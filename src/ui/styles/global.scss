@@ -1,0 +1,66 @@
+@use "./themes";
+@use "_variables" as v;
+
+@font-face {
+  font-family: Inter;
+  font-style: normal;
+  font-display: swap;
+  src: url("_assets/fonts/inter.ttf");
+}
+
+html,
+body {
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+
+  /* to allow gradient color to work and show at least solid color when over-scroll */
+  background: v.use(v.$colors-background);
+  background-color: v.use(v.$colors-background-color);
+  color: black;
+  scroll-behavior: smooth;
+  font-family: Inter, sans-serif;
+}
+
+#root {
+  display: flex;
+  align-items: center;
+  flex-flow: column nowrap;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.btn {
+  padding: 15px;
+  border-radius: 4px;
+  background-color: #8bc3df;
+  text-decoration: none;
+  border: none;
+  display: inline-block;
+  font-weight: 700;
+  cursor: pointer;
+  color: black;
+
+  &.link {
+    background-color: transparent;
+  }
+
+  &:visited,
+  &:active {
+    color: inherit;
+  }
+
+  &.disabled,
+  &[disabled] {
+    cursor: initial;
+    color: #707070;
+  }
+}
+
+input:focus,
+textarea {
+  outline: none !important;
+}

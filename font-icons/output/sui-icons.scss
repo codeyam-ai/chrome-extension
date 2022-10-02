@@ -1,0 +1,147 @@
+@font-face {
+  font-family: sui-icons;
+  src: url("./sui-icons.eot");
+  src: url("./sui-icons.eot#iefix") format("embedded-opentype"),
+    url("./sui-icons.woff2") format("woff2"),
+    url("./sui-icons.woff") format("woff"),
+    url("./sui-icons.ttf") format("truetype"),
+    url("./sui-icons.svg#sui-icons") format("svg");
+}
+
+[class^="sui-icons-"],
+[class*=" sui-icons-"] {
+  font-family: sui-icons !important;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.sui-icons-Buy:before {
+  content: "\ea01";
+}
+.sui-icons-Info:before {
+  content: "\ea02";
+}
+.sui-icons-Preview:before {
+  content: "\ea03";
+}
+.sui-icons-apps:before {
+  content: "\ea04";
+}
+.sui-icons-arrow-left:before {
+  content: "\ea05";
+}
+.sui-icons-arrow-right:before {
+  content: "\ea06";
+}
+.sui-icons-checkmark:before {
+  content: "\ea07";
+}
+.sui-icons-clipboard:before {
+  content: "\ea08";
+}
+.sui-icons-clock:before {
+  content: "\ea09";
+}
+.sui-icons-close:before {
+  content: "\ea0a";
+}
+.sui-icons-coins:before {
+  content: "\ea0b";
+}
+.sui-icons-currency-dollar:before {
+  content: "\ea0c";
+}
+.sui-icons-ethos-logo-icon:before {
+  content: "\ea0d";
+}
+.sui-icons-ethos-text:before {
+  content: "\ea0e";
+}
+.sui-icons-globe:before {
+  content: "\ea0f";
+}
+.sui-icons-grid:before {
+  content: "\ea10";
+}
+.sui-icons-hand-coins:before {
+  content: "\ea11";
+}
+.sui-icons-history:before {
+  content: "\ea12";
+}
+.sui-icons-logout:before {
+  content: "\ea13";
+}
+.sui-icons-low-res-ethos-text:before {
+  content: "\ea14";
+}
+.sui-icons-low-res-ethos:before {
+  content: "\ea15";
+}
+.sui-icons-nfts:before {
+  content: "\ea16";
+}
+.sui-icons-percentage-polygon:before {
+  content: "\ea17";
+}
+.sui-icons-person:before {
+  content: "\ea18";
+}
+.sui-icons-receive:before {
+  content: "\ea19";
+}
+.sui-icons-send:before {
+  content: "\ea1a";
+}
+.sui-icons-sui-chevron-right:before {
+  content: "\ea1b";
+}
+.sui-icons-sui-logo-icon:before {
+  content: "\ea1c";
+}
+.sui-icons-sui-logo-txt:before {
+  content: "\ea1d";
+}
+.sui-icons-tokens:before {
+  content: "\ea1e";
+}
+.sui-icons-version-icon:before {
+  content: "\ea1f";
+}
+.sui-icons-wallet:before {
+  content: "\ea20";
+}
+
+$sui-icons-Buy: "\ea01";
+$sui-icons-Info: "\ea02";
+$sui-icons-Preview: "\ea03";
+$sui-icons-apps: "\ea04";
+$sui-icons-arrow-left: "\ea05";
+$sui-icons-arrow-right: "\ea06";
+$sui-icons-checkmark: "\ea07";
+$sui-icons-clipboard: "\ea08";
+$sui-icons-clock: "\ea09";
+$sui-icons-close: "\ea0a";
+$sui-icons-coins: "\ea0b";
+$sui-icons-currency-dollar: "\ea0c";
+$sui-icons-ethos-logo-icon: "\ea0d";
+$sui-icons-ethos-text: "\ea0e";
+$sui-icons-globe: "\ea0f";
+$sui-icons-grid: "\ea10";
+$sui-icons-hand-coins: "\ea11";
+$sui-icons-history: "\ea12";
+$sui-icons-logout: "\ea13";
+$sui-icons-low-res-ethos-text: "\ea14";
+$sui-icons-low-res-ethos: "\ea15";
+$sui-icons-nfts: "\ea16";
+$sui-icons-percentage-polygon: "\ea17";
+$sui-icons-person: "\ea18";
+$sui-icons-receive: "\ea19";
+$sui-icons-send: "\ea1a";
+$sui-icons-sui-chevron-right: "\ea1b";
+$sui-icons-sui-logo-icon: "\ea1c";
+$sui-icons-sui-logo-txt: "\ea1d";
+$sui-icons-tokens: "\ea1e";
+$sui-icons-version-icon: "\ea1f";
+$sui-icons-wallet: "\ea20";
