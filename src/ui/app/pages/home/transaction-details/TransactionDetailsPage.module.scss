@@ -1,41 +1,41 @@
 .container {
-  display: flex;
-  flex-flow: column nowrap;
-  border-radius: 2px;
-  padding: 18px;
-  align-self: stretch;
-  margin-top: 16px;
-  align-items: flex-start;
-  position: relative;
+    display: flex;
+    flex-flow: column nowrap;
+    border-radius: 2px;
+    padding: 18px;
+    align-self: stretch;
+    margin-top: 16px;
+    align-items: flex-start;
+    position: relative;
 }
 
 .status {
-  align-self: center;
-  font-size: 60px;
+    align-self: center;
+    font-size: 60px;
 
-  &.success {
-    color: #4ade80;
-    font-size: 80px;
-  }
+    &.success {
+        color: #4ade80;
+        font-size: 80px;
+    }
 
-  &.failure {
-    color: #8b1111;
-  }
+    &.failure {
+        color: #8b1111;
+    }
 }
 
 .txt {
-  font-size: 16px;
-  align-self: center;
-  margin-top: 8px;
+    font-size: 16px;
+    align-self: center;
+    margin-top: 8px;
 }
 
 .link {
-  position: absolute;
-  right: 3px;
-  bottom: 3px;
-  padding: 2px;
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
+    padding: 2px;
 }
 
 .error {
-  align-self: stretch;
+    align-self: stretch;
 }

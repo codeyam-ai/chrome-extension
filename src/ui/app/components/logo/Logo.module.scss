@@ -1,26 +1,26 @@
 .container {
-  display: inline-flex;
-  flex-flow: row nowrap;
-  align-items: center;
+    display: inline-flex;
+    flex-flow: row nowrap;
+    align-items: center;
 }
 
 .icon,
 .txt {
-  font-weight: 500;
+    font-weight: 500;
 
-  .normal & {
-    font-size: 25px;
-  }
+    .normal & {
+        font-size: 25px;
+    }
 
-  .big & {
-    font-size: 35px;
-  }
+    .big & {
+        font-size: 35px;
+    }
 
-  .bigger & {
-    font-size: 45px;
-  }
+    .bigger & {
+        font-size: 45px;
+    }
 
-  .huge & {
-    font-size: 55px;
-  }
+    .huge & {
+        font-size: 55px;
+    }
 }

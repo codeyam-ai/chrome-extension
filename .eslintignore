@@ -1,0 +1,7 @@
+dist/
+node_modules/
+.next/
+.swc/
+out/
+font-icons/output/
+src/ui/app/components/gradientBackground/

@@ -1,10 +1,10 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useDispatch } from "react-redux";
+import { useDispatch } from 'react-redux';
 
-import type { AppDispatch } from "_store";
+import type { AppDispatch } from '_store';
 
 export default function useAppDispatch() {
-  return useDispatch<AppDispatch>();
+    return useDispatch<AppDispatch>();
 }
