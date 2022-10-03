@@ -94,7 +94,7 @@ export default function Preapprovals() {
         }, [preapprovalRequest.id, onRevoke]);
 
         return (
-            <div className="mb-6 rounded-md bg-gray-100 p-3">
+            <div className="mb-6 p-3 rounded-md border border-gray-300 bg-white px-4 py-2 shadow-sm dark:border-gray-500 dark:bg-gray-700">
                 <div className="flex gap-3 items-center justify-between">
                     <div className="mt-1">
                         {preapprovalRequest.originFavIcon && (
@@ -134,19 +134,19 @@ export default function Preapprovals() {
                     {showDetails ? '▼' : '▶'} Show Details
                     {showDetails && (
                         <div className="mt-1">
-                            <div className="p-1 flex justify-between bg-white">
+                            <div className="p-1 flex justify-between bg-white dark:bg-gray-600">
                                 <div>Transactions Remaining:</div>
                                 <div>{maxTransactionCount}</div>
                             </div>
-                            <div className="p-1 flex justify-between bg-gray-50">
+                            <div className="p-1 flex justify-between bg-gray-50 dark:bg-gray-700">
                                 <div>Gas Remaining:</div>
                                 <div>{totalGasLimit}</div>
                             </div>
-                            <div className="p-1 flex justify-between bg-white">
+                            <div className="p-1 flex justify-between bg-white dark:bg-gray-600">
                                 <div>Transactions Executed:</div>
                                 <div>{transactions.length}</div>
                             </div>
-                            <div className="p-1 flex justify-between bg-gray-50">
+                            <div className="p-1 flex justify-between bg-gray-50 dark:bg-gray-700">
                                 <div>Total Gas Used:</div>
                                 <div>
                                     {transactions.reduce(
@@ -156,7 +156,7 @@ export default function Preapprovals() {
                                     )}
                                 </div>
                             </div>
-                            <div className="p-1 flex justify-between bg-white">
+                            <div className="p-1 flex justify-between bg-white dark:bg-gray-600">
                                 <div>Avg Gas / Transaction:</div>
                                 <div>
                                     {Math.round(

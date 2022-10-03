@@ -84,7 +84,9 @@ function SiteConnectPage() {
         <Loading loading={loading}>
             {permissionRequest ? (
                 <UserApproveContainer
-                    title="Connect to Ethos wallet"
+                    title={`Connect to ${
+                        permissionRequest.title || permissionRequest.origin
+                    }`}
                     origin={permissionRequest.origin}
                     originFavIcon={permissionRequest.favIcon}
                     originTitle={permissionRequest.title}
@@ -92,7 +94,7 @@ function SiteConnectPage() {
                     rejectTitle="Cancel"
                     onSubmit={handleOnSubmit}
                 >
-                    <div className="pb-6 flex gap-3 justify-center items-center">
+                    {/* <div className="pb-6 flex gap-3 justify-center items-center">
                         <img
                             src={permissionRequest.favIcon}
                             alt="Site Favicon"
@@ -105,7 +107,7 @@ function SiteConnectPage() {
                                     permissionRequest.origin}
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                     <label className="text-gray-500 dark:text-gray-400 text-sm">
                         This app would like to:
                     </label>

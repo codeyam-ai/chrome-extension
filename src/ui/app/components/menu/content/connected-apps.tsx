@@ -98,7 +98,7 @@ export default function ConnectedApps() {
                     key={permission.origin}
                     className="col-span-1 flex rounded-md shadow-sm"
                 >
-                    <div className="flex flex-1 relative truncate items-center space-x-4 rounded-md border border-gray-300 bg-white px-4 py-2 shadow-sm   dark:border-gray-500 dark:bg-gray-700">
+                    <div className="flex flex-1 relative truncate items-center space-x-4 rounded-md border border-gray-300 bg-white px-4 py-2 shadow-sm dark:border-gray-500 dark:bg-gray-700">
                         <div className="flex-1 flex items-center gap-2">
                             {permission.favIcon && (
                                 <img

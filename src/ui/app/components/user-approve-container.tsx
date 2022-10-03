@@ -64,7 +64,11 @@ function UserApproveContainer({
 
             <div className="flex flex-col gap-1 py-3">
                 <div className="flex items-center justify-center">
-                    <img src={logo} className="h-12" alt="" />
+                    <img
+                        src={originFavIcon}
+                        className="h-12"
+                        alt={`${originTitle} icon`}
+                    />
                 </div>
                 <div className="text-xl dark:text-gray-200">{title}</div>
             </div>

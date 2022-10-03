@@ -170,7 +170,11 @@ export function DappTxApprovalPage() {
                         >
                             {details ? '▼' : '▶'} Show Details
                         </div>
-                        <div className={details ? '' : 'hidden'}>
+                        <div
+                            className={
+                                details + ' dark:text-gray-400' ? '' : 'hidden'
+                            }
+                        >
                             {detailedValuesContent.map(
                                 ({ label, content, title }) => (
                                     <Fragment key={label}>
@@ -179,7 +183,10 @@ export function DappTxApprovalPage() {
                                                 {label}
                                             </label>
                                             <div
-                                                className={st.value}
+                                                className={
+                                                    st.value +
+                                                    ' dark:text-gray-400'
+                                                }
                                                 title={title}
                                             >
                                                 {content}

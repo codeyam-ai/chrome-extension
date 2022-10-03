@@ -72,7 +72,7 @@ const PermissionInput = ({
         <div className="flex flex-col gap-1">
             <div className="text-sm flex justify-between items-center">
                 <div className="flex gap-1">
-                    <div className="font-bold">{title}</div>
+                    <div className="font-bold dark:text-gray-300">{title}</div>
                     {description && (
                         <Tooltip tooltipText={description}>
                             <div className="cursor-help flex justify-center items-center rounded-full bg-gray-400 text-white text-xs h-5 w-5 scale-75">
@@ -83,7 +83,7 @@ const PermissionInput = ({
                 </div>
                 <div>
                     <input
-                        className="text-right border rounded-lg p-1"
+                        className="text-right border p-1 rounded-md focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 border-gray-300 dark:border-gray-500 dark:bg-gray-700"
                         style={{ width: '6em' }}
                         onChange={_handleChange}
                         value={value}
@@ -348,7 +348,7 @@ export function DappPreapprovalPage() {
                     ) : (
                         <>
                             <div className="text-sm flex flex-col justify-center items-center">
-                                <div className="text-gray-500">
+                                <div className="text-gray-500 dark:text-gray-400">
                                     Transactions can only {modifier} this NFT:
                                 </div>
                                 {nft && (
@@ -357,7 +357,7 @@ export function DappPreapprovalPage() {
                                             nftobj={nft}
                                             showlabel={true}
                                         />
-                                        <div className="pt-1">
+                                        <div className="pt-1 dark:text-gray-400">
                                             {truncateMiddle(
                                                 preapproval?.objectId || ''
                                             )}
@@ -367,14 +367,14 @@ export function DappPreapprovalPage() {
                             </div>
                             <div className="flex flex-col gap-3">
                                 <div className="flex flex-col gap-3 py-3 text-xs">
-                                    <div className="font-extrabold text-sm">
+                                    <div className="font-extrabold text-sm dark:text-gray-300">
                                         Description
                                     </div>
-                                    <p className="text-gray-500">
+                                    <p className="text-gray-500 dark:text-gray-400">
                                         {preapproval?.description}
                                     </p>
                                 </div>
-                                <div className="flex flex-col gap-4">
+                                <div className="flex flex-col gap-4 dark:text-gray-300">
                                     {permissionInputs.map((info, index) => (
                                         <PermissionInput
                                             key={`permission-input-${index}`}
