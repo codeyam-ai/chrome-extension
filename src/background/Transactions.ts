@@ -37,7 +37,7 @@ function openPermissionWindow(permissionID: string) {
         url:
             Browser.runtime.getURL('ui.html') +
             `#/preapproval/${encodeURIComponent(permissionID)}`,
-        height: 690,
+        height: 720,
     });
 }
 
