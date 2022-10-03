@@ -45,7 +45,7 @@ export class EthosSigner extends SignerWithProvider {
         );
 
         if (status !== 200) {
-          throw new Error(`Signing error: ${status}`);
+            throw new Error(`Signing error: ${status}`);
         }
 
         const { signedTransaction } = json;

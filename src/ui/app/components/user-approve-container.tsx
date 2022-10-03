@@ -16,6 +16,7 @@ type UserApproveContainerProps = {
     origin: string;
     originFavIcon?: string;
     originTitle?: string;
+    description?: string;
     rejectTitle: string;
     approveTitle: string;
     onSubmit: (approved: boolean) => void;
@@ -26,6 +27,7 @@ function UserApproveContainer({
     origin,
     originFavIcon,
     originTitle,
+    description,
     children,
     rejectTitle,
     approveTitle,
@@ -62,7 +64,7 @@ function UserApproveContainer({
                 </div>
             </div>
 
-            <div className="flex flex-col gap-1 py-3">
+            <div className="flex flex-col gap-1 pt-3 pb-8">
                 <div className="flex items-center justify-center">
                     <img
                         src={originFavIcon}
@@ -70,7 +72,12 @@ function UserApproveContainer({
                         alt={`${originTitle} icon`}
                     />
                 </div>
-                <div className="text-xl dark:text-gray-200">{title}</div>
+                <div className="text-xl text-center dark:text-gray-200">
+                    {title}
+                </div>
+                <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
+                    {description}
+                </div>
             </div>
 
             <div className="w-full">{children}</div>

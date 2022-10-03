@@ -90,27 +90,11 @@ function SiteConnectPage() {
                     origin={permissionRequest.origin}
                     originFavIcon={permissionRequest.favIcon}
                     originTitle={permissionRequest.title}
+                    description="Allow this app to:"
                     approveTitle="Connect"
                     rejectTitle="Cancel"
                     onSubmit={handleOnSubmit}
                 >
-                    {/* <div className="pb-6 flex gap-3 justify-center items-center">
-                        <img
-                            src={permissionRequest.favIcon}
-                            alt="Site Favicon"
-                            className="w-10 h-10"
-                        />
-                        <div className="text-sm dark:text-gray-400">
-                            <div>Connect your wallet to:</div>
-                            <div>
-                                {permissionRequest.title ||
-                                    permissionRequest.origin}
-                            </div>
-                        </div>
-                    </div> */}
-                    <label className="text-gray-500 dark:text-gray-400 text-sm">
-                        This app would like to:
-                    </label>
                     <div className="flex flex-col gap-2 mt-2">
                         {permissionRequest.permissions.map((aPermission) => (
                             <span
