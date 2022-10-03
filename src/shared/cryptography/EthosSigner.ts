@@ -30,7 +30,7 @@ export class EthosSigner extends SignerWithProvider {
     }
 
     async signData(data: Base64DataBuffer): Promise<SignaturePubkeyPair> {
-        const response = await simpleApiCall(
+        const { json, status } = await simpleApiCall(
             'transaction/sign',
             'POST',
             this.accessToken || '',
@@ -44,7 +44,11 @@ export class EthosSigner extends SignerWithProvider {
             })
         );
 
-        const { signedTransaction } = response.json;
+        if (status !== 200) {
+          throw new Error(`Signing error: ${status}`);
+        }
+
+        const { signedTransaction } = json;
 
         return {
             signatureScheme: 'ED25519',
