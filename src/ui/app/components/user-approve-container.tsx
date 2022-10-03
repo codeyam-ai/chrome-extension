@@ -47,10 +47,13 @@ function UserApproveContainer({
     return (
         <div className="flex flex-col w-full px-6 py-1 items-center dark:bg-gray-800">
             <div className="flex w-full items-center justify-between pb-3">
-                <div className="text-base cursor-pointer" onClick={reject}>
+                <div
+                    className="text-base cursor-pointer dark:text-gray-200"
+                    onClick={reject}
+                >
                     ✕
                 </div>
-                <div className="px-2 rounded-md bg-gray-200">
+                <div className="px-2 rounded-md bg-gray-200 dark:bg-gray-700">
                     <AccountAddress
                         className="py-2"
                         showLink={false}
@@ -63,7 +66,7 @@ function UserApproveContainer({
                 <div className="flex items-center justify-center">
                     <img src={logo} className="h-12" alt="" />
                 </div>
-                <div className="text-xl">{title}</div>
+                <div className="text-xl dark:text-gray-200">{title}</div>
             </div>
 
             <div className="w-full">{children}</div>

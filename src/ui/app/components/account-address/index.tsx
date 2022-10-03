@@ -72,7 +72,7 @@ function AccountAddress({
                         </svg>
                     )} */}
                     </div>
-                    <div className={textSize}>
+                    <div className={`${textSize} dark:text-gray-300`}>
                         {accountInfo.name || 'Wallet'}:
                     </div>
                 </>
@@ -81,7 +81,7 @@ function AccountAddress({
                 <span className={cl(st.addressContainer, className)}>
                     <CopyToClipboard txt={address} mode={cpIconMode}>
                         <span
-                            className={`${textSize} font-medium break-words flex-1 min-w-0 text-gray-700 dark:text-gray-400`}
+                            className={`${textSize} font-medium break-words flex-1 min-w-0 text-gray-700 dark:text-gray-200`}
                         >
                             {shorten ? shortenAddress : address}
                         </span>
