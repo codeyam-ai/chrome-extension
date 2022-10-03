@@ -96,9 +96,10 @@ function SiteConnectPage() {
                         <img
                             src={permissionRequest.favIcon}
                             alt="Site Favicon"
+                            className="w-10 h-10"
                         />
-                        <div className="text-sm">
-                            <div className="">Connect your wallet to:</div>
+                        <div className="text-sm dark:text-gray-400">
+                            <div>Connect your wallet to:</div>
                             <div>
                                 {permissionRequest.title ||
                                     permissionRequest.origin}
