@@ -14,10 +14,9 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
     to?: string;
     type?: 'button' | 'submit' | 'reset' | undefined;
     disabled?: boolean;
+    isInline?: boolean;
     children?: React.ReactNode;
 }
-
-const buttonWrapperClassNames = 'px-6';
 
 const baseButtonClassNames =
     'w-full inline-flex items-center justify-center w-full p-3 mb-6 border border-transparent font-semibold text-sm rounded-lg';
@@ -33,10 +32,14 @@ const secondaryButtonClassNames =
     'text-ethos-light-primary bg-ethos-light-background-accent dark:text-ethos-dark-text-default dark:bg-ethos-dark-background-accent';
 
 const Button = (props: ButtonProps) => {
-    const { buttonStyle, to, className, children, ...reactProps } = props;
+    const { buttonStyle, to, className, isInline, children, ...reactProps } =
+        props;
     // Note - in order to override an existing class, prepend the name with "!"
     // ex) !py-2. This will only work if done from the component implementation
     // (not adding the "!") later in this file
+
+    const buttonWrapperClassNames = isInline ? '' : 'px-6';
+
     const classes =
         (className ? className : '') +
         ' ' +

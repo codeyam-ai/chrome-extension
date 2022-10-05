@@ -2,7 +2,7 @@ import { type MouseEventHandler } from 'react';
 
 import Button, { ButtonStyle } from './Button';
 
-type VerticalButtonGroupProps = {
+type InlineButtonGroupProps = {
     className?: string;
     onClickButtonPrimary?: MouseEventHandler<HTMLButtonElement>;
     buttonPrimaryTo?: string;
@@ -14,7 +14,7 @@ type VerticalButtonGroupProps = {
     buttonSecondaryChildren?: React.ReactNode;
 };
 
-const VerticalButtonGroup = ({
+const InlineButtonGroup = ({
     className,
     onClickButtonPrimary,
     buttonPrimaryTo,
@@ -24,28 +24,29 @@ const VerticalButtonGroup = ({
     buttonSecondaryTo,
     buttonSecondaryType,
     buttonSecondaryChildren,
-}: VerticalButtonGroupProps) => {
+}: InlineButtonGroupProps) => {
     return (
-        <div className={className}>
-            <Button
-                buttonStyle={ButtonStyle.PRIMARY}
-                onClick={onClickButtonPrimary}
-                to={buttonPrimaryTo}
-                type={buttonPrimarytype}
-                className="!mb-2"
-            >
-                {buttonPrimaryChildren}
-            </Button>
+        <div className={`${className} grid grid-cols-2 gap-2 mx-6`}>
             <Button
                 buttonStyle={ButtonStyle.SECONDARY}
                 onClick={onClickButtonSecondary}
                 to={buttonSecondaryTo}
                 type={buttonSecondaryType}
+                isInline={true}
             >
                 {buttonSecondaryChildren}
+            </Button>
+            <Button
+                buttonStyle={ButtonStyle.PRIMARY}
+                onClick={onClickButtonPrimary}
+                to={buttonPrimaryTo}
+                type={buttonPrimarytype}
+                isInline={true}
+            >
+                {buttonPrimaryChildren}
             </Button>
         </div>
     );
 };
 
-export default VerticalButtonGroup;
+export default InlineButtonGroup;

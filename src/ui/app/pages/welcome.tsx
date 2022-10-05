@@ -3,7 +3,6 @@
 
 import { AppState } from '../hooks/useInitializedGuard';
 import GetStartedCard from '../shared/GetStartedCard';
-import { ButtonStyle } from '../shared/buttons/Button';
 import VerticalButtonGroup from '../shared/buttons/VerticalButtonGroup';
 import Body from '../shared/typography/Body';
 import BodyLarge from '../shared/typography/BodyLarge';
@@ -30,12 +29,10 @@ const WelcomePage = () => {
                         Welcome, let&apos;s get started!
                     </BodyLarge>
                     <VerticalButtonGroup
-                        buttonOneStyle={ButtonStyle.PRIMARY}
-                        buttonOneTo="/initialize/create"
-                        buttonOneChildren={'Create A New Wallet'}
-                        buttonTwoStyle={ButtonStyle.SECONDARY}
-                        buttonTwoTo="/initialize/hosted"
-                        buttonTwoChildren={'Sign In With Email'}
+                        buttonPrimaryTo="/initialize/create"
+                        buttonPrimaryChildren={'Create A New Wallet'}
+                        buttonSecondaryTo="/initialize/hosted"
+                        buttonSecondaryChildren={'Sign In With Email'}
                     />
                     <div className="text-left">
                         <Body

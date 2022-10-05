@@ -1,15 +1,17 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import {
+    ArrowDownTrayIcon,
+    CreditCardIcon,
+    PaperAirplaneIcon,
+} from '@heroicons/react/24/outline';
 import { memo, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
-import { SuiIcons } from '_font-icons/output/sui-icons';
-// import { useMiddleEllipsis } from '_hooks';
 import { Coin } from '_redux/slices/sui-objects/Coin';
 import { balanceFormatOptions } from '_shared/formatting';
-import Icon from '_src/ui/app/components/icon';
-import Button, { ButtonStyle } from '_src/ui/app/shared/buttons/Button';
+import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
 
 export type CoinProps = {
     type: string;
@@ -50,7 +52,7 @@ function CoinBalance({
     // const shortenType = useMiddleEllipsis(type, 30);
     return (
         <div className="flex flex-col">
-            <div className="flex flex-row items-baseline gap-1">
+            <div className="flex flex-row items-baseline gap-1 mb-2">
                 <span className="font-semibold text-2xl">
                     {balanceFormatted}
                 </span>
@@ -59,32 +61,28 @@ function CoinBalance({
                     {usdAmount}
                 </span>
             </div>
-            <div className="grid grid-cols-2 gap-2 mt-1">
-                {/* {mode === 'row-item' ? (
-                    <span className={st.type} title={type}>
-                        {shortenType}
-                    </span>
-                ) : null} */}
-                <Button
-                    buttonStyle={ButtonStyle.PRIMARY}
-                    to={isBalanceZero ? '/buy' : sendUrl}
-                    className="!py-2"
-                >
-                    <Icon
-                        className="mr-2 text-xs"
-                        icon={isBalanceZero ? SuiIcons.Buy : SuiIcons.Send}
-                    />
-                    {isBalanceZero ? 'Buy' : 'Send'}
-                </Button>
-                <Button
-                    buttonStyle={ButtonStyle.SECONDARY}
-                    to={'/receive'}
-                    className="!py-2"
-                >
-                    <Icon className="mr-2 text-xs" icon={SuiIcons.Receive} />
-                    Receive
-                </Button>
-            </div>
+            <InlineButtonGroup
+                className="!mx-0"
+                buttonPrimaryTo={isBalanceZero ? '/buy' : sendUrl}
+                buttonPrimaryChildren={
+                    <>
+                        {isBalanceZero ? (
+                            <CreditCardIcon className="mr-2 h-4 w-4" />
+                        ) : (
+                            <PaperAirplaneIcon className="mr-2 h-4 w-4" />
+                        )}
+
+                        {isBalanceZero ? 'Buy' : 'Send'}
+                    </>
+                }
+                buttonSecondaryTo="/receive"
+                buttonSecondaryChildren={
+                    <>
+                        <ArrowDownTrayIcon className="mr-2 h-4 w-4" />
+                        Receive
+                    </>
+                }
+            />
         </div>
     );
 }
