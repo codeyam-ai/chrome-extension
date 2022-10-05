@@ -5,7 +5,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import LoadingIndicator from '../../components/loading/LoadingIndicator';
-import logo from '../../components/logo/ethos-logo.png';
 import { iframe } from '../../helpers';
 import { AppState } from '../../hooks/useInitializedGuard';
 import {
@@ -14,14 +13,18 @@ import {
     saveEmail,
     setAddress,
 } from '../../redux/slices/account';
-import Button, { ButtonStyle } from '../../shared/buttons/Button';
 import BackButton from './BackButton';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
 import Authentication from '_src/background/Authentication';
 import { IFRAME_URL } from '_src/shared/constants';
 
-import type { ChangeEvent, FormEvent } from 'react';
+import type { ChangeEvent } from 'react';
+import Title from '../../shared/typography/Title';
+import EmailForm from '../../shared/EmailForm';
+import Body from '../../shared/typography/Body';
+import EthosLink from '../../shared/typography/EthosLink';
+import { LinkType, TextColor } from '_src/enums/TypographyEnums';
 
 export const AUTHENTICATION_REQUESTED = 'AUTHENTICATION_REQUESTED';
 
@@ -45,8 +48,7 @@ const HostedPage = () => {
     );
 
     const _handleSubmit = useCallback(
-        async (e: FormEvent) => {
-            e.preventDefault();
+        async (email: string) => {
             setLoading(true);
             setTimeout(async () => {
                 if (!emailSent) {
@@ -86,91 +88,52 @@ const HostedPage = () => {
     return (
         <Loading loading={checkingInitialized}>
             {!shouldLogInImmediately && <BackButton to="/welcome" />}
-            <div className="">
-                <div className="divide-y divide-gray-300/50">
-                    <div className="text-center space-y-2 py-4 text-base leading-7">
-                        <h1 className="mb-4 font-semibold tracking-tight">
-                            <img
-                                src={logo}
-                                className="h-36 mx-auto pb-3"
-                                alt=""
-                            />
-                            <span className="block text-5xl">Ethos</span>
-                            <span className="block text-ethos-primary dark:text-violet-400 font-thin text-lg">
-                                The new web awaits
-                            </span>
-                        </h1>
-                        {emailSent ? (
-                            <div className="">
-                                An email has been sent to {email} with a link
-                                that will automatically log you in.
-                            </div>
-                        ) : error ? (
-                            <div className="text-sm text-gray-700 dark:text-gray-400">
-                                <p>
-                                    There&apos;s been an error and the team has
-                                    been notified.
-                                </p>
-                                <br />
-                                <p>
-                                    If this continues, please reach out to{' '}
-                                    <a
-                                        className="underline text-ethos-primary dark:text-violet-400"
-                                        href="mailto:support@ethoswallet.xyz"
-                                    >
-                                        support@ethoswallet.xyz
-                                    </a>
-                                </p>
-                            </div>
-                        ) : shouldLogInImmediately ||
-                          (loading &&
-                              authentication === AUTHENTICATION_REQUESTED) ? (
-                            <div className="flex justify-center items-center p-6 text-xl">
-                                <LoadingIndicator />
-                            </div>
-                        ) : (
-                            <form
-                                className="flex flex-col gap-1"
-                                onSubmit={_handleSubmit}
+            <div className="text-center space-y-2 py-4 text-base leading-7">
+                <div className="mb-4">
+                    <Title as="h1">Sign in with Your Email</Title>
+                </div>{' '}
+                {emailSent ? (
+                    <Body as="p" textColor={TextColor.Medium}>
+                        An email has been sent to {email} with a link that will
+                        automatically log you in.
+                    </Body>
+                ) : error ? (
+                    <div>
+                        <Body
+                            as="p"
+                            textColor={TextColor.Medium}
+                            className="mb-2"
+                        >
+                            There&apos;s been an error and the team has been
+                            notified.
+                        </Body>
+                        <Body as="p" textColor={TextColor.Medium}>
+                            If this continues, please reach out to{' '}
+                            <EthosLink
+                                type={LinkType.External}
+                                to="mailto:support@ethoswallet.xyz"
                             >
-                                <div className="font-semibold px-10 text-left text-gray-700 dark:text-gray-400">
-                                    Sign in with your email
-                                </div>
-                                <input
-                                    type="email"
-                                    placeholder="Email"
-                                    value={email}
-                                    onChange={_handleEmailChange}
-                                    className="w-full py-1 px-2 mb-1 text-sm rounded-md focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 border-gray-300 dark:border-gray-500 dark:bg-gray-700"
-                                    required={true}
-                                />
-                                <div className="flex justify-center">
-                                    {loading ? (
-                                        <div className="flex justify-center items-center p-6 text-xl">
-                                            <LoadingIndicator />
-                                        </div>
-                                    ) : (
-                                        <Button
-                                            buttonStyle={ButtonStyle.PRIMARY}
-                                            type="submit"
-                                        >
-                                            Sign in
-                                        </Button>
-                                    )}
-                                </div>
-                            </form>
-                        )}
-                        <iframe
-                            id="wallet-iframe"
-                            src={IFRAME_URL}
-                            height="1px"
-                            width="1px"
-                            title="wallet"
-                            // Hide the iframe pixel, as it is visible in dark mode
-                            className="-top-[1000px] absolute"
-                        />
+                                support@ethoswallet.xyz
+                            </EthosLink>
+                        </Body>
                     </div>
-                </div>
+                ) : shouldLogInImmediately ||
+                  (loading && authentication === AUTHENTICATION_REQUESTED) ? (
+                    <div className="flex justify-center items-center p-6 text-xl">
+                        <LoadingIndicator />
+                    </div>
+                ) : (
+                    <EmailForm onSubmit={_handleSubmit} loading={loading} />
+                )}
+                <iframe
+                    id="wallet-iframe"
+                    src={IFRAME_URL}
+                    height="1px"
+                    width="1px"
+                    title="wallet"
+                    // Hide the iframe pixel, as it is visible in dark mode
+                    className="-top-[1000px] absolute"
+                />
             </div>
         </Loading>
     );

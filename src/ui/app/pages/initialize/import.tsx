@@ -77,7 +77,6 @@ const ImportPage = () => {
     return (
         <>
             <BackButton to="/" />
-            <img src={logo} className="h-36 mx-auto pb-3" alt="" />
 
             <Title as="h1" className="mb-4">
                 Recover Your Wallet

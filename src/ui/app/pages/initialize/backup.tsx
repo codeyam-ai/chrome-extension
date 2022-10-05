@@ -36,10 +36,10 @@ const BackupPage = () => {
     }, [navigate, dispatch, mnemonic]);
     return (
         <>
-            <img src={logo} className="h-36 mx-auto pb-3" alt="" />
             <Title as="h1" className="mb-4">
                 Your Recovery Phrase
             </Title>
+
             <BodyLarge as="p" className="mb-2">
                 This phrase is the <strong>only</strong> way to recover your
                 wallet. Do not share it with anyone!
