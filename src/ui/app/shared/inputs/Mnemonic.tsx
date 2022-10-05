@@ -1,4 +1,5 @@
 import { type FocusEventHandler } from 'react';
+
 import TextArea from './TextArea';
 
 type MnemonicProps = {

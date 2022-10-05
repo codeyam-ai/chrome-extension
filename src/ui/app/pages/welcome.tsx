@@ -1,8 +1,8 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import DarkModeToggle from '../components/darkModeToggle';
 import { AppState } from '../hooks/useInitializedGuard';
+import GetStartedCard from '../shared/GetStartedCard';
 import { ButtonStyle } from '../shared/buttons/Button';
 import VerticalButtonGroup from '../shared/buttons/VerticalButtonGroup';
 import Body from '../shared/typography/Body';
@@ -13,23 +13,16 @@ import Loading from '_components/loading';
 import { useInitializedGuard } from '_hooks';
 import PageLayout from '_pages/layout';
 import { LinkType, TextColor } from '_src/enums/TypographyEnums';
-import GetStartedCard from '../shared/GetStartedCard';
-import LargeColoredLogo from '../shared/LargeColoredLogo';
 
 const WelcomePage = () => {
     const checkingInitialized = useInitializedGuard(AppState.UNINITIALIZED);
     return (
         <PageLayout forceFullscreen={true}>
             <Loading loading={checkingInitialized}>
-                <div className="w-full mb-2">
-                    <span className="float-right">
-                        <DarkModeToggle />
-                    </span>
-                </div>
                 <GetStartedCard>
                     <div className="mb-4">
                         <Title as="h1">Ethos</Title>
-                        <Body className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium">
+                        <Body textColor={TextColor.Medium}>
                             The new web awaits
                         </Body>
                     </div>

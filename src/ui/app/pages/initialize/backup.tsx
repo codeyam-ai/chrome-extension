@@ -4,7 +4,6 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import logo from '../../components/logo/ethos-logo.png';
 import Button, { ButtonStyle } from '../../shared/buttons/Button';
 import Checkbox from '../../shared/inputs/Checkbox';
 import Mnemonic from '../../shared/inputs/Mnemonic';

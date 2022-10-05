@@ -3,7 +3,6 @@
 
 import { memo, useCallback, useState } from 'react';
 
-import logo from '../components/logo/ethos-logo.png';
 import Button, { ButtonStyle } from '../shared/buttons/Button';
 import AccountAddress, { AddressMode } from '_components/account-address';
 import LoadingIndicator from '_components/loading/LoadingIndicator';

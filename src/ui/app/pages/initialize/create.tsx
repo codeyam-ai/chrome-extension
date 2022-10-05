@@ -4,7 +4,6 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import logo from '../../components/logo/ethos-logo.png';
 import Button, { ButtonStyle } from '../../shared/buttons/Button';
 import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';

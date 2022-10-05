@@ -1,16 +1,19 @@
 import { Formik, Form, useField } from 'formik';
+import { useCallback } from 'react';
 import * as Yup from 'yup';
 
-import LoadingIndicator from '../components/loading/LoadingIndicator';
-import Button, { ButtonStyle } from './buttons/Button';
-import Input from './inputs/Input';
+import LoadingIndicator from '../../components/loading/LoadingIndicator';
+import Button, { ButtonStyle } from '../buttons/Button';
+import Input from '../inputs/Input';
+
+import type { FormikValues } from 'formik';
 
 type EmailFormProps = {
     onSubmit: (email: string) => void;
     loading: boolean;
 };
 
-const CustomFormikForm = ({ loading }: any) => {
+const CustomFormikForm = ({ loading }: { loading: boolean }) => {
     // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
     // which we can spread on <input> and alse replace ErrorMessage entirely.
     const [field, meta] = useField('email');
@@ -44,6 +47,12 @@ const CustomFormikForm = ({ loading }: any) => {
 };
 
 const EmailForm = ({ onSubmit, loading }: EmailFormProps) => {
+    const _onSubmit = useCallback(
+        ({ email }: FormikValues) => {
+            onSubmit(email);
+        },
+        [onSubmit]
+    );
     return (
         <div>
             <Formik
@@ -55,9 +64,7 @@ const EmailForm = ({ onSubmit, loading }: EmailFormProps) => {
                         .email('Invalid email address')
                         .required('Required'),
                 })}
-                onSubmit={({ email }) => {
-                    onSubmit(email);
-                }}
+                onSubmit={_onSubmit}
             >
                 <Form>
                     <CustomFormikForm loading={loading} />

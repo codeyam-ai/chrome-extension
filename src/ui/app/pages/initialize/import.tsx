@@ -5,8 +5,9 @@ import { useFormik } from 'formik';
 import { useCallback } from 'react';
 import * as Yup from 'yup';
 
-import logo from '../../components/logo/ethos-logo.png';
 import Button, { ButtonStyle } from '../../shared/buttons/Button';
+import Mnemonic from '../../shared/inputs/Mnemonic';
+import Title from '../../shared/typography/Title';
 import BackButton from './BackButton';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { createMnemonic, setMnemonic } from '_redux/slices/account';
@@ -16,8 +17,6 @@ import {
 } from '_shared/cryptography/mnemonics';
 
 import type { FocusEventHandler } from 'react';
-import Title from '../../shared/typography/Title';
-import Mnemonic from '../../shared/inputs/Mnemonic';
 
 const validationSchema = Yup.object({
     mnemonic: Yup.string()

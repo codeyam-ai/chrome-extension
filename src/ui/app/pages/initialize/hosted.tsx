@@ -13,18 +13,16 @@ import {
     saveEmail,
     setAddress,
 } from '../../redux/slices/account';
+import EmailForm from '../../shared/forms/EmailForm';
+import Body from '../../shared/typography/Body';
+import EthosLink from '../../shared/typography/EthosLink';
+import Title from '../../shared/typography/Title';
 import BackButton from './BackButton';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
 import Authentication from '_src/background/Authentication';
-import { IFRAME_URL } from '_src/shared/constants';
-
-import type { ChangeEvent } from 'react';
-import Title from '../../shared/typography/Title';
-import EmailForm from '../../shared/EmailForm';
-import Body from '../../shared/typography/Body';
-import EthosLink from '../../shared/typography/EthosLink';
 import { LinkType, TextColor } from '_src/enums/TypographyEnums';
+import { IFRAME_URL } from '_src/shared/constants';
 
 export const AUTHENTICATION_REQUESTED = 'AUTHENTICATION_REQUESTED';
 
@@ -40,15 +38,9 @@ const HostedPage = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState(false);
 
-    const _handleEmailChange = useCallback(
-        (e: ChangeEvent<HTMLInputElement>) => {
-            setEmail(e.target.value);
-        },
-        []
-    );
-
     const _handleSubmit = useCallback(
         async (email: string) => {
+            setEmail(email);
             setLoading(true);
             setTimeout(async () => {
                 if (!emailSent) {
@@ -61,7 +53,7 @@ const HostedPage = () => {
             await dispatch(saveEmail(email));
             await dispatch(saveAuthentication(AUTHENTICATION_REQUESTED));
         },
-        [email, emailSent, dispatch]
+        [emailSent, dispatch]
     );
 
     useEffect(() => {
