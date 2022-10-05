@@ -5,17 +5,19 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import CoinBalance from './coin-balance';
-// import IconLink from './icon-link';
 import AccountAddress, { AddressMode } from '_components/account-address';
 import Alert from '_components/alert';
 import Loading from '_components/loading';
-// import { SuiIcons } from '_font-icons/output/sui-icons';
-import { useAppSelector, useExplorerPermission, useObjectsState } from '_hooks';
+import { useAppSelector, useObjectsState } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
+import { TextColor, LinkType } from '_src/enums/TypographyEnums';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import { useNextMenuUrl } from '_src/ui/app/components/menu/hooks';
 import Divider from '_src/ui/app/shared/Divider';
+import Body from '_src/ui/app/shared/typography/Body';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
@@ -39,8 +41,6 @@ function TokensPage() {
         () => Object.keys(balances).filter((aType) => aType !== GAS_TYPE_ARG),
         [balances]
     );
-
-    const setExplorerPermission = useExplorerPermission();
 
     const switchWalletUrl = useNextMenuUrl(true, '/switch-wallet');
     const navigate = useNavigate();
@@ -153,24 +153,21 @@ function TokensPage() {
                         );
                     })
                 ) : (
-                    <div>
-                        <h3 className="font-semibold text-base">
-                            Get started with Sui
-                        </h3>
-                        <p className="text-sm my-1 text-gray-500 dark:text-gray-400">
+                    <>
+                        <BodyLarge as="h3">Get started with Sui</BodyLarge>
+                        <Body as="p" textColor={TextColor.Medium}>
                             Interested in Sui but don&apos;t know where to
                             start? We&apos;ve got you covered.
-                        </p>
-                        <a
-                            href={DASHBOARD_LINK}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-sm text-purple-500 hover:text-purple-600 dark:text-violet-400 dark:hover:text-violet-300"
-                            onMouseOver={setExplorerPermission}
-                        >
-                            Discover new apps →
-                        </a>
-                    </div>
+                        </Body>
+                        <Body>
+                            <EthosLink
+                                type={LinkType.External}
+                                to={DASHBOARD_LINK}
+                            >
+                                Discover new apps →
+                            </EthosLink>
+                        </Body>
+                    </>
                 )}
             </Loading>
         </div>
