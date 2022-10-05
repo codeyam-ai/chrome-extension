@@ -12,6 +12,11 @@ import { ToS_LINK } from '_shared/constants';
 import Loading from '_src/ui/app/components/loading';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { createMnemonic } from '_src/ui/app/redux/slices/account';
+import Title from '../../shared/typography/Title';
+import BodyLarge from '../../shared/typography/BodyLarge';
+import { TextColor, LinkType } from '_src/enums/TypographyEnums';
+import Body from '../../shared/typography/Body';
+import EthosLink from '../../shared/typography/EthosLink';
 
 const CreatePage = () => {
     const dispatch = useAppDispatch();
@@ -25,32 +30,27 @@ const CreatePage = () => {
         <>
             <BackButton to="/" />
             <img src={logo} className="h-36 mx-auto pb-3" alt="" />
-            <h1 className="text-xl font-semibold tracking-tight sm:text-4xl">
+            <Title as="h1" className="mb-4">
                 Create a Wallet
-            </h1>
-            <div className="text-center space-y-6 py-3">
-                <p className="text-lg max-w-md mx-auto text-gray-700 dark:text-gray-400">
-                    Creating a wallet generates a recovery phrase. Using it you
-                    can restore the wallet.
-                </p>
-                <Loading loading={creatingMnemonic}>
-                    <Button
-                        buttonStyle={ButtonStyle.PRIMARY}
-                        className="my-4"
-                        type="button"
-                        onClick={onHandleCreate}
-                        disabled={creatingMnemonic}
-                    >
-                        Create
-                    </Button>
-                </Loading>
-                <p className="mt-4 text-center text-base text-gray-700 dark:text-gray-400">
-                    By creating a wallet, you have read and agreed to the{' '}
-                    <ExternalLink className="underline" href={ToS_LINK}>
-                        Terms of Service
-                    </ExternalLink>
-                </p>
-            </div>
+            </Title>
+            <BodyLarge className="mb-2">
+                Creating a wallet generates a recovery phrase. Using it you can
+                restore the wallet.
+            </BodyLarge>
+            <Button
+                buttonStyle={ButtonStyle.PRIMARY}
+                type="button"
+                onClick={onHandleCreate}
+                disabled={creatingMnemonic}
+            >
+                <Loading loading={creatingMnemonic}>Create</Loading>
+            </Button>
+            <Body as="p" textColor={TextColor.Medium}>
+                By creating a wallet, you have read and agreed to the{' '}
+                <EthosLink type={LinkType.External} to={ToS_LINK}>
+                    Terms of Service
+                </EthosLink>
+            </Body>
         </>
     );
 };
