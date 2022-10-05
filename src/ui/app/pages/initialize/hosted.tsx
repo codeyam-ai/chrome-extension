@@ -14,7 +14,7 @@ import {
     saveEmail,
     setAddress,
 } from '../../redux/slices/account';
-import Button, { ButtonStyle } from '../../shared/Button';
+import Button, { ButtonStyle } from '../../shared/buttons/Button';
 import BackButton from './BackButton';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';

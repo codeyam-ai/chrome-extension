@@ -3,7 +3,7 @@
 
 import logo from '../../components/logo/ethos-logo.png';
 import { AppState } from '../../hooks/useInitializedGuard';
-import Button, { ButtonStyle } from '../../shared/Button';
+import Button, { ButtonStyle } from '../../shared/buttons/Button';
 import BackButton from './BackButton';
 import Loading from '_components/loading';
 import { useInitializedGuard } from '_hooks';

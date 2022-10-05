@@ -17,14 +17,24 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
     children?: React.ReactNode;
 }
 
+const buttonWrapperClassNames = 'px-6';
+
+const baseButtonClassNames =
+    'w-full inline-flex items-center justify-center w-full p-3 mb-6 border border-transparent font-semibold text-sm rounded-lg';
+
 const primaryButtonClassNames =
-    'w-full inline-flex items-center justify-center w-full px-3 py-2 border border-transparent text-base font-medium rounded-md text-white bg-purple-700 hover:bg-purple-800 disabled:text-gray-500 disabled:bg-gray-100 disabled:hover:bg-gray-100 dark:bg-violet-600 dark:hover:bg-violet-700 dark:disabled:bg-gray-800 dark:disabled:hover:bg-gray-800 dark:disabled:text-gray-500 dark:disabled:border-gray-500 dark:disabled-border-[1px]';
+    baseButtonClassNames +
+    ' ' +
+    'text-ethos-light-background-light bg-ethos-light-primary disabled:opacity-50';
+
 const secondaryButtonClassNames =
-    'w-full inline-flex items-center justify-center w-full px-3 py-2 border border-transparent text-base font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-200 disabled:text-gray-500 disabled:bg-gray-100 disabled:hover:bg-gray-100 dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600 dark:disabled:bg-gray-800 dark:disabled:hover:bg-gray-800 dark:disabled:text-gray-500 dark:disabled:border-gray-500 dark:disabled-border-[1px]';
+    baseButtonClassNames +
+    ' ' +
+    'text-ethos-light-primary bg-ethos-light-background-accent dark:text-ethos-dark-text-default dark:bg-ethos-dark-background-accent';
 
 const Button = (props: ButtonProps) => {
     const { buttonStyle, to, className, children, ...reactProps } = props;
-    // Note - in order to override an existing class, prepend the name with "1"
+    // Note - in order to override an existing class, prepend the name with "!"
     // ex) !py-2. This will only work if done from the component implementation
     // (not adding the "!") later in this file
     const classes =
@@ -40,10 +50,19 @@ const Button = (props: ButtonProps) => {
         </button>
     );
 
+    const test = <button className="text-base m">hi</button>;
+
     if (to) {
-        return <Link to={to}>{buttonElement}</Link>;
+        return (
+            // tabIndex of -1 will make the <Link> element not tabbable, because the button inside it already is
+            <div className={buttonWrapperClassNames}>
+                <Link to={to} tabIndex={-1}>
+                    {buttonElement}
+                </Link>
+            </div>
+        );
     } else {
-        return buttonElement;
+        return <div className={buttonWrapperClassNames}>{buttonElement}</div>;
     }
 };
 

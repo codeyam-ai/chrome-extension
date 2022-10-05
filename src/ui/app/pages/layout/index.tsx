@@ -30,8 +30,8 @@ function PageLayout({
 
     return (
         <Loading loading={guardLoading}>
-            <div className="relative flex sm:min-h-screen sm:w-full flex-col justify-center overflow-hidden bg-white dark:bg-gray-800 sm:bg-[#f9fafc] dark:sm:bg-[#0a1121]">
-                {/* Show light gradieent backdrop during light theme, and vice versa */}
+            <div className="relative flex sm:min-h-screen sm:w-full flex-col justify-center overflow-hidden text-ethos-light-text-default bg-ethos-light-background-default dark:text-ethos-dark-text-default dark:bg-ethos-dark-background-default">
+                {/* Show light gradient backdrop during light theme, and vice versa */}
                 <img
                     src={lightGradientBackground}
                     alt=""

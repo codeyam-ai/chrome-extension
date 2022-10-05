@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import logo from '../../components/logo/ethos-logo.png';
-import Button, { ButtonStyle } from '../../shared/Button';
+import Button, { ButtonStyle } from '../../shared/buttons/Button';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { setMnemonic } from '_src/ui/app/redux/slices/account';
 

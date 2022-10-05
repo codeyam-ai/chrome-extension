@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import Button, { ButtonStyle } from '../../../shared/Button';
+import Button, { ButtonStyle } from '../../../shared/buttons/Button';
 import { useNextMenuUrl } from '../hooks';
 import Layout from './layout';
 import { useAppSelector } from '_src/ui/app/hooks';

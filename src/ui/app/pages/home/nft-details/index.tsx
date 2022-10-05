@@ -18,7 +18,7 @@ import Loading from '_components/loading';
 import NFTDisplayCard from '_components/nft-display';
 import { useAppSelector, useMiddleEllipsis, useNFTBasicData } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account';
-import Button, { ButtonStyle } from '_src/ui/app/shared/Button';
+import Button, { ButtonStyle } from '_src/ui/app/shared/buttons/Button';
 
 import type { SuiObject } from '@mysten/sui.js';
 import type { ButtonHTMLAttributes } from 'react';

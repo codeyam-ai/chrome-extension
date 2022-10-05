@@ -16,7 +16,7 @@ import {
 } from '_redux/slices/sui-objects/Coin';
 import { balanceFormatOptions } from '_shared/formatting';
 import Icon from '_src/ui/app/components/icon';
-import Button, { ButtonStyle } from '_src/ui/app/shared/Button';
+import Button, { ButtonStyle } from '_src/ui/app/shared/buttons/Button';
 
 import type { FormValues } from '.';
 

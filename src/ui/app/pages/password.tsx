@@ -8,7 +8,7 @@ import DarkModeToggle from '../components/darkModeToggle';
 import logo from '../components/logo/ethos-logo.png';
 import { AppState } from '../hooks/useInitializedGuard';
 import { savePassphrase } from '../redux/slices/account';
-import Button, { ButtonStyle } from '../shared/Button';
+import Button, { ButtonStyle } from '../shared/buttons/Button';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
 import PageLayout from '_pages/layout';

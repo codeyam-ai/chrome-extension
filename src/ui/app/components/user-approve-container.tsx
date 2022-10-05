@@ -4,7 +4,7 @@
 import { memo, useCallback, useState } from 'react';
 
 import logo from '../components/logo/ethos-logo.png';
-import Button, { ButtonStyle } from '../shared/Button';
+import Button, { ButtonStyle } from '../shared/buttons/Button';
 import AccountAddress, { AddressMode } from '_components/account-address';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 
@@ -103,19 +103,6 @@ function UserApproveContainer({
                 >
                     {submitting ? <LoadingIndicator /> : approveTitle}
                 </Button>
-                {/* <button
-                        className="w-full mt-3 inline-flex items-center justify-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-200 disabled:text-purple-500 disabled:bg-gray-200 disabled:hover:bg-gray-200"
-                    >
-                    </button>
-                    <button
-                        type="button"
-                        data-allow="true"
-                        disabled={submitting}
-                        onClick={handleOnResponse}
-                        className="w-full mt-3 inline-flex items-center justify-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-700 hover:bg-purple-800 disabled:bg-purple-500 disabled:hover:bg-purple-500"
-                    >
-                        {submitting ? <LoadingIndicator /> : approveTitle}
-                    </button> */}
             </div>
         </div>
     );

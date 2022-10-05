@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import logo from '../../components/logo/ethos-logo.png';
-import Button, { ButtonStyle } from '../../shared/Button';
+import Button, { ButtonStyle } from '../../shared/buttons/Button';
 import BackButton from './BackButton';
 import ExternalLink from '_components/external-link';
 import { ToS_LINK } from '_shared/constants';

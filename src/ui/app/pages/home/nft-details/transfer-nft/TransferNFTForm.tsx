@@ -10,7 +10,7 @@ import AddressInput from '_components/address-input';
 import Icon, { SuiIcons } from '_components/icon';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import { DEFAULT_NFT_TRANSFER_GAS_FEE } from '_redux/slices/sui-objects/Coin';
-import Button, { ButtonStyle } from '_src/ui/app/shared/Button';
+import Button, { ButtonStyle } from '_src/ui/app/shared/buttons/Button';
 
 import type { FormValues } from '.';
 

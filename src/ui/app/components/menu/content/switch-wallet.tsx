@@ -13,7 +13,7 @@ import {
     saveActiveAccountIndex,
 } from '../../../redux/slices/account';
 import { thunkExtras } from '../../../redux/store/thunk-extras';
-import Button, { ButtonStyle } from '../../../shared/Button';
+import Button, { ButtonStyle } from '../../../shared/buttons/Button';
 import Icon, { SuiIcons } from '../../icon';
 import LoadingIndicator from '../../loading/LoadingIndicator';
 import { useNextMenuUrl } from '../hooks';
