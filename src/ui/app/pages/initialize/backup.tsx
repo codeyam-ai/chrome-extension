@@ -45,7 +45,7 @@ const BackupPage = () => {
                 wallet. Do not share it with anyone!
             </BodyLarge>
 
-            <Mnemonic mnemonic={mnemonic || ''} />
+            <Mnemonic mnemonic={mnemonic || ''} isReadOnly={true} />
 
             <Checkbox
                 label="I saved my recovery phrase"

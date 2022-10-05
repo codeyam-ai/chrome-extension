@@ -8,6 +8,7 @@ import { AppState } from '../../hooks/useInitializedGuard';
 import Loading from '_components/loading';
 import { useInitializedGuard } from '_hooks';
 import PageLayout from '_pages/layout';
+import GetStartedCard from '../../shared/GetStartedCard';
 
 const InitializePage = () => {
     const checkingInitialized = useInitializedGuard(AppState.UNINITIALIZED);
@@ -19,9 +20,9 @@ const InitializePage = () => {
                         <DarkModeToggle />
                     </span>
                 </div>
-                <div className="text-center pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 max-w-sm rounded-lg px-10 bg-white dark:text-white dark:bg-gray-800 dark:sm:border-gray-700 dark:sm:border-[1px]">
+                <GetStartedCard>
                     <Outlet />
-                </div>
+                </GetStartedCard>
             </Loading>
         </PageLayout>
     );

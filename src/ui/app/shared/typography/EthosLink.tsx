@@ -15,8 +15,7 @@ type EthosLinkProps = {
 };
 
 const EthosLink = ({ to, type, children }: EthosLinkProps) => {
-    const linkClasses =
-        'text-ethos-light-primary-light dark:text-ethos-dark-primary-light';
+    const linkClasses = 'text-ethos-light-primary dark:text-ethos-dark-primary';
     if (type === LinkType.Internal) {
         return (
             <Link to={to} className={linkClasses}>

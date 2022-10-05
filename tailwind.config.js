@@ -84,7 +84,7 @@ module.exports = {
                 'ethos-dark-text-stroke': '#4B5563',
 
                 // Primary
-                'ethos-dark-primary': '#6D28D9',
+                'ethos-dark-primary': '#8B5CF6',
                 'ethos-dark-primary-light': '#8B5CF6',
 
                 // Feedback

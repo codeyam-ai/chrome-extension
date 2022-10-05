@@ -16,6 +16,8 @@ import {
 } from '_shared/cryptography/mnemonics';
 
 import type { FocusEventHandler } from 'react';
+import Title from '../../shared/typography/Title';
+import Mnemonic from '../../shared/inputs/Mnemonic';
 
 const validationSchema = Yup.object({
     mnemonic: Yup.string()
@@ -76,35 +78,30 @@ const ImportPage = () => {
         <>
             <BackButton to="/" />
             <img src={logo} className="h-36 mx-auto pb-3" alt="" />
-            <h1 className="text-xl font-semibold tracking-tight sm:text-4xl">
+
+            <Title as="h1" className="mb-4">
                 Recover Your Wallet
-            </h1>
-            <div className="text-center space-y-6 py-4">
-                <form onSubmit={handleSubmit} noValidate autoComplete="off">
-                    <textarea
-                        rows={2}
-                        onChange={handleChange}
-                        value={mnemonic}
-                        onBlur={onHandleMnemonicBlur}
-                        id="mnemonic"
-                        className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
-                        placeholder="Insert your recovery phrase"
-                        name="mnemonic"
-                        disabled={createInProgress || isSubmitting}
-                    />
-                    <div className="mt-1 text-red-700 dark:text-red-400">
-                        {(touched.mnemonic && errors?.mnemonic) || null}
-                    </div>
-                    <Button
-                        buttonStyle={ButtonStyle.PRIMARY}
-                        type="submit"
-                        className="mt-4"
-                        disabled={isSubmitting || createInProgress || !isValid}
-                    >
-                        Import
-                    </Button>
-                </form>
-            </div>
+            </Title>
+
+            <form onSubmit={handleSubmit} noValidate autoComplete="off">
+                <Mnemonic
+                    mnemonic={mnemonic}
+                    isReadOnly={false}
+                    onChange={handleChange}
+                    onBlur={onHandleMnemonicBlur}
+                    disabled={createInProgress || isSubmitting}
+                    errorText={
+                        (touched.mnemonic && errors?.mnemonic) || undefined
+                    }
+                />
+                <Button
+                    buttonStyle={ButtonStyle.PRIMARY}
+                    type="submit"
+                    disabled={isSubmitting || createInProgress || !isValid}
+                >
+                    Import
+                </Button>
+            </form>
         </>
     );
 };
