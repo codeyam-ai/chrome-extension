@@ -14,14 +14,13 @@ import {
     setAddress,
 } from '../../redux/slices/account';
 import EmailForm from '../../shared/forms/EmailForm';
-import Title from '../../shared/typography/Title';
+import Body from '../../shared/typography/Body';
+import EthosLink from '../../shared/typography/EthosLink';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
 import Authentication from '_src/background/Authentication';
 import { LinkType, TextColor } from '_src/enums/TypographyEnums';
 import { IFRAME_URL } from '_src/shared/constants';
-import Body from '../../shared/typography/Body';
-import EthosLink from '../../shared/typography/EthosLink';
 
 export const AUTHENTICATION_REQUESTED = 'AUTHENTICATION_REQUESTED';
 
@@ -79,9 +78,6 @@ const HostedPage = () => {
     return (
         <Loading loading={checkingInitialized}>
             <div className="text-center space-y-2 py-4 text-base leading-7">
-                <div className="mb-4">
-                    <Title as="h1">Sign in with Your Email</Title>
-                </div>{' '}
                 {emailSent ? (
                     <Body as="p" textColor={TextColor.Medium}>
                         An email has been sent to {email} with a link that will

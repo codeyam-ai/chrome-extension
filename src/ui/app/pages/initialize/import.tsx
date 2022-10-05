@@ -5,8 +5,8 @@ import { useFormik } from 'formik';
 import { useCallback } from 'react';
 import * as Yup from 'yup';
 
+import Button, { ButtonStyle } from '../../shared/buttons/Button';
 import Mnemonic from '../../shared/inputs/Mnemonic';
-import Title from '../../shared/typography/Title';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { createMnemonic, setMnemonic } from '_redux/slices/account';
 import {
@@ -15,12 +15,11 @@ import {
 } from '_shared/cryptography/mnemonics';
 
 import type { FocusEventHandler } from 'react';
-import Button, { ButtonStyle } from '../../shared/buttons/Button';
 
 const validationSchema = Yup.object({
     mnemonic: Yup.string()
         .ensure()
-        .required()
+        .required('Enter your recovery phrase')
         .trim()
         .transform((mnemonic) => normalizeMnemonics(mnemonic))
         .test('mnemonic-valid', 'Recovery phrase is invalid', (mnemonic) =>
@@ -74,10 +73,6 @@ const ImportPage = () => {
     );
     return (
         <>
-            <Title as="h1" className="mb-4">
-                Recover Your Wallet
-            </Title>
-
             <form onSubmit={handleSubmit} noValidate autoComplete="off">
                 <Mnemonic
                     mnemonic={mnemonic}

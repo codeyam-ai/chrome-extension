@@ -24,7 +24,7 @@ const Input = ({
         <div
             className={`${
                 className || ''
-            } flex flex-col gap-2 text-left mx-6 mb-6`}
+            } flex flex-col gap-2 text-left px-6 pb-6`}
         >
             <label htmlFor={id}>{label}</label>
             <input id={id} className={inputClasses} {...reactProps} />

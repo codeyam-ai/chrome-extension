@@ -6,15 +6,13 @@ import { useNavigate } from 'react-router-dom';
 
 import { AppState } from '../hooks/useInitializedGuard';
 import { savePassphrase } from '../redux/slices/account';
-import GetStartedCard from '../shared/GetStartedCard';
 import PassphraseForm from '../shared/forms/PassphraseForm';
-import Body from '../shared/typography/Body';
 import BodyLarge from '../shared/typography/BodyLarge';
-import Title from '../shared/typography/Title';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
 import PageLayout from '_pages/layout';
-import { TextColor } from '_src/enums/TypographyEnums';
+import DescriptionList from '../shared/content/rows-and-lists/DescriptionList';
+import GetStartedCard from '../shared/GetStartedCard';
 
 const PasswordPage = () => {
     const dispatch = useAppDispatch();
@@ -32,17 +30,20 @@ const PasswordPage = () => {
     return (
         <PageLayout forceFullscreen={true}>
             <Loading loading={checkingInitialized}>
-                <GetStartedCard>
-                    <div className="mb-4">
-                        <Title as="h1">Ethos</Title>
-                        <Body textColor={TextColor.Medium}>
-                            The new web awaits
-                        </Body>
-                    </div>
-                    <BodyLarge as="p" className="mb-2">
-                        Please provide a passphrase to ensure your wallet is
-                        secure.
-                    </BodyLarge>
+                <GetStartedCard showBack={true}>
+                    <DescriptionList
+                        labelAndDescriptions={[
+                            {
+                                label: 'Create a passphrase',
+                                description: (
+                                    <>
+                                        Please provide a passphrase to ensure
+                                        your wallet is secure.
+                                    </>
+                                ),
+                            },
+                        ]}
+                    />
 
                     <PassphraseForm onSubmit={_save} />
                 </GetStartedCard>

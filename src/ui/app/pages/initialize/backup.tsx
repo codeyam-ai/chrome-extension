@@ -4,19 +4,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import Loading from '../../components/loading';
+import Button, { ButtonStyle } from '../../shared/buttons/Button';
+import DescriptionList from '../../shared/content/rows-and-lists/DescriptionList';
+import TextLinkList from '../../shared/content/rows-and-lists/TextLinkList';
+import Checkbox from '../../shared/inputs/Checkbox';
 import Mnemonic from '../../shared/inputs/Mnemonic';
-import BodyLarge from '../../shared/typography/BodyLarge';
-import Title from '../../shared/typography/Title';
+import { LinkType } from '_src/enums/TypographyEnums';
+import { ToS_LINK } from '_src/shared/constants';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { createMnemonic, setMnemonic } from '_src/ui/app/redux/slices/account';
 
 import type { ChangeEventHandler } from 'react';
-import Button, { ButtonStyle } from '../../shared/buttons/Button';
-import Checkbox from '../../shared/inputs/Checkbox';
-import { LinkType } from '_src/enums/TypographyEnums';
-import { ToS_LINK } from '_src/shared/constants';
-import TextLinkList from '../../shared/content/rows-and-lists/TextLinkList';
-import Loading from '../../components/loading';
 
 const BackupPage = () => {
     const [hasSavedPhrase, setHasSavedPhrase] = useState(false);
@@ -46,18 +45,24 @@ const BackupPage = () => {
 
     useEffect(() => {
         onHandleCreate();
-    }, []);
+    }, [onHandleCreate]);
 
     return (
         <>
-            <Title as="h1" className="mb-4">
-                Your Recovery Phrase
-            </Title>
-
-            <BodyLarge as="p" className="mb-2">
-                This phrase is the <strong>only</strong> way to recover your
-                wallet. Do not share it with anyone!
-            </BodyLarge>
+            <DescriptionList
+                labelAndDescriptions={[
+                    {
+                        label: 'Your recovery phrase',
+                        description: (
+                            <>
+                                This phrase is the <strong>only</strong> way to
+                                recover your wallet. Do not share it with
+                                anyone!
+                            </>
+                        ),
+                    },
+                ]}
+            />
 
             <Mnemonic mnemonic={mnemonic || ''} isReadOnly={true} />
 
@@ -76,6 +81,7 @@ const BackupPage = () => {
             >
                 <Loading loading={creatingMnemonic}>Continue</Loading>
             </Button>
+
             <TextLinkList
                 textAndLinks={[
                     {

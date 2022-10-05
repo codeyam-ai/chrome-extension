@@ -26,6 +26,7 @@ const CustomFormikForm = () => {
                 type="password"
                 required={true}
                 errorText={meta.touched && meta.error ? meta.error : undefined}
+                className="!pb-2"
             />
             <Input
                 {...confirmField}
