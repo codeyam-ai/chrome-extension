@@ -29,10 +29,8 @@ import { setNavVisibility } from '_redux/slices/app';
 import { ThemeProvider } from '_src/shared/utils/themeContext';
 import { DappPreapprovalPage } from '_src/ui/app/pages/dapp-preapproval';
 import BackupPage from '_src/ui/app/pages/initialize/backup';
-import CreatePage from '_src/ui/app/pages/initialize/create';
 import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import ImportPage from '_src/ui/app/pages/initialize/import';
-import RecoveryPhrasePage from '_src/ui/app/pages/initialize/recoveryphrase';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
 
@@ -83,12 +81,7 @@ const App = () => {
                 </Route>
                 <Route path="welcome" element={<WelcomePage />} />
                 <Route path="/initialize" element={<InitializePage />}>
-                    <Route
-                        path="recoveryphrase"
-                        element={<RecoveryPhrasePage />}
-                    />
                     <Route path="hosted" element={<HostedPage />} />
-                    <Route path="create" element={<CreatePage />} />
                     <Route path="import" element={<ImportPage />} />
                     <Route path="backup" element={<BackupPage />} />
                 </Route>

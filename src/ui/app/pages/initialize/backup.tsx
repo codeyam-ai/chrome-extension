@@ -1,18 +1,22 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import Button, { ButtonStyle } from '../../shared/buttons/Button';
-import Checkbox from '../../shared/inputs/Checkbox';
 import Mnemonic from '../../shared/inputs/Mnemonic';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Title from '../../shared/typography/Title';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
-import { setMnemonic } from '_src/ui/app/redux/slices/account';
+import { createMnemonic, setMnemonic } from '_src/ui/app/redux/slices/account';
 
 import type { ChangeEventHandler } from 'react';
+import Button, { ButtonStyle } from '../../shared/buttons/Button';
+import Checkbox from '../../shared/inputs/Checkbox';
+import { LinkType } from '_src/enums/TypographyEnums';
+import { ToS_LINK } from '_src/shared/constants';
+import TextLinkList from '../../shared/content/rows-and-lists/TextLinkList';
+import Loading from '../../components/loading';
 
 const BackupPage = () => {
     const [hasSavedPhrase, setHasSavedPhrase] = useState(false);
@@ -33,6 +37,17 @@ const BackupPage = () => {
             dispatch(setMnemonic(mnemonic));
         }
     }, [navigate, dispatch, mnemonic]);
+
+    const onHandleCreate = useCallback(async () => {
+        await dispatch(createMnemonic());
+        navigate('../backup');
+    }, [dispatch, navigate]);
+    const creatingMnemonic = useAppSelector(({ account }) => account.creating);
+
+    useEffect(() => {
+        onHandleCreate();
+    }, []);
+
     return (
         <>
             <Title as="h1" className="mb-4">
@@ -57,10 +72,23 @@ const BackupPage = () => {
                 buttonStyle={ButtonStyle.PRIMARY}
                 type="button"
                 onClick={handleOnClick}
-                disabled={!hasSavedPhrase}
+                disabled={!hasSavedPhrase || creatingMnemonic}
             >
-                Continue
+                <Loading loading={creatingMnemonic}>Continue</Loading>
             </Button>
+            <TextLinkList
+                textAndLinks={[
+                    {
+                        description:
+                            'By creating a wallet, you have read and agreed to the',
+                        link: {
+                            type: LinkType.External,
+                            to: ToS_LINK,
+                            children: 'Terms of Service',
+                        },
+                    },
+                ]}
+            />
         </>
     );
 };

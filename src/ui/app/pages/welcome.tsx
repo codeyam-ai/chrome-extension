@@ -17,7 +17,7 @@ const WelcomePage = () => {
             <Loading loading={checkingInitialized}>
                 <GetStartedCard>
                     <VerticalButtonGroup
-                        buttonPrimaryTo="/initialize/create"
+                        buttonPrimaryTo="/initialize/backup"
                         buttonPrimaryChildren="Create A New Wallet"
                         buttonSecondaryTo="/initialize/hosted"
                         buttonSecondaryChildren="Sign In With Email"

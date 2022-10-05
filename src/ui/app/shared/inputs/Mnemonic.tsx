@@ -22,7 +22,7 @@ const Mnemonic = ({
     return (
         <TextArea
             label="Recovery phrase"
-            rows={3}
+            rows={2}
             value={mnemonic}
             id="mnemonic"
             name="mnemonic"

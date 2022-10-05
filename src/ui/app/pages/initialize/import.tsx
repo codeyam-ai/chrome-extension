@@ -5,10 +5,8 @@ import { useFormik } from 'formik';
 import { useCallback } from 'react';
 import * as Yup from 'yup';
 
-import Button, { ButtonStyle } from '../../shared/buttons/Button';
 import Mnemonic from '../../shared/inputs/Mnemonic';
 import Title from '../../shared/typography/Title';
-import BackButton from './BackButton';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { createMnemonic, setMnemonic } from '_redux/slices/account';
 import {
@@ -17,6 +15,7 @@ import {
 } from '_shared/cryptography/mnemonics';
 
 import type { FocusEventHandler } from 'react';
+import Button, { ButtonStyle } from '../../shared/buttons/Button';
 
 const validationSchema = Yup.object({
     mnemonic: Yup.string()
@@ -75,8 +74,6 @@ const ImportPage = () => {
     );
     return (
         <>
-            <BackButton to="/" />
-
             <Title as="h1" className="mb-4">
                 Recover Your Wallet
             </Title>

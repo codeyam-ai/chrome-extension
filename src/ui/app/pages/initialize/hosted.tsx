@@ -14,15 +14,14 @@ import {
     setAddress,
 } from '../../redux/slices/account';
 import EmailForm from '../../shared/forms/EmailForm';
-import Body from '../../shared/typography/Body';
-import EthosLink from '../../shared/typography/EthosLink';
 import Title from '../../shared/typography/Title';
-import BackButton from './BackButton';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
 import Authentication from '_src/background/Authentication';
 import { LinkType, TextColor } from '_src/enums/TypographyEnums';
 import { IFRAME_URL } from '_src/shared/constants';
+import Body from '../../shared/typography/Body';
+import EthosLink from '../../shared/typography/EthosLink';
 
 export const AUTHENTICATION_REQUESTED = 'AUTHENTICATION_REQUESTED';
 
@@ -79,7 +78,6 @@ const HostedPage = () => {
 
     return (
         <Loading loading={checkingInitialized}>
-            {!shouldLogInImmediately && <BackButton to="/welcome" />}
             <div className="text-center space-y-2 py-4 text-base leading-7">
                 <div className="mb-4">
                     <Title as="h1">Sign in with Your Email</Title>
