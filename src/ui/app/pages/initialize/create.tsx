@@ -6,17 +6,16 @@ import { useNavigate } from 'react-router-dom';
 
 import logo from '../../components/logo/ethos-logo.png';
 import Button, { ButtonStyle } from '../../shared/buttons/Button';
+import Body from '../../shared/typography/Body';
+import BodyLarge from '../../shared/typography/BodyLarge';
+import EthosLink from '../../shared/typography/EthosLink';
+import Title from '../../shared/typography/Title';
 import BackButton from './BackButton';
-import ExternalLink from '_components/external-link';
 import { ToS_LINK } from '_shared/constants';
+import { TextColor, LinkType } from '_src/enums/TypographyEnums';
 import Loading from '_src/ui/app/components/loading';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { createMnemonic } from '_src/ui/app/redux/slices/account';
-import Title from '../../shared/typography/Title';
-import BodyLarge from '../../shared/typography/BodyLarge';
-import { TextColor, LinkType } from '_src/enums/TypographyEnums';
-import Body from '../../shared/typography/Body';
-import EthosLink from '../../shared/typography/EthosLink';
 
 const CreatePage = () => {
     const dispatch = useAppDispatch();
@@ -33,7 +32,7 @@ const CreatePage = () => {
             <Title as="h1" className="mb-4">
                 Create a Wallet
             </Title>
-            <BodyLarge className="mb-2">
+            <BodyLarge as="p" className="mb-2">
                 Creating a wallet generates a recovery phrase. Using it you can
                 restore the wallet.
             </BodyLarge>

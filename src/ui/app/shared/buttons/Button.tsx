@@ -50,8 +50,6 @@ const Button = (props: ButtonProps) => {
         </button>
     );
 
-    const test = <button className="text-base m">hi</button>;
-
     if (to) {
         return (
             // tabIndex of -1 will make the <Link> element not tabbable, because the button inside it already is

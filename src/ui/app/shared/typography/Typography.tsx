@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react';
+
 import { TextColor } from '_src/enums/TypographyEnums';
 
 export type TypographyProps = {

@@ -5,15 +5,15 @@ import DarkModeToggle from '../components/darkModeToggle';
 import logo from '../components/logo/ethos-logo.png';
 import { AppState } from '../hooks/useInitializedGuard';
 import { ButtonStyle } from '../shared/buttons/Button';
+import VerticalButtonGroup from '../shared/buttons/VerticalButtonGroup';
+import Body from '../shared/typography/Body';
+import BodyLarge from '../shared/typography/BodyLarge';
+import EthosLink from '../shared/typography/EthosLink';
+import Title from '../shared/typography/Title';
 import Loading from '_components/loading';
 import { useInitializedGuard } from '_hooks';
 import PageLayout from '_pages/layout';
-import Title from '../shared/typography/Title';
-import BodyLarge from '../shared/typography/BodyLarge';
-import Body from '../shared/typography/Body';
-import VerticalButtonGroup from '../shared/buttons/VerticalButtonGroup';
 import { LinkType, TextColor } from '_src/enums/TypographyEnums';
-import EthosLink from '../shared/typography/EthosLink';
 
 const WelcomePage = () => {
     const checkingInitialized = useInitializedGuard(AppState.UNINITIALIZED);
@@ -38,7 +38,7 @@ const WelcomePage = () => {
                                 The new web awaits
                             </Body>
                         </div>
-                        <BodyLarge className="mb-2">
+                        <BodyLarge as="p" className="mb-2">
                             Welcome, let&apos;s get started!
                         </BodyLarge>
                         <VerticalButtonGroup

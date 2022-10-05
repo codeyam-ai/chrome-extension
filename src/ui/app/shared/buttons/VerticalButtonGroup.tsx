@@ -1,4 +1,5 @@
 import { type MouseEventHandler } from 'react';
+
 import Button, { type ButtonStyle } from './Button';
 
 type VerticalButtonGroupProps = {

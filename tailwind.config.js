@@ -1,3 +1,5 @@
+/* eslint @typescript-eslint/no-var-requires: "off" */
+
 const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
@@ -35,6 +37,14 @@ module.exports = {
                 'letter-spacing-ethos-subheader': '',
                 'letter-spacing-ethos-body-large': '',
                 'letter-spacing-ethos-body': '',
+            },
+            boxShadow: {
+                // Light mode
+                'ethos-light-stroke-focused':
+                    '0px 1px 2px rgba(0, 0, 0, 0.05), 0px 0px 0px 3px #EDE9FE',
+                // Dark mode
+                'ethos-dark-stroke-focused':
+                    '0px 1px 2px rgba(0, 0, 0, 0.05), 0px 0px 0px 3px #374151',
             },
             colors: {
                 // ==========

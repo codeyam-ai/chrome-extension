@@ -6,6 +6,10 @@ import { useNavigate } from 'react-router-dom';
 
 import logo from '../../components/logo/ethos-logo.png';
 import Button, { ButtonStyle } from '../../shared/buttons/Button';
+import Checkbox from '../../shared/inputs/Checkbox';
+import Mnemonic from '../../shared/inputs/Mnemonic';
+import BodyLarge from '../../shared/typography/BodyLarge';
+import Title from '../../shared/typography/Title';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { setMnemonic } from '_src/ui/app/redux/slices/account';
 
@@ -33,46 +37,23 @@ const BackupPage = () => {
     return (
         <>
             <img src={logo} className="h-36 mx-auto pb-3" alt="" />
-            <h1 className="text-xl font-semibold tracking-tight sm:text-4xl pb-3">
+            <Title as="h1" className="mb-4">
                 Your Recovery Phrase
-            </h1>
-            <p className="text-base max-w-md mx-auto text-gray-700 dark:text-gray-400">
+            </Title>
+            <BodyLarge as="p" className="mb-2">
                 This phrase is the <strong>only</strong> way to recover your
                 wallet. Do not share it with anyone!
-            </p>
-            <textarea
-                rows={3}
-                value={mnemonic || ''}
-                id="mnemonic"
-                className="mt-4 max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
-                name="mnemonic"
-                disabled={true}
+            </BodyLarge>
+
+            <Mnemonic mnemonic={mnemonic || ''} />
+
+            <Checkbox
+                label="I saved my recovery phrase"
+                id="save-phrase-check-description"
+                onChange={onHandleSavedPhrase}
+                checked={hasSavedPhrase}
             />
 
-            <div className="my-4 w-full relative flex items-start text-left">
-                <div className="flex">
-                    <div className="flex items-center h-5">
-                        <input
-                            id="save-phrase-check"
-                            aria-describedby="save-phrase-check-description"
-                            name="save-phrase-check"
-                            type="checkbox"
-                            onChange={onHandleSavedPhrase}
-                            checked={hasSavedPhrase}
-                            className="h-4 w-4 rounded text-purple-600 border-gray-300 focus:ring-purple-500 dark:text-violet-700 dark:focus:ring-violet-700 dark:border-gray-400 dark:bg-gray-700"
-                        />
-                    </div>
-                    <div className="ml-3 text-sm">
-                        <label
-                            htmlFor="save-phrase-check"
-                            className="font-medium text-gray-700 dark:text-gray-400"
-                            id="save-phrase-check-description"
-                        >
-                            I saved my recovery phrase
-                        </label>
-                    </div>
-                </div>
-            </div>
             <Button
                 buttonStyle={ButtonStyle.PRIMARY}
                 type="button"
