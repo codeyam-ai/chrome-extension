@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 
+import Body from '../typography/Body';
+
 import type { MouseEventHandler } from 'react';
 
 export enum ButtonStyle {
@@ -19,17 +21,17 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
 }
 
 const baseButtonClassNames =
-    'w-full inline-flex items-center justify-center w-full p-3 mb-6 border border-transparent font-semibold text-sm rounded-lg';
+    'w-full inline-flex items-center justify-center w-full p-3 mb-6 border border-transparent rounded-lg';
 
 const primaryButtonClassNames =
     baseButtonClassNames +
     ' ' +
-    'text-ethos-light-background-light bg-ethos-light-primary disabled:opacity-50';
+    'text-ethos-light-background-light bg-ethos-light-primary-light disabled:opacity-50';
 
 const secondaryButtonClassNames =
     baseButtonClassNames +
     ' ' +
-    'text-ethos-light-primary bg-ethos-light-background-accent dark:text-ethos-dark-text-default dark:bg-ethos-dark-background-accent';
+    'text-ethos-light-primary-light bg-ethos-light-background-accent dark:text-ethos-dark-text-default dark:bg-ethos-dark-background-accent';
 
 const Button = (props: ButtonProps) => {
     const { buttonStyle, to, className, isInline, children, ...reactProps } =
@@ -49,7 +51,9 @@ const Button = (props: ButtonProps) => {
 
     const buttonElement = (
         <button className={classes} {...reactProps}>
-            {children}
+            <Body as="span" isSemibold={true}>
+                {children}
+            </Body>
         </button>
     );
 

@@ -19,10 +19,10 @@ const Typography = ({
     if (textColor === TextColor.Medium) {
         textColorClasses =
             ' ' +
-            'text-ethos-light-text-medium dark:text-ethos-dark-text-medium';
+            'text-ethos-light-text-medium dark:text-ethos-dark-text-medium antialiased';
     }
     return (
-        <ComponentType className={className + textColorClasses}>
+        <ComponentType className={`${className || ''} ${textColorClasses}`}>
             {children}
         </ComponentType>
     );

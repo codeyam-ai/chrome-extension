@@ -11,10 +11,15 @@ module.exports = {
                 sans: ['Inter var', ...defaultTheme.fontFamily.sans],
             },
             fontWeight: {
-                'weight-ethos-title': '600',
-                'weight-ethos-header': '600',
-                'weight-ethos-subheader': '600',
+                /*
+                    We are defaulting all Figma Semi-Bold (600's) to 500 in code
+                    to compoensate for Chrome making the fonts look thicker.
+                */
+                'weight-ethos-title': '500',
+                'weight-ethos-header': '500',
+                'weight-ethos-subheader': '500',
                 'weight-ethos-body-large': '400',
+                'weight-ethos-semibold-body': '500',
                 'weight-ethos-body': '400',
             },
             fontSize: {
@@ -39,6 +44,17 @@ module.exports = {
                 'letter-spacing-ethos-body': '',
             },
             boxShadow: {
+                // ==========
+                // Shadow
+                // ==========
+
+                'ethos-box-shadow':
+                    'box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.09)',
+
+                // ==========
+                // Stroke
+                // ==========
+
                 // Light mode
                 'ethos-light-stroke-focused':
                     '0px 1px 2px rgba(0, 0, 0, 0.05), 0px 0px 0px 3px #EDE9FE',
@@ -62,8 +78,7 @@ module.exports = {
                 'ethos-light-text-stroke': '#E5E7EB',
 
                 // Primary
-                'ethos-light-primary': '#6D28D9',
-                'ethos-light-primary-light': '#8B5CF6',
+                'ethos-light-primary-light': '#6D28D9',
 
                 // Feedback
                 'ethos-light-green': '#16A349',
@@ -84,8 +99,8 @@ module.exports = {
                 'ethos-dark-text-stroke': '#4B5563',
 
                 // Primary
-                'ethos-dark-primary': '#8B5CF6',
-                'ethos-dark-primary-light': '#8B5CF6',
+                'ethos-dark-primary-dark': '#9C78F7',
+                'ethos-dark-primary-light': '#6D28D9',
 
                 // Feedback
                 'ethos-dark-green': '#16A349',

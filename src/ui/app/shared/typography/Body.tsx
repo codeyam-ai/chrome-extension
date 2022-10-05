@@ -1,11 +1,20 @@
 import Typography, { type TypographyProps } from './Typography';
 
-const Body = (props: TypographyProps) => {
+interface BodyProps extends TypographyProps {
+    isSemibold?: boolean;
+}
+
+const Body = ({ isSemibold, ...props }: BodyProps) => {
+    const fontWeightClass = isSemibold
+        ? 'font-weight-ethos-semibold-body'
+        : 'font-weight-ethos-body';
     const bodyClasses =
-        'font-weight-ethos-body text-size-ethos-body leading-line-height-ethos-body tracking-letter-spacing-ethos-body';
+        fontWeightClass +
+        ' ' +
+        'text-size-ethos-body leading-line-height-ethos-body tracking-letter-spacing-ethos-body';
     return (
         <Typography
-            className={props.className + ' ' + bodyClasses}
+            className={`${props.className || ''} ${bodyClasses}`}
             as={props.as}
             textColor={props.textColor}
         >
