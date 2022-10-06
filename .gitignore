@@ -13,3 +13,4 @@ font-icons/output/*
 !font-icons/output/sui-icons.woff2
 !font-icons/output/sui-icons.svg
 configs/environment/.env
+configs/environment/.env.production
