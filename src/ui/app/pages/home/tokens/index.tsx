@@ -4,7 +4,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import CoinBalance from './coin-balance';
+import CoinBalance from './CoinBalance';
 import AccountAddress, { AddressMode } from '_components/account-address';
 import Alert from '_components/alert';
 import Loading from '_components/loading';
@@ -20,8 +20,6 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-
-import st from './TokensPage.module.scss';
 
 function TokensPage() {
     const [editWallet, setEditWallet] = useState<boolean>(false);
@@ -60,7 +58,7 @@ function TokensPage() {
     return (
         <div className="flex h-full max-w-full flex-col">
             {showError && error ? (
-                <Alert className={st.alert}>
+                <Alert>
                     <strong>Sync error (data might be outdated).</strong>{' '}
                     <small>{error.message}</small>
                 </Alert>
@@ -105,45 +103,25 @@ function TokensPage() {
             <div className="my-6">
                 <Divider />
             </div>
-            <div className="text-3xl">
-                <Loading loading={loading}>
-                    <CoinBalance
-                        balance={suiBalance}
-                        type={GAS_TYPE_ARG}
-                        mode="standalone"
-                    />
-                </Loading>
-            </div>
-            <div className="my-6">
+            <Loading loading={loading}>
+                <CoinBalance
+                    balance={suiBalance}
+                    type={GAS_TYPE_ARG}
+                    mode="standalone"
+                />
+            </Loading>
+
+            <div className="mb-6">
                 <Divider />
             </div>
-            {/* <div className={st.actions}>
-                <IconLink
-                    icon={SuiIcons.Coins}
-                    to="/"
-                    disabled={true}
-                    text="Buy, Sell & Swap"
-                />
-                <IconLink
-                    icon={SuiIcons.HandCoins}
-                    to="/"
-                    disabled={true}
-                    text="Send & Receive"
-                />
-                <IconLink
-                    icon={SuiIcons.PercentagePolygon}
-                    to="/stake-new"
-                    disabled={process.env.NODE_ENV !== 'development'}
-                    text="Stake & Earn"
-                />
-            </div> */}
-            <Loading loading={loading} className={st.othersLoader}>
+
+            <Loading loading={loading} className="text-2xl">
                 {otherCoinTypes.length ? (
                     otherCoinTypes.map((aCoinType) => {
                         const aCoinBalance = balances[aCoinType];
                         return (
                             <>
-                                <div className={st.title}>OTHER COINS</div>
+                                <div className="">OTHER COINS</div>
                                 <CoinBalance
                                     type={aCoinType}
                                     balance={aCoinBalance}

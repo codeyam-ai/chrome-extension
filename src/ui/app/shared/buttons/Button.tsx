@@ -20,8 +20,11 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
     children?: React.ReactNode;
 }
 
+const buttonChildrenClassNames =
+    'inline-flex items-center justify-center gap-2';
+
 const baseButtonClassNames =
-    'w-full inline-flex items-center justify-center w-full p-3 mb-6 border border-transparent rounded-lg';
+    'w-full w-full p-3 mb-6 border border-transparent rounded-lg';
 
 const primaryButtonClassNames =
     baseButtonClassNames +
@@ -51,7 +54,11 @@ const Button = (props: ButtonProps) => {
 
     const buttonElement = (
         <button className={classes} {...reactProps}>
-            <Body as="span" isSemibold={true}>
+            <Body
+                as="span"
+                isSemibold={true}
+                className={buttonChildrenClassNames}
+            >
                 {children}
             </Body>
         </button>

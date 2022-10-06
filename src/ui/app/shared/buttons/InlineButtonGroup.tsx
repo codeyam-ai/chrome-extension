@@ -26,7 +26,7 @@ const InlineButtonGroup = ({
     buttonSecondaryChildren,
 }: InlineButtonGroupProps) => {
     return (
-        <div className={`${className} grid grid-cols-2 gap-2 mx-6`}>
+        <div className={`${className || ''} grid grid-cols-2 gap-2 px-6`}>
             <Button
                 buttonStyle={ButtonStyle.SECONDARY}
                 onClick={onClickButtonSecondary}

@@ -11,6 +11,7 @@ import { useIntl } from 'react-intl';
 
 import { Coin } from '_redux/slices/sui-objects/Coin';
 import { balanceFormatOptions } from '_shared/formatting';
+import Button, { ButtonStyle } from '_src/ui/app/shared/buttons/Button';
 import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
 
 export type CoinProps = {
@@ -42,14 +43,6 @@ function CoinBalance({
         () => `/send?${new URLSearchParams({ type }).toString()}`,
         [type]
     );
-    // const stakeUrl = useMemo(
-    //     () => `/stake?${new URLSearchParams({ type }).toString()}`,
-    //     [type]
-    // );
-    // // TODO from Sui team: turn stake feature back on when fix is ready on next release.
-    // // const showStake = !hideStake && GAS_TYPE_ARG === type;
-    // const showStake = false;
-    // const shortenType = useMiddleEllipsis(type, 30);
     return (
         <div className="flex flex-col">
             <div className="flex flex-row items-baseline gap-1 mb-2">
@@ -62,14 +55,13 @@ function CoinBalance({
                 </span>
             </div>
             <InlineButtonGroup
-                className="!mx-0"
                 buttonPrimaryTo={isBalanceZero ? '/buy' : sendUrl}
                 buttonPrimaryChildren={
                     <>
                         {isBalanceZero ? (
-                            <CreditCardIcon className="mr-2 h-4 w-4" />
+                            <CreditCardIcon className="h-4 w-4" />
                         ) : (
-                            <PaperAirplaneIcon className="mr-2 h-4 w-4" />
+                            <PaperAirplaneIcon className="h-4 w-4" />
                         )}
 
                         {isBalanceZero ? 'Buy' : 'Send'}
@@ -78,7 +70,7 @@ function CoinBalance({
                 buttonSecondaryTo="/receive"
                 buttonSecondaryChildren={
                     <>
-                        <ArrowDownTrayIcon className="mr-2 h-4 w-4" />
+                        <ArrowDownTrayIcon className="h-4 w-4" />
                         Receive
                     </>
                 }
