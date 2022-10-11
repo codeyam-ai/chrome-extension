@@ -1,5 +1,6 @@
 import { SignerWithProvider } from '@mysten/sui.js';
 
+import { deleteEncrypted } from '../storagex/store';
 import simpleApiCall from '_src/shared/utils/simpleApiCall';
 
 import type {
@@ -45,6 +46,7 @@ export class EthosSigner extends SignerWithProvider {
         );
 
         if (status !== 200) {
+            await deleteEncrypted('authentication');
             throw new Error(`Signing error: ${status}`);
         }
 
