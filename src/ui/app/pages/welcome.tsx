@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { AppState } from '../hooks/useInitializedGuard';
-import GetStartedCard from '../shared/GetStartedCard';
+import GetStartedCard from '../shared/layouts/GetStartedCard';
 import VerticalButtonGroup from '../shared/buttons/VerticalButtonGroup';
 import TextLinkList from '../shared/content/rows-and-lists/TextLinkList';
 import Loading from '_components/loading';

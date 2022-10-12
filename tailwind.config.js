@@ -11,13 +11,9 @@ module.exports = {
                 sans: ['Inter var', ...defaultTheme.fontFamily.sans],
             },
             fontWeight: {
-                /*
-                    We are defaulting all Figma Semi-Bold (600's) to 500 in code
-                    to compoensate for Chrome making the fonts look thicker.
-                */
-                'weight-ethos-title': '500',
-                'weight-ethos-header': '500',
-                'weight-ethos-subheader': '500',
+                'weight-ethos-title': '600',
+                'weight-ethos-header': '600',
+                'weight-ethos-subheader': '600',
                 'weight-ethos-body-large': '400',
                 'weight-ethos-semibold-body': '500',
                 'weight-ethos-body': '400',
@@ -48,8 +44,7 @@ module.exports = {
                 // Shadow
                 // ==========
 
-                'ethos-box-shadow':
-                    'box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.09)',
+                'ethos-box-shadow': '0px 4px 12px rgba(0, 0, 0, 0.09)',
 
                 // ==========
                 // Stroke

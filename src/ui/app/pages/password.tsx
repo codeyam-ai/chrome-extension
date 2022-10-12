@@ -12,7 +12,7 @@ import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
 import PageLayout from '_pages/layout';
 import DescriptionList from '../shared/content/rows-and-lists/DescriptionList';
-import GetStartedCard from '../shared/GetStartedCard';
+import GetStartedCard from '../shared/layouts/GetStartedCard';
 
 const PasswordPage = () => {
     const dispatch = useAppDispatch();

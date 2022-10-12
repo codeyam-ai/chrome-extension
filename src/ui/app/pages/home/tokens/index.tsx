@@ -20,6 +20,15 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import WalletRow from '_src/ui/app/shared/content/rows-and-lists/WalletRow';
+import {
+    CreditCardIcon,
+    PaperAirplaneIcon,
+    ArrowDownTrayIcon,
+} from '@heroicons/react/24/outline';
+import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
+import AmountRow from '_src/ui/app/shared/content/rows-and-lists/AmountRow';
+import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 
 function TokensPage() {
     const [editWallet, setEditWallet] = useState<boolean>(false);
@@ -35,87 +44,54 @@ function TokensPage() {
     const { loading, error, showError } = useObjectsState();
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const suiBalance = balances[GAS_TYPE_ARG] || BigInt(0);
+    const isBalanceZero = useMemo(
+        () => suiBalance.toString() === '0',
+        [suiBalance]
+    );
+
     const otherCoinTypes = useMemo(
         () => Object.keys(balances).filter((aType) => aType !== GAS_TYPE_ARG),
         [balances]
     );
 
-    const switchWalletUrl = useNextMenuUrl(true, '/switch-wallet');
-    const navigate = useNavigate();
-
-    const _selectWallet = useCallback(() => {
-        navigate(switchWalletUrl);
-    }, [navigate, switchWalletUrl]);
-
-    const _showEdit = useCallback(() => {
-        setEditWallet(true);
-    }, []);
-
-    const _hideEdit = useCallback(() => {
-        setEditWallet(false);
-    }, []);
+    const sendUrl = useMemo(
+        () => `/send?${new URLSearchParams({ type: GAS_TYPE_ARG }).toString()}`,
+        [GAS_TYPE_ARG]
+    );
 
     return (
-        <div className="flex h-full max-w-full flex-col">
+        <div className="pt-2">
             {showError && error ? (
                 <Alert>
                     <strong>Sync error (data might be outdated).</strong>{' '}
                     <small>{error.message}</small>
                 </Alert>
             ) : null}
-            <div className="flex items-center gap-1 cursor-pointer">
-                <div
-                    className="flex items-center gap-1 cursor-pointer"
-                    onClick={_selectWallet}
-                    onMouseOver={_showEdit}
-                    onMouseOut={_hideEdit}
-                >
-                    <div
-                        className="h-5 w-5 rounded-full flex items-center justify-center"
-                        style={{
-                            backgroundColor: accountInfo?.color || '#7E23CA',
-                        }}
-                    >
-                        {editWallet && (
-                            <svg
-                                viewBox="0 0 24 24"
-                                width="12"
-                                height="12"
-                                stroke="white"
-                                strokeWidth="2"
-                                fill="black"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                onClick={_selectWallet}
-                            >
-                                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                            </svg>
-                        )}
-                    </div>
-                    <div>{accountInfo?.name || 'Wallet'}:</div>
-                </div>
-                <AccountAddress
-                    showName={false}
-                    showLink={false}
-                    mode={AddressMode.FADED}
-                />
-            </div>
-            <div className="my-6">
-                <Divider />
-            </div>
+            <WalletRow />
             <Loading loading={loading}>
-                <CoinBalance
-                    balance={suiBalance}
-                    type={GAS_TYPE_ARG}
-                    mode="standalone"
+                <AmountRow balance={suiBalance} type={GAS_TYPE_ARG} />
+                <InlineButtonGroup
+                    buttonPrimaryTo={isBalanceZero ? '/buy' : sendUrl}
+                    buttonPrimaryChildren={
+                        <>
+                            {isBalanceZero ? (
+                                <CreditCardIcon className="h-4 w-4" />
+                            ) : (
+                                <PaperAirplaneIcon className="h-4 w-4" />
+                            )}
+
+                            {isBalanceZero ? 'Buy' : 'Send'}
+                        </>
+                    }
+                    buttonSecondaryTo="/receive"
+                    buttonSecondaryChildren={
+                        <>
+                            <ArrowDownTrayIcon className="h-4 w-4" />
+                            Receive
+                        </>
+                    }
                 />
-            </Loading>
 
-            <div className="mb-6">
-                <Divider />
-            </div>
-
-            <Loading loading={loading} className="text-2xl">
                 {otherCoinTypes.length ? (
                     otherCoinTypes.map((aCoinType) => {
                         const aCoinBalance = balances[aCoinType];
@@ -131,7 +107,7 @@ function TokensPage() {
                         );
                     })
                 ) : (
-                    <>
+                    <ContentBlock>
                         <BodyLarge as="h3">Get started with Sui</BodyLarge>
                         <Body as="p" textColor={TextColor.Medium}>
                             Interested in Sui but don&apos;t know where to
@@ -145,7 +121,7 @@ function TokensPage() {
                                 Discover new apps →
                             </EthosLink>
                         </Body>
-                    </>
+                    </ContentBlock>
                 )}
             </Loading>
         </div>

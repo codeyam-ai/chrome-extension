@@ -7,8 +7,10 @@ import CopyToClipboard from '_components/copy-to-clipboard';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { useAppSelector, useMiddleEllipsis } from '_hooks';
+import { TextColor } from '_src/enums/TypographyEnums';
 
 import type { AccountInfo } from '../../KeypairVault';
+import Body from '../../shared/typography/Body';
 
 import st from './AccountAddress.module.scss';
 
@@ -55,36 +57,16 @@ function AccountAddress({
                         style={{
                             backgroundColor: accountInfo.color || '#7E23CA',
                         }}
-                    >
-                        {/* {editWallet && (
-                        <svg
-                            viewBox="0 0 24 24"
-                            width="12"
-                            height="12"
-                            stroke="white"
-                            strokeWidth="2"
-                            fill="black"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            onClick={_selectWallet}
-                        >
-                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                        </svg>
-                    )} */}
-                    </div>
-                    <div className={`${textSize} dark:text-gray-300`}>
-                        {accountInfo.name || 'Wallet'}:
-                    </div>
+                    ></div>
+                    <Body>{accountInfo.name || 'Wallet'}:</Body>
                 </>
             )}
             {address ? (
                 <span className={cl(st.addressContainer, className)}>
                     <CopyToClipboard txt={address} mode={cpIconMode}>
-                        <span
-                            className={`${textSize} font-medium break-words flex-1 min-w-0 text-gray-700 dark:text-gray-200`}
-                        >
+                        <Body textColor={TextColor.Medium}>
                             {shorten ? shortenAddress : address}
-                        </span>
+                        </Body>
                     </CopyToClipboard>
                     {showLink ? (
                         <ExplorerLink

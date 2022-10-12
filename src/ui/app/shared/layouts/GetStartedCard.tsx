@@ -1,9 +1,10 @@
 import { type ReactNode } from 'react';
 
-import DarkModeToggle from '../components/darkModeToggle';
-import logo from '../components/logo/ethos-logo.png';
-import LargePageHeaderWIthIcon from './headers/page-headers/LargePageHeaderWithIcon';
-import NavBarWithBackAndTitle from './navigation/nav-bar/NavBarWithBackAndTitle';
+import DarkModeToggle from '../../components/darkModeToggle';
+import logo from '../../components/logo/ethos-logo.png';
+import BaseLayout from './BaseLayout';
+import LargePageHeaderWIthIcon from '../headers/page-headers/LargePageHeaderWithIcon';
+import NavBarWithBackAndTitle from '../navigation/nav-bar/NavBarWithBackAndTitle';
 
 type GetStartedCardProps = {
     showBack?: boolean;
@@ -18,7 +19,7 @@ const GetStartedCard = ({ showBack, children }: GetStartedCardProps) => {
                     <DarkModeToggle />
                 </span>
             </div>
-            <div className="mx-auto w-96 pt-4 shadow-ethos-box-shadow rounded-lg text-center bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
+            <BaseLayout>
                 {showBack && (
                     <NavBarWithBackAndTitle backLink="/" title="Back" />
                 )}
@@ -29,7 +30,7 @@ const GetStartedCard = ({ showBack, children }: GetStartedCardProps) => {
                     description="The new web awaits"
                 />
                 {children}
-            </div>
+            </BaseLayout>
         </>
     );
 };
