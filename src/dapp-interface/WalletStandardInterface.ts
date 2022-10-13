@@ -1,4 +1,4 @@
-// Copyright (c) 2022, Mysten Labs, Inc.
+// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 import {
@@ -9,8 +9,9 @@ import {
     type ConnectFeature,
     type ConnectMethod,
     type Wallet,
-    type WalletEventNames,
-    type WalletEvents,
+    type EventsFeature,
+    type EventsOnMethod,
+    type EventsListeners,
 } from '@mysten/wallet-standard';
 import mitt, { type Emitter } from 'mitt';
 import { filter, map, type Observable } from 'rxjs';
@@ -34,7 +35,7 @@ import type {
 } from '_payloads/transactions';
 
 type WalletEventsMap = {
-    [E in WalletEventNames]: Parameters<WalletEvents[E]>[0];
+    [E in keyof EventsListeners]: Parameters<EventsListeners[E]>[0];
 };
 
 // TODO: rebuild event interface with Mitt.
@@ -64,11 +65,17 @@ export class SuiWallet implements Wallet {
         return SUI_CHAINS;
     }
 
-    get features(): ConnectFeature & SuiSignAndExecuteTransactionFeature {
+    get features(): ConnectFeature &
+        EventsFeature &
+        SuiSignAndExecuteTransactionFeature {
         return {
             'standard:connect': {
                 version: '1.0.0',
                 connect: this.#connect,
+            },
+            'standard:events': {
+                version: '1.0.0',
+                on: this.#on,
             },
             'sui:signAndExecuteTransaction': {
                 version: '1.0.0',
@@ -85,20 +92,17 @@ export class SuiWallet implements Wallet {
         this.#events = mitt();
         this.#account = null;
         this.#messagesStream = new WindowMessageStream(
-            'sui_in-page',
-            'sui_content-script'
+            'ethos_in-page',
+            'ethos_content-script'
         );
 
         this.#connected();
     }
 
-    on<E extends WalletEventNames>(
-        event: E,
-        listener: WalletEvents[E]
-    ): () => void {
-        this.#events.on('standard:change', listener);
+    #on: EventsOnMethod = (event, listener) => {
+        this.#events.on(event, listener);
         return () => this.#events.off(event, listener);
-    }
+    };
 
     #connected = async () => {
         const accounts = await mapToPromise(
@@ -107,8 +111,6 @@ export class SuiWallet implements Wallet {
             }),
             (response) => response.accounts
         );
-
-        const properties: ('accounts' | 'chains')[] = [];
 
         const [address] = accounts;
 
@@ -125,12 +127,8 @@ export class SuiWallet implements Wallet {
                         'standard:signMessage',
                     ],
                 });
-                properties.push('accounts');
+                this.#events.emit('change', { accounts: this.accounts });
             }
-        }
-
-        if (properties.length) {
-            this.#events.emit('standard:change', properties);
         }
     };
 
@@ -148,7 +146,7 @@ export class SuiWallet implements Wallet {
             );
         }
 
-        this.#connected();
+        await this.#connected();
 
         return { accounts: this.accounts };
     };

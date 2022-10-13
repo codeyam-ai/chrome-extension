@@ -1,7 +1,10 @@
-// Copyright (c) 2022, Mysten Labs, Inc.
+// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { Base64DataBuffer } from '@mysten/sui.js';
+import {
+    Base64DataBuffer,
+    type SuiMoveNormalizedFunction,
+} from '@mysten/sui.js';
 import {
     createAsyncThunk,
     createEntityAdapter,
@@ -12,7 +15,6 @@ import type { SuiTransactionResponse } from '@mysten/sui.js';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { TransactionRequest } from '_payloads/transactions';
 import type { RootState } from '_redux/RootReducer';
-import type { TransactionRequestResponse } from '_src/shared/messaging/messages/payloads/transactions/ui/TransactionRequestResponse';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
 const txRequestsAdapter = createEntityAdapter<TransactionRequest>({
@@ -22,6 +24,37 @@ const txRequestsAdapter = createEntityAdapter<TransactionRequest>({
         return aDate.getTime() - bDate.getTime();
     },
 });
+
+export const loadTransactionResponseMetadata = createAsyncThunk<
+    { txRequestID: string; metadata: SuiMoveNormalizedFunction },
+    {
+        txRequestID: string;
+        objectId: string;
+        moduleName: string;
+        functionName: string;
+    },
+    AppThunkConfig
+>(
+    'load-transaction-response-metadata',
+    async (
+        { txRequestID, objectId, moduleName, functionName },
+        { extra: { api }, getState }
+    ) => {
+        const state = getState();
+        const txRequest = txRequestsSelectors.selectById(state, txRequestID);
+        if (!txRequest) {
+            throw new Error(`TransactionRequest ${txRequestID} not found`);
+        }
+
+        const metadata = await api.instance.fullNode.getNormalizedMoveFunction(
+            objectId,
+            moduleName,
+            functionName
+        );
+
+        return { txRequestID, metadata };
+    }
+);
 
 export const respondToTransactionRequest = createAsyncThunk<
     {
@@ -38,12 +71,10 @@ export const respondToTransactionRequest = createAsyncThunk<
         { extra: { background, api, keypairVault }, getState }
     ) => {
         const state = getState();
-
         const txRequest = txRequestsSelectors.selectById(state, txRequestID);
         if (!txRequest) {
             throw new Error(`TransactionRequest ${txRequestID} not found`);
         }
-
         let txResult: SuiTransactionResponse | undefined = undefined;
         let tsResultError: string | undefined;
         if (approved) {
@@ -64,10 +95,14 @@ export const respondToTransactionRequest = createAsyncThunk<
             }
 
             try {
-                if (txRequest.type === 'move-call') {
-                    txResult = await signer.executeMoveCall(txRequest.tx);
-                } else if (txRequest.type === 'serialized-move-call') {
-                    const txBytes = new Base64DataBuffer(txRequest.txBytes);
+                if (txRequest.tx.type === 'v2') {
+                    txResult = await signer.signAndExecuteTransaction(
+                        txRequest.tx.data
+                    );
+                } else if (txRequest.tx.type === 'move-call') {
+                    txResult = await signer.executeMoveCall(txRequest.tx.data);
+                } else if (txRequest.tx.type === 'serialized-move-call') {
+                    const txBytes = new Base64DataBuffer(txRequest.tx.data);
                     txResult = await signer.signAndExecuteTransaction(txBytes);
                 } else {
                     throw new Error(
@@ -88,25 +123,6 @@ export const respondToTransactionRequest = createAsyncThunk<
     }
 );
 
-export const sendTransactionResponse = createAsyncThunk<
-    {
-        response: TransactionRequestResponse;
-    },
-    { response: TransactionRequestResponse },
-    AppThunkConfig
->(
-    'send-transaction-response',
-    async ({ response }, { extra: { background } }) => {
-        background.sendTransactionRequestResponse(
-            response.txID,
-            response.approved,
-            response.txResult,
-            response.tsResultError
-        );
-        return { response };
-    }
-);
-
 const slice = createSlice({
     name: 'transaction-requests',
     initialState: txRequestsAdapter.getInitialState({ initialized: false }),
@@ -122,6 +138,19 @@ const slice = createSlice({
         },
     },
     extraReducers: (build) => {
+        build.addCase(
+            loadTransactionResponseMetadata.fulfilled,
+            (state, { payload }) => {
+                const { txRequestID, metadata } = payload;
+                txRequestsAdapter.updateOne(state, {
+                    id: txRequestID,
+                    changes: {
+                        metadata,
+                    },
+                });
+            }
+        );
+
         build.addCase(
             respondToTransactionRequest.fulfilled,
             (state, { payload }) => {
