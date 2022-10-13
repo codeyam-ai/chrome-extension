@@ -1,3 +1,5 @@
+import Body from '../typography/Body';
+
 export interface InputProps
     extends React.DetailedHTMLProps<
         React.InputHTMLAttributes<HTMLInputElement>,
@@ -26,7 +28,9 @@ const Input = ({
                 className || ''
             } flex flex-col gap-2 text-left px-6 pb-6`}
         >
-            <label htmlFor={id}>{label}</label>
+            <label htmlFor={id}>
+                <Body isSemibold={true}>{label}</Body>
+            </label>
             <input id={id} className={inputClasses} {...reactProps} />
             {description && (
                 <span className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium">
