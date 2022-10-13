@@ -34,6 +34,7 @@ export const fetchAllOwnedObjects = createAsyncThunk<
     if (address) {
         const allObjectRefs =
             await api.instance.fullNode.getObjectsOwnedByAddress(`${address}`);
+        api.instance.gateway.syncAccountState(address);
         const objectIDs = allObjectRefs.map((anObj) => anObj.objectId);
         const allObjRes = await api.instance.fullNode.getObjectBatch(objectIDs);
         for (const objRes of allObjRes) {
