@@ -32,10 +32,10 @@ describe('mnemonics', () => {
         const keypair = new Ed25519Keypair(keypairData);
 
         expect(new Base64DataBuffer(keypairData.secretKey).toString()).toEqual(
-            'V3zZEK7eJYJminQdR2tF55mOkFpChvcBuHslkjUB+dTGHsYX9tdbrbyu2sALKKQcfTOiz6DAeMOxQ+RNp159nA=='
+            'NsmVpqDHahFNSPNs+w/PqwNuhBrCGL8He5v1q+nQnRkvN+Qdrhzog983149pQTOOfKQKnWEBUnPNDnqzwpwsGA=='
         );
         expect(keypair.getPublicKey().toBase64()).toEqual(
-            'xh7GF/bXW628rtrACyikHH0zos+gwHjDsUPkTadefZw='
+            'LzfkHa4c6IPfN9ePaUEzjnykCp1hAVJzzQ56s8KcLBg='
         );
     });
 });
