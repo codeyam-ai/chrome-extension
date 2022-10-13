@@ -1,3 +1,5 @@
+import Body from '../typography/Body';
+
 export interface TextAreaProps
     extends React.DetailedHTMLProps<
         React.TextareaHTMLAttributes<HTMLTextAreaElement>,
@@ -24,7 +26,9 @@ const TextArea = ({
                 className || ''
             } flex flex-col gap-2 text-left mx-6 mb-6`}
         >
-            <label htmlFor={id}>{label}</label>
+            <label htmlFor={id}>
+                <Body isSemibold={true}>{label}</Body>
+            </label>
             <textarea id={id} className={textAreaClasses} {...reactProps} />
             {errorText && (
                 <span className="text-ethos-light-red dark:text-ethos-dark-red">
