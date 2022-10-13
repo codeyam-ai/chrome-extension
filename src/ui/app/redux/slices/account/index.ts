@@ -34,6 +34,8 @@ type InitialAccountInfo = {
     activeAccountIndex: number;
 };
 
+export const LOCKED = 'locked';
+
 export const loadAccountInformationFromStorage = createAsyncThunk(
     'account/loadAccountInformation',
     async (): Promise<InitialAccountInfo> => {
@@ -76,6 +78,16 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             return {
                 authentication: null,
                 passphrase: null,
+                mnemonic: null,
+                accountInfos: [],
+                activeAccountIndex: 0,
+            };
+        }
+
+        if (passphrase === LOCKED) {
+            return {
+                authentication: null,
+                passphrase: LOCKED,
                 mnemonic: null,
                 accountInfos: [],
                 activeAccountIndex: 0,
@@ -255,6 +267,16 @@ export const reset = createAsyncThunk(
         await deleteEncrypted('email');
         await deleteEncrypted('activeAccountIndex');
         await deleteEncrypted(PERMISSIONS_STORAGE_KEY);
+
+        window.location.reload();
+    }
+);
+
+export const logout = createAsyncThunk(
+    'account/logout',
+    async (_args): Promise<void> => {
+        await setEncrypted('passphrase', LOCKED);
+        await deleteEncrypted('authentication');
 
         window.location.reload();
     }

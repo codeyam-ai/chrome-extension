@@ -1,14 +1,16 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 
 import Item from './item';
 import ExternalLink from '_components/external-link';
 import { SuiIcons } from '_components/icon';
 import { useNextMenuUrl } from '_components/menu/hooks';
-import { useExplorerPermission } from '_hooks';
+import { useAppDispatch, useExplorerPermission } from '_hooks';
 import { DASHBOARD_LINK } from '_src/shared/constants';
+import { logout } from '_src/ui/app/redux/slices/account';
 
 import st from './MenuList.module.scss';
 
@@ -62,10 +64,15 @@ const arrowUpRightIcon = (
 );
 
 function MenuList() {
+    const dispatch = useAppDispatch();
     const switchWalletUrl = useNextMenuUrl(true, '/switch-wallet');
     const connectedAppsUrl = useNextMenuUrl(true, '/connected-apps');
     const preapprovalsUrl = useNextMenuUrl(true, '/preapprovals');
     const setExplorerPermission = useExplorerPermission();
+
+    const handleLogout = useCallback(async () => {
+        await dispatch(logout());
+    }, [dispatch]);
 
     return (
         <div className="flex flex-col divide-y divide-gray-700/50 dark:divide-gray-400/50">
@@ -125,6 +132,9 @@ function MenuList() {
                     indicator={SuiIcons.SuiChevronRight}
                 />
             </Link>
+            <span onClick={handleLogout} className={st.item}>
+                <Item icon={SuiIcons.Logout} title="Lock" />
+            </span>
             {/* <Link to={playgroundUrl} className={st.item}>
                 <Item
                     icon="joystick"

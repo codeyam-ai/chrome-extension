@@ -7,7 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import DarkModeToggle from '../components/darkModeToggle';
 import logo from '../components/logo/ethos-logo.png';
 import { AppState } from '../hooks/useInitializedGuard';
-import { savePassphrase } from '../redux/slices/account';
+import {
+    savePassphrase,
+    loadAccountInformationFromStorage,
+} from '../redux/slices/account';
 import Button, { ButtonStyle } from '../shared/Button';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
@@ -40,6 +43,7 @@ const PasswordPage = () => {
             setDontMatch(true);
         } else {
             await dispatch(savePassphrase(passphrase));
+            await dispatch(loadAccountInformationFromStorage());
             navigate('/');
         }
     }, [passphrase, passphraseConfirm, dispatch, navigate]);

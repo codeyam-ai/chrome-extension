@@ -5,6 +5,7 @@ import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { AUTHENTICATION_REQUESTED } from '../pages/initialize/hosted';
+import { LOCKED } from '../redux/slices/account';
 import useAppSelector from './useAppSelector';
 
 export enum AppState {
@@ -38,6 +39,13 @@ export default function useInitializedGuard(state: AppState | AppState[]) {
 
     if (authentication && (accountInfos?.length || 0) > 0) {
         currentState = AppState.HOSTED;
+    }
+
+    const locked = useAppSelector(
+        (state) => state.account.passphrase === LOCKED
+    );
+    if (locked) {
+        currentState = AppState.PASSWORD;
     }
 
     const guardAct = useMemo(() => {
