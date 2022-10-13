@@ -39,10 +39,10 @@ type WalletEventsMap = {
 };
 
 // TODO: rebuild event interface with Mitt.
-export class SuiWallet implements Wallet {
+export class EthosWallet implements Wallet {
     readonly #events: Emitter<WalletEventsMap>;
     readonly #version = '1.0.0' as const;
-    readonly #name = 'Sui Wallet' as const;
+    readonly #name = 'Ethos Wallet' as const;
     #account: ReadonlyWalletAccount | null;
     #messagesStream: WindowMessageStream;
 
