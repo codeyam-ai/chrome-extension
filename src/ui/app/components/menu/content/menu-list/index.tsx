@@ -11,6 +11,14 @@ import { useExplorerPermission } from '_hooks';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 
 import st from './MenuList.module.scss';
+import LinkList, {
+    type LinkItem,
+} from '_src/ui/app/shared/navigation/nav-bar/LinkList';
+import { ArrowUpRightIcon, CreditCardIcon } from '@heroicons/react/24/solid';
+import {
+    ArrowsPointingOutIcon,
+    ArrowTopRightOnSquareIcon,
+} from '@heroicons/react/24/outline';
 
 // Adding icons here that don't work with this code base's icon creator
 const walletIcon = (
@@ -65,73 +73,44 @@ function MenuList() {
     const switchWalletUrl = useNextMenuUrl(true, '/switch-wallet');
     const connectedAppsUrl = useNextMenuUrl(true, '/connected-apps');
     const preapprovalsUrl = useNextMenuUrl(true, '/preapprovals');
-    const setExplorerPermission = useExplorerPermission();
+
+    const menuItems: LinkItem[] = [
+        {
+            iconWithNoClasses: <ArrowTopRightOnSquareIcon />,
+            title: 'View Wallet Dashboard',
+            to: DASHBOARD_LINK,
+            isExternal: true,
+        },
+        {
+            iconWithNoClasses: <ArrowsPointingOutIcon />,
+            title: 'Expand view',
+            to: '/tokens',
+            isExternal: false,
+            isExpandView: true,
+        },
+        {
+            iconWithNoClasses: <CreditCardIcon />,
+            title: 'Switch/add wallet',
+            to: switchWalletUrl,
+            isExternal: false,
+        },
+        {
+            iconWithNoClasses: <CreditCardIcon />,
+            title: 'Connected apps',
+            to: connectedAppsUrl,
+            isExternal: false,
+        },
+        {
+            iconWithNoClasses: <CreditCardIcon />,
+            title: 'Pre-approvals',
+            to: preapprovalsUrl,
+            isExternal: false,
+        },
+    ];
 
     return (
-        <div className="flex flex-col divide-y divide-gray-700/50 dark:divide-gray-400/50">
-            {/* <Link to={accountUrl} className={st.item}>
-                <Item
-                    icon={SuiIcons.Person}
-                    title="Account"
-                    subtitle={shortenAddress}
-                    indicator={SuiIcons.SuiChevronRight}
-                />
-            </Link> */}
-            <div onMouseOver={setExplorerPermission}>
-                <ExternalLink
-                    className={st.item}
-                    href={DASHBOARD_LINK}
-                    showIcon={false}
-                >
-                    <Item
-                        svg={arrowUpRightIcon}
-                        title="View Wallet Dashboard"
-                        indicator={SuiIcons.SuiChevronRight}
-                    />
-                </ExternalLink>
-            </div>
-            <div className="sm:hidden">
-                <Link
-                    to={'/tokens'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={st.item}
-                >
-                    <Item
-                        icon={SuiIcons.Preview}
-                        title="Expand View"
-                        indicator={SuiIcons.SuiChevronRight}
-                    />
-                </Link>
-            </div>
-            <Link to={switchWalletUrl} className={st.item}>
-                <Item
-                    svg={walletIcon}
-                    title="Switch/add wallet"
-                    indicator={SuiIcons.SuiChevronRight}
-                />
-            </Link>
-            <Link to={connectedAppsUrl} className={st.item}>
-                <Item
-                    svg={appsIcon}
-                    title="Connected apps"
-                    indicator={SuiIcons.SuiChevronRight}
-                />
-            </Link>
-            <Link to={preapprovalsUrl} className={st.item}>
-                <Item
-                    icon={SuiIcons.Info}
-                    title="Pre-approvals"
-                    indicator={SuiIcons.SuiChevronRight}
-                />
-            </Link>
-            {/* <Link to={playgroundUrl} className={st.item}>
-                <Item
-                    icon="joystick"
-                    title="Playground"
-                    indicator={SuiIcons.SuiChevronRight}
-                />
-            </Link> */}
+        <div>
+            <LinkList linkItems={menuItems} />
         </div>
     );
 }

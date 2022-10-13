@@ -4,7 +4,7 @@ export interface ContentBlockProps
 }
 
 const ContentBlock = ({ className, children }: ContentBlockProps) => {
-    const defaultClasses = 'px-6 pb-2 text-left';
+    const defaultClasses = 'flex flex-col gap-2 px-6 pb-2 text-left';
     return (
         <div className={`${className || ''} ${defaultClasses}`}>{children}</div>
     );

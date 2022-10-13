@@ -5,7 +5,7 @@ import Browser from 'webextension-polyfill';
 import ExternalLink from '../../external-link';
 import { SuiIcons } from '../../icon';
 import LoadingIndicator from '../../loading/LoadingIndicator';
-import { useNextMenuUrl } from '../hooks';
+import { useMenuUrl, useNextMenuUrl } from '../hooks';
 import Item from './menu-list/item';
 import { API_ENV_TO_INFO } from '_app/ApiProvider';
 import { IFRAME_URL, ToS_LINK } from '_src/shared/constants';
@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { getEmail, reset } from '_src/ui/app/redux/slices/account';
 
 import st from './menu-list/MenuList.module.scss';
+import Layout from './layout';
 
 const eyeIcon = (
     <svg
@@ -40,11 +41,12 @@ const eyeIcon = (
 const version = Browser.runtime.getManifest().version;
 
 export default function Settings() {
+    const menuUrl = useMenuUrl();
     const networkUrl = useNextMenuUrl(true, '/network');
+    const viewSeedUrl = useNextMenuUrl(true, '/settings/view-seed');
     const apiEnv = useAppSelector((state) => state.app.apiEnv);
     const networkName = API_ENV_TO_INFO[apiEnv].name;
 
-    const viewSeedUrl = useNextMenuUrl(true, '/settings/view-seed');
     const dispatch = useAppDispatch();
     const [logoutInProgress, setLogoutInProgress] = useState(false);
     const [isHostedWallet, setIsHostedWallet] = useState(false);
@@ -85,60 +87,66 @@ export default function Settings() {
     }, [dispatch]);
 
     return (
-        <div
-            className={
-                st.container +
-                ' divide-y divide-gray-700/50 dark:divide-gray-400/50'
-            }
-        >
-            {!isHostedWallet && (
-                <Link className={st.item} to={viewSeedUrl}>
+        <Layout backUrl={menuUrl || '/'} title="">
+            <div
+                className={
+                    st.container +
+                    ' divide-y divide-gray-700/50 dark:divide-gray-400/50'
+                }
+            >
+                {!isHostedWallet && (
+                    <Link className={st.item} to={viewSeedUrl}>
+                        <Item
+                            svg={eyeIcon}
+                            title="View recovery phrase"
+                            indicator={SuiIcons.SuiChevronRight}
+                        />
+                    </Link>
+                )}
+                <ExternalLink
+                    className={st.item}
+                    href={ToS_LINK}
+                    showIcon={false}
+                >
                     <Item
-                        svg={eyeIcon}
-                        title="View recovery phrase"
+                        icon="file-earmark-text"
+                        title="Terms of Service"
+                        indicator="link-45deg"
+                    />
+                </ExternalLink>
+                <Link to={networkUrl} className={st.item}>
+                    <Item
+                        icon={SuiIcons.Globe}
+                        title="Network"
+                        subtitle={networkName}
                         indicator={SuiIcons.SuiChevronRight}
                     />
                 </Link>
-            )}
-            <ExternalLink className={st.item} href={ToS_LINK} showIcon={false}>
-                <Item
-                    icon="file-earmark-text"
-                    title="Terms of Service"
-                    indicator="link-45deg"
-                />
-            </ExternalLink>
-            <Link to={networkUrl} className={st.item}>
-                <Item
-                    icon={SuiIcons.Globe}
-                    title="Network"
-                    subtitle={networkName}
-                    indicator={SuiIcons.SuiChevronRight}
-                />
-            </Link>
-            <div className={st.item}>
-                <Item
-                    // TODO: import and use the icon from Figma
-                    icon={SuiIcons.VersionIcon}
-                    title="Wallet version"
-                    subtitle={'v' + version}
+                <div className={st.item}>
+                    <Item
+                        // TODO: import and use the icon from Figma
+                        icon={SuiIcons.VersionIcon}
+                        title="Wallet version"
+                        subtitle={'v' + version}
+                    />
+                </div>
+                <span onClick={handleReset} className={st.item}>
+                    {logoutInProgress ? (
+                        <LoadingIndicator />
+                    ) : (
+                        <Item icon={SuiIcons.Logout} title="Reset" />
+                    )}
+                </span>
+                <iframe
+                    id="wallet-iframe"
+                    src={IFRAME_URL}
+                    height="1px"
+                    width="1px"
+                    title="wallet"
+                    // Hide the iframe pixel, as it is visible in dark mode
+                    className="-top-[1000px] absolute"
                 />
             </div>
-            <span onClick={handleReset} className={st.item}>
-                {logoutInProgress ? (
-                    <LoadingIndicator />
-                ) : (
-                    <Item icon={SuiIcons.Logout} title="Reset" />
-                )}
-            </span>
-            <iframe
-                id="wallet-iframe"
-                src={IFRAME_URL}
-                height="1px"
-                width="1px"
-                title="wallet"
-                // Hide the iframe pixel, as it is visible in dark mode
-                className="-top-[1000px] absolute"
-            />
-        </div>
+        </Layout>
     );
 }

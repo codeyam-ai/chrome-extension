@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
 const MENU_PARAM = 'menu';
+const SETTINGS_PARAM = 'settings';
 
 export function useMenuUrl() {
     const [searchParams] = useSearchParams();
@@ -17,6 +18,11 @@ export function useMenuUrl() {
 export function useMenuIsOpen() {
     const [searchParams] = useSearchParams();
     return searchParams.has(MENU_PARAM);
+}
+
+export function useSettingsMenuIsOpen() {
+    const [searchParams] = useSearchParams();
+    return searchParams.has(SETTINGS_PARAM);
 }
 
 /**

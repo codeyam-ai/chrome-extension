@@ -19,6 +19,7 @@ import { fetchAllOwnedObjects } from '_redux/slices/sui-objects';
 import BaseLayout from '../../shared/layouts/BaseLayout';
 import NavBarWithMenu from '../../shared/navigation/nav-bar/NavBarWithMenu';
 import TabBar from '../../shared/navigation/tab-bar/TabBar';
+import NavExpanded from '../../shared/navigation/nav-bar/NavExpanded';
 
 const POLL_SUI_OBJECTS_INTERVAL = 4000;
 
@@ -49,7 +50,7 @@ const HomePage = () => {
             <Loading loading={guardChecking}>
                 <BaseLayout className="!pt-0">
                     <NavBarWithMenu />
-                    <MenuContent />
+                    <NavExpanded />
                     <main className="flex-grow">
                         <Outlet />
                     </main>

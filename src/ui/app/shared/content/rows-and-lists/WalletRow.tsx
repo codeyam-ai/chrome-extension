@@ -35,7 +35,7 @@ const WalletRow = () => {
     }, []);
 
     return (
-        <div className="flex flex-row gap-2 items-center px-6 pb-2">
+        <div className="flex flex-row gap-2 items-center py-4 px-6">
             <div
                 className="flex flex-row gap-2 items-center cursor-pointer"
                 onClick={_selectWallet}

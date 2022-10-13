@@ -17,7 +17,7 @@ function NftsPage() {
     const nfts = useAppSelector(accountNftsSelector) || [];
 
     return (
-        <div className={st.container}>
+        <div>
             {nfts.length <= 0 ? (
                 <div className="text-center my-auto text-gray-900 dark:text-white">
                     <Icon className="text-4xl " icon={SuiIcons.Nfts} />

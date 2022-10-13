@@ -29,6 +29,7 @@ import {
 import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
 import AmountRow from '_src/ui/app/shared/content/rows-and-lists/AmountRow';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
+import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 function TokensPage() {
     const [editWallet, setEditWallet] = useState<boolean>(false);
@@ -60,7 +61,7 @@ function TokensPage() {
     );
 
     return (
-        <div className="pt-2">
+        <div>
             {showError && error ? (
                 <Alert>
                     <strong>Sync error (data might be outdated).</strong>{' '}
@@ -108,17 +109,16 @@ function TokensPage() {
                     })
                 ) : (
                     <ContentBlock>
-                        <BodyLarge as="h3">Get started with Sui</BodyLarge>
+                        <Subheader as="h3">Get started with Sui</Subheader>
                         <Body as="p" textColor={TextColor.Medium}>
-                            Interested in Sui but don&apos;t know where to
-                            start? We&apos;ve got you covered.
+                            Interested in SUI but not sure where to start?
                         </Body>
                         <Body>
                             <EthosLink
                                 type={LinkType.External}
                                 to={DASHBOARD_LINK}
                             >
-                                Discover new apps →
+                                Discover New Apps →
                             </EthosLink>
                         </Body>
                     </ContentBlock>
