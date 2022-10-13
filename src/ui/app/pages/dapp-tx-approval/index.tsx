@@ -85,52 +85,52 @@ export function DappTxApprovalPage() {
     // TODO: add more tx types/make it generic
     const valuesContent = useMemo(
         () =>
-            txRequest?.type === 'move-call'
+            txRequest?.tx.type === 'move-call'
                 ? [
                       { label: 'Transaction type', content: 'MoveCall' },
-                      { label: 'Module', content: txRequest.tx.module },
-                      { label: 'Function', content: txRequest.tx.function },
+                      { label: 'Module', content: txRequest.tx.data.module },
+                      {
+                          label: 'Function',
+                          content: txRequest.tx.data.function,
+                      },
                       {
                           label: 'Arguments',
-                          content: toList(txRequest.tx.arguments),
+                          content: toList(txRequest.tx.data.arguments),
                       },
-                      { label: 'Gas budget', content: txRequest.tx.gasBudget },
+                      {
+                          label: 'Gas budget',
+                          content: txRequest.tx.data.gasBudget,
+                      },
                   ]
                 : [
                       {
                           label: 'Transaction type',
                           content: 'SerializedMoveCall',
                       },
-                      { label: 'Contents', content: txRequest?.txBytes },
                   ],
         [txRequest]
     );
     const detailedValuesContent = useMemo(
         () =>
-            txRequest?.type === 'move-call'
+            txRequest?.tx.type === 'move-call'
                 ? [
                       {
                           label: 'Package',
                           content: truncateMiddle(
-                              txRequest.tx.packageObjectId,
+                              txRequest.tx.data.packageObjectId,
                               12
                           ),
-                          title: txRequest.tx.packageObjectId,
+                          title: txRequest.tx.data.packageObjectId,
                       },
                       {
                           label: 'Type arguments',
-                          content: toList(txRequest.tx.typeArguments),
+                          content: toList(txRequest.tx.data.typeArguments),
                       },
                   ]
                 : [
                       {
                           label: 'Transaction type',
                           content: 'SerializedMoveCall',
-                          title: '',
-                      },
-                      {
-                          label: 'Contents',
-                          content: txRequest?.txBytes,
                           title: '',
                       },
                   ],

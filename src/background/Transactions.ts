@@ -11,6 +11,7 @@ import { Window } from './Window';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 
 import type { MoveCallTransaction } from '@mysten/sui.js';
+import type { TransactionDataType } from '_messages/payloads/transactions/ExecuteTransactionRequest';
 import type {
     PreapprovalRequest,
     PreapprovalResponse,
@@ -112,29 +113,38 @@ class Transactions {
     }
 
     public async executeTransaction(
-        tx: MoveCallTransaction | undefined,
-        txBytes: Uint8Array | undefined,
+        tx: TransactionDataType,
         connection: ContentScriptConnection
     ) {
-        if (tx) {
-            const permissionRequest = await this.findPreapprovalRequest({
-                moveCall: tx,
-            });
+        if (tx.type === 'v2' || tx.type === 'move-call') {
+            let moveCall: MoveCallTransaction | undefined;
+            if (tx.type === 'v2') {
+                if (tx.data.kind === 'moveCall') {
+                    moveCall = tx.data.data;
+                }
+            } else {
+                moveCall = tx.data;
+            }
 
-            if (permissionRequest) {
-                const result = await this.tryDirectExecution(
-                    tx,
-                    permissionRequest
-                );
-                if (result) {
-                    return result;
+            if (moveCall) {
+                const permissionRequest = await this.findPreapprovalRequest({
+                    moveCall,
+                });
+
+                if (permissionRequest) {
+                    const result = await this.tryDirectExecution(
+                        moveCall,
+                        permissionRequest
+                    );
+                    if (result) {
+                        return result;
+                    }
                 }
             }
         }
 
         const txRequest = this.createTransactionRequest(
             tx,
-            txBytes,
             connection.origin,
             connection.originFavIcon
         );
@@ -394,34 +404,18 @@ class Transactions {
     }
 
     private createTransactionRequest(
-        tx: MoveCallTransaction | undefined,
-        txBytes: Uint8Array | undefined,
+        tx: TransactionDataType,
         origin: string,
         originFavIcon?: string
     ): TransactionRequest {
-        if (tx !== undefined) {
-            return {
-                id: uuidV4(),
-                approved: null,
-                origin,
-                originFavIcon,
-                createdDate: new Date().toISOString(),
-                type: 'move-call',
-                tx,
-            };
-        } else if (txBytes !== undefined) {
-            return {
-                id: uuidV4(),
-                approved: null,
-                origin,
-                originFavIcon,
-                createdDate: new Date().toISOString(),
-                type: 'serialized-move-call',
-                txBytes,
-            };
-        } else {
-            throw new Error('Either tx or txBytes needs to be defined.');
-        }
+        return {
+            id: uuidV4(),
+            approved: null,
+            origin,
+            originFavIcon,
+            createdDate: new Date().toISOString(),
+            tx,
+        };
     }
 
     private async createPreapprovalRequest(

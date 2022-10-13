@@ -1,4 +1,4 @@
-// Copyright (c) 2022, Mysten Labs, Inc.
+// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 import Messages from '../Messages';
@@ -128,7 +128,6 @@ export class ContentScriptConnection extends Connection {
                 try {
                     const result = await Transactions.executeTransaction(
                         payload.transaction,
-                        payload.transactionBytes,
                         this
                     );
                     this.send(
