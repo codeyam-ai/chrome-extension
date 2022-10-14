@@ -77,8 +77,8 @@
     },
     "dependencies": {
         "@heroicons/react": "^2.0.1",
-        "@mysten/sui.js": "file:../sui/sui/sdk/typescript",
-        "@mysten/wallet-standard": "file:../sui/sui/sdk/wallet-adapter/packages/wallet-standard",
+        "@mysten/sui.js": "^0.12.0",
+        "@mysten/wallet-standard": "0.1.0",
         "@reduxjs/toolkit": "^1.8.3",
         "@tailwindcss/forms": "^0.5.2",
         "@types/react-color": "^3.0.6",
