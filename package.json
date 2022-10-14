@@ -82,6 +82,7 @@
         "@reduxjs/toolkit": "^1.8.3",
         "@tailwindcss/forms": "^0.5.2",
         "@types/react-color": "^3.0.6",
+        "@wallet-standard/standard": "^0.1.0-alpha.5",
         "aes-js": "^3.1.2",
         "asmcrypto.js": "^2.3.2",
         "bip39-light": "^1.0.7",

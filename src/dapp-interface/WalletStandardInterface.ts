@@ -1,6 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+// import { Base64DataBuffer } from '@mysten/sui.js';
 import {
     SUI_CHAINS,
     ReadonlyWalletAccount,
@@ -12,6 +13,10 @@ import {
     type EventsFeature,
     type EventsOnMethod,
     type EventsListeners,
+    type DisconnectFeature,
+    type DisconnectMethod,
+    // type SignMessageFeature,
+    // type SignMessageMethod,
 } from '@mysten/wallet-standard';
 import mitt, { type Emitter } from 'mitt';
 import { filter, map, type Observable } from 'rxjs';
@@ -26,13 +31,18 @@ import {
     type AcquirePermissionsResponse,
     ALL_PERMISSION_TYPES,
 } from '_payloads/permissions';
+// import { deserializeSignaturePubkeyPair } from '_src/shared/signature-serialization';
 
 import type { GetAccount } from '_payloads/account/GetAccount';
 import type { GetAccountResponse } from '_payloads/account/GetAccountResponse';
+// import type { ExecuteSignMessageRequest } from '_payloads/messages/ExecuteSignMessageRequest';
+// import type { ExecuteSignMessageResponse } from '_payloads/messages/ExecuteSignMessageResponse';
 import type {
     ExecuteTransactionRequest,
     ExecuteTransactionResponse,
 } from '_payloads/transactions';
+import type { DisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
+import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 
 type WalletEventsMap = {
     [E in keyof EventsListeners]: Parameters<EventsListeners[E]>[0];
@@ -66,17 +76,27 @@ export class EthosWallet implements Wallet {
     }
 
     get features(): ConnectFeature &
+        DisconnectFeature &
         EventsFeature &
+        // SignMessageFeature &
         SuiSignAndExecuteTransactionFeature {
         return {
             'standard:connect': {
                 version: '1.0.0',
                 connect: this.#connect,
             },
+            'standard:disconnect': {
+                version: '1.0.0',
+                disconnect: this.#disconnect,
+            },
             'standard:events': {
                 version: '1.0.0',
                 on: this.#on,
             },
+            // 'standard:signMessage': {
+            //     version: '1.0.0',
+            //     signMessage: this.#signMessage,
+            // },
             'sui:signAndExecuteTransaction': {
                 version: '1.0.0',
                 signAndExecuteTransaction: this.#signAndExecuteTransaction,
@@ -119,7 +139,6 @@ export class EthosWallet implements Wallet {
             if (!account || account.address !== address) {
                 this.#account = new ReadonlyWalletAccount({
                     address,
-                    // TODO: Expose public key instead of address:
                     publicKey: new Uint8Array(),
                     chains: SUI_CHAINS,
                     features: [
@@ -151,6 +170,15 @@ export class EthosWallet implements Wallet {
         return { accounts: this.accounts };
     };
 
+    #disconnect: DisconnectMethod = async () => {
+        await mapToPromise(
+            this.#send<DisconnectRequest, DisconnectResponse>({
+                type: 'disconnect-request',
+            }),
+            (response) => response.success
+        );
+    };
+
     #signAndExecuteTransaction: SuiSignAndExecuteTransactionMethod = async (
         input
     ) => {
@@ -165,6 +193,36 @@ export class EthosWallet implements Wallet {
             (response) => response.result
         );
     };
+
+    // #signMessage: SignMessageMethod = async (input) => {
+    //     let { message } = input;
+
+    //     let messageData;
+    //     let messageString;
+
+    //     // convert utf8 string to Uint8Array
+    //     if (typeof message === 'string') {
+    //         messageString = message;
+    //         message = new Uint8Array(Buffer.from(message, 'utf8'));
+    //     }
+
+    //     // convert Uint8Array to base64 string
+    //     if (message instanceof Uint8Array) {
+    //         messageData = new Base64DataBuffer(message).toString();
+    //     }
+
+    //     return mapToPromise(
+    //         this.send<ExecuteSignMessageRequest, ExecuteSignMessageResponse>({
+    //             type: 'execute-sign-message-request',
+    //             messageData,
+    //             messageString,
+    //         }),
+    //         (response) =>
+    //             response.signature
+    //                 ? deserializeSignaturePubkeyPair(response.signature)
+    //                 : undefined
+    //     );
+    // };
 
     #send<
         RequestPayload extends Payload,
