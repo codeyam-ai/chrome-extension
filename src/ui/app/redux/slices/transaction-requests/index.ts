@@ -3,6 +3,7 @@
 
 import {
     Base64DataBuffer,
+    type SuiExecuteTransactionResponse,
     type SuiMoveNormalizedFunction,
 } from '@mysten/sui.js';
 import {
@@ -11,7 +12,6 @@ import {
     createSlice,
 } from '@reduxjs/toolkit';
 
-import type { SuiTransactionResponse } from '@mysten/sui.js';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { TransactionRequest } from '_payloads/transactions';
 import type { RootState } from '_redux/RootReducer';
@@ -60,7 +60,7 @@ export const respondToTransactionRequest = createAsyncThunk<
     {
         txRequestID: string;
         approved: boolean;
-        txResponse: SuiTransactionResponse | null;
+        txResponse: SuiExecuteTransactionResponse | null;
     },
     { txRequestID: string; approved: boolean },
     AppThunkConfig
@@ -75,7 +75,7 @@ export const respondToTransactionRequest = createAsyncThunk<
         if (!txRequest) {
             throw new Error(`TransactionRequest ${txRequestID} not found`);
         }
-        let txResult: SuiTransactionResponse | undefined = undefined;
+        let txResult: SuiExecuteTransactionResponse | undefined = undefined;
         let tsResultError: string | undefined;
         if (approved) {
             const {
@@ -96,14 +96,23 @@ export const respondToTransactionRequest = createAsyncThunk<
 
             try {
                 if (txRequest.tx.type === 'v2') {
-                    txResult = await signer.signAndExecuteTransaction(
-                        txRequest.tx.data
-                    );
+                    txResult =
+                        await signer.signAndExecuteTransactionWithRequestType(
+                            txRequest.tx.data,
+                            'WaitForEffectsCert'
+                        );
                 } else if (txRequest.tx.type === 'move-call') {
-                    txResult = await signer.executeMoveCall(txRequest.tx.data);
+                    txResult = await signer.executeMoveCallWithRequestType(
+                        txRequest.tx.data,
+                        'WaitForEffectsCert'
+                    );
                 } else if (txRequest.tx.type === 'serialized-move-call') {
                     const txBytes = new Base64DataBuffer(txRequest.tx.data);
-                    txResult = await signer.signAndExecuteTransaction(txBytes);
+                    txResult =
+                        await signer.signAndExecuteTransactionWithRequestType(
+                            txBytes,
+                            'WaitForEffectsCert'
+                        );
                 } else {
                     throw new Error(
                         `Either tx or txBytes needs to be defined.`
