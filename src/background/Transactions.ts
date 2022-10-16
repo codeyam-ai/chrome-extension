@@ -90,7 +90,7 @@ class Transactions {
             const { preapproval } = preapprovalRequest;
             preapproval.maxTransactionCount -= 1;
             const { computationCost, storageCost, storageRebate } =
-                txDirectResult.effects.gasUsed;
+                txDirectResult.EffectsCert.effects.effects.gasUsed;
             const gasUsed = computationCost + (storageCost - storageRebate);
             preapproval.totalGasLimit -= gasUsed;
 
@@ -260,7 +260,13 @@ class Transactions {
             body: JSON.stringify({
                 jsonrpc: '2.0',
                 method: 'sui_executeTransaction',
-                params: [txBytes, 'ED25519', signature, publicKey],
+                params: [
+                    txBytes,
+                    'ED25519',
+                    signature,
+                    publicKey,
+                    'WaitForEffectsCert',
+                ],
                 id: 1,
             }),
         };
