@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { isSuiMoveObject } from '@mysten/sui.js';
+import { getTransactionDigest, isSuiMoveObject } from '@mysten/sui.js';
 import {
     createAsyncThunk,
     createEntityAdapter,
@@ -9,10 +9,11 @@ import {
 } from '@reduxjs/toolkit';
 
 import {
-    fetchAllOwnedObjects,
+    fetchAllOwnedAndRequiredObjects,
     suiObjectsAdapterSelectors,
 } from '_redux/slices/sui-objects';
 import { Coin } from '_redux/slices/sui-objects/Coin';
+import { FEATURES } from '_src/ui/app/experimentation/features';
 
 import type {
     SuiAddress,
@@ -37,7 +38,7 @@ export const sendTokens = createAsyncThunk<
     'sui-objects/send-tokens',
     async (
         { tokenTypeArg, amount, recipientAddress },
-        { getState, extra: { api, keypairVault }, dispatch }
+        { getState, extra: { api, keypairVault, featureGating }, dispatch }
     ) => {
         const state = getState();
         const {
@@ -67,17 +68,19 @@ export const sendTokens = createAsyncThunk<
                       signer,
                       coins,
                       amount,
-                      recipientAddress
+                      recipientAddress,
+                      featureGating.isOn(FEATURES.DEPRECATE_GATEWAY)
                   )
                 : await Coin.transferCoin(
                       signer,
                       coins,
                       amount,
-                      recipientAddress
+                      recipientAddress,
+                      featureGating.isOn(FEATURES.DEPRECATE_GATEWAY)
                   );
 
         // TODO: better way to sync latest objects
-        dispatch(fetchAllOwnedObjects());
+        dispatch(fetchAllOwnedAndRequiredObjects());
         // TODO: is this correct? Find a better way to do it
         return response as TransactionResult;
     }
@@ -96,7 +99,7 @@ export const StakeTokens = createAsyncThunk<
     'sui-objects/stake',
     async (
         { tokenTypeArg, amount },
-        { getState, extra: { api, keypairVault }, dispatch }
+        { getState, extra: { api, keypairVault, featureGating }, dispatch }
     ) => {
         const state = getState();
         const {
@@ -133,15 +136,16 @@ export const StakeTokens = createAsyncThunk<
             signer,
             coins,
             amount,
-            validatorAddress
+            validatorAddress,
+            featureGating.isOn(FEATURES.DEPRECATE_GATEWAY)
         );
-        dispatch(fetchAllOwnedObjects());
+        dispatch(fetchAllOwnedAndRequiredObjects());
         return response as TransactionResult;
     }
 );
 
 const txAdapter = createEntityAdapter<TransactionResult>({
-    selectId: (tx) => tx.certificate.transactionDigest,
+    selectId: (tx) => getTransactionDigest(tx),
 });
 
 export const txSelectors = txAdapter.getSelectors(

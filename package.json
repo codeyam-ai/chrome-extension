@@ -76,6 +76,7 @@
         "webpack-merge": "^5.8.0"
     },
     "dependencies": {
+        "@growthbook/growthbook": "^0.18.1",
         "@heroicons/react": "^2.0.1",
         "@mysten/sui.js": "^0.13.0",
         "@mysten/wallet-standard": "0.1.0",
