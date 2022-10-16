@@ -194,7 +194,7 @@ class Transactions {
     }) {
         const activeAccount = await this.getActiveAccount();
 
-        const endpoint = process.env.API_ENDPOINT_DEV_NET || '';
+        const endpoint = process.env.API_ENDPOINT_DEV_NET_FULLNODE || '';
 
         const toBase64 = (data: string): Uint8Array => {
             return new Uint8Array(Buffer.from(data, 'base64'));

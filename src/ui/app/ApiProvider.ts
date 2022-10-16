@@ -34,7 +34,7 @@ export const ENV_TO_API: Record<API_ENV, ApiEndpoints> = {
         fullNode: process.env.API_ENDPOINT_LOCAL_FULLNODE || '',
     },
     [API_ENV.devNet]: {
-        gateway: process.env.API_ENDPOINT_DEV_NET || '',
+        gateway: process.env.API_ENDPOINT_DEV_NET_FULLNODE || '',
         fullNode: process.env.API_ENDPOINT_DEV_NET_FULLNODE || '',
     },
     [API_ENV.staging]: {
