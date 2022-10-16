@@ -13,6 +13,7 @@
     "host_permissions": [
         "http://127.0.0.1:5001/",
         "https://gateway.devnet.sui.io/",
+        "https://fullnode.devnet.sui.io:443/",
         "https://gateway.staging.sui.io/"
     ],
     "icons": {
