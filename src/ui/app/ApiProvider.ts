@@ -129,6 +129,9 @@ export default class ApiProvider {
         address: SuiAddress,
         accessToken: string
     ): EthosSigner {
+        if (!this._apiFullNodeProvider) {
+            this.setNewJsonRpcProvider();
+        }
         return new EthosSigner(address, accessToken, this._apiProvider);
     }
 }
