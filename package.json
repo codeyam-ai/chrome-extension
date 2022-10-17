@@ -1,6 +1,6 @@
 {
     "name": "ethos-wallet-extension-beta",
-    "version": "0.0.0.5",
+    "version": "0.0.0.6",
     "description": "Ethos: Your wallet and home base for Sui",
     "main": "./dist/ui.js",
     "scripts": {
