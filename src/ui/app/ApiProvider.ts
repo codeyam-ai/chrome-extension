@@ -1,11 +1,17 @@
-// Copyright (c) 2022, Mysten Labs, Inc.
+// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { RawSigner, JsonRpcProvider } from '@mysten/sui.js';
+import {
+    RawSigner,
+    JsonRpcProvider,
+    LocalTxnDataSerializer,
+} from '@mysten/sui.js';
 
+import { FEATURES } from './experimentation/features';
 import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
-import type { Ed25519Keypair, SuiAddress } from '@mysten/sui.js';
+import type FeatureGating from './experimentation/feature-gating';
+import type { Keypair, SuiAddress } from '@mysten/sui.js';
 
 export enum API_ENV {
     local = 'local',
@@ -64,38 +70,57 @@ function getDefaultAPI(env: API_ENV) {
 }
 
 export const DEFAULT_API_ENV = getDefaultApiEnv();
-export const DEFAULT_API_ENDPOINT = getDefaultAPI(DEFAULT_API_ENV);
 
 export default class ApiProvider {
-    private _apiProvider: JsonRpcProvider;
-    private _apiFullNodeProvider: JsonRpcProvider;
+    private _apiProvider?: JsonRpcProvider;
+    private _apiFullNodeProvider?: JsonRpcProvider;
     private _signer: RawSigner | null = null;
 
-    constructor() {
-        this._apiProvider = new JsonRpcProvider(DEFAULT_API_ENDPOINT.gateway);
-        this._apiFullNodeProvider = new JsonRpcProvider(
-            DEFAULT_API_ENDPOINT.fullNode
-        );
-    }
+    constructor(private _featureGating: FeatureGating) {}
 
-    public setNewJsonRpcProvider(apiEnv: API_ENV) {
-        this._apiProvider = new JsonRpcProvider(getDefaultAPI(apiEnv).gateway);
+    public setNewJsonRpcProvider(apiEnv: API_ENV = DEFAULT_API_ENV) {
+        const apiVersion = this._featureGating.getFeatureValue(
+            FEATURES.RPC_API_VERSION,
+            '0.11.0'
+        );
+        this._apiProvider = new JsonRpcProvider(
+            getDefaultAPI(apiEnv).gateway,
+            true,
+            apiVersion
+        );
         this._apiFullNodeProvider = new JsonRpcProvider(
-            getDefaultAPI(apiEnv).fullNode
+            getDefaultAPI(apiEnv).fullNode,
+            true,
+            apiVersion
         );
         this._signer = null;
     }
 
     public get instance() {
+        if (!this._apiFullNodeProvider) {
+            this.setNewJsonRpcProvider();
+        }
         return {
-            gateway: this._apiProvider,
-            fullNode: this._apiFullNodeProvider,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            gateway: this._apiProvider!,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            fullNode: this._apiFullNodeProvider!,
         };
     }
 
-    public getSignerInstance(keypair: Ed25519Keypair): RawSigner {
+    public getSignerInstance(keypair: Keypair): RawSigner {
+        if (!this._apiFullNodeProvider) {
+            this.setNewJsonRpcProvider();
+        }
         if (!this._signer) {
-            this._signer = new RawSigner(keypair, this._apiProvider);
+            this._signer = this._featureGating.isOn(FEATURES.DEPRECATE_GATEWAY)
+                ? new RawSigner(
+                      keypair,
+                      this._apiFullNodeProvider,
+                      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                      new LocalTxnDataSerializer(this._apiFullNodeProvider!)
+                  )
+                : new RawSigner(keypair, this._apiProvider);
         }
         return this._signer;
     }

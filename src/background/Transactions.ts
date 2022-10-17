@@ -90,7 +90,7 @@ class Transactions {
             const { preapproval } = preapprovalRequest;
             preapproval.maxTransactionCount -= 1;
             const { computationCost, storageCost, storageRebate } =
-                txDirectResult.effects.gasUsed;
+                txDirectResult.EffectsCert.effects.effects.gasUsed;
             const gasUsed = computationCost + (storageCost - storageRebate);
             preapproval.totalGasLimit -= gasUsed;
 
@@ -194,7 +194,7 @@ class Transactions {
     }) {
         const activeAccount = await this.getActiveAccount();
 
-        const endpoint = process.env.API_ENDPOINT_DEV_NET || '';
+        const endpoint = process.env.API_ENDPOINT_DEV_NET_FULLNODE || '';
 
         const toBase64 = (data: string): Uint8Array => {
             return new Uint8Array(Buffer.from(data, 'base64'));
@@ -260,7 +260,13 @@ class Transactions {
             body: JSON.stringify({
                 jsonrpc: '2.0',
                 method: 'sui_executeTransaction',
-                params: [txBytes, 'ED25519', signature, publicKey],
+                params: [
+                    txBytes,
+                    'ED25519',
+                    signature,
+                    publicKey,
+                    'WaitForEffectsCert',
+                ],
                 id: 1,
             }),
         };

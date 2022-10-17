@@ -15,7 +15,7 @@ import {
     useExplorerPermission,
 } from '_hooks';
 import PageLayout from '_pages/layout';
-import { fetchAllOwnedObjects } from '_redux/slices/sui-objects';
+import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import Navigation from '_src/ui/app/components/navigation';
 
@@ -36,9 +36,9 @@ const HomePage = () => {
             .pipe(
                 filter(() => !guardChecking),
                 switchMap(() =>
-                    defer(() => from(dispatch(fetchAllOwnedObjects()))).pipe(
-                        repeat({ delay: POLL_SUI_OBJECTS_INTERVAL })
-                    )
+                    defer(() =>
+                        from(dispatch(fetchAllOwnedAndRequiredObjects()))
+                    ).pipe(repeat({ delay: POLL_SUI_OBJECTS_INTERVAL }))
                 )
             )
             .subscribe();
@@ -84,7 +84,6 @@ const HomePage = () => {
 
 export default HomePage;
 export { default as NftsPage } from './nfts';
-export { default as StakePage } from './stake';
 export { default as TokensPage } from './tokens';
 export { default as TransactionDetailsPage } from './transaction-details';
 export { default as TransactionsPage } from './transactions';
