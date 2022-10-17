@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { memo, useMemo } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 import { SuiIcons } from '_font-icons/output/sui-icons';
@@ -9,6 +9,8 @@ import { SuiIcons } from '_font-icons/output/sui-icons';
 import { Coin } from '_redux/slices/sui-objects/Coin';
 import { balanceFormatOptions } from '_shared/formatting';
 import Icon from '_src/ui/app/components/icon';
+import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
+import { useAppSelector } from '_src/ui/app/hooks';
 import Button, { ButtonStyle } from '_src/ui/app/shared/Button';
 
 export type CoinProps = {
@@ -24,6 +26,7 @@ function CoinBalance({
     hideStake = false,
     mode = 'row-item',
 }: CoinProps) {
+    const faucetAvailable = useMemo(() => balance < 10000000, [balance]);
     const symbol = useMemo(() => Coin.getCoinSymbol(type), [type]);
     const intl = useIntl();
     const isBalanceZero = useMemo(() => balance.toString() === '0', [balance]);
@@ -40,6 +43,33 @@ function CoinBalance({
         () => `/send?${new URLSearchParams({ type }).toString()}`,
         [type]
     );
+
+    const [usingFaucet, setUsingFaucet] = useState(false);
+    const address = useAppSelector(({ account }) => account.address);
+    const _faucet = useCallback(() => {
+        if (!faucetAvailable) return;
+        setUsingFaucet(true);
+        const faucet = async () => {
+            await fetch('https://faucet.devnet.sui.io:443/gas', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    FixedAmountRequest: {
+                        recipient: address,
+                    },
+                }),
+            });
+
+            setTimeout(() => {
+                setUsingFaucet(false);
+            }, 2500);
+        };
+
+        faucet();
+    }, [faucetAvailable, address]);
     // const stakeUrl = useMemo(
     //     () => `/stake?${new URLSearchParams({ type }).toString()}`,
     //     [type]
@@ -78,11 +108,12 @@ function CoinBalance({
                 </Button>
                 <Button
                     buttonStyle={ButtonStyle.SECONDARY}
-                    to={'/receive'}
+                    to={faucetAvailable ? undefined : '/receive'}
+                    onClick={faucetAvailable ? _faucet : undefined}
                     className="!py-2"
                 >
                     <Icon className="mr-2 text-xs" icon={SuiIcons.Receive} />
-                    Receive
+                    {usingFaucet ? <LoadingIndicator /> : <>Get Sui</>}
                 </Button>
             </div>
         </div>
