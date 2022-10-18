@@ -48,14 +48,16 @@ function NavExpanded() {
     return (
         <div className="absolute w-full h-full z-10">
             <div
-                className="absolute w-full h-full bg-white opacity-20"
+                // The height class is added to adjust for the height of the nav bar and top padding of the main container.
+                // Without it, the backdrop will bleed over the bottom edge in the expanded veiw.
+                className="absolute w-full rounded-lg bg-black opacity-20 h-[419px]"
                 onClick={handleOnCloseMenu}
             />
             <div
                 className={
                     (expanded ? 'h-full' : '') +
                     ' ' +
-                    'relative px-6 pb-6 max-h-full overflow-y-auto shadow-ethos-box-shadow rounded-b-lg border-solid border-[1px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default dark:border-gray-500'
+                    'relative px-6 pb-6 max-h-full overflow-y-auto drop-shadow-ethos-box-shadow rounded-b-lg bg-ethos-light-background-default dark:bg-ethos-dark-background-default'
                 }
             >
                 <Routes location={menuUrl || ''}>

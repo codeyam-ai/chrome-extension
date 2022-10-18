@@ -22,7 +22,7 @@ const NavBarWithMenu = () => {
                 !isMenuOpen
                     ? 'border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke'
                     : ''
-            } flex flex-row items-center justify-between px-6 pb-4`}
+            } flex flex-row items-center justify-between z-30 px-6 pb-4`}
         >
             <MenuButton />
             {!isMenuOpen ? (
