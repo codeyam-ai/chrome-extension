@@ -9,6 +9,7 @@ import {
     useNextMenuUrl,
 } from '_src/ui/app/components/menu/hooks';
 import { useExplorerPermission } from '_src/ui/app/hooks';
+import MonochromeLogo from '_src/ui/app/components/MonochromeLogo';
 
 const NavBarWithMenu = () => {
     const setExplorerPermission = useExplorerPermission();
@@ -21,7 +22,7 @@ const NavBarWithMenu = () => {
                 !isMenuOpen
                     ? 'border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke'
                     : ''
-            } flex flex-row items-center justify-between px-6 h-12`}
+            } flex flex-row items-center justify-between px-6 pb-4`}
         >
             <MenuButton />
             {!isMenuOpen ? (
@@ -31,7 +32,7 @@ const NavBarWithMenu = () => {
                     rel="noreferrer"
                     onMouseDown={setExplorerPermission}
                 >
-                    <Logo txt={true} />
+                    <MonochromeLogo />
                 </a>
             ) : !window.location.href.includes('settings') ? (
                 <Link to={settingsUrl}>

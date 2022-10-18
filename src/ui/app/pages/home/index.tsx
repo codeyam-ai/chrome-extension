@@ -48,7 +48,7 @@ const HomePage = () => {
     return (
         <PageLayout limitToPopUpSize={true}>
             <Loading loading={guardChecking}>
-                <BaseLayout className="!pt-0">
+                <BaseLayout>
                     <NavBarWithMenu />
                     <NavExpanded />
                     <main className="flex-grow">

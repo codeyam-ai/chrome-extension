@@ -1,6 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import cl from 'classnames';
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
@@ -18,11 +19,11 @@ function MenuButton({ className }: MenuButtonProps) {
     const menuUrl = useNextMenuUrl(!isOpen, '/');
     return (
         <Link to={menuUrl}>
-            <div className={cl(st.button, { [st.open]: isOpen }, className)}>
-                <span className={cl(st.line, st.line1)} />
-                <span className={cl(st.line, st.line2)} />
-                <span className={cl(st.line, st.line3)} />
-            </div>
+            {!isOpen ? (
+                <Bars3Icon className="h-6 w-6 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+            ) : (
+                <XMarkIcon className="h-6 w-6 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+            )}
         </Link>
     );
 }
