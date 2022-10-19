@@ -32,7 +32,9 @@ const LinkList = ({ linkItems }: LinkListProps) => {
                             {item.iconWithNoClasses}
                         </span>
                         <Body>{item.title}</Body>
-                        <ChevronRightIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                        <div className="flex-1 justify-end">
+                            <ChevronRightIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                        </div>
                     </div>
                 );
                 if (item.isExternal) {

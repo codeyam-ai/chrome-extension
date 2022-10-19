@@ -50,7 +50,7 @@ function NavExpanded() {
             <div
                 // The height class is added to adjust for the height of the nav bar and top padding of the main container.
                 // Without it, the backdrop will bleed over the bottom edge in the expanded veiw.
-                className="absolute w-full rounded-lg bg-black opacity-20 h-[419px]"
+                className="absolute w-full sm:rounded-lg bg-black opacity-20 h-[419px]"
                 onClick={handleOnCloseMenu}
             />
             <div
