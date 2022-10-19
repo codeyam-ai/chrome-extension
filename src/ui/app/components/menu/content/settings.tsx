@@ -55,7 +55,7 @@ export default function Settings() {
             title: 'Network',
             subtitle: networkName,
             to: networkUrl,
-            linkType: LinkType.External,
+            linkType: LinkType.Internal,
         },
         {
             iconWithNoClasses: <CodeBracketIcon />,

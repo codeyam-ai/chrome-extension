@@ -1,9 +1,7 @@
-interface WalletEditorProps {
-    
-}
- 
+interface WalletEditorProps {}
+
 const WalletEditor = () => {
-    return (  );
-}
- 
+    return <div></div>;
+};
+
 export default WalletEditor;

@@ -43,7 +43,9 @@ const LinkList = ({ linkItems }: LinkListProps) => {
                             </Body>
                         )}
                         <div className="flex-1">
-                            <ChevronRightIcon className="float-right h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                            {(item.to || item.onClick) && (
+                                <ChevronRightIcon className="float-right h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                            )}
                         </div>
                     </div>
                 );
