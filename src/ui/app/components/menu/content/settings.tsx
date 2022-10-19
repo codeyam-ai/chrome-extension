@@ -16,6 +16,17 @@ import { getEmail, reset } from '_src/ui/app/redux/slices/account';
 
 import st from './menu-list/MenuList.module.scss';
 import Layout from './layout';
+import LinkList, {
+    LinkItem,
+} from '_src/ui/app/shared/navigation/nav-bar/LinkList';
+import {
+    ArrowLeftOnRectangleIcon,
+    CodeBracketIcon,
+    CubeIcon,
+    DocumentTextIcon,
+    EyeIcon,
+} from '@heroicons/react/24/outline';
+import { LinkType } from '_src/enums/LinkType';
 
 const eyeIcon = (
     <svg
@@ -61,6 +72,44 @@ export default function Settings() {
         );
     }, [dispatch]);
 
+    const menuItems: LinkItem[] = [
+        {
+            iconWithNoClasses: <DocumentTextIcon />,
+            title: 'Terms of Service',
+            to: ToS_LINK,
+            linkType: LinkType.External,
+        },
+        {
+            iconWithNoClasses: <CubeIcon />,
+            title: 'Network',
+            subtitle: networkName,
+            to: networkUrl,
+            linkType: LinkType.External,
+        },
+        {
+            iconWithNoClasses: <CodeBracketIcon />,
+            title: 'Wallet version',
+            subtitle: 'v' + version,
+            linkType: LinkType.None,
+        },
+        {
+            iconWithNoClasses: <ArrowLeftOnRectangleIcon />,
+            title: 'Reset',
+            linkType: LinkType.None,
+            onClick: handleReset,
+        },
+    ];
+
+    // Email users cannot view their seed
+    if (!isHostedWallet) {
+        menuItems.unshift({
+            iconWithNoClasses: <EyeIcon />,
+            title: 'View recovery phrase',
+            to: viewSeedUrl,
+            linkType: LinkType.Internal,
+        });
+    }
+
     useEffect(() => {
         const listenForLogOut = async () => {
             await iframe.listenForLogout();
@@ -87,66 +136,73 @@ export default function Settings() {
     }, [dispatch]);
 
     return (
-        <Layout backUrl={menuUrl || '/'} title="">
-            <div
-                className={
-                    st.container +
-                    ' divide-y divide-gray-700/50 dark:divide-gray-400/50'
-                }
-            >
-                {!isHostedWallet && (
-                    <Link className={st.item} to={viewSeedUrl}>
+        <>
+            {logoutInProgress ? (
+                <LoadingIndicator />
+            ) : (
+                <LinkList linkItems={menuItems} />
+            )}
+            {/* <Layout backUrl={menuUrl || '/'} title="">
+                <div
+                    className={
+                        st.container +
+                        ' divide-y divide-gray-700/50 dark:divide-gray-400/50'
+                    }
+                >
+                    {!isHostedWallet && (
+                        <Link className={st.item} to={viewSeedUrl}>
+                            <Item
+                                svg={eyeIcon}
+                                title="View recovery phrase"
+                                indicator={SuiIcons.SuiChevronRight}
+                            />
+                        </Link>
+                    )}
+                    <ExternalLink
+                        className={st.item}
+                        href={ToS_LINK}
+                        showIcon={false}
+                    >
                         <Item
-                            svg={eyeIcon}
-                            title="View recovery phrase"
+                            icon="file-earmark-text"
+                            title="Terms of Service"
+                            indicator="link-45deg"
+                        />
+                    </ExternalLink>
+                    <Link to={networkUrl} className={st.item}>
+                        <Item
+                            icon={SuiIcons.Globe}
+                            title="Network"
+                            subtitle={networkName}
                             indicator={SuiIcons.SuiChevronRight}
                         />
                     </Link>
-                )}
-                <ExternalLink
-                    className={st.item}
-                    href={ToS_LINK}
-                    showIcon={false}
-                >
-                    <Item
-                        icon="file-earmark-text"
-                        title="Terms of Service"
-                        indicator="link-45deg"
-                    />
-                </ExternalLink>
-                <Link to={networkUrl} className={st.item}>
-                    <Item
-                        icon={SuiIcons.Globe}
-                        title="Network"
-                        subtitle={networkName}
-                        indicator={SuiIcons.SuiChevronRight}
-                    />
-                </Link>
-                <div className={st.item}>
-                    <Item
-                        // TODO: import and use the icon from Figma
-                        icon={SuiIcons.VersionIcon}
-                        title="Wallet version"
-                        subtitle={'v' + version}
-                    />
+                    <div className={st.item}>
+                        <Item
+                            // TODO: import and use the icon from Figma
+                            icon={SuiIcons.VersionIcon}
+                            title="Wallet version"
+                            subtitle={'v' + version}
+                        />
+                    </div>
+                    <span onClick={handleReset} className={st.item}>
+                        {logoutInProgress ? (
+                            <LoadingIndicator />
+                        ) : (
+                            <Item icon={SuiIcons.Logout} title="Reset" />
+                        )}
+                    </span>
                 </div>
-                <span onClick={handleReset} className={st.item}>
-                    {logoutInProgress ? (
-                        <LoadingIndicator />
-                    ) : (
-                        <Item icon={SuiIcons.Logout} title="Reset" />
-                    )}
-                </span>
-                <iframe
-                    id="wallet-iframe"
-                    src={IFRAME_URL}
-                    height="1px"
-                    width="1px"
-                    title="wallet"
-                    // Hide the iframe pixel, as it is visible in dark mode
-                    className="-top-[1000px] absolute"
-                />
-            </div>
-        </Layout>
+            </Layout> */}
+            <iframe
+                id="wallet-iframe"
+                src={IFRAME_URL}
+                height="1px"
+                width="1px"
+                title="wallet"
+                // Hide the iframe pixel, as it is visible in dark mode
+                className="-top-[1000px] absolute"
+            />
+        </>
     );
 }

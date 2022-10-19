@@ -19,8 +19,10 @@ import EthosLink from '../../shared/typography/EthosLink';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
 import Authentication from '_src/background/Authentication';
-import { LinkType, TextColor } from '_src/enums/TypographyEnums';
+import { TextColor } from '_src/enums/Typography';
 import { IFRAME_URL } from '_src/shared/constants';
+import ContentBlock from '../../shared/typography/ContentBlock';
+import { LinkType } from '_src/enums/LinkType';
 
 export const AUTHENTICATION_REQUESTED = 'AUTHENTICATION_REQUESTED';
 
@@ -79,10 +81,12 @@ const HostedPage = () => {
         <Loading loading={checkingInitialized}>
             <div className="text-center space-y-2 py-4 text-base leading-7">
                 {emailSent ? (
-                    <Body as="p" textColor={TextColor.Medium}>
-                        An email has been sent to {email} with a link that will
-                        automatically log you in.
-                    </Body>
+                    <ContentBlock>
+                        <Body as="p" textColor={TextColor.Medium}>
+                            An email has been sent to {email} with a link that
+                            will automatically log you in.
+                        </Body>
+                    </ContentBlock>
                 ) : error ? (
                     <div>
                         <Body

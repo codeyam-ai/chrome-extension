@@ -1,7 +1,6 @@
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-
-import { LinkType } from '_src/enums/TypographyEnums';
+import { LinkType } from '_src/enums/LinkType';
 
 /*
     The EthosLink component should be used within an existing Typography component

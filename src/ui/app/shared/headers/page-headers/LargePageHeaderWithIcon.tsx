@@ -1,6 +1,6 @@
 import Subheader from '../../typography/Subheader';
 import Title from '../../typography/Title';
-import { TextColor } from '_src/enums/TypographyEnums';
+import { TextColor } from '_src/enums/Typography';
 
 type LargePageHeaderWIthIconProps = {
     iconSrc: string;

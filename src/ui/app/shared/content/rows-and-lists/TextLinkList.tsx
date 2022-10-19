@@ -1,6 +1,6 @@
 import Body from '../../typography/Body';
 import EthosLink, { type EthosLinkProps } from '../../typography/EthosLink';
-import { TextColor } from '_src/enums/TypographyEnums';
+import { TextColor } from '_src/enums/Typography';
 
 interface textAndLink {
     description: string;

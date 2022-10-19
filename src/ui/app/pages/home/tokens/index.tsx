@@ -11,7 +11,7 @@ import Loading from '_components/loading';
 import { useAppSelector, useObjectsState } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
-import { TextColor, LinkType } from '_src/enums/TypographyEnums';
+import { TextColor } from '_src/enums/Typography';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import { useNextMenuUrl } from '_src/ui/app/components/menu/hooks';
 import Divider from '_src/ui/app/shared/Divider';
@@ -30,6 +30,7 @@ import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
 import AmountRow from '_src/ui/app/shared/content/rows-and-lists/AmountRow';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
+import { LinkType } from '_src/enums/LinkType';
 
 function TokensPage() {
     const [editWallet, setEditWallet] = useState<boolean>(false);

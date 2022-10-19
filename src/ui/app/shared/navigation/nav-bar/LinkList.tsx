@@ -1,5 +1,7 @@
 import { ChevronRightIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
+import { LinkType } from '_src/enums/LinkType';
+import { TextColor } from '_src/enums/Typography';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import { useExplorerPermission } from '_src/ui/app/hooks';
 import Body from '../../typography/Body';
@@ -7,8 +9,10 @@ import Body from '../../typography/Body';
 export type LinkItem = {
     iconWithNoClasses: React.ReactNode;
     title: string;
-    to: string;
-    isExternal: boolean;
+    subtitle?: string;
+    to?: string;
+    onClick?: () => void;
+    linkType: LinkType;
     isExpandView?: boolean;
 };
 
@@ -32,12 +36,17 @@ const LinkList = ({ linkItems }: LinkListProps) => {
                             {item.iconWithNoClasses}
                         </span>
                         <Body>{item.title}</Body>
-                        <div className="flex-1 justify-end">
-                            <ChevronRightIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                        {item.subtitle && (
+                            <Body textColor={TextColor.Medium}>
+                                {item.subtitle}
+                            </Body>
+                        )}
+                        <div className="flex-1">
+                            <ChevronRightIcon className="float-right h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
                         </div>
                     </div>
                 );
-                if (item.isExternal) {
+                if (item.linkType === LinkType.External && item.to) {
                     return (
                         <div>
                             <a
@@ -51,7 +60,7 @@ const LinkList = ({ linkItems }: LinkListProps) => {
                             </a>
                         </div>
                     );
-                } else {
+                } else if (item.linkType === LinkType.Internal && item.to) {
                     return (
                         <div className={item.isExpandView ? 'sm:hidden' : ''}>
                             <Link
@@ -62,6 +71,14 @@ const LinkList = ({ linkItems }: LinkListProps) => {
                             </Link>
                         </div>
                     );
+                } else if (item.linkType === LinkType.None && item.onClick) {
+                    return (
+                        <div onClick={item.onClick} className="cursor-pointer">
+                            {content}
+                        </div>
+                    );
+                } else {
+                    return content;
                 }
             })}
         </div>

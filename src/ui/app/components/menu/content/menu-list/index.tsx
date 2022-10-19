@@ -14,6 +14,7 @@ import {
     ArrowsPointingOutIcon,
     ArrowTopRightOnSquareIcon,
 } from '@heroicons/react/24/outline';
+import { LinkType } from '_src/enums/LinkType';
 
 function MenuList() {
     const switchWalletUrl = useNextMenuUrl(true, '/switch-wallet');
@@ -25,40 +26,36 @@ function MenuList() {
             iconWithNoClasses: <ArrowTopRightOnSquareIcon />,
             title: 'View Wallet Dashboard',
             to: DASHBOARD_LINK,
-            isExternal: true,
+            linkType: LinkType.External,
         },
         {
             iconWithNoClasses: <ArrowsPointingOutIcon />,
             title: 'Expand view',
             to: '/tokens',
-            isExternal: false,
+            linkType: LinkType.Internal,
             isExpandView: true,
         },
         {
             iconWithNoClasses: <ArrowsRightLeftIcon />,
             title: 'Switch/add wallet',
             to: switchWalletUrl,
-            isExternal: false,
+            linkType: LinkType.Internal,
         },
         {
             iconWithNoClasses: <LinkIcon />,
             title: 'Connected apps',
             to: connectedAppsUrl,
-            isExternal: false,
+            linkType: LinkType.Internal,
         },
         {
             iconWithNoClasses: <ShieldCheckIcon />,
             title: 'Pre-approvals',
             to: preapprovalsUrl,
-            isExternal: false,
+            linkType: LinkType.Internal,
         },
     ];
 
-    return (
-        <div>
-            <LinkList linkItems={menuItems} />
-        </div>
-    );
+    return <LinkList linkItems={menuItems} />;
 }
 
 export default MenuList;

@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 
 import Body from '../../typography/Body';
-import { TextColor } from '_src/enums/TypographyEnums';
+import { TextColor } from '_src/enums/Typography';
 
 type LabelAndDescription = {
     label: string;

@@ -8,7 +8,7 @@ import TextLinkList from '../shared/content/rows-and-lists/TextLinkList';
 import Loading from '_components/loading';
 import { useInitializedGuard } from '_hooks';
 import PageLayout from '_pages/layout';
-import { LinkType } from '_src/enums/TypographyEnums';
+import { LinkType } from '_src/enums/LinkType';
 
 const WelcomePage = () => {
     const checkingInitialized = useInitializedGuard(AppState.UNINITIALIZED);

@@ -7,7 +7,7 @@ import CopyToClipboard from '_components/copy-to-clipboard';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { useAppSelector, useMiddleEllipsis } from '_hooks';
-import { TextColor } from '_src/enums/TypographyEnums';
+import { TextColor } from '_src/enums/Typography';
 
 import type { AccountInfo } from '../../KeypairVault';
 import Body from '../../shared/typography/Body';
