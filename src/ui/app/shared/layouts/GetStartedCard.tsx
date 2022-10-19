@@ -2,7 +2,7 @@ import { type ReactNode } from 'react';
 
 import logo from '../../components/logo/ethos-logo.png';
 import LargePageHeaderWIthIcon from '../headers/page-headers/LargePageHeaderWithIcon';
-import NavBarWithBackAndTitleAndThemeToggle from '../navigation/nav-bar/NavBarWithBackAndTitle';
+import NavBarWithBackAndTitle from '../navigation/nav-bar/NavBarWithBackAndTitle';
 import BaseLayout from './BaseLayout';
 
 type GetStartedCardProps = {
@@ -15,9 +15,10 @@ const GetStartedCard = ({ showBack, children }: GetStartedCardProps) => {
         <>
             <BaseLayout>
                 {showBack && (
-                    <NavBarWithBackAndTitleAndThemeToggle
+                    <NavBarWithBackAndTitle
                         backLink="/"
                         title="Back"
+                        showThemeToggle={true}
                     />
                 )}
                 <LargePageHeaderWIthIcon

@@ -12,6 +12,9 @@ import { activeAccountSelector } from '_redux/slices/account';
 
 import type { ObjectId, SuiAddress, TransactionDigest } from '@mysten/sui.js';
 import type { ReactNode } from 'react';
+import Body from '../../shared/typography/Body';
+import EthosLink from '../../shared/typography/EthosLink';
+import { LinkType } from '_src/enums/LinkType';
 
 export type ExplorerLinkProps = (
     | {
@@ -68,16 +71,11 @@ function ExplorerLink(props: ExplorerLinkProps) {
         return null;
     }
     return (
-        <ExternalLink
-            href={explorerHref}
-            className={className}
-            title={title}
-            showIcon={false}
-        >
-            <>
-                {children} {showIcon && <Icon icon="box-arrow-up-right" />}
-            </>
-        </ExternalLink>
+        <Body>
+            <EthosLink type={LinkType.External} to={explorerHref}>
+                {children}
+            </EthosLink>
+        </Body>
     );
 }
 

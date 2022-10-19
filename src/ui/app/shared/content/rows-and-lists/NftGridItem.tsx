@@ -4,11 +4,11 @@ import { useNFTBasicData } from '_src/ui/app/hooks';
 
 import type { SuiObject } from '@mysten/sui.js';
 
-interface NftItemProps {
+interface NftGridItemProps {
     nft: SuiObject;
 }
 
-const NftItem = ({ nft }: NftItemProps) => {
+const NftGridItem = ({ nft }: NftGridItemProps) => {
     const { filePath, fileExtentionType } = useNFTBasicData(nft);
     const drilldownLink = `/nft-details?${new URLSearchParams({
         objectId: nft.reference.objectId,
@@ -27,4 +27,4 @@ const NftItem = ({ nft }: NftItemProps) => {
     );
 };
 
-export default NftItem;
+export default NftGridItem;

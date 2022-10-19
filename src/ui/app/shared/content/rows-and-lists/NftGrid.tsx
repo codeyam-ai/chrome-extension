@@ -1,6 +1,6 @@
 import { hasPublicTransfer } from '@mysten/sui.js';
 
-import NftItem from './NftItem';
+import NftGridItem from './NftGridItem';
 
 import type { SuiObject } from '@mysten/sui.js';
 
@@ -15,7 +15,7 @@ const NftGrid = ({ nfts }: NftGridProps) => {
                 .filter((nft) => hasPublicTransfer(nft))
                 .map((nft, key) => (
                     <div key={key}>
-                        <NftItem nft={nft} />
+                        <NftGridItem nft={nft} />
                     </div>
                 ))}
         </div>

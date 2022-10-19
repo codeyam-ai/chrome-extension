@@ -24,6 +24,12 @@ import type { SuiObject } from '@mysten/sui.js';
 import type { ButtonHTMLAttributes } from 'react';
 
 import st from './NFTDetails.module.scss';
+import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
+import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
+import Body from '_src/ui/app/shared/typography/Body';
+import EthosLink from '_src/ui/app/shared/typography/EthosLink';
+import { TextColor } from '_src/enums/Typography';
+import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 
 const TRUNCATE_MAX_LENGTH = 10;
 const TRUNCATE_PREFIX_LENGTH = 6;
@@ -34,9 +40,10 @@ function NFTdetailsContent({
     nft: SuiObject;
     onClick?: ButtonHTMLAttributes<HTMLButtonElement>['onClick'];
 }) {
-    const { nftObjectID, nftFields, fileExtentionType } = useNFTBasicData(nft);
+    const { filePath, nftObjectID, nftFields, fileExtentionType } =
+        useNFTBasicData(nft);
 
-    const shortAddress = useMiddleEllipsis(
+    const shortenedObjectId = useMiddleEllipsis(
         nftObjectID,
         TRUNCATE_MAX_LENGTH,
         TRUNCATE_PREFIX_LENGTH
@@ -54,7 +61,7 @@ function NFTdetailsContent({
                         className={st.explorerLink}
                         showIcon={false}
                     >
-                        {shortAddress}
+                        {shortenedObjectId}
                     </ExplorerLink>
                 </div>
             </div>
@@ -71,51 +78,71 @@ function NFTdetailsContent({
     );
 
     return (
-        <div className={st.container}>
-            <PageTitle
-                title={nftFields?.name}
-                backLink="/nfts"
-                className={st.pageTitle}
-                hideBackLabel={true}
-            />
-            <BottomMenuLayout>
-                <Content>
-                    <section className={st.nftDetail}>
-                        <NFTDisplayCard
-                            nftobj={nft}
-                            size="large"
-                            expandable={true}
-                        />
-                        {NFTDetails}
-                    </section>
-                </Content>
-                <Menu stuckClass={st.shadow} className={st.shadow}>
-                    {/* <button
-                        onClick={onClick}
-                        className={cl(
-                            'btn',
-                            st.action,
-                            st.sendNftBtn,
-                            'primary'
-                        )}
-                    >
-                        <Icon
-                            icon={SuiIcons.ArrowLeft}
-                            className={cl(st.arrowActionIcon, st.angledArrow)}
-                        />
-                        Send NFT
-                    </button> */}
-                    <Button
-                        buttonStyle={ButtonStyle.PRIMARY}
-                        onClick={onClick}
-                        className="mt-2"
-                    >
-                        <Icon className="mr-2 text-xs" icon={SuiIcons.Send} />
-                        Send
-                    </Button>
-                </Menu>
-            </BottomMenuLayout>
-        </div>
+        <>
+            <div className={st.container}>
+                <NavBarWithBackAndTitle
+                    // title={nftFields?.name}
+                    backLink="/nfts"
+                />
+                <div className="text-center w-full">
+                    <Body className="pb-2">{nftFields?.name}</Body>
+                    <img
+                        className="mx-auto h-36 w-36 mb-4 shadow-sm rounded-2xl"
+                        src={filePath || ''}
+                        alt={fileExtentionType?.name || 'NFT'}
+                    />
+                    <div className="mb-4">
+                        <ExplorerLink
+                            type={ExplorerLinkType.object}
+                            objectID={nftObjectID}
+                        >
+                            View On Sui Explorer →
+                        </ExplorerLink>
+                    </div>
+                    <KeyValueList
+                        keyNamesAndValues={[
+                            {
+                                keyName: 'Object ID',
+                                value: shortenedObjectId,
+                            },
+                        ]}
+                    />
+                </div>
+                {/* This margin top is a temporary fix - we need to figure out if the page should scroll */}
+                <Button
+                    buttonStyle={ButtonStyle.PRIMARY}
+                    className="-mt-[15px]"
+                    onClick={onClick}
+                >
+                    Send
+                </Button>
+                {/* <BottomMenuLayout>
+                    <Content>
+                        <section className={st.nftDetail}>
+                            <NFTDisplayCard
+                                nftobj={nft}
+                                size="large"
+                                expandable={true}
+                            />
+                            {NFTDetails}
+                        </section>
+                    </Content>
+                    <Menu stuckClass={st.shadow} className={st.shadow}>
+                        <Button
+                            buttonStyle={ButtonStyle.PRIMARY}
+                            onClick={onClick}
+                            className="mt-2"
+                        >
+                            <Icon
+                                className="mr-2 text-xs"
+                                icon={SuiIcons.Send}
+                            />
+                            Send
+                        </Button>
+                    </Menu>
+                </BottomMenuLayout> */}
+            </div>
+        </>
     );
 }
 
@@ -151,16 +178,18 @@ function NFTDetailsPage() {
     }
 
     return (
-        <Loading loading={loadingBalance}>
-            {objectId && startNFTTransfer ? (
-                <TransferNFTCard objectId={objectId} />
-            ) : (
-                <NFTdetailsContent
-                    nft={activeNFT}
-                    onClick={startNFTTransferHandler}
-                />
-            )}
-        </Loading>
+        <div className="">
+            <Loading loading={loadingBalance}>
+                {objectId && startNFTTransfer ? (
+                    <TransferNFTCard objectId={objectId} />
+                ) : (
+                    <NFTdetailsContent
+                        nft={activeNFT}
+                        onClick={startNFTTransferHandler}
+                    />
+                )}
+            </Loading>
+        </div>
     );
 }
 
