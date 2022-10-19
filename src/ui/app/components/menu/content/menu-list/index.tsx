@@ -3,11 +3,11 @@
 
 import {
     ArrowsRightLeftIcon,
-    LinkIcon,
-    ShieldCheckIcon,
     ArrowsPointingOutIcon,
     ArrowTopRightOnSquareIcon,
     LockClosedIcon,
+    SquaresPlusIcon,
+    CheckBadgeIcon,
 } from '@heroicons/react/24/outline';
 import { useCallback } from 'react';
 
@@ -51,13 +51,13 @@ function MenuList() {
             linkType: LinkType.Internal,
         },
         {
-            iconWithNoClasses: <LinkIcon />,
+            iconWithNoClasses: <SquaresPlusIcon />,
             title: 'Connected apps',
             to: connectedAppsUrl,
             linkType: LinkType.Internal,
         },
         {
-            iconWithNoClasses: <ShieldCheckIcon />,
+            iconWithNoClasses: <CheckBadgeIcon />,
             title: 'Pre-approvals',
             to: preapprovalsUrl,
             linkType: LinkType.Internal,
@@ -70,7 +70,11 @@ function MenuList() {
         },
     ];
 
-    return <LinkList linkItems={menuItems} />;
+    return (
+        <div className="px-6 pb-6">
+            <LinkList linkItems={menuItems} />
+        </div>
+    );
 }
 
 export default MenuList;

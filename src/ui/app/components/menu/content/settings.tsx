@@ -111,7 +111,9 @@ export default function Settings() {
             {logoutInProgress ? (
                 <LoadingIndicator />
             ) : (
-                <LinkList linkItems={menuItems} />
+                <div className="px-6 pb-6">
+                    <LinkList linkItems={menuItems} />
+                </div>
             )}
             {/* <Layout backUrl={menuUrl || '/'} title="">
                 <div

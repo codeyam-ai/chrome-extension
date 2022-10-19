@@ -56,7 +56,8 @@ function NavExpanded() {
                 className={
                     (expanded ? 'h-full' : '') +
                     ' ' +
-                    'relative px-6 pb-6 max-h-full overflow-y-auto drop-shadow-ethos-box-shadow rounded-b-lg bg-ethos-light-background-default dark:bg-ethos-dark-background-default'
+                    'relative max-h-full overflow-y-auto drop-shadow-ethos-box-shadow rounded-b-lg bg-ethos-light-background-default dark:bg-ethos-dark-background-default'
+                    // 'relative px-6 pb-6 max-h-full overflow-y-auto drop-shadow-ethos-box-shadow rounded-b-lg bg-ethos-light-background-default dark:bg-ethos-dark-background-default'
                 }
             >
                 <Routes location={menuUrl || ''}>

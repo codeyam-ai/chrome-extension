@@ -14,9 +14,7 @@ const NftGrid = ({ nfts }: NftGridProps) => {
             {nfts
                 .filter((nft) => hasPublicTransfer(nft))
                 .map((nft, key) => (
-                    <div key={key}>
-                        <NftGridItem nft={nft} />
-                    </div>
+                    <NftGridItem nft={nft} key={key} />
                 ))}
         </div>
     );
