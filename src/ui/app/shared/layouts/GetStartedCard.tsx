@@ -1,10 +1,9 @@
 import { type ReactNode } from 'react';
 
-import DarkModeToggle from '../../components/darkModeToggle';
 import logo from '../../components/logo/ethos-logo.png';
 import BaseLayout from './BaseLayout';
 import LargePageHeaderWIthIcon from '../headers/page-headers/LargePageHeaderWithIcon';
-import NavBarWithBackAndTitle from '../navigation/nav-bar/NavBarWithBackAndTitle';
+import NavBarWithBackAndTitleAndThemeToggle from '../navigation/nav-bar/NavBarWithBackAndTitle';
 
 type GetStartedCardProps = {
     showBack?: boolean;
@@ -14,14 +13,12 @@ type GetStartedCardProps = {
 const GetStartedCard = ({ showBack, children }: GetStartedCardProps) => {
     return (
         <>
-            <div className="w-full mb-2">
-                <span className="float-right">
-                    <DarkModeToggle />
-                </span>
-            </div>
             <BaseLayout>
                 {showBack && (
-                    <NavBarWithBackAndTitle backLink="/" title="Back" />
+                    <NavBarWithBackAndTitleAndThemeToggle
+                        backLink="/"
+                        title="Back"
+                    />
                 )}
                 <LargePageHeaderWIthIcon
                     iconSrc={logo}

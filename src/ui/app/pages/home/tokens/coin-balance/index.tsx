@@ -11,7 +11,7 @@ import { balanceFormatOptions } from '_shared/formatting';
 import Icon from '_src/ui/app/components/icon';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import { useAppSelector } from '_src/ui/app/hooks';
-import Button, { ButtonStyle } from '_src/ui/app/shared/Button';
+import Button, { ButtonStyle } from '_src/ui/app/shared/buttons/Button';
 
 export type CoinProps = {
     type: string;

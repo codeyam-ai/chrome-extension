@@ -82,6 +82,7 @@ const HostedPage = () => {
             <div className="text-center space-y-2 py-4 text-base leading-7">
                 {emailSent ? (
                     <ContentBlock>
+                        <Body isSemibold={true}>Email sent</Body>
                         <Body as="p" textColor={TextColor.Medium}>
                             An email has been sent to {email} with a link that
                             will automatically log you in.

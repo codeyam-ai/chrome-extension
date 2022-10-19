@@ -1,7 +1,7 @@
 import { Cog6ToothIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
 import { DASHBOARD_LINK } from '_src/shared/constants';
-import DarkModeToggle from '_src/ui/app/components/darkModeToggle';
+import DarkModeToggle from '_src/ui/app/components/DarkModeToggle';
 import Logo from '_src/ui/app/components/logo';
 import { MenuButton } from '_src/ui/app/components/menu';
 import {
