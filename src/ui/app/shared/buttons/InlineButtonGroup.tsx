@@ -8,10 +8,12 @@ type InlineButtonGroupProps = {
     buttonPrimaryTo?: string;
     buttonPrimarytype?: 'button' | 'submit' | 'reset' | undefined;
     buttonPrimaryChildren?: React.ReactNode;
+    isButtonPrimaryDisabled?: boolean;
     onClickButtonSecondary?: MouseEventHandler<HTMLButtonElement>;
     buttonSecondaryTo?: string;
     buttonSecondaryType?: 'button' | 'submit' | 'reset' | undefined;
     buttonSecondaryChildren?: React.ReactNode;
+    isButtonSecondaryDisabled?: boolean;
 };
 
 const InlineButtonGroup = ({
@@ -20,10 +22,12 @@ const InlineButtonGroup = ({
     buttonPrimaryTo,
     buttonPrimarytype,
     buttonPrimaryChildren,
+    isButtonPrimaryDisabled,
     onClickButtonSecondary,
     buttonSecondaryTo,
     buttonSecondaryType,
     buttonSecondaryChildren,
+    isButtonSecondaryDisabled,
 }: InlineButtonGroupProps) => {
     return (
         <div className={`${className || ''} grid grid-cols-2 gap-2 px-6`}>
@@ -33,6 +37,7 @@ const InlineButtonGroup = ({
                 to={buttonSecondaryTo}
                 type={buttonSecondaryType}
                 isInline={true}
+                disabled={isButtonSecondaryDisabled}
             >
                 {buttonSecondaryChildren}
             </Button>
@@ -42,6 +47,7 @@ const InlineButtonGroup = ({
                 to={buttonPrimaryTo}
                 type={buttonPrimarytype}
                 isInline={true}
+                disabled={isButtonPrimaryDisabled}
             >
                 {buttonPrimaryChildren}
             </Button>

@@ -31,34 +31,16 @@ import AmountRow from '_src/ui/app/shared/content/rows-and-lists/AmountRow';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 import { LinkType } from '_src/enums/LinkType';
+import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
+import SendReceiveButtonGroup from '_src/ui/app/shared/buttons/SendReceiveButtonGroup';
 
 function TokensPage() {
-    const [editWallet, setEditWallet] = useState<boolean>(false);
-
-    const accountInfo = useAppSelector(
-        ({ account: { accountInfos, activeAccountIndex } }) =>
-            accountInfos.find(
-                (accountInfo: AccountInfo) =>
-                    (accountInfo.index || 0) === activeAccountIndex
-            )
-    );
-
     const { loading, error, showError } = useObjectsState();
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const mistBalance = balances[GAS_TYPE_ARG] || BigInt(0);
-    const isBalanceZero = useMemo(
-        () => mistBalance.toString() === '0',
-        [mistBalance]
-    );
-
     const otherCoinTypes = useMemo(
         () => Object.keys(balances).filter((aType) => aType !== GAS_TYPE_ARG),
         [balances]
-    );
-
-    const sendUrl = useMemo(
-        () => `/send?${new URLSearchParams({ type: GAS_TYPE_ARG }).toString()}`,
-        [GAS_TYPE_ARG]
     );
 
     return (
@@ -75,27 +57,7 @@ function TokensPage() {
                     balance={Number(mistBalance) / MIST_PER_SUI}
                     type={GAS_TYPE_ARG}
                 />
-                <InlineButtonGroup
-                    buttonPrimaryTo={isBalanceZero ? '/buy' : sendUrl}
-                    buttonPrimaryChildren={
-                        <>
-                            {isBalanceZero ? (
-                                <CreditCardIcon className="h-4 w-4" />
-                            ) : (
-                                <PaperAirplaneIcon className="h-4 w-4" />
-                            )}
-
-                            {isBalanceZero ? 'Buy' : 'Send'}
-                        </>
-                    }
-                    buttonSecondaryTo="/receive"
-                    buttonSecondaryChildren={
-                        <>
-                            <ArrowDownTrayIcon className="h-4 w-4" />
-                            Receive
-                        </>
-                    }
-                />
+                <SendReceiveButtonGroup mistBalance={mistBalance} />
 
                 {otherCoinTypes.length ? (
                     otherCoinTypes.map((aCoinType) => {

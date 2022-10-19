@@ -86,7 +86,7 @@ const LinkList = ({ linkItems }: LinkListProps) => {
                         </div>
                     );
                 } else {
-                    return content;
+                    return <div key={key}>{content}</div>;
                 }
             })}
         </div>

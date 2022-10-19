@@ -15,9 +15,9 @@ import st from './Transactions.module.scss';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { LinkType } from '_src/enums/LinkType';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
-import EmptyPageState from '_src/ui/app/shared/content/EmptyPageState';
+import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
-import PageScrollView from '_src/ui/app/shared/content/PageScrollView';
+import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
 
 function TransactionsPage() {
     const dispatch = useAppDispatch();
