@@ -7,7 +7,6 @@ import { of, filter, switchMap, from, defer, repeat } from 'rxjs';
 
 import { AppState } from '../../hooks/useInitializedGuard';
 import Loading from '_components/loading';
-import { MenuContent } from '_components/menu';
 import {
     useInitializedGuard,
     useAppDispatch,
