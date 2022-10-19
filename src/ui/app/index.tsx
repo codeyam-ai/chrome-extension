@@ -14,8 +14,6 @@ import { useAppDispatch, useAppSelector } from '_hooks';
 import { DappTxApprovalPage } from '_pages/dapp-tx-approval';
 import HomePage, {
     NftsPage,
-    StakeNew,
-    StakePage,
     TokensPage,
     TransactionDetailsPage,
     TransactionsPage,
@@ -34,7 +32,7 @@ import ImportPage from '_src/ui/app/pages/initialize/import';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
 
-const HIDDEN_MENU_PATHS = ['/stake-new', '/nft-details', '/receipt'];
+const HIDDEN_MENU_PATHS = ['/nft-details', '/receipt'];
 
 const App = () => {
     const dispatch = useAppDispatch();
@@ -69,10 +67,6 @@ const App = () => {
                     <Route path="send" element={<TransferCoinPage />} />
                     <Route path="receive" element={<ReceivePage />} />
                     <Route path="buy" element={<BuyPage />} />
-                    <Route path="stake" element={<StakePage />} />
-                    {process.env.NODE_ENV === 'development' ? (
-                        <Route path="stake-new" element={<StakeNew />} />
-                    ) : null}
                     <Route
                         path="tx/:txDigest"
                         element={<TransactionDetailsPage />}

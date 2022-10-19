@@ -151,6 +151,7 @@ export default function SwitchWallet() {
 
             setAccountInfos(draftAccountInfos.current);
             await dispatch(saveAccountInfos(newAccountInfos));
+            await dispatch(saveActiveAccountIndex(newAccountInfos.length - 1));
 
             setLoading(false);
             setEdit(true);

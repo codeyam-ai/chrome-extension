@@ -3,6 +3,7 @@
 
 import { useNextMenuUrl } from '_components/menu/hooks';
 import { DASHBOARD_LINK } from '_src/shared/constants';
+import { logout } from '_src/ui/app/redux/slices/account';
 
 import LinkList, {
     type LinkItem,
@@ -13,13 +14,21 @@ import {
     ShieldCheckIcon,
     ArrowsPointingOutIcon,
     ArrowTopRightOnSquareIcon,
+    LockClosedIcon,
 } from '@heroicons/react/24/outline';
 import { LinkType } from '_src/enums/LinkType';
+import { useCallback } from 'react';
+import { useAppDispatch } from '_src/ui/app/hooks';
 
 function MenuList() {
+    const dispatch = useAppDispatch();
     const switchWalletUrl = useNextMenuUrl(true, '/switch-wallet');
     const connectedAppsUrl = useNextMenuUrl(true, '/connected-apps');
     const preapprovalsUrl = useNextMenuUrl(true, '/preapprovals');
+
+    const handleLogout = useCallback(async () => {
+        await dispatch(logout());
+    }, [dispatch]);
 
     const menuItems: LinkItem[] = [
         {
@@ -52,6 +61,12 @@ function MenuList() {
             title: 'Pre-approvals',
             to: preapprovalsUrl,
             linkType: LinkType.Internal,
+        },
+        {
+            iconWithNoClasses: <LockClosedIcon />,
+            title: 'Lock',
+            linkType: LinkType.None,
+            onClick: handleLogout,
         },
     ];
 

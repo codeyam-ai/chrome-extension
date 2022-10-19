@@ -11,6 +11,7 @@ import { Window } from './Window';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 
 import type { MoveCallTransaction } from '@mysten/sui.js';
+import type { TransactionDataType } from '_messages/payloads/transactions/ExecuteTransactionRequest';
 import type {
     PreapprovalRequest,
     PreapprovalResponse,
@@ -89,7 +90,7 @@ class Transactions {
             const { preapproval } = preapprovalRequest;
             preapproval.maxTransactionCount -= 1;
             const { computationCost, storageCost, storageRebate } =
-                txDirectResult.effects.gasUsed;
+                txDirectResult.EffectsCert.effects.effects.gasUsed;
             const gasUsed = computationCost + (storageCost - storageRebate);
             preapproval.totalGasLimit -= gasUsed;
 
@@ -112,29 +113,38 @@ class Transactions {
     }
 
     public async executeTransaction(
-        tx: MoveCallTransaction | undefined,
-        txBytes: Uint8Array | undefined,
+        tx: TransactionDataType,
         connection: ContentScriptConnection
     ) {
-        if (tx) {
-            const permissionRequest = await this.findPreapprovalRequest({
-                moveCall: tx,
-            });
+        if (tx.type === 'v2' || tx.type === 'move-call') {
+            let moveCall: MoveCallTransaction | undefined;
+            if (tx.type === 'v2') {
+                if (tx.data.kind === 'moveCall') {
+                    moveCall = tx.data.data;
+                }
+            } else {
+                moveCall = tx.data;
+            }
 
-            if (permissionRequest) {
-                const result = await this.tryDirectExecution(
-                    tx,
-                    permissionRequest
-                );
-                if (result) {
-                    return result;
+            if (moveCall) {
+                const permissionRequest = await this.findPreapprovalRequest({
+                    moveCall,
+                });
+
+                if (permissionRequest) {
+                    const result = await this.tryDirectExecution(
+                        moveCall,
+                        permissionRequest
+                    );
+                    if (result) {
+                        return result;
+                    }
                 }
             }
         }
 
         const txRequest = this.createTransactionRequest(
             tx,
-            txBytes,
             connection.origin,
             connection.originFavIcon
         );
@@ -184,7 +194,7 @@ class Transactions {
     }) {
         const activeAccount = await this.getActiveAccount();
 
-        const endpoint = process.env.API_ENDPOINT_DEV_NET || '';
+        const endpoint = process.env.API_ENDPOINT_DEV_NET_FULLNODE || '';
 
         const toBase64 = (data: string): Uint8Array => {
             return new Uint8Array(Buffer.from(data, 'base64'));
@@ -250,7 +260,13 @@ class Transactions {
             body: JSON.stringify({
                 jsonrpc: '2.0',
                 method: 'sui_executeTransaction',
-                params: [txBytes, 'ED25519', signature, publicKey],
+                params: [
+                    txBytes,
+                    'ED25519',
+                    signature,
+                    publicKey,
+                    'WaitForEffectsCert',
+                ],
                 id: 1,
             }),
         };
@@ -394,34 +410,18 @@ class Transactions {
     }
 
     private createTransactionRequest(
-        tx: MoveCallTransaction | undefined,
-        txBytes: Uint8Array | undefined,
+        tx: TransactionDataType,
         origin: string,
         originFavIcon?: string
     ): TransactionRequest {
-        if (tx !== undefined) {
-            return {
-                id: uuidV4(),
-                approved: null,
-                origin,
-                originFavIcon,
-                createdDate: new Date().toISOString(),
-                type: 'move-call',
-                tx,
-            };
-        } else if (txBytes !== undefined) {
-            return {
-                id: uuidV4(),
-                approved: null,
-                origin,
-                originFavIcon,
-                createdDate: new Date().toISOString(),
-                type: 'serialized-move-call',
-                txBytes,
-            };
-        } else {
-            throw new Error('Either tx or txBytes needs to be defined.');
-        }
+        return {
+            id: uuidV4(),
+            approved: null,
+            origin,
+            originFavIcon,
+            createdDate: new Date().toISOString(),
+            tx,
+        };
     }
 
     private async createPreapprovalRequest(

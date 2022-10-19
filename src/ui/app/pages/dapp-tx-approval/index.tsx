@@ -83,59 +83,86 @@ export function DappTxApprovalPage() {
     }, [loading, txRequest]);
 
     // TODO: add more tx types/make it generic
-    const valuesContent = useMemo(
-        () =>
-            txRequest?.type === 'move-call'
-                ? [
-                      { label: 'Transaction type', content: 'MoveCall' },
-                      { label: 'Module', content: txRequest.tx.module },
-                      { label: 'Function', content: txRequest.tx.function },
-                      {
-                          label: 'Arguments',
-                          content: toList(txRequest.tx.arguments),
-                      },
-                      { label: 'Gas budget', content: txRequest.tx.gasBudget },
-                  ]
-                : [
-                      {
-                          label: 'Transaction type',
-                          content: 'SerializedMoveCall',
-                      },
-                      { label: 'Contents', content: txRequest?.txBytes },
-                  ],
-        [txRequest]
-    );
-    const detailedValuesContent = useMemo(
-        () =>
-            txRequest?.type === 'move-call'
-                ? [
-                      {
-                          label: 'Package',
-                          content: truncateMiddle(
-                              txRequest.tx.packageObjectId,
-                              12
-                          ),
-                          title: txRequest.tx.packageObjectId,
-                      },
-                      {
-                          label: 'Type arguments',
-                          content: toList(txRequest.tx.typeArguments),
-                      },
-                  ]
-                : [
-                      {
-                          label: 'Transaction type',
-                          content: 'SerializedMoveCall',
-                          title: '',
-                      },
-                      {
-                          label: 'Contents',
-                          content: txRequest?.txBytes,
-                          title: '',
-                      },
-                  ],
-        [txRequest]
-    );
+    const valuesContent = useMemo(() => {
+        switch (txRequest?.tx.type) {
+            case 'v2': {
+                const contents = [
+                    {
+                        label: 'Transaction Type',
+                        content: txRequest.tx.data.kind.toString(),
+                    },
+                ];
+
+                if (txRequest.tx.data.kind === 'moveCall') {
+                    contents.push({
+                        label: 'Function',
+                        content: txRequest.tx.data.data.function,
+                    });
+
+                    contents.push({
+                        label: 'Gas Fees',
+                        content: txRequest.tx.data.data.gasBudget.toString(),
+                    });
+                }
+
+                return contents;
+            }
+            case 'move-call':
+                return [
+                    { label: 'Transaction Type', content: 'MoveCall' },
+                    {
+                        label: 'Function',
+                        content: txRequest.tx.data.function,
+                    },
+                    {
+                        label: 'Gas Fees',
+                        content: txRequest.tx.data.gasBudget,
+                    },
+                ];
+            case 'serialized-move-call':
+                return [
+                    {
+                        label: 'Transaction Type',
+                        content: 'SerializedMoveCall',
+                    },
+                    { label: 'Contents', content: txRequest?.tx?.data },
+                ];
+            default:
+                return [];
+        }
+    }, [txRequest]);
+
+    const detailedValuesContent = useMemo(() => {
+        switch (txRequest?.tx.type) {
+            case 'v2': {
+                return [
+                    {
+                        label: 'Transaction Type',
+                        content: txRequest.tx.data.kind,
+                    },
+                ];
+            }
+            case 'move-call':
+                return [
+                    {
+                        label: 'Package',
+                        content: truncateMiddle(
+                            txRequest.tx.data.packageObjectId,
+                            12
+                        ),
+                        title: txRequest.tx.data.packageObjectId,
+                    },
+                    {
+                        label: 'Type arguments',
+                        content: toList(txRequest.tx.data.typeArguments),
+                    },
+                ];
+            case 'serialized-move-call':
+                return [];
+            default:
+                return [];
+        }
+    }, [txRequest]);
 
     return (
         <Loading loading={loading}>

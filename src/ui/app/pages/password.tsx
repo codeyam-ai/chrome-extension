@@ -5,9 +5,11 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AppState } from '../hooks/useInitializedGuard';
-import { savePassphrase } from '../redux/slices/account';
 import PassphraseForm from '../shared/forms/PassphraseForm';
-import BodyLarge from '../shared/typography/BodyLarge';
+import {
+    savePassphrase,
+    loadAccountInformationFromStorage,
+} from '../redux/slices/account';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
 import PageLayout from '_pages/layout';
@@ -22,6 +24,7 @@ const PasswordPage = () => {
     const _save = useCallback(
         async (passphrase: string) => {
             await dispatch(savePassphrase(passphrase));
+            await dispatch(loadAccountInformationFromStorage());
             navigate('/');
         },
         [dispatch, navigate]

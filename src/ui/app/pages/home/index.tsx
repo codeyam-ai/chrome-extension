@@ -13,7 +13,7 @@ import {
     useExplorerPermission,
 } from '_hooks';
 import PageLayout from '_pages/layout';
-import { fetchAllOwnedObjects } from '_redux/slices/sui-objects';
+import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
 
 import BaseLayout from '../../shared/layouts/BaseLayout';
 import NavBarWithMenu from '../../shared/navigation/nav-bar/NavBarWithMenu';
@@ -35,9 +35,9 @@ const HomePage = () => {
             .pipe(
                 filter(() => !guardChecking),
                 switchMap(() =>
-                    defer(() => from(dispatch(fetchAllOwnedObjects()))).pipe(
-                        repeat({ delay: POLL_SUI_OBJECTS_INTERVAL })
-                    )
+                    defer(() =>
+                        from(dispatch(fetchAllOwnedAndRequiredObjects()))
+                    ).pipe(repeat({ delay: POLL_SUI_OBJECTS_INTERVAL }))
                 )
             )
             .subscribe();
@@ -62,11 +62,9 @@ const HomePage = () => {
 
 export default HomePage;
 export { default as NftsPage } from './nfts';
-export { default as StakePage } from './stake';
 export { default as TokensPage } from './tokens';
 export { default as TransactionDetailsPage } from './transaction-details';
 export { default as TransactionsPage } from './transactions';
 export { default as TransferCoinPage } from './transfer-coin';
 export { default as NFTDetailsPage } from './nft-details';
-export { default as StakeNew } from './stake-new';
 export { default as ReceiptPage } from './receipt';
