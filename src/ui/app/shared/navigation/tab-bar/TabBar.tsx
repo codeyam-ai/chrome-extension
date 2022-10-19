@@ -6,6 +6,7 @@ import {
 } from '@heroicons/react/24/solid';
 import { useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
+
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import ExternalLink from '_src/ui/app/components/external-link';
 import { useExplorerPermission } from '_src/ui/app/hooks';

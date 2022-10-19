@@ -10,12 +10,12 @@ import DescriptionList from '../../shared/content/rows-and-lists/DescriptionList
 import TextLinkList from '../../shared/content/rows-and-lists/TextLinkList';
 import Checkbox from '../../shared/inputs/Checkbox';
 import Mnemonic from '../../shared/inputs/Mnemonic';
+import { LinkType } from '_src/enums/LinkType';
 import { ToS_LINK } from '_src/shared/constants';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { createMnemonic, setMnemonic } from '_src/ui/app/redux/slices/account';
 
 import type { ChangeEventHandler } from 'react';
-import { LinkType } from '_src/enums/LinkType';
 
 const BackupPage = () => {
     const [hasSavedPhrase, setHasSavedPhrase] = useState(false);

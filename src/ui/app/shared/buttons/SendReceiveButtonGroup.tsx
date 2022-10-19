@@ -5,7 +5,7 @@ import {
     CloudArrowDownIcon,
 } from '@heroicons/react/24/outline';
 import { useCallback, useMemo, useState } from 'react';
-import { API_ENV_TO_INFO } from '../../ApiProvider';
+
 import LoadingIndicator from '../../components/loading/LoadingIndicator';
 import { useAppSelector } from '../../hooks';
 import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
@@ -26,7 +26,7 @@ const SendReceiveButtonGroup = ({
     );
     const sendUrl = useMemo(
         () => `/send?${new URLSearchParams({ type: GAS_TYPE_ARG }).toString()}`,
-        [GAS_TYPE_ARG]
+        []
     );
 
     const faucetAvailable = useMemo(

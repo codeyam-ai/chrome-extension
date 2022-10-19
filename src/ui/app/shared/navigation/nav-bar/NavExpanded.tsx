@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback } from 'react';
-import { Link, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
 import {
     useMenuIsOpen,
@@ -10,9 +10,6 @@ import {
     useNextMenuUrl,
 } from '_components/menu/hooks';
 import { useOnKeyboardEvent } from '_hooks';
-
-import type { MouseEvent } from 'react';
-
 import ConnectedApps from '_src/ui/app/components/menu/content/connected-apps';
 import MenuList from '_src/ui/app/components/menu/content/menu-list';
 import Network from '_src/ui/app/components/menu/content/network';
@@ -21,6 +18,8 @@ import Preapprovals from '_src/ui/app/components/menu/content/preapprovals';
 import Settings from '_src/ui/app/components/menu/content/settings';
 import SwitchWallet from '_src/ui/app/components/menu/content/switch-wallet';
 import ViewSeed from '_src/ui/app/components/menu/content/view-seed';
+
+import type { MouseEvent } from 'react';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 

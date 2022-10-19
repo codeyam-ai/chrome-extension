@@ -11,7 +11,6 @@ import { useIntl } from 'react-intl';
 
 import { Coin } from '_redux/slices/sui-objects/Coin';
 import { balanceFormatOptions } from '_shared/formatting';
-import Button, { ButtonStyle } from '_src/ui/app/shared/buttons/Button';
 import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
 
 export type CoinProps = {

@@ -1,10 +1,11 @@
 import { ChevronRightIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
+
+import Body from '../../typography/Body';
 import { LinkType } from '_src/enums/LinkType';
 import { TextColor } from '_src/enums/Typography';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import { useExplorerPermission } from '_src/ui/app/hooks';
-import Body from '../../typography/Body';
 
 export type LinkItem = {
     iconWithNoClasses: React.ReactNode;

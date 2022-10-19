@@ -6,19 +6,14 @@ import { Outlet } from 'react-router-dom';
 import { of, filter, switchMap, from, defer, repeat } from 'rxjs';
 
 import { AppState } from '../../hooks/useInitializedGuard';
-import Loading from '_components/loading';
-import {
-    useInitializedGuard,
-    useAppDispatch,
-    useExplorerPermission,
-} from '_hooks';
-import PageLayout from '_pages/layout';
-import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
-
 import BaseLayout from '../../shared/layouts/BaseLayout';
 import NavBarWithMenu from '../../shared/navigation/nav-bar/NavBarWithMenu';
-import TabBar from '../../shared/navigation/tab-bar/TabBar';
 import NavExpanded from '../../shared/navigation/nav-bar/NavExpanded';
+import TabBar from '../../shared/navigation/tab-bar/TabBar';
+import Loading from '_components/loading';
+import { useInitializedGuard, useAppDispatch } from '_hooks';
+import PageLayout from '_pages/layout';
+import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
 
 const POLL_SUI_OBJECTS_INTERVAL = 4000;
 
@@ -28,7 +23,6 @@ const HomePage = () => {
         AppState.HOSTED,
     ]);
     const dispatch = useAppDispatch();
-    const setExplorerPermission = useExplorerPermission();
 
     useEffect(() => {
         const sub = of(guardChecking)

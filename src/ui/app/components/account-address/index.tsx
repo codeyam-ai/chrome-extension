@@ -3,6 +3,7 @@
 
 import cl from 'classnames';
 
+import Body from '../../shared/typography/Body';
 import CopyToClipboard from '_components/copy-to-clipboard';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
@@ -10,7 +11,6 @@ import { useAppSelector, useMiddleEllipsis } from '_hooks';
 import { TextColor } from '_src/enums/Typography';
 
 import type { AccountInfo } from '../../KeypairVault';
-import Body from '../../shared/typography/Body';
 
 import st from './AccountAddress.module.scss';
 
@@ -47,7 +47,6 @@ function AccountAddress({
     const shortenAddress = useMiddleEllipsis(address, 10, 6);
     const cpIconMode = mode === AddressMode.NORMAL ? 'normal' : 'highlighted';
     const dotSize = mode === AddressMode.SMALL ? 'h-3 w-3' : 'h-5 w-5';
-    const textSize = mode === AddressMode.SMALL ? 'text-xs' : 'text-sm';
     return (
         <div className="flex gap-1 justify-center items-center">
             {showName && accountInfo && (

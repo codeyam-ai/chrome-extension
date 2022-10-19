@@ -1,9 +1,9 @@
 import { type ReactNode } from 'react';
 
 import logo from '../../components/logo/ethos-logo.png';
-import BaseLayout from './BaseLayout';
 import LargePageHeaderWIthIcon from '../headers/page-headers/LargePageHeaderWithIcon';
 import NavBarWithBackAndTitleAndThemeToggle from '../navigation/nav-bar/NavBarWithBackAndTitle';
+import BaseLayout from './BaseLayout';
 
 type GetStartedCardProps = {
     showBack?: boolean;

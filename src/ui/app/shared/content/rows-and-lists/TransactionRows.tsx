@@ -1,6 +1,6 @@
-import { TxResultState } from '_src/ui/app/redux/slices/txresults';
-import TransactionCard from '_components/transactions-card';
 import TransactionRow from './TransactionRow';
+
+import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
 interface TransactionRowsProps {
     transactions: TxResultState[];

@@ -5,16 +5,16 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AppState } from '../hooks/useInitializedGuard';
-import PassphraseForm from '../shared/forms/PassphraseForm';
 import {
     savePassphrase,
     loadAccountInformationFromStorage,
 } from '../redux/slices/account';
+import DescriptionList from '../shared/content/rows-and-lists/DescriptionList';
+import PassphraseForm from '../shared/forms/PassphraseForm';
+import GetStartedCard from '../shared/layouts/GetStartedCard';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
 import PageLayout from '_pages/layout';
-import DescriptionList from '../shared/content/rows-and-lists/DescriptionList';
-import GetStartedCard from '../shared/layouts/GetStartedCard';
 
 const PasswordPage = () => {
     const dispatch = useAppDispatch();

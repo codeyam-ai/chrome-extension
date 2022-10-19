@@ -1,12 +1,13 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import Body from '../../typography/Body';
+import { type AccountInfo } from '_src/ui/app/KeypairVault';
 import AccountAddress, {
     AddressMode,
 } from '_src/ui/app/components/account-address';
 import { useNextMenuUrl } from '_src/ui/app/components/menu/hooks';
 import { useAppSelector } from '_src/ui/app/hooks';
-import { type AccountInfo } from '_src/ui/app/KeypairVault';
-import Body from '../../typography/Body';
 
 const WalletRow = () => {
     const [editWallet, setEditWallet] = useState<boolean>(false);

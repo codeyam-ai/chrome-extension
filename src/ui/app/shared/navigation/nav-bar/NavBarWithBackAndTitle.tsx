@@ -1,8 +1,8 @@
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
-import DarkModeToggle from '_src/ui/app/components/DarkModeToggle';
 
 import BodyLarge from '../../typography/BodyLarge';
+import DarkModeToggle from '_src/ui/app/components/DarkModeToggle';
 
 interface NavBarWithBackAndTitleAndThemeToggleProps {
     backLink: string;

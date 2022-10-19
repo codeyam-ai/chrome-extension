@@ -1,15 +1,15 @@
 import { Cog6ToothIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
+
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import DarkModeToggle from '_src/ui/app/components/DarkModeToggle';
-import Logo from '_src/ui/app/components/logo';
+import MonochromeLogo from '_src/ui/app/components/MonochromeLogo';
 import { MenuButton } from '_src/ui/app/components/menu';
 import {
     useMenuIsOpen,
     useNextMenuUrl,
 } from '_src/ui/app/components/menu/hooks';
 import { useExplorerPermission } from '_src/ui/app/hooks';
-import MonochromeLogo from '_src/ui/app/components/MonochromeLogo';
 
 const NavBarWithMenu = () => {
     const setExplorerPermission = useExplorerPermission();

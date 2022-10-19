@@ -1,9 +1,10 @@
-import { ReactNode } from 'react';
-import { LinkType } from '_src/enums/LinkType';
-import { TextColor } from '_src/enums/Typography';
 import Body from '../typography/Body';
 import EthosLink from '../typography/EthosLink';
 import Subheader from '../typography/Subheader';
+import { LinkType } from '_src/enums/LinkType';
+import { TextColor } from '_src/enums/Typography';
+
+import type { ReactNode } from 'react';
 
 interface EmptyPageStateProps {
     iconWithNoClasses: ReactNode;

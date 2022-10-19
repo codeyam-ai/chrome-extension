@@ -15,14 +15,14 @@ import {
 } from '../../redux/slices/account';
 import EmailForm from '../../shared/forms/EmailForm';
 import Body from '../../shared/typography/Body';
+import ContentBlock from '../../shared/typography/ContentBlock';
 import EthosLink from '../../shared/typography/EthosLink';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
 import Authentication from '_src/background/Authentication';
+import { LinkType } from '_src/enums/LinkType';
 import { TextColor } from '_src/enums/Typography';
 import { IFRAME_URL } from '_src/shared/constants';
-import ContentBlock from '../../shared/typography/ContentBlock';
-import { LinkType } from '_src/enums/LinkType';
 
 export const AUTHENTICATION_REQUESTED = 'AUTHENTICATION_REQUESTED';
 

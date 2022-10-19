@@ -1,11 +1,12 @@
 import { Coin } from '@mysten/sui.js';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { TextColor } from '_src/enums/Typography';
-import { balanceFormatOptions } from '_src/shared/formatting';
+
 import Body from '../../typography/Body';
 import Header from '../../typography/Header';
 import Subheader from '../../typography/Subheader';
+import { TextColor } from '_src/enums/Typography';
+import { balanceFormatOptions } from '_src/shared/formatting';
 
 interface AmountRowProps {
     type: string;

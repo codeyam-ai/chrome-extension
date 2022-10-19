@@ -1,17 +1,18 @@
 import {
     ArrowDownTrayIcon,
     ExclaimationTriangleIcon,
-    GifIcon,
     PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
-import { TextColor } from '_src/enums/Typography';
-import { useMiddleEllipsis } from '_src/ui/app/hooks';
-import { TxResultState } from '_src/ui/app/redux/slices/txresults';
-import { formatDate } from '_helpers';
+import { Link } from 'react-router-dom';
+
 import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
+import { formatDate } from '_helpers';
+import { TextColor } from '_src/enums/Typography';
 import { MIST_PER_SUI } from '_src/shared/constants';
-import { Link } from 'react-router-dom';
+import { useMiddleEllipsis } from '_src/ui/app/hooks';
+
+import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
 interface TransactionRowProps {
     txn: TxResultState;

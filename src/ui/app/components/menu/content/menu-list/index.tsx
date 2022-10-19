@@ -1,13 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useNextMenuUrl } from '_components/menu/hooks';
-import { DASHBOARD_LINK } from '_src/shared/constants';
-import { logout } from '_src/ui/app/redux/slices/account';
-
-import LinkList, {
-    type LinkItem,
-} from '_src/ui/app/shared/navigation/nav-bar/LinkList';
 import {
     ArrowsRightLeftIcon,
     LinkIcon,
@@ -16,9 +9,16 @@ import {
     ArrowTopRightOnSquareIcon,
     LockClosedIcon,
 } from '@heroicons/react/24/outline';
-import { LinkType } from '_src/enums/LinkType';
 import { useCallback } from 'react';
+
+import { useNextMenuUrl } from '_components/menu/hooks';
+import { LinkType } from '_src/enums/LinkType';
+import { DASHBOARD_LINK } from '_src/shared/constants';
 import { useAppDispatch } from '_src/ui/app/hooks';
+import { logout } from '_src/ui/app/redux/slices/account';
+import LinkList, {
+    type LinkItem,
+} from '_src/ui/app/shared/navigation/nav-bar/LinkList';
 
 function MenuList() {
     const dispatch = useAppDispatch();

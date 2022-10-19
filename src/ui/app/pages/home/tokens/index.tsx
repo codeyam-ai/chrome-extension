@@ -1,38 +1,24 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
 
 import CoinBalance from './CoinBalance';
-import AccountAddress, { AddressMode } from '_components/account-address';
 import Alert from '_components/alert';
 import Loading from '_components/loading';
 import { useAppSelector, useObjectsState } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
+import { LinkType } from '_src/enums/LinkType';
 import { TextColor } from '_src/enums/Typography';
 import { DASHBOARD_LINK, MIST_PER_SUI } from '_src/shared/constants';
-import { useNextMenuUrl } from '_src/ui/app/components/menu/hooks';
-import Divider from '_src/ui/app/shared/Divider';
-import Body from '_src/ui/app/shared/typography/Body';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import EthosLink from '_src/ui/app/shared/typography/EthosLink';
-
-import type { AccountInfo } from '_src/ui/app/KeypairVault';
-import WalletRow from '_src/ui/app/shared/content/rows-and-lists/WalletRow';
-import {
-    CreditCardIcon,
-    PaperAirplaneIcon,
-    ArrowDownTrayIcon,
-} from '@heroicons/react/24/outline';
-import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
-import AmountRow from '_src/ui/app/shared/content/rows-and-lists/AmountRow';
-import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
-import Subheader from '_src/ui/app/shared/typography/Subheader';
-import { LinkType } from '_src/enums/LinkType';
-import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import SendReceiveButtonGroup from '_src/ui/app/shared/buttons/SendReceiveButtonGroup';
+import AmountRow from '_src/ui/app/shared/content/rows-and-lists/AmountRow';
+import WalletRow from '_src/ui/app/shared/content/rows-and-lists/WalletRow';
+import Body from '_src/ui/app/shared/typography/Body';
+import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
+import EthosLink from '_src/ui/app/shared/typography/EthosLink';
+import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 function TokensPage() {
     const { loading, error, showError } = useObjectsState();

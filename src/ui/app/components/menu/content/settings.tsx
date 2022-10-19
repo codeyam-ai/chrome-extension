@@ -1,17 +1,3 @@
-import { useCallback, useState, useEffect } from 'react';
-import Browser from 'webextension-polyfill';
-
-import LoadingIndicator from '../../loading/LoadingIndicator';
-import { useNextMenuUrl } from '../hooks';
-import { API_ENV_TO_INFO } from '_app/ApiProvider';
-import { IFRAME_URL, ToS_LINK } from '_src/shared/constants';
-import { getEncrypted } from '_src/shared/storagex/store';
-import { iframe } from '_src/ui/app/helpers';
-import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
-import { getEmail, reset } from '_src/ui/app/redux/slices/account';
-import LinkList, {
-    LinkItem,
-} from '_src/ui/app/shared/navigation/nav-bar/LinkList';
 import {
     ArrowLeftOnRectangleIcon,
     CodeBracketIcon,
@@ -19,7 +5,21 @@ import {
     DocumentTextIcon,
     EyeIcon,
 } from '@heroicons/react/24/outline';
+import { useCallback, useState, useEffect } from 'react';
+import Browser from 'webextension-polyfill';
+
+import LoadingIndicator from '../../loading/LoadingIndicator';
+import { useNextMenuUrl } from '../hooks';
+import { API_ENV_TO_INFO } from '_app/ApiProvider';
 import { LinkType } from '_src/enums/LinkType';
+import { IFRAME_URL, ToS_LINK } from '_src/shared/constants';
+import { getEncrypted } from '_src/shared/storagex/store';
+import { iframe } from '_src/ui/app/helpers';
+import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
+import { getEmail, reset } from '_src/ui/app/redux/slices/account';
+import LinkList from '_src/ui/app/shared/navigation/nav-bar/LinkList';
+
+import type { LinkItem } from '_src/ui/app/shared/navigation/nav-bar/LinkList';
 
 const version = Browser.runtime.getManifest().version;
 
