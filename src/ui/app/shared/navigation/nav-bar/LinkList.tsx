@@ -46,9 +46,10 @@ const LinkList = ({ linkItems }: LinkListProps) => {
                         </div>
                     </div>
                 );
+
                 if (item.linkType === LinkType.External && item.to) {
                     return (
-                        <div>
+                        <div key={key}>
                             <a
                                 href={item.to}
                                 target="_blank"
@@ -62,7 +63,10 @@ const LinkList = ({ linkItems }: LinkListProps) => {
                     );
                 } else if (item.linkType === LinkType.Internal && item.to) {
                     return (
-                        <div className={item.isExpandView ? 'sm:hidden' : ''}>
+                        <div
+                            className={item.isExpandView ? 'sm:hidden' : ''}
+                            key={key}
+                        >
                             <Link
                                 to={item.to}
                                 target={item.isExpandView ? '_blank' : ''}
@@ -73,7 +77,11 @@ const LinkList = ({ linkItems }: LinkListProps) => {
                     );
                 } else if (item.linkType === LinkType.None && item.onClick) {
                     return (
-                        <div onClick={item.onClick} className="cursor-pointer">
+                        <div
+                            onClick={item.onClick}
+                            className="cursor-pointer"
+                            key={key}
+                        >
                             {content}
                         </div>
                     );

@@ -14,9 +14,10 @@ import type { TxResultState } from '_redux/slices/txresults';
 import st from './Transactions.module.scss';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { LinkType } from '_src/enums/LinkType';
-import Body from '_src/ui/app/shared/typography/Body';
-import EthosLink from '_src/ui/app/shared/typography/EthosLink';
-import Subheader from '_src/ui/app/shared/typography/Subheader';
+import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
+import EmptyPageState from '_src/ui/app/shared/content/EmptyPageState';
+import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
+import PageScrollView from '_src/ui/app/shared/content/PageScrollView';
 
 function TransactionsPage() {
     const dispatch = useAppDispatch();
@@ -33,25 +34,19 @@ function TransactionsPage() {
         <Loading loading={loading}>
             {txByAddress && txByAddress.length ? (
                 <div className={st.container}>
-                    <PageTitle title="Activity" className={st.pageTitle} />
-                    <Content>
-                        <section className={st.txContent}>
-                            {txByAddress.map((txn) => (
-                                <TransactionCard txn={txn} key={txn.txId} />
-                            ))}
-                        </section>
-                    </Content>
+                    <TextPageTitle title="Activity" />
+                    <PageScrollView>
+                        <TransactionRows transactions={txByAddress} />
+                    </PageScrollView>
                 </div>
             ) : (
-                <div className="pt-24 text-center flex flex-col gap-2">
-                    <MagnifyingGlassIcon className="h-6 w-6 mx-auto" />
-                    <Subheader as="h3">No transactions yet</Subheader>
-                    <Body>
-                        <EthosLink to={''} type={LinkType.External}>
-                            Get DevNet Sui tokens →
-                        </EthosLink>
-                    </Body>
-                </div>
+                <EmptyPageState
+                    iconWithNoClasses={<MagnifyingGlassIcon />}
+                    title="No transactions yet"
+                    subtitle="Set up DevNet SUI tokens to send coins."
+                    linkText="Learn more"
+                    linkUrl="https://docs.sui.io/build/devnet"
+                />
             )}
         </Loading>
     );

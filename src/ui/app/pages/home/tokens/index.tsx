@@ -12,7 +12,7 @@ import { useAppSelector, useObjectsState } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
 import { TextColor } from '_src/enums/Typography';
-import { DASHBOARD_LINK } from '_src/shared/constants';
+import { DASHBOARD_LINK, MIST_PER_SUI } from '_src/shared/constants';
 import { useNextMenuUrl } from '_src/ui/app/components/menu/hooks';
 import Divider from '_src/ui/app/shared/Divider';
 import Body from '_src/ui/app/shared/typography/Body';
@@ -45,10 +45,10 @@ function TokensPage() {
 
     const { loading, error, showError } = useObjectsState();
     const balances = useAppSelector(accountAggregateBalancesSelector);
-    const suiBalance = balances[GAS_TYPE_ARG] || BigInt(0);
+    const mistBalance = balances[GAS_TYPE_ARG] || BigInt(0);
     const isBalanceZero = useMemo(
-        () => suiBalance.toString() === '0',
-        [suiBalance]
+        () => mistBalance.toString() === '0',
+        [mistBalance]
     );
 
     const otherCoinTypes = useMemo(
@@ -71,7 +71,10 @@ function TokensPage() {
             ) : null}
             <WalletRow />
             <Loading loading={loading}>
-                <AmountRow balance={suiBalance} type={GAS_TYPE_ARG} />
+                <AmountRow
+                    balance={Number(mistBalance) / MIST_PER_SUI}
+                    type={GAS_TYPE_ARG}
+                />
                 <InlineButtonGroup
                     buttonPrimaryTo={isBalanceZero ? '/buy' : sendUrl}
                     buttonPrimaryChildren={

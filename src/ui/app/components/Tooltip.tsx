@@ -15,11 +15,11 @@ const Tooltip = ({ children, tooltipText }: TooltipProps) => {
     return (
         <div className="relative flex items-center">
             <div
-                className="text-xs left-full absolute whitespace-no-wrap bg-gray-800 dark:bg-gray-700 text-white px-2 py-1 rounded flex items-center transition-all duration-75 cursor-default z-10"
+                className="text-xs left-full absolute whitespace-no-wrap bg-gray-800 dark:bg-gray-700 text-white px-2 py-1 rounded flex items-center transition-all duration-75 cursor-default"
                 style={
                     hasMouseEntered
-                        ? { marginLeft: '15px', opacity: 1 }
-                        : { marginLeft: '10px', opacity: 0 }
+                        ? { marginLeft: '15px', opacity: 1, zIndex: 10 }
+                        : { marginLeft: '10px', opacity: 0, zIndex: 0 }
                 }
             >
                 <div
