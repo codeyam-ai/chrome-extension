@@ -21,7 +21,7 @@ import {
 import mitt, { type Emitter } from 'mitt';
 import { filter, map, type Observable } from 'rxjs';
 
-import icon from '../manifest/icons/ethos-icon-128.png';
+import icon from '../manifest/icons/ethos-icon-150.png';
 import { mapToPromise } from './utils';
 import { createMessage } from '_messages';
 import { WindowMessageStream } from '_messaging/WindowMessageStream';
