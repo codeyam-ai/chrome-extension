@@ -48,7 +48,7 @@ function TransferCoinForm({
     }, [amount, to]);
     return (
         <Form className={st.container} autoComplete="off" noValidate={true}>
-            <div className="flex flex-col mt-2">
+            <div className="flex flex-col px-6 text-left">
                 <label
                     htmlFor="to"
                     className="block text-sm font-medium text-gray-700 dark:text-white"
@@ -69,7 +69,7 @@ function TransferCoinForm({
                     component="div"
                 />
             </div>
-            <div className="flex flex-col mt-2">
+            <div className="flex flex-col mt-2 px-6 text-left">
                 <label
                     htmlFor="amount"
                     className="block text-sm font-medium text-gray-700 dark:text-white"
