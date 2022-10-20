@@ -8,6 +8,7 @@ import AccountAddress, { AddressMode } from '_components/account-address';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 
 import type { MouseEventHandler, ReactNode } from 'react';
+import InlineButtonGroup from '../shared/buttons/InlineButtonGroup';
 
 type UserApproveContainerProps = {
     title: string;
@@ -81,14 +82,25 @@ function UserApproveContainer({
 
             <div className="w-full">{children}</div>
 
-            <div className="w-full flex flex-row items-center pt-6 gap-2">
+            {/* <InlineButtonGroup
+                buttonPrimaryChildren={rejectTitle}
+                isButtonPrimaryDisabled={submitting}
+                onClickButtonPrimary={handleOnResponse}
+                buttonSecondaryChildren={
+                    submitting ? <LoadingIndicator /> : approveTitle
+                }
+                isButtonSecondaryDisabled={submitting}
+                onClickButtonSecondary={handleOnResponse}
+            /> */}
+
+            <div className={`grid grid-cols-2 gap-2 w-full mt-2`}>
                 <Button
                     buttonStyle={ButtonStyle.SECONDARY}
                     type="button"
                     data-allow="false"
                     onClick={handleOnResponse}
                     disabled={submitting}
-                    className="mt-2"
+                    isInline={true}
                 >
                     {rejectTitle}
                 </Button>
@@ -98,7 +110,7 @@ function UserApproveContainer({
                     data-allow="true"
                     disabled={submitting}
                     onClick={handleOnResponse}
-                    className="mt-2"
+                    isInline={true}
                 >
                     {submitting ? <LoadingIndicator /> : approveTitle}
                 </Button>
