@@ -11,6 +11,7 @@ import PageTitle from '_src/ui/app/shared/page-title';
 import type { TxResultState } from '_redux/slices/txresults';
 
 import st from './ReceiptPage.module.scss';
+import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 // Response pages for all transactions
 // use txDigest for the transaction result
@@ -38,17 +39,17 @@ function ReceiptPage() {
 
     return (
         <div className={st.container}>
-            <PageTitle
-                title={''}
-                backLink={linkTo}
-                className={st.pageTitle}
-                hideBackLabel={true}
-            />
-            <Content>
-                {txnItem && (
-                    <ReceiptCard txDigest={txnItem} tranferType={tranferType} />
-                )}
-            </Content>
+            <NavBarWithBackAndTitle title="" backLink={linkTo} />
+            <div className="px-6">
+                <Content>
+                    {txnItem && (
+                        <ReceiptCard
+                            txDigest={txnItem}
+                            tranferType={tranferType}
+                        />
+                    )}
+                </Content>
+            </div>
         </div>
     );
 }

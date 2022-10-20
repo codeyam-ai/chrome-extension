@@ -40,7 +40,7 @@ function ReceiptCard({ tranferType, txDigest }: TxResponseProps) {
             <div className={st.successIcon}>
                 <Icon icon={TxIcon} className={iconClassName} />
             </div>
-            <div className="text-lg text-center mb-5 dark:text-white">
+            <div className="text-lg text-center mb-2 dark:text-white">
                 {headerCopy}
             </div>
         </>
@@ -53,7 +53,7 @@ function ReceiptCard({ tranferType, txDigest }: TxResponseProps) {
                     <Icon icon={SuiIcons.Close} className={cl(st.close)} />
                 </div>
             </div>
-            <div className="text-lg text-center mb-5 dark:text-white">
+            <div className="text-lg text-center mb-2 dark:text-white">
                 Failed
             </div>
             <div className={st.errorMessage}>{txDigest?.error}</div>
@@ -109,14 +109,18 @@ function ReceiptCard({ tranferType, txDigest }: TxResponseProps) {
                         <div className={st.txFees}>
                             <div className={st.txInfoLabel}>Gas Fee</div>
                             <div className={st.walletInfoValue}>
-                                {txDigest.txGas} {GAS_SYMBOL}
+                                <div className="text-black">
+                                    {txDigest.txGas} {GAS_SYMBOL}
+                                </div>
                             </div>
                         </div>
                     )}
                     {date && (
                         <div className={st.txDate}>
                             <div className={st.txInfoLabel}>Date</div>
-                            <div className={st.walletInfoValue}>{date}</div>
+                            <div className={st.walletInfoValue}>
+                                <div className="text-black">{date}</div>
+                            </div>
                         </div>
                     )}
                 </div>
