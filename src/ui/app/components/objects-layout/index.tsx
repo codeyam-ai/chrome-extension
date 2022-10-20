@@ -4,7 +4,6 @@
 import { memo } from 'react';
 
 import AccountAddress from '_components/account-address';
-import Alert from '_components/alert';
 import Icon from '_components/icon';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import { useObjectsState } from '_hooks';
@@ -12,6 +11,7 @@ import { useObjectsState } from '_hooks';
 import type { ReactNode } from 'react';
 
 import st from './ObjectsLayout.module.scss';
+import Alert from '../../shared/feedback/Alert';
 
 export type ObjectsLayoutProps = {
     children: ReactNode;
@@ -31,10 +31,12 @@ function ObjectsLayout({ children, emptyMsg, totalItems }: ObjectsLayoutProps) {
             </div>
             <div className={st.items}>
                 {showError && error ? (
-                    <Alert className={st.alert}>
-                        <strong>Sync error (data might be outdated).</strong>{' '}
-                        <small>{error.message}</small>
-                    </Alert>
+                    <div className="px-6 py-6">
+                        <Alert
+                            title="Something's wrong"
+                            subtitle="You've lost connection with the network. DevNet may be unstable. Please try again later."
+                        />
+                    </div>
                 ) : null}
                 {showItems ? children : null}
                 {showEmptyNotice ? (
