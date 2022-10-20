@@ -4,13 +4,15 @@
 import Layout from '_components/menu/content/layout';
 import { useNextMenuUrl } from '_components/menu/hooks';
 import NetworkSelector from '_components/network-selector';
+import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 function Network() {
     const settingsUrl = useNextMenuUrl(true, '/settings');
     return (
-        <Layout backUrl={settingsUrl} title="Network">
+        <>
+            <NavBarWithBackAndTitle title="Network" backLink={settingsUrl} />
             <NetworkSelector />
-        </Layout>
+        </>
     );
 }
 

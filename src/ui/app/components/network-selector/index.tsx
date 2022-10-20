@@ -43,7 +43,7 @@ const NetworkSelector = () => {
     );
 
     return (
-        <div className="flex flex-col items-center content-center">
+        <div className="flex flex-col items-center content-center px-6">
             <ul className="w-full grid grid-cols-1 gap-2">
                 {netWorks.map((apiEnv) => (
                     <li
