@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import BodyLarge from '../../typography/BodyLarge';
 import DarkModeToggle from '_src/ui/app/components/DarkModeToggle';
 
-
 interface NavBarWithBackAndTitleProps {
     backLink: string;
     title?: string;

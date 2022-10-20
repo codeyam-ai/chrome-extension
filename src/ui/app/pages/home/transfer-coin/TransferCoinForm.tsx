@@ -6,7 +6,6 @@ import { useEffect, useRef, memo } from 'react';
 import { useIntl } from 'react-intl';
 
 import AddressInput from '_components/address-input';
-import Alert from '_components/alert';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import NumberInput from '_components/number-input';
 import { SuiIcons } from '_font-icons/output/sui-icons';
@@ -17,6 +16,7 @@ import {
 import { balanceFormatOptions } from '_shared/formatting';
 import Icon from '_src/ui/app/components/icon';
 import Button, { ButtonStyle } from '_src/ui/app/shared/buttons/Button';
+import Alert from '_src/ui/app/shared/feedback/Alert';
 
 import type { FormValues } from '.';
 
@@ -107,10 +107,7 @@ function TransferCoinForm({
             </div>
             {submitError ? (
                 <div className="flex flex-col mt-2">
-                    <Alert>
-                        <strong>Transfer failed.</strong>{' '}
-                        <small>{submitError}</small>
-                    </Alert>
+                    <Alert title="Transfer failed" subtitle={submitError} />
                 </div>
             ) : null}
             <div className="flex flex-col mt-2">

@@ -35,13 +35,13 @@ function PageLayout({
                 <img
                     src={lightGradientBackground}
                     alt=""
-                    className="absolute h-full hidden sm:block dark:sm:hidden"
+                    className="absolute h-full w-full hidden sm:block dark:sm:hidden"
                     width={1308}
                 />
                 <img
                     src={darkGradientBackground}
                     alt=""
-                    className="absolute h-full hidden dark:sm:block"
+                    className="absolute h-full w-full hidden dark:sm:block"
                     width={1308}
                 />
                 <div className="relative mx-auto">

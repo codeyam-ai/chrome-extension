@@ -75,6 +75,9 @@ module.exports = {
                 // Primary
                 'ethos-light-primary-light': '#6D28D9',
 
+                // Primary translucent
+                'ethos-light-primary-light-translucent': '#6D28D90F',
+
                 // Feedback
                 'ethos-light-green': '#16A349',
                 'ethos-light-red': '#EF4444',
@@ -96,6 +99,9 @@ module.exports = {
                 // Primary
                 'ethos-dark-primary-dark': '#9C78F7',
                 'ethos-dark-primary-light': '#6D28D9',
+
+                // Primary translucent
+                'ethos-dark-primary-light-translucent': '#6D28D90F',
 
                 // Feedback
                 'ethos-dark-green': '#16A349',

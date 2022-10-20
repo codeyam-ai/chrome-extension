@@ -13,7 +13,6 @@ import { useOnKeyboardEvent } from '_hooks';
 import ConnectedApps from '_src/ui/app/components/menu/content/connected-apps';
 import MenuList from '_src/ui/app/components/menu/content/menu-list';
 import Network from '_src/ui/app/components/menu/content/network';
-import Playground from '_src/ui/app/components/menu/content/playground';
 import Preapprovals from '_src/ui/app/components/menu/content/preapprovals';
 import Settings from '_src/ui/app/components/menu/content/settings';
 import SwitchWallet from '_src/ui/app/components/menu/content/switch-wallet';
@@ -67,7 +66,6 @@ function NavExpanded() {
                     <Route path="/switch-wallet" element={<SwitchWallet />} />
                     <Route path="/connected-apps" element={<ConnectedApps />} />
                     <Route path="/preapprovals" element={<Preapprovals />} />
-                    <Route path="/playground" element={<Playground />} />
                     <Route path="/network" element={<Network />} />
                     <Route
                         path="*"

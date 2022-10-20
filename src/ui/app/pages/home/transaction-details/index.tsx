@@ -11,7 +11,6 @@ import clBind from 'classnames/bind';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import Alert from '_components/alert';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import Icon from '_components/icon';
@@ -22,6 +21,7 @@ import type { TransactionKindName } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 
 import st from './TransactionDetailsPage.module.scss';
+import Alert from '_src/ui/app/shared/feedback/Alert';
 
 const cl = clBind.bind(st);
 
@@ -72,21 +72,22 @@ function TransactionDetailsPage() {
                     ) : null}
                 </>
             ) : (
-                <Alert className={cl('error')}>
-                    <strong>Transaction not found.</strong>{' '}
-                    {txDigest ? (
-                        <span>
-                            Click{' '}
-                            <ExplorerLink
-                                type={ExplorerLinkType.transaction}
-                                transactionID={txDigest}
-                            >
-                                here
-                            </ExplorerLink>{' '}
-                            to go to Sui Explorer.
-                        </span>
-                    ) : null}
-                </Alert>
+                <Alert title="Transaction not found" />
+                // <Alert className={cl('error')}>
+                //     <strong>Transaction not found.</strong>{' '}
+                //     {txDigest ? (
+                //         <span>
+                //             Click{' '}
+                //             <ExplorerLink
+                //                 type={ExplorerLinkType.transaction}
+                //                 transactionID={txDigest}
+                //             >
+                //                 here
+                //             </ExplorerLink>{' '}
+                //             to go to Sui Explorer.
+                //         </span>
+                //     ) : null}
+                // </Alert>
             )}
         </div>
     );
