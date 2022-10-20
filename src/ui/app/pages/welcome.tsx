@@ -15,7 +15,7 @@ const WelcomePage = () => {
     return (
         <PageLayout forceFullscreen={true}>
             <Loading loading={checkingInitialized}>
-                <GetStartedCard>
+                <GetStartedCard showBack={false}>
                     <VerticalButtonGroup
                         buttonPrimaryTo="/initialize/backup"
                         buttonPrimaryChildren="Create A New Wallet"

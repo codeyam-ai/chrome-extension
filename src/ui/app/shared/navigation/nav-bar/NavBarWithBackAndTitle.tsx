@@ -7,13 +7,11 @@ import DarkModeToggle from '_src/ui/app/components/DarkModeToggle';
 interface NavBarWithBackAndTitleProps {
     backLink: string;
     title?: string;
-    showThemeToggle?: boolean;
 }
 
 const NavBarWithBackAndTitle = ({
     backLink,
     title,
-    showThemeToggle,
 }: NavBarWithBackAndTitleProps) => {
     return (
         <div className="flex flex-row justify-between items-center px-6 h-12">
@@ -24,7 +22,6 @@ const NavBarWithBackAndTitle = ({
                 <ArrowLeftIcon className="h-5 w-5" />
                 {title && <BodyLarge as="span">{title}</BodyLarge>}
             </Link>
-            {showThemeToggle && <DarkModeToggle />}
         </div>
     );
 };

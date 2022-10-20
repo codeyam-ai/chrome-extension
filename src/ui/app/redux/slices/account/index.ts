@@ -440,7 +440,13 @@ export const accountItemizedBalancesSelector = createSelector(
 export const accountNftsSelector = createSelector(
     suiObjectsAdapterSelectors.selectAll,
     (allSuiObjects) => {
-        return allSuiObjects.filter((anObj) => !Coin.isCoin(anObj));
+        // The  previousTransaction` check was added
+        return allSuiObjects.filter(
+            (anObj) =>
+                !Coin.isCoin(anObj) &&
+                anObj.previousTransaction !==
+                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='
+        );
     }
 );
 
