@@ -329,20 +329,20 @@ export default function SwitchWallet() {
         );
     };
 
-    const test: RadioCardItem[] = [
-        {
-            icon: <KeyIcon className="h-5 w-5" />,
-            title: 'test 1',
-            subtitle: 'subtitle 1',
-            selected: true,
-        },
-        {
-            icon: <KeyIcon className="h-5 w-5" />,
-            title: 'test 2',
-            subtitle: 'subtitle 2',
-            selected: false,
-        },
-    ];
+    // const test: RadioCardItem[] = [
+    //     {
+    //         icon: <KeyIcon className="h-5 w-5" />,
+    //         title: 'test 1',
+    //         subtitle: 'subtitle 1',
+    //         selected: true,
+    //     },
+    //     {
+    //         icon: <KeyIcon className="h-5 w-5" />,
+    //         title: 'test 2',
+    //         subtitle: 'subtitle 2',
+    //         selected: false,
+    //     },
+    // ];
 
     return (
         <>
@@ -350,8 +350,8 @@ export default function SwitchWallet() {
                 backLink={mainMenuUrl}
                 title="Your Wallets"
             />
-            <RadioCardList items={test} />
-            {loading && (
+            {/* <RadioCardList items={test} /> */}
+            {/* {loading && (
                 <div className="flex justify-center items-center p-6 text-xl">
                     <LoadingIndicator />
                 </div>
@@ -371,72 +371,51 @@ export default function SwitchWallet() {
                     buttonSecondaryChildren="Create"
                     onClickButtonSecondary={_createWallet}
                 />
-            )}
-            <Layout backUrl={mainMenuUrl} title="Your Wallets">
+            )} */}
+            <div>
                 <div>
-                    <div>
-                        <ul className="grid grid-cols-1 gap-2">
-                            {accountInfos.map((accountInfo, key) => {
-                                return (
-                                    <li
-                                        key={key}
-                                        className="col-span-1 flex rounded-md shadow-sm"
-                                    >
-                                        <AddressButton
-                                            info={accountInfo}
-                                            isActive={
-                                                (accountInfo.index || 0) ===
-                                                activeAccountIndex
-                                            }
-                                            onChange={_handleChange}
-                                        />
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    </div>
-                    {loading && (
-                        <div className="flex justify-center items-center p-6 text-xl">
-                            <LoadingIndicator />
-                        </div>
-                    )}
-                    {!loading && edit && (
-                        <div className="mt-2">
-                            <Button
-                                buttonStyle={ButtonStyle.PRIMARY}
-                                onClick={_saveAccountInfos}
-                            >
-                                Save
-                            </Button>
-                            <Button
-                                buttonStyle={ButtonStyle.SECONDARY}
-                                onClick={_cancelEdit}
-                                className="mt-2"
-                            >
-                                Cancel
-                            </Button>
-                        </div>
-                    )}
-                    {!loading && !edit && (
-                        <div>
-                            <Button
-                                buttonStyle={ButtonStyle.SECONDARY}
-                                onClick={_toggleEdit}
-                                className="mt-2"
-                            >
-                                {pencilIcon} Edit Wallet Names &amp; Colors
-                            </Button>
-                            <Button
-                                buttonStyle={ButtonStyle.PRIMARY}
-                                onClick={_createWallet}
-                                className="mt-2"
-                            >
-                                {plusIcon} Create New Wallet
-                            </Button>
-                        </div>
-                    )}
+                    <ul className="grid grid-cols-1 gap-2 px-6 pb-6">
+                        {accountInfos.map((accountInfo, key) => {
+                            return (
+                                <li
+                                    key={key}
+                                    className="col-span-1 flex rounded-md shadow-sm"
+                                >
+                                    <AddressButton
+                                        info={accountInfo}
+                                        isActive={
+                                            (accountInfo.index || 0) ===
+                                            activeAccountIndex
+                                        }
+                                        onChange={_handleChange}
+                                    />
+                                </li>
+                            );
+                        })}
+                    </ul>
                 </div>
-            </Layout>
+                {loading && (
+                    <div className="flex justify-center items-center p-6 text-xl">
+                        <LoadingIndicator />
+                    </div>
+                )}
+                {!loading && edit && (
+                    <InlineButtonGroup
+                        buttonPrimaryChildren="Save"
+                        onClickButtonPrimary={_cancelEdit}
+                        buttonSecondaryChildren="Cancel"
+                        onClickButtonSecondary={_saveAccountInfos}
+                    />
+                )}
+                {!loading && !edit && (
+                    <InlineButtonGroup
+                        buttonPrimaryChildren="Edit"
+                        onClickButtonPrimary={_toggleEdit}
+                        buttonSecondaryChildren="Create"
+                        onClickButtonSecondary={_createWallet}
+                    />
+                )}
+            </div>
         </>
     );
 }
