@@ -9,6 +9,7 @@ import { useAppSelector, useMiddleEllipsis } from '_src/ui/app/hooks';
 
 import type { Permission } from '_src/shared/messaging/messages/payloads/permissions';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 type GroupedPermissions = {
     name: string;
@@ -179,15 +180,21 @@ export default function ConnectedApps() {
     };
 
     return (
-        <Layout backUrl={mainMenuUrl} title="Connected Apps">
-            {Object.keys(groupedPermissions || {})
-                .sort()
-                .map((walletName, index) => (
-                    <PermissionRevokeGroup
-                        key={`permission-revoke-group-${index}`}
-                        info={(groupedPermissions || {})[walletName]}
-                    />
-                ))}
-        </Layout>
+        <>
+            <NavBarWithBackAndTitle
+                title="Connected Apps"
+                backLink={mainMenuUrl}
+            />
+            <div className="px-6">
+                {Object.keys(groupedPermissions || {})
+                    .sort()
+                    .map((walletName, index) => (
+                        <PermissionRevokeGroup
+                            key={`permission-revoke-group-${index}`}
+                            info={(groupedPermissions || {})[walletName]}
+                        />
+                    ))}
+            </div>
+        </>
     );
 }
