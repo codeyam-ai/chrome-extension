@@ -3,18 +3,16 @@
 
 import { memo, useMemo } from 'react';
 
+import Body from '../../shared/typography/Body';
+import EthosLink from '../../shared/typography/EthosLink';
 import { Explorer } from './Explorer';
 import { ExplorerLinkType } from './ExplorerLinkType';
-import ExternalLink from '_components/external-link';
-import Icon from '_components/icon';
 import { useAppSelector } from '_hooks';
 import { activeAccountSelector } from '_redux/slices/account';
+import { LinkType } from '_src/enums/LinkType';
 
 import type { ObjectId, SuiAddress, TransactionDigest } from '@mysten/sui.js';
 import type { ReactNode } from 'react';
-import Body from '../../shared/typography/Body';
-import EthosLink from '../../shared/typography/EthosLink';
-import { LinkType } from '_src/enums/LinkType';
 
 export type ExplorerLinkProps = (
     | {

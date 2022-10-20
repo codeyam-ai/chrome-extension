@@ -2,14 +2,13 @@ import { useCallback, useEffect, useState } from 'react';
 
 import Permissions from '../../../../../background/Permissions';
 import { useNextMenuUrl } from '../hooks';
-import Layout from './layout';
 import formatUrl from '_src/ui/app/helpers/format-url';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector, useMiddleEllipsis } from '_src/ui/app/hooks';
+import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 import type { Permission } from '_src/shared/messaging/messages/payloads/permissions';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 type GroupedPermissions = {
     name: string;

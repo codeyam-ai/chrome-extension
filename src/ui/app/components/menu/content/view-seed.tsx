@@ -2,11 +2,10 @@ import { useCallback, useState } from 'react';
 
 import Button, { ButtonStyle } from '../../../shared/buttons/Button';
 import { useNextMenuUrl } from '../hooks';
-import Layout from './layout';
 import { useAppSelector } from '_src/ui/app/hooks';
+import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 import type { ChangeEventHandler } from 'react';
-import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 export default function ViewSeed() {
     const settingsUrl = useNextMenuUrl(true, '/settings');

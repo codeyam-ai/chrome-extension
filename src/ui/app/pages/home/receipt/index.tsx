@@ -6,12 +6,11 @@ import { Navigate, useSearchParams } from 'react-router-dom';
 import { Content } from '_app/shared/bottom-menu-layout';
 import ReceiptCard from '_components/receipt-card';
 import { useAppSelector } from '_hooks';
-import PageTitle from '_src/ui/app/shared/page-title';
+import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 import type { TxResultState } from '_redux/slices/txresults';
 
 import st from './ReceiptPage.module.scss';
-import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 // Response pages for all transactions
 // use txDigest for the transaction result

@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 
 import TransferNFTForm from './TransferNFTForm';
 import { createValidationSchema } from './validation';
-import PageTitle from '_app/shared/page-title';
 import NFTDisplayCard from '_components/nft-display';
 import { useAppSelector, useAppDispatch } from '_hooks';
 import {
@@ -19,13 +18,13 @@ import {
     GAS_TYPE_ARG,
     DEFAULT_NFT_TRANSFER_GAS_FEE,
 } from '_redux/slices/sui-objects/Coin';
+import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 import type { ObjectId } from '@mysten/sui.js';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
 
 import st from './TransferNFTForm.module.scss';
-import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 const initialValues = {
     to: '',

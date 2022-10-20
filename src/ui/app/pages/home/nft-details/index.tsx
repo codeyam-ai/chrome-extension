@@ -6,30 +6,20 @@ import { useMemo, useState, useCallback } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
 import TransferNFTCard from './transfer-nft';
-import BottomMenuLayout, {
-    Content,
-    Menu,
-} from '_app/shared/bottom-menu-layout';
-import PageTitle from '_app/shared/page-title';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
-import Icon, { SuiIcons } from '_components/icon';
 import Loading from '_components/loading';
-import NFTDisplayCard from '_components/nft-display';
 import { useAppSelector, useMiddleEllipsis, useNFTBasicData } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account';
 import Button, { ButtonStyle } from '_src/ui/app/shared/buttons/Button';
+import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
+import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
+import Body from '_src/ui/app/shared/typography/Body';
 
 import type { SuiObject } from '@mysten/sui.js';
 import type { ButtonHTMLAttributes } from 'react';
 
 import st from './NFTDetails.module.scss';
-import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
-import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
-import Body from '_src/ui/app/shared/typography/Body';
-import EthosLink from '_src/ui/app/shared/typography/EthosLink';
-import { TextColor } from '_src/enums/Typography';
-import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 
 const TRUNCATE_MAX_LENGTH = 10;
 const TRUNCATE_PREFIX_LENGTH = 6;

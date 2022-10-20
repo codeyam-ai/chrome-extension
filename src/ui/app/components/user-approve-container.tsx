@@ -8,7 +8,6 @@ import AccountAddress, { AddressMode } from '_components/account-address';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 
 import type { MouseEventHandler, ReactNode } from 'react';
-import InlineButtonGroup from '../shared/buttons/InlineButtonGroup';
 
 type UserApproveContainerProps = {
     title: string;

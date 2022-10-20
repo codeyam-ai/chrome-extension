@@ -1,4 +1,4 @@
-import RadioCard, { RadioCardItem } from './RadioCard';
+import RadioCard, { type RadioCardItem } from './RadioCard';
 
 interface RadioCardListProps {
     items: RadioCardItem[];

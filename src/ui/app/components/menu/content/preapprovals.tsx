@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { useNextMenuUrl } from '../hooks';
-import Layout from './layout';
 import Transactions from '_src/background/Transactions';
 import { useAppSelector, useMiddleEllipsis } from '_src/ui/app/hooks';
+import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 import type { PreapprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 type GroupedPreapprovals = {
     name: string;

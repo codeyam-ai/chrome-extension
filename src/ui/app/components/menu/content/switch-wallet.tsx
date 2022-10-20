@@ -13,49 +13,15 @@ import {
     saveActiveAccountIndex,
 } from '../../../redux/slices/account';
 import { thunkExtras } from '../../../redux/store/thunk-extras';
-import Button, { ButtonStyle } from '../../../shared/buttons/Button';
 import Icon, { SuiIcons } from '../../icon';
 import LoadingIndicator from '../../loading/LoadingIndicator';
 import { useNextMenuUrl } from '../hooks';
-import Layout from './layout';
 import Authentication from '_src/background/Authentication';
+import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
+import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 import type { AccountInfo } from '../../../KeypairVault';
 import type { ColorResult } from 'react-color';
-import { RadioCardItem } from '_src/ui/app/shared/inputs/RadioCardList/RadioCard';
-import { KeyIcon } from '@heroicons/react/24/outline';
-import RadioCardList from '_src/ui/app/shared/inputs/RadioCardList/RadioCardList';
-import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
-import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
-
-const plusIcon = (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="w-6 h-6"
-    >
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
-    </svg>
-);
-
-const pencilIcon = (
-    <svg
-        viewBox="0 0 24 24"
-        width="15"
-        height="15"
-        stroke="currentColor"
-        strokeWidth="2"
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="mr-1"
-    >
-        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-    </svg>
-);
 
 export default function SwitchWallet() {
     const mainMenuUrl = useNextMenuUrl(true, '/');

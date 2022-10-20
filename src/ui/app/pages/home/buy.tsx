@@ -1,12 +1,10 @@
-import { LinkType } from '_src/enums/LinkType';
-import { TextColor } from '_src/enums/Typography';
-import { DASHBOARD_LINK } from '_src/shared/constants';
 import AccountAddress from '../../components/account-address';
 import NavBarWithBackAndTitle from '../../shared/navigation/nav-bar/NavBarWithBackAndTitle';
-import PageTitle from '../../shared/page-title';
 import Body from '../../shared/typography/Body';
 import ContentBlock from '../../shared/typography/ContentBlock';
 import EthosLink from '../../shared/typography/EthosLink';
+import { LinkType } from '_src/enums/LinkType';
+import { TextColor } from '_src/enums/Typography';
 
 export default function BuyPage() {
     return (

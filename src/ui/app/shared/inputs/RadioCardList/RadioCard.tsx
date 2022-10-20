@@ -1,8 +1,9 @@
 import { CheckIcon } from '@heroicons/react/20/solid';
-import { ReactNode } from 'react';
-import { TextColor } from '_src/enums/Typography';
+import { type ReactNode } from 'react';
+
 import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
+import { TextColor } from '_src/enums/Typography';
 
 export type RadioCardItem = {
     icon: ReactNode;
