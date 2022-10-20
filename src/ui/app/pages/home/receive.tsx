@@ -1,5 +1,12 @@
+import { LinkType } from '_src/enums/LinkType';
+import { TextColor } from '_src/enums/Typography';
+import { DASHBOARD_LINK } from '_src/shared/constants';
 import AccountAddress from '../../components/account-address';
+import NavBarWithBackAndTitle from '../../shared/navigation/nav-bar/NavBarWithBackAndTitle';
 import PageTitle from '../../shared/page-title';
+import Body from '../../shared/typography/Body';
+import ContentBlock from '../../shared/typography/ContentBlock';
+import EthosLink from '../../shared/typography/EthosLink';
 
 const divider = (
     <div className="relative">
@@ -11,32 +18,24 @@ const divider = (
 
 export default function ReceivePage() {
     return (
-        <div className="flex h-full max-w-full flex-col">
-            <PageTitle
-                title="Get some SUI"
-                backLink="/tokens"
-                className="capitalize mb-4"
-                hideBackLabel={true}
-            />
-            <p className="text-gray-700 dark:text-gray-400 text-sm mt-1 mb-2">
-                Here&apos;s your wallet address. Coins and NFTs sent to this
-                address will end up in your wallet.
-            </p>
-            <div className="flex flex-row justify-center items-center">
-                <AccountAddress showLink={false} />
-            </div>
-            <div className="my-4">{divider}</div>
-            <p className="text-gray-700 dark:text-gray-400 text-sm my-1">
-                Or, get test coins from the DevNet faucet.
-            </p>
-            <a
-                href="https://discord.com/channels/916379725201563759/971488439931392130"
-                target="_blank"
-                rel="noreferrer"
-                className="text-sm text-purple-500 hover:text-purple-600 dark:text-violet-400 dark:hover:text-violet-300"
-            >
-                Get DevNet coins →
-            </a>
-        </div>
+        <>
+            <NavBarWithBackAndTitle title="Get Some SUI" backLink="/tokens" />
+            <ContentBlock>
+                <Body isSemibold={true}>Wallet Address</Body>
+                <Body textColor={TextColor.Medium}>
+                    Coins and NFTs sent to this address will end up in your
+                    wallet.
+                </Body>
+                <AccountAddress showLink={false} showName={false} />
+                <Body textColor={TextColor.Medium}>
+                    Interested in SUI but not sure where to start?
+                </Body>
+                <Body>
+                    <EthosLink type={LinkType.External} to={DASHBOARD_LINK}>
+                        Disover New Apps →
+                    </EthosLink>
+                </Body>
+            </ContentBlock>
+        </>
     );
 }
