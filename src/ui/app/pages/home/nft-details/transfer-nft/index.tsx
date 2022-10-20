@@ -25,6 +25,7 @@ import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
 
 import st from './TransferNFTForm.module.scss';
+import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 const initialValues = {
     to: '',
@@ -109,15 +110,15 @@ function TransferNFTCard({ objectId }: TransferProps) {
 
     return (
         <div className={st.container}>
-            <PageTitle
-                title="Send NFT"
-                backLink="/nfts"
-                className={st.pageTitle}
-                hideBackLabel={true}
-            />
+            <NavBarWithBackAndTitle title="Send NFT" backLink="/nfts" />
             <div className={st.content}>
                 {selectedNFTObj && (
-                    <NFTDisplayCard nftobj={selectedNFTObj} wideview={true} />
+                    <div className="px-6">
+                        <NFTDisplayCard
+                            nftobj={selectedNFTObj}
+                            wideview={true}
+                        />
+                    </div>
                 )}
                 <Formik
                     initialValues={initialValues}

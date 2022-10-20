@@ -22,6 +22,7 @@ import PageTitle from '_src/ui/app/shared/page-title';
 
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
+import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 const initialValues = {
     to: '',
@@ -118,11 +119,9 @@ function TransferCoinPage() {
     }
     return (
         <>
-            <PageTitle
+            <NavBarWithBackAndTitle
                 title={'Send ' + coinSymbol}
                 backLink="/tokens"
-                className="capitalize mb-4"
-                hideBackLabel={true}
             />
             <Loading loading={loadingBalance}>
                 <Formik
