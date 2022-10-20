@@ -7,6 +7,7 @@ import { useAppSelector, useMiddleEllipsis } from '_src/ui/app/hooks';
 
 import type { PreapprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 type GroupedPreapprovals = {
     name: string;
@@ -218,16 +219,22 @@ export default function Preapprovals() {
     };
 
     return (
-        <Layout backUrl={mainMenuUrl} title="Pre-Approved Transactions">
-            {Object.keys(groupedPreapprovals || {})
-                .sort()
-                .map((walletName, index) => (
-                    <PreapprovalGroup
-                        key={`permission-revoke-group-${index}`}
-                        info={(groupedPreapprovals || {})[walletName]}
-                        onRevoke={getPreapprovals}
-                    />
-                ))}
-        </Layout>
+        <>
+            <NavBarWithBackAndTitle
+                title="Pre-Approved Transactions"
+                backLink={mainMenuUrl}
+            />
+            <div className="px-6 text-left">
+                {Object.keys(groupedPreapprovals || {})
+                    .sort()
+                    .map((walletName, index) => (
+                        <PreapprovalGroup
+                            key={`permission-revoke-group-${index}`}
+                            info={(groupedPreapprovals || {})[walletName]}
+                            onRevoke={getPreapprovals}
+                        />
+                    ))}
+            </div>
+        </>
     );
 }
