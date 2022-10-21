@@ -27,7 +27,7 @@ function TransactionsPage() {
     }, [dispatch]);
 
     return (
-        <Loading loading={loading}>
+        <Loading loading={loading} big={true}>
             {txByAddress && txByAddress.length ? (
                 <div className={st.container}>
                     <TextPageTitle title="Activity" />
