@@ -4,15 +4,15 @@ import {
     GlobeAltIcon,
     Squares2X2Icon,
 } from '@heroicons/react/24/solid';
-import { useMemo, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { type ReactNode, useCallback, useMemo } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import ExternalLink from '_src/ui/app/components/external-link';
 import { useExplorerPermission } from '_src/ui/app/hooks';
 
 const iconClasses = 'w-6 h-6';
-const navItems = [
+const navItems: NavItem[] = [
     {
         title: 'Tokens',
         to: './tokens',
@@ -35,15 +35,38 @@ const navItems = [
     },
 ];
 
-const TabBar = () => {
-    const [isActive] = useState(true);
-    const setExplorerPermission = useExplorerPermission();
+type NavItem = {
+    to: string;
+    title: string;
+    icon: ReactNode;
+};
+
+const NavItemElement = ({ to, title, icon }: NavItem) => {
+    const location = useLocation();
+    const isActive = useCallback(
+        (to: string) => {
+            // to starts with "./", location.pathname starts with just a "/"
+            return to === '.' + location.pathname;
+        },
+        [location]
+    );
 
     const navLinkClass = useMemo(() => {
-        return isActive
+        return isActive(to)
             ? 'text-ethos-light-primary-light dark:text-ethos-dark-primary-dark'
             : 'text-ethos-light-text-medium dark:text-ethos-dark-text-medium';
-    }, [isActive]);
+    }, [isActive, to]);
+
+    return (
+        <NavLink to={to} title={title} className={navLinkClass}>
+            <span className="sr-only">{title}</span>
+            {icon}
+        </NavLink>
+    );
+};
+
+const TabBar = () => {
+    const setExplorerPermission = useExplorerPermission();
 
     return (
         <nav className="flex flex-row h-16 w-full items-center absolute inset-x-0 bottom-0 border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
@@ -71,16 +94,11 @@ const TabBar = () => {
                                         {item.icon}
                                     </ExternalLink>
                                 ) : (
-                                    <NavLink
-                                        to={item.to}
+                                    <NavItemElement
                                         title={item.title}
-                                        className={navLinkClass}
-                                    >
-                                        <span className="sr-only">
-                                            {item.title}
-                                        </span>
-                                        {item.icon}
-                                    </NavLink>
+                                        to={item.to}
+                                        icon={item.icon}
+                                    />
                                 )}
                             </span>
                         </div>
