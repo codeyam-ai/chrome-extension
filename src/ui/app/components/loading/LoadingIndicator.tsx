@@ -3,8 +3,15 @@
 
 import st from './LoadingIndicator.module.scss';
 
-const LoadingIndicator = () => {
-    return <span className={st.spinner} />;
+const LoadingIndicator = ({ big }: { big?: boolean }) => {
+    return (
+        <span
+            className={st.spinner}
+            style={
+                big ? { width: '3em', height: '3em', marginTop: '24px' } : {}
+            }
+        />
+    );
 };
 
 export default LoadingIndicator;

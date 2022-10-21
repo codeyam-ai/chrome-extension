@@ -368,9 +368,9 @@ export default function SwitchWallet() {
                 {!loading && edit && (
                     <InlineButtonGroup
                         buttonPrimaryChildren="Save"
-                        onClickButtonPrimary={_cancelEdit}
+                        onClickButtonPrimary={_saveAccountInfos}
                         buttonSecondaryChildren="Cancel"
-                        onClickButtonSecondary={_saveAccountInfos}
+                        onClickButtonSecondary={_cancelEdit}
                     />
                 )}
                 {!loading && !edit && (

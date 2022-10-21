@@ -11,16 +11,17 @@ type LoadingProps = {
     loading: boolean;
     children: ReactNode | ReactNode[];
     className?: string;
+    big?: boolean;
 };
 
-const Loading = ({ loading, children, className }: LoadingProps) => {
+const Loading = ({ loading, children, className, big }: LoadingProps) => {
     return loading ? (
         className ? (
             <div className={className}>
-                <LoadingIndicator />
+                <LoadingIndicator big={big} />
             </div>
         ) : (
-            <LoadingIndicator />
+            <LoadingIndicator big={big} />
         )
     ) : (
         <>{children}</>

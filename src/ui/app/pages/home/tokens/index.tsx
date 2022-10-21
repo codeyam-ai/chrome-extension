@@ -30,7 +30,7 @@ function TokensPage() {
     );
 
     return (
-        <Loading loading={loading}>
+        <Loading loading={loading} big={true}>
             {showError && error ? (
                 // <Alert>
                 //     <strong>Something&apos;s wrong.</strong>{' '}
