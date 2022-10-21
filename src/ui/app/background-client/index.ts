@@ -14,7 +14,7 @@ import { setSignMessageRequests } from '_redux/slices/sign-message-requests';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
 import { isGetPreapprovalResponse } from '_src/shared/messaging/messages/payloads/transactions/ui/GetPreapprovalResponse';
 
-import type { SuiAddress, SuiExecuteTransactionResponse } from '@mysten/sui.js';
+import type { SuiAddress, SuiTransactionResponse } from '@mysten/sui.js';
 import type { Message } from '_messages';
 import type { GetSignMessageRequests } from '_payloads/messages/ui/GetSignMessageRequests';
 import type { SignMessageRequestResponse } from '_payloads/messages/ui/SignMessageRequestResponse';
@@ -80,7 +80,7 @@ export class BackgroundClient {
     public async sendTransactionRequestResponse(
         txID: string,
         approved: boolean,
-        txResult: SuiExecuteTransactionResponse | undefined,
+        txResult: SuiTransactionResponse | undefined,
         tsResultError: string | undefined
     ) {
         this.sendMessage(

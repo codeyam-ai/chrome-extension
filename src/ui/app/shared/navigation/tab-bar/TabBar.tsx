@@ -4,7 +4,7 @@ import {
     GlobeAltIcon,
     Squares2X2Icon,
 } from '@heroicons/react/24/solid';
-import { useCallback } from 'react';
+import { useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { DASHBOARD_LINK } from '_src/shared/constants';
@@ -36,13 +36,14 @@ const navItems = [
 ];
 
 const TabBar = () => {
+    const [isActive] = useState(true);
     const setExplorerPermission = useExplorerPermission();
 
-    const getLinkClasses = useCallback((isActive: boolean) => {
+    const navLinkClass = useMemo(() => {
         return isActive
             ? 'text-ethos-light-primary-light dark:text-ethos-dark-primary-dark'
             : 'text-ethos-light-text-medium dark:text-ethos-dark-text-medium';
-    }, []);
+    }, [isActive]);
 
     return (
         <nav className="flex flex-row h-16 w-full items-center absolute inset-x-0 bottom-0 border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
@@ -73,9 +74,7 @@ const TabBar = () => {
                                     <NavLink
                                         to={item.to}
                                         title={item.title}
-                                        className={({ isActive }) =>
-                                            getLinkClasses(isActive)
-                                        }
+                                        className={navLinkClass}
                                     >
                                         <span className="sr-only">
                                             {item.title}

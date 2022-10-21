@@ -16,12 +16,12 @@ import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import Icon from '_components/icon';
 import { useAppSelector } from '_hooks';
 import { txSelectors } from '_redux/slices/transactions';
+import Alert from '_src/ui/app/shared/feedback/Alert';
 
 import type { TransactionKindName } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 
 import st from './TransactionDetailsPage.module.scss';
-import Alert from '_src/ui/app/shared/feedback/Alert';
 
 const cl = clBind.bind(st);
 

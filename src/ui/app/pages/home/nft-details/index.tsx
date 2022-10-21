@@ -39,33 +39,33 @@ function NFTdetailsContent({
         TRUNCATE_PREFIX_LENGTH
     );
 
-    const NFTDetails = (
-        <div className="mt-5 p-5 rounded-md dark:bg-gray-700">
-            <div className="flex flex-row items-center justify-between">
-                <div className={st.label}>Object ID</div>
-                <div className={st.value}>
-                    <ExplorerLink
-                        type={ExplorerLinkType.object}
-                        objectID={nftObjectID}
-                        title="View on Sui Explorer"
-                        className={st.explorerLink}
-                        showIcon={false}
-                    >
-                        {shortenedObjectId}
-                    </ExplorerLink>
-                </div>
-            </div>
+    // const NFTDetails = (
+    //     <div className="mt-5 p-5 rounded-md dark:bg-gray-700">
+    //         <div className="flex flex-row items-center justify-between">
+    //             <div className={st.label}>Object ID</div>
+    //             <div className={st.value}>
+    //                 <ExplorerLink
+    //                     type={ExplorerLinkType.object}
+    //                     objectID={nftObjectID}
+    //                     title="View on Sui Explorer"
+    //                     className={st.explorerLink}
+    //                     showIcon={false}
+    //                 >
+    //                     {shortenedObjectId}
+    //                 </ExplorerLink>
+    //             </div>
+    //         </div>
 
-            {fileExtentionType.name !== '' && (
-                <div className={st.nftItemDetail}>
-                    <div className={st.label}>Media Type</div>
-                    <div className={st.value}>
-                        {fileExtentionType?.name} {fileExtentionType.type}
-                    </div>
-                </div>
-            )}
-        </div>
-    );
+    //         {fileExtentionType.name !== '' && (
+    //             <div className={st.nftItemDetail}>
+    //                 <div className={st.label}>Media Type</div>
+    //                 <div className={st.value}>
+    //                     {fileExtentionType?.name} {fileExtentionType.type}
+    //                 </div>
+    //             </div>
+    //         )}
+    //     </div>
+    // );
 
     return (
         <>

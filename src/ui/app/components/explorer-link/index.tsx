@@ -42,7 +42,7 @@ function useAddress(props: ExplorerLinkProps) {
 }
 
 function ExplorerLink(props: ExplorerLinkProps) {
-    const { type, children, className, title, showIcon = true } = props;
+    const { type, children } = props;
     const address = useAddress(props);
     const selectedApiEnv = useAppSelector(({ app }) => app.apiEnv);
     const objectID = type === ExplorerLinkType.object ? props.objectID : null;

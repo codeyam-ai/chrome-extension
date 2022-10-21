@@ -2,7 +2,6 @@ import { type ReactNode } from 'react';
 
 import logo from '../../components/logo/ethos-logo.png';
 import LargePageHeaderWIthIcon from '../headers/page-headers/LargePageHeaderWithIcon';
-import NavBarWithBackAndTitle from '../navigation/nav-bar/NavBarWithBackAndTitle';
 import SignInFlowNavBar from '../navigation/nav-bar/SignInFlowNavBar';
 import BaseLayout from './BaseLayout';
 

@@ -13,7 +13,7 @@ import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
 function NftsPage() {
     const nfts = useAppSelector(accountNftsSelector) || [];
 
-    console.log('nfts :>> ', nfts);
+    // console.log('nfts :>> ', nfts);
 
     return (
         <div>

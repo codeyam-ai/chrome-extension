@@ -3,7 +3,7 @@
 
 import type {
     SuiMoveNormalizedFunction,
-    SuiExecuteTransactionResponse,
+    SuiTransactionResponse,
 } from '@mysten/sui.js';
 import type { TransactionDataType } from '_messages/payloads/transactions/ExecuteTransactionRequest';
 
@@ -12,7 +12,7 @@ export type TransactionRequest = {
     approved: boolean | null;
     origin: string;
     originFavIcon?: string;
-    txResult?: SuiExecuteTransactionResponse;
+    txResult?: SuiTransactionResponse;
     txResultError?: string;
     metadata?: SuiMoveNormalizedFunction;
     createdDate: string;

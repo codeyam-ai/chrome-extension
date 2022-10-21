@@ -14,11 +14,11 @@ import { DASHBOARD_LINK, MIST_PER_SUI } from '_src/shared/constants';
 import SendReceiveButtonGroup from '_src/ui/app/shared/buttons/SendReceiveButtonGroup';
 import AmountRow from '_src/ui/app/shared/content/rows-and-lists/AmountRow';
 import WalletRow from '_src/ui/app/shared/content/rows-and-lists/WalletRow';
+import Alert from '_src/ui/app/shared/feedback/Alert';
 import Body from '_src/ui/app/shared/typography/Body';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
-import Alert from '_src/ui/app/shared/feedback/Alert';
 
 function TokensPage() {
     const { loading, error, showError } = useObjectsState();

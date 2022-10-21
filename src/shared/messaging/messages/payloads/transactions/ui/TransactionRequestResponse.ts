@@ -1,16 +1,16 @@
-// Copyright (c) 2022, Mysten Labs, Inc.
+// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
 import { isBasePayload } from '_payloads';
 
-import type { SuiExecuteTransactionResponse } from '@mysten/sui.js';
+import type { SuiTransactionResponse } from '@mysten/sui.js';
 import type { BasePayload, Payload } from '_payloads';
 
 export interface TransactionRequestResponse extends BasePayload {
     type: 'transaction-request-response';
     txID: string;
     approved: boolean;
-    txResult?: SuiExecuteTransactionResponse;
+    txResult?: SuiTransactionResponse;
     tsResultError?: string;
 }
 
