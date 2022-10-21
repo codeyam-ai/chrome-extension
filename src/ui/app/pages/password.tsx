@@ -37,11 +37,11 @@ const PasswordPage = () => {
                     <DescriptionList
                         labelAndDescriptions={[
                             {
-                                label: 'Create a passphrase',
+                                label: 'Create a password',
                                 description: (
                                     <>
-                                        Please provide a passphrase to ensure
-                                        your wallet is secure.
+                                        Please provide a password to ensure your
+                                        wallet is secure.
                                     </>
                                 ),
                             },
