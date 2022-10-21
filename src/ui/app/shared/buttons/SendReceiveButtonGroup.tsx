@@ -8,6 +8,7 @@ import { useCallback, useMemo, useState } from 'react';
 import LoadingIndicator from '../../components/loading/LoadingIndicator';
 import { useAppSelector } from '../../hooks';
 import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
+import Alert from '../feedback/Alert';
 import InlineButtonGroup from './InlineButtonGroup';
 
 interface SendReceiveButtonGroupProps {
@@ -18,6 +19,7 @@ const SendReceiveButtonGroup = ({
     mistBalance,
 }: SendReceiveButtonGroupProps) => {
     // Update with login when mainnet happens
+    const [error, setError] = useState(false);
     const isBalanceZero = useMemo(
         () => mistBalance.toString() === '0',
         [mistBalance]
@@ -33,7 +35,11 @@ const SendReceiveButtonGroup = ({
     const _faucet = useCallback(() => {
         setIsFaucetInProgress(true);
         const faucet = async () => {
-            await fetch('https://faucet.devnet.sui.io:443/gas', {
+            setTimeout(() => {
+                setIsFaucetInProgress(false);
+            }, 2500);
+
+            const result = await fetch('https://faucet.devnet.sui.io:443/gas', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -46,38 +52,54 @@ const SendReceiveButtonGroup = ({
                 }),
             });
 
-            setTimeout(() => {
+            if (result.status !== 200) {
                 setIsFaucetInProgress(false);
-            }, 2500);
+                setError(true);
+            }
         };
 
         faucet();
     }, [address]);
     const iconClasses = 'h-4 w-4';
     return (
-        <InlineButtonGroup
-            onClickButtonPrimary={_faucet}
-            isButtonPrimaryDisabled={isFaucetInProgress}
-            buttonPrimaryChildren={
-                <>
-                    <CloudArrowDownIcon className={iconClasses} />
+        <>
+            {error ? (
+                <div className="px-6 pb-4">
+                    <Alert
+                        title="The faucet isn't working"
+                        subtitle="There could be an issue with Sui DevNet or the Sui faucet. Please try again later."
+                    />
+                </div>
+            ) : (
+                <InlineButtonGroup
+                    onClickButtonPrimary={_faucet}
+                    isButtonPrimaryDisabled={isFaucetInProgress}
+                    buttonPrimaryChildren={
+                        <>
+                            <CloudArrowDownIcon className={iconClasses} />
 
-                    {isFaucetInProgress ? <LoadingIndicator /> : 'Use faucet'}
-                </>
-            }
-            buttonSecondaryTo={sendUrl}
-            buttonSecondaryChildren={
-                <>
-                    {isBalanceZero ? (
-                        <CreditCardIcon className={iconClasses} />
-                    ) : (
-                        <PaperAirplaneIcon className={iconClasses} />
-                    )}
+                            {isFaucetInProgress ? (
+                                <LoadingIndicator />
+                            ) : (
+                                'Use faucet'
+                            )}
+                        </>
+                    }
+                    buttonSecondaryTo={sendUrl}
+                    buttonSecondaryChildren={
+                        <>
+                            {isBalanceZero ? (
+                                <CreditCardIcon className={iconClasses} />
+                            ) : (
+                                <PaperAirplaneIcon className={iconClasses} />
+                            )}
 
-                    {isBalanceZero ? 'Buy' : 'Send'}
-                </>
-            }
-        />
+                            {isBalanceZero ? 'Buy' : 'Send'}
+                        </>
+                    }
+                />
+            )}
+        </>
     );
 };
 
