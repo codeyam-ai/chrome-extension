@@ -15,8 +15,8 @@ fi
 
 distDir="${1}"
 
+# Was trying to save the file with the version name, but couldn't get it to work
 # versionNumber=$(npm run get-version)
-
 # zipFileName="ethos-extension-v$versionNumber"
 
 zipFileName="ethos-extension"
