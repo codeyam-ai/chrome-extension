@@ -10,7 +10,7 @@ import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
 import { LinkType } from '_src/enums/LinkType';
 import { TextColor } from '_src/enums/Typography';
-import { DASHBOARD_LINK, MIST_PER_SUI } from '_src/shared/constants';
+import { DASHBOARD_LINK } from '_src/shared/constants';
 import SendReceiveButtonGroup from '_src/ui/app/shared/buttons/SendReceiveButtonGroup';
 import AmountRow from '_src/ui/app/shared/content/rows-and-lists/AmountRow';
 import WalletRow from '_src/ui/app/shared/content/rows-and-lists/WalletRow';
@@ -45,10 +45,7 @@ function TokensPage() {
             ) : (
                 <>
                     <WalletRow />
-                    <AmountRow
-                        balance={Number(mistBalance) / MIST_PER_SUI}
-                        type={GAS_TYPE_ARG}
-                    />
+                    <AmountRow balance={mistBalance} type={GAS_TYPE_ARG} />
                     <SendReceiveButtonGroup mistBalance={mistBalance} />
                     {otherCoinTypes.length ? (
                         otherCoinTypes.map((aCoinType) => {

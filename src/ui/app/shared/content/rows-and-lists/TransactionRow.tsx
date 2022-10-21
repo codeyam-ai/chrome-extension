@@ -9,7 +9,6 @@ import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
 import { formatDate } from '_helpers';
 import { TextColor } from '_src/enums/Typography';
-import { MIST_PER_SUI } from '_src/shared/constants';
 import { useMiddleEllipsis } from '_src/ui/app/hooks';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
@@ -80,7 +79,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
             <span className="flex-1">
                 {txn.amount && (
                     <BodyLarge className="float-right text-right">
-                        {txn.amount / MIST_PER_SUI} SUI
+                        {txn.amount} SUI
                     </BodyLarge>
                 )}
             </span>

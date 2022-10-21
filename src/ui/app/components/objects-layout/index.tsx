@@ -3,6 +3,7 @@
 
 import { memo } from 'react';
 
+import Alert from '../../shared/feedback/Alert';
 import AccountAddress from '_components/account-address';
 import Icon from '_components/icon';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
@@ -11,7 +12,6 @@ import { useObjectsState } from '_hooks';
 import type { ReactNode } from 'react';
 
 import st from './ObjectsLayout.module.scss';
-import Alert from '../../shared/feedback/Alert';
 
 export type ObjectsLayoutProps = {
     children: ReactNode;
