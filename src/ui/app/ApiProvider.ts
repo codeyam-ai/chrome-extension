@@ -113,14 +113,12 @@ export default class ApiProvider {
             this.setNewJsonRpcProvider();
         }
         if (!this._signer) {
-            this._signer = this._featureGating.isOn(FEATURES.DEPRECATE_GATEWAY)
-                ? new RawSigner(
-                      keypair,
-                      this._apiFullNodeProvider,
-                      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                      new LocalTxnDataSerializer(this._apiFullNodeProvider!)
-                  )
-                : new RawSigner(keypair, this._apiProvider);
+            this._signer = new RawSigner(
+                keypair,
+                this._apiFullNodeProvider,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                new LocalTxnDataSerializer(this._apiFullNodeProvider!)
+            );
         }
         return this._signer;
     }
@@ -132,14 +130,12 @@ export default class ApiProvider {
         if (!this._apiFullNodeProvider) {
             this.setNewJsonRpcProvider();
         }
-        return this._featureGating.isOn(FEATURES.DEPRECATE_GATEWAY)
-            ? new EthosSigner(
-                  address,
-                  accessToken,
-                  this._apiFullNodeProvider,
-                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                  new LocalTxnDataSerializer(this._apiFullNodeProvider!)
-              )
-            : new EthosSigner(address, accessToken, this._apiProvider);
+        return new EthosSigner(
+            address,
+            accessToken,
+            this._apiFullNodeProvider,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            new LocalTxnDataSerializer(this._apiFullNodeProvider!)
+        );
     }
 }

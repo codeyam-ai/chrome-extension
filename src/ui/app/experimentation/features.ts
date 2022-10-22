@@ -6,6 +6,5 @@
  * in https://docs.growthbook.io/app/features#feature-keys
  */
 export enum FEATURES {
-    DEPRECATE_GATEWAY = 'deprecate-gateway',
     RPC_API_VERSION = 'rpc-api-version',
 }

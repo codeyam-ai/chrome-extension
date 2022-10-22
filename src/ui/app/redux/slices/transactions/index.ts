@@ -13,7 +13,6 @@ import {
     suiObjectsAdapterSelectors,
 } from '_redux/slices/sui-objects';
 import { Coin } from '_redux/slices/sui-objects/Coin';
-import { FEATURES } from '_src/ui/app/experimentation/features';
 
 import type {
     SuiAddress,
@@ -69,14 +68,14 @@ export const sendTokens = createAsyncThunk<
                       coins,
                       amount,
                       recipientAddress,
-                      featureGating.isOn(FEATURES.DEPRECATE_GATEWAY)
+                      true
                   )
                 : await Coin.transferCoin(
                       signer,
                       coins,
                       amount,
                       recipientAddress,
-                      featureGating.isOn(FEATURES.DEPRECATE_GATEWAY)
+                      true
                   );
 
         // TODO: better way to sync latest objects
@@ -137,7 +136,7 @@ export const StakeTokens = createAsyncThunk<
             coins,
             amount,
             validatorAddress,
-            featureGating.isOn(FEATURES.DEPRECATE_GATEWAY)
+            true
         );
         dispatch(fetchAllOwnedAndRequiredObjects());
         return response as TransactionResult;
