@@ -14,24 +14,24 @@ type PassphraseFormProps = {
 const CustomFormikForm = () => {
     // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
     // which we can spread on <input> and alse replace ErrorMessage entirely.
-    const [field, meta] = useField('passphrase');
-    const [confirmField, confirmMeta] = useField('confirmPassphrase');
+    const [field, meta] = useField('password');
+    const [confirmField, confirmMeta] = useField('confirmPassword');
     return (
         <>
             <Input
                 {...field}
-                label="Passphrase"
-                id="passphrase"
-                name="passphrase"
+                label="Password"
+                id="password"
+                name="password"
                 type="password"
                 required={true}
                 errorText={meta.touched && meta.error ? meta.error : undefined}
             />
             <Input
                 {...confirmField}
-                label="Confirm passphrase"
-                id="confirmPassphrase"
-                name="confirmPassphrase"
+                label="Confirm password"
+                id="confirmPassword"
+                name="confirmPassword"
                 type="password"
                 required={true}
                 errorText={
@@ -61,8 +61,8 @@ const CustomFormikForm = () => {
 
 const PassphraseForm = ({ onSubmit }: PassphraseFormProps) => {
     const _onSubmit = useCallback(
-        ({ passphrase }: FormikValues) => {
-            onSubmit(passphrase);
+        ({ password }: FormikValues) => {
+            onSubmit(password);
         },
         [onSubmit]
     );
@@ -70,16 +70,16 @@ const PassphraseForm = ({ onSubmit }: PassphraseFormProps) => {
         <div>
             <Formik
                 initialValues={{
-                    passphrase: '',
-                    confirmPassphrase: '',
+                    password: '',
+                    confirmPassword: '',
                 }}
                 validationSchema={Yup.object({
-                    passphrase: Yup.string().required('Enter a passphrase'),
-                    confirmPassphrase: Yup.string()
-                        .required('Confirm your passphrase')
+                    password: Yup.string().required('Enter a password'),
+                    confirmPassword: Yup.string()
+                        .required('Confirm your password')
                         .oneOf(
-                            [Yup.ref('passphrase'), null],
-                            'Passphrases must match'
+                            [Yup.ref('password'), null],
+                            'Passwords must match'
                         ),
                 })}
                 onSubmit={_onSubmit}
