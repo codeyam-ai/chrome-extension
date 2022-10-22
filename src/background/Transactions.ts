@@ -265,14 +265,13 @@ class Transactions {
                     'ED25519',
                     signature,
                     publicKey,
-                    'WaitForEffectsCert',
+                    'WaitForLocalExecution',
                 ],
                 id: 1,
             }),
         };
 
         const executeResponse = await fetch(endpoint, data);
-
         const txResponse = await executeResponse.json();
 
         return txResponse.result;
