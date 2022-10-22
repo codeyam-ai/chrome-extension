@@ -79,6 +79,9 @@ export default function SwitchWallet() {
             setAccountInfos(draftAccountInfos.current);
         } else {
             await dispatch(saveAccountInfos(draftAccountInfos.current));
+            await dispatch(
+                saveActiveAccountIndex(draftAccountInfos.current.length - 1)
+            );
             getAccountInfos();
         }
 
@@ -109,6 +112,7 @@ export default function SwitchWallet() {
                     ...accountInfos,
                     {
                         index: nextAccountIndex,
+                        name: `Wallet ${accountInfos.length + 1}`,
                         address:
                             keypairVault.getAddress(nextAccountIndex) || '',
                         seed: (
@@ -121,20 +125,20 @@ export default function SwitchWallet() {
             }
 
             setAccountInfos(draftAccountInfos.current);
-            await dispatch(saveAccountInfos(newAccountInfos));
-            await dispatch(saveActiveAccountIndex(newAccountInfos.length - 1));
 
             setLoading(false);
             setEdit(true);
         };
         loadAccFromStorage();
-    }, [keypairVault, dispatch, authentication, accountInfos]);
+    }, [keypairVault, authentication, accountInfos]);
 
     const _toggleEdit = useCallback(() => {
         setEdit((prev) => !prev);
     }, []);
 
     const _cancelEdit = useCallback(() => {
+        draftAccountInfos.current.pop();
+        setAccountInfos(draftAccountInfos.current);
         setEdit(false);
     }, []);
 

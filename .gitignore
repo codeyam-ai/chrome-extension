@@ -1,4 +1,5 @@
 .env
+.env.production
 *.log
 .DS_Store
 node_modules
