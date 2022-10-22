@@ -37,7 +37,7 @@ export const sendTokens = createAsyncThunk<
     'sui-objects/send-tokens',
     async (
         { tokenTypeArg, amount, recipientAddress },
-        { getState, extra: { api, keypairVault, featureGating }, dispatch }
+        { getState, extra: { api, keypairVault }, dispatch }
     ) => {
         const state = getState();
         const {

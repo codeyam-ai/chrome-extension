@@ -68,8 +68,13 @@ export const batchFetchObject = createAsyncThunk<
 
 export const mintDemoNFT = createAsyncThunk<void, void, AppThunkConfig>(
     'mintDemoNFT',
-    async (_, { extra: { api, keypairVault, featureGating }, dispatch }) => {
-        const signer = api.getSignerInstance(keypairVault.getKeyPair());
+    async (_, { extra: { api, keypairVault }, getState, dispatch }) => {
+        const {
+            account: { activeAccountIndex },
+        } = getState();
+        const signer = api.getSignerInstance(
+            keypairVault.getKeyPair(activeAccountIndex)
+        );
         await ExampleNFT.mintExampleNFTWithFullnode(signer);
         await dispatch(fetchAllOwnedAndRequiredObjects());
     }
@@ -88,8 +93,13 @@ export const transferSuiNFT = createAsyncThunk<
     AppThunkConfig
 >(
     'transferSuiNFT',
-    async (data, { extra: { api, keypairVault, featureGating }, dispatch }) => {
-        const signer = api.getSignerInstance(keypairVault.getKeyPair());
+    async (data, { extra: { api, keypairVault }, getState, dispatch }) => {
+        const {
+            account: { activeAccountIndex },
+        } = getState();
+        const signer = api.getSignerInstance(
+            keypairVault.getKeyPair(activeAccountIndex)
+        );
         const txn = await ExampleNFT.TransferNFTWithFullnode(
             signer,
             data.nftId,
