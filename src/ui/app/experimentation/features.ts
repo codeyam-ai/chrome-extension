@@ -6,5 +6,6 @@
  * in https://docs.growthbook.io/app/features#feature-keys
  */
 export enum FEATURES {
+    TEST = 'test',
     RPC_API_VERSION = 'rpc-api-version',
 }

@@ -74,7 +74,7 @@ export const respondToTransactionRequest = createAsyncThunk<
     'respond-to-transaction-request',
     async (
         { txRequestID, approved },
-        { extra: { background, api, keypairVault, featureGating }, getState }
+        { extra: { background, api, keypairVault }, getState }
     ) => {
         const state = getState();
         const txRequest = txRequestsSelectors.selectById(state, txRequestID);

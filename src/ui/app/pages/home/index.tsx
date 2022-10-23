@@ -6,10 +6,12 @@ import { Outlet } from 'react-router-dom';
 import { of, filter, switchMap, from, defer, repeat } from 'rxjs';
 
 import { AppState } from '../../hooks/useInitializedGuard';
+import { thunkExtras } from '../../redux/store/thunk-extras';
 import BaseLayout from '../../shared/layouts/BaseLayout';
 import NavBarWithMenu from '../../shared/navigation/nav-bar/NavBarWithMenu';
 import NavExpanded from '../../shared/navigation/nav-bar/NavExpanded';
 import TabBar from '../../shared/navigation/tab-bar/TabBar';
+import { FEATURES } from '_app/experimentation/features';
 import Loading from '_components/loading';
 import { useInitializedGuard, useAppDispatch } from '_hooks';
 import PageLayout from '_pages/layout';
@@ -18,6 +20,7 @@ import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
 const POLL_SUI_OBJECTS_INTERVAL = 4000;
 
 const HomePage = () => {
+    const { featureGating } = thunkExtras;
     const guardChecking = useInitializedGuard([
         AppState.MNEMONIC,
         AppState.HOSTED,
@@ -44,6 +47,7 @@ const HomePage = () => {
                 <BaseLayout>
                     <NavBarWithMenu />
                     <NavExpanded />
+                    {featureGating.isOn(FEATURES.TEST) && <div>TEST!!!!!</div>}
                     <main className="flex-grow">
                         <Outlet />
                     </main>

@@ -98,7 +98,7 @@ export const StakeTokens = createAsyncThunk<
     'sui-objects/stake',
     async (
         { tokenTypeArg, amount },
-        { getState, extra: { api, keypairVault, featureGating }, dispatch }
+        { getState, extra: { api, keypairVault }, dispatch }
     ) => {
         const state = getState();
         const {

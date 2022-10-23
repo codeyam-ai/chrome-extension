@@ -5,20 +5,17 @@ import { GrowthBook } from '@growthbook/growthbook';
 
 import type { JSONValue } from '@growthbook/growthbook';
 
-const GROWTHBOOK_API_KEY =
-    process.env.NODE_ENV === 'production'
-        ? 'key_prod_ac59fe325855eb5f'
-        : 'key_dev_dc2872e15e0c5f95';
+const GROWTHBOOK_API_KEY = 'prod_rT9proBe3naVQHm9JbRb4LpE2Z8t5zK3IoLNo0dXEU';
 export default class FeatureGating {
     #growthBook: GrowthBook;
 
     constructor() {
         // Create a GrowthBook context
         this.#growthBook = new GrowthBook();
+        this.init();
     }
 
     public async init() {
-        // Load feature definitions
         await fetch(
             `https://cdn.growthbook.io/api/features/${GROWTHBOOK_API_KEY}`
         )

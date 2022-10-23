@@ -81,7 +81,7 @@ export default class ApiProvider {
     public setNewJsonRpcProvider(apiEnv: API_ENV = DEFAULT_API_ENV) {
         const apiVersion = this._featureGating.getFeatureValue(
             FEATURES.RPC_API_VERSION,
-            '0.11.0'
+            '0.13.0'
         );
         this._apiProvider = new JsonRpcProvider(
             getDefaultAPI(apiEnv).gateway,
