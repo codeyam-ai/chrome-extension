@@ -29,7 +29,7 @@ const baseButtonClassNames =
 const primaryButtonClassNames =
     baseButtonClassNames +
     ' ' +
-    'text-ethos-light-background-light bg-ethos-light-primary-light disabled:opacity-50';
+    'text-ethos-light-background-default bg-ethos-light-primary-light disabled:opacity-50';
 
 const secondaryButtonClassNames =
     baseButtonClassNames +
