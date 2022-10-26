@@ -1,10 +1,11 @@
 {
     "name": "ethos-wallet-extension-beta",
-    "version": "0.0.0.7",
+    "version": "0.0.0.8",
     "description": "Ethos: Your wallet and home base for Sui",
     "main": "./dist/ui.js",
     "scripts": {
         "build:prod": "cross-env NODE_ENV=\"production\" TS_NODE_PROJECT=\"./configs/ts/tsconfig.webpack.json\" webpack --progress",
+        "build:final": "npm run build:prod && scripts/build-prod.sh dist/",
         "build:dev": "cross-env NODE_ENV=\"development\" TS_NODE_PROJECT=\"./configs/ts/tsconfig.webpack.json\" webpack --progress",
         "prettier:check": "prettier -c --ignore-unknown .",
         "prettier:fix": "prettier -w --ignore-unknown .",
@@ -18,8 +19,7 @@
         "start": "concurrently --restart-tries 10 --raw \"npm:build:dev -- --watch\" \"npm:prettier:fix:watch\"",
         "test": "jest",
         "make-font-icons": "svgtofont -s ./font-icons/svgs/ -o ./font-icons/output/",
-        "get-version": "echo $npm_package_version",
-        "build-final": "npm run build:prod && scripts/build-prod.sh dist/"
+        "get-version": "echo $npm_package_version"
     },
     "repository": {
         "type": "git",

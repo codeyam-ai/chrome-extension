@@ -21,7 +21,7 @@ import KeypairVault from '_src/ui/app/KeypairVault';
 import { AUTHENTICATION_REQUESTED } from '_src/ui/app/pages/initialize/hosted';
 
 import type { AppThunkConfig } from '../../store/thunk-extras';
-import type { SuiAddress, SuiMoveObject } from '@mysten/sui.js';
+import type { SuiAddress, SuiMoveObject, SuiObject } from '@mysten/sui.js';
 import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
@@ -32,6 +32,17 @@ type InitialAccountInfo = {
     passphrase: string | null;
     accountInfos: AccountInfo[];
     activeAccountIndex: number;
+};
+
+/*
+    The has_public_transfer was added to make sure the SuiSystemState object isn't
+    shown as an NFT. This forced us to extend the anObj type because there is no
+    such object on the SuiObject type of the mysten NPM package.
+*/
+type SuiObjectWithPublicTransfer = SuiObject & {
+    data: {
+        has_public_transfer: boolean;
+    };
 };
 
 export const LOCKED = 'locked';
@@ -440,12 +451,20 @@ export const accountItemizedBalancesSelector = createSelector(
 export const accountNftsSelector = createSelector(
     suiObjectsAdapterSelectors.selectAll,
     (allSuiObjects) => {
-        // The  previousTransaction` check was added
         return allSuiObjects.filter(
-            (anObj) =>
-                !Coin.isCoin(anObj) &&
-                anObj.previousTransaction !==
-                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='
+            /*
+                The has_public_transfer was added to make sure the SuiSystemState object isn't
+                shown as an NFT. This forced us to extend the anObj type because there is no
+                such object on the SuiObject type of the mysten NPM package.
+            */
+            (anObj) => {
+                const anObjWithPublicTransfer =
+                    anObj as SuiObjectWithPublicTransfer;
+                return (
+                    !Coin.isCoin(anObj) &&
+                    anObjWithPublicTransfer.data.has_public_transfer !== false
+                );
+            }
         );
     }
 );
