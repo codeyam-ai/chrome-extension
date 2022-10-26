@@ -19,4 +19,4 @@ export const SUI_ADDRESS_VALIDATION = Yup.string()
         'Invalid address. Please check again.',
         (value) => isValidSuiAddress(value)
     )
-    .label("Recipient's address");
+    .label("Recipient's address or SuiNS Name");

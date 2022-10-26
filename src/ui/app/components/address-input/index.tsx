@@ -1,8 +1,9 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 
+import lookup from './lookup';
 import { SUI_ADDRESS_VALIDATION } from './validation';
 
 import type { SuiAddress } from '@mysten/sui.js';
@@ -18,37 +19,57 @@ export interface AddressInputProps<Values>
 
 function AddressInput<FormValues>({
     disabled: forcedDisabled,
-    placeholder = '0x...',
+    placeholder = '0x... or SuiNS name',
     className,
     form: { isSubmitting, setFieldValue },
     field: { onBlur, name, value },
 }: AddressInputProps<FormValues>) {
+    const [displayedValue, setDisplayedValue] = useState<string>(value);
+    const [showAddress, setShowAddress] = useState<boolean>(false);
     const disabled =
         forcedDisabled !== undefined ? forcedDisabled : isSubmitting;
     const handleOnChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
         (e) => {
-            const address = e.currentTarget.value;
-            setFieldValue(name, SUI_ADDRESS_VALIDATION.cast(address));
+            const _value = e.currentTarget.value;
+            setDisplayedValue(_value);
+            if (!_value.startsWith('0x')) {
+                lookup(_value).then((address: string) => {
+                    setShowAddress(address !== _value);
+                    setFieldValue(name, SUI_ADDRESS_VALIDATION.cast(address));
+                });
+            } else {
+                setFieldValue(name, SUI_ADDRESS_VALIDATION.cast(_value));
+            }
         },
-        [setFieldValue, name]
+        [setFieldValue, setDisplayedValue, name]
     );
     const formattedValue = useMemo(
         () => SUI_ADDRESS_VALIDATION.cast(value),
         [value]
     );
     return (
-        <input
-            type="text"
-            {...{
-                disabled,
-                placeholder,
-                className,
-                onBlur,
-                value: formattedValue,
-                name,
-                onChange: handleOnChange,
-            }}
-        />
+        <div className="flex flex-col gap-1 flex-1">
+            <input
+                type="text"
+                {...{
+                    disabled,
+                    placeholder,
+                    className,
+                    onBlur,
+                    value: displayedValue,
+                    onChange: handleOnChange,
+                }}
+            />
+            <input
+                type="hidden"
+                {...{
+                    disabled,
+                    value: formattedValue,
+                    name,
+                }}
+            />
+            {showAddress && <div>{formattedValue}</div>}
+        </div>
     );
 }
 

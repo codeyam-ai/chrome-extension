@@ -61,7 +61,7 @@ function TransferCoinForm({
                     className="flex-1 block w-full min-w-0 rounded-md sm:text-sm focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 border-gray-300 dark:border-gray-500 dark:bg-gray-700"
                 />
                 <div className="text-xs text-gray-500 dark:text-gray-400">
-                    The recipient&apos;s address
+                    The recipient&apos;s address or SuiNS name
                 </div>
                 <ErrorMessage
                     className="mt-1 text-red-500 dark:text-red-400"
