@@ -87,10 +87,16 @@ class Transactions {
                 tx,
             });
 
+            const { result, error } = txDirectResult;
+
+            if (error) {
+                return { error };
+            }
+
             const { preapproval } = preapprovalRequest;
             preapproval.maxTransactionCount -= 1;
             const { computationCost, storageCost, storageRebate } =
-                txDirectResult.EffectsCert.effects.effects.gasUsed;
+                result.EffectsCert.effects.effects.gasUsed;
             const gasUsed = computationCost + (storageCost - storageRebate);
             preapproval.totalGasLimit -= gasUsed;
 
@@ -132,12 +138,16 @@ class Transactions {
                 });
 
                 if (permissionRequest) {
-                    const result = await this.tryDirectExecution(
+                    const { result, error } = await this.tryDirectExecution(
                         moveCall,
                         permissionRequest
                     );
                     if (result) {
                         return result;
+                    }
+
+                    if (error) {
+                        throw new Error(error);
                     }
                 }
             }
@@ -274,7 +284,7 @@ class Transactions {
         const executeResponse = await fetch(endpoint, data);
         const txResponse = await executeResponse.json();
 
-        return txResponse.result;
+        return txResponse;
     }
 
     public async requestPreapproval(
