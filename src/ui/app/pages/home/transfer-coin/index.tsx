@@ -18,6 +18,7 @@ import {
 import { Coin, GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
 import { sendTokens } from '_redux/slices/transactions';
 import { balanceFormatOptions } from '_shared/formatting';
+import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
 import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 import type { SerializedError } from '@reduxjs/toolkit';
@@ -52,6 +53,11 @@ function TransferCoinPage() {
         () => (coinType && Coin.getCoinSymbol(coinType)) || '',
         [coinType]
     );
+
+    const [formattedBalance] = useFormatCoin(coinBalance, coinType);
+    // const [formattedTotal] = useFormatCoin(totalGasCoins, GAS_TYPE_ARG);
+    // const [formattedGas] = useFormatCoin(gasAggregateBalance, GAS_TYPE_ARG);
+
     const [sendError, setSendError] = useState<string | null>(null);
     const intl = useIntl();
     const validationSchema = useMemo(
@@ -131,7 +137,7 @@ function TransferCoinPage() {
                 >
                     <TransferCoinForm
                         submitError={sendError}
-                        coinBalance={coinBalance.toString()}
+                        coinBalance={formattedBalance.toString()}
                         coinSymbol={coinSymbol}
                         onClearSubmitError={handleOnClearSubmitError}
                     />

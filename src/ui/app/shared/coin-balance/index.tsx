@@ -3,15 +3,12 @@
 
 import cl from 'classnames';
 import { memo } from 'react';
-import { useIntl } from 'react-intl';
-
-import { balanceFormatOptions } from '_shared/formatting';
 
 import st from './CoinBalance.module.scss';
 
 export type CoinBalanceProps = {
     className?: string;
-    balance: bigint;
+    balance: string;
     symbol: string;
     mode?: 'neutral' | 'positive' | 'negative';
     diffSymbol?: boolean;
@@ -24,10 +21,9 @@ function CoinBalance({
     mode = 'neutral',
     diffSymbol = false,
 }: CoinBalanceProps) {
-    const intl = useIntl();
     return (
         <div className={cl(className, st.container, st[mode])}>
-            <span>{intl.formatNumber(balance, balanceFormatOptions)}</span>
+            <span>{balance}</span>
             <span className={cl(st.symbol, { [st.diffSymbol]: diffSymbol })}>
                 {symbol}
             </span>

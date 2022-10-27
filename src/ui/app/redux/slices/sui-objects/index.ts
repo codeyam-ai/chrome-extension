@@ -87,20 +87,6 @@ export const batchFetchObject = createAsyncThunk<
     return allSuiObjects;
 });
 
-export const mintDemoNFT = createAsyncThunk<void, void, AppThunkConfig>(
-    'mintDemoNFT',
-    async (_, { extra: { api, keypairVault }, getState, dispatch }) => {
-        const {
-            account: { activeAccountIndex },
-        } = getState();
-        const signer = api.getSignerInstance(
-            keypairVault.getKeyPair(activeAccountIndex)
-        );
-        await ExampleNFT.mintExampleNFTWithFullnode(signer);
-        await dispatch(fetchAllOwnedAndRequiredObjects());
-    }
-);
-
 type NFTTxResponse = {
     timestamp_ms?: number;
     status?: string;

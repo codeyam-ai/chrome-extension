@@ -3,7 +3,6 @@
 
 import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
 import { useEffect, useRef, memo } from 'react';
-import { useIntl } from 'react-intl';
 
 import AddressInput from '_components/address-input';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
@@ -13,7 +12,6 @@ import {
     DEFAULT_GAS_BUDGET_FOR_TRANSFER,
     GAS_SYMBOL,
 } from '_redux/slices/sui-objects/Coin';
-import { balanceFormatOptions } from '_shared/formatting';
 import Icon from '_src/ui/app/components/icon';
 import Button, { ButtonStyle } from '_src/ui/app/shared/buttons/Button';
 import Alert from '_src/ui/app/shared/feedback/Alert';
@@ -40,7 +38,6 @@ function TransferCoinForm({
         isValid,
         values: { amount, to },
     } = useFormikContext<FormValues>();
-    const intl = useIntl();
     const onClearRef = useRef(onClearSubmitError);
     onClearRef.current = onClearSubmitError;
     useEffect(() => {
@@ -88,12 +85,7 @@ function TransferCoinForm({
                     </span>
                 </span>
                 <div className="text-xs text-gray-500 dark:text-gray-400">
-                    Available balance:{' '}
-                    {intl.formatNumber(
-                        BigInt(coinBalance),
-                        balanceFormatOptions
-                    )}{' '}
-                    {coinSymbol}
+                    Available balance: {coinBalance} {coinSymbol}
                 </div>
                 <ErrorMessage
                     className="mt-1 text-red-500 dark:text-red-400"

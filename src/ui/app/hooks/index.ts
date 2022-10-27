@@ -15,3 +15,4 @@ export { default as useFileExtentionType } from './useFileExtentionType';
 export { default as useNFTBasicData } from './useNFTBasicData';
 export { useObjectsState } from './useObjectsState';
 export { default as useExplorerPermission } from './useExplorerPermission';
+export { useFormatCoin } from './useFormatCoin';

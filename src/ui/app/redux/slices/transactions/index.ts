@@ -67,15 +67,13 @@ export const sendTokens = createAsyncThunk<
                       signer,
                       coins,
                       amount,
-                      recipientAddress,
-                      true
+                      recipientAddress
                   )
                 : await Coin.transferCoin(
                       signer,
                       coins,
                       amount,
-                      recipientAddress,
-                      true
+                      recipientAddress
                   );
 
         // TODO: better way to sync latest objects
@@ -135,8 +133,7 @@ export const StakeTokens = createAsyncThunk<
             signer,
             coins,
             amount,
-            validatorAddress,
-            true
+            validatorAddress
         );
         dispatch(fetchAllOwnedAndRequiredObjects());
         return response as TransactionResult;

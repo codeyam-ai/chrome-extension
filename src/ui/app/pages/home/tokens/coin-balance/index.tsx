@@ -2,15 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { memo, useCallback, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
 
 import { SuiIcons } from '_font-icons/output/sui-icons';
 // import { useMiddleEllipsis } from '_hooks';
 import { Coin } from '_redux/slices/sui-objects/Coin';
-import { balanceFormatOptions } from '_shared/formatting';
 import Icon from '_src/ui/app/components/icon';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import { useAppSelector } from '_src/ui/app/hooks';
+import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
 import Button, { ButtonStyle } from '_src/ui/app/shared/buttons/Button';
 
 export type CoinProps = {
@@ -20,20 +19,11 @@ export type CoinProps = {
     mode?: 'row-item' | 'standalone';
 };
 
-function CoinBalance({
-    type,
-    balance,
-    hideStake = false,
-    mode = 'row-item',
-}: CoinProps) {
+function CoinBalance({ type, balance }: CoinProps) {
     const faucetAvailable = useMemo(() => balance < 10000000, [balance]);
     const symbol = useMemo(() => Coin.getCoinSymbol(type), [type]);
-    const intl = useIntl();
     const isBalanceZero = useMemo(() => balance.toString() === '0', [balance]);
-    const balanceFormatted = useMemo(
-        () => intl.formatNumber(balance, balanceFormatOptions),
-        [intl, balance]
-    );
+    const [balanceFormatted] = useFormatCoin(balance, type);
     // TODO: make this an actual calculation
     const usdAmount = useMemo(
         () => (isBalanceZero ? '$0.00' : '$54.32'),
