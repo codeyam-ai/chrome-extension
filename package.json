@@ -1,6 +1,6 @@
 {
     "name": "ethos-wallet-extension-beta",
-    "version": "0.0.0.8",
+    "version": "0.0.0.9",
     "description": "Ethos is your Sui wallet and home base for the best dApps, experiences, and cryptocurrency and NFT assets.",
     "main": "./dist/ui.js",
     "scripts": {
@@ -90,6 +90,7 @@
         "@wallet-standard/standard": "^0.1.0-alpha.5",
         "aes-js": "^3.1.2",
         "asmcrypto.js": "^2.3.2",
+        "bignumber.js": "^9.1.0",
         "bip39-light": "^1.0.7",
         "bootstrap-icons": "^1.9.1",
         "buffer": "^6.0.3",
