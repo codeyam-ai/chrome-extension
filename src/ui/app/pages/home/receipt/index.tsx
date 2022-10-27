@@ -41,12 +41,7 @@ function ReceiptPage() {
             <NavBarWithBackAndTitle title="" backLink={linkTo} />
             <div className="px-6">
                 <Content>
-                    {txnItem && (
-                        <ReceiptCard
-                            txDigest={txnItem}
-                            tranferType={tranferType}
-                        />
-                    )}
+                    {txnItem && <ReceiptCard txDigest={txnItem} />}
                 </Content>
             </div>
         </div>

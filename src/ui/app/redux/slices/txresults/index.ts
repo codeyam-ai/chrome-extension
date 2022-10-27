@@ -45,6 +45,7 @@ export type TxResultState = {
     balance?: number;
     callFunctionName?: string;
     coinSymbol?: string;
+    coinType?: string;
 };
 
 interface TransactionManualState {

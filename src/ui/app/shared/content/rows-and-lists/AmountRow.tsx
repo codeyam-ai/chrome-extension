@@ -1,12 +1,10 @@
-import { Coin } from '@mysten/sui.js';
 import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
 
 import Body from '../../typography/Body';
 import Header from '../../typography/Header';
 import Subheader from '../../typography/Subheader';
 import { TextColor } from '_src/enums/Typography';
-import { balanceFormatOptions } from '_src/shared/formatting';
+import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
 
 interface AmountRowProps {
     type: string;
@@ -14,13 +12,8 @@ interface AmountRowProps {
 }
 
 const AmountRow = ({ type, balance }: AmountRowProps) => {
-    const symbol = useMemo(() => Coin.getCoinSymbol(type), [type]);
-    const intl = useIntl();
     const isBalanceZero = useMemo(() => balance.toString() === '0', [balance]);
-    const balanceFormatted = useMemo(
-        () => intl.formatNumber(balance, balanceFormatOptions),
-        [intl, balance]
-    );
+    const [balanceFormatted, symbol] = useFormatCoin(balance, type);
     // TODO: make this an actual calculation
     const usdAmount = useMemo(
         () => (isBalanceZero ? '$0.00' : '$54.32'),

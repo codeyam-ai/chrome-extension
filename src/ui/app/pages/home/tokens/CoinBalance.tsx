@@ -7,10 +7,8 @@ import {
     PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
 import { memo, useMemo } from 'react';
-import { useIntl } from 'react-intl';
 
-import { Coin } from '_redux/slices/sui-objects/Coin';
-import { balanceFormatOptions } from '_shared/formatting';
+import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
 import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
 
 export type CoinProps = {
@@ -20,19 +18,9 @@ export type CoinProps = {
     mode?: 'row-item' | 'standalone';
 };
 
-function CoinBalance({
-    type,
-    balance,
-    hideStake = false,
-    mode = 'row-item',
-}: CoinProps) {
-    const symbol = useMemo(() => Coin.getCoinSymbol(type), [type]);
-    const intl = useIntl();
+function CoinBalance({ type, balance }: CoinProps) {
     const isBalanceZero = useMemo(() => balance.toString() === '0', [balance]);
-    const balanceFormatted = useMemo(
-        () => intl.formatNumber(balance, balanceFormatOptions),
-        [intl, balance]
-    );
+    const [balanceFormatted, symbol] = useFormatCoin(balance, type);
     // TODO: make this an actual calculation
     const usdAmount = useMemo(
         () => (isBalanceZero ? '$0.00' : '$54.32'),
