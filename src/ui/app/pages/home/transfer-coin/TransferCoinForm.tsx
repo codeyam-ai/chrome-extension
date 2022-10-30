@@ -13,6 +13,7 @@ import {
     GAS_SYMBOL,
 } from '_redux/slices/sui-objects/Coin';
 import Icon from '_src/ui/app/components/icon';
+import { useFormatCoin } from '_src/ui/app/hooks';
 import Button, { ButtonStyle } from '_src/ui/app/shared/buttons/Button';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 
@@ -43,6 +44,11 @@ function TransferCoinForm({
     useEffect(() => {
         onClearRef.current();
     }, [amount, to]);
+    const [formattedGasAmount] = useFormatCoin(
+        DEFAULT_GAS_BUDGET_FOR_TRANSFER,
+        '0x2::sui::SUI'
+    );
+
     return (
         <Form className={st.container} autoComplete="off" noValidate={true}>
             <div className="flex flex-col px-6 text-left">
@@ -78,7 +84,9 @@ function TransferCoinForm({
                         component={NumberInput}
                         allowNegative={false}
                         name="amount"
+                        placeholder={`Total ${coinSymbol.toLocaleUpperCase()} to send`}
                         className="flex-1 block w-full min-w-fit rounded-md focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 border-gray-300 dark:border-gray-500 dark:bg-gray-700"
+                        decimals
                     />
                     <span className="w-full flex items-center ml-2 text-base text-gray-700 dark:text-white">
                         {coinSymbol.toLocaleUpperCase()}
@@ -94,8 +102,7 @@ function TransferCoinForm({
                 />
             </div>
             <div className="flex flex-col mt-2 text-gray-500 dark:text-gray-400">
-                Total transaction fee estimate (gas cost):{' '}
-                {DEFAULT_GAS_BUDGET_FOR_TRANSFER} {GAS_SYMBOL}
+                Estimated fee (gas cost): {formattedGasAmount} {GAS_SYMBOL}
             </div>
             {submitError ? (
                 <div className="flex flex-col mt-2">

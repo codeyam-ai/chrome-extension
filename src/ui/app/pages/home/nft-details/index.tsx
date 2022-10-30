@@ -169,7 +169,7 @@ function NFTDetailsPage() {
 
     return (
         <div className="">
-            <Loading loading={loadingBalance}>
+            <Loading loading={loadingBalance} big={true}>
                 {objectId && startNFTTransfer ? (
                     <TransferNFTCard objectId={objectId} />
                 ) : (

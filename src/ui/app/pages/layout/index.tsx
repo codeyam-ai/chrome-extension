@@ -29,7 +29,7 @@ function PageLayout({
     const isNavVisible = useAppSelector(getNavIsVisible);
 
     return (
-        <Loading loading={guardLoading}>
+        <Loading loading={guardLoading} big={true}>
             <div className="relative flex sm:min-h-screen sm:w-full flex-col justify-center overflow-hidden text-ethos-light-text-default bg-ethos-light-background-default dark:text-ethos-dark-text-default dark:bg-ethos-dark-background-default">
                 {/* Show light gradient backdrop during light theme, and vice versa */}
                 <img

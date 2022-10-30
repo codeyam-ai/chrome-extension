@@ -1,24 +1,23 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { getTransactionDigest } from '@mysten/sui.js';
+// import { getTransactionDigest } from '@mysten/sui.js';
+import BigNumber from 'bignumber.js';
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
 import TransferCoinForm from './TransferCoinForm';
-import { createValidationSchema } from './validation';
+import { createTokenValidation } from './validation';
 import Loading from '_components/loading';
 import { useAppSelector, useAppDispatch } from '_hooks';
-import {
-    accountAggregateBalancesSelector,
-    accountItemizedBalancesSelector,
-} from '_redux/slices/account';
+import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { Coin, GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
 import { sendTokens } from '_redux/slices/transactions';
-import { balanceFormatOptions } from '_shared/formatting';
-import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
+import {
+    useCoinDecimals,
+    useFormatCoin,
+} from '_src/ui/app/hooks/useFormatCoin';
 import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 import type { SerializedError } from '@reduxjs/toolkit';
@@ -35,49 +34,46 @@ export type FormValues = typeof initialValues;
 function TransferCoinPage() {
     const [searchParams] = useSearchParams();
     const coinType = useMemo(() => searchParams.get('type'), [searchParams]);
-    const balances = useAppSelector(accountItemizedBalancesSelector);
     const aggregateBalances = useAppSelector(accountAggregateBalancesSelector);
     const coinBalance = useMemo(
         () => (coinType && aggregateBalances[coinType]) || BigInt(0),
         [coinType, aggregateBalances]
     );
-    const totalGasCoins = useMemo(
-        () => balances[GAS_TYPE_ARG]?.length || 0,
-        [balances]
-    );
     const gasAggregateBalance = useMemo(
         () => aggregateBalances[GAS_TYPE_ARG] || BigInt(0),
         [aggregateBalances]
     );
+
     const coinSymbol = useMemo(
         () => (coinType && Coin.getCoinSymbol(coinType)) || '',
         [coinType]
     );
+
+    const [coinDecimals] = useCoinDecimals(coinType);
+    const [gasDecimals] = useCoinDecimals(GAS_TYPE_ARG);
 
     const [formattedBalance] = useFormatCoin(coinBalance, coinType);
     // const [formattedTotal] = useFormatCoin(totalGasCoins, GAS_TYPE_ARG);
     // const [formattedGas] = useFormatCoin(gasAggregateBalance, GAS_TYPE_ARG);
 
     const [sendError, setSendError] = useState<string | null>(null);
-    const intl = useIntl();
     const validationSchema = useMemo(
         () =>
-            createValidationSchema(
+            createTokenValidation(
                 coinType || '',
                 coinBalance,
                 coinSymbol,
                 gasAggregateBalance,
-                totalGasCoins,
-                intl,
-                balanceFormatOptions
+                coinDecimals,
+                gasDecimals
             ),
         [
             coinType,
             coinBalance,
             coinSymbol,
             gasAggregateBalance,
-            totalGasCoins,
-            intl,
+            coinDecimals,
+            gasDecimals,
         ]
     );
     const dispatch = useAppDispatch();
@@ -92,26 +88,41 @@ function TransferCoinPage() {
             }
             setSendError(null);
             try {
-                const response = await dispatch(
+                const bigIntAmount = BigInt(
+                    new BigNumber(amount)
+                        .shiftedBy(coinDecimals)
+                        .integerValue()
+                        .toString()
+                );
+
+                // const response = await dispatch(
+                //     sendTokens({
+                //         amount: bigIntAmount,
+                //         recipientAddress: to,
+                //         tokenTypeArg: coinType,
+                //     })
+                // ).unwrap();
+                await dispatch(
                     sendTokens({
-                        amount: BigInt(amount),
+                        amount: bigIntAmount,
                         recipientAddress: to,
                         tokenTypeArg: coinType,
                     })
-                ).unwrap();
+                );
 
                 resetForm();
-                const txDigest = getTransactionDigest(response);
-                const receiptUrl = `/receipt?txdigest=${encodeURIComponent(
-                    txDigest
-                )}&transfer=coin`;
+                // const txDigest = getTransactionDigest(response);
+                // const receiptUrl = `/receipt?txdigest=${encodeURIComponent(
+                //     txDigest
+                // )}&transfer=coin`;
+                const receiptUrl = '/tokens';
 
                 navigate(receiptUrl);
             } catch (e) {
                 setSendError((e as SerializedError).message || null);
             }
         },
-        [dispatch, navigate, coinType]
+        [dispatch, navigate, coinType, coinDecimals]
     );
     const handleOnClearSubmitError = useCallback(() => {
         setSendError(null);
@@ -128,7 +139,7 @@ function TransferCoinPage() {
                 title={'Send ' + coinSymbol}
                 backLink="/tokens"
             />
-            <Loading loading={loadingBalance}>
+            <Loading loading={loadingBalance} big={true}>
                 <Formik
                     initialValues={initialValues}
                     validateOnMount={true}

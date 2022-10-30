@@ -55,6 +55,8 @@ const lookup = async (name: string) => {
         }
     }
 
+    if (!suiNSRecords) return name;
+
     return suiNSRecords[name] || name;
 };
 

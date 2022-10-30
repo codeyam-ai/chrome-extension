@@ -64,7 +64,7 @@ export function DappSignMessageApprovalPage() {
     }, [loading, signMessageRequest]);
 
     return (
-        <Loading loading={loading}>
+        <Loading loading={loading} big={true}>
             {signMessageRequest && (
                 <UserApproveContainer
                     title="Sign Message"

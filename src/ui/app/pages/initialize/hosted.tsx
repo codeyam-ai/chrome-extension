@@ -78,7 +78,7 @@ const HostedPage = () => {
     }, [dispatch]);
 
     return (
-        <Loading loading={checkingInitialized}>
+        <Loading loading={checkingInitialized} big={true}>
             <div className="text-center space-y-2 py-4 text-base leading-7">
                 {emailSent ? (
                     <ContentBlock>

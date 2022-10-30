@@ -165,7 +165,7 @@ export function DappTxApprovalPage() {
     }, [txRequest]);
 
     return (
-        <Loading loading={loading}>
+        <Loading loading={loading} big={true}>
             {txRequest ? (
                 <UserApproveContainer
                     title="Transaction Request"

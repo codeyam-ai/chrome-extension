@@ -42,7 +42,7 @@ const HomePage = () => {
 
     return (
         <PageLayout limitToPopUpSize={true}>
-            <Loading loading={guardChecking}>
+            <Loading loading={guardChecking} big={true}>
                 <BaseLayout>
                     <NavBarWithMenu />
                     <NavExpanded />

@@ -330,7 +330,7 @@ export function DappPreapprovalPage() {
     }
 
     return (
-        <Loading loading={loading}>
+        <Loading loading={loading} big={true}>
             {preapprovalRequest ? (
                 <UserApproveContainer
                     title="Pre-Approve Transactions"

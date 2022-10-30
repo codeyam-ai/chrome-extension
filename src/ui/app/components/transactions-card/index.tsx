@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import Divider from '../../shared/Divider';
 import Icon, { SuiIcons } from '_components/icon';
 import { formatDate } from '_helpers';
-import { useMiddleEllipsis } from '_hooks';
+import { useFormatCoin, useMiddleEllipsis } from '_hooks';
 
 import type { TxResultState } from '_redux/slices/txresults';
 
@@ -46,6 +46,11 @@ function TransactionCard({ txn }: { txn: TxResultState }) {
               // 'minute',
           ])
         : false;
+
+    const [formattedAmount] = useFormatCoin(
+        txn.amount,
+        txn.coinType || '0x2::sui::SUI'
+    );
 
     return (
         <Link
@@ -92,7 +97,7 @@ function TransactionCard({ txn }: { txn: TxResultState }) {
                     {txn.amount && (
                         <>
                             <div className="text-right dark:text-white">
-                                {txn.amount} SUI
+                                {formattedAmount} SUI
                             </div>
                             <div className={st.txFiatValue}></div>
                         </>

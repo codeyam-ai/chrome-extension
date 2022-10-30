@@ -14,7 +14,7 @@ const WelcomePage = () => {
     const checkingInitialized = useInitializedGuard(AppState.UNINITIALIZED);
     return (
         <PageLayout forceFullscreen={true}>
-            <Loading loading={checkingInitialized}>
+            <Loading loading={checkingInitialized} big={true}>
                 <GetStartedCard showBack={false}>
                     <VerticalButtonGroup
                         buttonPrimaryTo="/initialize/backup"

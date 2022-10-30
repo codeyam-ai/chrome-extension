@@ -9,7 +9,7 @@ import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
 import { formatDate } from '_helpers';
 import { TextColor } from '_src/enums/Typography';
-import { useMiddleEllipsis } from '_src/ui/app/hooks';
+import { useFormatCoin, useMiddleEllipsis } from '_src/ui/app/hooks';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
@@ -62,6 +62,11 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
           ])
         : false;
 
+    const [formattedAmount] = useFormatCoin(
+        txn.amount,
+        txn.coinType || '0x2::sui::SUI'
+    );
+
     return (
         <Link
             to={drilldownLink}
@@ -79,7 +84,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
             <span className="flex-1">
                 {txn.amount && (
                     <BodyLarge className="float-right text-right">
-                        {txn.amount} SUI
+                        {formattedAmount} SUI
                     </BodyLarge>
                 )}
             </span>
