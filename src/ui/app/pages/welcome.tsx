@@ -18,9 +18,9 @@ const WelcomePage = () => {
                 <GetStartedCard showBack={false}>
                     <VerticalButtonGroup
                         buttonPrimaryTo="/initialize/backup"
-                        buttonPrimaryChildren="Create A New Wallet"
+                        buttonPrimaryChildren="Create a New Wallet"
                         buttonSecondaryTo="/initialize/hosted"
-                        buttonSecondaryChildren="Sign In With Email"
+                        buttonSecondaryChildren="Sign in with Email"
                     />
                     <TextLinkList
                         textAndLinks={[
