@@ -5,6 +5,7 @@ import {
     RawSigner,
     JsonRpcProvider,
     LocalTxnDataSerializer,
+    Network,
     type SuiAddress,
 } from '@mysten/sui.js';
 
@@ -38,12 +39,12 @@ export const API_ENV_TO_INFO: Record<API_ENV, EnvInfo> = {
 export const ENV_TO_API: Record<API_ENV, ApiEndpoints> = {
     [API_ENV.local]: {
         gateway: process.env.API_ENDPOINT_LOCAL || '',
-        fullNode: process.env.API_ENDPOINT_LOCAL_FULLNODE || '',
+        fullNode: Network.LOCAL || '',
         faucet: process.env.API_ENDPOINT_LOCAL_FAUCET || '',
     },
     [API_ENV.devNet]: {
         gateway: process.env.API_ENDPOINT_DEV_NET || '',
-        fullNode: process.env.API_ENDPOINT_DEV_NET_FULLNODE || '',
+        fullNode: Network.DEVNET || '',
         faucet: process.env.API_ENDPOINT_DEV_NET_FAUCET || '',
     },
     [API_ENV.staging]: {
