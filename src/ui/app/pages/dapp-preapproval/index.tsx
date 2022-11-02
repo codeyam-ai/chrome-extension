@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { JsonRpcProvider } from '@mysten/sui.js';
+import { JsonRpcProvider, Network } from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -166,9 +166,7 @@ export function DappPreapprovalPage() {
         if (!preapproval) return;
 
         const retrieveDetails = async () => {
-            const provider = new JsonRpcProvider(
-                process.env.API_ENDPOINT_DEV_NET_FULLNODE || ''
-            );
+            const provider = new JsonRpcProvider(Network.DEVNET);
             const functionDetails = await provider.getNormalizedMoveFunction(
                 preapproval.packageObjectId,
                 preapproval.module,

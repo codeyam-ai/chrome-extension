@@ -147,7 +147,7 @@ class Transactions {
                     }
 
                     if (error) {
-                        throw new Error(error);
+                        throw new Error(error.message);
                     }
                 }
             }
