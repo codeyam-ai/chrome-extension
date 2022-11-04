@@ -8,16 +8,20 @@ import { NetworkSwitchMiddleware } from './middlewares/NetworkSwitchMiddleware';
 import { thunkExtras } from './thunk-extras';
 import rootReducer from '_redux/RootReducer';
 
-const store = configureStore({
-    reducer: rootReducer,
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-            thunk: {
-                extraArgument: thunkExtras,
-            },
-        }).concat(KeypairVaultMiddleware, NetworkSwitchMiddleware),
-});
+export function createStore() {
+    return configureStore({
+        reducer: rootReducer,
+        middleware: (getDefaultMiddleware) =>
+            getDefaultMiddleware({
+                thunk: {
+                    extraArgument: thunkExtras,
+                },
+            }).concat(KeypairVaultMiddleware, NetworkSwitchMiddleware),
+    });
+}
+
+const store = createStore();
 
 export default store;
-
+export type AppStore = ReturnType<typeof createStore>
 export type AppDispatch = typeof store.dispatch;

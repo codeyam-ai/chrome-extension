@@ -16,7 +16,6 @@
         "outDir": "../../dist",
         "baseUrl": "../../",
         "paths": {
-            // for internal aliases start them with _ for eslint to use the correct import group
             "_src/*": ["./src/*"],
             "_shared/*": ["./src/shared/*"],
             "_app/*": ["./src/ui/app/*"],
