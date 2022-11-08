@@ -169,6 +169,7 @@ export class EthosWallet implements Wallet {
     };
 
     #disconnect: DisconnectMethod = async () => {
+        this.#account = null;
         await mapToPromise(
             this.#send<DisconnectRequest, DisconnectResponse>({
                 type: 'disconnect-request',
