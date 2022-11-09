@@ -5,6 +5,8 @@ export enum SuiIcons {
   Apps = "sui-icons-apps",
   ArrowLeft = "sui-icons-arrow-left",
   ArrowRight = "sui-icons-arrow-right",
+  Check = "sui-icons-check",
+  CheckFill = "sui-icons-check-fill",
   Checkmark = "sui-icons-checkmark",
   Clipboard = "sui-icons-clipboard",
   Clock = "sui-icons-clock",

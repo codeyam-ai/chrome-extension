@@ -34,6 +34,8 @@
 .sui-icons-arrow-right:before {
   content: "\ea06";
 }
+.sui-icons-check-fill:before { content: "\ea0c"; }
+.sui-icons-check:before { content: "\ea0d"; }
 .sui-icons-checkmark:before {
   content: "\ea07";
 }
@@ -119,6 +121,8 @@ $sui-icons-Preview: "\ea03";
 $sui-icons-apps: "\ea04";
 $sui-icons-arrow-left: "\ea05";
 $sui-icons-arrow-right: "\ea06";
+$sui-icons-check-fill: "\ea0c";
+$sui-icons-check: "\ea0d";
 $sui-icons-checkmark: "\ea07";
 $sui-icons-clipboard: "\ea08";
 $sui-icons-clock: "\ea09";

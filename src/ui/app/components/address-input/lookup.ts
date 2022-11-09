@@ -2,6 +2,7 @@ import { getObjectVersion, JsonRpcProvider, Network } from '@mysten/sui.js';
 import Browser from 'webextension-polyfill';
 
 import { growthbook } from '../../experimentation/feature-gating';
+import { FEATURES } from '../../experimentation/features';
 
 import type { SuiMoveObject, SuiObject } from '@mysten/sui.js';
 
@@ -10,7 +11,10 @@ const CACHE_DELAY = 1000 * 30;
 const lookup = async (name: string) => {
     const provider = new JsonRpcProvider(Network.DEVNET);
 
-    const nameObjectId = growthbook.getFeatureValue('suins_registry', '');
+    const nameObjectId = growthbook.getFeatureValue(
+        FEATURES.SUINS_REGISTRY,
+        ''
+    );
 
     const { [nameObjectId]: recordsInfo } = await Browser.storage.local.get(
         nameObjectId

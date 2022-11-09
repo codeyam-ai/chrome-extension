@@ -6,7 +6,8 @@
  * in https://docs.growthbook.io/app/features#feature-keys
  */
 export enum FEATURES {
-    TEST = 'test',
-    RPC_API_VERSION = 'rpc-api-version',
-    SUI_DENOMINATION = 'sui-denomination',
+    SUINS_REGISTRY = 'suins_registry',
+    USE_LOCAL_TXN_SERIALIZER = 'use-local-txn-serializer',
+    USE_CUSTOM_RPC_URL = 'custom-rpc-url',
+    USE_TEST_NET_ENDPOINT = 'testnet-selection',
 }
