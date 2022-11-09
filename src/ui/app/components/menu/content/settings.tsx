@@ -21,8 +21,6 @@ import LinkList from '_src/ui/app/shared/navigation/nav-bar/LinkList';
 
 import type { LinkItem } from '_src/ui/app/shared/navigation/nav-bar/LinkList';
 
-const version = Browser.runtime.getManifest().version;
-
 export default function Settings() {
     const networkUrl = useNextMenuUrl(true, '/network');
     const viewSeedUrl = useNextMenuUrl(true, '/settings/view-seed');
@@ -60,7 +58,7 @@ export default function Settings() {
         {
             iconWithNoClasses: <CodeBracketIcon />,
             title: 'Wallet version',
-            subtitle: 'v' + version,
+            subtitle: 'v' + Browser.runtime.getManifest().version,
             linkType: LinkType.None,
         },
         {

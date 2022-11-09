@@ -9,7 +9,9 @@ import type { Config } from '@jest/types';
 const pathsMappings = pathsToModuleNameMapper(compilerOptions.paths, {
     prefix: '<rootDir>/',
 });
-const cssMappings = { '^.+\\.scss$': 'identity-obj-proxy' };
+const cssMappings = {
+    '\\.(scss|jpg|png)$': '<rootDir>/src/test/utils/file-mock.js',
+};
 const esmMappings = {
     uuid: '<rootDir>/node_modules/uuid/dist/index.js',
 };
@@ -18,7 +20,7 @@ const config: Config.InitialOptions = {
     testEnvironment: 'jsdom',
     moduleNameMapper: { ...pathsMappings, ...cssMappings, ...esmMappings },
     testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-    setupFilesAfterEnv: ['./src/test-utils/setup-tests.ts'],
+    setupFilesAfterEnv: ['./src/test/utils/setup-tests.ts'],
 };
 
 export default config;
