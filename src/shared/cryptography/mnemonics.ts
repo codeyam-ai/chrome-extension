@@ -41,7 +41,7 @@ export function getSeedFromMnemonics(mnemonics: string, index = 0): Uint8Array {
     let seed = bip39.mnemonicToSeed(normalizeMnemonics(mnemonics));
 
     if (index > -1) {
-        const path = `m/44'/784'/0'/0'/${index}'`;
+        const path = `m/44'/784'/${index}'/0'/0'`;
         const seedBuffer = Buffer.from(seed).toString('hex');
         seed = derivePath(path, seedBuffer).key;
     }
