@@ -25,7 +25,7 @@ export const DEFAULT_GAS_BUDGET_FOR_PAY = 150;
 export const DEFAULT_GAS_BUDGET_FOR_STAKE = 10000;
 export const GAS_TYPE_ARG = '0x2::sui::SUI';
 export const GAS_SYMBOL = 'SUI';
-export const DEFAULT_NFT_TRANSFER_GAS_FEE = 450;
+export const DEFAULT_NFT_TRANSFER_GAS_FEE = 10000;
 export const SUI_SYSTEM_STATE_OBJECT_ID =
     '0x0000000000000000000000000000000000000005';
 
@@ -101,7 +101,7 @@ export class Coin {
                 BigInt(gasBudget)
             ),
         };
-        return await signer.payWithRequestType(payTxn);
+        return await signer.pay(payTxn);
     }
 
     private static computeGasCostForPay(numInputCoins: number): number {
@@ -159,7 +159,7 @@ export class Coin {
                 recipient: recipient,
                 amount: Number(amount),
             };
-            return await signer.transferSuiWithRequestType(txn);
+            return await signer.transferSui(txn);
         }
 
         // TODO: use PaySui Transaction when it is ready
@@ -203,7 +203,7 @@ export class Coin {
                 recipient: await signer.getAddress(),
                 amount: gasCostForPay,
             };
-            await signer.transferSuiWithRequestType(txn);
+            await signer.transferSui(txn);
 
             inputCoins =
                 await signer.provider.selectCoinSetWithCombinedBalanceGreaterThanOrEqual(
@@ -219,7 +219,7 @@ export class Coin {
             amounts: [Number(amount)],
             gasBudget: gasCostForPay,
         };
-        return await signer.payWithRequestType(txn);
+        return await signer.pay(txn);
     }
 
     private static async assertAndGetCoinsWithBalanceGte(
@@ -273,7 +273,7 @@ export class Coin {
             arguments: [SUI_SYSTEM_STATE_OBJECT_ID, coin, validator],
             gasBudget: DEFAULT_GAS_BUDGET_FOR_STAKE,
         };
-        return await signer.executeMoveCallWithRequestType(txn);
+        return await signer.executeMoveCall(txn);
     }
 
     private static async requestSuiCoinWithExactAmount(
