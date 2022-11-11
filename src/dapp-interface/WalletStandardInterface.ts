@@ -30,6 +30,8 @@ import {
     type AcquirePermissionsRequest,
     type AcquirePermissionsResponse,
     ALL_PERMISSION_TYPES,
+    type HasPermissionsRequest,
+    type HasPermissionsResponse,
 } from '_payloads/permissions';
 // import { deserializeSignaturePubkeyPair } from '_src/shared/signature-serialization';
 
@@ -123,6 +125,9 @@ export class EthosWallet implements Wallet {
     };
 
     #connected = async () => {
+        if (!(await this.#hasPermissions(['viewAccount']))) {
+            return;
+        }
         const accounts = await mapToPromise(
             this.#send<GetAccount, GetAccountResponse>({
                 type: 'get-account',
@@ -137,12 +142,10 @@ export class EthosWallet implements Wallet {
             if (!account || account.address !== address) {
                 this.#account = new ReadonlyWalletAccount({
                     address,
+                    // TODO: Expose public key instead of address:
                     publicKey: new Uint8Array(),
                     chains: SUI_CHAINS,
-                    features: [
-                        'sui:signAndExecuteTransaction',
-                        'standard:signMessage',
-                    ],
+                    features: ['sui:signAndExecuteTransaction'],
                 });
                 this.#events.emit('change', { accounts: this.accounts });
             }
@@ -222,6 +225,16 @@ export class EthosWallet implements Wallet {
     //                 : undefined
     //     );
     // };
+
+    #hasPermissions(permissions: HasPermissionsRequest['permissions']) {
+        return mapToPromise(
+            this.#send<HasPermissionsRequest, HasPermissionsResponse>({
+                type: 'has-permissions-request',
+                permissions: permissions,
+            }),
+            ({ result }) => result
+        );
+    }
 
     #send<
         RequestPayload extends Payload,
