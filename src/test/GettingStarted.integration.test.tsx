@@ -5,27 +5,37 @@ import * as React from 'react';
 import App from '_app/index';
 import { renderWithProviders } from '_src/test/utils/react-rendering';
 
-function fakeLocalStorageGet(dkeys?: null | string | string[] | Record<string, unknown>): Promise<Record<string, unknown>> {
-    return new Promise<Record<string, unknown>>((resolve, reject) => {
-        const returnVal: Record<string, unknown> = {}
-        if (typeof dkeys === "string") {
-            returnVal[dkeys] = null
+
+function fakeOutLocalStorage(numGets: number, numSets: number) {
+    const records: Record<string, unknown> = {}
+
+    function fakeLocalStorageGet(dkeys?: null | string | string[] | Record<string, unknown>): Promise<Record<string, unknown>> {
+        return new Promise<Record<string, unknown>>((resolve, reject) => {
+            const returnVal: Record<string, unknown> = {}
+            if (typeof dkeys === "string") {
+                returnVal[dkeys] = records[dkeys]
+            }
+
+            resolve(returnVal)
+        });
+    }
+
+    function fakeLocalStorageSet(items: Record<string, unknown>): Promise<void> {
+        for (const property in items) {
+            records[property] = items[property]
         }
-
-        resolve(returnVal)
-    });
-}
-
-function mockLocalStorage(numGets = 2) {
-    // mockzilla does not have a concept of "it can be called any number of times". so unfortunately every test needs
-    // to declare how many :(
+        return new Promise<void>((resolve, reject) => {
+            resolve()
+        });
+    }
     mockBrowser.storage.local.get.spy(fakeLocalStorageGet).times(numGets);
+    mockBrowser.storage.local.set.spy(fakeLocalStorageSet).times(numSets);
 }
 
 test('Signing in by importing an account with a seed phrase', async () => {
     const validSeedPhrase =
         'girl empower human spring circle ceiling wild pact stumble model wheel chuckle';
-    mockLocalStorage();
+    fakeOutLocalStorage(7, 3);
     renderWithProviders(<App />);
     await screen.findByText('The new web awaits');
     await userEvent.click(screen.getByText('Import', { exact: false }));
@@ -36,7 +46,14 @@ test('Signing in by importing an account with a seed phrase', async () => {
     );
     await userEvent.click(screen.getByRole('button'));
 
-    await screen.findByText(
-        'Please provide a password to ensure your wallet is secure.'
-    );
+    await screen.findByText('Please provide a password to ensure your wallet is secure.');
+
+    await userEvent.type(screen.getByText("Password"), 'A Bad Password');
+
+    await userEvent.type(screen.getByText("Confirm password"), 'A Bad Password');
+
+    await userEvent.click(screen.getByText('Save'));
+
+    await screen.findByText('Get started with Sui');
+
 });
