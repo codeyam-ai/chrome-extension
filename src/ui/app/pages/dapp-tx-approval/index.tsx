@@ -41,6 +41,11 @@ function toList(items: SuiJsonValue[] | TypeTag[]) {
     );
 }
 
+export type Detail = {
+    label: string;
+    content: string | number | JSX.Element;
+};
+
 export function DappTxApprovalPage() {
     const { txID } = useParams();
     const [details, setDetails] = useState<boolean>(false);
@@ -86,7 +91,7 @@ export function DappTxApprovalPage() {
     const valuesContent = useMemo(() => {
         switch (txRequest?.tx.type) {
             case 'v2': {
-                const contents = [
+                const contents: Detail[] = [
                     {
                         label: 'Transaction Type',
                         content: txRequest.tx.data.kind.toString(),
@@ -102,6 +107,25 @@ export function DappTxApprovalPage() {
                     contents.push({
                         label: 'Gas Fees',
                         content: txRequest.tx.data.data.gasBudget.toString(),
+                    });
+                } else if (txRequest.tx.data.kind === 'pay') {
+                    const plural = txRequest.tx.data.data.recipients.length > 1;
+                    contents.push({
+                        label: `Recipient${plural ? 's' : ''}`,
+                        content: plural
+                            ? toList(txRequest.tx.data.data.recipients)
+                            : truncateMiddle(
+                                  txRequest.tx.data.data.recipients[0],
+                                  12
+                              ),
+                    });
+
+                    const plural2 = txRequest.tx.data.data.amounts.length > 1;
+                    contents.push({
+                        label: `Amount${plural2 ? 's' : ''}`,
+                        content: plural2
+                            ? toList(txRequest.tx.data.data.amounts)
+                            : txRequest.tx.data.data.amounts[0],
                     });
                 }
 
@@ -135,12 +159,41 @@ export function DappTxApprovalPage() {
     const detailedValuesContent = useMemo(() => {
         switch (txRequest?.tx.type) {
             case 'v2': {
-                return [
-                    {
-                        label: 'Transaction Type',
-                        content: txRequest.tx.data.kind,
-                    },
-                ];
+                if (txRequest.tx.data.kind === 'moveCall') {
+                    return [
+                        {
+                            label: 'Package',
+                            content: truncateMiddle(
+                                txRequest.tx.data.data.packageObjectId,
+                                12
+                            ),
+                            title: txRequest.tx.data.data.packageObjectId,
+                        },
+                        {
+                            label: 'Module',
+                            content: txRequest.tx.data.data.module,
+                        },
+                        {
+                            label: 'Arguments',
+                            content: toList(txRequest.tx.data.data.arguments),
+                        },
+                        {
+                            label: 'Type arguments',
+                            content: toList(
+                                txRequest.tx.data.data.typeArguments
+                            ),
+                        },
+                    ];
+                } else if (txRequest.tx.data.kind === 'pay') {
+                    return [
+                        {
+                            label: 'Coins',
+                            content: toList(txRequest.tx.data.data.inputCoins),
+                        },
+                    ];
+                }
+
+                return null;
             }
             case 'move-call':
                 return [
@@ -158,9 +211,9 @@ export function DappTxApprovalPage() {
                     },
                 ];
             case 'serialized-move-call':
-                return [];
+                return null;
             default:
-                return [];
+                return null;
         }
     }, [txRequest]);
 
@@ -190,40 +243,41 @@ export function DappTxApprovalPage() {
                         </Fragment>
                     ))}
 
-                    <div className="">
-                        <div
-                            className="cursor-pointer py-3 dark:text-gray-400"
-                            onClick={toggleDetails}
-                        >
-                            {details ? '▼' : '▶'} Show Details
-                        </div>
-                        <div
-                            className={
-                                details + ' dark:text-gray-400' ? '' : 'hidden'
-                            }
-                        >
-                            {detailedValuesContent.map(
-                                ({ label, content, title }) => (
-                                    <Fragment key={label}>
-                                        <div className="flex justify-between">
-                                            <label className="text-gray-500 dark:text-gray-400 text-sm">
-                                                {label}
-                                            </label>
-                                            <div
-                                                className={
-                                                    st.value +
-                                                    ' dark:text-gray-400'
-                                                }
-                                                title={title}
-                                            >
-                                                {content}
-                                            </div>
-                                        </div>
-                                    </Fragment>
-                                )
+                    {detailedValuesContent && (
+                        <div className="py-3">
+                            <div
+                                className="cursor-pointer py-1 dark:text-gray-400"
+                                onClick={toggleDetails}
+                            >
+                                {details ? '▼ Hide' : '▶ Show'} Details
+                            </div>
+
+                            {details && (
+                                <div className="dark:text-gray-400">
+                                    {detailedValuesContent.map(
+                                        ({ label, content, title }) => (
+                                            <Fragment key={label}>
+                                                <div className="flex justify-between">
+                                                    <label className="text-gray-500 dark:text-gray-400 text-sm">
+                                                        {label}
+                                                    </label>
+                                                    <div
+                                                        className={
+                                                            st.value +
+                                                            ' dark:text-gray-400'
+                                                        }
+                                                        title={title}
+                                                    >
+                                                        {content}
+                                                    </div>
+                                                </div>
+                                            </Fragment>
+                                        )
+                                    )}
+                                </div>
                             )}
                         </div>
-                    </div>
+                    )}
                 </UserApproveContainer>
             ) : null}
         </Loading>

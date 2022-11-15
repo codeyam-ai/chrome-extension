@@ -65,7 +65,7 @@ function UserApproveContainer({
 
             <div className="flex flex-col gap-1 pt-3 pb-8">
                 <div className="flex items-center justify-center">
-                    {originFavIcon && (
+                    {originFavIcon && originFavIcon.length > 0 && (
                         <img
                             src={originFavIcon}
                             className="h-12"
