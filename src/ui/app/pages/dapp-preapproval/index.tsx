@@ -251,12 +251,12 @@ export function DappPreapprovalPage() {
 
         return (
             <div
-                className="text-sm cursor-pointer relative"
+                className="text-sm cursor-pointer relative py-3"
                 onClick={_toggleDetails}
             >
                 <div className="flex justify-between items-center">
                     <div>View Details</div>
-                    <div className="">
+                    <div className="text-xs">
                         {showDetails ? (
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -291,7 +291,7 @@ export function DappPreapprovalPage() {
                     </div>
                 </div>
                 {showDetails && (
-                    <div className="flex flex-col gap-3 pt-2">
+                    <div className="flex flex-col gap-3 pt-2 text-xs">
                         <div className="flex justify-between">
                             <div className="text-gray-400">Module</div>
                             <div>{preapproval?.module}</div>
@@ -357,14 +357,15 @@ export function DappPreapprovalPage() {
                                         />
                                         <div className="pt-1 dark:text-gray-400">
                                             {truncateMiddle(
-                                                preapproval?.objectId || ''
+                                                preapproval?.objectId || '',
+                                                12
                                             )}
                                         </div>
                                     </div>
                                 )}
                             </div>
                             <div className="flex flex-col gap-3">
-                                <div className="flex flex-col gap-3 py-3 text-xs">
+                                <div className="flex flex-col gap-1 py-3 text-xs">
                                     <div className="font-extrabold text-sm dark:text-gray-300">
                                         Description
                                     </div>
@@ -372,7 +373,7 @@ export function DappPreapprovalPage() {
                                         {preapproval?.description}
                                     </p>
                                 </div>
-                                <div className="flex flex-col gap-4 dark:text-gray-300">
+                                <div className="flex flex-col gap-3 dark:text-gray-300">
                                     {permissionInputs.map((info, index) => (
                                         <PermissionInput
                                             key={`permission-input-${index}`}
