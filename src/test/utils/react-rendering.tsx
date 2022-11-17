@@ -10,8 +10,8 @@ import type React from 'react';
 import type { PropsWithChildren } from 'react';
 
 import { createStore } from '_store';
-import {IntlProvider} from "react-intl";
-import {queryClient} from "_app/helpers/queryClient";
+import { IntlProvider } from 'react-intl';
+import { queryClient } from '_app/helpers/queryClient';
 import { QueryClientProvider } from '@tanstack/react-query';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {

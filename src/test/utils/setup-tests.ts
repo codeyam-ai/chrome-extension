@@ -26,5 +26,6 @@ Object.defineProperty(window, 'matchMedia', {
     })),
 });
 
-process.env.API_ENDPOINT_DEV_NET_FULLNODE = 'http://dev-net-fullnode.example.com/'
-process.env.API_ENDPOINT_DEV_NET_FAUCET = 'http://dev-net-faucet.example.com/'
+process.env.API_ENDPOINT_DEV_NET_FULLNODE =
+    'http://dev-net-fullnode.example.com/';
+process.env.API_ENDPOINT_DEV_NET_FAUCET = 'http://dev-net-faucet.example.com/';
