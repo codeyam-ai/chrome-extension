@@ -77,6 +77,7 @@ export function DappSignMessageApprovalPage() {
                     <div className="flex gap-3 justify-center items-center py-6">
                         <img
                             src={signMessageRequest.originFavIcon}
+                            className="h-12"
                             alt="Site Favicon"
                         />
                         <div>
