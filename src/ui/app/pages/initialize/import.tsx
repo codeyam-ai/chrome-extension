@@ -22,9 +22,9 @@ const validationSchema = Yup.object({
         .required('Enter your recovery phrase')
         .trim()
         .transform((mnemonic) => normalizeMnemonics(mnemonic))
-        .test('mnemonic-valid', 'Recovery phrase is invalid', (mnemonic) => {
-            return validateMnemonics(mnemonic);
-        })
+        .test('mnemonic-valid', 'Recovery phrase is invalid', (mnemonic) =>
+            validateMnemonics(mnemonic)
+        )
         .label('Recovery phrase'),
 });
 
