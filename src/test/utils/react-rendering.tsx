@@ -10,6 +10,9 @@ import type React from 'react';
 import type { PropsWithChildren } from 'react';
 
 import { createStore } from '_store';
+import { IntlProvider } from 'react-intl';
+import { queryClient } from '_app/helpers/queryClient';
+import { QueryClientProvider } from '@tanstack/react-query';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: PreloadedState<RootState>;
@@ -28,7 +31,13 @@ export function renderWithProviders(
     function Wrapper({ children }: PropsWithChildren<{}>): JSX.Element {
         return (
             <MemoryRouter>
-                <Provider store={store}>{children}</Provider>
+                <Provider store={store}>
+                    <IntlProvider locale={'pt'}>
+                        <QueryClientProvider client={queryClient}>
+                            {children}
+                        </QueryClientProvider>
+                    </IntlProvider>
+                </Provider>
             </MemoryRouter>
         );
     }
