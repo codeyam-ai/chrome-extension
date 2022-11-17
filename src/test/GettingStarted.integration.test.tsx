@@ -1,10 +1,14 @@
-import { screen } from '@testing-library/react';
+import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import * as React from 'react';
 import nock from 'nock'
+import * as React from 'react';
+import {act} from "react-dom/test-utils";
 
 import App from '_app/index';
-import { renderWithProviders } from '_src/test/utils/react-rendering';
+import {initAppType} from "_redux/slices/app";
+import {getFromLocationSearch} from "_redux/slices/app/AppType";
+import {renderWithProviders} from '_src/test/utils/react-rendering';
+
 
 afterEach(() => {
     nock.cleanAll();
@@ -37,7 +41,7 @@ function fakeOutLocalStorage(numGets: number, numSets: number) {
 }
 
 test('Signing in by importing an account with a seed phrase', async () => {
-    const scope = nock('http://dev-net-fullnode.example.com')
+    nock('http://dev-net-fullnode.example.com')
         .post('/', /sui_getObjectsOwnedByAddress/)
         .reply(200, {"jsonrpc":"2.0","result":[],"id":"fbf9bf0c-a3c9-460a-a999-b7e87096dd1c"})
         .post('/', /sui_getObject/)
@@ -45,7 +49,13 @@ test('Signing in by importing an account with a seed phrase', async () => {
     const validSeedPhrase =
         'girl empower human spring circle ceiling wild pact stumble model wheel chuckle';
     fakeOutLocalStorage(7, 3);
-    renderWithProviders(<App />);
+    const view = renderWithProviders(<App />);
+    act(() => {
+        // todo (mag): is this the right way to do this, or can we just set up the store with this state and avoid
+        // the act/dispatch indirection
+        view.store.dispatch(initAppType(getFromLocationSearch(window.location.search)))
+    })
+
     await screen.findByText('The new web awaits');
     await userEvent.click(screen.getByText('Import', { exact: false }));
     await screen.findByText('Recovery phrase');
@@ -64,5 +74,4 @@ test('Signing in by importing an account with a seed phrase', async () => {
     await userEvent.click(screen.getByText('Save'));
 
     await screen.findByText('Get started with Sui');
-
 });
