@@ -19,7 +19,7 @@ const Tooltip = ({ children, tooltipText }: TooltipProps) => {
                 style={
                     hasMouseEntered
                         ? { marginLeft: '15px', opacity: 1, zIndex: 10 }
-                        : { marginLeft: '10px', opacity: 0, zIndex: 0 }
+                        : { marginLeft: '10px', opacity: 0, zIndex: -1 }
                 }
             >
                 <div

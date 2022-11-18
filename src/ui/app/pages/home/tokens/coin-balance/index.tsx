@@ -10,7 +10,7 @@ import Icon from '_src/ui/app/components/icon';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
-import Button, { ButtonStyle } from '_src/ui/app/shared/buttons/Button';
+import Button from '_src/ui/app/shared/buttons/Button';
 
 export type CoinProps = {
     type: string;
@@ -86,7 +86,7 @@ function CoinBalance({ type, balance }: CoinProps) {
                     </span>
                 ) : null} */}
                 <Button
-                    buttonStyle={ButtonStyle.PRIMARY}
+                    buttonStyle="primary"
                     to={isBalanceZero ? '/buy' : sendUrl}
                     className="!py-2"
                 >
@@ -97,7 +97,7 @@ function CoinBalance({ type, balance }: CoinProps) {
                     {isBalanceZero ? 'Buy' : 'Send'}
                 </Button>
                 <Button
-                    buttonStyle={ButtonStyle.SECONDARY}
+                    buttonStyle="secondary"
                     to={faucetAvailable ? undefined : '/receive'}
                     onClick={faucetAvailable ? _faucet : undefined}
                     className="!py-2"

@@ -3,7 +3,7 @@
 
 import { memo, useCallback, useState } from 'react';
 
-import Button, { ButtonStyle } from '../shared/buttons/Button';
+import Button from '../shared/buttons/Button';
 import AccountAddress, { AddressMode } from '_components/account-address';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 
@@ -96,7 +96,7 @@ function UserApproveContainer({
 
             <div className={`grid grid-cols-2 gap-2 w-full mt-2`}>
                 <Button
-                    buttonStyle={ButtonStyle.SECONDARY}
+                    buttonStyle="secondary"
                     type="button"
                     data-allow="false"
                     onClick={handleOnResponse}
@@ -106,7 +106,7 @@ function UserApproveContainer({
                     {rejectTitle}
                 </Button>
                 <Button
-                    buttonStyle={ButtonStyle.PRIMARY}
+                    buttonStyle="primary"
                     type="button"
                     data-allow="true"
                     disabled={submitting}

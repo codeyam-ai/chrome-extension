@@ -14,6 +14,7 @@ import Loading from '_components/loading';
 import { useInitializedGuard, useAppDispatch } from '_hooks';
 import PageLayout from '_pages/layout';
 import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
+import WalletPickerPage from '../../shared/navigation/nav-bar/WalletPickerPage';
 
 const POLL_SUI_OBJECTS_INTERVAL = 4000;
 
@@ -44,6 +45,7 @@ const HomePage = () => {
                 <BaseLayout>
                     <NavBarWithMenu />
                     <NavExpanded />
+                    <WalletPickerPage />
                     <main className="flex-grow">
                         <Outlet />
                     </main>

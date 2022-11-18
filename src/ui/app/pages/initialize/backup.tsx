@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Loading from '../../components/loading';
-import Button, { ButtonStyle } from '../../shared/buttons/Button';
+import Button from '../../shared/buttons/Button';
 import DescriptionList from '../../shared/content/rows-and-lists/DescriptionList';
 import TextLinkList from '../../shared/content/rows-and-lists/TextLinkList';
 import Checkbox from '../../shared/inputs/Checkbox';
@@ -74,7 +74,7 @@ const BackupPage = () => {
             />
 
             <Button
-                buttonStyle={ButtonStyle.PRIMARY}
+                buttonStyle="primary"
                 type="button"
                 onClick={handleOnClick}
                 disabled={!hasSavedPhrase || creatingMnemonic}

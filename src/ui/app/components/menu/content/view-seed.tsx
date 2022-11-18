@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import Button, { ButtonStyle } from '../../../shared/buttons/Button';
+import Button from '../../../shared/buttons/Button';
 import { useNextMenuUrl } from '../hooks';
 import { useAppSelector } from '_src/ui/app/hooks';
 import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
@@ -102,7 +102,7 @@ export default function ViewSeed() {
                             </div>
                         </div>
                         <Button
-                            buttonStyle={ButtonStyle.SECONDARY}
+                            buttonStyle="secondary"
                             onClick={viewSeed}
                             disabled={!hasConfirmed}
                         >

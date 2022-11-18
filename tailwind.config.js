@@ -15,7 +15,7 @@ module.exports = {
                 'weight-ethos-header': '600',
                 'weight-ethos-subheader': '600',
                 'weight-ethos-body-large': '400',
-                'weight-ethos-semibold-body': '500',
+                'weight-ethos-semibold-body': '600',
                 'weight-ethos-body': '400',
             },
             fontSize: {
@@ -45,6 +45,8 @@ module.exports = {
                 // ==========
 
                 'ethos-box-shadow': '0px 4px 12px rgba(0, 0, 0, 0.09)',
+                'ethos-hovering-element-box-shadow':
+                    '0px 2px 8px rgba(0, 0, 0, 0.1)',
 
                 // ==========
                 // Stroke
@@ -81,6 +83,9 @@ module.exports = {
                 // Feedback
                 'ethos-light-green': '#16A349',
                 'ethos-light-red': '#EF4444',
+
+                // Input
+                'ethos-input-background': '#F2F2F2',
 
                 // ==========
                 // Dark mode

@@ -5,7 +5,7 @@ import { useFormik } from 'formik';
 import { useCallback } from 'react';
 import * as Yup from 'yup';
 
-import Button, { ButtonStyle } from '../../shared/buttons/Button';
+import Button from '../../shared/buttons/Button';
 import Mnemonic from '../../shared/inputs/Mnemonic';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { createMnemonic, setMnemonic } from '_redux/slices/account';
@@ -85,7 +85,7 @@ const ImportPage = () => {
                     }
                 />
                 <Button
-                    buttonStyle={ButtonStyle.PRIMARY}
+                    buttonStyle="primary"
                     type="submit"
                     disabled={isSubmitting || createInProgress || !isValid}
                 >

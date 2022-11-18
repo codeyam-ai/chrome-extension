@@ -13,7 +13,7 @@ import { TextColor } from '_src/enums/Typography';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import SendReceiveButtonGroup from '_src/ui/app/shared/buttons/SendReceiveButtonGroup';
 import AmountRow from '_src/ui/app/shared/content/rows-and-lists/AmountRow';
-import WalletRow from '_src/ui/app/shared/content/rows-and-lists/WalletRow';
+import WalletProfile from '_src/ui/app/shared/content/rows-and-lists/WalletProfile';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 import Body from '_src/ui/app/shared/typography/Body';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
@@ -44,7 +44,6 @@ function TokensPage() {
                 </div>
             ) : (
                 <>
-                    <WalletRow />
                     <AmountRow balance={mistBalance} type={GAS_TYPE_ARG} />
                     <SendReceiveButtonGroup mistBalance={mistBalance} />
                     {otherCoinTypes.length ? (
