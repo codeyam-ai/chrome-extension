@@ -154,6 +154,11 @@ const slice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder.addCase(sendTokens.fulfilled, (state, { payload }) => {
+            // This line of code was giving me "TS2589: Type instantiation is excessively deep and possibly infinite."
+            // Both at runtime and in my IDE.
+            // Not sure if turning off this warning is safe.
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             return txAdapter.setOne(state, payload);
         });
         builder.addCase(StakeTokens.fulfilled, (state, { payload }) => {

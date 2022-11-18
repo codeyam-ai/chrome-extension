@@ -7,7 +7,7 @@ import Button from '../shared/buttons/Button';
 import AccountAddress, { AddressMode } from '_components/account-address';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 
-import type { MouseEventHandler, ReactNode } from 'react';
+import type { MouseEventHandler, ReactNode, SyntheticEvent } from 'react';
 
 type UserApproveContainerProps = {
     title: string;
@@ -45,6 +45,13 @@ function UserApproveContainer({
     const reject = useCallback(() => {
         onSubmit(false);
     }, [onSubmit]);
+    const hideIcon = useCallback(
+        (e: SyntheticEvent<HTMLImageElement, Event>) => {
+            const img = e.target as HTMLImageElement;
+            img.style.display = 'none';
+        },
+        []
+    );
     return (
         <div className="flex flex-col w-full px-6 py-1 items-center dark:bg-gray-800">
             <div className="flex w-full items-center justify-between pb-3">
@@ -70,6 +77,7 @@ function UserApproveContainer({
                             src={originFavIcon}
                             className="h-12"
                             alt={`${originTitle} icon`}
+                            onError={hideIcon}
                         />
                     )}
                 </div>

@@ -1,6 +1,6 @@
 {
     "name": "ethos-wallet-extension-beta",
-    "version": "0.0.0.15",
+    "version": "0.0.0.16",
     "description": "Ethos is your Sui wallet and home base for the best dApps, experiences, and NFTs.",
     "main": "./dist/ui.js",
     "scripts": {
@@ -37,6 +37,7 @@
     "license": "Apache-2.0",
     "devDependencies": {
         "@testing-library/react": "^13.4.0",
+        "@testing-library/user-event": "^14.4.3",
         "@types/aes-js": "^3.1.1",
         "@types/dotenv-webpack": "^7.0.3",
         "@types/jest": "^28.1.6",
@@ -61,6 +62,7 @@
         "jest-environment-jsdom": "^29.2.2",
         "mini-css-extract-plugin": "^2.6.1",
         "mockzilla-webextension": "^0.15.0",
+        "nock": "^13.2.9",
         "onchange": "^7.1.0",
         "postcss-loader": "^7.0.1",
         "postcss-preset-env": "^7.7.2",
