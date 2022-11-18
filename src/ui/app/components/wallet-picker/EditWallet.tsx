@@ -7,8 +7,12 @@ import ColorRow from '../../shared/inputs/colors/ColorRow';
 import NavBarWithBackAndClose from '../../shared/navigation/nav-bar/NavBarWithBackAndClose';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import { useNextWalletPickerUrl } from '../menu/hooks';
+import Input from '../../shared/inputs/Input';
+interface EditWalletProps {
+    setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-const EditWallet = () => {
+const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     const [isColorPickerMenuOpen, setIsColorPickerMenuOpen] = useState(false);
     const [selectedColor, setSelectedColor] = useState('#FF6A00');
     const [searchParams] = useSearchParams();
@@ -20,19 +24,30 @@ const EditWallet = () => {
         setIsColorPickerMenuOpen(!isColorPickerMenuOpen);
     }, [isColorPickerMenuOpen]);
 
+    const setIsWalletEditingToFalse = useCallback(() => {
+        setIsWalletEditing(false);
+    }, []);
+
+    const setIsWalletEditingToTrue = useCallback(() => {
+        setIsWalletEditing(true);
+    }, []);
+
     return (
         <>
             <NavBarWithBackAndClose
                 backUrl={walletPickerHomeUrl}
+                onClickBack={setIsWalletEditingToTrue}
                 closeUrl={closeWalletPickerUrl}
+                onClickClose={setIsWalletEditingToFalse}
             />
             <BasicSectionHeader text="Edit Wallet"></BasicSectionHeader>
             <div className="flex flex-col">
-                <div className="px-6 pb-6">
-                    <div className="py-4 px-5 bg-ethos-input-background">
-                        Input goes here
-                    </div>
-                </div>
+                <Input
+                    value={'name!'}
+                    id="hi"
+                    label="Label"
+                    description="Description"
+                />
                 <div className="flex justify-between items-center px-6 pb-6">
                     <BodyLarge isSemibold>Choose a Color</BodyLarge>
                     <div className="p-1 rounded-md border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">

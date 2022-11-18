@@ -16,7 +16,7 @@ const lookup = async (nameOrAddress: string): Promise<SuiAddress | string> => {
         ''
     );
     const { suins: recordsInfo } = await Browser.storage.local.get('suins');
-    
+
     const { version, timestamp } = recordsInfo || {};
     let { suiNSRecords } = recordsInfo || {};
 

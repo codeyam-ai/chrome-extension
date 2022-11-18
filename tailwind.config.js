@@ -72,7 +72,7 @@ module.exports = {
                 // Text and stroke
                 'ethos-light-text-default': '#000000',
                 'ethos-light-text-medium': '#74777C',
-                'ethos-light-text-stroke': '#E5E7EB',
+                'ethos-light-text-stroke': 'rgba(0, 0, 0, 0.08)',
 
                 // Primary
                 'ethos-light-primary-light': '#6D28D9',
@@ -99,7 +99,7 @@ module.exports = {
                 // Text and stroke
                 'ethos-dark-text-default': '#FFFFFF',
                 'ethos-dark-text-medium': '#9CA3AF',
-                'ethos-dark-text-stroke': '#4B5563',
+                'ethos-dark-text-stroke': 'rgba(255, 255, 255, 0.12)',
 
                 // Primary
                 'ethos-dark-primary-dark': '#9C78F7',

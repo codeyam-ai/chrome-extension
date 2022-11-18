@@ -100,7 +100,14 @@ function WalletPickerPage() {
                                 />
                             }
                         />
-                        <Route path="/edit" element={<EditWallet />} />
+                        <Route
+                            path="/edit"
+                            element={
+                                <EditWallet
+                                    setIsWalletEditing={setIsWalletEditing}
+                                />
+                            }
+                        />
                         <Route
                             path="*"
                             element={
