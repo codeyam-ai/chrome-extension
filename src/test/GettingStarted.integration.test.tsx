@@ -8,8 +8,7 @@ import App from '_app/index';
 import { initAppType } from '_redux/slices/app';
 import { getFromLocationSearch } from '_redux/slices/app/AppType';
 import { renderWithProviders } from '_src/test/utils/react-rendering';
-import suiGetObjectResponse from '_src/test/utils/sui-fake-responses/sui_getObject.json'
-
+import suiGetObjectResponse from '_src/test/utils/sui-fake-responses/sui_getObject.json';
 
 afterEach(() => {
     nock.cleanAll();

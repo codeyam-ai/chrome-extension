@@ -4,36 +4,37 @@ import Browser from 'webextension-polyfill';
 import { growthbook } from '../../experimentation/feature-gating';
 import { FEATURES } from '../../experimentation/features';
 
-import type { SuiMoveObject, SuiObject } from '@mysten/sui.js';
+import type { SuiAddress, SuiMoveObject, SuiObject } from '@mysten/sui.js';
 
 const CACHE_DELAY = 1000 * 30;
 
-const lookup = async (name: string) => {
+const lookup = async (nameOrAddress: string): Promise<SuiAddress | string> => {
     const provider = new JsonRpcProvider(Network.DEVNET);
 
-    const nameObjectId = growthbook.getFeatureValue(
+    const namesObjectId = growthbook.getFeatureValue(
         FEATURES.SUINS_REGISTRY,
         ''
     );
-
-    const { [nameObjectId]: recordsInfo } = await Browser.storage.local.get(
-        nameObjectId
-    );
-
+    const { suins: recordsInfo } = await Browser.storage.local.get('suins');
+    
     const { version, timestamp } = recordsInfo || {};
     let { suiNSRecords } = recordsInfo || {};
 
     if (suiNSRecords && Date.now() - timestamp > CACHE_DELAY) {
-        const ref = await provider.getObjectRef(nameObjectId);
+        const ref = await provider.getObjectRef(namesObjectId);
         if (ref) {
             if (version !== getObjectVersion(ref)) {
                 suiNSRecords = null;
             }
         }
+        recordsInfo.timestamp = Date.now();
+        Browser.storage.local.set({
+            suins: recordsInfo,
+        });
     }
 
     if (!suiNSRecords) {
-        const namesObject = await provider.getObject(nameObjectId);
+        const namesObject = await provider.getObject(namesObjectId);
         if (namesObject.status === 'Exists') {
             const suiNamesObject = namesObject.details as SuiObject;
             const moveNameObject = suiNamesObject.data as SuiMoveObject;
@@ -42,12 +43,16 @@ const lookup = async (name: string) => {
             suiNSRecords = {};
             for (const record of records) {
                 const { key, value } = record.fields;
-                suiNSRecords[key] = value.fields.owner;
+                const { owner } = value.fields;
+                suiNSRecords[key] = owner;
+                if (key.indexOf('addr.reverse') === -1) {
+                    suiNSRecords[owner] = key;
+                }
             }
             const { version } = suiNamesObject.reference;
             const timestamp = Date.now();
             Browser.storage.local.set({
-                [nameObjectId]: {
+                suins: {
                     version,
                     timestamp,
                     suiNSRecords,
@@ -56,9 +61,9 @@ const lookup = async (name: string) => {
         }
     }
 
-    if (!suiNSRecords) return name;
+    if (!suiNSRecords) return nameOrAddress;
 
-    return suiNSRecords[name] || name;
+    return suiNSRecords[nameOrAddress] || nameOrAddress;
 };
 
 export default lookup;
