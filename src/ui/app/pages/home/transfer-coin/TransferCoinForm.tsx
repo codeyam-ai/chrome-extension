@@ -8,10 +8,7 @@ import AddressInput from '_components/address-input';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import NumberInput from '_components/number-input';
 import { SuiIcons } from '_font-icons/output/sui-icons';
-import {
-    DEFAULT_GAS_BUDGET_FOR_TRANSFER,
-    GAS_SYMBOL,
-} from '_redux/slices/sui-objects/Coin';
+import { GAS_SYMBOL } from '_redux/slices/sui-objects/Coin';
 import Icon from '_src/ui/app/components/icon';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import Button, { ButtonStyle } from '_src/ui/app/shared/buttons/Button';
@@ -25,6 +22,7 @@ export type TransferCoinFormProps = {
     submitError: string | null;
     coinBalance: string;
     coinSymbol: string;
+    gasBudget: number;
     onClearSubmitError: () => void;
 };
 
@@ -32,6 +30,7 @@ function TransferCoinForm({
     submitError,
     coinBalance,
     coinSymbol,
+    gasBudget,
     onClearSubmitError,
 }: TransferCoinFormProps) {
     const {
@@ -44,10 +43,7 @@ function TransferCoinForm({
     useEffect(() => {
         onClearRef.current();
     }, [amount, to]);
-    const [formattedGasAmount] = useFormatCoin(
-        DEFAULT_GAS_BUDGET_FOR_TRANSFER,
-        '0x2::sui::SUI'
-    );
+    const [formattedGasAmount] = useFormatCoin(gasBudget, '0x2::sui::SUI');
 
     return (
         <Form className={st.container} autoComplete="off" noValidate={true}>

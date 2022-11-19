@@ -3,6 +3,9 @@
 
 import type { RawSigner, SuiExecuteTransactionResponse } from '@mysten/sui.js';
 
+const DEFAULT_NFT_IMAGE =
+    'ipfs://QmZPWWy5Si54R3d26toaqRiqvCH7HkGdXkxwUgCm2oKKM2?filename=img-sq-01.png';
+
 // TODO: Remove this after internal dogfooding
 export class ExampleNFT {
     /**
@@ -10,7 +13,7 @@ export class ExampleNFT {
      *
      * @param signer A signer with connection to the fullnode
      */
-    public static async mintExampleNFTWithFullnode(
+    public static async mintExampleNFT(
         signer: RawSigner,
         name?: string,
         description?: string,
@@ -24,23 +27,9 @@ export class ExampleNFT {
             arguments: [
                 name || 'Example NFT',
                 description || 'An NFT created by Sui Wallet',
-                imageUrl ||
-                    'ipfs://bafkreibngqhl3gaa7daob4i2vccziay2jjlp435cf66vhono7nrvww53ty',
+                imageUrl || DEFAULT_NFT_IMAGE,
             ],
             gasBudget: 10000,
-        });
-    }
-
-    public static async TransferNFTWithFullnode(
-        signer: RawSigner,
-        nftId: string,
-        recipientID: string,
-        transferCost: number
-    ): Promise<SuiExecuteTransactionResponse> {
-        return await signer.transferObject({
-            objectId: nftId,
-            gasBudget: transferCost,
-            recipient: recipientID,
         });
     }
 }

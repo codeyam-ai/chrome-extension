@@ -11,7 +11,10 @@ import TransferCoinForm from './TransferCoinForm';
 import { createTokenValidation } from './validation';
 import Loading from '_components/loading';
 import { useAppSelector, useAppDispatch } from '_hooks';
-import { accountAggregateBalancesSelector } from '_redux/slices/account';
+import {
+    accountAggregateBalancesSelector,
+    accountCoinsSelector,
+} from '_redux/slices/account';
 import { Coin, GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
 import { sendTokens } from '_redux/slices/transactions';
 import {
@@ -33,12 +36,18 @@ export type FormValues = typeof initialValues;
 // TODO: show out of sync when sui objects locally might be outdated
 function TransferCoinPage() {
     const [searchParams] = useSearchParams();
-    const coinType = useMemo(() => searchParams.get('type'), [searchParams]);
+    const coinType = searchParams.get('type');
+
     const aggregateBalances = useAppSelector(accountAggregateBalancesSelector);
     const coinBalance = useMemo(
         () => (coinType && aggregateBalances[coinType]) || BigInt(0),
         [coinType, aggregateBalances]
     );
+    const [formattedBalance] = useFormatCoin(
+        coinBalance,
+        coinType || '0x2::sui::SUI'
+    );
+
     const gasAggregateBalance = useMemo(
         () => aggregateBalances[GAS_TYPE_ARG] || BigInt(0),
         [aggregateBalances]
@@ -49,14 +58,29 @@ function TransferCoinPage() {
         [coinType]
     );
 
+    const [sendError, setSendError] = useState<string | null>(null);
+    // const [formData] = useState<FormValues>(initialValues);
+
     const [coinDecimals] = useCoinDecimals(coinType);
     const [gasDecimals] = useCoinDecimals(GAS_TYPE_ARG);
+    const allCoins = useAppSelector(accountCoinsSelector);
+    const allCoinsOfSelectedTypeArg = useMemo(
+        () =>
+            allCoins.filter(
+                (aCoin) => coinType && Coin.getCoinTypeArg(aCoin) === coinType
+            ),
+        [coinType, allCoins]
+    );
+    const [amountToSend] = useState(BigInt(0));
+    const gasBudget = useMemo(
+        () =>
+            Coin.computeGasBudgetForPay(
+                allCoinsOfSelectedTypeArg,
+                amountToSend
+            ),
+        [allCoinsOfSelectedTypeArg, amountToSend]
+    );
 
-    const [formattedBalance] = useFormatCoin(coinBalance, coinType);
-    // const [formattedTotal] = useFormatCoin(totalGasCoins, GAS_TYPE_ARG);
-    // const [formattedGas] = useFormatCoin(gasAggregateBalance, GAS_TYPE_ARG);
-
-    const [sendError, setSendError] = useState<string | null>(null);
     const validationSchema = useMemo(
         () =>
             createTokenValidation(
@@ -65,7 +89,8 @@ function TransferCoinPage() {
                 coinSymbol,
                 gasAggregateBalance,
                 coinDecimals,
-                gasDecimals
+                gasDecimals,
+                gasBudget
             ),
         [
             coinType,
@@ -74,6 +99,7 @@ function TransferCoinPage() {
             gasAggregateBalance,
             coinDecimals,
             gasDecimals,
+            gasBudget,
         ]
     );
     const dispatch = useAppDispatch();
@@ -150,6 +176,7 @@ function TransferCoinPage() {
                         submitError={sendError}
                         coinBalance={formattedBalance.toString()}
                         coinSymbol={coinSymbol}
+                        gasBudget={gasBudget}
                         onClearSubmitError={handleOnClearSubmitError}
                     />
                 </Formik>

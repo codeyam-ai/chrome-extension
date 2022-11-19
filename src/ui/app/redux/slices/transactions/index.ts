@@ -1,13 +1,18 @@
-// Copyright (c) 2022, Mysten Labs, Inc.
+// Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { getTransactionDigest, isSuiMoveObject } from '@mysten/sui.js';
+import {
+    getTransactionDigest,
+    isSuiMoveObject,
+    Coin as CoinAPI,
+} from '@mysten/sui.js';
 import {
     createAsyncThunk,
     createEntityAdapter,
     createSlice,
 } from '@reduxjs/toolkit';
 
+import { accountCoinsSelector } from '_redux/slices/account';
 import {
     fetchAllOwnedAndRequiredObjects,
     suiObjectsAdapterSelectors,
@@ -53,33 +58,23 @@ export const sendTokens = createAsyncThunk<
             );
         }
 
-        const coinType = Coin.getCoinTypeFromArg(tokenTypeArg);
-        const coins: SuiMoveObject[] = suiObjectsAdapterSelectors
-            .selectAll(state)
-            .filter(
-                (anObj) =>
-                    isSuiMoveObject(anObj.data) && anObj.data.type === coinType
+        const coins: SuiMoveObject[] = accountCoinsSelector(state);
+        const response = await CoinAPI.transfer(
+            signer,
+            coins,
+            tokenTypeArg,
+            amount,
+            recipientAddress,
+            Coin.computeGasBudgetForPay(
+                coins.filter(
+                    (aCoin) => Coin.getCoinTypeArg(aCoin) === tokenTypeArg
+                ),
+                amount
             )
-            .map(({ data }) => data as SuiMoveObject);
-        const response =
-            Coin.getCoinSymbol(tokenTypeArg) === 'SUI'
-                ? await Coin.transferSui(
-                      signer,
-                      coins,
-                      amount,
-                      recipientAddress
-                  )
-                : await Coin.transferCoin(
-                      signer,
-                      coins,
-                      amount,
-                      recipientAddress
-                  );
-
+        );
         // TODO: better way to sync latest objects
         dispatch(fetchAllOwnedAndRequiredObjects());
-        // TODO: is this correct? Find a better way to do it
-        return response as TransactionResult;
+        return response;
     }
 );
 
@@ -136,7 +131,7 @@ export const StakeTokens = createAsyncThunk<
             validatorAddress
         );
         dispatch(fetchAllOwnedAndRequiredObjects());
-        return response as TransactionResult;
+        return response;
     }
 );
 
