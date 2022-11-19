@@ -88,5 +88,5 @@ test('Signing in by importing an account with a seed phrase', async () => {
 
     await userEvent.click(screen.getByText('Save'));
 
-    await screen.findByText('Get started with Sui');
+    await screen.findByText('Wallet');
 });
