@@ -21,7 +21,7 @@ import KeypairVault from '_src/ui/app/KeypairVault';
 import { AUTHENTICATION_REQUESTED } from '_src/ui/app/pages/initialize/hosted';
 
 import type { AppThunkConfig } from '../../store/thunk-extras';
-import type { SuiAddress, SuiMoveObject, SuiObject } from '@mysten/sui.js';
+import type { SuiAddress, SuiMoveObject } from '@mysten/sui.js';
 import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
@@ -32,17 +32,6 @@ type InitialAccountInfo = {
     passphrase: string | null;
     accountInfos: AccountInfo[];
     activeAccountIndex: number;
-};
-
-/*
-    The has_public_transfer was added to make sure the SuiSystemState object isn't
-    shown as an NFT. This forced us to extend the anObj type because there is no
-    such object on the SuiObject type of the mysten NPM package.
-*/
-type SuiObjectWithPublicTransfer = SuiObject & {
-    data: {
-        has_public_transfer: boolean;
-    };
 };
 
 export const LOCKED = 'locked';
@@ -405,8 +394,27 @@ export const { setMnemonic, setAddress, setAccountInfos, setAuthentication } =
 
 export default accountSlice.reducer;
 
-export const accountCoinsSelector = createSelector(
+export const activeAccountSelector = ({ account }: RootState) =>
+    account.address;
+
+export const ownedObjects = createSelector(
     suiObjectsAdapterSelectors.selectAll,
+    activeAccountSelector,
+    (objects, address) => {
+        if (address) {
+            return objects.filter(
+                ({ owner }) =>
+                    typeof owner === 'object' &&
+                    'AddressOwner' in owner &&
+                    owner.AddressOwner === address
+            );
+        }
+        return [];
+    }
+);
+
+export const accountCoinsSelector = createSelector(
+    ownedObjects,
     (allSuiObjects) => {
         return allSuiObjects
             .filter(Coin.isCoin)
@@ -449,25 +457,8 @@ export const accountItemizedBalancesSelector = createSelector(
 );
 
 export const accountNftsSelector = createSelector(
-    suiObjectsAdapterSelectors.selectAll,
+    ownedObjects,
     (allSuiObjects) => {
-        return allSuiObjects.filter(
-            /*
-                The has_public_transfer was added to make sure the SuiSystemState object isn't
-                shown as an NFT. This forced us to extend the anObj type because there is no
-                such object on the SuiObject type of the mysten NPM package.
-            */
-            (anObj) => {
-                const anObjWithPublicTransfer =
-                    anObj as SuiObjectWithPublicTransfer;
-                return (
-                    !Coin.isCoin(anObj) &&
-                    anObjWithPublicTransfer.data.has_public_transfer !== false
-                );
-            }
-        );
+        return allSuiObjects.filter((anObj) => !Coin.isCoin(anObj));
     }
 );
-
-export const activeAccountSelector = ({ account }: RootState) =>
-    account.address;
