@@ -17,7 +17,10 @@ import {
 } from '_redux/slices/account';
 import { Coin, GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
 import { sendTokens } from '_redux/slices/transactions';
-import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
+import {
+    useCoinDecimals,
+    useFormatCoin,
+} from '_src/ui/app/hooks/useFormatCoin';
 import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 import type { SerializedError } from '@reduxjs/toolkit';
@@ -39,6 +42,10 @@ function TransferCoinPage() {
     const coinBalance = useMemo(
         () => (coinType && aggregateBalances[coinType]) || BigInt(0),
         [coinType, aggregateBalances]
+    );
+    const [formattedBalance] = useFormatCoin(
+        coinBalance,
+        coinType || '0x2::sui::SUI'
     );
 
     const gasAggregateBalance = useMemo(
@@ -64,7 +71,7 @@ function TransferCoinPage() {
             ),
         [coinType, allCoins]
     );
-    const [amountToSend, setAmountToSend] = useState(BigInt(0));
+    const [amountToSend] = useState(BigInt(0));
     const gasBudget = useMemo(
         () =>
             Coin.computeGasBudgetForPay(
@@ -167,7 +174,7 @@ function TransferCoinPage() {
                 >
                     <TransferCoinForm
                         submitError={sendError}
-                        coinBalance={coinBalance.toString()}
+                        coinBalance={formattedBalance.toString()}
                         coinSymbol={coinSymbol}
                         gasBudget={gasBudget}
                         onClearSubmitError={handleOnClearSubmitError}
