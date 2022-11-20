@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useEffect, useMemo, useState, Fragment } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { AppState } from '../../hooks/useInitializedGuard';
+import Check from '../../shared/svg/Check';
 import Loading from '_components/loading';
 import {
     useAppDispatch,
@@ -23,6 +24,12 @@ import type { SuiJsonValue, TypeTag, TransactionEffects } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 
 import st from './DappTxApprovalPage.module.scss';
+
+enum ImpactIcon {
+    SAFE = 'safe',
+    WARNING = 'warning',
+    DANGER = 'danger',
+}
 
 const truncateMiddle = (s = '', length = 6) =>
     s.length > length * 2.5
@@ -63,8 +70,8 @@ export function DappTxApprovalPage() {
     const txRequestsLoading = useAppSelector(
         ({ transactionRequests }) => !transactionRequests.initialized
     );
-    const activeAccountIndex = useAppSelector(
-        ({ account: { activeAccountIndex } }) => activeAccountIndex
+    const { activeAccountIndex, address } = useAppSelector(
+        ({ account }) => account
     );
     const txRequestSelector = useMemo(
         () => (state: RootState) =>
@@ -76,9 +83,52 @@ export function DappTxApprovalPage() {
     const dispatch = useAppDispatch();
 
     const [effects, setEffects] = useState<TransactionEffects | null>(null);
+
     const gasUsed = effects?.gasUsed;
     const gas = gasUsed ? gasUsed.computationCost + gasUsed.storageCost : null;
     const [formattedGas, symbol] = useFormatCoin(gas, '0x2::sui::SUI');
+
+    const ownedMutated = useMemo(() => {
+        if (!effects?.mutated) return [];
+
+        const ownedMutated = effects.mutated.filter((object) => {
+            if (typeof object.owner === 'string') {
+                return false;
+            }
+            if ('AddressOwner' in object.owner) {
+                if (object.owner.AddressOwner !== address) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+            if (
+                object.reference.objectId ===
+                effects.gasObject.reference.objectId
+            ) {
+                return false;
+            }
+
+            return true;
+        });
+
+        return ownedMutated;
+    }, [effects, address]);
+
+    const sharedMutated = useMemo(() => {
+        if (!effects?.mutated) return [];
+
+        const sharedMutated = effects.mutated.filter((object) => {
+            if (typeof object.owner === 'string') {
+                return false;
+            }
+            return 'Shared' in object.owner;
+        });
+
+        return sharedMutated;
+    }, [effects]);
+
+    console.log('MUTATED', ownedMutated, sharedMutated);
 
     useEffect(() => {
         const getEffects = async () => {
@@ -101,6 +151,44 @@ export function DappTxApprovalPage() {
         getEffects();
     }, [txRequest, activeAccountIndex]);
     console.log('Effects', effects);
+
+    useEffect(() => {
+        const getNormalizedFunction = async () => {
+            if (!txRequest) return;
+            if (txRequest.tx.type === 'move-call') return;
+            if (typeof txRequest.tx.data === 'string') return;
+            if (!('packageObjectId' in txRequest.tx.data.data)) return;
+
+            const {
+                packageObjectId,
+                module,
+                function: f,
+            } = txRequest.tx.data.data;
+
+            const normalizedP =
+                await thunkExtras.api.instance.fullNode.getNormalizedMoveModulesByPackage(
+                    packageObjectId
+                );
+            console.log('getNormalizedMoveModulesByPackage', normalizedP);
+
+            const normalizedM =
+                await thunkExtras.api.instance.fullNode.getNormalizedMoveModule(
+                    packageObjectId,
+                    module
+                );
+            console.log('getNormalizedMoveModule', normalizedM);
+
+            const normalizedF =
+                await thunkExtras.api.instance.fullNode.getNormalizedMoveFunction(
+                    packageObjectId,
+                    module,
+                    f
+                );
+            console.log('getNormalizedFunction', normalizedF);
+        };
+
+        getNormalizedFunction();
+    }, [txRequest]);
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
@@ -194,9 +282,18 @@ export function DappTxApprovalPage() {
                     return [
                         {
                             label: 'Package',
-                            content: truncateMiddle(
-                                txRequest.tx.data.data.packageObjectId,
-                                8
+                            content: (
+                                <a
+                                    href={`https://explorer.sui.io/objects/${txRequest.tx.data.data.packageObjectId}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-blue-500 underline"
+                                >
+                                    {truncateMiddle(
+                                        txRequest.tx.data.data.packageObjectId,
+                                        8
+                                    )}
+                                </a>
                             ),
                             title: txRequest.tx.data.data.packageObjectId,
                         },
@@ -261,13 +358,22 @@ export function DappTxApprovalPage() {
     const Detail = ({
         label,
         value,
+        icon,
     }: {
         label: string;
         value: string | number | JSX.Element;
+        icon?: string;
     }) => {
         return (
             <div className="flex justify-between text-sm">
-                <div className="text-gray-500 dark:text-gray-400">{label}:</div>
+                <div className="flex items-center gap-1">
+                    {icon === ImpactIcon.SAFE && <Check color="green" />}
+                    {icon === ImpactIcon.WARNING && <Check color="yellow" />}
+                    {icon === ImpactIcon.DANGER && <Check color="red" />}
+                    <div className="text-gray-500 dark:text-gray-400">
+                        {label}:
+                    </div>
+                </div>
                 <div className={st.value + ' dark:text-gray-400'}>{value}</div>
             </div>
         );
@@ -285,7 +391,7 @@ export function DappTxApprovalPage() {
                     onSubmit={handleOnSubmit}
                 >
                     <div className="flex flex-col gap-6">
-                        <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-2">
                             <div className="text-lg">Request</div>
                             {valuesContent.map(({ label, content }) => (
                                 <Fragment key={label}>
@@ -294,9 +400,43 @@ export function DappTxApprovalPage() {
                             ))}
                         </div>
 
-                        <Loading loading={effects === null} big={true}>
-                            <div className="text-lg mb-6">
-                                <div className="flex flex-col gap-3">
+                        <Loading
+                            loading={effects === null}
+                            big={true}
+                            className="flex justify-center"
+                        >
+                            <div className="text-lg flex flex-col gap-6">
+                                <div className="flex flex-col gap-2">
+                                    <div className="text-md">Impact</div>
+                                    <Detail
+                                        label="Your Assets"
+                                        value={
+                                            ownedMutated.length === 0
+                                                ? 'None Impacted'
+                                                : `${ownedMutated.length} Impacted`
+                                        }
+                                        icon={
+                                            ownedMutated.length === 0
+                                                ? ImpactIcon.SAFE
+                                                : ImpactIcon.WARNING
+                                        }
+                                    />
+                                    <Detail
+                                        label="Shared Objects"
+                                        value={
+                                            sharedMutated.length === 0
+                                                ? 'None Impacted'
+                                                : `${sharedMutated.length} Impacted`
+                                        }
+                                        icon={
+                                            sharedMutated.length === 0
+                                                ? ImpactIcon.SAFE
+                                                : ImpactIcon.WARNING
+                                        }
+                                    />
+                                </div>
+
+                                <div className="flex flex-col gap-2">
                                     <div className="text-md">Cost</div>
                                     <Detail
                                         label="Charges"
@@ -314,7 +454,7 @@ export function DappTxApprovalPage() {
                             </div>
 
                             {detailedValuesContent && (
-                                <div className="py-3">
+                                <div className="pb-6">
                                     <div
                                         className="cursor-pointer py-1 dark:text-gray-400"
                                         onClick={toggleDetails}
