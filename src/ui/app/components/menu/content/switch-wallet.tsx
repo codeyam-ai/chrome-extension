@@ -139,8 +139,11 @@ export default function SwitchWallet() {
     }, []);
 
     const _cancelEdit = useCallback(() => {
-        draftAccountInfos.current.pop();
-        setAccountInfos(draftAccountInfos.current);
+        if (!Object.isFrozen(draftAccountInfos.current)) {
+            draftAccountInfos.current.pop();
+            setAccountInfos(draftAccountInfos.current);
+        }
+
         setEdit(false);
     }, []);
 
