@@ -30,6 +30,7 @@ function openTxWindow(txRequestID: string) {
         url:
             Browser.runtime.getURL('ui.html') +
             `#/tx-approval/${encodeURIComponent(txRequestID)}`,
+        height: 720,
     });
 }
 

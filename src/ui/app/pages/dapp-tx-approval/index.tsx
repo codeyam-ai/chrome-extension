@@ -16,13 +16,10 @@ import {
     respondToTransactionRequest,
     txRequestsSelectors,
 } from '_redux/slices/transaction-requests';
+import { thunkExtras } from '_redux/store/thunk-extras';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
-import type {
-    SignableTransaction,
-    SuiJsonValue,
-    TypeTag,
-} from '@mysten/sui.js';
+import type { SuiJsonValue, TypeTag, TransactionEffects } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 
 import st from './DappTxApprovalPage.module.scss';
@@ -66,6 +63,9 @@ export function DappTxApprovalPage() {
     const txRequestsLoading = useAppSelector(
         ({ transactionRequests }) => !transactionRequests.initialized
     );
+    const activeAccountIndex = useAppSelector(
+        ({ account: { activeAccountIndex } }) => activeAccountIndex
+    );
     const txRequestSelector = useMemo(
         () => (state: RootState) =>
             (txID && txRequestsSelectors.selectById(state, txID)) || null,
@@ -75,12 +75,32 @@ export function DappTxApprovalPage() {
     const loading = guardLoading || txRequestsLoading;
     const dispatch = useAppDispatch();
 
-    const transaction = txRequest?.tx?.data
-        ? (txRequest.tx.data as SignableTransaction)
-        : null;
-    const gas =
-        transaction?.kind !== 'bytes' ? transaction?.data?.gasBudget : 0;
-    const [formattedGas, symbol] = useFormatCoin(gas || 0, '0x2::sui::SUI');
+    const [effects, setEffects] = useState<TransactionEffects | null>(null);
+    const gasUsed = effects?.gasUsed;
+    const gas = gasUsed ? gasUsed.computationCost + gasUsed.storageCost : null;
+    const [formattedGas, symbol] = useFormatCoin(gas, '0x2::sui::SUI');
+
+    useEffect(() => {
+        const getEffects = async () => {
+            try {
+                if (!txRequest) return;
+                if (txRequest.tx.type === 'move-call') return;
+
+                const signer = thunkExtras.api.getSignerInstance(
+                    thunkExtras.keypairVault.getKeyPair(activeAccountIndex)
+                );
+                const transactionEffects = await signer.dryRunTransaction(
+                    txRequest.tx.data
+                );
+                setEffects(transactionEffects);
+            } catch (e) {
+                setTimeout(getEffects, 100);
+            }
+        };
+
+        getEffects();
+    }, [txRequest, activeAccountIndex]);
+    console.log('Effects', effects);
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
@@ -104,7 +124,6 @@ export function DappTxApprovalPage() {
         }
     }, [loading, txRequest]);
 
-    // TODO: add more tx types/make it generic
     const valuesContent = useMemo(() => {
         switch (txRequest?.tx.type) {
             case 'v2': {
@@ -119,11 +138,6 @@ export function DappTxApprovalPage() {
                     contents.push({
                         label: 'Function',
                         content: txRequest.tx.data.data.function,
-                    });
-
-                    contents.push({
-                        label: 'Gas Fees',
-                        content: `${formattedGas} ${symbol}`,
                     });
                 } else if (txRequest.tx.data.kind === 'pay') {
                     const plural = txRequest.tx.data.data.recipients.length > 1;
@@ -171,7 +185,7 @@ export function DappTxApprovalPage() {
             default:
                 return [];
         }
-    }, [txRequest, formattedGas, symbol]);
+    }, [txRequest]);
 
     const detailedValuesContent = useMemo(() => {
         switch (txRequest?.tx.type) {
@@ -199,6 +213,16 @@ export function DappTxApprovalPage() {
                             content: toList(
                                 txRequest.tx.data.data.typeArguments
                             ),
+                        },
+                        {
+                            label: 'Computation Fees',
+                            content: gasUsed?.computationCost || '-',
+                        },
+                        {
+                            label: 'Storage Fees',
+                            content: gasUsed
+                                ? gasUsed.storageCost - gasUsed.storageRebate
+                                : '-',
                         },
                     ];
                 } else if (txRequest.tx.data.kind === 'pay') {
@@ -232,7 +256,22 @@ export function DappTxApprovalPage() {
             default:
                 return null;
         }
-    }, [txRequest]);
+    }, [txRequest, gasUsed]);
+
+    const Detail = ({
+        label,
+        value,
+    }: {
+        label: string;
+        value: string | number | JSX.Element;
+    }) => {
+        return (
+            <div className="flex justify-between text-sm">
+                <div className="text-gray-500 dark:text-gray-400">{label}:</div>
+                <div className={st.value + ' dark:text-gray-400'}>{value}</div>
+            </div>
+        );
+    };
 
     return (
         <Loading loading={loading} big={true}>
@@ -245,60 +284,72 @@ export function DappTxApprovalPage() {
                     rejectTitle="Reject"
                     onSubmit={handleOnSubmit}
                 >
-                    <div className="flex flex-col gap-3">
-                        {valuesContent.map(({ label, content }) => (
-                            <Fragment key={label}>
-                                <div className="flex justify-between">
-                                    <label className="text-gray-500 dark:text-gray-400 text-sm">
-                                        {label}
-                                    </label>
-                                    <div
-                                        className={
-                                            st.value + ' dark:text-gray-400'
-                                        }
-                                    >
-                                        {content}
-                                    </div>
-                                </div>
-                            </Fragment>
-                        ))}
-                    </div>
+                    <div className="flex flex-col gap-6">
+                        <div className="flex flex-col gap-3">
+                            <div className="text-lg">Request</div>
+                            {valuesContent.map(({ label, content }) => (
+                                <Fragment key={label}>
+                                    <Detail label={label} value={content} />
+                                </Fragment>
+                            ))}
+                        </div>
 
-                    {detailedValuesContent && (
-                        <div className="py-3">
-                            <div
-                                className="cursor-pointer py-1 dark:text-gray-400"
-                                onClick={toggleDetails}
-                            >
-                                {details ? '▼ Hide' : '▶ Show'} Details
+                        <Loading loading={effects === null} big={true}>
+                            <div className="text-lg mb-6">
+                                <div className="flex flex-col gap-3">
+                                    <div className="text-md">Cost</div>
+                                    <Detail
+                                        label="Charges"
+                                        value={`0 ${symbol}`}
+                                    />
+                                    <Detail
+                                        label="Gas Fees"
+                                        value={`${formattedGas} ${symbol}`}
+                                    />
+                                    <Detail
+                                        label="Total"
+                                        value={`${formattedGas} ${symbol}`}
+                                    />
+                                </div>
                             </div>
 
-                            {details && (
-                                <div className="mt-3 flex flex-col gap-3 dark:text-gray-400">
-                                    {detailedValuesContent.map(
-                                        ({ label, content, title }) => (
-                                            <Fragment key={label}>
-                                                <div className="flex justify-between">
-                                                    <label className="text-gray-500 dark:text-gray-400 text-sm">
-                                                        {label}
-                                                    </label>
-                                                    <div
-                                                        className={
-                                                            st.value +
-                                                            ' dark:text-gray-400'
-                                                        }
-                                                        title={title}
-                                                    >
-                                                        {content}
-                                                    </div>
-                                                </div>
-                                            </Fragment>
-                                        )
+                            {detailedValuesContent && (
+                                <div className="py-3">
+                                    <div
+                                        className="cursor-pointer py-1 dark:text-gray-400"
+                                        onClick={toggleDetails}
+                                    >
+                                        {details ? '▼ Hide' : '▶ Show'} Details
+                                    </div>
+
+                                    {details && (
+                                        <div className="mt-3 flex flex-col gap-3 dark:text-gray-400">
+                                            {detailedValuesContent.map(
+                                                ({ label, content, title }) => (
+                                                    <Fragment key={label}>
+                                                        <div className="flex justify-between">
+                                                            <label className="text-gray-500 dark:text-gray-400 text-sm">
+                                                                {label}
+                                                            </label>
+                                                            <div
+                                                                className={
+                                                                    st.value +
+                                                                    ' dark:text-gray-400'
+                                                                }
+                                                                title={title}
+                                                            >
+                                                                {content}
+                                                            </div>
+                                                        </div>
+                                                    </Fragment>
+                                                )
+                                            )}
+                                        </div>
                                     )}
                                 </div>
                             )}
-                        </div>
-                    )}
+                        </Loading>
+                    </div>
                 </UserApproveContainer>
             ) : null}
         </Loading>
