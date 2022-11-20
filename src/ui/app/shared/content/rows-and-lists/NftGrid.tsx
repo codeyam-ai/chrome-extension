@@ -3,7 +3,7 @@ import NftGridItem from './NftGridItem';
 import type { SuiObject } from '@mysten/sui.js';
 
 interface NftGridProps {
-    nfts: SuiObject[] | null;
+    nfts: SuiObject[];
 }
 
 const NftGrid = ({ nfts }: NftGridProps) => {

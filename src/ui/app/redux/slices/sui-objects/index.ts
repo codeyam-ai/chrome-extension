@@ -32,7 +32,7 @@ const objectsAdapter = createEntityAdapter<SuiObject>({
 });
 
 export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
-    SuiObject[] | null,
+    SuiObject[],
     void,
     AppThunkConfig
 >('sui-objects/fetch-all', async (_, { getState, extra: { api } }) => {
@@ -40,7 +40,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
     const {
         account: { address },
     } = state;
-    let allSuiObjects: SuiObject[] | null = null;
+    const allSuiObjects: SuiObject[] = [];
     if (address) {
         const allObjectRefs =
             await api.instance.fullNode.getObjectsOwnedByAddress(`${address}`);
@@ -57,7 +57,6 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                     : null;
                 const objOutdated = fetchedVersion !== storedVersion;
                 if (!objOutdated && storedObj) {
-                    if (!allSuiObjects) allSuiObjects = [];
                     allSuiObjects.push(storedObj);
                 }
                 return objOutdated;
@@ -68,7 +67,6 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         for (const objRes of allObjRes) {
             const suiObj = getObjectExistsResponse(objRes);
             if (suiObj) {
-                if (!allSuiObjects) allSuiObjects = [];
                 allSuiObjects.push(suiObj);
             }
         }
@@ -77,16 +75,15 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
 });
 
 export const batchFetchObject = createAsyncThunk<
-    SuiObject[] | null,
+    SuiObject[],
     ObjectId[],
     AppThunkConfig
 >('sui-objects/batch', async (objectIDs, { extra: { api } }) => {
-    let allSuiObjects: SuiObject[] | null = null;
+    const allSuiObjects: SuiObject[] = [];
     const allObjRes = await api.instance.fullNode.getObjectBatch(objectIDs);
     for (const objRes of allObjRes) {
         const suiObj = getObjectExistsResponse(objRes);
         if (suiObj) {
-            if (!allSuiObjects) allSuiObjects = [];
             allSuiObjects.push(suiObj);
         }
     }
@@ -143,9 +140,10 @@ const slice = createSlice({
     name: 'sui-objects',
     initialState: initialState,
     reducers: {
-        clearForNetworkSwitch: (state) => {
+        clearForNetworkOrWalletSwitch: (state) => {
             state.error = false;
             state.lastSync = null;
+            state.loading = true;
             objectsAdapter.removeAll(state);
         },
     },
@@ -180,7 +178,7 @@ const slice = createSlice({
 
 export default slice.reducer;
 
-export const { clearForNetworkSwitch } = slice.actions;
+export const { clearForNetworkOrWalletSwitch } = slice.actions;
 
 export const suiObjectsAdapterSelectors = objectsAdapter.getSelectors(
     (state: RootState) => state.suiObjects
