@@ -41,9 +41,7 @@ function TokensPage() {
                     <WalletRow />
 
                     <Loading
-                        loading={
-                            !balances || Object.keys(balances).length === 0
-                        }
+                        loading={!balances}
                         big={true}
                         className="flex py-6 justify-center items-center"
                     >

@@ -32,7 +32,7 @@ const objectsAdapter = createEntityAdapter<SuiObject>({
 });
 
 export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
-    SuiObject[],
+    SuiObject[] | null,
     void,
     AppThunkConfig
 >('sui-objects/fetch-all', async (_, { getState, extra: { api } }) => {
@@ -40,10 +40,11 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
     const {
         account: { address },
     } = state;
-    const allSuiObjects: SuiObject[] = [];
+    let allSuiObjects: SuiObject[] | null = null;
     if (address) {
         const allObjectRefs =
             await api.instance.fullNode.getObjectsOwnedByAddress(`${address}`);
+
         const objectIDs = allObjectRefs
             .filter((anObj) => {
                 const fetchedVersion = getObjectVersion(anObj);
@@ -56,6 +57,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                     : null;
                 const objOutdated = fetchedVersion !== storedVersion;
                 if (!objOutdated && storedObj) {
+                    if (!allSuiObjects) allSuiObjects = [];
                     allSuiObjects.push(storedObj);
                 }
                 return objOutdated;
@@ -66,6 +68,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         for (const objRes of allObjRes) {
             const suiObj = getObjectExistsResponse(objRes);
             if (suiObj) {
+                if (!allSuiObjects) allSuiObjects = [];
                 allSuiObjects.push(suiObj);
             }
         }
@@ -74,15 +77,16 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
 });
 
 export const batchFetchObject = createAsyncThunk<
-    SuiObject[],
+    SuiObject[] | null,
     ObjectId[],
     AppThunkConfig
 >('sui-objects/batch', async (objectIDs, { extra: { api } }) => {
-    const allSuiObjects: SuiObject[] = [];
+    let allSuiObjects: SuiObject[] | null = null;
     const allObjRes = await api.instance.fullNode.getObjectBatch(objectIDs);
     for (const objRes of allObjRes) {
         const suiObj = getObjectExistsResponse(objRes);
         if (suiObj) {
+            if (!allSuiObjects) allSuiObjects = [];
             allSuiObjects.push(suiObj);
         }
     }
@@ -150,10 +154,12 @@ const slice = createSlice({
             .addCase(
                 fetchAllOwnedAndRequiredObjects.fulfilled,
                 (state, action) => {
-                    objectsAdapter.setAll(state, action.payload);
-                    state.loading = false;
-                    state.error = false;
-                    state.lastSync = Date.now();
+                    if (action.payload) {
+                        objectsAdapter.setAll(state, action.payload);
+                        state.loading = false;
+                        state.error = false;
+                        state.lastSync = Date.now();
+                    }
                 }
             )
             .addCase(
