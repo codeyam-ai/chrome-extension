@@ -24,7 +24,7 @@ function TokensPage() {
     const mistBalance = balances[GAS_TYPE_ARG] || BigInt(0);
 
     return (
-        <Loading loading={loading} big={true}>
+        <>
             {showError && error ? (
                 // <Alert>
                 //     <strong>Something&apos;s wrong.</strong>{' '}
@@ -41,7 +41,7 @@ function TokensPage() {
                     <WalletRow />
 
                     <Loading
-                        loading={!balances}
+                        loading={loading}
                         big={true}
                         className="flex py-6 justify-center items-center"
                     >
@@ -75,7 +75,7 @@ function TokensPage() {
                     </Loading>
                 </>
             )}
-        </Loading>
+        </>
     );
 }
 
