@@ -6,14 +6,23 @@ import { useParams } from 'react-router-dom';
 
 import { AppState } from '../../hooks/useInitializedGuard';
 import Loading from '_components/loading';
-import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
+import {
+    useAppDispatch,
+    useAppSelector,
+    useFormatCoin,
+    useInitializedGuard,
+} from '_hooks';
 import {
     respondToTransactionRequest,
     txRequestsSelectors,
 } from '_redux/slices/transaction-requests';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
-import type { SuiJsonValue, TypeTag } from '@mysten/sui.js';
+import type {
+    SignableTransaction,
+    SuiJsonValue,
+    TypeTag,
+} from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 
 import st from './DappTxApprovalPage.module.scss';
@@ -33,7 +42,7 @@ function toList(items: SuiJsonValue[] | TypeTag[]) {
                 const val = JSON.stringify(anItem, null, 4);
                 return (
                     <li key={val} title={val} className="text-right">
-                        {truncateMiddle(val, 12)}
+                        {truncateMiddle(val, 8)}
                     </li>
                 );
             })}
@@ -65,6 +74,14 @@ export function DappTxApprovalPage() {
     const txRequest = useAppSelector(txRequestSelector);
     const loading = guardLoading || txRequestsLoading;
     const dispatch = useAppDispatch();
+
+    const transaction = txRequest?.tx?.data
+        ? (txRequest.tx.data as SignableTransaction)
+        : null;
+    const gas =
+        transaction?.kind !== 'bytes' ? transaction?.data?.gasBudget : 0;
+    const [formattedGas, symbol] = useFormatCoin(gas || 0, '0x2::sui::SUI');
+
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
             if (txRequest) {
@@ -106,7 +123,7 @@ export function DappTxApprovalPage() {
 
                     contents.push({
                         label: 'Gas Fees',
-                        content: txRequest.tx.data.data.gasBudget.toString(),
+                        content: `${formattedGas} ${symbol}`,
                     });
                 } else if (txRequest.tx.data.kind === 'pay') {
                     const plural = txRequest.tx.data.data.recipients.length > 1;
@@ -154,7 +171,7 @@ export function DappTxApprovalPage() {
             default:
                 return [];
         }
-    }, [txRequest]);
+    }, [txRequest, formattedGas, symbol]);
 
     const detailedValuesContent = useMemo(() => {
         switch (txRequest?.tx.type) {
@@ -165,7 +182,7 @@ export function DappTxApprovalPage() {
                             label: 'Package',
                             content: truncateMiddle(
                                 txRequest.tx.data.data.packageObjectId,
-                                12
+                                8
                             ),
                             title: txRequest.tx.data.data.packageObjectId,
                         },
@@ -201,7 +218,7 @@ export function DappTxApprovalPage() {
                         label: 'Package',
                         content: truncateMiddle(
                             txRequest.tx.data.packageObjectId,
-                            12
+                            8
                         ),
                         title: txRequest.tx.data.packageObjectId,
                     },
@@ -228,20 +245,24 @@ export function DappTxApprovalPage() {
                     rejectTitle="Reject"
                     onSubmit={handleOnSubmit}
                 >
-                    {valuesContent.map(({ label, content }) => (
-                        <Fragment key={label}>
-                            <div className="flex justify-between">
-                                <label className="text-gray-500 dark:text-gray-400 text-sm">
-                                    {label}
-                                </label>
-                                <div
-                                    className={st.value + ' dark:text-gray-400'}
-                                >
-                                    {content}
+                    <div className="flex flex-col gap-3">
+                        {valuesContent.map(({ label, content }) => (
+                            <Fragment key={label}>
+                                <div className="flex justify-between">
+                                    <label className="text-gray-500 dark:text-gray-400 text-sm">
+                                        {label}
+                                    </label>
+                                    <div
+                                        className={
+                                            st.value + ' dark:text-gray-400'
+                                        }
+                                    >
+                                        {content}
+                                    </div>
                                 </div>
-                            </div>
-                        </Fragment>
-                    ))}
+                            </Fragment>
+                        ))}
+                    </div>
 
                     {detailedValuesContent && (
                         <div className="py-3">
@@ -253,7 +274,7 @@ export function DappTxApprovalPage() {
                             </div>
 
                             {details && (
-                                <div className="dark:text-gray-400">
+                                <div className="mt-3 flex flex-col gap-3 dark:text-gray-400">
                                     {detailedValuesContent.map(
                                         ({ label, content, title }) => (
                                             <Fragment key={label}>
