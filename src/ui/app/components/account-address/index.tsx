@@ -57,7 +57,9 @@ function AccountAddress({
                             backgroundColor: accountInfo.color || '#7E23CA',
                         }}
                     ></div>
-                    <Body>{accountInfo.name || 'Wallet'}:</Body>
+                    <div className="text-slate-800 dark:text-slate-200">
+                        {accountInfo.name || 'Wallet'}:
+                    </div>
                 </>
             )}
             {address ? (

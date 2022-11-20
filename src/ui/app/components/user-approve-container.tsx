@@ -4,6 +4,7 @@
 import { memo, useCallback, useState } from 'react';
 
 import Button, { ButtonStyle } from '../shared/buttons/Button';
+import Ethos from '../shared/svg/Ethos';
 import AccountAddress, { AddressMode } from '_components/account-address';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 
@@ -54,7 +55,7 @@ function UserApproveContainer({
     );
     return (
         <div className="flex flex-col w-full px-6 py-1 items-center dark:bg-gray-800">
-            <div className="flex w-full items-center justify-between pb-3">
+            <div className="flex w-full items-center justify-between py-6 border-b border-slate-400 dark:border-slate-600">
                 <div
                     className="text-base cursor-pointer dark:text-gray-200"
                     onClick={reject}
@@ -70,18 +71,21 @@ function UserApproveContainer({
                 </div>
             </div>
 
-            <div className="flex flex-col gap-1 pt-3 pb-3">
+            <div className="flex flex-col gap-1 py-6">
                 <div className="flex items-center justify-center">
                     {originFavIcon && originFavIcon.length > 0 && (
                         <img
                             src={originFavIcon}
-                            className="h-12"
+                            className="z-10 h-12 border-white dark:border-black border-2 rounded-full"
                             alt={`${originTitle} icon`}
                             onError={hideIcon}
                         />
                     )}
+                    <div className="-ml-3">
+                        <Ethos />
+                    </div>
                 </div>
-                <div className="text-xl text-center dark:text-gray-200">
+                <div className="text-xl text-center dark:text-gray-200 pt-1 pb-2">
                     {title}
                 </div>
                 <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
