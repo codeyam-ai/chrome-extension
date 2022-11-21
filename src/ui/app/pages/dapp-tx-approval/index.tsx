@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useEffect, useMemo, useState, Fragment } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { AppState } from '../../hooks/useInitializedGuard';
 import Check from '../../shared/svg/Check';
@@ -116,6 +116,16 @@ export function DappTxApprovalPage() {
 
         return ownedMutated;
     }, [effects, address]);
+
+    const ownedTransferred = useMemo(() => {
+        if (!effects?.events) return [];
+
+        const ownedTransferred = effects.events.filter(
+            (event) => event.transferObject
+        );
+
+        return ownedTransferred;
+    }, [effects]);
 
     const sharedMutated = useMemo(() => {
         if (!effects?.mutated) return [];
@@ -417,8 +427,8 @@ export function DappTxApprovalPage() {
                                             label="Your Assets"
                                             value={
                                                 ownedMutated.length === 0
-                                                    ? 'None Impacted'
-                                                    : `${ownedMutated.length} Impacted`
+                                                    ? 'None Changed'
+                                                    : `${ownedMutated.length} Changed`
                                             }
                                             icon={
                                                 ownedMutated.length === 0
@@ -426,6 +436,13 @@ export function DappTxApprovalPage() {
                                                     : ImpactIcon.WARNING
                                             }
                                         />
+                                        {ownedTransferred.length > 0 && (
+                                            <Detail
+                                                label="Transferred"
+                                                value={`${ownedTransferred.length} Transferred`}
+                                                icon={ImpactIcon.WARNING}
+                                            />
+                                        )}
                                         <Detail
                                             label="Shared Objects"
                                             value={
