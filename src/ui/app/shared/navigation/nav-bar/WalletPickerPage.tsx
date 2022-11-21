@@ -47,7 +47,6 @@ function WalletPickerPage() {
         handleOnCloseMenu,
         isWalletPickerOpen
     );
-    const expanded = walletPickerUrl !== '/';
 
     const toggleIsWalletEditing = useCallback(() => {
         setIsWalletEditing(!isWalletEditing);

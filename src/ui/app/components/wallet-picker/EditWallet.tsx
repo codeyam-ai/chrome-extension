@@ -115,6 +115,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
         getAccountInfos,
         navigate,
         walletPickerHomeUrl,
+        setIsWalletEditing
     ]);
 
     const _handleChange = useCallback(
@@ -133,7 +134,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                 }
             );
         },
-        []
+        [currentAccountInfo.index]
     );
 
     const _handleNameChange = useCallback(

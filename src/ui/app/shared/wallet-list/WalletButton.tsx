@@ -30,11 +30,11 @@ const WalletButton = ({
         if (isActive || isWalletEditing) return;
         await dispatch(saveActiveAccountIndex(wallet.index));
         navigate('/');
-    }, [wallet.index, isActive, isWalletEditing, navigate]);
+    }, [wallet.index, isActive, isWalletEditing, navigate, dispatch]);
 
     const editThisWallet = useCallback(() => {
         navigate(editWalletUrl);
-    }, [wallet.index, navigate, editWalletUrl]);
+    }, [navigate, editWalletUrl]);
 
     const hideThisWallet = useCallback(() => {
         console.log('hiding wallet.index :>> ', wallet.index);
@@ -42,9 +42,8 @@ const WalletButton = ({
 
     return (
         <div
-            className={`py-[10px] px-3 flex justify-between items-center ${
-                !isWalletEditing && 'cursor-pointer'
-            }`}
+            className={`py-[10px] px-3 flex justify-between items-center ${!isWalletEditing && 'cursor-pointer'
+                }`}
             onClick={switchToThisWallet}
         >
             <div className="flex gap-3">

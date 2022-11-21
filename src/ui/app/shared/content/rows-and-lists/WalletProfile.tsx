@@ -1,17 +1,13 @@
-import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-import BodyLarge from '../../typography/BodyLarge';
-import { type AccountInfo } from '_src/ui/app/KeypairVault';
 import AccountAddress, {
-    AddressMode,
+    AddressMode
 } from '_src/ui/app/components/account-address';
-import { useNextMenuUrl } from '_src/ui/app/components/menu/hooks';
 import { useAppSelector } from '_src/ui/app/hooks';
+import { type AccountInfo } from '_src/ui/app/KeypairVault';
+import BodyLarge from '../../typography/BodyLarge';
 
 // This component contains the wallet icon, name, and address
 const WalletProfile = () => {
-    const [editWallet, setEditWallet] = useState<boolean>(false);
 
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex } }) =>
@@ -20,21 +16,6 @@ const WalletProfile = () => {
                     (accountInfo.index || 0) === activeAccountIndex
             )
     );
-
-    const switchWalletUrl = useNextMenuUrl(true, '/switch-wallet');
-    const navigate = useNavigate();
-
-    const _selectWallet = useCallback(() => {
-        navigate(switchWalletUrl);
-    }, [navigate, switchWalletUrl]);
-
-    const _showEdit = useCallback(() => {
-        setEditWallet(true);
-    }, []);
-
-    const _hideEdit = useCallback(() => {
-        setEditWallet(false);
-    }, []);
 
     return (
         <div className="flex flex-row gap-2 items-center py-1">
