@@ -60,22 +60,19 @@ const CreateWalletButton = () => {
             );
             getAccountInfos();
         }
-
-        // setEdit(false);
     }, [authentication, dispatch, getAccountInfos]);
 
     const createWallet = useCallback(() => {
-        // setLoading(true);
         const loadAccFromStorage = async () => {
             const sortedAccountIndices = accountInfos
                 .map((a) => a.index || 0)
-                .sort();
+                .sort(function (a, b) {
+                    return a - b;
+                });
             const nextAccountIndex =
                 +sortedAccountIndices[sortedAccountIndices.length - 1] + 1;
 
-            console.log('nextAccountIndex :>> ', nextAccountIndex);
             let newAccountInfos: AccountInfo[];
-            console.log('authentication :>> ', authentication);
             if (authentication) {
                 const newAccount = await Authentication.createAccount(
                     nextAccountIndex
@@ -103,12 +100,7 @@ const CreateWalletButton = () => {
                 draftAccountInfos.current = newAccountInfos;
             }
 
-            console.log('newAccountInfos :>> ', newAccountInfos);
-
             setAccountInfos(newAccountInfos);
-
-            // setLoading(false);
-            // setEdit(true);
         };
         loadAccFromStorage();
         _saveAccountInfos();
