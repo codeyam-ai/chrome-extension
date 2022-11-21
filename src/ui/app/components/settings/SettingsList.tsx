@@ -1,33 +1,40 @@
 import {
     ArrowLeftOnRectangleIcon,
+    ArrowsPointingOutIcon,
+    ArrowTopRightOnSquareIcon,
+    CheckBadgeIcon,
     CodeBracketIcon,
     CubeIcon,
     DocumentTextIcon,
     EyeIcon,
+    LockClosedIcon,
+    SquaresPlusIcon,
 } from '@heroicons/react/24/outline';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Browser from 'webextension-polyfill';
 
-import LoadingIndicator from '../../loading/LoadingIndicator';
-import { useNextMenuUrl } from '../hooks';
-import { API_ENV_TO_INFO } from '_app/ApiProvider';
+import { useNextMenuUrl } from '_components/menu/hooks';
 import { LinkType } from '_src/enums/LinkType';
-import { IFRAME_URL, ToS_LINK } from '_src/shared/constants';
+import { DASHBOARD_LINK, IFRAME_URL, ToS_LINK } from '_src/shared/constants';
 import { getEncrypted } from '_src/shared/storagex/store';
-import { iframe } from '_src/ui/app/helpers';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
-import { getEmail, reset } from '_src/ui/app/redux/slices/account';
-import LinkList from '_src/ui/app/shared/navigation/nav-bar/LinkList';
+import { getEmail, logout, reset } from '_src/ui/app/redux/slices/account';
+import LinkList, {
+    type LinkItem,
+} from '_src/ui/app/shared/navigation/nav-bar/LinkList';
+import { API_ENV_TO_INFO } from '../../ApiProvider';
+import { iframe } from '../../helpers';
 
-import type { LinkItem } from '_src/ui/app/shared/navigation/nav-bar/LinkList';
+const SettingsList = () => {
+    const dispatch = useAppDispatch();
+    const connectedAppsUrl = useNextMenuUrl(true, '/connected-apps');
+    const preapprovalsUrl = useNextMenuUrl(true, '/preapprovals');
 
-export default function Settings() {
     const networkUrl = useNextMenuUrl(true, '/network');
     const viewSeedUrl = useNextMenuUrl(true, '/settings/view-seed');
     const apiEnv = useAppSelector((state) => state.app.apiEnv);
     const networkName = API_ENV_TO_INFO[apiEnv].name;
 
-    const dispatch = useAppDispatch();
     const [logoutInProgress, setLogoutInProgress] = useState(false);
     const [isHostedWallet, setIsHostedWallet] = useState(false);
 
@@ -41,7 +48,42 @@ export default function Settings() {
         );
     }, [dispatch]);
 
+    const handleLogout = useCallback(async () => {
+        await dispatch(logout());
+    }, [dispatch]);
+
     const menuItems: LinkItem[] = [
+        {
+            iconWithNoClasses: <ArrowTopRightOnSquareIcon />,
+            title: 'View Wallet Dashboard',
+            to: DASHBOARD_LINK,
+            linkType: LinkType.External,
+        },
+        {
+            iconWithNoClasses: <ArrowsPointingOutIcon />,
+            title: 'Expand view',
+            to: '/tokens',
+            linkType: LinkType.Internal,
+            isExpandView: true,
+        },
+        {
+            iconWithNoClasses: <SquaresPlusIcon />,
+            title: 'Connected apps',
+            to: connectedAppsUrl,
+            linkType: LinkType.Internal,
+        },
+        {
+            iconWithNoClasses: <CheckBadgeIcon />,
+            title: 'Pre-approvals',
+            to: preapprovalsUrl,
+            linkType: LinkType.Internal,
+        },
+        {
+            iconWithNoClasses: <LockClosedIcon />,
+            title: 'Lock',
+            linkType: LinkType.None,
+            onClick: handleLogout,
+        },
         {
             iconWithNoClasses: <DocumentTextIcon />,
             title: 'Terms of Service',
@@ -71,7 +113,7 @@ export default function Settings() {
 
     // Email users cannot view their seed
     if (!isHostedWallet) {
-        menuItems.unshift({
+        menuItems.splice(5, 0, {
             iconWithNoClasses: <EyeIcon />,
             title: 'View recovery phrase',
             to: viewSeedUrl,
@@ -105,66 +147,8 @@ export default function Settings() {
     }, [dispatch]);
 
     return (
-        <>
-            {logoutInProgress ? (
-                <LoadingIndicator />
-            ) : (
-                <div className="px-6 pb-6">
-                    <LinkList linkItems={menuItems} />
-                </div>
-            )}
-            {/* <Layout backUrl={menuUrl || '/'} title="">
-                <div
-                    className={
-                        st.container +
-                        ' divide-y divide-gray-700/50 dark:divide-gray-400/50'
-                    }
-                >
-                    {!isHostedWallet && (
-                        <Link className={st.item} to={viewSeedUrl}>
-                            <Item
-                                svg={eyeIcon}
-                                title="View recovery phrase"
-                                indicator={SuiIcons.SuiChevronRight}
-                            />
-                        </Link>
-                    )}
-                    <ExternalLink
-                        className={st.item}
-                        href={ToS_LINK}
-                        showIcon={false}
-                    >
-                        <Item
-                            icon="file-earmark-text"
-                            title="Terms of Service"
-                            indicator="link-45deg"
-                        />
-                    </ExternalLink>
-                    <Link to={networkUrl} className={st.item}>
-                        <Item
-                            icon={SuiIcons.Globe}
-                            title="Network"
-                            subtitle={networkName}
-                            indicator={SuiIcons.SuiChevronRight}
-                        />
-                    </Link>
-                    <div className={st.item}>
-                        <Item
-                            // TODO: import and use the icon from Figma
-                            icon={SuiIcons.VersionIcon}
-                            title="Wallet version"
-                            subtitle={'v' + version}
-                        />
-                    </div>
-                    <span onClick={handleReset} className={st.item}>
-                        {logoutInProgress ? (
-                            <LoadingIndicator />
-                        ) : (
-                            <Item icon={SuiIcons.Logout} title="Reset" />
-                        )}
-                    </span>
-                </div>
-            </Layout> */}
+        <div className="px-6 pb-6">
+            <LinkList linkItems={menuItems} />
             <iframe
                 id="wallet-iframe"
                 src={IFRAME_URL}
@@ -174,6 +158,8 @@ export default function Settings() {
                 // Hide the iframe pixel, as it is visible in dark mode
                 className="-top-[1000px] absolute"
             />
-        </>
+        </div>
     );
-}
+};
+
+export default SettingsList;
