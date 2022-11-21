@@ -85,9 +85,13 @@ export function DappTxApprovalPage() {
     const [effects, setEffects] = useState<
         TransactionEffects | undefined | null
     >();
+    const [dryRunError, setDryRunError] = useState<string | undefined>();
 
     const gasUsed = effects?.gasUsed;
-    const gas = gasUsed ? gasUsed.computationCost + gasUsed.storageCost : null;
+    const gas = gasUsed
+        ? gasUsed.computationCost +
+          (gasUsed.storageCost - gasUsed.storageRebate)
+        : null;
     const [formattedGas, symbol] = useFormatCoin(gas, '0x2::sui::SUI');
 
     const ownedMutated = useMemo(() => {
@@ -158,7 +162,11 @@ export function DappTxApprovalPage() {
                 );
                 setEffects(transactionEffects);
             } catch (e) {
-                setTimeout(getEffects, 100);
+                if ((e as Error).message === 'Account mnemonic is not set') {
+                    setTimeout(getEffects, 100);
+                } else {
+                    setDryRunError((e as Error).message);
+                }
             }
         };
 
@@ -416,64 +424,78 @@ export function DappTxApprovalPage() {
 
                         {effects !== null && (
                             <Loading
-                                loading={effects === undefined}
+                                loading={effects === undefined && !dryRunError}
                                 big={true}
                                 className="flex justify-center"
                             >
-                                <div className="text-lg flex flex-col gap-6">
-                                    <div className="flex flex-col gap-2">
-                                        <div className="text-md">Impact</div>
-                                        <Detail
-                                            label="Your Assets"
-                                            value={
-                                                ownedMutated.length === 0
-                                                    ? 'None Changed'
-                                                    : `${ownedMutated.length} Changed`
-                                            }
-                                            icon={
-                                                ownedMutated.length === 0
-                                                    ? ImpactIcon.SAFE
-                                                    : ImpactIcon.WARNING
-                                            }
-                                        />
-                                        {ownedTransferred.length > 0 && (
+                                {dryRunError ? (
+                                    <div className="bg-red-50 p-6">
+                                        <div className="font-semibold mb-3">
+                                            Error
+                                        </div>
+                                        <div>
+                                            There was an error doing a dry run
+                                            of this transaction: {dryRunError}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="text-lg flex flex-col gap-6">
+                                        <div className="flex flex-col gap-2">
+                                            <div className="text-md">
+                                                Impact
+                                            </div>
                                             <Detail
-                                                label="Transferred"
-                                                value={`${ownedTransferred.length} Transferred`}
-                                                icon={ImpactIcon.WARNING}
+                                                label="Your Assets"
+                                                value={
+                                                    ownedMutated.length === 0
+                                                        ? 'None Changed'
+                                                        : `${ownedMutated.length} Changed`
+                                                }
+                                                icon={
+                                                    ownedMutated.length === 0
+                                                        ? ImpactIcon.SAFE
+                                                        : ImpactIcon.WARNING
+                                                }
                                             />
-                                        )}
-                                        <Detail
-                                            label="Shared Objects"
-                                            value={
-                                                sharedMutated.length === 0
-                                                    ? 'None Impacted'
-                                                    : `${sharedMutated.length} Impacted`
-                                            }
-                                            icon={
-                                                sharedMutated.length === 0
-                                                    ? ImpactIcon.SAFE
-                                                    : ImpactIcon.WARNING
-                                            }
-                                        />
-                                    </div>
+                                            {ownedTransferred.length > 0 && (
+                                                <Detail
+                                                    label="Transferred"
+                                                    value={`${ownedTransferred.length} Transferred`}
+                                                    icon={ImpactIcon.WARNING}
+                                                />
+                                            )}
+                                            <Detail
+                                                label="Shared Objects"
+                                                value={
+                                                    sharedMutated.length === 0
+                                                        ? 'None Impacted'
+                                                        : `${sharedMutated.length} Impacted`
+                                                }
+                                                icon={
+                                                    sharedMutated.length === 0
+                                                        ? ImpactIcon.SAFE
+                                                        : ImpactIcon.WARNING
+                                                }
+                                            />
+                                        </div>
 
-                                    <div className="flex flex-col gap-2">
-                                        <div className="text-md">Cost</div>
-                                        <Detail
-                                            label="Charges"
-                                            value={`0 ${symbol}`}
-                                        />
-                                        <Detail
-                                            label="Gas Fees"
-                                            value={`${formattedGas} ${symbol}`}
-                                        />
-                                        <Detail
-                                            label="Total"
-                                            value={`${formattedGas} ${symbol}`}
-                                        />
+                                        <div className="flex flex-col gap-2">
+                                            <div className="text-md">Cost</div>
+                                            <Detail
+                                                label="Charges"
+                                                value={`0 ${symbol}`}
+                                            />
+                                            <Detail
+                                                label="Gas Fees"
+                                                value={`${formattedGas} ${symbol}`}
+                                            />
+                                            <Detail
+                                                label="Total"
+                                                value={`${formattedGas} ${symbol}`}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
+                                )}
 
                                 {detailedValuesContent && (
                                     <div>
