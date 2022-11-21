@@ -5,7 +5,7 @@ import ColorRow from './ColorRow';
 
 interface ColorPickerMenuProps {
     selectedColor: string;
-    setSelectedColor: Dispatch<SetStateAction<string>>;
+    setSelectedColor: (color: string) => void;
 }
 
 const ColorPickerMenu = ({

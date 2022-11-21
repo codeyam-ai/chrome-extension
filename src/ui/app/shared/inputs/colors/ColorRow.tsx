@@ -14,7 +14,7 @@ const colors = [
 interface ColorButtonProps {
     color: string;
     selectedColor: string;
-    setSelectedColor: Dispatch<SetStateAction<string>>;
+    setSelectedColor: (color: string) => void;
 }
 
 const ColorButton = ({
@@ -38,7 +38,7 @@ const ColorButton = ({
 
 interface ColorRowProps {
     selectedColor: string;
-    setSelectedColor: Dispatch<SetStateAction<string>>;
+    setSelectedColor: (color: string) => void;
 }
 
 const ColorRow = ({ selectedColor, setSelectedColor }: ColorRowProps) => {
