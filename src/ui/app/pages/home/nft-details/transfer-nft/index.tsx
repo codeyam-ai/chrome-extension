@@ -13,7 +13,7 @@ import {
     accountNftsSelector,
     accountAggregateBalancesSelector,
 } from '_redux/slices/account';
-import { transferSuiNFT } from '_redux/slices/sui-objects';
+import { transferNFT } from '_redux/slices/sui-objects';
 import {
     GAS_TYPE_ARG,
     DEFAULT_NFT_TRANSFER_GAS_FEE,
@@ -80,7 +80,7 @@ function TransferNFTCard({ objectId }: TransferProps) {
             setSendError(null);
             try {
                 const resp = await dispatch(
-                    transferSuiNFT({
+                    transferNFT({
                         recipientAddress: to,
                         nftId: objectId,
                         transferCost: DEFAULT_NFT_TRANSFER_GAS_FEE,

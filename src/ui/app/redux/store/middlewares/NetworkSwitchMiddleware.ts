@@ -4,7 +4,7 @@
 import { isAnyOf } from '@reduxjs/toolkit';
 
 import { changeRPCNetwork } from '_redux/slices/app';
-import { clearForNetworkSwitch } from '_redux/slices/sui-objects';
+import { clearForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
 
 import type { Middleware } from '@reduxjs/toolkit';
 
@@ -15,7 +15,7 @@ export const NetworkSwitchMiddleware: Middleware =
     (next) =>
     (action) => {
         if (isChangeNetwork(action)) {
-            dispatch(clearForNetworkSwitch());
+            dispatch(clearForNetworkOrWalletSwitch());
         }
         return next(action);
     };

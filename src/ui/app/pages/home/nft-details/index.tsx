@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { getObjectId } from '@mysten/sui.js';
+import { getObjectId, hasPublicTransfer } from '@mysten/sui.js';
 import { useMemo, useState, useCallback } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
@@ -99,13 +99,15 @@ function NFTdetailsContent({
                     />
                 </div>
                 {/* This margin top is a temporary fix - we need to figure out if the page should scroll */}
-                <Button
-                    buttonStyle="primary"
-                    className="-mt-[15px]"
-                    onClick={onClick}
-                >
-                    Send
-                </Button>
+                {hasPublicTransfer(nft) && (
+                    <Button
+                        buttonStyle="primary"
+                        className="-mt-[15px]"
+                        onClick={onClick}
+                    >
+                        Send
+                    </Button>
+                )}
                 {/* <BottomMenuLayout>
                     <Content>
                         <section className={st.nftDetail}>

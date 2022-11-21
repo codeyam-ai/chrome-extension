@@ -16,8 +16,10 @@ import {
     createSlice,
 } from '@reduxjs/toolkit';
 
-import { SUI_SYSTEM_STATE_OBJECT_ID } from './Coin';
-import { ExampleNFT } from './NFT';
+import {
+    DEFAULT_NFT_TRANSFER_GAS_FEE,
+    SUI_SYSTEM_STATE_OBJECT_ID,
+} from './Coin';
 
 import type { SuiObject, SuiAddress, ObjectId } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
@@ -42,6 +44,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
     if (address) {
         const allObjectRefs =
             await api.instance.fullNode.getObjectsOwnedByAddress(`${address}`);
+
         const objectIDs = allObjectRefs
             .filter((anObj) => {
                 const fetchedVersion = getObjectVersion(anObj);
@@ -94,12 +97,12 @@ type NFTTxResponse = {
     txId?: string;
 };
 
-export const transferSuiNFT = createAsyncThunk<
+export const transferNFT = createAsyncThunk<
     NFTTxResponse,
     { nftId: ObjectId; recipientAddress: SuiAddress; transferCost: number },
     AppThunkConfig
 >(
-    'transferSuiNFT',
+    'transferNFT',
     async (data, { extra: { api, keypairVault }, getState, dispatch }) => {
         const {
             account: { activeAccountIndex },
@@ -107,12 +110,11 @@ export const transferSuiNFT = createAsyncThunk<
         const signer = api.getSignerInstance(
             keypairVault.getKeyPair(activeAccountIndex)
         );
-        const txn = await ExampleNFT.TransferNFTWithFullnode(
-            signer,
-            data.nftId,
-            data.recipientAddress,
-            data.transferCost
-        );
+        const txn = await signer.transferObject({
+            objectId: data.nftId,
+            recipient: data.recipientAddress,
+            gasBudget: DEFAULT_NFT_TRANSFER_GAS_FEE,
+        });
         await dispatch(fetchAllOwnedAndRequiredObjects());
         const txnResp = {
             timestamp_ms: getTimestampFromTransactionResponse(txn),
@@ -120,7 +122,6 @@ export const transferSuiNFT = createAsyncThunk<
             gasFee: txn ? getTotalGasUsed(txn) : 0,
             txId: getTransactionDigest(txn),
         };
-
         return txnResp as NFTTxResponse;
     }
 );
@@ -139,9 +140,10 @@ const slice = createSlice({
     name: 'sui-objects',
     initialState: initialState,
     reducers: {
-        clearForNetworkSwitch: (state) => {
+        clearForNetworkOrWalletSwitch: (state) => {
             state.error = false;
             state.lastSync = null;
+            state.loading = true;
             objectsAdapter.removeAll(state);
         },
     },
@@ -150,10 +152,12 @@ const slice = createSlice({
             .addCase(
                 fetchAllOwnedAndRequiredObjects.fulfilled,
                 (state, action) => {
-                    objectsAdapter.setAll(state, action.payload);
-                    state.loading = false;
-                    state.error = false;
-                    state.lastSync = Date.now();
+                    if (action.payload) {
+                        objectsAdapter.setAll(state, action.payload);
+                        state.loading = false;
+                        state.error = false;
+                        state.lastSync = Date.now();
+                    }
                 }
             )
             .addCase(
@@ -174,7 +178,7 @@ const slice = createSlice({
 
 export default slice.reducer;
 
-export const { clearForNetworkSwitch } = slice.actions;
+export const { clearForNetworkOrWalletSwitch } = slice.actions;
 
 export const suiObjectsAdapterSelectors = objectsAdapter.getSelectors(
     (state: RootState) => state.suiObjects
