@@ -12,7 +12,7 @@ import {
     useNextWalletPickerUrl,
     useWalletEditorIsOpen,
     useWalletPickerIsOpen,
-    useWalletPickerUrl
+    useWalletPickerUrl,
 } from '_components/menu/hooks';
 import { useOnKeyboardEvent } from '_hooks';
 import { LinkType } from '_src/enums/LinkType';
@@ -20,7 +20,6 @@ import EditWallet from '_src/ui/app/components/wallet-picker/EditWallet';
 import WalletPicker from '_src/ui/app/components/wallet-picker/WalletPicker';
 
 import type { MouseEvent } from 'react';
-
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
@@ -70,7 +69,7 @@ function WalletPickerPage() {
                 onClick={handleOnCloseMenu}
             />
 
-            <div className="relative flex flex-col drop-shadow-ethos-box-shadow rounded-[20px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
+            <div className="relative flex flex-col max-h-full overflow-scroll drop-shadow-ethos-box-shadow rounded-b-[20px] sm:rounded-[20px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
                 {/* Nav bar: */}
                 {!isEditorOpen && (
                     <div className="flex flex-row items-center justify-between p-6 border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">

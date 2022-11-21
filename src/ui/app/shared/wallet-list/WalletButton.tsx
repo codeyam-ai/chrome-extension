@@ -1,13 +1,9 @@
-import {
-    CheckCircleIcon, PencilIcon
-} from '@heroicons/react/24/solid';
+import { CheckCircleIcon, PencilIcon } from '@heroicons/react/24/solid';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
-import {
-    useEditWalletUrl
-} from '../../components/menu/hooks';
+import { useEditWalletUrl } from '../../components/menu/hooks';
 import { useAppDispatch, useMiddleEllipsis } from '../../hooks';
 import { saveActiveAccountIndex } from '../../redux/slices/account';
 import Body from '../typography/Body';
@@ -46,8 +42,9 @@ const WalletButton = ({
 
     return (
         <div
-            className={`py-[10px] px-3 flex justify-between items-center ${!isWalletEditing && 'cursor-pointer'
-                }`}
+            className={`py-[10px] px-3 flex justify-between items-center ${
+                !isWalletEditing && 'cursor-pointer'
+            }`}
             onClick={switchToThisWallet}
         >
             <div className="flex gap-3">

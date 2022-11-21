@@ -18,8 +18,9 @@ const ColorButton = ({
     }, [color, setSelectedColor]);
     return (
         <div
-            className={`h-12 w-12 rounded-[10px] cursor-pointer ${color === selectedColor && 'border-[4px] border-black/[.08]'
-                }`}
+            className={`h-12 w-12 rounded-[10px] cursor-pointer ${
+                color === selectedColor && 'border-[4px] border-black/[.08]'
+            }`}
             style={{ backgroundColor: color }}
             onClick={selectThisColor}
         />

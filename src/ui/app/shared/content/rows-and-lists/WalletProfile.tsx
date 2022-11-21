@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import BodyLarge from '../../typography/BodyLarge';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 import AccountAddress, {
-    AddressMode
+    AddressMode,
 } from '_src/ui/app/components/account-address';
 import { useNextMenuUrl } from '_src/ui/app/components/menu/hooks';
 import { useAppSelector } from '_src/ui/app/hooks';

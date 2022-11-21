@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import {
     saveAccountInfos,
     saveActiveAccountIndex,
-    setAccountInfos as setStateAccountInfos
+    setAccountInfos as setStateAccountInfos,
 } from '../../redux/slices/account';
 import { thunkExtras } from '../../redux/store/thunk-extras';
 import Button from '../../shared/buttons/Button';
@@ -29,10 +29,10 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     const closeWalletPickerUrl = useNextWalletPickerUrl(false);
 
     const _accountInfos = useAppSelector(({ account }) => account.accountInfos);
-    let walletIndex = 0
+    let walletIndex = 0;
     const indexFromParam = searchParams.get('index');
     if (indexFromParam !== null) {
-        walletIndex = +indexFromParam
+        walletIndex = +indexFromParam;
     }
     const currentAccountInfo = _accountInfos[walletIndex];
     const draftAccountInfos = useRef<AccountInfo[]>(_accountInfos);
@@ -109,7 +109,13 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
 
         setIsWalletEditing(true);
         navigate(walletPickerHomeUrl);
-    }, [authentication, dispatch, getAccountInfos, navigate, walletPickerHomeUrl]);
+    }, [
+        authentication,
+        dispatch,
+        getAccountInfos,
+        navigate,
+        walletPickerHomeUrl,
+    ]);
 
     const _handleChange = useCallback(
         ({ name, color }: { name?: string; color?: string }) => {

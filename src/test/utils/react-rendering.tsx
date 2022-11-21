@@ -14,7 +14,6 @@ import type { AppStore } from '_store';
 import type React from 'react';
 import type { PropsWithChildren } from 'react';
 
-
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: PreloadedState<RootState>;
     store?: AppStore;
