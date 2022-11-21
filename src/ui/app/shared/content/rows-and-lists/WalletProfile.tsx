@@ -1,6 +1,5 @@
-
 import AccountAddress, {
-    AddressMode
+    AddressMode,
 } from '_src/ui/app/components/account-address';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
@@ -8,7 +7,6 @@ import BodyLarge from '../../typography/BodyLarge';
 
 // This component contains the wallet icon, name, and address
 const WalletProfile = () => {
-
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex } }) =>
             accountInfos.find(

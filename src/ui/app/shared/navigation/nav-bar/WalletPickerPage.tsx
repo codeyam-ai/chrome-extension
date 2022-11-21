@@ -68,7 +68,12 @@ function WalletPickerPage() {
                 onClick={handleOnCloseMenu}
             />
 
-            <div className="relative flex flex-col max-h-full overflow-scroll drop-shadow-ethos-box-shadow rounded-b-[20px] sm:rounded-[20px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
+            <div
+                // don't overflow if wallet is being edited, so the color and emoji pickers can be outside the container
+                className={`${
+                    !isEditorOpen ? 'overflow-scroll' : ''
+                } relative flex flex-col max-h-full drop-shadow-ethos-box-shadow rounded-b-[20px] sm:rounded-[20px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default`}
+            >
                 {/* Nav bar: */}
                 {!isEditorOpen && (
                     <div className="flex flex-row items-center justify-between p-6 border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
