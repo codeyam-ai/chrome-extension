@@ -27,18 +27,18 @@ const WalletButton = ({
     const editWalletUrl = useEditWalletUrl(wallet.index);
 
     const switchToThisWallet = useCallback(async () => {
-        if (isActive || isWalletEditing) return;
+        if (isWalletEditing) return;
         await dispatch(saveActiveAccountIndex(wallet.index));
         navigate('/');
-    }, [wallet.index, isActive, isWalletEditing, navigate, dispatch]);
+    }, [wallet.index, isWalletEditing, navigate, dispatch]);
 
     const editThisWallet = useCallback(() => {
         navigate(editWalletUrl);
     }, [navigate, editWalletUrl]);
 
-    const hideThisWallet = useCallback(() => {
-        console.log('hiding wallet.index :>> ', wallet.index);
-    }, [wallet.index]);
+    // const hideThisWallet = useCallback(() => {
+    //     console.log('hiding wallet.index :>> ', wallet.index);
+    // }, [wallet.index]);
 
     return (
         <div

@@ -1,9 +1,9 @@
+import BodyLarge from '../../typography/BodyLarge';
+import { type AccountInfo } from '_src/ui/app/KeypairVault';
 import AccountAddress, {
     AddressMode,
 } from '_src/ui/app/components/account-address';
 import { useAppSelector } from '_src/ui/app/hooks';
-import { type AccountInfo } from '_src/ui/app/KeypairVault';
-import BodyLarge from '../../typography/BodyLarge';
 
 // This component contains the wallet icon, name, and address
 const WalletProfile = () => {

@@ -13,6 +13,8 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import Browser from 'webextension-polyfill';
 
+import { API_ENV_TO_INFO } from '../../ApiProvider';
+import { iframe } from '../../helpers';
 import { useNextMenuUrl } from '_components/menu/hooks';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK, IFRAME_URL, ToS_LINK } from '_src/shared/constants';
@@ -22,8 +24,6 @@ import { getEmail, logout, reset } from '_src/ui/app/redux/slices/account';
 import LinkList, {
     type LinkItem,
 } from '_src/ui/app/shared/navigation/nav-bar/LinkList';
-import { API_ENV_TO_INFO } from '../../ApiProvider';
-import { iframe } from '../../helpers';
 
 const SettingsList = () => {
     const dispatch = useAppDispatch();
@@ -35,12 +35,9 @@ const SettingsList = () => {
     const apiEnv = useAppSelector((state) => state.app.apiEnv);
     const networkName = API_ENV_TO_INFO[apiEnv].name;
 
-    const [logoutInProgress, setLogoutInProgress] = useState(false);
     const [isHostedWallet, setIsHostedWallet] = useState(false);
 
     const handleReset = useCallback(async () => {
-        setLogoutInProgress(true);
-        // iframe.listenForLogout();
         const email = await dispatch(getEmail());
         if (!email) return;
         iframe.onReady(
@@ -124,12 +121,7 @@ const SettingsList = () => {
     useEffect(() => {
         const listenForLogOut = async () => {
             await iframe.listenForLogout();
-
-            try {
-                await dispatch(reset());
-            } finally {
-                setLogoutInProgress(false);
-            }
+            await dispatch(reset());
         };
         listenForLogOut();
     }, [dispatch]);
