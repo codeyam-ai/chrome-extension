@@ -1,15 +1,13 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import Body from '../../typography/Body';
+import BodyLarge from '../../typography/BodyLarge';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 import AccountAddress, {
-    AddressMode,
+    AddressMode
 } from '_src/ui/app/components/account-address';
 import { useNextMenuUrl } from '_src/ui/app/components/menu/hooks';
 import { useAppSelector } from '_src/ui/app/hooks';
-import { ChevronDownIcon } from '@heroicons/react/24/solid';
-import BodyLarge from '../../typography/BodyLarge';
 
 // This component contains the wallet icon, name, and address
 const WalletProfile = () => {

@@ -1,12 +1,13 @@
 import { ChevronDownIcon, Cog6ToothIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
+
+import WalletProfile from '../../content/rows-and-lists/WalletProfile';
 import {
     useMenuIsOpen,
     useNextMenuUrl,
     useNextWalletPickerUrl,
     useWalletPickerIsOpen,
 } from '_src/ui/app/components/menu/hooks';
-import WalletProfile from '../../content/rows-and-lists/WalletProfile';
 
 const NavBarWithMenu = () => {
     const menuUrl = useNextMenuUrl(true);

@@ -1,8 +1,8 @@
 import { useRef, useCallback } from 'react';
-import Authentication from '_src/background/Authentication';
+
+import { type AccountInfo } from '../../KeypairVault';
 import getNextWalletColor from '../../helpers/getNextWalletColor';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { type AccountInfo } from '../../KeypairVault';
 import {
     setAccountInfos,
     saveAccountInfos,
@@ -10,6 +10,7 @@ import {
 } from '../../redux/slices/account';
 import { thunkExtras } from '../../redux/store/thunk-extras';
 import Button from '../../shared/buttons/Button';
+import Authentication from '_src/background/Authentication';
 
 const CreateWalletButton = () => {
     const dispatch = useAppDispatch();
@@ -104,7 +105,7 @@ const CreateWalletButton = () => {
         };
         loadAccFromStorage();
         _saveAccountInfos();
-    }, [keypairVault, authentication, accountInfos]);
+    }, [keypairVault, authentication, accountInfos, _saveAccountInfos]);
 
     return (
         <Button buttonStyle="primary" onClick={createWallet}>

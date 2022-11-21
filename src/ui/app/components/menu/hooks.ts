@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
 const MENU_PARAM = 'menu';
@@ -103,5 +103,5 @@ export function useEditWalletUrl(walletIndex: number) {
         searchParams.set('index', walletIndex.toString());
         const search = searchParams.toString();
         return `${pathname}${search ? '?' : ''}${search}`;
-    }, [searchParams, pathname]);
+    }, [searchParams, pathname, walletIndex]);
 }

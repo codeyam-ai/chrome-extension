@@ -1,7 +1,8 @@
 import { ArrowLeftIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
-import { TextColor } from '_src/enums/Typography';
+
 import BodyLarge from '../../typography/BodyLarge';
+import { TextColor } from '_src/enums/Typography';
 
 interface NavBarWithBackAndCloseProps {
     backUrl: string;

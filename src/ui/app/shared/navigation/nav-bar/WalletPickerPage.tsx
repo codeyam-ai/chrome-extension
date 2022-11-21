@@ -1,26 +1,26 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useCallback, useState } from 'react';
-import { Link, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
+import WalletProfile from '../../content/rows-and-lists/WalletProfile';
+import BodyLarge from '../../typography/BodyLarge';
+import EthosLink from '../../typography/EthosLink';
 import {
     useNextWalletPickerUrl,
     useWalletEditorIsOpen,
     useWalletPickerIsOpen,
-    useWalletPickerUrl,
+    useWalletPickerUrl
 } from '_components/menu/hooks';
 import { useOnKeyboardEvent } from '_hooks';
-import Settings from '_src/ui/app/components/menu/content/settings';
+import { LinkType } from '_src/enums/LinkType';
+import EditWallet from '_src/ui/app/components/wallet-picker/EditWallet';
+import WalletPicker from '_src/ui/app/components/wallet-picker/WalletPicker';
 
 import type { MouseEvent } from 'react';
-import WalletPicker from '_src/ui/app/components/wallet-picker/WalletPicker';
-import WalletProfile from '../../content/rows-and-lists/WalletProfile';
-import { XMarkIcon } from '@heroicons/react/24/outline';
-import { LinkType } from '_src/enums/LinkType';
-import BodyLarge from '../../typography/BodyLarge';
-import EthosLink from '../../typography/EthosLink';
-import EditWallet from '_src/ui/app/components/wallet-picker/EditWallet';
+
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
@@ -57,7 +57,7 @@ function WalletPickerPage() {
     const closeWalletPicker = useCallback(() => {
         setIsWalletEditing(false);
         navigate(closeWalletPickerUrl);
-    }, [closeWalletPickerUrl]);
+    }, [closeWalletPickerUrl, navigate]);
 
     if (!isWalletPickerOpen) {
         return null;

@@ -1,9 +1,10 @@
 import { ArrowLongUpIcon } from '@heroicons/react/24/solid';
-import { TextColor } from '_src/enums/Typography';
+
 import { useAppSelector } from '../../hooks';
 import Body from '../../shared/typography/Body';
 import WalletList from '../../shared/wallet-list/WalletList';
 import CreateWalletButton from './CreateWalletButton';
+import { TextColor } from '_src/enums/Typography';
 
 interface WalletPickerProps {
     isWalletEditing: boolean;

@@ -1,6 +1,6 @@
-import { TextColor } from '_src/enums/Typography';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
+import { TextColor } from '_src/enums/Typography';
 
 export interface InputProps
     extends React.DetailedHTMLProps<

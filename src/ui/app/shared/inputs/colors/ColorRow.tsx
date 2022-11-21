@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+
 import defaultColors from '_src/shared/defaultColorOptions';
 
 interface ColorButtonProps {
@@ -14,12 +15,11 @@ const ColorButton = ({
 }: ColorButtonProps) => {
     const selectThisColor = useCallback(() => {
         setSelectedColor(color);
-    }, [color]);
+    }, [color, setSelectedColor]);
     return (
         <div
-            className={`h-12 w-12 rounded-[10px] cursor-pointer ${
-                color === selectedColor && 'border-[4px] border-black/[.08]'
-            }`}
+            className={`h-12 w-12 rounded-[10px] cursor-pointer ${color === selectedColor && 'border-[4px] border-black/[.08]'
+                }`}
             style={{ backgroundColor: color }}
             onClick={selectThisColor}
         />

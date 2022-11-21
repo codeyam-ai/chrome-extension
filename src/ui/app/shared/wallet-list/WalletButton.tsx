@@ -1,20 +1,18 @@
 import {
-    CheckCircleIcon,
-    MinusCircleIcon,
-    PencilIcon,
+    CheckCircleIcon, PencilIcon
 } from '@heroicons/react/24/solid';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextColor } from '_src/enums/Typography';
+
+import { type AccountInfo } from '../../KeypairVault';
 import {
-    useEditWalletUrl,
-    useNextWalletPickerUrl,
+    useEditWalletUrl
 } from '../../components/menu/hooks';
 import { useAppDispatch, useMiddleEllipsis } from '../../hooks';
-import { type AccountInfo } from '../../KeypairVault';
 import { saveActiveAccountIndex } from '../../redux/slices/account';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
+import { TextColor } from '_src/enums/Typography';
 
 interface WalletButtonProps {
     wallet: AccountInfo;
@@ -36,12 +34,11 @@ const WalletButton = ({
         if (isActive || isWalletEditing) return;
         await dispatch(saveActiveAccountIndex(wallet.index));
         navigate('/');
-    }, [wallet.index, isActive, isWalletEditing]);
+    }, [wallet.index, isActive, isWalletEditing, navigate]);
 
     const editThisWallet = useCallback(() => {
-        console.log('editWalletUrl :>> ', editWalletUrl);
         navigate(editWalletUrl);
-    }, [wallet.index]);
+    }, [wallet.index, navigate, editWalletUrl]);
 
     const hideThisWallet = useCallback(() => {
         console.log('hiding wallet.index :>> ', wallet.index);
@@ -49,9 +46,8 @@ const WalletButton = ({
 
     return (
         <div
-            className={`py-[10px] px-3 flex justify-between items-center ${
-                !isWalletEditing && 'cursor-pointer'
-            }`}
+            className={`py-[10px] px-3 flex justify-between items-center ${!isWalletEditing && 'cursor-pointer'
+                }`}
             onClick={switchToThisWallet}
         >
             <div className="flex gap-3">

@@ -1,6 +1,5 @@
-import { Dispatch, SetStateAction, useState } from 'react';
-import { TextColor } from '_src/enums/Typography';
-import BodyLarge from '../../typography/BodyLarge';
+import { useState } from 'react';
+
 import ColorRow from './ColorRow';
 
 interface ColorPickerMenuProps {

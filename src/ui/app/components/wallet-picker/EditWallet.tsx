@@ -1,22 +1,23 @@
 import { useCallback, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import Button from '../../shared/buttons/Button';
-import BasicSectionHeader from '../../shared/headers/section-headers/BasicSectionHeader';
-import ColorPickerMenu from '../../shared/inputs/colors/ColorPickerMenu';
-import ColorRow from '../../shared/inputs/colors/ColorRow';
-import NavBarWithBackAndClose from '../../shared/navigation/nav-bar/NavBarWithBackAndClose';
-import BodyLarge from '../../shared/typography/BodyLarge';
-import { useNextWalletPickerUrl } from '../menu/hooks';
-import Input from '../../shared/inputs/Input';
-import { AccountInfo } from '../../KeypairVault';
+
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { thunkExtras } from '../../redux/store/thunk-extras';
 import {
     saveAccountInfos,
     saveActiveAccountIndex,
-    setAccountInfos as setStateAccountInfos,
+    setAccountInfos as setStateAccountInfos
 } from '../../redux/slices/account';
+import { thunkExtras } from '../../redux/store/thunk-extras';
+import Button from '../../shared/buttons/Button';
+import BasicSectionHeader from '../../shared/headers/section-headers/BasicSectionHeader';
+import Input from '../../shared/inputs/Input';
+import ColorPickerMenu from '../../shared/inputs/colors/ColorPickerMenu';
+import NavBarWithBackAndClose from '../../shared/navigation/nav-bar/NavBarWithBackAndClose';
+import BodyLarge from '../../shared/typography/BodyLarge';
+import { useNextWalletPickerUrl } from '../menu/hooks';
 import Authentication from '_src/background/Authentication';
+
+import type { AccountInfo } from '../../KeypairVault';
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -28,9 +29,11 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     const closeWalletPickerUrl = useNextWalletPickerUrl(false);
 
     const _accountInfos = useAppSelector(({ account }) => account.accountInfos);
-    const walletIndex = searchParams.get('index')
-        ? +searchParams.get('index')!
-        : 0;
+    let walletIndex = 0
+    const indexFromParam = searchParams.get('index');
+    if (indexFromParam !== null) {
+        walletIndex = +indexFromParam
+    }
     const currentAccountInfo = _accountInfos[walletIndex];
     const draftAccountInfos = useRef<AccountInfo[]>(_accountInfos);
     const [accountInfos, setAccountInfos] = useState<AccountInfo[]>(
@@ -57,11 +60,11 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
 
     const setIsWalletEditingToFalse = useCallback(() => {
         setIsWalletEditing(false);
-    }, []);
+    }, [setIsWalletEditing]);
 
     const setIsWalletEditingToTrue = useCallback(() => {
         setIsWalletEditing(true);
-    }, []);
+    }, [setIsWalletEditing]);
 
     const getAccountInfos = useCallback(async () => {
         if (authentication) return;
@@ -106,18 +109,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
 
         setIsWalletEditing(true);
         navigate(walletPickerHomeUrl);
-    }, [authentication, dispatch, getAccountInfos]);
-
-    const _cancelEdit = useCallback(() => {
-        if (!Object.isFrozen(draftAccountInfos.current)) {
-            draftAccountInfos.current.pop();
-            setAccountInfos(draftAccountInfos.current);
-        }
-
-        // setEdit(false);
-        setIsWalletEditing(true);
-        navigate(walletPickerHomeUrl);
-    }, []);
+    }, [authentication, dispatch, getAccountInfos, navigate, walletPickerHomeUrl]);
 
     const _handleChange = useCallback(
         ({ name, color }: { name?: string; color?: string }) => {

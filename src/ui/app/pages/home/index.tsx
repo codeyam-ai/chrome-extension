@@ -9,12 +9,12 @@ import { AppState } from '../../hooks/useInitializedGuard';
 import BaseLayout from '../../shared/layouts/BaseLayout';
 import NavBarWithMenu from '../../shared/navigation/nav-bar/NavBarWithMenu';
 import NavExpanded from '../../shared/navigation/nav-bar/NavExpanded';
+import WalletPickerPage from '../../shared/navigation/nav-bar/WalletPickerPage';
 import TabBar from '../../shared/navigation/tab-bar/TabBar';
 import Loading from '_components/loading';
 import { useInitializedGuard, useAppDispatch } from '_hooks';
 import PageLayout from '_pages/layout';
 import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
-import WalletPickerPage from '../../shared/navigation/nav-bar/WalletPickerPage';
 
 const POLL_SUI_OBJECTS_INTERVAL = 4000;
 
