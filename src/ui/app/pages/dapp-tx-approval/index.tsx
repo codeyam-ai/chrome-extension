@@ -82,7 +82,9 @@ export function DappTxApprovalPage() {
     const loading = guardLoading || txRequestsLoading;
     const dispatch = useAppDispatch();
 
-    const [effects, setEffects] = useState<TransactionEffects | null>(null);
+    const [effects, setEffects] = useState<
+        TransactionEffects | undefined | null
+    >();
 
     const gasUsed = effects?.gasUsed;
     const gas = gasUsed ? gasUsed.computationCost + gasUsed.storageCost : null;
@@ -133,8 +135,10 @@ export function DappTxApprovalPage() {
     useEffect(() => {
         const getEffects = async () => {
             try {
-                if (!txRequest) return;
-                if (txRequest.tx.type === 'move-call') return;
+                if (!txRequest || txRequest.tx.type === 'move-call') {
+                    setEffects(null);
+                    return;
+                }
 
                 const signer = thunkExtras.api.getSignerInstance(
                     thunkExtras.keypairVault.getKeyPair(activeAccountIndex)
@@ -390,7 +394,7 @@ export function DappTxApprovalPage() {
                     rejectTitle="Reject"
                     onSubmit={handleOnSubmit}
                 >
-                    <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-6 grow">
                         <div className="flex flex-col gap-2">
                             <div className="text-lg">Request</div>
                             {valuesContent.map(({ label, content }) => (
@@ -400,95 +404,104 @@ export function DappTxApprovalPage() {
                             ))}
                         </div>
 
-                        <Loading
-                            loading={effects === null}
-                            big={true}
-                            className="flex justify-center"
-                        >
-                            <div className="text-lg flex flex-col gap-6">
-                                <div className="flex flex-col gap-2">
-                                    <div className="text-md">Impact</div>
-                                    <Detail
-                                        label="Your Assets"
-                                        value={
-                                            ownedMutated.length === 0
-                                                ? 'None Impacted'
-                                                : `${ownedMutated.length} Impacted`
-                                        }
-                                        icon={
-                                            ownedMutated.length === 0
-                                                ? ImpactIcon.SAFE
-                                                : ImpactIcon.WARNING
-                                        }
-                                    />
-                                    <Detail
-                                        label="Shared Objects"
-                                        value={
-                                            sharedMutated.length === 0
-                                                ? 'None Impacted'
-                                                : `${sharedMutated.length} Impacted`
-                                        }
-                                        icon={
-                                            sharedMutated.length === 0
-                                                ? ImpactIcon.SAFE
-                                                : ImpactIcon.WARNING
-                                        }
-                                    />
-                                </div>
-
-                                <div className="flex flex-col gap-2">
-                                    <div className="text-md">Cost</div>
-                                    <Detail
-                                        label="Charges"
-                                        value={`0 ${symbol}`}
-                                    />
-                                    <Detail
-                                        label="Gas Fees"
-                                        value={`${formattedGas} ${symbol}`}
-                                    />
-                                    <Detail
-                                        label="Total"
-                                        value={`${formattedGas} ${symbol}`}
-                                    />
-                                </div>
-                            </div>
-
-                            {detailedValuesContent && (
-                                <div className="pb-6">
-                                    <div
-                                        className="cursor-pointer py-1 dark:text-gray-400"
-                                        onClick={toggleDetails}
-                                    >
-                                        {details ? '▼ Hide' : '▶ Show'} Details
+                        {effects !== null && (
+                            <Loading
+                                loading={effects === undefined}
+                                big={true}
+                                className="flex justify-center"
+                            >
+                                <div className="text-lg flex flex-col gap-6">
+                                    <div className="flex flex-col gap-2">
+                                        <div className="text-md">Impact</div>
+                                        <Detail
+                                            label="Your Assets"
+                                            value={
+                                                ownedMutated.length === 0
+                                                    ? 'None Impacted'
+                                                    : `${ownedMutated.length} Impacted`
+                                            }
+                                            icon={
+                                                ownedMutated.length === 0
+                                                    ? ImpactIcon.SAFE
+                                                    : ImpactIcon.WARNING
+                                            }
+                                        />
+                                        <Detail
+                                            label="Shared Objects"
+                                            value={
+                                                sharedMutated.length === 0
+                                                    ? 'None Impacted'
+                                                    : `${sharedMutated.length} Impacted`
+                                            }
+                                            icon={
+                                                sharedMutated.length === 0
+                                                    ? ImpactIcon.SAFE
+                                                    : ImpactIcon.WARNING
+                                            }
+                                        />
                                     </div>
 
-                                    {details && (
-                                        <div className="mt-3 flex flex-col gap-3 dark:text-gray-400">
-                                            {detailedValuesContent.map(
-                                                ({ label, content, title }) => (
-                                                    <Fragment key={label}>
-                                                        <div className="flex justify-between">
-                                                            <label className="text-gray-500 dark:text-gray-400 text-sm">
-                                                                {label}
-                                                            </label>
-                                                            <div
-                                                                className={
-                                                                    st.value +
-                                                                    ' dark:text-gray-400'
-                                                                }
-                                                                title={title}
-                                                            >
-                                                                {content}
-                                                            </div>
-                                                        </div>
-                                                    </Fragment>
-                                                )
-                                            )}
-                                        </div>
-                                    )}
+                                    <div className="flex flex-col gap-2">
+                                        <div className="text-md">Cost</div>
+                                        <Detail
+                                            label="Charges"
+                                            value={`0 ${symbol}`}
+                                        />
+                                        <Detail
+                                            label="Gas Fees"
+                                            value={`${formattedGas} ${symbol}`}
+                                        />
+                                        <Detail
+                                            label="Total"
+                                            value={`${formattedGas} ${symbol}`}
+                                        />
+                                    </div>
                                 </div>
-                            )}
-                        </Loading>
+
+                                {detailedValuesContent && (
+                                    <div>
+                                        <div
+                                            className="cursor-pointer py-1 dark:text-gray-400"
+                                            onClick={toggleDetails}
+                                        >
+                                            {details ? '▼ Hide' : '▶ Show'}{' '}
+                                            Details
+                                        </div>
+
+                                        {details && (
+                                            <div className="mt-3 flex flex-col gap-3 dark:text-gray-400">
+                                                {detailedValuesContent.map(
+                                                    ({
+                                                        label,
+                                                        content,
+                                                        title,
+                                                    }) => (
+                                                        <Fragment key={label}>
+                                                            <div className="flex justify-between">
+                                                                <label className="text-gray-500 dark:text-gray-400 text-sm">
+                                                                    {label}
+                                                                </label>
+                                                                <div
+                                                                    className={
+                                                                        st.value +
+                                                                        ' dark:text-gray-400'
+                                                                    }
+                                                                    title={
+                                                                        title
+                                                                    }
+                                                                >
+                                                                    {content}
+                                                                </div>
+                                                            </div>
+                                                        </Fragment>
+                                                    )
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </Loading>
+                        )}
                     </div>
                 </UserApproveContainer>
             ) : null}

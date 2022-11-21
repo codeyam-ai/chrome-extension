@@ -106,7 +106,7 @@ function UserApproveContainer({
                 onClickButtonSecondary={handleOnResponse}
             /> */}
 
-            <div className={`grid grid-cols-2 gap-2 w-full mt-2`}>
+            <div className={`grid grid-cols-2 gap-2 w-full pt-6`}>
                 <Button
                     buttonStyle={ButtonStyle.SECONDARY}
                     type="button"
