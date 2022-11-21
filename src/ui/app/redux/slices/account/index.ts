@@ -28,6 +28,7 @@ import type { SuiAddress, SuiMoveObject } from '@mysten/sui.js';
 import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 
 type InitialAccountInfo = {
     authentication: string | null;
@@ -108,6 +109,8 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             accountInfos = [
                 {
                     index: 0,
+                    name: 'Wallet',
+                    color: getNextWalletColor(0),
                     address: keypairVault.getAddress(0),
                     seed: (keypairVault.getSeed(0) || '').toString(),
                 },
@@ -245,6 +248,8 @@ export const savePassphrase: AsyncThunk<
                 JSON.stringify([
                     {
                         index: 0,
+                        name: 'Wallet',
+                        color: getNextWalletColor(0),
                         address: keypairVault.getAddress() || '',
                         seed: (keypairVault.getSeed() || '').toString(),
                     },

@@ -72,9 +72,9 @@ const WalletButton = ({
                         <button onClick={editThisWallet}>
                             <PencilIcon className="h-5 w-5 text-black dark:text-white" />
                         </button>
-                        <button onClick={hideThisWallet}>
+                        {/* <button onClick={hideThisWallet}>
                             <MinusCircleIcon className="h-5 w-5 text-black dark:text-white" />
-                        </button>
+                        </button> */}
                     </div>
                 )}
                 {isActive && !isWalletEditing && (

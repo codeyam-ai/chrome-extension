@@ -1,5 +1,6 @@
 import { useRef, useCallback } from 'react';
 import Authentication from '_src/background/Authentication';
+import getNextWalletColor from '../../helpers/getNextWalletColor';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { type AccountInfo } from '../../KeypairVault';
 import {
@@ -90,6 +91,7 @@ const CreateWalletButton = () => {
                     {
                         index: nextAccountIndex,
                         name: `Wallet ${accountInfos.length + 1}`,
+                        color: getNextWalletColor(nextAccountIndex),
                         address:
                             keypairVault.getAddress(nextAccountIndex) || '',
                         seed: (
@@ -111,6 +113,7 @@ const CreateWalletButton = () => {
         loadAccFromStorage();
         _saveAccountInfos();
     }, [keypairVault, authentication, accountInfos]);
+
     return (
         <Button buttonStyle="primary" onClick={createWallet}>
             Create Wallet

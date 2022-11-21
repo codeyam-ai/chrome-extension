@@ -1,15 +1,5 @@
-import { Dispatch, SetStateAction, useCallback } from 'react';
-
-const colors = [
-    '#FF6A00',
-    '#FCB904',
-    '#7CDCB6',
-    '#00D085',
-    '#0F93E3',
-    '#EB154C',
-    '#F78DA7',
-    '#CB6FFF',
-];
+import { useCallback } from 'react';
+import defaultColors from '_src/shared/defaultColorOptions';
 
 interface ColorButtonProps {
     color: string;
@@ -44,7 +34,7 @@ interface ColorRowProps {
 const ColorRow = ({ selectedColor, setSelectedColor }: ColorRowProps) => {
     return (
         <div className="grid grid-cols-5 gap-2">
-            {colors.map((color, key) => {
+            {defaultColors.map((color, key) => {
                 return (
                     <ColorButton
                         color={color}

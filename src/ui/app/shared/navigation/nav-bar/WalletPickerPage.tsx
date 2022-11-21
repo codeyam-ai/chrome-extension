@@ -36,6 +36,7 @@ function WalletPickerPage() {
         (e: KeyboardEvent | MouseEvent<HTMLDivElement>) => {
             if (isWalletPickerOpen) {
                 e.preventDefault();
+                setIsWalletEditing(false);
                 navigate(closeWalletPickerUrl);
             }
         },
