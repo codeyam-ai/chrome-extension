@@ -7,7 +7,10 @@ import {
     createSlice,
 } from '@reduxjs/toolkit';
 
-import { suiObjectsAdapterSelectors } from '_redux/slices/sui-objects';
+import {
+    clearForNetworkOrWalletSwitch,
+    suiObjectsAdapterSelectors,
+} from '_redux/slices/sui-objects';
 import { Coin } from '_redux/slices/sui-objects/Coin';
 import { generateMnemonic } from '_shared/cryptography/mnemonics';
 import Authentication from '_src/background/Authentication';
@@ -200,6 +203,7 @@ export const saveActiveAccountIndex = createAsyncThunk(
             activeAccountIndex.toString(),
             passphrase || authentication || undefined
         );
+        await clearForNetworkOrWalletSwitch();
         return activeAccountIndex;
     }
 );

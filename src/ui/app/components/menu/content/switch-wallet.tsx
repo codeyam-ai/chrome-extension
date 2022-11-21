@@ -17,6 +17,7 @@ import Icon, { SuiIcons } from '../../icon';
 import LoadingIndicator from '../../loading/LoadingIndicator';
 import { useNextMenuUrl } from '../hooks';
 import Authentication from '_src/background/Authentication';
+import { clearForNetworkOrWalletSwitch } from '_src/ui/app/redux/slices/sui-objects';
 import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
 import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
@@ -78,6 +79,7 @@ export default function SwitchWallet() {
             await dispatch(setStateAccountInfos(draftAccountInfos.current));
             setAccountInfos(draftAccountInfos.current);
         } else {
+            await dispatch(clearForNetworkOrWalletSwitch());
             await dispatch(saveAccountInfos(draftAccountInfos.current));
             await dispatch(
                 saveActiveAccountIndex(draftAccountInfos.current.length - 1)
@@ -137,8 +139,11 @@ export default function SwitchWallet() {
     }, []);
 
     const _cancelEdit = useCallback(() => {
-        draftAccountInfos.current.pop();
-        setAccountInfos(draftAccountInfos.current);
+        if (!Object.isFrozen(draftAccountInfos.current)) {
+            draftAccountInfos.current.pop();
+            setAccountInfos(draftAccountInfos.current);
+        }
+
         setEdit(false);
     }, []);
 
@@ -199,6 +204,7 @@ export default function SwitchWallet() {
         const switchToThisWallet = useCallback(async () => {
             if (edit) return;
             if (isActive) return;
+            await dispatch(clearForNetworkOrWalletSwitch());
             await dispatch(saveActiveAccountIndex(index));
             navigate('/');
         }, [index, isActive]);
