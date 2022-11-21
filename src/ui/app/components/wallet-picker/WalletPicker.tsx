@@ -16,7 +16,8 @@ const WalletPicker = ({ isWalletEditing }: WalletPickerProps) => {
     );
 
     return (
-        <div className="flex flex-col">
+        // max-h is so the dropdown doesn't go over the main wallet area
+        <div className="flex flex-col max-h-[394px] overflow-scroll">
             <WalletList
                 hasTopPadding
                 wallets={accountInfos}
