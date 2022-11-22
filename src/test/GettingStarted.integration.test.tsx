@@ -2,11 +2,8 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import * as React from 'react';
-import { act } from 'react-dom/test-utils';
 
 import App from '_app/index';
-import { initAppType } from '_redux/slices/app';
-import { getFromLocationSearch } from '_redux/slices/app/AppType';
 import { renderWithProviders } from '_src/test/utils/react-rendering';
 import suiGetObjectResponse from '_src/test/utils/sui-fake-responses/sui_getObject.json';
 
