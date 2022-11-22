@@ -28,7 +28,7 @@ const Tooltip = ({
     return (
         <div className="relative flex items-center">
             <div
-                className={`text-xs ${shift} absolute whitespace-no-wrap bg-gray-800 dark:bg-gray-700 text-white px-2 py-1 rounded flex items-center transition-all duration-75 cursor-default`}
+                className={`text-center text-xs ${shift} absolute whitespace-no-wrap bg-gray-800 dark:bg-gray-700 text-white px-2 py-1 rounded flex items-center transition-all duration-75 cursor-default`}
                 style={
                     hasMouseEntered
                         ? {
@@ -47,9 +47,9 @@ const Tooltip = ({
                 <div
                     className="bg-gray-800 dark:bg-gray-700 h-3 w-3 absolute"
                     style={{
-                        left: right ? '-6px' : '36px',
-                        top: down ? '-6px' : '12px',
-                        transform: 'rotate(45deg)',
+                        left: right ? '-6px' : '45%',
+                        top: down ? '3px' : '50%',
+                        transform: 'rotate(45deg) translate(-50%, -50%)',
                     }}
                 />
                 {tooltipText}
