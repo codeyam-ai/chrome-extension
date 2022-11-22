@@ -42,14 +42,14 @@ function TokensPage() {
                         big={true}
                         className="flex py-6 justify-center items-center"
                     >
-                        <div className="py-2">
+                        <div className="pt-6">
                             <AmountRow
                                 balance={mistBalance}
                                 type={GAS_TYPE_ARG}
                             />
                             <SendReceiveButtonGroup mistBalance={mistBalance} />
                         </div>
-                        <div className="flex flex-col gap-6 pb-6 h-[177px] overflow-auto">
+                        <div className="flex flex-col gap-6 pb-6 h-[195px] overflow-auto">
                             <CoinList balances={balances} />
                             <ContentBlock>
                                 <Subheader as="h3">

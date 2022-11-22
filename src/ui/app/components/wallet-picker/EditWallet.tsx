@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import {
     saveAccountInfos,
     saveActiveAccountIndex,
-    setAccountInfos as setStateAccountInfos,
+    setAccountInfos,
 } from '../../redux/slices/account';
 import { thunkExtras } from '../../redux/store/thunk-extras';
 import Button from '../../shared/buttons/Button';
@@ -36,9 +36,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     }
     const currentAccountInfo = _accountInfos[walletIndex];
     const draftAccountInfos = useRef<AccountInfo[]>(_accountInfos);
-    const [accountInfos, setAccountInfos] = useState<AccountInfo[]>(
-        draftAccountInfos.current
-    );
+
     const [draftName, setDraftName] = useState<string>(
         currentAccountInfo.name || `Wallet ${currentAccountInfo.index + 1}`
     );
@@ -78,27 +76,12 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                 },
             ];
         }
-
-        const accountInfosWithAddresses = draftAccountInfos.current.map(
-            (accountInfo: AccountInfo) => {
-                const address =
-                    accountInfo.address ||
-                    keypairVault.getAddress(accountInfo.index) ||
-                    '';
-                return {
-                    ...accountInfo,
-                    address,
-                };
-            }
-        );
-        setAccountInfos(accountInfosWithAddresses);
     }, [authentication, keypairVault]);
 
     const _saveAccountInfos = useCallback(async () => {
         if (authentication) {
             Authentication.updateAccountInfos(draftAccountInfos.current);
-            await dispatch(setStateAccountInfos(draftAccountInfos.current));
-            setAccountInfos(draftAccountInfos.current);
+            await dispatch(setAccountInfos(draftAccountInfos.current));
         } else {
             await dispatch(saveAccountInfos(draftAccountInfos.current));
             await dispatch(

@@ -11,7 +11,7 @@ const ColorPickerMenu = ({
     selectedColor,
     setSelectedColor,
 }: ColorPickerMenuProps) => {
-    const [showColorRow, setShowColorRow] = useState(true);
+    const [showColorRow] = useState(true);
 
     return (
         <div className="flex flex-col gap-3 w-full -mt-2 p-6 rounded-[20px] shadow-ethos-hovering-element-box-shadow bg-ethos-light-background-default dark:bg-ethos-dark-background-default border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">

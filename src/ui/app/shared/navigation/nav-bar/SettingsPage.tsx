@@ -4,6 +4,7 @@
 import { useCallback } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
+import HeaderWithClose from '../../headers/section-headers/HeaderWithClose';
 import {
     useMenuIsOpen,
     useMenuUrl,
@@ -19,7 +20,6 @@ import ImportWallet from '_src/ui/app/components/settings/subpages/ImportWallet'
 
 import PermissionsPage from '_src/ui/app/components/settings/subpages/PermissionsPage';
 import Security from '_src/ui/app/components/settings/subpages/Security';
-import HeaderWithClose from '../../headers/section-headers/HeaderWithClose';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 

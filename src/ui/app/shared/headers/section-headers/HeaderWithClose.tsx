@@ -1,6 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { Link } from 'react-router-dom';
-import { text } from 'stream/consumers';
+
 import Header from '../../typography/Header';
 
 interface HeaderWithCloseProps {
