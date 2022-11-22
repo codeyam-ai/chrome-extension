@@ -92,7 +92,6 @@ export function DappTxApprovalPage() {
         ? gasUsed.computationCost +
           (gasUsed.storageCost - gasUsed.storageRebate)
         : null;
-    const [formattedGas, symbol] = useFormatCoin(gas, '0x2::sui::SUI');
 
     const ownedMutated = useMemo(() => {
         if (!effects?.mutated) return [];
@@ -131,20 +130,66 @@ export function DappTxApprovalPage() {
         return ownedTransferred;
     }, [effects]);
 
-    const sharedMutated = useMemo(() => {
-        if (!effects?.mutated) return [];
+    const ownedDeleted = useMemo(() => {
+        if (!effects?.deleted) return [];
 
-        const sharedMutated = effects.mutated.filter((object) => {
-            if (typeof object.owner === 'string') {
-                return false;
-            }
-            return 'Shared' in object.owner;
-        });
+        const ownedDeleted: string[] = [];
+        // effects.deleted.filter(
 
-        return sharedMutated;
+        // );
+        console.log('DELETED', effects.deleted);
+
+        return ownedDeleted;
     }, [effects]);
 
-    console.log('MUTATED', ownedMutated, sharedMutated);
+    // const sharedMutated = useMemo(() => {
+    //     if (!effects?.mutated) return [];
+
+    //     const sharedMutated = effects.mutated.filter((object) => {
+    //         if (typeof object.owner === 'string') {
+    //             return false;
+    //         }
+    //         return 'Shared' in object.owner;
+    //     });
+
+    //     return sharedMutated;
+    // }, [effects]);
+
+    const suiChange = useMemo(() => {
+        if (!effects?.events) return 0;
+
+        const coinBalanceChangeEvents = effects.events.filter(
+            (e) =>
+                e.coinBalanceChange &&
+                e.coinBalanceChange.coinType === '0x2::sui::SUI'
+        );
+
+        return (
+            coinBalanceChangeEvents.reduce(
+                (total, e) => total + e.coinBalanceChange.amount,
+                0
+            ) * -1
+        );
+    }, [effects]);
+
+    const [formattedCharges, chargesSymbol] = useFormatCoin(
+        suiChange - (gas || 0),
+        '0x2::sui::SUI'
+    );
+    const [formattedGas, gasSymbol] = useFormatCoin(gas, '0x2::sui::SUI');
+    const [formattedTotal, totalSymbol] = useFormatCoin(
+        suiChange,
+        '0x2::sui::SUI'
+    );
+
+    console.log(
+        'OWNED',
+        ownedMutated,
+        ownedTransferred,
+        ownedDeleted,
+        suiChange,
+        gas
+    );
 
     useEffect(() => {
         const getEffects = async () => {
@@ -382,24 +427,39 @@ export function DappTxApprovalPage() {
         value,
         icon,
     }: {
-        label: string;
+        label: string | JSX.Element;
         value: string | number | JSX.Element;
         icon?: string;
     }) => {
         return (
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between">
                 <div className="flex items-center gap-1">
                     {icon === ImpactIcon.SAFE && <Check color="green" />}
                     {icon === ImpactIcon.WARNING && <Check color="yellow" />}
                     {icon === ImpactIcon.DANGER && <Check color="red" />}
                     <div className="text-gray-500 dark:text-gray-400">
-                        {label}:
+                        {typeof label === 'string' ? `${label}:` : label}
                     </div>
                 </div>
-                <div className={st.value + ' dark:text-gray-400'}>{value}</div>
+                <div className="dark:text-gray-400">{value}</div>
             </div>
         );
     };
+
+    const Dot = () => (
+        <svg
+            width="6"
+            height="6"
+            viewBox="0 0 6 6"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                d="M3.02983 5.13068C2.62879 5.13068 2.26255 5.03291 1.93111 4.83736C1.59967 4.63849 1.33452 4.37334 1.13565 4.0419C0.940104 3.71046 0.84233 3.34422 0.84233 2.94318C0.84233 2.53883 0.940104 2.17259 1.13565 1.84446C1.33452 1.51302 1.59967 1.24953 1.93111 1.05398C2.26255 0.855113 2.62879 0.755682 3.02983 0.755682C3.43419 0.755682 3.80043 0.855113 4.12855 1.05398C4.45999 1.24953 4.72348 1.51302 4.91903 1.84446C5.1179 2.17259 5.21733 2.53883 5.21733 2.94318C5.21733 3.34422 5.1179 3.71046 4.91903 4.0419C4.72348 4.37334 4.45999 4.63849 4.12855 4.83736C3.80043 5.03291 3.43419 5.13068 3.02983 5.13068Z"
+                fill="#74777C"
+            />
+        </svg>
+    );
 
     return (
         <Loading loading={loading} big={true}>
@@ -444,55 +504,95 @@ export function DappTxApprovalPage() {
                                             <div className="text-md">
                                                 Impact
                                             </div>
-                                            <Detail
-                                                label="Your Assets"
-                                                value={
-                                                    ownedMutated.length === 0
-                                                        ? 'None Changed'
-                                                        : `${ownedMutated.length} Changed`
-                                                }
-                                                icon={
-                                                    ownedMutated.length === 0
-                                                        ? ImpactIcon.SAFE
-                                                        : ImpactIcon.WARNING
-                                                }
-                                            />
-                                            {ownedTransferred.length > 0 && (
+                                            <div className="text-sm">
                                                 <Detail
-                                                    label="Transferred"
-                                                    value={`${ownedTransferred.length} Transferred`}
-                                                    icon={ImpactIcon.WARNING}
+                                                    label="Your Assets"
+                                                    value={
+                                                        ownedMutated.length ===
+                                                        0
+                                                            ? 'None Changed'
+                                                            : `${ownedMutated.length} Changed`
+                                                    }
+                                                    icon={
+                                                        ownedMutated.length ===
+                                                        0
+                                                            ? ImpactIcon.SAFE
+                                                            : ImpactIcon.WARNING
+                                                    }
                                                 />
-                                            )}
-                                            <Detail
-                                                label="Shared Objects"
-                                                value={
-                                                    sharedMutated.length === 0
-                                                        ? 'None Impacted'
-                                                        : `${sharedMutated.length} Impacted`
-                                                }
-                                                icon={
-                                                    sharedMutated.length === 0
-                                                        ? ImpactIcon.SAFE
-                                                        : ImpactIcon.WARNING
-                                                }
-                                            />
+                                                {ownedTransferred.length >
+                                                    0 && (
+                                                    <Detail
+                                                        label="Transferred"
+                                                        value={`${ownedTransferred.length} Transferred`}
+                                                        icon={
+                                                            ImpactIcon.WARNING
+                                                        }
+                                                    />
+                                                )}
+                                            </div>
                                         </div>
 
                                         <div className="flex flex-col gap-2">
                                             <div className="text-md">Cost</div>
-                                            <Detail
-                                                label="Charges"
-                                                value={`0 ${symbol}`}
-                                            />
-                                            <Detail
-                                                label="Gas Fees"
-                                                value={`${formattedGas} ${symbol}`}
-                                            />
-                                            <Detail
-                                                label="Total"
-                                                value={`${formattedGas} ${symbol}`}
-                                            />
+                                            <div className="text-sm">
+                                                <Detail
+                                                    label="Charges"
+                                                    value={
+                                                        <div className="flex flex-row items-center gap-1 py-1">
+                                                            <div>
+                                                                {
+                                                                    formattedCharges
+                                                                }{' '}
+                                                                {chargesSymbol}
+                                                            </div>
+                                                            <Dot />
+                                                            <div>
+                                                                $
+                                                                {
+                                                                    formattedCharges
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                />
+                                                <Detail
+                                                    label="Gas Fees"
+                                                    value={
+                                                        <div className="flex flex-row items-center gap-1 py-1">
+                                                            <div>
+                                                                {formattedGas}{' '}
+                                                                {gasSymbol}
+                                                            </div>
+                                                            <Dot />
+                                                            <div>
+                                                                ${formattedGas}
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                />
+                                                <hr />
+                                                <Detail
+                                                    label={
+                                                        <div className="font-semibold text-slate-800">
+                                                            Total:
+                                                        </div>
+                                                    }
+                                                    value={
+                                                        <div className="flex flex-row items-center gap-1 py-1 font-semibold text-slate-600">
+                                                            <div>
+                                                                {formattedTotal}{' '}
+                                                                {totalSymbol}
+                                                            </div>
+                                                            <Dot />
+                                                            <div className="font-semibold text-slate-800">
+                                                                $
+                                                                {formattedTotal}
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 )}
@@ -508,7 +608,7 @@ export function DappTxApprovalPage() {
                                         </div>
 
                                         {details && (
-                                            <div className="mt-3 flex flex-col gap-3 dark:text-gray-400">
+                                            <div className="text-xs mt-3 flex flex-col gap-3 dark:text-gray-400">
                                                 {detailedValuesContent.map(
                                                     ({
                                                         label,
@@ -517,7 +617,7 @@ export function DappTxApprovalPage() {
                                                     }) => (
                                                         <Fragment key={label}>
                                                             <div className="flex justify-between">
-                                                                <label className="text-gray-500 dark:text-gray-400 text-sm">
+                                                                <label className="text-gray-500 dark:text-gray-400">
                                                                     {label}
                                                                 </label>
                                                                 <div
