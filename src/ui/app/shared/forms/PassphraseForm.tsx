@@ -2,7 +2,7 @@ import { Formik, Form, useField } from 'formik';
 import { useCallback } from 'react';
 import * as Yup from 'yup';
 
-import Button, { ButtonStyle } from '../buttons/Button';
+import Button from '../buttons/Button';
 import Input from '../inputs/Input';
 
 import type { FormikValues } from 'formik';
@@ -42,7 +42,7 @@ const CustomFormikForm = () => {
             />
 
             <Button
-                buttonStyle={ButtonStyle.PRIMARY}
+                buttonStyle="primary"
                 type="submit"
                 disabled={
                     !meta.value ||

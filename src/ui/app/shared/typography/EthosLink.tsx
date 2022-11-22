@@ -10,29 +10,38 @@ import { LinkType } from '_src/enums/LinkType';
 
 export interface EthosLinkProps {
     type: LinkType;
-    to: string;
+    to?: string;
+    onClick?: () => void;
     children: ReactNode;
 }
 
-const EthosLink = ({ to, type, children }: EthosLinkProps) => {
+const EthosLink = ({ to, type, onClick, children }: EthosLinkProps) => {
     const linkClasses =
-        'font-weight-ethos-semibold-body text-ethos-light-primary-light dark:text-ethos-dark-primary-dark';
-    if (type === LinkType.Internal) {
+        'font-weight-ethos-semibold-body text-ethos-light-primary-light dark:text-ethos-dark-primary-dark cursor-pointer';
+    if (type === LinkType.Internal && to) {
         return (
-            <Link to={to} className={linkClasses}>
+            <Link to={to} onClick={onClick} className={linkClasses}>
                 {children}
             </Link>
         );
-    } else {
+    } else if (type === LinkType.External && to) {
         return (
             <a
                 href={to}
+                onClick={onClick}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={linkClasses}
             >
                 {children}
             </a>
+        );
+    } else {
+        // LinkType = None
+        return (
+            <span onClick={onClick} className={linkClasses}>
+                {children}
+            </span>
         );
     }
 };

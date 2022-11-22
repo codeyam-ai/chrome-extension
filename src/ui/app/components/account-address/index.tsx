@@ -4,6 +4,7 @@
 import cl from 'classnames';
 
 import Body from '../../shared/typography/Body';
+import { TooltipDirection } from '../Tooltip';
 import CopyToClipboard from '_components/copy-to-clipboard';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
@@ -44,7 +45,7 @@ function AccountAddress({
     );
     const address = useAppSelector(({ account }) => account.address);
 
-    const shortenAddress = useMiddleEllipsis(address, 10, 6);
+    const shortenAddress = useMiddleEllipsis(address, 9, 5);
     const cpIconMode = mode === AddressMode.NORMAL ? 'normal' : 'highlighted';
     const dotSize = mode === AddressMode.SMALL ? 'h-3 w-3' : 'h-5 w-5';
     return (
@@ -64,7 +65,11 @@ function AccountAddress({
             )}
             {address ? (
                 <span className={cl(st.addressContainer, className)}>
-                    <CopyToClipboard txt={address} mode={cpIconMode}>
+                    <CopyToClipboard
+                        txt={address}
+                        mode={cpIconMode}
+                        direction={TooltipDirection.DOWN}
+                    >
                         <Body textColor={TextColor.Medium}>
                             {shorten ? shortenAddress : address}
                         </Body>

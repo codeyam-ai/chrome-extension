@@ -1,18 +1,18 @@
+import { QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
+import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
-
 import { MemoryRouter } from 'react-router-dom';
+
+import { queryClient } from '_app/helpers/queryClient';
+import { createStore } from '_store';
+
 import type { PreloadedState } from '@reduxjs/toolkit';
 import type { RenderOptions } from '@testing-library/react';
 import type { RootState } from '_redux/RootReducer';
 import type { AppStore } from '_store';
 import type React from 'react';
 import type { PropsWithChildren } from 'react';
-
-import { createStore } from '_store';
-import { IntlProvider } from 'react-intl';
-import { queryClient } from '_app/helpers/queryClient';
-import { QueryClientProvider } from '@tanstack/react-query';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: PreloadedState<RootState>;
@@ -28,7 +28,7 @@ export function renderWithProviders(
         ...renderOptions
     }: ExtendedRenderOptions = {}
 ) {
-    function Wrapper({ children }: PropsWithChildren<{}>): JSX.Element {
+    function Wrapper({ children }: PropsWithChildren<unknown>): JSX.Element {
         return (
             <MemoryRouter>
                 <Provider store={store}>

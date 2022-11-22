@@ -3,7 +3,7 @@
 
 import { memo, useCallback, useState } from 'react';
 
-import Button, { ButtonStyle } from '../shared/buttons/Button';
+import Button from '../shared/buttons/Button';
 import Ethos from '../shared/svg/Ethos';
 import AccountAddress, { AddressMode } from '_components/account-address';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
@@ -54,7 +54,7 @@ function UserApproveContainer({
         []
     );
     return (
-        <div className="flex flex-col w-full px-6 py-1 items-center dark:bg-gray-800">
+        <div className="flex flex-col w-full px-6 items-center dark:bg-gray-800">
             <div className="flex w-full items-center justify-between pt-5 pb-6 border-b border-slate-400 dark:border-slate-600">
                 <div
                     className="text-base cursor-pointer dark:text-gray-200"
@@ -85,12 +85,14 @@ function UserApproveContainer({
                         <Ethos />
                     </div>
                 </div>
-                <div className="text-xl text-center dark:text-gray-200 pt-1 pb-2">
+                <div className="text-xl text-center dark:text-gray-200 py-1">
                     {title}
                 </div>
-                <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
-                    {description}
-                </div>
+                {description && (
+                    <div className="text-center text-gray-500 dark:text-gray-400 text-sm py-1">
+                        {description}
+                    </div>
+                )}
             </div>
 
             <div className="w-full">{children}</div>
@@ -108,7 +110,7 @@ function UserApproveContainer({
 
             <div className={`grid grid-cols-2 gap-2 w-full pt-6`}>
                 <Button
-                    buttonStyle={ButtonStyle.SECONDARY}
+                    buttonStyle="secondary"
                     type="button"
                     data-allow="false"
                     onClick={handleOnResponse}
@@ -118,7 +120,7 @@ function UserApproveContainer({
                     {rejectTitle}
                 </Button>
                 <Button
-                    buttonStyle={ButtonStyle.PRIMARY}
+                    buttonStyle="primary"
                     type="button"
                     data-allow="true"
                     disabled={submitting}

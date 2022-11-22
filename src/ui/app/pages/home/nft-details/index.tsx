@@ -11,7 +11,7 @@ import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import Loading from '_components/loading';
 import { useAppSelector, useMiddleEllipsis, useNFTBasicData } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account';
-import Button, { ButtonStyle } from '_src/ui/app/shared/buttons/Button';
+import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 import Body from '_src/ui/app/shared/typography/Body';
@@ -101,7 +101,7 @@ function NFTdetailsContent({
                 {/* This margin top is a temporary fix - we need to figure out if the page should scroll */}
                 {hasPublicTransfer(nft) && (
                     <Button
-                        buttonStyle={ButtonStyle.PRIMARY}
+                        buttonStyle="primary"
                         className="-mt-[15px]"
                         onClick={onClick}
                     >

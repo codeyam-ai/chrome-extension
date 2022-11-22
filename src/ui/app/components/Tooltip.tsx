@@ -2,9 +2,19 @@ import { useCallback, useState } from 'react';
 
 export interface TooltipProps extends React.HTMLAttributes<HTMLElement> {
     tooltipText: string;
+    direction?: TooltipDirection;
 }
 
-const Tooltip = ({ children, tooltipText }: TooltipProps) => {
+export enum TooltipDirection {
+    RIGHT = 'right',
+    DOWN = 'down',
+}
+
+const Tooltip = ({
+    children,
+    tooltipText,
+    direction = TooltipDirection.RIGHT,
+}: TooltipProps) => {
     const [hasMouseEntered, setHasMouseEntered] = useState(false);
     const handleMouseEnter = useCallback(() => {
         setHasMouseEntered(true);
@@ -12,19 +22,35 @@ const Tooltip = ({ children, tooltipText }: TooltipProps) => {
     const handleMouseLeave = useCallback(() => {
         setHasMouseEntered(false);
     }, []);
+    const down = direction === TooltipDirection.DOWN;
+    const right = direction === TooltipDirection.RIGHT;
+    const shift = right ? 'left-full' : down ? 'top-full' : '';
     return (
         <div className="relative flex items-center">
             <div
-                className="text-xs left-full absolute whitespace-no-wrap bg-gray-800 dark:bg-gray-700 text-white px-2 py-1 rounded flex items-center transition-all duration-75 cursor-default"
+                className={`text-xs ${shift} absolute whitespace-no-wrap bg-gray-800 dark:bg-gray-700 text-white px-2 py-1 rounded flex items-center transition-all duration-75 cursor-default`}
                 style={
                     hasMouseEntered
-                        ? { marginLeft: '15px', opacity: 1, zIndex: 10 }
-                        : { marginLeft: '10px', opacity: 0, zIndex: 0 }
+                        ? {
+                              marginLeft: right ? '15px' : 'auto',
+                              marginTop: down ? '9px' : 'auto',
+                              opacity: 1,
+                              zIndex: 10,
+                          }
+                        : {
+                              marginLeft: right ? '10px' : 0,
+                              opacity: 0,
+                              zIndex: -1,
+                          }
                 }
             >
                 <div
                     className="bg-gray-800 dark:bg-gray-700 h-3 w-3 absolute"
-                    style={{ left: '-6px', transform: 'rotate(45deg)' }}
+                    style={{
+                        left: right ? '-6px' : '36px',
+                        top: down ? '-6px' : '12px',
+                        transform: 'rotate(45deg)',
+                    }}
                 />
                 {tooltipText}
             </div>

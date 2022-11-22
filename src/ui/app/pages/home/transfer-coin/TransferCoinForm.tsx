@@ -11,7 +11,7 @@ import { SuiIcons } from '_font-icons/output/sui-icons';
 import { GAS_SYMBOL } from '_redux/slices/sui-objects/Coin';
 import Icon from '_src/ui/app/components/icon';
 import { useFormatCoin } from '_src/ui/app/hooks';
-import Button, { ButtonStyle } from '_src/ui/app/shared/buttons/Button';
+import Button from '_src/ui/app/shared/buttons/Button';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 
 import type { FormValues } from '.';
@@ -107,7 +107,7 @@ function TransferCoinForm({
             ) : null}
             <div className="flex flex-col mt-2">
                 <Button
-                    buttonStyle={ButtonStyle.PRIMARY}
+                    buttonStyle="primary"
                     type="submit"
                     disabled={!isValid || isSubmitting}
                     className="mt-2"

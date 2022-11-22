@@ -8,7 +8,8 @@ import { of, filter, switchMap, from, defer, repeat } from 'rxjs';
 import { AppState } from '../../hooks/useInitializedGuard';
 import BaseLayout from '../../shared/layouts/BaseLayout';
 import NavBarWithMenu from '../../shared/navigation/nav-bar/NavBarWithMenu';
-import NavExpanded from '../../shared/navigation/nav-bar/NavExpanded';
+import SettingsPage from '../../shared/navigation/nav-bar/SettingsPage';
+import WalletPickerPage from '../../shared/navigation/nav-bar/WalletPickerPage';
 import TabBar from '../../shared/navigation/tab-bar/TabBar';
 import Loading from '_components/loading';
 import { useInitializedGuard, useAppDispatch } from '_hooks';
@@ -43,7 +44,8 @@ const HomePage = () => {
             <Loading loading={guardChecking} big={true}>
                 <BaseLayout>
                     <NavBarWithMenu />
-                    <NavExpanded />
+                    <SettingsPage />
+                    <WalletPickerPage />
                     <main className="flex-grow">
                         <Outlet />
                     </main>

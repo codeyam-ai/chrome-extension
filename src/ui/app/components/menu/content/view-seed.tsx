@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import Button, { ButtonStyle } from '../../../shared/buttons/Button';
+import Button from '../../../shared/buttons/Button';
 import { useNextMenuUrl } from '../hooks';
 import { useAppSelector } from '_src/ui/app/hooks';
 import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
@@ -8,7 +8,7 @@ import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBar
 import type { ChangeEventHandler } from 'react';
 
 export default function ViewSeed() {
-    const settingsUrl = useNextMenuUrl(true, '/settings');
+    const menuUrl = useNextMenuUrl(true, '/');
     const [hasConfirmed, setHasConfirmed] = useState(false);
     const [showSeed, setShowSeed] = useState(false);
     const onHandleConfirmed = useCallback<ChangeEventHandler<HTMLInputElement>>(
@@ -29,7 +29,7 @@ export default function ViewSeed() {
         <>
             <NavBarWithBackAndTitle
                 title="Recovery Phrase"
-                backLink={settingsUrl}
+                backLink={menuUrl}
             />
             <div className="px-6">
                 {showSeed ? (
@@ -102,7 +102,7 @@ export default function ViewSeed() {
                             </div>
                         </div>
                         <Button
-                            buttonStyle={ButtonStyle.SECONDARY}
+                            buttonStyle="secondary"
                             onClick={viewSeed}
                             disabled={!hasConfirmed}
                         >

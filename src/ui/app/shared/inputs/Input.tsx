@@ -1,12 +1,14 @@
 import Body from '../typography/Body';
+import BodyLarge from '../typography/BodyLarge';
+import { TextColor } from '_src/enums/Typography';
 
 export interface InputProps
     extends React.DetailedHTMLProps<
         React.InputHTMLAttributes<HTMLInputElement>,
         HTMLInputElement
     > {
-    label: string;
-    id: string;
+    label?: string;
+    id?: string;
     description?: string;
     errorText?: string;
 }
@@ -19,23 +21,23 @@ const Input = ({
     className,
     ...reactProps
 }: InputProps) => {
-    // focus:py-[7px] focus:px-[11px] is to compensate for the larger border, so the element doesn't change sizes
     const inputClasses =
-        'flex flex-row items-start w-full py-2 px-3 resize-none shadow-sm rounded-lg font-weight-ethos-body text-size-ethos-body leading-line-height-ethos-body tracking-letter-spacing-ethos-body bg-ethos-light-background-default dark:bg-ethos-dark-background-default border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke focus:ring-0 focus:border-2 focus:border-ethos-light-primary-light focus:dark:border-ethos-dark-primary-dark focus:shadow-ethos-light-stroke-focused dark:focus:shadow-ethos-dark-stroke-focused focus:py-[7px] focus:px-[11px]';
+        // the addition of focus:py-[15px] focus:px-[19px] is to compensate for the 1px border that gets added on focus, so the element doesn't change sizes
+        'flex flex-row w-full py-[16px] px-[20px] focus:py-[15px] focus:px-[19px] resize-none shadow-sm rounded-lg bg-ethos-input-background font-weight-ethos-body-large text-size-ethos-body-large leading-line-height-ethos-body-large tracking-letter-spacing-ethos-body-large bg-ethos-light-background-default dark:bg-ethos-dark-background-default border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke focus:ring-0 focus:border-2 focus:border-ethos-light-primary-light focus:dark:border-ethos-dark-primary-dark focus:shadow-ethos-light-stroke-focused dark:focus:shadow-ethos-dark-stroke-focused';
     return (
         <div
             className={`${
                 className || ''
             } flex flex-col gap-2 text-left px-6 pb-6`}
         >
-            <label htmlFor={id}>
-                <Body isSemibold={true}>{label}</Body>
-            </label>
+            {label && (
+                <label htmlFor={id}>
+                    <BodyLarge isSemibold={true}>{label}</BodyLarge>
+                </label>
+            )}
             <input id={id} className={inputClasses} {...reactProps} />
             {description && (
-                <span className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium">
-                    {description}
-                </span>
+                <Body textColor={TextColor.Medium}>{description}</Body>
             )}
             {errorText && (
                 <span className="text-ethos-light-red dark:text-ethos-dark-red">

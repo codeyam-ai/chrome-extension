@@ -11,7 +11,6 @@ import { TextColor } from '_src/enums/Typography';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import SendReceiveButtonGroup from '_src/ui/app/shared/buttons/SendReceiveButtonGroup';
 import AmountRow from '_src/ui/app/shared/content/rows-and-lists/AmountRow';
-import WalletRow from '_src/ui/app/shared/content/rows-and-lists/WalletRow';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 import Body from '_src/ui/app/shared/typography/Body';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
@@ -38,21 +37,19 @@ function TokensPage() {
                 </div>
             ) : (
                 <>
-                    <WalletRow />
-
                     <Loading
                         loading={loading}
                         big={true}
                         className="flex py-6 justify-center items-center"
                     >
-                        <div className="py-2">
+                        <div className="pt-6">
                             <AmountRow
                                 balance={mistBalance}
                                 type={GAS_TYPE_ARG}
                             />
                             <SendReceiveButtonGroup mistBalance={mistBalance} />
                         </div>
-                        <div className="flex flex-col gap-6 pb-6 h-[177px] overflow-auto">
+                        <div className="flex flex-col gap-6 pb-6 h-[198px] overflow-auto">
                             <CoinList balances={balances} />
                             <ContentBlock>
                                 <Subheader as="h3">

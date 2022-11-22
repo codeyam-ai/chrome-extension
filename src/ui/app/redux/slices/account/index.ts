@@ -21,6 +21,7 @@ import {
     deleteEncrypted,
 } from '_src/shared/storagex/store';
 import KeypairVault from '_src/ui/app/KeypairVault';
+import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 import { AUTHENTICATION_REQUESTED } from '_src/ui/app/pages/initialize/hosted';
 
 import type { AppThunkConfig } from '../../store/thunk-extras';
@@ -108,6 +109,8 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             accountInfos = [
                 {
                     index: 0,
+                    name: 'Wallet',
+                    color: getNextWalletColor(0),
                     address: keypairVault.getAddress(0),
                     seed: (keypairVault.getSeed(0) || '').toString(),
                 },
@@ -245,6 +248,8 @@ export const savePassphrase: AsyncThunk<
                 JSON.stringify([
                     {
                         index: 0,
+                        name: 'Wallet',
+                        color: getNextWalletColor(0),
                         address: keypairVault.getAddress() || '',
                         seed: (keypairVault.getSeed() || '').toString(),
                     },

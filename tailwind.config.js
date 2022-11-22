@@ -15,7 +15,7 @@ module.exports = {
                 'weight-ethos-header': '600',
                 'weight-ethos-subheader': '600',
                 'weight-ethos-body-large': '400',
-                'weight-ethos-semibold-body': '500',
+                'weight-ethos-semibold-body': '600',
                 'weight-ethos-body': '400',
             },
             fontSize: {
@@ -45,6 +45,8 @@ module.exports = {
                 // ==========
 
                 'ethos-box-shadow': '0px 4px 12px rgba(0, 0, 0, 0.09)',
+                'ethos-hovering-element-box-shadow':
+                    '0px 2px 8px rgba(0, 0, 0, 0.1)',
 
                 // ==========
                 // Stroke
@@ -70,7 +72,7 @@ module.exports = {
                 // Text and stroke
                 'ethos-light-text-default': '#000000',
                 'ethos-light-text-medium': '#74777C',
-                'ethos-light-text-stroke': '#E5E7EB',
+                'ethos-light-text-stroke': 'rgba(0, 0, 0, 0.08)',
 
                 // Primary
                 'ethos-light-primary-light': '#6D28D9',
@@ -81,6 +83,9 @@ module.exports = {
                 // Feedback
                 'ethos-light-green': '#16A349',
                 'ethos-light-red': '#EF4444',
+
+                // Input
+                'ethos-input-background': '#F2F2F2',
 
                 // ==========
                 // Dark mode
@@ -94,7 +99,7 @@ module.exports = {
                 // Text and stroke
                 'ethos-dark-text-default': '#FFFFFF',
                 'ethos-dark-text-medium': '#9CA3AF',
-                'ethos-dark-text-stroke': '#4B5563',
+                'ethos-dark-text-stroke': 'rgba(255, 255, 255, 0.12)',
 
                 // Primary
                 'ethos-dark-primary-dark': '#9C78F7',

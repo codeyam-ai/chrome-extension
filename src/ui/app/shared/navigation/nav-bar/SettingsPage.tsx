@@ -4,6 +4,7 @@
 import { useCallback } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
+import HeaderWithClose from '../../headers/section-headers/HeaderWithClose';
 import {
     useMenuIsOpen,
     useMenuUrl,
@@ -11,32 +12,24 @@ import {
 } from '_components/menu/hooks';
 import { useOnKeyboardEvent } from '_hooks';
 import ConnectedApps from '_src/ui/app/components/menu/content/connected-apps';
-import MenuList from '_src/ui/app/components/menu/content/menu-list';
 import Network from '_src/ui/app/components/menu/content/network';
 import Preapprovals from '_src/ui/app/components/menu/content/preapprovals';
-import Settings from '_src/ui/app/components/menu/content/settings';
-import SwitchWallet from '_src/ui/app/components/menu/content/switch-wallet';
 import ViewSeed from '_src/ui/app/components/menu/content/view-seed';
-
-import type { MouseEvent } from 'react';
+import SettingsList from '_src/ui/app/components/settings/SettingsList';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
-function NavExpanded() {
+function SettingsPage() {
     const isOpen = useMenuIsOpen();
     const menuUrl = useMenuUrl();
     const menuHomeUrl = useNextMenuUrl(true, '/');
     const closeMenuUrl = useNextMenuUrl(false);
     const navigate = useNavigate();
-    const handleOnCloseMenu = useCallback(
-        (e: KeyboardEvent | MouseEvent<HTMLDivElement>) => {
-            if (isOpen) {
-                e.preventDefault();
-                navigate(closeMenuUrl);
-            }
-        },
-        [isOpen, navigate, closeMenuUrl]
-    );
+    const handleOnCloseMenu = useCallback(() => {
+        if (isOpen) {
+            navigate(closeMenuUrl);
+        }
+    }, [isOpen, navigate, closeMenuUrl]);
     useOnKeyboardEvent('keydown', CLOSE_KEY_CODES, handleOnCloseMenu, isOpen);
     const expanded = menuUrl !== '/';
 
@@ -48,22 +41,23 @@ function NavExpanded() {
             <div
                 // The height class is added to adjust for the height of the nav bar and top padding of the main container.
                 // Without it, the backdrop will bleed over the bottom edge in the expanded veiw.
-                className="absolute w-full sm:rounded-lg bg-black opacity-20 h-[419px]"
+                className="absolute w-full sm:rounded-[20px] bg-black opacity-20 h-full"
                 onClick={handleOnCloseMenu}
             />
             <div
                 className={
                     (expanded ? 'h-full' : '') +
                     ' ' +
-                    'relative max-h-full overflow-y-auto drop-shadow-ethos-box-shadow rounded-b-lg bg-ethos-light-background-default dark:bg-ethos-dark-background-default'
-                    // 'relative px-6 pb-6 max-h-full overflow-y-auto drop-shadow-ethos-box-shadow rounded-b-lg bg-ethos-light-background-default dark:bg-ethos-dark-background-default'
+                    'relative max-h-full overflow-y-auto drop-shadow-ethos-box-shadow sm:rounded-[20px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default'
                 }
             >
+                <HeaderWithClose
+                    title="Settings"
+                    onClickClose={handleOnCloseMenu}
+                />
                 <Routes location={menuUrl || ''}>
-                    <Route path="/" element={<MenuList />} />
-                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/" element={<SettingsList />} />
                     <Route path="/settings/view-seed" element={<ViewSeed />} />
-                    <Route path="/switch-wallet" element={<SwitchWallet />} />
                     <Route path="/connected-apps" element={<ConnectedApps />} />
                     <Route path="/preapprovals" element={<Preapprovals />} />
                     <Route path="/network" element={<Network />} />
@@ -77,4 +71,4 @@ function NavExpanded() {
     );
 }
 
-export default NavExpanded;
+export default SettingsPage;

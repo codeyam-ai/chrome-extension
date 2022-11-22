@@ -1,6 +1,6 @@
 import { type MouseEventHandler } from 'react';
 
-import Button, { ButtonStyle } from './Button';
+import Button from './Button';
 
 type InlineButtonGroupProps = {
     className?: string;
@@ -32,7 +32,7 @@ const InlineButtonGroup = ({
     return (
         <div className={`${className || ''} grid grid-cols-2 gap-2 px-6`}>
             <Button
-                buttonStyle={ButtonStyle.SECONDARY}
+                buttonStyle="secondary"
                 onClick={onClickButtonSecondary}
                 to={buttonSecondaryTo}
                 type={buttonSecondaryType}
@@ -42,7 +42,7 @@ const InlineButtonGroup = ({
                 {buttonSecondaryChildren}
             </Button>
             <Button
-                buttonStyle={ButtonStyle.PRIMARY}
+                buttonStyle="primary"
                 onClick={onClickButtonPrimary}
                 to={buttonPrimaryTo}
                 type={buttonPrimarytype}

@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import * as Yup from 'yup';
 
 import LoadingIndicator from '../../components/loading/LoadingIndicator';
-import Button, { ButtonStyle } from '../buttons/Button';
+import Button from '../buttons/Button';
 import Input from '../inputs/Input';
 
 import type { FormikValues } from 'formik';
@@ -35,7 +35,7 @@ const CustomFormikForm = ({ loading }: { loading: boolean }) => {
                 </div>
             ) : (
                 <Button
-                    buttonStyle={ButtonStyle.PRIMARY}
+                    buttonStyle="primary"
                     type="submit"
                     disabled={!meta.value || meta.error ? true : false}
                 >
