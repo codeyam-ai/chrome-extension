@@ -174,12 +174,15 @@ export function DappTxApprovalPage() {
     }, [effects]);
 
     const charges = useMemo(() => suiChange - (gas || 0), [suiChange, gas]);
-    const [formattedCharges, chargesSymbol] = useFormatCoin(
+    const [formattedCharges, chargesSymbol, chargeDollars] = useFormatCoin(
         charges,
         '0x2::sui::SUI'
     );
-    const [formattedGas, gasSymbol] = useFormatCoin(gas, '0x2::sui::SUI');
-    const [formattedTotal, totalSymbol] = useFormatCoin(
+    const [formattedGas, gasSymbol, gasDollars] = useFormatCoin(
+        gas,
+        '0x2::sui::SUI'
+    );
+    const [formattedTotal, totalSymbol, totalDollars] = useFormatCoin(
         suiChange,
         '0x2::sui::SUI'
     );
@@ -189,8 +192,9 @@ export function DappTxApprovalPage() {
         ownedMutated,
         ownedTransferred,
         ownedDeleted,
-        suiChange,
-        gas
+        gas,
+        gasDollars,
+        formattedGas
     );
 
     useEffect(() => {
@@ -559,10 +563,7 @@ export function DappTxApprovalPage() {
                                                             </div>
                                                             <Dot />
                                                             <div>
-                                                                $
-                                                                {
-                                                                    formattedCharges
-                                                                }
+                                                                ${chargeDollars}
                                                             </div>
                                                         </div>
                                                     }
@@ -577,7 +578,7 @@ export function DappTxApprovalPage() {
                                                             </div>
                                                             <Dot />
                                                             <div>
-                                                                ${formattedGas}
+                                                                ${gasDollars}
                                                             </div>
                                                         </div>
                                                     }
@@ -597,8 +598,7 @@ export function DappTxApprovalPage() {
                                                             </div>
                                                             <Dot />
                                                             <div className="font-semibold text-slate-800">
-                                                                $
-                                                                {formattedTotal}
+                                                                ${totalDollars}
                                                             </div>
                                                         </div>
                                                     }
