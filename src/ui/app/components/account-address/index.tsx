@@ -4,6 +4,7 @@
 import cl from 'classnames';
 
 import Body from '../../shared/typography/Body';
+import { TooltipDirection } from '../Tooltip';
 import CopyToClipboard from '_components/copy-to-clipboard';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
@@ -63,7 +64,11 @@ function AccountAddress({
             )}
             {address ? (
                 <span className={cl(st.addressContainer, className)}>
-                    <CopyToClipboard txt={address} mode={cpIconMode}>
+                    <CopyToClipboard
+                        txt={address}
+                        mode={cpIconMode}
+                        direction={TooltipDirection.DOWN}
+                    >
                         <Body isTextColorMedium>
                             {shorten ? shortenAddress : address}
                         </Body>

@@ -3,7 +3,7 @@
 
 import { memo, useCallback, useEffect, useState } from 'react';
 
-import Tooltip from '../Tooltip';
+import Tooltip, { type TooltipDirection } from '../Tooltip';
 
 import type { ReactNode, MouseEventHandler } from 'react';
 
@@ -15,6 +15,7 @@ export type CopyToClipboardProps = {
     copyOnlyOnIconClick?: boolean;
     className?: string;
     mode?: 'normal' | 'highlighted';
+    direction?: TooltipDirection;
 };
 
 function CopyToClipboard({
@@ -23,6 +24,7 @@ function CopyToClipboard({
     copyOnlyOnIconClick = false,
     className,
     mode = 'normal',
+    direction,
 }: CopyToClipboardProps) {
     const [copied, setCopied] = useState(false);
     const copyToClipboard = useCallback<MouseEventHandler<HTMLElement>>(
@@ -52,7 +54,10 @@ function CopyToClipboard({
         };
     }, [copied]);
     return (
-        <Tooltip tooltipText={copied ? 'Copied!' : 'Copy to clipboard'}>
+        <Tooltip
+            tooltipText={copied ? 'Copied!' : 'Copy to clipboard'}
+            direction={direction}
+        >
             <span
                 className="cursor-pointer flex items-center"
                 onClick={!copyOnlyOnIconClick ? copyToClipboard : undefined}

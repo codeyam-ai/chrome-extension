@@ -8,6 +8,7 @@ import { useAppDispatch, useMiddleEllipsis } from '../../hooks';
 import { saveActiveAccountIndex } from '../../redux/slices/account';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
+import { clearForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
 
 interface WalletButtonProps {
     wallet: AccountInfo;
@@ -27,6 +28,7 @@ const WalletButton = ({
 
     const switchToThisWallet = useCallback(async () => {
         if (isWalletEditing) return;
+        await dispatch(clearForNetworkOrWalletSwitch());
         await dispatch(saveActiveAccountIndex(wallet.index));
         navigate('/');
     }, [wallet.index, isWalletEditing, navigate, dispatch]);
