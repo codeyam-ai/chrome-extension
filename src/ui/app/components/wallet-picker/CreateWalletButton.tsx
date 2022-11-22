@@ -8,6 +8,7 @@ import {
     saveAccountInfos,
     saveActiveAccountIndex,
 } from '../../redux/slices/account';
+import { clearForNetworkOrWalletSwitch } from '../../redux/slices/sui-objects';
 import { thunkExtras } from '../../redux/store/thunk-extras';
 import Button from '../../shared/buttons/Button';
 import Authentication from '_src/background/Authentication';
@@ -55,6 +56,7 @@ const CreateWalletButton = () => {
             await dispatch(setAccountInfos(draftAccountInfos.current));
             setAccountInfos(draftAccountInfos.current);
         } else {
+            await dispatch(clearForNetworkOrWalletSwitch());
             await dispatch(saveAccountInfos(draftAccountInfos.current));
             await dispatch(
                 saveActiveAccountIndex(draftAccountInfos.current.length - 1)

@@ -54,7 +54,7 @@ function UserApproveContainer({
         []
     );
     return (
-        <div className="flex flex-col w-full px-6 py-1 items-center dark:bg-gray-800">
+        <div className="flex flex-col w-full px-6 items-center dark:bg-gray-800">
             <div className="flex w-full items-center justify-between pt-5 pb-6 border-b border-slate-400 dark:border-slate-600">
                 <div
                     className="text-base cursor-pointer dark:text-gray-200"
@@ -85,12 +85,14 @@ function UserApproveContainer({
                         <Ethos />
                     </div>
                 </div>
-                <div className="text-xl text-center dark:text-gray-200 pt-1 pb-2">
+                <div className="text-xl text-center dark:text-gray-200 py-1">
                     {title}
                 </div>
-                <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
-                    {description}
-                </div>
+                {description && (
+                    <div className="text-center text-gray-500 dark:text-gray-400 text-sm py-1">
+                        {description}
+                    </div>
+                )}
             </div>
 
             <div className="w-full">{children}</div>
