@@ -72,8 +72,10 @@ function WalletPickerPage() {
                 {/* Nav bar: */}
                 {!isEditorOpen && (
                     <div className="flex flex-row items-center justify-between p-6 border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
-                        <WalletProfile />
                         <div className="flex flex-row gap-4 items-center">
+                            <button onClick={closeWalletPicker}>
+                                <XMarkIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                            </button>
                             <BodyLarge isSemibold>
                                 <EthosLink
                                     type={LinkType.None}
@@ -82,10 +84,8 @@ function WalletPickerPage() {
                                     {isWalletEditing ? 'Done' : 'Edit'}
                                 </EthosLink>
                             </BodyLarge>
-                            <button onClick={closeWalletPicker}>
-                                <XMarkIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
-                            </button>
                         </div>
+                        <WalletProfile onClick={closeWalletPicker} />
                     </div>
                 )}
                 {/* Content: */}
