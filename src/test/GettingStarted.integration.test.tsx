@@ -26,14 +26,7 @@ test('Signing in by importing an account with a seed phrase', async () => {
         .reply(200, [suiGetObjectResponse]);
     const validSeedPhrase =
         'girl empower human spring circle ceiling wild pact stumble model wheel chuckle';
-    const view = renderWithProviders(<App />);
-    act(() => {
-        // todo (mag): is this the right way to do this, or can we just set up the store with this state and avoid
-        // the act/dispatch indirection
-        view.store.dispatch(
-            initAppType(getFromLocationSearch(window.location.search))
-        );
-    });
+    renderWithProviders(<App />);
 
     await screen.findByText('The new web awaits');
     await userEvent.click(screen.getByText('Import', { exact: false }));

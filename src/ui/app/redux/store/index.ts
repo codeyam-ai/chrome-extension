@@ -8,8 +8,14 @@ import { NetworkSwitchMiddleware } from './middlewares/NetworkSwitchMiddleware';
 import { thunkExtras } from './thunk-extras';
 import rootReducer from '_redux/RootReducer';
 
-export function createStore() {
+import type { NoInfer } from '@reduxjs/toolkit/src/tsHelpers';
+import type { CombinedState, PreloadedState } from 'redux';
+
+export function createStore(
+    preloadedState: PreloadedState<CombinedState<NoInfer<unknown>>>
+) {
     return configureStore({
+        preloadedState: preloadedState,
         reducer: rootReducer,
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({
@@ -20,7 +26,7 @@ export function createStore() {
     });
 }
 
-const store = createStore();
+const store = createStore({});
 
 export default store;
 export type AppStore = ReturnType<typeof createStore>;

@@ -13,6 +13,7 @@ import type { RootState } from '_redux/RootReducer';
 import type { AppStore } from '_store';
 import type React from 'react';
 import type { PropsWithChildren } from 'react';
+import { AppType } from '_redux/slices/app/AppType';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: PreloadedState<RootState>;
@@ -24,7 +25,7 @@ export function renderWithProviders(
     {
         preloadedState = {},
         // Automatically create a store instance if no store was passed in
-        store = createStore(),
+        store = createStore({ app: { appType: AppType.fullscreen } }),
         ...renderOptions
     }: ExtendedRenderOptions = {}
 ) {
