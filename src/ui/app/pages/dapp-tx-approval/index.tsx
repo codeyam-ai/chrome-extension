@@ -4,6 +4,7 @@
 import { useCallback, useEffect, useMemo, useState, Fragment } from 'react';
 import { useParams } from 'react-router-dom';
 
+import Tooltip from '../../components/Tooltip';
 import { AppState } from '../../hooks/useInitializedGuard';
 import Check from '../../shared/svg/Check';
 import Loading from '_components/loading';
@@ -172,8 +173,9 @@ export function DappTxApprovalPage() {
         );
     }, [effects]);
 
+    const charges = useMemo(() => suiChange - (gas || 0), [suiChange, gas]);
     const [formattedCharges, chargesSymbol] = useFormatCoin(
-        suiChange - (gas || 0),
+        charges,
         '0x2::sui::SUI'
     );
     const [formattedGas, gasSymbol] = useFormatCoin(gas, '0x2::sui::SUI');
@@ -501,8 +503,17 @@ export function DappTxApprovalPage() {
                                 ) : (
                                     <div className="text-lg flex flex-col gap-6">
                                         <div className="flex flex-col gap-2">
-                                            <div className="text-md">
-                                                Impact
+                                            <div className="text-md flex flex-row gap-1 items-center">
+                                                Effects
+                                                <Tooltip
+                                                    tooltipText={
+                                                        'This transaction will have the following effects on the assets in your wallet.'
+                                                    }
+                                                >
+                                                    <div className="cursor-help flex justify-center items-center rounded-full bg-gray-400 text-white text-xs h-5 w-5 scale-75">
+                                                        ?
+                                                    </div>
+                                                </Tooltip>
                                             </div>
                                             <div className="text-sm">
                                                 <Detail
