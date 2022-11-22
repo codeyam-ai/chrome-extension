@@ -6,7 +6,7 @@ jest.mock('webextension-polyfill', () => {
     return fakeBrowser;
 });
 
-beforeAll(() => clearLocalStorage());
+beforeEach(() => clearLocalStorage());
 
 // ref: https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 // ref: https://github.com/jsdom/jsdom/issues/2524
