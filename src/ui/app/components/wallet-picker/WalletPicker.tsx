@@ -17,23 +17,27 @@ const WalletPicker = ({ isWalletEditing }: WalletPickerProps) => {
     );
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col h-full">
             <WalletList
                 hasTopPadding
                 wallets={accountInfos}
                 activeAccountIndex={activeAccountIndex}
                 isWalletEditing={isWalletEditing}
             />
-            {!isWalletEditing ? (
-                <CreateWalletButton />
-            ) : (
-                <div className="flex gap-2 py-4 px-5 place-content-center">
-                    <ArrowLongUpIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
-                    <Body textColor={TextColor.Medium}>
-                        Select the wallet you&apos;d like to edit
-                    </Body>
-                </div>
-            )}
+            <div className="border-t border-t-ethos-light-text-stroke dark:border-t-ethos-dark-text-stroke">
+                {!isWalletEditing ? (
+                    <div className="pt-6">
+                        <CreateWalletButton />
+                    </div>
+                ) : (
+                    <div className="flex gap-2 py-4 px-5 place-content-center">
+                        <ArrowLongUpIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                        <Body textColor={TextColor.Medium}>
+                            Select the wallet you&apos;d like to edit
+                        </Body>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

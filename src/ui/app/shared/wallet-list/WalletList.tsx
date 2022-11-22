@@ -16,9 +16,9 @@ const WalletList = ({
 }: WalletListProps) => {
     return (
         <div
-            className={`${
-                hasTopPadding ? 'pt-3' : 'pt-0'
-            } px-3 pb-4 flex flex-col gap-1`}
+            className={`${hasTopPadding ? 'pt-3' : 'pt-0'} ${
+                isWalletEditing ? 'h-[342px]' : 'h-[300px]'
+            } px-3 pb-4 flex flex-col gap-1 overflow-scroll`}
         >
             {wallets.map((wallet, key) => {
                 const isActive = (wallet.index || 0) === activeAccountIndex;
