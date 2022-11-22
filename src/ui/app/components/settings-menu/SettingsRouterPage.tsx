@@ -4,38 +4,42 @@
 import { useCallback } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
-import HeaderWithClose from '../../headers/section-headers/HeaderWithClose';
+import HeaderWithClose from '../../shared/headers/section-headers/HeaderWithClose';
 import {
-    useMenuIsOpen,
-    useMenuUrl,
-    useNextMenuUrl,
+    useSettingsIsOpen,
+    useSettingsUrl,
+    useNextSettingsUrl,
+    useSettingsIsOpenOnSubPage,
 } from '_components/menu/hooks';
 import { useOnKeyboardEvent } from '_hooks';
 import ConnectedApps from '_src/ui/app/components/menu/content/connected-apps';
 import Network from '_src/ui/app/components/menu/content/network';
 import Preapprovals from '_src/ui/app/components/menu/content/preapprovals';
 import ViewSeed from '_src/ui/app/components/menu/content/view-seed';
-import SettingsListPage from '_src/ui/app/components/settings/main-menu-page/SettingsListPage';
-import ImportWallet from '_src/ui/app/components/settings/subpages/ImportWallet';
+import SettingsHomePage from '_src/ui/app/components/settings-menu/SettingsHomePage';
+import ImportWalletPage from '_src/ui/app/components/settings-menu/subpages/ImportWalletPage';
 
-import PermissionsPage from '_src/ui/app/components/settings/subpages/PermissionsPage';
-import Security from '_src/ui/app/components/settings/subpages/Security';
+import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/PermissionsPage';
+import SecurityPage from '_src/ui/app/components/settings-menu/subpages/SecurityPage';
+import ThemePage from './subpages/ThemePage';
+import NavBarWithBackAndWalletPicker from '../../shared/navigation/nav-bar/NavBarWithBackAndWalletPicker';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
-function SettingsPage() {
-    const isOpen = useMenuIsOpen();
-    const menuUrl = useMenuUrl();
-    const menuHomeUrl = useNextMenuUrl(true, '/');
-    const closeMenuUrl = useNextMenuUrl(false);
+function SettingsRouterPage() {
+    const isOpen = useSettingsIsOpen();
+    const settingsIsOpenOnSubPage = useSettingsIsOpenOnSubPage();
+    const settingsUrl = useSettingsUrl();
+    const settingsHomeUrl = useNextSettingsUrl(true, '/');
+    const closeSettingsUrl = useNextSettingsUrl(false);
     const navigate = useNavigate();
     const handleOnCloseMenu = useCallback(() => {
         if (isOpen) {
-            navigate(closeMenuUrl);
+            navigate(closeSettingsUrl);
         }
-    }, [isOpen, navigate, closeMenuUrl]);
+    }, [isOpen, navigate, closeSettingsUrl]);
     useOnKeyboardEvent('keydown', CLOSE_KEY_CODES, handleOnCloseMenu, isOpen);
-    const expanded = menuUrl !== '/';
+    const expanded = settingsUrl !== '/';
 
     if (!isOpen) {
         return null;
@@ -55,22 +59,32 @@ function SettingsPage() {
                     'relative max-h-full overflow-y-auto drop-shadow-ethos-box-shadow sm:rounded-[20px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default'
                 }
             >
-                <HeaderWithClose
-                    title="Settings"
-                    onClickClose={handleOnCloseMenu}
-                />
-                <Routes location={menuUrl || ''}>
-                    <Route path="/" element={<SettingsListPage />} />
+                {!settingsIsOpenOnSubPage ? (
+                    <HeaderWithClose
+                        title="Settings"
+                        onClickClose={handleOnCloseMenu}
+                    />
+                ) : (
+                    <NavBarWithBackAndWalletPicker backUrl={settingsHomeUrl} />
+                )}
+                <Routes location={settingsUrl || ''}>
+                    <Route path="/" element={<SettingsHomePage />} />
                     <Route path="/settings/view-seed" element={<ViewSeed />} />
                     <Route path="/connected-apps" element={<ConnectedApps />} />
                     <Route path="/preapprovals" element={<Preapprovals />} />
                     <Route path="/network" element={<Network />} />
-                    <Route path="/security" element={<Security />} />
+                    <Route path="/theme" element={<ThemePage />} />
+                    <Route path="/security" element={<SecurityPage />} />
                     <Route path="/permissions" element={<PermissionsPage />} />
-                    <Route path="/import-wallet" element={<ImportWallet />} />
+                    <Route
+                        path="/import-wallet"
+                        element={<ImportWalletPage />}
+                    />
                     <Route
                         path="*"
-                        element={<Navigate to={menuHomeUrl} replace={true} />}
+                        element={
+                            <Navigate to={settingsHomeUrl} replace={true} />
+                        }
                     />
                 </Routes>
             </div>
@@ -78,4 +92,4 @@ function SettingsPage() {
     );
 }
 
-export default SettingsPage;
+export default SettingsRouterPage;

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import Permissions from '../../../../../background/Permissions';
-import { useNextMenuUrl } from '../hooks';
+import { useNextSettingsUrl } from '../hooks';
 import formatUrl from '_src/ui/app/helpers/format-url';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector, useMiddleEllipsis } from '_src/ui/app/hooks';
@@ -18,7 +18,7 @@ type GroupedPermissions = {
 };
 
 export default function ConnectedApps() {
-    const mainMenuUrl = useNextMenuUrl(true, '/');
+    const mainMenuUrl = useNextSettingsUrl(true, '/');
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
     const [permissions, setPermissions] = useState<Permission[]>([]);
     const [groupedPermissions, setGroupedPermissions] = useState<Record<

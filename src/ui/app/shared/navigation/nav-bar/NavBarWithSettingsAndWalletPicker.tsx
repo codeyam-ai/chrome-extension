@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom';
 
 import WalletProfile from '../../content/rows-and-lists/WalletProfile';
 import {
-    useMenuIsOpen,
-    useNextMenuUrl,
+    useSettingsIsOpen,
+    useNextSettingsUrl,
     useWalletPickerIsOpen,
 } from '_src/ui/app/components/menu/hooks';
 
-const NavBarWithMenu = () => {
-    const menuUrl = useNextMenuUrl(true);
-    const isMenuOpen = useMenuIsOpen();
+const NavBarWithSettingsAndWalletPicker = () => {
+    const menuUrl = useNextSettingsUrl(true);
+    const isMenuOpen = useSettingsIsOpen();
     const isWalletPickerOpen = useWalletPickerIsOpen();
 
     return (
@@ -27,4 +27,4 @@ const NavBarWithMenu = () => {
     );
 };
 
-export default NavBarWithMenu;
+export default NavBarWithSettingsAndWalletPicker;

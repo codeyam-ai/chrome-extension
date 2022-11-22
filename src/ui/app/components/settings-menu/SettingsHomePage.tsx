@@ -6,34 +6,29 @@ import {
     FireIcon,
     GlobeAltIcon,
     LockClosedIcon,
+    PaintBrushIcon,
     PlusCircleIcon,
     ShieldExclamationIcon,
     SignalIcon,
 } from '@heroicons/react/24/solid';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Browser from 'webextension-polyfill';
 
-import { useNextMenuUrl } from '_components/menu/hooks';
-import { LinkType } from '_src/enums/LinkType';
+import { useNextSettingsUrl } from '_components/menu/hooks';
 import {
     DASHBOARD_LINK,
     IFRAME_URL,
     MAILTO_SUPPORT_URL,
     ToS_LINK,
 } from '_src/shared/constants';
-import { getEncrypted } from '_src/shared/storagex/store';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { getEmail, logout, reset } from '_src/ui/app/redux/slices/account';
-import LinkList, {
-    type LinkItem,
-} from '_src/ui/app/shared/navigation/nav-bar/LinkList';
-import { API_ENV_TO_INFO } from '../../../ApiProvider';
-import { iframe } from '../../../helpers';
-import CreateWalletProvider from '../../wallet-picker/CreateWalletProvider';
-import SettingsList from './SettingsList';
+import { API_ENV_TO_INFO } from '../../ApiProvider';
+import { iframe } from '../../helpers';
+import CreateWalletProvider from '../wallet-picker/CreateWalletProvider';
+import SettingsList from '../../shared/navigation/nav-bar/SettingsList';
 
-const SettingsListPage = () => {
+const SettingsHomePage = () => {
     const orange = '#EE950F';
     const purple = '#9040F5';
     const blue = '#328EFA';
@@ -41,19 +36,16 @@ const SettingsListPage = () => {
     const pink = '#E81CA5';
 
     const [loading, setLoading] = useState(false);
-    // const [createWallet, setCreateWallet] = useState<() => void>(
-    //     () => () => null
-    // );
-    const testFn = () => {
-        console.log('FUCK');
-    };
-    const [createWallet, setCreateWallet] = useState<() => void>(() => testFn);
+    const [createWallet, setCreateWallet] = useState<() => void>(
+        () => () => null
+    );
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const networkUrl = useNextMenuUrl(true, '/network');
-    const securityUrl = useNextMenuUrl(true, '/security');
-    const permissionsUrl = useNextMenuUrl(true, '/permissions');
-    const importWalletUrl = useNextMenuUrl(true, '/import-wallet');
+    const networkUrl = useNextSettingsUrl(true, '/network');
+    const themeUrl = useNextSettingsUrl(true, '/theme');
+    const securityUrl = useNextSettingsUrl(true, '/security');
+    const permissionsUrl = useNextSettingsUrl(true, '/permissions');
+    const importWalletUrl = useNextSettingsUrl(true, '/import-wallet');
 
     const apiEnv = useAppSelector((state) => state.app.apiEnv);
     const networkName = API_ENV_TO_INFO[apiEnv].name;
@@ -129,6 +121,12 @@ const SettingsListPage = () => {
                                     iconWithNoClasses: <SignalIcon />,
                                     to: networkUrl,
                                     detailText: networkName,
+                                },
+                                {
+                                    text: 'Theme',
+                                    iconWithNoClasses: <PaintBrushIcon />,
+                                    to: themeUrl,
+                                    detailText: 'THEME HERE',
                                 },
                                 {
                                     text: 'Security',
@@ -344,4 +342,4 @@ const SettingsListPage = () => {
     // );
 };
 
-export default SettingsListPage;
+export default SettingsHomePage;

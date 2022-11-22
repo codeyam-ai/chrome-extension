@@ -4,15 +4,14 @@
 import { useMemo } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
-const MENU_PARAM = 'menu';
-const SETTINGS_PARAM = 'settings';
+const SETTINGS_PARAM = 'menu';
 export const WALLET_PICKER_PARAM = 'wallet-picker';
 const WALLET_EDITOR_PARAM = 'edit';
 
-export function useMenuUrl() {
+export function useSettingsUrl() {
     const [searchParams] = useSearchParams();
-    if (searchParams.has(MENU_PARAM)) {
-        return searchParams.get(MENU_PARAM) || '/';
+    if (searchParams.has(SETTINGS_PARAM)) {
+        return searchParams.get(SETTINGS_PARAM) || '/';
     }
     return false;
 }
@@ -25,14 +24,20 @@ export function useWalletPickerUrl() {
     return false;
 }
 
-export function useMenuIsOpen() {
-    const [searchParams] = useSearchParams();
-    return searchParams.has(MENU_PARAM);
-}
-
-export function useSettingsMenuIsOpen() {
+export function useSettingsIsOpen() {
     const [searchParams] = useSearchParams();
     return searchParams.has(SETTINGS_PARAM);
+}
+
+export function useSettingsIsOpenOnSubPage() {
+    const [searchParams] = useSearchParams();
+    const settingsParamValue = searchParams.get(SETTINGS_PARAM);
+    return (
+        settingsParamValue !== null &&
+        // Just a slash means the home page is open
+        settingsParamValue !== '/' &&
+        settingsParamValue.length > 0
+    );
 }
 
 export function useWalletPickerIsOpen() {
@@ -53,14 +58,14 @@ export function useWalletEditorIsOpen() {
  * @param isOpen Indicates if the menu will be open
  * @param nextMenuLocation The location within the menu
  */
-export function useNextMenuUrl(isOpen: boolean, nextMenuLocation = '/') {
+export function useNextSettingsUrl(isOpen: boolean, nextMenuLocation = '/') {
     const [searchParams] = useSearchParams();
     const { pathname } = useLocation();
     return useMemo(() => {
         if (isOpen) {
-            searchParams.set(MENU_PARAM, nextMenuLocation);
+            searchParams.set(SETTINGS_PARAM, nextMenuLocation);
         } else {
-            searchParams.delete(MENU_PARAM);
+            searchParams.delete(SETTINGS_PARAM);
         }
         const search = searchParams.toString();
         return `${pathname}${search ? '?' : ''}${search}`;

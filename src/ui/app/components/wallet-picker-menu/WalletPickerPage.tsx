@@ -5,9 +5,9 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useCallback, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
-import WalletProfile from '../../content/rows-and-lists/WalletProfile';
-import BodyLarge from '../../typography/BodyLarge';
-import EthosLink from '../../typography/EthosLink';
+import WalletProfile from '../../shared/content/rows-and-lists/WalletProfile';
+import BodyLarge from '../../shared/typography/BodyLarge';
+import EthosLink from '../../shared/typography/EthosLink';
 import {
     useNextWalletPickerUrl,
     useWalletEditorIsOpen,
@@ -20,6 +20,7 @@ import EditWallet from '_src/ui/app/components/wallet-picker/EditWallet';
 import WalletPicker from '_src/ui/app/components/wallet-picker/WalletPicker';
 
 import type { MouseEvent } from 'react';
+import NavBarWithCloseAndActionAndWalletPicker from '../../shared/navigation/nav-bar/NavBarWithCloseAndActionAndWalletPicker';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
@@ -54,7 +55,7 @@ function WalletPickerPage() {
 
     const closeWalletPicker = useCallback(() => {
         setIsWalletEditing(false);
-        navigate(closeWalletPickerUrl);
+        // navigate(closeWalletPickerUrl);
     }, [closeWalletPickerUrl, navigate]);
 
     if (!isWalletPickerOpen) {
@@ -71,22 +72,13 @@ function WalletPickerPage() {
             <div className="relative flex flex-col max-h-full drop-shadow-ethos-box-shadow rounded-b-[20px] sm:rounded-[20px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
                 {/* Nav bar: */}
                 {!isEditorOpen && (
-                    <div className="flex flex-row items-center justify-between p-6 border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
-                        <div className="flex flex-row gap-4 items-center">
-                            <button onClick={closeWalletPicker}>
-                                <XMarkIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
-                            </button>
-                            <BodyLarge isSemibold>
-                                <EthosLink
-                                    type={LinkType.None}
-                                    onClick={toggleIsWalletEditing}
-                                >
-                                    {isWalletEditing ? 'Done' : 'Edit'}
-                                </EthosLink>
-                            </BodyLarge>
-                        </div>
-                        <WalletProfile onClick={closeWalletPicker} />
-                    </div>
+                    <NavBarWithCloseAndActionAndWalletPicker
+                        closeUrl={closeWalletPickerUrl}
+                        onClickClose={closeWalletPicker}
+                        actionText={isWalletEditing ? 'Done' : 'Edit'}
+                        onClickAction={toggleIsWalletEditing}
+                        onClickWalletPicker={closeWalletPicker}
+                    />
                 )}
                 {/* Content: */}
                 <Routes location={walletPickerUrl || ''}>

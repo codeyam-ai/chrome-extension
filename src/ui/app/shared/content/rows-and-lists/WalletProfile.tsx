@@ -6,7 +6,10 @@ import { type AccountInfo } from '_src/ui/app/KeypairVault';
 import AccountAddress, {
     AddressMode,
 } from '_src/ui/app/components/account-address';
-import { useNextWalletPickerUrl } from '_src/ui/app/components/menu/hooks';
+import {
+    useNextWalletPickerUrl,
+    useWalletPickerIsOpen,
+} from '_src/ui/app/components/menu/hooks';
 import { useAppSelector } from '_src/ui/app/hooks';
 
 // This component contains the wallet icon, name, and address
@@ -18,7 +21,9 @@ const WalletProfile = ({ onClick }: { onClick?: () => void }) => {
                     (accountInfo.index || 0) === activeAccountIndex
             )
     );
+    const isWalletPickerOpen = useWalletPickerIsOpen();
     const walletPickerUrl = useNextWalletPickerUrl(true, '/');
+    const closeWalletPickerUrl = useNextWalletPickerUrl(false);
 
     const WalletPicker = () => (
         <div className="flex flex-row gap-2 items-center">
@@ -37,7 +42,7 @@ const WalletProfile = ({ onClick }: { onClick?: () => void }) => {
     return (
         <div className="flex flex-row gap-2 items-center">
             <div className="flex flex-row gap-2 items-center py-1">
-                {onClick ? (
+                {/* {onClick ? (
                     <div onClick={onClick} className="cursor-pointer">
                         <WalletPicker />
                     </div>
@@ -45,7 +50,17 @@ const WalletProfile = ({ onClick }: { onClick?: () => void }) => {
                     <Link to={walletPickerUrl}>
                         <WalletPicker />
                     </Link>
-                )}
+                )} */}
+                <Link
+                    to={
+                        isWalletPickerOpen
+                            ? closeWalletPickerUrl
+                            : walletPickerUrl
+                    }
+                    onClick={onClick}
+                >
+                    <WalletPicker />
+                </Link>
             </div>
             <AccountAddress
                 showName={false}

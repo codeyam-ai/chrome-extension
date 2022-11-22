@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useNextMenuUrl } from '../hooks';
+import { useNextSettingsUrl } from '../hooks';
 import Transactions from '_src/background/Transactions';
 import { useAppSelector, useMiddleEllipsis } from '_src/ui/app/hooks';
 import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
@@ -16,7 +16,7 @@ type GroupedPreapprovals = {
 };
 
 export default function Preapprovals() {
-    const mainMenuUrl = useNextMenuUrl(true, '/');
+    const mainMenuUrl = useNextSettingsUrl(true, '/');
 
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
     const [preapprovals, setPreapprovals] = useState<PreapprovalRequest[]>([]);
