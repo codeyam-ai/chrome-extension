@@ -1,8 +1,6 @@
-import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 import { type ReactNode } from 'react';
-import { Link } from 'react-router-dom';
 import Browser from 'webextension-polyfill';
-import BodyLarge from '../../../shared/typography/BodyLarge';
+import EthosLogoGrayscale from '_src/ui/app/shared/svg/EthosLogoGrayscale';
 import SettingsListItem from './SettingsListItem';
 
 export interface SettingsListSectionItem {
@@ -46,7 +44,7 @@ const SettingsList = ({ listSections }: SettingsListProps) => {
                 <SettingsListItem
                     item={{
                         text: 'Ethos Wallet',
-                        iconWithNoClasses: <ArrowUpRightIcon />,
+                        iconWithNoClasses: <EthosLogoGrayscale />,
                         detailText: 'v' + Browser.runtime.getManifest().version,
                     }}
                     color=""
