@@ -8,7 +8,6 @@ import { useAppDispatch, useMiddleEllipsis } from '../../hooks';
 import { saveActiveAccountIndex } from '../../redux/slices/account';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
-import { TextColor } from '_src/enums/Typography';
 
 interface WalletButtonProps {
     wallet: AccountInfo;
@@ -56,7 +55,7 @@ const WalletButton = ({
                 />
                 <div className="flex flex-col text-left">
                     <BodyLarge>{wallet.name}</BodyLarge>
-                    <Body textColor={TextColor.Medium}>{shortenedAddress}</Body>
+                    <Body isTextColorMedium>{shortenedAddress}</Body>
                 </div>
             </div>
             <div>

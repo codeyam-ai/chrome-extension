@@ -1,6 +1,5 @@
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
-import { TextColor } from '_src/enums/Typography';
 
 export interface InputProps
     extends React.DetailedHTMLProps<
@@ -36,9 +35,7 @@ const Input = ({
                 </label>
             )}
             <input id={id} className={inputClasses} {...reactProps} />
-            {description && (
-                <Body textColor={TextColor.Medium}>{description}</Body>
-            )}
+            {description && <Body isTextColorMedium>{description}</Body>}
             {errorText && (
                 <span className="text-ethos-light-red dark:text-ethos-dark-red">
                     {errorText}

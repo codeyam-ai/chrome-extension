@@ -1,22 +1,20 @@
 import { type ReactNode } from 'react';
 
-import { TextColor } from '_src/enums/Typography';
-
 export type TypographyProps = {
     as?: React.ElementType;
-    textColor?: TextColor;
+    isTextColorMedium?: boolean;
     className?: string;
     children: ReactNode;
 };
 
 const Typography = ({
     as: ComponentType = 'div',
-    textColor = TextColor.Default,
+    isTextColorMedium,
     className,
     children,
 }: TypographyProps) => {
     let textColorClasses = '';
-    if (textColor === TextColor.Medium) {
+    if (isTextColorMedium) {
         textColorClasses =
             ' ' +
             'text-ethos-light-text-medium dark:text-ethos-dark-text-medium';

@@ -17,7 +17,7 @@ const BodyLarge = ({ isSemibold, ...props }: BodyLargeProps) => {
         <Typography
             className={props.className + ' ' + bodyLargeClasses}
             as={props.as}
-            textColor={props.textColor}
+            isTextColorMedium={props.isTextColorMedium}
         >
             {props.children}
         </Typography>

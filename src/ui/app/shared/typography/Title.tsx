@@ -7,7 +7,7 @@ const Title = (props: TypographyProps) => {
         <Typography
             className={props.className + ' ' + titleClasses}
             as={props.as}
-            textColor={props.textColor}
+            isTextColorMedium={props.isTextColorMedium}
         >
             {props.children}
         </Typography>

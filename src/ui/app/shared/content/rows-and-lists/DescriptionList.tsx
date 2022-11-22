@@ -1,7 +1,6 @@
 import { type ReactNode } from 'react';
 
 import Body from '../../typography/Body';
-import { TextColor } from '_src/enums/Typography';
 
 type LabelAndDescription = {
     label: string;
@@ -19,9 +18,7 @@ const DescriptionList = ({ labelAndDescriptions }: DescriptionListProps) => {
                 return (
                     <div className="flex flex-col gap-2 pt-2" key={key}>
                         <Body isSemibold={true}>{item.label}</Body>
-                        <Body textColor={TextColor.Medium}>
-                            {item.description}
-                        </Body>
+                        <Body isTextColorMedium>{item.description}</Body>
                     </div>
                 );
             })}

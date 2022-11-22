@@ -1,4 +1,13 @@
-import { useRef, useCallback } from 'react';
+import React, {
+    useRef,
+    useCallback,
+    ReactComponentElement,
+    ReactHTMLElement,
+    ReactNode,
+    useEffect,
+    Dispatch,
+    SetStateAction,
+} from 'react';
 
 import { type AccountInfo } from '../../KeypairVault';
 import getNextWalletColor from '../../helpers/getNextWalletColor';
@@ -12,7 +21,21 @@ import { thunkExtras } from '../../redux/store/thunk-extras';
 import Button from '../../shared/buttons/Button';
 import Authentication from '_src/background/Authentication';
 
-const CreateWalletButton = () => {
+/*
+    Because creating a wallet extensively uses hooks (and hooks can't be used outside
+    react components), this component wraps a given component and provides a function
+    to be called that creates a new wallet and navigates to the home page.
+*/
+
+interface CreateWalletProviderProps {
+    setCreateWallet: Dispatch<SetStateAction<() => void>>;
+    children: JSX.Element;
+}
+
+const CreateWalletProvider = ({
+    setCreateWallet,
+    children,
+}: CreateWalletProviderProps) => {
     const dispatch = useAppDispatch();
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
     const authentication = useAppSelector(
@@ -64,6 +87,8 @@ const CreateWalletButton = () => {
     }, [authentication, dispatch, getAccountInfos]);
 
     const createWallet = useCallback(() => {
+        console.log('creating wallet!');
+
         const loadAccFromStorage = async () => {
             const sortedAccountIndices = accountInfos
                 .map((a) => a.index || 0)
@@ -107,11 +132,11 @@ const CreateWalletButton = () => {
         _saveAccountInfos();
     }, [keypairVault, authentication, accountInfos, _saveAccountInfos]);
 
-    return (
-        <Button buttonStyle="primary" onClick={createWallet}>
-            Create Wallet
-        </Button>
-    );
+    useEffect(() => {
+        setCreateWallet(() => createWallet);
+    }, [setCreateWallet, accountInfos]);
+
+    return children;
 };
 
-export default CreateWalletButton;
+export default CreateWalletProvider;

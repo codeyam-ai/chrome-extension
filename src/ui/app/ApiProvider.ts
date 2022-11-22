@@ -31,9 +31,9 @@ type ApiEndpoints = {
 } | null;
 export const API_ENV_TO_INFO: Record<API_ENV, EnvInfo> = {
     [API_ENV.local]: { name: 'Local' },
-    [API_ENV.devNet]: { name: 'Sui Devnet' },
+    [API_ENV.devNet]: { name: 'Devnet' },
     [API_ENV.customRPC]: { name: 'Custom RPC URL' },
-    [API_ENV.testNet]: { name: 'Sui Testnet' },
+    [API_ENV.testNet]: { name: 'Testnet' },
 };
 
 export const ENV_TO_API: Record<API_ENV, ApiEndpoints> = {

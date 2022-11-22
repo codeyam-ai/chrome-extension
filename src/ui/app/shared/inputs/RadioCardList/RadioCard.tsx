@@ -3,7 +3,6 @@ import { type ReactNode } from 'react';
 
 import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
-import { TextColor } from '_src/enums/Typography';
 
 export type RadioCardItem = {
     icon: ReactNode;
@@ -29,7 +28,7 @@ const RadioCard = ({ item }: RadioCardProps) => {
             {icon}
             <span className="flex flex-col text-left">
                 <BodyLarge>{title}</BodyLarge>
-                <Body textColor={TextColor.Medium}>{subtitle}</Body>
+                <Body isTextColorMedium>{subtitle}</Body>
             </span>
             <span className="flex-1">
                 {selected && (

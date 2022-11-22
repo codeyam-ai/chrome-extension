@@ -1,6 +1,5 @@
 import Subheader from '../../typography/Subheader';
 import Title from '../../typography/Title';
-import { TextColor } from '_src/enums/Typography';
 
 type LargePageHeaderWIthIconProps = {
     iconSrc: string;
@@ -25,7 +24,7 @@ const LargePageHeaderWIthIcon = ({
                 />
             </div>
             <Title as="h1">{header}</Title>
-            <Subheader textColor={TextColor.Medium}>{description}</Subheader>
+            <Subheader isTextColorMedium>{description}</Subheader>
         </div>
     );
 };

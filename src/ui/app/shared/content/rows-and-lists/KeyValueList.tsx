@@ -1,5 +1,4 @@
 import Body from '../../typography/Body';
-import { TextColor } from '_src/enums/Typography';
 
 type KeyNameAndValue = {
     keyName: string;
@@ -16,7 +15,7 @@ const KeyValueList = ({ keyNamesAndValues }: KeyValueListProps) => {
             {keyNamesAndValues.map((item, key) => {
                 return (
                     <div className="flex flex-row justify-between" key={key}>
-                        <Body textColor={TextColor.Medium}>{item.keyName}</Body>
+                        <Body isTextColorMedium>{item.keyName}</Body>
                         <Body>{item.value}</Body>
                     </div>
                 );

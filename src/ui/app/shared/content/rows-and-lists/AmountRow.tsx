@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import Body from '../../typography/Body';
 import Header from '../../typography/Header';
 import Subheader from '../../typography/Subheader';
-import { TextColor } from '_src/enums/Typography';
+
 import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
 
 interface AmountRowProps {
@@ -24,7 +24,7 @@ const AmountRow = ({ type, balance }: AmountRowProps) => {
         <div className="flex flex-row gap-2 items-center px-6 pb-2">
             <Header>{balanceFormatted}</Header>
             <Subheader>{symbol}</Subheader>
-            <Body textColor={TextColor.Medium}>{usdAmount}</Body>
+            <Body isTextColorMedium>{usdAmount}</Body>
         </div>
     );
 };

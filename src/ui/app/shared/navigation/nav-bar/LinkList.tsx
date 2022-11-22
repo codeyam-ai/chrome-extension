@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import Body from '../../typography/Body';
 import { LinkType } from '_src/enums/LinkType';
-import { TextColor } from '_src/enums/Typography';
+
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import { useExplorerPermission } from '_src/ui/app/hooks';
 
@@ -38,9 +38,7 @@ const LinkList = ({ linkItems }: LinkListProps) => {
                         </span>
                         <Body>{item.title}</Body>
                         {item.subtitle && (
-                            <Body textColor={TextColor.Medium}>
-                                {item.subtitle}
-                            </Body>
+                            <Body isTextColorMedium>{item.subtitle}</Body>
                         )}
                         <div className="flex-1">
                             {(item.to || item.onClick) && (

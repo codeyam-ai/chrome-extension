@@ -14,8 +14,11 @@ import ConnectedApps from '_src/ui/app/components/menu/content/connected-apps';
 import Network from '_src/ui/app/components/menu/content/network';
 import Preapprovals from '_src/ui/app/components/menu/content/preapprovals';
 import ViewSeed from '_src/ui/app/components/menu/content/view-seed';
+import SettingsListPage from '_src/ui/app/components/settings/main-menu-page/SettingsListPage';
+import ImportWallet from '_src/ui/app/components/settings/subpages/ImportWallet';
 
-import SettingsList from '_src/ui/app/components/settings/SettingsList';
+import PermissionsPage from '_src/ui/app/components/settings/subpages/PermissionsPage';
+import Security from '_src/ui/app/components/settings/subpages/Security';
 import HeaderWithClose from '../../headers/section-headers/HeaderWithClose';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
@@ -57,11 +60,14 @@ function SettingsPage() {
                     onClickClose={handleOnCloseMenu}
                 />
                 <Routes location={menuUrl || ''}>
-                    <Route path="/" element={<SettingsList />} />
+                    <Route path="/" element={<SettingsListPage />} />
                     <Route path="/settings/view-seed" element={<ViewSeed />} />
                     <Route path="/connected-apps" element={<ConnectedApps />} />
                     <Route path="/preapprovals" element={<Preapprovals />} />
                     <Route path="/network" element={<Network />} />
+                    <Route path="/security" element={<Security />} />
+                    <Route path="/permissions" element={<PermissionsPage />} />
+                    <Route path="/import-wallet" element={<ImportWallet />} />
                     <Route
                         path="*"
                         element={<Navigate to={menuHomeUrl} replace={true} />}

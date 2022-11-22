@@ -16,7 +16,7 @@ const Body = ({ isSemibold, ...props }: BodyProps) => {
         <Typography
             className={`${props.className || ''} ${bodyClasses}`}
             as={props.as}
-            textColor={props.textColor}
+            isTextColorMedium={props.isTextColorMedium}
         >
             {props.children}
         </Typography>
