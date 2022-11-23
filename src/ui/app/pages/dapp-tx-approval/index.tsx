@@ -25,13 +25,6 @@ import type { SuiJsonValue, TypeTag, TransactionEffects } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 
 import st from './DappTxApprovalPage.module.scss';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
-
-enum ImpactIcon {
-    SAFE = 'safe',
-    WARNING = 'warning',
-    DANGER = 'danger',
-}
 
 const truncateMiddle = (s = '', length = 6) =>
     s.length > length * 2.5
@@ -320,9 +313,6 @@ export function DappTxApprovalPage() {
                     {count}
                 </div>
                 <div>{label}</div>
-                <div className="w-6">
-                    <ChevronDownIcon />
-                </div>
             </div>
         );
     };
@@ -511,11 +501,6 @@ export function DappTxApprovalPage() {
                     </div>
                     <div className="flex flex-row items-center gap-1">
                         <div className="dark:text-gray-400">{value}</div>
-                        {detail && (
-                            <div>
-                                <ChevronDownIcon />
-                            </div>
-                        )}
                     </div>
                 </div>
                 {detail && showDetail && detail}
@@ -549,6 +534,18 @@ export function DappTxApprovalPage() {
                     rejectTitle="Reject"
                     onSubmit={handleOnSubmit}
                 >
+                    <div className="flex flex-row justify-between items-baseline text-lg pb-6">
+                        <div className="border-b-2 border-b-black px-3 py-1">
+                            Summary
+                        </div>
+                        <div className="border-b-2 border-b-slate-400 text-slate-400 px-3 py-1">
+                            Assets
+                        </div>
+                        <div className="border-b-2 border-b-slate-400 text-slate-400 px-3 py-1">
+                            Details
+                        </div>
+                    </div>
+
                     <div className="flex flex-col gap-6 grow">
                         {valuesContent.length > 0 && (
                             <div className="flex flex-col gap-2">
@@ -703,7 +700,7 @@ export function DappTxApprovalPage() {
                                     </div>
                                 )}
 
-                                {detailedValuesContent &&
+                                {/* {detailedValuesContent &&
                                     detailedValuesContent.length > 0 && (
                                         <div>
                                             <div
@@ -749,7 +746,7 @@ export function DappTxApprovalPage() {
                                                 </div>
                                             )}
                                         </div>
-                                    )}
+                                    )} */}
                             </Loading>
                         )}
                     </div>
