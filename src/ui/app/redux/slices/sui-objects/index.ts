@@ -105,11 +105,16 @@ export const transferNFT = createAsyncThunk<
     'transferNFT',
     async (data, { extra: { api, keypairVault }, getState, dispatch }) => {
         const {
-            account: { activeAccountIndex },
+            account: { activeAccountIndex, authentication, address },
         } = getState();
-        const signer = api.getSignerInstance(
-            keypairVault.getKeyPair(activeAccountIndex)
-        );
+        let signer;
+        if (authentication) {
+            signer = api.getEthosSignerInstance(address || '', authentication);
+        } else {
+            signer = api.getSignerInstance(
+                keypairVault.getKeyPair(activeAccountIndex)
+            );
+        }
         const txn = await signer.transferObject({
             objectId: data.nftId,
             recipient: data.recipientAddress,
