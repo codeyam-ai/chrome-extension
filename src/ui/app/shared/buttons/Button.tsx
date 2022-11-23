@@ -19,7 +19,7 @@ const buttonChildrenClassNames =
     'inline-flex items-center justify-center gap-2';
 
 const baseButtonClassNames =
-    'w-full w-full p-3 mb-6 border border-transparent rounded-lg';
+    'w-full w-full p-4 mb-6 border border-transparent rounded-2xl';
 
 const primaryButtonClassNames =
     baseButtonClassNames +

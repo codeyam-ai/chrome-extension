@@ -3,18 +3,14 @@ import {
     ExclaimationTriangleIcon,
     PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
-import { Link } from 'react-router-dom';
 
-import Body from '../../typography/Body';
-import BodyLarge from '../../typography/BodyLarge';
 import { formatDate } from '_helpers';
-import { TextColor } from '_src/enums/Typography';
-import { useFormatCoin, useMiddleEllipsis } from '_src/ui/app/hooks';
-
+import { useMiddleEllipsis } from '_src/ui/app/hooks';
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
+import { ActivityRow } from './ActivityRow';
 
 interface TransactionRowProps {
-    txn: TxResultState;
+    txn: any; // TODO: Update when NFT events are complete
 }
 
 const TRUNCATE_MAX_LENGTH = 8;
@@ -24,6 +20,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
     const drilldownLink = `/receipt?${new URLSearchParams({
         txdigest: txn.txId,
     }).toString()}`;
+
     const toAddrStr = useMiddleEllipsis(
         txn.to || '',
         TRUNCATE_MAX_LENGTH,
@@ -42,8 +39,10 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
 
     const iconClasses =
         'h-6 w-6 text-ethos-light-text-medium dark:text-ethos-dark-text-medium';
+
     //TODO update the logic to account for other transfer type
     let TxIcon: JSX.Element;
+
     if (txn.status === 'failure') {
         TxIcon = <ExclaimationTriangleIcon className={iconClasses} />;
     } else if (txn.isSender) {
@@ -62,33 +61,16 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
           ])
         : false;
 
-    const [formattedAmount] = useFormatCoin(
-        txn.amount,
-        txn.coinType || '0x2::sui::SUI'
-    );
-
     return (
-        <Link
-            to={drilldownLink}
-            className="flex flex-row items-center gap-2 py-2"
-        >
-            {TxIcon}
-            <span className="flex flex-col text-left">
-                <BodyLarge>
-                    {txn.kind} {date || ''}
-                </BodyLarge>
-                <Body textColor={TextColor.Medium}>
-                    {displayAction} {displayAddress}
-                </Body>
-            </span>
-            <span className="flex-1">
-                {txn.amount && (
-                    <BodyLarge className="float-right text-right">
-                        {formattedAmount} SUI
-                    </BodyLarge>
-                )}
-            </span>
-        </Link>
+        <ActivityRow
+            icon={TxIcon}
+            link={drilldownLink}
+            header={txn.kind + ' ' + date || ''}
+            subheader={displayAction + ' ' + displayAddress}
+            txAmount={txn.amount}
+            coinType={txn.coinType}
+            amountSubtext={'SUI'}
+        />
     );
 };
 

@@ -1,4 +1,4 @@
-import Title from '../../typography/Title';
+import Header from '../../typography/Header';
 
 interface TextPageTitleProps {
     title: string;
@@ -8,14 +8,14 @@ interface TextPageTitleProps {
 const TextPageTitle = ({ title, count }: TextPageTitleProps) => {
     return (
         <div className="p-6 text-left">
-            <Title>
+            <Header>
                 {title}
                 {count && (
                     <span className={'pl-2 text-ethos-light-text-medium'}>
                         {count}
                     </span>
                 )}
-            </Title>
+            </Header>
         </div>
     );
 };

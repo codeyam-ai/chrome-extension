@@ -13,13 +13,17 @@ import { useAppSelector, useMiddleEllipsis, useNFTBasicData } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
-import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
-import Body from '_src/ui/app/shared/typography/Body';
+import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
+import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
+import Title from '_src/ui/app/shared/typography/Title';
+import Typography from '_src/ui/app/shared/typography/Typography';
+import CircleElipsis from '_src/ui/app/shared/svg/CircleElipsis';
 
 import type { SuiObject } from '@mysten/sui.js';
 import type { ButtonHTMLAttributes } from 'react';
 
-import st from './NFTDetails.module.scss';
+import NFTTransactionRows from '_src/ui/app/shared/content/rows-and-lists/NFTTransactionRows';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 const TRUNCATE_MAX_LENGTH = 10;
 const TRUNCATE_PREFIX_LENGTH = 6;
@@ -39,100 +43,59 @@ function NFTdetailsContent({
         TRUNCATE_PREFIX_LENGTH
     );
 
-    // const NFTDetails = (
-    //     <div className="mt-5 p-5 rounded-md dark:bg-gray-700">
-    //         <div className="flex flex-row items-center justify-between">
-    //             <div className={st.label}>Object ID</div>
-    //             <div className={st.value}>
-    //                 <ExplorerLink
-    //                     type={ExplorerLinkType.object}
-    //                     objectID={nftObjectID}
-    //                     title="View on Sui Explorer"
-    //                     className={st.explorerLink}
-    //                     showIcon={false}
-    //                 >
-    //                     {shortenedObjectId}
-    //                 </ExplorerLink>
-    //             </div>
-    //         </div>
-
-    //         {fileExtentionType.name !== '' && (
-    //             <div className={st.nftItemDetail}>
-    //                 <div className={st.label}>Media Type</div>
-    //                 <div className={st.value}>
-    //                     {fileExtentionType?.name} {fileExtentionType.type}
-    //                 </div>
-    //             </div>
-    //         )}
-    //     </div>
-    // );
+    console.log('nft data: ', nftFields);
 
     return (
         <>
-            <div className={st.container}>
-                <NavBarWithBackAndTitle
-                    // title={nftFields?.name}
-                    backLink="/nfts"
-                />
-                <div className="text-center w-full">
-                    <Body className="pb-2">{nftFields?.name}</Body>
-                    <img
-                        className="mx-auto h-36 w-36 mb-4 shadow-sm rounded-2xl"
-                        src={filePath || ''}
-                        alt={fileExtentionType?.name || 'NFT'}
-                    />
-                    <div className="mb-4">
-                        <ExplorerLink
-                            type={ExplorerLinkType.object}
-                            objectID={nftObjectID}
-                        >
-                            View On Sui Explorer →
-                        </ExplorerLink>
+            <div>
+                <PageScrollView>
+                    <div className="text-center w-full p-6">
+                        <BlurredImage
+                            imgSrc={filePath || ''}
+                            fileExt={fileExtentionType?.name || 'NFT'}
+                        />
+                        <div className="mb-4 py-6">
+                            <div
+                                className={
+                                    'flex flex-row justify-between mb-2 items-center'
+                                }
+                            >
+                                <Title>{nftFields?.name}</Title>
+                                <div>
+                                    <CircleElipsis />
+                                </div>
+                            </div>
+                            <Typography
+                                className={
+                                    'text-left text-ethos-light-text-medium font-weight-normal mb-6 text-size-ethos-subheader leading-line-height-ethos-subheader'
+                                }
+                            >
+                                SuiGod Collection
+                            </Typography>
+                            <ExplorerLink
+                                type={ExplorerLinkType.object}
+                                objectID={nftObjectID}
+                                className={'w-full'}
+                            >
+                                <Button
+                                    isInline
+                                    buttonStyle="primary"
+                                    className={
+                                        'text-ethos-dark-text-default w-full mb-6'
+                                    }
+                                >
+                                    View NFT
+                                </Button>
+                            </ExplorerLink>
+                            <div className={'w-full text-left'}>
+                                <BodyLarge className={'font-semibold mb-3'}>
+                                    Activity
+                                </BodyLarge>
+                                <NFTTransactionRows />
+                            </div>
+                        </div>
                     </div>
-                    <KeyValueList
-                        keyNamesAndValues={[
-                            {
-                                keyName: 'Object ID',
-                                value: shortenedObjectId,
-                            },
-                        ]}
-                    />
-                </div>
-                {/* This margin top is a temporary fix - we need to figure out if the page should scroll */}
-                {hasPublicTransfer(nft) && (
-                    <Button
-                        buttonStyle="primary"
-                        className="-mt-[15px]"
-                        onClick={onClick}
-                    >
-                        Send
-                    </Button>
-                )}
-                {/* <BottomMenuLayout>
-                    <Content>
-                        <section className={st.nftDetail}>
-                            <NFTDisplayCard
-                                nftobj={nft}
-                                size="large"
-                                expandable={true}
-                            />
-                            {NFTDetails}
-                        </section>
-                    </Content>
-                    <Menu stuckClass={st.shadow} className={st.shadow}>
-                        <Button
-                            buttonStyle={ButtonStyle.PRIMARY}
-                            onClick={onClick}
-                            className="mt-2"
-                        >
-                            <Icon
-                                className="mr-2 text-xs"
-                                icon={SuiIcons.Send}
-                            />
-                            Send
-                        </Button>
-                    </Menu>
-                </BottomMenuLayout> */}
+                </PageScrollView>
             </div>
         </>
     );
