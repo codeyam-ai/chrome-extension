@@ -67,7 +67,7 @@ module.exports = {
 
                 // Background
                 'ethos-light-background-default': '#FFFFFF',
-                'ethos-light-background-light': '#F3F4F6',
+                'ethos-light-background-secondary': '#F2F2F2',
                 'ethos-light-background-accent': '#EDE9FE',
 
                 // Text and stroke
@@ -85,16 +85,13 @@ module.exports = {
                 'ethos-light-green': '#16A349',
                 'ethos-light-red': '#EF4444',
 
-                // Input
-                'ethos-input-background': '#F2F2F2',
-
                 // ==========
                 // Dark mode
                 // ==========
 
                 // Background
                 'ethos-dark-background-default': '#1F2937',
-                'ethos-dark-background-light': '#374151',
+                'ethos-dark-background-secondary': '#1A1C26',
                 'ethos-dark-background-accent': '#374151',
 
                 // Text and stroke

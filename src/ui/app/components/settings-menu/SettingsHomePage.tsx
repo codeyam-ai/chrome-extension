@@ -11,7 +11,7 @@ import {
     ShieldExclamationIcon,
     SignalIcon,
 } from '@heroicons/react/24/solid';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useNextSettingsUrl } from '_components/menu/hooks';
@@ -27,6 +27,7 @@ import { API_ENV_TO_INFO } from '../../ApiProvider';
 import { iframe } from '../../helpers';
 import CreateWalletProvider from '../wallet-picker/CreateWalletProvider';
 import SettingsList from '../../shared/navigation/nav-bar/SettingsList';
+import { ThemeContext } from '_src/shared/utils/themeContext';
 
 const SettingsHomePage = () => {
     const orange = '#EE950F';
@@ -46,6 +47,10 @@ const SettingsHomePage = () => {
     const securityUrl = useNextSettingsUrl(true, '/security');
     const permissionsUrl = useNextSettingsUrl(true, '/permissions');
     const importWalletUrl = useNextSettingsUrl(true, '/import-wallet');
+    const { theme } = useContext(ThemeContext);
+    const themeDisplay = useMemo(() => {
+        return theme.charAt(0).toUpperCase() + theme.slice(1);
+    }, [theme]);
 
     const apiEnv = useAppSelector((state) => state.app.apiEnv);
     const networkName = API_ENV_TO_INFO[apiEnv].name;
@@ -126,7 +131,7 @@ const SettingsHomePage = () => {
                                     text: 'Theme',
                                     iconWithNoClasses: <PaintBrushIcon />,
                                     to: themeUrl,
-                                    detailText: 'THEME HERE',
+                                    detailText: themeDisplay,
                                 },
                                 {
                                     text: 'Security',

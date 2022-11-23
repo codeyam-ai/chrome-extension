@@ -15,13 +15,13 @@ interface SegmentedControlProps {
 const SegmentedControl = ({ items }: SegmentedControlProps) => {
     return (
         <div className="flex flex-col px-6 pb-6">
-            <div className="flex gap-[2px] p-1 rounded-xl bg-ethos-input-background shadow-ethos-shadow-small">
+            <div className="flex gap-[2px] p-1 rounded-xl bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary shadow-ethos-shadow-small">
                 {items.map((item, key) => {
                     return (
                         <div
                             className={`flex grow gap-2 p-2 rounded-lg justify-center items-center cursor-pointer ${
                                 item.isActive
-                                    ? 'border-[.5px] border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke bg-ethos-light-background-default dark:bg-ethos-dark-background-default'
+                                    ? 'shadow-ethos-shadow-small border-[.5px] border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke bg-ethos-light-background-default dark:bg-ethos-dark-background-default'
                                     : ''
                             }`}
                             onClick={item.onClick}

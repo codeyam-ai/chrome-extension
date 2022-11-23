@@ -2,7 +2,7 @@ import { createContext, useState, useEffect } from 'react';
 
 import type { ReactNode } from 'react';
 
-type ThemeName = 'light' | 'dark' | string;
+type ThemeName = 'system' | 'light' | 'dark' | string;
 type ThemeContextType = {
     theme: ThemeName;
     setTheme: (name: ThemeName) => void;
@@ -16,6 +16,7 @@ const getInitialTheme = () => {
         }
 
         const userMedia = window.matchMedia('(prefers-color-scheme:dark)');
+        console.log('userMedia :>> ', userMedia);
         if (userMedia.matches) {
             return 'dark';
         }
