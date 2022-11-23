@@ -1,6 +1,7 @@
 import Body from '../typography/Body';
 import EthosLink from '../typography/EthosLink';
 import Subheader from '../typography/Subheader';
+import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { LinkType } from '_src/enums/LinkType';
 import { TextColor } from '_src/enums/Typography';
 
@@ -22,15 +23,21 @@ const EmptyPageState = ({
     linkUrl,
 }: EmptyPageStateProps) => {
     return (
-        <div className="flex flex-col gap-2 pt-8 px-6">
-            <span className="mx-auto h-16 w-16 text-ethos-light-text-medium dark:text-ethos-dark-text-medium">
-                {iconWithNoClasses}
-            </span>
+        <div className="flex flex-col gap-2 pt-6 px-6">
+            <div className="mx-auto">{iconWithNoClasses}</div>
             <Subheader as="h3">{title}</Subheader>
             <Body textColor={TextColor.Medium}>{subtitle}</Body>
             <Body>
                 <EthosLink to={linkUrl} type={LinkType.External}>
-                    {linkText}
+                    <span>{linkText}</span>
+                    <ArrowRightIcon
+                        width={20}
+                        height={20}
+                        style={{
+                            display: 'inline',
+                            padding: '5px',
+                        }}
+                    />
                 </EthosLink>
             </Body>
         </div>
