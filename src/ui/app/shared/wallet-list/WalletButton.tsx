@@ -24,7 +24,7 @@ const WalletButton = ({
 }: WalletButtonProps) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const shortenedAddress = useMiddleEllipsis(wallet.address, 9, 5);
+    const shortenedAddress = useMiddleEllipsis(wallet.address, 16, 9);
     const editWalletUrl = useEditWalletUrl(wallet.index);
 
     const switchToThisWallet = useCallback(async () => {
@@ -53,7 +53,7 @@ const WalletButton = ({
                 <div
                     className="h-10 w-10 rounded-full flex items-center justify-center"
                     style={{
-                        backgroundColor: wallet.color,
+                        backgroundColor: wallet.color || '#742AC2',
                     }}
                 />
                 <div className="flex flex-col text-left">

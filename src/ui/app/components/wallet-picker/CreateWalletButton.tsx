@@ -54,7 +54,7 @@ const CreateWalletButton = () => {
         if (authentication) {
             Authentication.updateAccountInfos(draftAccountInfos.current);
             await dispatch(setAccountInfos(draftAccountInfos.current));
-            setAccountInfos(draftAccountInfos.current);
+            await Authentication.getAccountInfos(true);
         } else {
             await dispatch(clearForNetworkOrWalletSwitch());
             await dispatch(saveAccountInfos(draftAccountInfos.current));
@@ -85,6 +85,7 @@ const CreateWalletButton = () => {
                     : accountInfos;
 
                 draftAccountInfos.current = newAccountInfos;
+                _saveAccountInfos();
             } else {
                 newAccountInfos = [
                     ...accountInfos,
