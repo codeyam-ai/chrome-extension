@@ -24,6 +24,7 @@ import type { ButtonHTMLAttributes } from 'react';
 
 import NFTTransactionRows from '_src/ui/app/shared/content/rows-and-lists/NFTTransactionRows';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import LinkListWithIcon from '_src/ui/app/shared/content/rows-and-lists/LinkListWithIcon';
 
 const TRUNCATE_MAX_LENGTH = 10;
 const TRUNCATE_PREFIX_LENGTH = 6;
@@ -117,6 +118,24 @@ function NFTdetailsContent({
                                         {
                                             keyName: 'Object ID',
                                             value: '#1750',
+                                        },
+                                    ]}
+                                />
+                            </div>
+                            <div
+                                className={
+                                    'border-t-1 border-t-solid border-ethos-light-text-medium py-8'
+                                }
+                            >
+                                <LinkListWithIcon
+                                    textAndLinks={[
+                                        {
+                                            text: 'View on Keepsake',
+                                            link: '/link-to',
+                                        },
+                                        {
+                                            text: 'View on Clutchy',
+                                            link: '/linked',
                                         },
                                     ]}
                                 />

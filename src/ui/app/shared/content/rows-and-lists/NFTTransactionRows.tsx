@@ -47,7 +47,7 @@ const NFTTransactionRows = ({ transactions }: NFTTransactionRowsProps) => {
     ];
 
     return (
-        <div className="pb-2 dark:divide-ethos-dark-text-stroke">
+        <div className="pb-6 dark:divide-ethos-dark-text-stroke">
             {tempData.map((txn, idx) => {
                 return <NFTTransactionRow txn={txn} key={idx} />;
             })}
