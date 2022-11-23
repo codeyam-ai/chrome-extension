@@ -1,5 +1,12 @@
-import 'mockzilla-webextension';
 import * as util from 'util';
+
+import { fakeBrowser, clearLocalStorage } from './fake-browser';
+
+jest.mock('webextension-polyfill', () => {
+    return fakeBrowser;
+});
+
+beforeEach(() => clearLocalStorage());
 
 // ref: https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 // ref: https://github.com/jsdom/jsdom/issues/2524
