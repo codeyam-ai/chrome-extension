@@ -1,10 +1,8 @@
 import Body from '../typography/Body';
 import EthosLink from '../typography/EthosLink';
 import Subheader from '../typography/Subheader';
-import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { LinkType } from '_src/enums/LinkType';
 import { TextColor } from '_src/enums/Typography';
-
 import type { ReactNode } from 'react';
 
 interface EmptyPageStateProps {
@@ -29,15 +27,7 @@ const EmptyPageState = ({
             <Body textColor={TextColor.Medium}>{subtitle}</Body>
             <Body>
                 <EthosLink to={linkUrl} type={LinkType.External}>
-                    <span>{linkText}</span>
-                    <ArrowRightIcon
-                        width={20}
-                        height={20}
-                        style={{
-                            display: 'inline',
-                            padding: '5px',
-                        }}
-                    />
+                    <span>{linkText} →</span>
                 </EthosLink>
             </Body>
         </div>
