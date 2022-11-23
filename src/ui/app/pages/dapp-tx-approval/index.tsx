@@ -307,6 +307,26 @@ export function DappTxApprovalPage() {
         }
     }, [loading, txRequest]);
 
+    const NumberedDetails = ({
+        count,
+        label,
+    }: {
+        count: number;
+        label: string;
+    }) => {
+        return (
+            <div className="flex flex-row items-center gap-1">
+                <div className="w-6 h-6 flex justify-center items-center bg-slate-200 rounded-full">
+                    {count}
+                </div>
+                <div>{label}</div>
+                <div className="w-6">
+                    <ChevronDownIcon />
+                </div>
+            </div>
+        );
+    };
+
     const valuesContent: Detail[] = useMemo(() => {
         switch (txRequest?.tx.type) {
             case 'v2': {
@@ -322,7 +342,9 @@ export function DappTxApprovalPage() {
                         },
                         {
                             label: 'Permissions',
-                            content: '3 Assets',
+                            content: (
+                                <NumberedDetails count={3} label="Assets" />
+                            ),
                             detail: <div>HI</div>,
                         },
                     ];
@@ -580,27 +602,33 @@ export function DappTxApprovalPage() {
                                                     </div>
                                                 </Tooltip>
                                             </div>
-                                            <div className="text-sm">
+                                            <div className="text-sm flex flex-col gap-2">
                                                 {ownedCreating.length > 0 && (
                                                     <Detail
                                                         label="Creating"
                                                         value={
-                                                            <div className="flex flex-row items-center gap-1">
-                                                                <div className="w-6 h-6 flex justify-center items-center bg-slate-200 rounded-full">
-                                                                    {
-                                                                        ownedCreating.length
-                                                                    }
-                                                                </div>
-                                                                <div>
-                                                                    {
-                                                                        ownedCreating[0]
-                                                                            .name
-                                                                    }
-                                                                </div>
-                                                                <div className="w-6">
-                                                                    <ChevronDownIcon />
-                                                                </div>
-                                                            </div>
+                                                            <NumberedDetails
+                                                                count={
+                                                                    ownedCreating.length
+                                                                }
+                                                                label={
+                                                                    ownedCreating[0]
+                                                                        .name
+                                                                }
+                                                            />
+                                                        }
+                                                    />
+                                                )}
+                                                {ownedCreating.length > 0 && (
+                                                    <Detail
+                                                        label="Modifying"
+                                                        value={
+                                                            <NumberedDetails
+                                                                count={
+                                                                    ownedCreating.length
+                                                                }
+                                                                label="Leaderboard"
+                                                            />
                                                         }
                                                     />
                                                 )}
