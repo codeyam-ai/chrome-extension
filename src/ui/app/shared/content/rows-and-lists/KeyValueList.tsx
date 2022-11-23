@@ -12,12 +12,15 @@ interface KeyValueListProps {
 
 const KeyValueList = ({ keyNamesAndValues }: KeyValueListProps) => {
     return (
-        <div className="px-6 pb-6">
+        <div className={'mb-6'}>
             {keyNamesAndValues.map((item, key) => {
                 return (
-                    <div className="flex flex-row justify-between" key={key}>
+                    <div
+                        className="flex flex-row justify-between mb-2"
+                        key={key}
+                    >
                         <Body textColor={TextColor.Medium}>{item.keyName}</Body>
-                        <Body>{item.value}</Body>
+                        <Body className={'font-semibold'}>{item.value}</Body>
                     </div>
                 );
             })}

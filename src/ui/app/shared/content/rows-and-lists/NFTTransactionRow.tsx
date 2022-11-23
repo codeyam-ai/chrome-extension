@@ -31,7 +31,7 @@ const NFTTransactionRow = ({ txn }: NFTTransactionRowProps) => {
     );
 
     const fromAddrStr = useMiddleEllipsis(
-        txn.from || '',
+        txn.fromAddr || '',
         TRUNCATE_MAX_LENGTH,
         TRUNCATE_PREFIX_LENGTH
     );

@@ -43,8 +43,6 @@ function NFTdetailsContent({
         TRUNCATE_PREFIX_LENGTH
     );
 
-    console.log('nft data: ', nftFields);
-
     return (
         <>
             <div>
@@ -92,6 +90,36 @@ function NFTdetailsContent({
                                     Activity
                                 </BodyLarge>
                                 <NFTTransactionRows />
+                                <BodyLarge className={'font-semibold mb-3'}>
+                                    Creator
+                                </BodyLarge>
+                                <KeyValueList
+                                    keyNamesAndValues={[
+                                        {
+                                            keyName: 'Wallet Address',
+                                            value: '0xb8dc...ac1c',
+                                        },
+                                        {
+                                            keyName: 'Royalty',
+                                            value: '2.5%',
+                                        },
+                                    ]}
+                                />
+                                <BodyLarge className={'font-semibold mb-3'}>
+                                    Details
+                                </BodyLarge>
+                                <KeyValueList
+                                    keyNamesAndValues={[
+                                        {
+                                            keyName: 'Contract Address',
+                                            value: '0xb8dc...ac1c',
+                                        },
+                                        {
+                                            keyName: 'Object ID',
+                                            value: '#1750',
+                                        },
+                                    ]}
+                                />
                             </div>
                         </div>
                     </div>
