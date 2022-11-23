@@ -25,6 +25,7 @@ import type { SuiJsonValue, TypeTag, TransactionEffects } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 
 import st from './DappTxApprovalPage.module.scss';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
 enum ImpactIcon {
     SAFE = 'safe',
@@ -58,6 +59,8 @@ function toList(items: SuiJsonValue[] | TypeTag[]) {
 export type Detail = {
     label: string;
     content: string | number | JSX.Element;
+    title?: string;
+    detail?: JSX.Element;
 };
 
 export function DappTxApprovalPage() {
@@ -93,6 +96,20 @@ export function DappTxApprovalPage() {
         ? gasUsed.computationCost +
           (gasUsed.storageCost - gasUsed.storageRebate)
         : null;
+
+    const ownedCreating = useMemo(() => {
+        if (!effects?.events) return [];
+
+        const newEvents = effects.events.filter((event) => event.newObject);
+        const ownedCreating = newEvents.map((event) => {
+            const typeParts = event.newObject.objectType.split('::');
+            return {
+                name: typeParts[2],
+            };
+        });
+
+        return ownedCreating;
+    }, [effects]);
 
     const ownedMutated = useMemo(() => {
         if (!effects?.mutated) return [];
@@ -189,8 +206,13 @@ export function DappTxApprovalPage() {
 
     console.log(
         'OWNED',
+        'created',
+        ownedCreating,
+        'mutatede',
         ownedMutated,
+        'transferred',
         ownedTransferred,
+        'deleted',
         ownedDeleted,
         gas,
         gasDollars,
@@ -285,43 +307,28 @@ export function DappTxApprovalPage() {
         }
     }, [loading, txRequest]);
 
-    const valuesContent = useMemo(() => {
+    const valuesContent: Detail[] = useMemo(() => {
         switch (txRequest?.tx.type) {
             case 'v2': {
-                const contents: Detail[] = [
-                    {
-                        label: 'Transaction Type',
-                        content: txRequest.tx.data.kind.toString(),
-                    },
-                ];
-
                 if (txRequest.tx.data.kind === 'moveCall') {
-                    contents.push({
-                        label: 'Function',
-                        content: txRequest.tx.data.data.function,
-                    });
-                } else if (txRequest.tx.data.kind === 'pay') {
-                    const plural = txRequest.tx.data.data.recipients.length > 1;
-                    contents.push({
-                        label: `Recipient${plural ? 's' : ''}`,
-                        content: plural
-                            ? toList(txRequest.tx.data.data.recipients)
-                            : truncateMiddle(
-                                  txRequest.tx.data.data.recipients[0],
-                                  12
-                              ),
-                    });
-
-                    const plural2 = txRequest.tx.data.data.amounts.length > 1;
-                    contents.push({
-                        label: `Amount${plural2 ? 's' : ''}`,
-                        content: plural2
-                            ? toList(txRequest.tx.data.data.amounts)
-                            : txRequest.tx.data.data.amounts[0],
-                    });
+                    return [
+                        {
+                            label: 'Contract',
+                            content: txRequest.tx.data.data.module,
+                        },
+                        {
+                            label: 'Function',
+                            content: txRequest.tx.data.data.function,
+                        },
+                        {
+                            label: 'Permissions',
+                            content: '3 Assets',
+                            detail: <div>HI</div>,
+                        },
+                    ];
+                } else {
+                    return [];
                 }
-
-                return contents;
             }
             case 'move-call':
                 return [
@@ -351,8 +358,19 @@ export function DappTxApprovalPage() {
     const detailedValuesContent = useMemo(() => {
         switch (txRequest?.tx.type) {
             case 'v2': {
+                let contents: Detail[] = [
+                    {
+                        label: 'Transaction Type',
+                        content: txRequest.tx.data.kind.toString(),
+                    },
+                ];
+
                 if (txRequest.tx.data.kind === 'moveCall') {
-                    return [
+                    contents = contents.concat([
+                        {
+                            label: 'Function',
+                            content: txRequest.tx.data.data.function,
+                        },
                         {
                             label: 'Package',
                             content: (
@@ -394,8 +412,29 @@ export function DappTxApprovalPage() {
                                 ? gasUsed.storageCost - gasUsed.storageRebate
                                 : '-',
                         },
-                    ];
+                    ]);
                 } else if (txRequest.tx.data.kind === 'pay') {
+                    const plural = txRequest.tx.data.data.recipients.length > 1;
+                    contents.push({
+                        label: `Recipient${plural ? 's' : ''}`,
+                        content: plural
+                            ? toList(txRequest.tx.data.data.recipients)
+                            : truncateMiddle(
+                                  txRequest.tx.data.data.recipients[0],
+                                  12
+                              ),
+                    });
+
+                    const plural2 = txRequest.tx.data.data.amounts.length > 1;
+                    contents.push({
+                        label: `Amount${plural2 ? 's' : ''}`,
+                        content: plural2
+                            ? toList(txRequest.tx.data.data.amounts)
+                            : txRequest.tx.data.data.amounts[0],
+                    });
+                }
+
+                if (txRequest.tx.data.kind === 'pay') {
                     return [
                         {
                             label: 'Coins',
@@ -404,7 +443,7 @@ export function DappTxApprovalPage() {
                     ];
                 }
 
-                return null;
+                return contents;
             }
             case 'move-call':
                 return [
@@ -431,23 +470,33 @@ export function DappTxApprovalPage() {
     const Detail = ({
         label,
         value,
-        icon,
+        detail,
     }: {
         label: string | JSX.Element;
         value: string | number | JSX.Element;
-        icon?: string;
+        detail?: JSX.Element;
     }) => {
+        const [showDetail, setShowDetail] = useState(false);
+
+        const _toggle = useCallback(() => setShowDetail((prev) => !prev), []);
         return (
-            <div className="flex justify-between">
-                <div className="flex items-center gap-1">
-                    {icon === ImpactIcon.SAFE && <Check color="green" />}
-                    {icon === ImpactIcon.WARNING && <Check color="yellow" />}
-                    {icon === ImpactIcon.DANGER && <Check color="red" />}
-                    <div className="text-gray-500 dark:text-gray-400">
-                        {typeof label === 'string' ? `${label}:` : label}
+            <div>
+                <div className="flex justify-between" onClick={_toggle}>
+                    <div className="flex items-center gap-1">
+                        <div className="text-gray-500 dark:text-gray-400">
+                            {typeof label === 'string' ? `${label}:` : label}
+                        </div>
+                    </div>
+                    <div className="flex flex-row items-center gap-1">
+                        <div className="dark:text-gray-400">{value}</div>
+                        {detail && (
+                            <div>
+                                <ChevronDownIcon />
+                            </div>
+                        )}
                     </div>
                 </div>
-                <div className="dark:text-gray-400">{value}</div>
+                {detail && showDetail && detail}
             </div>
         );
     };
@@ -479,14 +528,26 @@ export function DappTxApprovalPage() {
                     onSubmit={handleOnSubmit}
                 >
                     <div className="flex flex-col gap-6 grow">
-                        <div className="flex flex-col gap-2">
-                            <div className="text-lg">Request</div>
-                            {valuesContent.map(({ label, content }) => (
-                                <Fragment key={label}>
-                                    <Detail label={label} value={content} />
-                                </Fragment>
-                            ))}
-                        </div>
+                        {valuesContent.length > 0 && (
+                            <div className="flex flex-col gap-2">
+                                <div className="text-lg">
+                                    Requesting permission to call:
+                                </div>
+                                <div className="flex flex-col text-sm gap-2">
+                                    {valuesContent.map(
+                                        ({ label, content, detail }) => (
+                                            <Fragment key={label}>
+                                                <Detail
+                                                    label={label}
+                                                    value={content}
+                                                    detail={detail}
+                                                />
+                                            </Fragment>
+                                        )
+                                    )}
+                                </div>
+                            </div>
+                        )}
 
                         {effects !== null && (
                             <Loading
@@ -520,29 +581,35 @@ export function DappTxApprovalPage() {
                                                 </Tooltip>
                                             </div>
                                             <div className="text-sm">
-                                                <Detail
-                                                    label="Your Assets"
-                                                    value={
-                                                        ownedMutated.length ===
-                                                        0
-                                                            ? 'None Changed'
-                                                            : `${ownedMutated.length} Changed`
-                                                    }
-                                                    icon={
-                                                        ownedMutated.length ===
-                                                        0
-                                                            ? ImpactIcon.SAFE
-                                                            : ImpactIcon.WARNING
-                                                    }
-                                                />
+                                                {ownedCreating.length > 0 && (
+                                                    <Detail
+                                                        label="Creating"
+                                                        value={
+                                                            <div className="flex flex-row items-center gap-1">
+                                                                <div className="w-6 h-6 flex justify-center items-center bg-slate-200 rounded-full">
+                                                                    {
+                                                                        ownedCreating.length
+                                                                    }
+                                                                </div>
+                                                                <div>
+                                                                    {
+                                                                        ownedCreating[0]
+                                                                            .name
+                                                                    }
+                                                                </div>
+                                                                <div className="w-6">
+                                                                    <ChevronDownIcon />
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    />
+                                                )}
+
                                                 {ownedTransferred.length >
                                                     0 && (
                                                     <Detail
-                                                        label="Transferred"
+                                                        label="Transferring"
                                                         value={`${ownedTransferred.length} Transferred`}
-                                                        icon={
-                                                            ImpactIcon.WARNING
-                                                        }
                                                     />
                                                 )}
                                             </div>
@@ -608,48 +675,53 @@ export function DappTxApprovalPage() {
                                     </div>
                                 )}
 
-                                {detailedValuesContent && (
-                                    <div>
-                                        <div
-                                            className="cursor-pointer py-1 dark:text-gray-400"
-                                            onClick={toggleDetails}
-                                        >
-                                            {details ? '▼ Hide' : '▶ Show'}{' '}
-                                            Details
-                                        </div>
-
-                                        {details && (
-                                            <div className="text-xs mt-3 flex flex-col gap-3 dark:text-gray-400">
-                                                {detailedValuesContent.map(
-                                                    ({
-                                                        label,
-                                                        content,
-                                                        title,
-                                                    }) => (
-                                                        <Fragment key={label}>
-                                                            <div className="flex justify-between">
-                                                                <label className="text-gray-500 dark:text-gray-400">
-                                                                    {label}
-                                                                </label>
-                                                                <div
-                                                                    className={
-                                                                        st.value +
-                                                                        ' dark:text-gray-400'
-                                                                    }
-                                                                    title={
-                                                                        title
-                                                                    }
-                                                                >
-                                                                    {content}
-                                                                </div>
-                                                            </div>
-                                                        </Fragment>
-                                                    )
-                                                )}
+                                {detailedValuesContent &&
+                                    detailedValuesContent.length > 0 && (
+                                        <div>
+                                            <div
+                                                className="cursor-pointer py-1 dark:text-gray-400"
+                                                onClick={toggleDetails}
+                                            >
+                                                {details ? '▼ Hide' : '▶ Show'}{' '}
+                                                Details
                                             </div>
-                                        )}
-                                    </div>
-                                )}
+
+                                            {details && (
+                                                <div className="text-xs mt-3 flex flex-col gap-3 dark:text-gray-400">
+                                                    {detailedValuesContent.map(
+                                                        ({
+                                                            label,
+                                                            content,
+                                                            title,
+                                                        }) => (
+                                                            <Fragment
+                                                                key={label}
+                                                            >
+                                                                <div className="flex justify-between">
+                                                                    <label className="text-gray-500 dark:text-gray-400">
+                                                                        {label}
+                                                                    </label>
+                                                                    <div
+                                                                        className={
+                                                                            st.value +
+                                                                            ' dark:text-gray-400'
+                                                                        }
+                                                                        title={
+                                                                            title
+                                                                        }
+                                                                    >
+                                                                        {
+                                                                            content
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </Fragment>
+                                                        )
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
                             </Loading>
                         )}
                     </div>
