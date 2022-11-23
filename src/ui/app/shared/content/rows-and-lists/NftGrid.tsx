@@ -8,7 +8,7 @@ interface NftGridProps {
 
 const NftGrid = ({ nfts }: NftGridProps) => {
     return (
-        <div className="grid grid-cols-2 gap-6 px-6 pb-6">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-7 px-6 pb-6">
             {(nfts || []).map((nft, key) => (
                 <NftGridItem nft={nft} key={key} />
             ))}

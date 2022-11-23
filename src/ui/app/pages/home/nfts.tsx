@@ -25,7 +25,7 @@ function NftsPage() {
                 />
             ) : (
                 <>
-                    <TextPageTitle title="NFTs" />
+                    <TextPageTitle title="NFTs" count={nfts.length} />
                     <PageScrollView>
                         <NftGrid nfts={nfts} />
                     </PageScrollView>

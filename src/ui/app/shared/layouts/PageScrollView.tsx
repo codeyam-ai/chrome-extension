@@ -3,7 +3,11 @@ interface PageScrollViewProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const PageScrollView = ({ heightInPx, children }: PageScrollViewProps) => {
-    return <div className="h-[290px] overflow-scroll">{children}</div>;
+    return (
+        <div className="h-[290px] overflow-auto no-scrollbar pb-10">
+            {children}
+        </div>
+    );
 };
 
 export default PageScrollView;
