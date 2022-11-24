@@ -11,10 +11,10 @@ class Authentication {
         this._accessToken = accessToken;
     }
 
-    public async getAccountInfos(): Promise<AccountInfo[]> {
-        if (this._accountInfos) return this._accountInfos;
+    public async getAccountInfos(force?: boolean): Promise<AccountInfo[]> {
+        if (!this._accessToken) return this._accountInfos || [];
 
-        if (!this._accessToken) return [];
+        if (!force && this._accountInfos) return this._accountInfos;
 
         const accountsString = await getEncrypted(
             'accountInfos',
@@ -22,7 +22,7 @@ class Authentication {
         );
 
         let accounts;
-        if (accountsString) {
+        if (!force && accountsString) {
             accounts = JSON.parse(accountsString);
         } else {
             const { json, status } = await simpleApiCall(
@@ -38,7 +38,6 @@ class Authentication {
 
             accounts = json.accounts;
         }
-
         this._accountInfos = accounts;
 
         await setEncrypted(
