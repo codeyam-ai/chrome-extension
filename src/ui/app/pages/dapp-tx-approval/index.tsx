@@ -309,10 +309,10 @@ export function DappTxApprovalPage() {
     }) => {
         return (
             <div className="flex flex-row items-center gap-1">
-                <div className="w-6 h-6 flex justify-center items-center bg-slate-200 rounded-full">
+                <div>{label}</div>
+                <div className="w-5 h-5 flex justify-center items-center font-normal bg-slate-200 text-slate-600 rounded-full">
                     {count}
                 </div>
-                <div>{label}</div>
             </div>
         );
     };
@@ -335,7 +335,6 @@ export function DappTxApprovalPage() {
                             content: (
                                 <NumberedDetails count={3} label="Assets" />
                             ),
-                            detail: <div>HI</div>,
                         },
                     ];
                 } else {
@@ -482,28 +481,18 @@ export function DappTxApprovalPage() {
     const Detail = ({
         label,
         value,
-        detail,
     }: {
         label: string | JSX.Element;
         value: string | number | JSX.Element;
-        detail?: JSX.Element;
     }) => {
-        const [showDetail, setShowDetail] = useState(false);
-
-        const _toggle = useCallback(() => setShowDetail((prev) => !prev), []);
         return (
-            <div>
-                <div className="flex justify-between" onClick={_toggle}>
-                    <div className="flex items-center gap-1">
-                        <div className="text-gray-500 dark:text-gray-400">
-                            {typeof label === 'string' ? `${label}:` : label}
-                        </div>
-                    </div>
-                    <div className="flex flex-row items-center gap-1">
-                        <div className="dark:text-gray-400">{value}</div>
+            <div className="flex justify-between">
+                <div className="flex items-center gap-1">
+                    <div className="text-gray-500 dark:text-gray-400">
+                        {typeof label === 'string' ? `${label}:` : label}
                     </div>
                 </div>
-                {detail && showDetail && detail}
+                <div className="dark:text-gray-400 font-semibold">{value}</div>
             </div>
         );
     };
@@ -535,13 +524,13 @@ export function DappTxApprovalPage() {
                     onSubmit={handleOnSubmit}
                 >
                     <div className="flex flex-row justify-between items-baseline text-lg pb-6">
-                        <div className="border-b-2 border-b-black px-3 py-1">
+                        <div className="border-b border-b-purple-800 text-purple-800 font-semibold px-3 py-1">
                             Summary
                         </div>
-                        <div className="border-b-2 border-b-slate-400 text-slate-400 px-3 py-1">
+                        <div className="border-b border-b-slate-300 text-slate-500 font-semibold px-3 py-1">
                             Assets
                         </div>
-                        <div className="border-b-2 border-b-slate-400 text-slate-400 px-3 py-1">
+                        <div className="border-b border-b-slate-300 text-slate-500 font-semibold px-3 py-1">
                             Details
                         </div>
                     </div>
@@ -549,8 +538,8 @@ export function DappTxApprovalPage() {
                     <div className="flex flex-col gap-6 grow">
                         {valuesContent.length > 0 && (
                             <div className="flex flex-col gap-2">
-                                <div className="text-lg">
-                                    Requesting permission to call:
+                                <div className="text-base">
+                                    Requesting Permission To Call
                                 </div>
                                 <div className="flex flex-col text-sm gap-2">
                                     {valuesContent.map(
@@ -559,7 +548,6 @@ export function DappTxApprovalPage() {
                                                 <Detail
                                                     label={label}
                                                     value={content}
-                                                    detail={detail}
                                                 />
                                             </Fragment>
                                         )
@@ -587,14 +575,16 @@ export function DappTxApprovalPage() {
                                 ) : (
                                     <div className="text-lg flex flex-col gap-6">
                                         <div className="flex flex-col gap-2">
-                                            <div className="text-md flex flex-row gap-1 items-center">
-                                                Effects
+                                            <div className="flex flex-row gap-1 items-center">
+                                                <div className="text-base">
+                                                    Effects
+                                                </div>
                                                 <Tooltip
                                                     tooltipText={
                                                         'This transaction will have the following effects on the assets in your wallet.'
                                                     }
                                                 >
-                                                    <div className="cursor-help flex justify-center items-center rounded-full bg-gray-400 text-white text-xs h-5 w-5 scale-75">
+                                                    <div className="cursor-help flex justify-center items-center rounded-full bg-gray-500 text-white text-xs h-5 w-5 scale-75">
                                                         ?
                                                     </div>
                                                 </Tooltip>
@@ -641,20 +631,22 @@ export function DappTxApprovalPage() {
                                         </div>
 
                                         <div className="flex flex-col gap-2">
-                                            <div className="text-md">Cost</div>
+                                            <div className="text-base">
+                                                Cost
+                                            </div>
                                             <div className="text-sm">
                                                 <Detail
                                                     label="Charges"
                                                     value={
                                                         <div className="flex flex-row items-center gap-1 py-1">
-                                                            <div>
+                                                            <div className="font-normal text-slate-500">
                                                                 {
                                                                     formattedCharges
                                                                 }{' '}
                                                                 {chargesSymbol}
                                                             </div>
                                                             <Dot />
-                                                            <div>
+                                                            <div className="font-normal">
                                                                 ${chargeDollars}
                                                             </div>
                                                         </div>
@@ -664,12 +656,12 @@ export function DappTxApprovalPage() {
                                                     label="Gas Fees"
                                                     value={
                                                         <div className="flex flex-row items-center gap-1 py-1">
-                                                            <div>
+                                                            <div className="font-normal text-slate-500">
                                                                 {formattedGas}{' '}
                                                                 {gasSymbol}
                                                             </div>
                                                             <Dot />
-                                                            <div>
+                                                            <div className="font-normal">
                                                                 ${gasDollars}
                                                             </div>
                                                         </div>
@@ -684,12 +676,12 @@ export function DappTxApprovalPage() {
                                                     }
                                                     value={
                                                         <div className="flex flex-row items-center gap-1 py-1 font-semibold text-slate-600">
-                                                            <div>
+                                                            <div className="text-slate-500">
                                                                 {formattedTotal}{' '}
                                                                 {totalSymbol}
                                                             </div>
                                                             <Dot />
-                                                            <div className="font-semibold text-slate-800">
+                                                            <div className="text-slate-800">
                                                                 ${totalDollars}
                                                             </div>
                                                         </div>
