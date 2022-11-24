@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 
 import LoadingIndicator from './LoadingIndicator';
 
@@ -15,6 +15,14 @@ type LoadingProps = {
 };
 
 const Loading = ({ loading, children, className, big }: LoadingProps) => {
+    useEffect(() => {
+        if (loading) return;
+        window.resizeTo(
+            document.body.offsetWidth,
+            document.body.offsetHeight + 30
+        );
+    }, [loading]);
+
     return loading ? (
         className ? (
             <div className={className}>

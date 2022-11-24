@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useState, useEffect } from 'react';
 
 import Button from '../shared/buttons/Button';
 import Ethos from '../shared/svg/Ethos';
@@ -53,6 +53,7 @@ function UserApproveContainer({
         },
         []
     );
+
     return (
         <div className="flex flex-col w-full px-6 items-center dark:bg-gray-800">
             <div className="flex w-full items-center justify-between pt-5 pb-6 border-b border-slate-400 dark:border-slate-600">

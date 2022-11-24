@@ -6,7 +6,6 @@ import { useParams } from 'react-router-dom';
 
 import Tooltip from '../../components/Tooltip';
 import { AppState } from '../../hooks/useInitializedGuard';
-import Check from '../../shared/svg/Check';
 import Loading from '_components/loading';
 import {
     useAppDispatch,
@@ -49,17 +48,33 @@ function toList(items: SuiJsonValue[] | TypeTag[]) {
     );
 }
 
+export enum TxApprovalTab {
+    SUMMARY = 'Summary',
+    ASSETS = 'Assets',
+    DETAILS = 'Details',
+}
+
 export type Detail = {
-    label: string;
-    content: string | number | JSX.Element;
+    label?: string;
+    content?: string | number;
+    count?: number;
     title?: string;
-    detail?: JSX.Element;
+};
+
+export type Section = {
+    title: string;
+    tooltip?: string;
+    details: Detail[];
+};
+
+export type TabSections = {
+    [key in TxApprovalTab]?: Section[];
 };
 
 export function DappTxApprovalPage() {
+    const [tab, setTab] = useState(TxApprovalTab.SUMMARY);
+
     const { txID } = useParams();
-    const [details, setDetails] = useState<boolean>(false);
-    const toggleDetails = useCallback(() => setDetails((prev) => !prev), []);
     const guardLoading = useInitializedGuard([
         AppState.MNEMONIC,
         AppState.HOSTED,
@@ -76,13 +91,15 @@ export function DappTxApprovalPage() {
         [txID]
     );
     const txRequest = useAppSelector(txRequestSelector);
-    const loading = guardLoading || txRequestsLoading;
     const dispatch = useAppDispatch();
 
     const [effects, setEffects] = useState<
         TransactionEffects | undefined | null
     >();
     const [dryRunError, setDryRunError] = useState<string | undefined>();
+
+    const loading =
+        guardLoading || txRequestsLoading || !(effects || dryRunError);
 
     const gasUsed = effects?.gasUsed;
     const gas = gasUsed
@@ -94,13 +111,24 @@ export function DappTxApprovalPage() {
         if (!effects?.events) return [];
 
         const newEvents = effects.events.filter((event) => event.newObject);
-        const ownedCreating = newEvents.map((event) => {
-            const typeParts = event.newObject.objectType.split('::');
-            return {
-                name: typeParts[2],
-            };
-        });
+        const ownedCreating = newEvents
+            .map((event) => {
+                const typeParts = event.newObject.objectType.split('::');
+                return typeParts[2];
+            })
+            .reduce((summed, name) => {
+                const index = summed.findIndex(
+                    (info: (string | number)[]) => info[0] === name
+                );
+                if (index !== -1) {
+                    summed[index][1]++;
+                } else {
+                    summed.push([name, 1]);
+                }
+                return summed;
+            }, []);
 
+        console.log('ownedCreating', ownedCreating);
         return ownedCreating;
     }, [effects]);
 
@@ -153,20 +181,7 @@ export function DappTxApprovalPage() {
         return ownedDeleted;
     }, [effects]);
 
-    // const sharedMutated = useMemo(() => {
-    //     if (!effects?.mutated) return [];
-
-    //     const sharedMutated = effects.mutated.filter((object) => {
-    //         if (typeof object.owner === 'string') {
-    //             return false;
-    //         }
-    //         return 'Shared' in object.owner;
-    //     });
-
-    //     return sharedMutated;
-    // }, [effects]);
-
-    const suiChange = useMemo(() => {
+    const suiSpent = useMemo(() => {
         if (!effects?.events) return 0;
 
         const coinBalanceChangeEvents = effects.events.filter(
@@ -183,7 +198,7 @@ export function DappTxApprovalPage() {
         );
     }, [effects]);
 
-    const charges = useMemo(() => suiChange - (gas || 0), [suiChange, gas]);
+    const charges = useMemo(() => suiSpent - (gas || 0), [suiSpent, gas]);
     const [formattedCharges, chargesSymbol, chargeDollars] = useFormatCoin(
         charges,
         '0x2::sui::SUI'
@@ -193,23 +208,8 @@ export function DappTxApprovalPage() {
         '0x2::sui::SUI'
     );
     const [formattedTotal, totalSymbol, totalDollars] = useFormatCoin(
-        suiChange,
+        suiSpent,
         '0x2::sui::SUI'
-    );
-
-    console.log(
-        'OWNED',
-        'created',
-        ownedCreating,
-        'mutatede',
-        ownedMutated,
-        'transferred',
-        ownedTransferred,
-        'deleted',
-        ownedDeleted,
-        gas,
-        gasDollars,
-        formattedGas
     );
 
     useEffect(() => {
@@ -300,12 +300,12 @@ export function DappTxApprovalPage() {
         }
     }, [loading, txRequest]);
 
-    const NumberedDetails = ({
-        count,
+    const NumberedValue = ({
         label,
+        count,
     }: {
-        count: number;
         label: string;
+        count: number;
     }) => {
         return (
             <div className="flex flex-row items-center gap-1">
@@ -317,182 +317,71 @@ export function DappTxApprovalPage() {
         );
     };
 
-    const valuesContent: Detail[] = useMemo(() => {
-        switch (txRequest?.tx.type) {
-            case 'v2': {
-                if (txRequest.tx.data.kind === 'moveCall') {
-                    return [
-                        {
-                            label: 'Contract',
-                            content: txRequest.tx.data.data.module,
-                        },
-                        {
-                            label: 'Function',
-                            content: txRequest.tx.data.data.function,
-                        },
-                        {
-                            label: 'Permissions',
-                            content: (
-                                <NumberedDetails count={3} label="Assets" />
-                            ),
-                        },
-                    ];
-                } else {
-                    return [];
-                }
-            }
-            case 'move-call':
-                return [
-                    { label: 'Transaction Type', content: 'MoveCall' },
-                    {
-                        label: 'Function',
-                        content: txRequest.tx.data.function,
-                    },
-                    {
-                        label: 'Gas Fees',
-                        content: txRequest.tx.data.gasBudget,
-                    },
-                ];
-            case 'serialized-move-call':
-                return [
-                    {
-                        label: 'Transaction Type',
-                        content: 'SerializedMoveCall',
-                    },
-                    { label: 'Contents', content: txRequest?.tx?.data },
-                ];
-            default:
-                return [];
-        }
-    }, [txRequest]);
-
-    const detailedValuesContent = useMemo(() => {
-        switch (txRequest?.tx.type) {
-            case 'v2': {
-                let contents: Detail[] = [
-                    {
-                        label: 'Transaction Type',
-                        content: txRequest.tx.data.kind.toString(),
-                    },
-                ];
-
-                if (txRequest.tx.data.kind === 'moveCall') {
-                    contents = contents.concat([
-                        {
-                            label: 'Function',
-                            content: txRequest.tx.data.data.function,
-                        },
-                        {
-                            label: 'Package',
-                            content: (
-                                <a
-                                    href={`https://explorer.sui.io/objects/${txRequest.tx.data.data.packageObjectId}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="text-blue-500 underline"
-                                >
-                                    {truncateMiddle(
-                                        txRequest.tx.data.data.packageObjectId,
-                                        8
-                                    )}
-                                </a>
-                            ),
-                            title: txRequest.tx.data.data.packageObjectId,
-                        },
-                        {
-                            label: 'Module',
-                            content: txRequest.tx.data.data.module,
-                        },
-                        {
-                            label: 'Arguments',
-                            content: toList(txRequest.tx.data.data.arguments),
-                        },
-                        {
-                            label: 'Type arguments',
-                            content: toList(
-                                txRequest.tx.data.data.typeArguments
-                            ),
-                        },
-                        {
-                            label: 'Computation Fees',
-                            content: gasUsed?.computationCost || '-',
-                        },
-                        {
-                            label: 'Storage Fees',
-                            content: gasUsed
-                                ? gasUsed.storageCost - gasUsed.storageRebate
-                                : '-',
-                        },
-                    ]);
-                } else if (txRequest.tx.data.kind === 'pay') {
-                    const plural = txRequest.tx.data.data.recipients.length > 1;
-                    contents.push({
-                        label: `Recipient${plural ? 's' : ''}`,
-                        content: plural
-                            ? toList(txRequest.tx.data.data.recipients)
-                            : truncateMiddle(
-                                  txRequest.tx.data.data.recipients[0],
-                                  12
-                              ),
-                    });
-
-                    const plural2 = txRequest.tx.data.data.amounts.length > 1;
-                    contents.push({
-                        label: `Amount${plural2 ? 's' : ''}`,
-                        content: plural2
-                            ? toList(txRequest.tx.data.data.amounts)
-                            : txRequest.tx.data.data.amounts[0],
-                    });
-                }
-
-                if (txRequest.tx.data.kind === 'pay') {
-                    return [
-                        {
-                            label: 'Coins',
-                            content: toList(txRequest.tx.data.data.inputCoins),
-                        },
-                    ];
-                }
-
-                return contents;
-            }
-            case 'move-call':
-                return [
-                    {
-                        label: 'Package',
-                        content: truncateMiddle(
-                            txRequest.tx.data.packageObjectId,
-                            8
-                        ),
-                        title: txRequest.tx.data.packageObjectId,
-                    },
-                    {
-                        label: 'Type arguments',
-                        content: toList(txRequest.tx.data.typeArguments),
-                    },
-                ];
-            case 'serialized-move-call':
-                return null;
-            default:
-                return null;
-        }
-    }, [txRequest, gasUsed]);
-
-    const Detail = ({
-        label,
+    const CostValue = ({
         value,
+        symbol,
+        dollars,
+        bold,
     }: {
-        label: string | JSX.Element;
-        value: string | number | JSX.Element;
+        value: string;
+        symbol: string;
+        dollars: string;
+        bold?: boolean;
     }) => {
+        return (
+            <div
+                className={`flex flex-row items-center gap-1 py-1 ${
+                    bold ? 'font-semibold' : ''
+                }`}
+            >
+                <div className="font-normal text-slate-500">
+                    {value} {symbol}
+                </div>
+                <Dot />
+                <div className="font-normal">${dollars}</div>
+            </div>
+        );
+    };
+
+    const TabElement = ({ type }: { type: TxApprovalTab }) => {
+        const _setTab = useCallback(() => setTab(type), [type]);
+
+        const selected =
+            tab === type ? 'border-b-purple-800 text-purple-800' : '';
+
+        return (
+            <div
+                className={`border-b ${selected} font-semibold px-3 py-1`}
+                onClick={_setTab}
+            >
+                {type}
+            </div>
+        );
+    };
+
+    const DetailElement = ({ detail }: { detail: Detail }) => {
+        const contents = Array.isArray(detail.content)
+            ? detail.content
+            : [detail.content];
         return (
             <div className="flex justify-between">
                 <div className="flex items-center gap-1">
                     <div className="text-gray-500 dark:text-gray-400">
-                        {typeof label === 'string' ? `${label}:` : label}
+                        {detail.label}
                     </div>
                 </div>
-                <div className="dark:text-gray-400 font-semibold">{value}</div>
+                <div className="dark:text-gray-400 font-semibold">
+                    {contents.map((content, index) =>
+                        content.count ? (
+                            <NumberedValue
+                                key={`detail-content-${index}`}
+                                {...content}
+                            />
+                        ) : (
+                            <div key={`detail-content-${index}`}>{content}</div>
+                        )
+                    )}
+                </div>
             </div>
         );
     };
@@ -512,6 +401,112 @@ export function DappTxApprovalPage() {
         </svg>
     );
 
+    // const CostTotal = () => (
+    //     <>
+    //         <hr />
+    //         <DetailElement
+    //             label={
+    //                 <div className="font-semibold text-slate-800">Total:</div>
+    //             }
+    //             content={
+    //                 <CostValue
+    //                     value={formattedTotal}
+    //                     symbol={totalSymbol}
+    //                     dollars={totalDollars}
+    //                     bold={true}
+    //                 />
+    //             }
+    //         />
+    //     </>
+    // );
+
+    const content: TabSections = useMemo(() => {
+        switch (txRequest?.tx.type) {
+            case 'v2': {
+                if (txRequest.tx.data.kind === 'moveCall') {
+                    const summary = [
+                        {
+                            title: 'Requesting Permission To Call',
+                            details: [
+                                {
+                                    label: 'Contract',
+                                    content: txRequest.tx.data.data.module,
+                                },
+                                {
+                                    label: 'Function',
+                                    content: txRequest.tx.data.data.function,
+                                },
+                                {
+                                    label: 'Permissions',
+                                    content: 'Assets',
+                                    count: 3,
+                                },
+                            ],
+                        } as Section,
+                    ];
+
+                    if (ownedCreating.length > 0) {
+                        const effects = {
+                            title: 'Effects',
+                            tooltip:
+                                'This transaction will have the following effects on the assets in your wallet.',
+                            details: [] as Detail[],
+                        } as Section;
+
+                        if (ownedCreating.length > 0) {
+                            effects.details.push({
+                                label: 'Creating',
+                                content: ownedCreating.map(
+                                    (creating: (string | number)[]) => ({
+                                        label: creating[0],
+                                        count: creating[1],
+                                    })
+                                ),
+                            });
+                        }
+
+                        summary.push(effects);
+
+                        // const costs = {
+                        //     title: 'Costs',
+                        //     details: [
+                        //         {
+                        //             label: 'Charges',
+                        //             content: (
+                        //                 <CostValue
+                        //                     value={formattedCharges}
+                        //                     symbol={chargesSymbol}
+                        //                     dollars={chargeDollars}
+                        //                 />
+                        //             ),
+                        //         },
+                        //         {
+                        //             label: 'Gas',
+                        //             content: (
+                        //                 <CostValue
+                        //                     value={formattedGas}
+                        //                     symbol={gasSymbol}
+                        //                     dollars={gasDollars}
+                        //                 />
+                        //             ),
+                        //         },
+                        //     ],
+                        // };
+
+                        // summary.push(costs);
+                    }
+                    return {
+                        [TxApprovalTab.SUMMARY]: summary,
+                    };
+                } else {
+                    return {};
+                }
+            }
+            default:
+                return {};
+        }
+    }, [txRequest?.tx, ownedCreating]);
+
     return (
         <Loading loading={loading} big={true}>
             {txRequest ? (
@@ -524,223 +519,38 @@ export function DappTxApprovalPage() {
                     onSubmit={handleOnSubmit}
                 >
                     <div className="flex flex-row justify-between items-baseline text-lg pb-6">
-                        <div className="border-b border-b-purple-800 text-purple-800 font-semibold px-3 py-1">
-                            Summary
-                        </div>
-                        <div className="border-b border-b-slate-300 text-slate-500 font-semibold px-3 py-1">
-                            Assets
-                        </div>
-                        <div className="border-b border-b-slate-300 text-slate-500 font-semibold px-3 py-1">
-                            Details
-                        </div>
+                        {[
+                            TxApprovalTab.SUMMARY,
+                            TxApprovalTab.ASSETS,
+                            TxApprovalTab.DETAILS,
+                        ].map((tab, index) => (
+                            <TabElement key={`tab-${index}`} type={tab} />
+                        ))}
                     </div>
 
                     <div className="flex flex-col gap-6 grow">
-                        {valuesContent.length > 0 && (
-                            <div className="flex flex-col gap-2">
-                                <div className="text-base">
-                                    Requesting Permission To Call
-                                </div>
-                                <div className="flex flex-col text-sm gap-2">
-                                    {valuesContent.map(
-                                        ({ label, content, detail }) => (
-                                            <Fragment key={label}>
-                                                <Detail
-                                                    label={label}
-                                                    value={content}
-                                                />
-                                            </Fragment>
-                                        )
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
-                        {effects !== null && (
-                            <Loading
-                                loading={effects === undefined && !dryRunError}
-                                big={true}
-                                className="flex justify-center"
-                            >
-                                {dryRunError ? (
-                                    <div className="bg-red-50 p-6">
-                                        <div className="font-semibold mb-3">
-                                            Error
-                                        </div>
-                                        <div>
-                                            There was an error doing a dry run
-                                            of this transaction: {dryRunError}
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="text-lg flex flex-col gap-6">
-                                        <div className="flex flex-col gap-2">
-                                            <div className="flex flex-row gap-1 items-center">
-                                                <div className="text-base">
-                                                    Effects
-                                                </div>
-                                                <Tooltip
-                                                    tooltipText={
-                                                        'This transaction will have the following effects on the assets in your wallet.'
-                                                    }
-                                                >
-                                                    <div className="cursor-help flex justify-center items-center rounded-full bg-gray-500 text-white text-xs h-5 w-5 scale-75">
-                                                        ?
-                                                    </div>
-                                                </Tooltip>
-                                            </div>
-                                            <div className="text-sm flex flex-col gap-2">
-                                                {ownedCreating.length > 0 && (
-                                                    <Detail
-                                                        label="Creating"
-                                                        value={
-                                                            <NumberedDetails
-                                                                count={
-                                                                    ownedCreating.length
-                                                                }
-                                                                label={
-                                                                    ownedCreating[0]
-                                                                        .name
-                                                                }
-                                                            />
-                                                        }
+                        <>
+                            {(content[tab] || []).map(
+                                ({ title, details }, sectionIndex) => (
+                                    <div
+                                        key={`section-${sectionIndex}`}
+                                        className="flex flex-col gap-2"
+                                    >
+                                        <div className="text-base">{title}</div>
+                                        <div className="flex flex-col text-sm gap-2">
+                                            {details.map(
+                                                (detail, detailIndex) => (
+                                                    <DetailElement
+                                                        key={`details-${detailIndex}`}
+                                                        detail={detail}
                                                     />
-                                                )}
-                                                {ownedCreating.length > 0 && (
-                                                    <Detail
-                                                        label="Modifying"
-                                                        value={
-                                                            <NumberedDetails
-                                                                count={
-                                                                    ownedCreating.length
-                                                                }
-                                                                label="Leaderboard"
-                                                            />
-                                                        }
-                                                    />
-                                                )}
-
-                                                {ownedTransferred.length >
-                                                    0 && (
-                                                    <Detail
-                                                        label="Transferring"
-                                                        value={`${ownedTransferred.length} Transferred`}
-                                                    />
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <div className="flex flex-col gap-2">
-                                            <div className="text-base">
-                                                Cost
-                                            </div>
-                                            <div className="text-sm">
-                                                <Detail
-                                                    label="Charges"
-                                                    value={
-                                                        <div className="flex flex-row items-center gap-1 py-1">
-                                                            <div className="font-normal text-slate-500">
-                                                                {
-                                                                    formattedCharges
-                                                                }{' '}
-                                                                {chargesSymbol}
-                                                            </div>
-                                                            <Dot />
-                                                            <div className="font-normal">
-                                                                ${chargeDollars}
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                />
-                                                <Detail
-                                                    label="Gas Fees"
-                                                    value={
-                                                        <div className="flex flex-row items-center gap-1 py-1">
-                                                            <div className="font-normal text-slate-500">
-                                                                {formattedGas}{' '}
-                                                                {gasSymbol}
-                                                            </div>
-                                                            <Dot />
-                                                            <div className="font-normal">
-                                                                ${gasDollars}
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                />
-                                                <hr />
-                                                <Detail
-                                                    label={
-                                                        <div className="font-semibold text-slate-800">
-                                                            Total:
-                                                        </div>
-                                                    }
-                                                    value={
-                                                        <div className="flex flex-row items-center gap-1 py-1 font-semibold text-slate-600">
-                                                            <div className="text-slate-500">
-                                                                {formattedTotal}{' '}
-                                                                {totalSymbol}
-                                                            </div>
-                                                            <Dot />
-                                                            <div className="text-slate-800">
-                                                                ${totalDollars}
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* {detailedValuesContent &&
-                                    detailedValuesContent.length > 0 && (
-                                        <div>
-                                            <div
-                                                className="cursor-pointer py-1 dark:text-gray-400"
-                                                onClick={toggleDetails}
-                                            >
-                                                {details ? '▼ Hide' : '▶ Show'}{' '}
-                                                Details
-                                            </div>
-
-                                            {details && (
-                                                <div className="text-xs mt-3 flex flex-col gap-3 dark:text-gray-400">
-                                                    {detailedValuesContent.map(
-                                                        ({
-                                                            label,
-                                                            content,
-                                                            title,
-                                                        }) => (
-                                                            <Fragment
-                                                                key={label}
-                                                            >
-                                                                <div className="flex justify-between">
-                                                                    <label className="text-gray-500 dark:text-gray-400">
-                                                                        {label}
-                                                                    </label>
-                                                                    <div
-                                                                        className={
-                                                                            st.value +
-                                                                            ' dark:text-gray-400'
-                                                                        }
-                                                                        title={
-                                                                            title
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            content
-                                                                        }
-                                                                    </div>
-                                                                </div>
-                                                            </Fragment>
-                                                        )
-                                                    )}
-                                                </div>
+                                                )
                                             )}
                                         </div>
-                                    )} */}
-                            </Loading>
-                        )}
+                                    </div>
+                                )
+                            )}
+                        </>
                     </div>
                 </UserApproveContainer>
             ) : null}
