@@ -20,7 +20,9 @@ const DetailElement = ({ detail }: { detail: Detail }) => {
             <div className="dark:text-gray-400 font-semibold">
                 {contents.map((content, index) => (
                     <div key={`detail-content-${index}`}>
-                        {content.count && <NumberedValue {...content} />}
+                        {content.count !== undefined && (
+                            <NumberedValue {...content} />
+                        )}
                         {content.value && <CostValue {...content} />}
                         {typeof content === 'string' && content}
                     </div>

@@ -1,10 +1,12 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useEffect, useMemo, useState, Fragment } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { AppState } from '../../hooks/useInitializedGuard';
+import SectionElement from './SectionElement';
+import TabElement from './TabElement';
 import Loading from '_components/loading';
 import {
     useAppDispatch,
@@ -19,35 +21,8 @@ import {
 import { thunkExtras } from '_redux/store/thunk-extras';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
-import type { SuiJsonValue, TypeTag, TransactionEffects } from '@mysten/sui.js';
+import type { SuiMoveNormalizedType, TransactionEffects } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
-
-import st from './DappTxApprovalPage.module.scss';
-import SectionElement from './SectionElement';
-import TabElement from './TabElement';
-
-const truncateMiddle = (s = '', length = 6) =>
-    s.length > length * 2.5
-        ? `${s.slice(0, length)}...${s.slice(length * -1)}`
-        : s;
-
-function toList(items: SuiJsonValue[] | TypeTag[]) {
-    if (!items?.length) {
-        return '-';
-    }
-    return (
-        <ul className={st.list}>
-            {items.map((anItem) => {
-                const val = JSON.stringify(anItem, null, 4);
-                return (
-                    <li key={val} title={val} className="text-right">
-                        {truncateMiddle(val, 8)}
-                    </li>
-                );
-            })}
-        </ul>
-    );
-}
 
 export enum TxApprovalTab {
     SUMMARY = 'Summary',
@@ -79,6 +54,19 @@ export type Section = {
     details: Detail[];
 };
 
+export type AssetPermission = {
+    type: string;
+    count: number;
+};
+
+export type AssetPermissions = {
+    count: number;
+    read: AssetPermission[];
+    write: AssetPermission[];
+    transfer: AssetPermission[];
+    full: AssetPermission[];
+};
+
 export type TabSections = {
     [key in TxApprovalTab]?: Section[];
 };
@@ -105,6 +93,9 @@ export function DappTxApprovalPage() {
     const txRequest = useAppSelector(txRequestSelector);
     const dispatch = useAppDispatch();
 
+    const [assetPermissions, setAssetPermissions] = useState<
+        AssetPermissions | undefined
+    >();
     const [effects, setEffects] = useState<
         TransactionEffects | undefined | null
     >();
@@ -261,29 +252,34 @@ export function DappTxApprovalPage() {
             const {
                 packageObjectId,
                 module,
-                function: f,
+                function: func,
             } = txRequest.tx.data.data;
 
-            const normalizedP =
-                await thunkExtras.api.instance.fullNode.getNormalizedMoveModulesByPackage(
-                    packageObjectId
-                );
-            console.log('getNormalizedMoveModulesByPackage', normalizedP);
-
-            const normalizedM =
-                await thunkExtras.api.instance.fullNode.getNormalizedMoveModule(
-                    packageObjectId,
-                    module
-                );
-            console.log('getNormalizedMoveModule', normalizedM);
-
-            const normalizedF =
+            const normalizedFunction =
                 await thunkExtras.api.instance.fullNode.getNormalizedMoveFunction(
                     packageObjectId,
                     module,
-                    f
+                    func
                 );
-            console.log('getNormalizedFunction', normalizedF);
+            const permissions = normalizedFunction.parameters
+                .slice(0, -1)
+                .filter(
+                    (parameter) =>
+                        typeof parameter !== 'string' &&
+                        'MutableReference' in parameter
+                )
+                .reduce(
+                    (
+                        assetPermissions: AssetPermissions,
+                        parameter: SuiMoveNormalizedType
+                    ) => {
+                        assetPermissions.count++;
+                        return assetPermissions;
+                    },
+                    { count: 0 } as AssetPermissions
+                );
+
+            setAssetPermissions(permissions);
         };
 
         getNormalizedFunction();
@@ -331,7 +327,7 @@ export function DappTxApprovalPage() {
                                     label: 'Permissions',
                                     content: {
                                         label: 'Assets',
-                                        count: 3,
+                                        count: assetPermissions?.count || 0,
                                     },
                                 },
                             ],
@@ -359,43 +355,44 @@ export function DappTxApprovalPage() {
                         }
 
                         summary.push(effects);
-
-                        const costs = {
-                            title: 'Costs',
-                            details: [
-                                {
-                                    label: 'Charges',
-                                    content: {
-                                        value: formattedCharges,
-                                        symbol: chargesSymbol,
-                                        dollars: chargeDollars,
-                                    },
-                                },
-                                {
-                                    label: 'Gas',
-                                    content: {
-                                        value: formattedGas,
-                                        symbol: gasSymbol,
-                                        dollars: gasDollars,
-                                    },
-                                },
-                                {
-                                    break: true,
-                                },
-                                {
-                                    label: 'Total',
-                                    content: {
-                                        value: formattedTotal,
-                                        symbol: totalSymbol,
-                                        dollars: totalDollars,
-                                        total: true,
-                                    },
-                                },
-                            ],
-                        };
-
-                        summary.push(costs);
                     }
+
+                    const costs = {
+                        title: 'Costs',
+                        details: [
+                            {
+                                label: 'Charges',
+                                content: {
+                                    value: formattedCharges,
+                                    symbol: chargesSymbol,
+                                    dollars: chargeDollars,
+                                },
+                            },
+                            {
+                                label: 'Gas',
+                                content: {
+                                    value: formattedGas,
+                                    symbol: gasSymbol,
+                                    dollars: gasDollars,
+                                },
+                            },
+                            {
+                                break: true,
+                            },
+                            {
+                                label: 'Total',
+                                content: {
+                                    value: formattedTotal,
+                                    symbol: totalSymbol,
+                                    dollars: totalDollars,
+                                    total: true,
+                                },
+                            },
+                        ],
+                    };
+
+                    summary.push(costs);
+
                     return {
                         [TxApprovalTab.SUMMARY]: summary,
                     };
