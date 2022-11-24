@@ -91,13 +91,14 @@ class Transactions {
             const { result, error } = txDirectResult;
 
             if (error) {
-                return { error };
+                return { error, effects: null };
             }
 
             const { preapproval } = preapprovalRequest;
             preapproval.maxTransactionCount -= 1;
+            const { effects } = result.EffectsCert;
             const { computationCost, storageCost, storageRebate } =
-                result.EffectsCert.effects.effects.gasUsed;
+                effects.effects.gasUsed;
             const gasUsed = computationCost + (storageCost - storageRebate);
             preapproval.totalGasLimit -= gasUsed;
 
@@ -113,9 +114,9 @@ class Transactions {
                 this.removePreapprovalRequest(preapprovalRequest.id as string);
             }
 
-            return txDirectResult;
+            return { effects, error: null };
         } catch (e) {
-            return null;
+            return { error: e, effects: null };
         }
     }
 
@@ -139,12 +140,12 @@ class Transactions {
                 });
 
                 if (permissionRequest) {
-                    const { result, error } = await this.tryDirectExecution(
+                    const { effects, error } = await this.tryDirectExecution(
                         moveCall,
                         permissionRequest
                     );
-                    if (result) {
-                        return result;
+                    if (effects) {
+                        return effects;
                     }
 
                     if (error) {
