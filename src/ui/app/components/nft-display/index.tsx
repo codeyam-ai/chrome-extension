@@ -5,6 +5,7 @@ import cl from 'classnames';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { useNFTBasicData } from '_hooks';
+import Body from '../../shared/typography/Body';
 
 import type { SuiObject as SuiObjectType } from '@mysten/sui.js';
 
@@ -29,15 +30,16 @@ function NFTDisplayCard({
         useNFTBasicData(nftobj);
 
     const wideviewSection = (
-        <div className={st.nftfields}>
-            <div className="capitalize dark:text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
+        <div className={'flex flex-col text-left'}>
+            <Body className={'font-weight-ethos-subheader'}>
                 {nftFields?.name}
-            </div>
-            <div className={st.nftType}>
+            </Body>
+            <Body className={'text-ethos-light-text-medium'}>
                 {fileExtentionType?.name} {fileExtentionType.type}
-            </div>
+            </Body>
         </div>
     );
+
     const defaultSection = (
         <>
             {expandable ? (
@@ -61,14 +63,7 @@ function NFTDisplayCard({
     );
 
     return (
-        <div
-            className={cl(
-                st.nftimage,
-                wideview &&
-                    st.wideview +
-                        ' dark:bg-gray-700 dark:border-gray-500 dark:border-[1px]'
-            )}
-        >
+        <div className={cl(st.nftimage, wideview && st.wideview)}>
             {filePath && (
                 <img
                     className={cl(st.img, st[size])}
