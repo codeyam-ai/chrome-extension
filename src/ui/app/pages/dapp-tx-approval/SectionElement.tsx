@@ -8,11 +8,14 @@ const SectionElement = ({ section }: { section: Section }) => {
         <div className="flex flex-col gap-2">
             <div className="text-base">
                 {section.tooltip ? (
-                    <Tooltip tooltipText={section.tooltip}>
-                        <div className="cursor-help flex justify-center items-center rounded-full bg-gray-500 text-white text-xs h-5 w-5 scale-75">
-                            ?
-                        </div>
-                    </Tooltip>
+                    <div className="flex flex-row gap-1 items-center">
+                        <div>{section.title}</div>
+                        <Tooltip tooltipText={section.tooltip}>
+                            <div className="cursor-help flex justify-center items-center rounded-full bg-gray-500 text-white text-xs h-5 w-5 scale-75">
+                                ?
+                            </div>
+                        </Tooltip>
+                    </div>
                 ) : (
                     section.title
                 )}

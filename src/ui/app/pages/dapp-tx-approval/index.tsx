@@ -439,7 +439,7 @@ export function DappTxApprovalPage() {
                         ].map((t, index) => (
                             <TabElement
                                 key={`tab-${index}`}
-                                type={tab}
+                                type={t}
                                 isSelected={t === tab}
                                 setTab={setTab}
                             />
