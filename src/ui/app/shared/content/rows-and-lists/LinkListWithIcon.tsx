@@ -1,5 +1,5 @@
 import { type EthosLinkProps } from '../../typography/EthosLink';
-import LinkWithIcon from './LinkWIthIcon';
+import LinkWithIcon from './LinkWithIcon';
 
 interface textAndLink {
     text: string;
