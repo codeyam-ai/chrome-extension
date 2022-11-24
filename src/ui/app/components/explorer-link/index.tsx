@@ -68,6 +68,8 @@ function ExplorerLink(props: ExplorerLinkProps) {
     if (!explorerHref) {
         return null;
     }
+
+    console.log('explorer link: ', explorerHref);
     return (
         <Body>
             <EthosLink type={LinkType.External} to={explorerHref}>

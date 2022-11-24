@@ -38,12 +38,7 @@ function ReceiptPage() {
 
     return (
         <div className={st.container}>
-            <NavBarWithBackAndTitle title="" backLink={linkTo} />
-            <div className="px-6">
-                <Content>
-                    {txnItem && <ReceiptCard txDigest={txnItem} />}
-                </Content>
-            </div>
+            <Content>{txnItem && <ReceiptCard txDigest={txnItem} />}</Content>
         </div>
     );
 }

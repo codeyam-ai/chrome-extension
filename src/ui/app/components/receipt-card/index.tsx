@@ -1,17 +1,27 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import cl from 'classnames';
-
-import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { formatDate } from '_helpers';
 import { useMiddleEllipsis, useFormatCoin } from '_hooks';
 import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
+import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline';
+import PageScrollView from '../../shared/layouts/PageScrollView';
+import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
+import ExplorerLink from '_components/explorer-link';
+
+import { ArrowUpRightIcon } from '@heroicons/react/24/solid';
+
+import LargeSent from '_src/ui/app/shared/svg/LargeSent';
+import LargeListed from '_src/ui/app/shared/svg/LargeListed';
+import LargeReceived from '_src/ui/app/shared/svg/LargeReceived';
 
 import type { TxResultState } from '_redux/slices/txresults';
 
 import st from './ReceiptCard.module.scss';
+import Body from '../../shared/typography/Body';
+import Header from '../../shared/typography/Header';
+import BodyLarge from '../../shared/typography/BodyLarge';
 
 type TxResponseProps = {
     txDigest: TxResultState;
@@ -101,17 +111,83 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
           ])
         : false;
 
-    const assetCard = imgUrl && (
-        <div className={st.wideview}>
+    const AssetCard = ({ imgUrl }: { imgUrl: string }) => (
+        <div className={'w-full'}>
+            <div className={'flex flex-row justify-center mb-4'}>
+                <img
+                    className={'rounded-2xl w-[58px] h-[58px] auto'}
+                    src={imgUrl}
+                    alt={txDigest?.name || 'NFT'}
+                />
+                <LargeListed />
+            </div>
+        </div>
+    );
+
+    const AvatarItem = ({
+        imgUrl,
+        header,
+        subheader,
+    }: {
+        imgUrl?: string;
+        header: string;
+        subheader?: string;
+    }) => (
+        <div
+            className={
+                'p-[10px] flex flex-row space-around items-center align-center gap-4'
+            }
+        >
             <img
-                className={cl(st.img)}
+                className={'rounded-full w-[40px] h-[40px] auto'}
                 src={imgUrl}
                 alt={txDigest?.name || 'NFT'}
             />
-            <div className={st.nftfields}>
-                <div className={st.nftName}>{truncatedNftName}</div>
-                <div className={st.nftType}>{truncatedNftDescription}</div>
+            <div className={'flex flex-col items-left'}>
+                <BodyLarge className={'font-semibold text-left'}>
+                    {header}
+                </BodyLarge>
+                <Body className={'text-ethos-light-text-medium text-left'}>
+                    {subheader}
+                </Body>
             </div>
+        </div>
+    );
+
+    const TxTransfer = ({
+        ToFrom,
+    }: {
+        ToFrom: {
+            to: {
+                imgSrc: string;
+                header: string;
+                subheader?: string;
+            };
+            from: {
+                imgSrc: string;
+                header: string;
+                subheader?: string;
+            };
+        };
+    }) => (
+        <div className={'flex flex-col'}>
+            <AvatarItem
+                imgUrl={ToFrom.from.imgSrc}
+                header={ToFrom.from.header}
+                subheader={ToFrom.from.subheader}
+            />
+            <div
+                className={
+                    'py-1 pl-[18px] text-left text-ethos-light-text-medium'
+                }
+            >
+                <ChevronDoubleDownIcon width={25} height={23} />
+            </div>
+            <AvatarItem
+                imgUrl={ToFrom.to.imgSrc}
+                header={ToFrom.to.header}
+                subheader={ToFrom.to.subheader}
+            />
         </div>
     );
 
@@ -134,94 +210,74 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
 
     return (
         <>
-            <div className={cl(st.txnResponse, statusClassName)}>
-                <div className={st.txnResponseStatus}>
-                    <div className={st.statusIcon}></div>
-                    <div className={st.date}>
+            <PageScrollView>
+                <div className={'pt-6 px-6 pb-8'}>
+                    <AssetCard imgUrl={imgUrl ? imgUrl : ''} />
+                    <Body className={'text-ethos-light-text-medium'}>
+                        {txDigest.status === 'success'
+                            ? transferMeta[transferType].txName
+                            : transferMeta[transferType].failedMsg}
+                    </Body>
+                    <Header className={'font-semibold mb-3'}>
+                        SuiGod #1750
+                    </Header>
+                    <Body className={'text-ethos-light-text-medium'}>
                         {date && date.replace(' AM', 'am').replace(' PM', 'pm')}
-                    </div>
+                    </Body>
                 </div>
-
-                <div className={st.responseCard}>
-                    <div className={st.status}>
-                        <div className={st.amountTransferred}>
-                            <div className={st.label}>
-                                {txDigest.status === 'success'
-                                    ? transferMeta[transferType].txName
-                                    : transferMeta[transferType].failedMsg}
-                            </div>
-                            {(txDigest.amount || txDigest.balance) && (
-                                <div className={st.amount}>
-                                    {formatted}
-                                    <span>{symbol}</span>
-                                </div>
-                            )}
-                        </div>
-
-                        {assetCard}
-                    </div>
-
-                    {transferMeta[transferType].address && (
-                        <div className={st.txnItem}>
-                            <div className={st.label}>
-                                {transferMeta[transferType].transfer}
-                            </div>
-                            <div className={cl(st.value, st.walletAddress)}>
+                <div className={'px-6 pb-6'}>
+                    <TxTransfer
+                        ToFrom={{
+                            to: {
+                                imgSrc: imgUrl ? imgUrl : '',
+                                header: 'Wallet 1', // TODO: get data for name of wallet
+                                subheader: toAddrStr,
+                            },
+                            from: {
+                                imgSrc: imgUrl ? imgUrl : '',
+                                header: fromAddrStr,
+                            },
+                        }}
+                    />
+                </div>
+                <div className={'px-6 pb-6 text-left'}>
+                    <BodyLarge className={'font-semibold mb-3'}>
+                        Details
+                    </BodyLarge>
+                    <KeyValueList
+                        keyNamesAndValues={[
+                            {
+                                keyName: 'Transaction Fee',
+                                value: gas,
+                            },
+                            {
+                                keyName: 'Signature',
+                                value: fromAddrStr,
+                            },
+                        ]}
+                    />
+                </div>
+                {txDigest.txId && (
+                    <div className={'px-6'}>
+                        <div className={'flex flex-row justify-between'}>
+                            <BodyLarge>
                                 <ExplorerLink
-                                    type={ExplorerLinkType.address}
-                                    address={
-                                        transferMeta[transferType]
-                                            .address as string
-                                    }
+                                    type={ExplorerLinkType.transaction}
+                                    transactionID={txDigest.txId}
                                     title="View on Sui Explorer"
                                     className={st['explorer-link']}
-                                    showIcon={false}
+                                    showIcon={true}
                                 >
-                                    {transferMeta[transferType].addressTruncate}
+                                    View on Sui Explorer
                                 </ExplorerLink>
+                            </BodyLarge>
+                            <div className={'text-ethos-light-text-medium'}>
+                                <ArrowUpRightIcon width={16} height={16} />
                             </div>
                         </div>
-                    )}
-
-                    {txDigest.txGas && (
-                        <div
-                            className={cl(
-                                st.txFees,
-                                st.txnItem,
-                                txDigest.isSender && st.noBorder
-                            )}
-                        >
-                            <div className={st.label}>Gas Fees</div>
-                            <div className={st.value}>
-                                {gas} {gasSymbol}
-                            </div>
-                        </div>
-                    )}
-
-                    {txDigest.amount && txDigest.isSender && (
-                        <div className={cl(st.txFees, st.txnItem)}>
-                            <div className={st.txInfoLabel}>Total Amount</div>
-                            <div className={st.walletInfoValue}>
-                                {total} {totalSymbol}
-                            </div>
-                        </div>
-                    )}
-
-                    {txDigest.txId && (
-                        <div className={st.explorerLink}>
-                            <ExplorerLink
-                                type={ExplorerLinkType.transaction}
-                                transactionID={txDigest.txId}
-                                title="View on Sui Explorer"
-                                className={st['explorer-link']}
-                                showIcon={true}
-                            >
-                                View on Explorer
-                            </ExplorerLink>
-                        </div>
-                    )}
-                </div>
-            </div>
+                    </div>
+                )}
+            </PageScrollView>
         </>
     );
 }
