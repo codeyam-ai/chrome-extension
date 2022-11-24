@@ -46,6 +46,13 @@ function UserApproveContainer({
     const reject = useCallback(() => {
         onSubmit(false);
     }, [onSubmit]);
+    const showIcon = useCallback(
+        (e: SyntheticEvent<HTMLImageElement, Event>) => {
+            const img = e.target as HTMLImageElement;
+            img.classList.remove('hidden');
+        },
+        []
+    );
     const hideIcon = useCallback(
         (e: SyntheticEvent<HTMLImageElement, Event>) => {
             const img = e.target as HTMLImageElement;
@@ -77,9 +84,10 @@ function UserApproveContainer({
                     {originFavIcon && originFavIcon.length > 0 && (
                         <img
                             src={originFavIcon}
-                            className="z-10 h-12 border-white dark:border-black border-2 rounded-full"
+                            className="z-10 h-12 border-white dark:border-black border-2 rounded-full hidden"
                             alt={`${originTitle} icon`}
                             onError={hideIcon}
+                            onLoad={showIcon}
                         />
                     )}
                     <div className="-ml-3">
