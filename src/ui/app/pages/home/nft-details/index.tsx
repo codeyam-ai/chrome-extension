@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { getObjectId } from '@mysten/sui.js';
+import { getObjectId, hasPublicTransfer } from '@mysten/sui.js';
 import { useMemo, useState, useCallback } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
@@ -77,6 +77,17 @@ function NFTdetailsContent({
                                 >
                                     View NFT
                                 </Button>
+
+                                {hasPublicTransfer(nft) && (
+                                    <Button
+                                        isInline
+                                        buttonStyle="primary"
+                                        className="-mt-[15px]"
+                                        onClick={onClick}
+                                    >
+                                        Send
+                                    </Button>
+                                )}
                             </ExplorerLink>
                             <div className={'w-full text-left'}>
                                 <BodyLarge className={'font-semibold mb-3'}>
