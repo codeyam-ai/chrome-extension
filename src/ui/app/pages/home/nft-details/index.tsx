@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { getObjectId, hasPublicTransfer } from '@mysten/sui.js';
+import { getObjectId } from '@mysten/sui.js';
 import { useMemo, useState, useCallback } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
@@ -9,25 +9,23 @@ import TransferNFTCard from './transfer-nft';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import Loading from '_components/loading';
-import { useAppSelector, useMiddleEllipsis, useNFTBasicData } from '_hooks';
+import { useAppSelector, useNFTBasicData } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account';
+import { LinkType } from '_src/enums/LinkType';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
+import LinkListWithIcon from '_src/ui/app/shared/content/rows-and-lists/LinkListWithIcon';
+import NFTTransactionRows from '_src/ui/app/shared/content/rows-and-lists/NFTTransactionRows';
 import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
 import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
+import CircleElipsis from '_src/ui/app/shared/svg/CircleElipsis';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 import Typography from '_src/ui/app/shared/typography/Typography';
-import CircleElipsis from '_src/ui/app/shared/svg/CircleElipsis';
 
 import type { SuiObject } from '@mysten/sui.js';
 import type { ButtonHTMLAttributes } from 'react';
 
-import NFTTransactionRows from '_src/ui/app/shared/content/rows-and-lists/NFTTransactionRows';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import LinkListWithIcon from '_src/ui/app/shared/content/rows-and-lists/LinkListWithIcon';
-
-const TRUNCATE_MAX_LENGTH = 10;
-const TRUNCATE_PREFIX_LENGTH = 6;
 function NFTdetailsContent({
     nft,
     onClick,
@@ -37,12 +35,6 @@ function NFTdetailsContent({
 }) {
     const { filePath, nftObjectID, nftFields, fileExtentionType } =
         useNFTBasicData(nft);
-
-    const shortenedObjectId = useMiddleEllipsis(
-        nftObjectID,
-        TRUNCATE_MAX_LENGTH,
-        TRUNCATE_PREFIX_LENGTH
-    );
 
     return (
         <>
@@ -131,11 +123,19 @@ function NFTdetailsContent({
                                     textAndLinks={[
                                         {
                                             text: 'View on Keepsake',
-                                            link: '/link-to',
+                                            link: {
+                                                type: LinkType.External,
+                                                to: 'https://ethoswallet.xyz/dev',
+                                                children: 'Learn how →',
+                                            },
                                         },
                                         {
                                             text: 'View on Clutchy',
-                                            link: '/linked',
+                                            link: {
+                                                type: LinkType.External,
+                                                to: 'https://ethoswallet.xyz/dev',
+                                                children: 'Learn how →',
+                                            },
                                         },
                                     ]}
                                 />

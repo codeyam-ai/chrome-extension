@@ -1,12 +1,12 @@
-import BodyLarge from '../../typography/BodyLarge';
-import Body from '../../typography/Body';
 import { Link } from 'react-router-dom';
+import Body from '../../typography/Body';
+import BodyLarge from '../../typography/BodyLarge';
 import { useFormatCoin } from '_src/ui/app/hooks';
 
 type ActivityRowProps = {
     icon: any;
     link: string;
-    header: any;
+    header: JSX.Element | string;
     subheader: string;
     txAmount?: number;
     amountSubtext?: string;

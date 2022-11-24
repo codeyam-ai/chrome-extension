@@ -1,10 +1,9 @@
+import ListedIcon from '../../svg/ListedIcon';
+import SentIcon from '../../svg/SentIcon';
+import SoldIcon from '../../svg/SoldIcon';
+import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
 import { useMiddleEllipsis } from '_src/ui/app/hooks';
-import { ActivityRow } from './ActivityRow';
-
-import SentIcon from '../../svg/SentIcon';
-import ListedIcon from '../../svg/ListedIcon';
-import SoldIcon from '../../svg/SoldIcon';
 
 interface NFTTransactionRowProps {
     txn: any;
@@ -30,11 +29,11 @@ const NFTTransactionRow = ({ txn }: NFTTransactionRowProps) => {
         TRUNCATE_PREFIX_LENGTH
     );
 
-    const fromAddrStr = useMiddleEllipsis(
+    /*const fromAddrStr = useMiddleEllipsis(
         txn.fromAddr || '',
         TRUNCATE_MAX_LENGTH,
         TRUNCATE_PREFIX_LENGTH
-    );
+    );*/
 
     let TxIcon: JSX.Element;
     let head: JSX.Element;

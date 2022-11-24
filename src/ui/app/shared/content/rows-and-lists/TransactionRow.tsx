@@ -3,11 +3,9 @@ import {
     ExclaimationTriangleIcon,
     PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
-
+import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
 import { useMiddleEllipsis } from '_src/ui/app/hooks';
-import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
-import { ActivityRow } from './ActivityRow';
 
 interface TransactionRowProps {
     txn: any; // TODO: Update when NFT events are complete

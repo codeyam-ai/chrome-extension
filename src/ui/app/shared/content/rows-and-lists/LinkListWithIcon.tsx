@@ -1,7 +1,6 @@
+import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 import BodyLarge from '../../typography/BodyLarge';
 import EthosLink, { type EthosLinkProps } from '../../typography/EthosLink';
-import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
-import { TextColor } from '_src/enums/Typography';
 
 interface textAndLink {
     text: string;
@@ -17,7 +16,7 @@ const LinkListWithIcon = ({ textAndLinks }: LinkListWithIconProps) => {
         <div className="mb-6 text-left flex flex-col gap-4">
             {textAndLinks.map((textAndLink, key) => {
                 return (
-                    <div className={'flex flex-row justify-between'}>
+                    <div className={'flex flex-row justify-between'} key={key}>
                         <BodyLarge key={key}>
                             <EthosLink
                                 type={textAndLink.link.type}
