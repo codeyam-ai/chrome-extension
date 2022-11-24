@@ -1,4 +1,4 @@
-const Check = () => {
+const LargeSent = () => {
     return (
         <svg
             width="60"
@@ -27,4 +27,4 @@ const Check = () => {
     );
 };
 
-export default Check;
+export default LargeSent;
