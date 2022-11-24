@@ -4,7 +4,6 @@
 import { useCallback, useEffect, useMemo, useState, Fragment } from 'react';
 import { useParams } from 'react-router-dom';
 
-import Tooltip from '../../components/Tooltip';
 import { AppState } from '../../hooks/useInitializedGuard';
 import Loading from '_components/loading';
 import {
@@ -24,6 +23,8 @@ import type { SuiJsonValue, TypeTag, TransactionEffects } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 
 import st from './DappTxApprovalPage.module.scss';
+import SectionElement from './SectionElement';
+import TabElement from './TabElement';
 
 const truncateMiddle = (s = '', length = 6) =>
     s.length > length * 2.5
@@ -54,10 +55,21 @@ export enum TxApprovalTab {
     DETAILS = 'Details',
 }
 
+export type Cost = {
+    value: string;
+    symbol: string;
+    dollars: string;
+    total?: boolean;
+};
+
+export type NumberedDetail = {
+    label: string;
+    count: number;
+};
+
 export type Detail = {
     label?: string;
-    content?: string | number;
-    count?: number;
+    content?: string | number | NumberedDetail | Cost;
     title?: string;
 };
 
@@ -128,7 +140,6 @@ export function DappTxApprovalPage() {
                 return summed;
             }, []);
 
-        console.log('ownedCreating', ownedCreating);
         return ownedCreating;
     }, [effects]);
 
@@ -300,126 +311,6 @@ export function DappTxApprovalPage() {
         }
     }, [loading, txRequest]);
 
-    const NumberedValue = ({
-        label,
-        count,
-    }: {
-        label: string;
-        count: number;
-    }) => {
-        return (
-            <div className="flex flex-row items-center gap-1">
-                <div>{label}</div>
-                <div className="w-5 h-5 flex justify-center items-center font-normal bg-slate-200 text-slate-600 rounded-full">
-                    {count}
-                </div>
-            </div>
-        );
-    };
-
-    const CostValue = ({
-        value,
-        symbol,
-        dollars,
-        bold,
-    }: {
-        value: string;
-        symbol: string;
-        dollars: string;
-        bold?: boolean;
-    }) => {
-        return (
-            <div
-                className={`flex flex-row items-center gap-1 py-1 ${
-                    bold ? 'font-semibold' : ''
-                }`}
-            >
-                <div className="font-normal text-slate-500">
-                    {value} {symbol}
-                </div>
-                <Dot />
-                <div className="font-normal">${dollars}</div>
-            </div>
-        );
-    };
-
-    const TabElement = ({ type }: { type: TxApprovalTab }) => {
-        const _setTab = useCallback(() => setTab(type), [type]);
-
-        const selected =
-            tab === type ? 'border-b-purple-800 text-purple-800' : '';
-
-        return (
-            <div
-                className={`border-b ${selected} font-semibold px-3 py-1`}
-                onClick={_setTab}
-            >
-                {type}
-            </div>
-        );
-    };
-
-    const DetailElement = ({ detail }: { detail: Detail }) => {
-        const contents = Array.isArray(detail.content)
-            ? detail.content
-            : [detail.content];
-        return (
-            <div className="flex justify-between">
-                <div className="flex items-center gap-1">
-                    <div className="text-gray-500 dark:text-gray-400">
-                        {detail.label}
-                    </div>
-                </div>
-                <div className="dark:text-gray-400 font-semibold">
-                    {contents.map((content, index) =>
-                        content.count ? (
-                            <NumberedValue
-                                key={`detail-content-${index}`}
-                                {...content}
-                            />
-                        ) : (
-                            <div key={`detail-content-${index}`}>{content}</div>
-                        )
-                    )}
-                </div>
-            </div>
-        );
-    };
-
-    const Dot = () => (
-        <svg
-            width="6"
-            height="6"
-            viewBox="0 0 6 6"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
-            <path
-                d="M3.02983 5.13068C2.62879 5.13068 2.26255 5.03291 1.93111 4.83736C1.59967 4.63849 1.33452 4.37334 1.13565 4.0419C0.940104 3.71046 0.84233 3.34422 0.84233 2.94318C0.84233 2.53883 0.940104 2.17259 1.13565 1.84446C1.33452 1.51302 1.59967 1.24953 1.93111 1.05398C2.26255 0.855113 2.62879 0.755682 3.02983 0.755682C3.43419 0.755682 3.80043 0.855113 4.12855 1.05398C4.45999 1.24953 4.72348 1.51302 4.91903 1.84446C5.1179 2.17259 5.21733 2.53883 5.21733 2.94318C5.21733 3.34422 5.1179 3.71046 4.91903 4.0419C4.72348 4.37334 4.45999 4.63849 4.12855 4.83736C3.80043 5.03291 3.43419 5.13068 3.02983 5.13068Z"
-                fill="#74777C"
-            />
-        </svg>
-    );
-
-    // const CostTotal = () => (
-    //     <>
-    //         <hr />
-    //         <DetailElement
-    //             label={
-    //                 <div className="font-semibold text-slate-800">Total:</div>
-    //             }
-    //             content={
-    //                 <CostValue
-    //                     value={formattedTotal}
-    //                     symbol={totalSymbol}
-    //                     dollars={totalDollars}
-    //                     bold={true}
-    //                 />
-    //             }
-    //         />
-    //     </>
-    // );
-
     const content: TabSections = useMemo(() => {
         switch (txRequest?.tx.type) {
             case 'v2': {
@@ -438,8 +329,10 @@ export function DappTxApprovalPage() {
                                 },
                                 {
                                     label: 'Permissions',
-                                    content: 'Assets',
-                                    count: 3,
+                                    content: {
+                                        label: 'Assets',
+                                        count: 3,
+                                    },
                                 },
                             ],
                         } as Section,
@@ -467,33 +360,41 @@ export function DappTxApprovalPage() {
 
                         summary.push(effects);
 
-                        // const costs = {
-                        //     title: 'Costs',
-                        //     details: [
-                        //         {
-                        //             label: 'Charges',
-                        //             content: (
-                        //                 <CostValue
-                        //                     value={formattedCharges}
-                        //                     symbol={chargesSymbol}
-                        //                     dollars={chargeDollars}
-                        //                 />
-                        //             ),
-                        //         },
-                        //         {
-                        //             label: 'Gas',
-                        //             content: (
-                        //                 <CostValue
-                        //                     value={formattedGas}
-                        //                     symbol={gasSymbol}
-                        //                     dollars={gasDollars}
-                        //                 />
-                        //             ),
-                        //         },
-                        //     ],
-                        // };
+                        const costs = {
+                            title: 'Costs',
+                            details: [
+                                {
+                                    label: 'Charges',
+                                    content: {
+                                        value: formattedCharges,
+                                        symbol: chargesSymbol,
+                                        dollars: chargeDollars,
+                                    },
+                                },
+                                {
+                                    label: 'Gas',
+                                    content: {
+                                        value: formattedGas,
+                                        symbol: gasSymbol,
+                                        dollars: gasDollars,
+                                    },
+                                },
+                                {
+                                    break: true,
+                                },
+                                {
+                                    label: 'Total',
+                                    content: {
+                                        value: formattedTotal,
+                                        symbol: totalSymbol,
+                                        dollars: totalDollars,
+                                        total: true,
+                                    },
+                                },
+                            ],
+                        };
 
-                        // summary.push(costs);
+                        summary.push(costs);
                     }
                     return {
                         [TxApprovalTab.SUMMARY]: summary,
@@ -505,7 +406,19 @@ export function DappTxApprovalPage() {
             default:
                 return {};
         }
-    }, [txRequest?.tx, ownedCreating]);
+    }, [
+        txRequest?.tx,
+        ownedCreating,
+        formattedCharges,
+        chargesSymbol,
+        chargeDollars,
+        formattedGas,
+        gasSymbol,
+        gasDollars,
+        formattedTotal,
+        totalSymbol,
+        totalDollars,
+    ]);
 
     return (
         <Loading loading={loading} big={true}>
@@ -523,31 +436,24 @@ export function DappTxApprovalPage() {
                             TxApprovalTab.SUMMARY,
                             TxApprovalTab.ASSETS,
                             TxApprovalTab.DETAILS,
-                        ].map((tab, index) => (
-                            <TabElement key={`tab-${index}`} type={tab} />
+                        ].map((t, index) => (
+                            <TabElement
+                                key={`tab-${index}`}
+                                type={tab}
+                                isSelected={t === tab}
+                                setTab={setTab}
+                            />
                         ))}
                     </div>
 
                     <div className="flex flex-col gap-6 grow">
                         <>
                             {(content[tab] || []).map(
-                                ({ title, details }, sectionIndex) => (
-                                    <div
+                                (section, sectionIndex) => (
+                                    <SectionElement
                                         key={`section-${sectionIndex}`}
-                                        className="flex flex-col gap-2"
-                                    >
-                                        <div className="text-base">{title}</div>
-                                        <div className="flex flex-col text-sm gap-2">
-                                            {details.map(
-                                                (detail, detailIndex) => (
-                                                    <DetailElement
-                                                        key={`details-${detailIndex}`}
-                                                        detail={detail}
-                                                    />
-                                                )
-                                            )}
-                                        </div>
-                                    </div>
+                                        section={section}
+                                    />
                                 )
                             )}
                         </>
