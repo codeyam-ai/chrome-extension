@@ -1,7 +1,11 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { getObjectId, hasPublicTransfer } from '@mysten/sui.js';
+import {
+    getObjectId,
+    hasPublicTransfer,
+    JsonRpcProvider,
+} from '@mysten/sui.js';
 import { useMemo, useState, useCallback } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
@@ -35,6 +39,20 @@ function NFTdetailsContent({
 }) {
     const { filePath, nftObjectID, nftFields, fileExtentionType } =
         useNFTBasicData(nft);
+
+    /*
+
+    Could not get the example working for getEventsByTransaction
+    Error: Said method was not avaialable => possibly a devnet issue?
+
+    const provider = new JsonRpcProvider();
+    const txEvents = await provider.getEventsByTransaction(
+        '6mn5W1CczLwitHCO9OIUbqirNrQ0cuKdyxaNe16SAME='
+    );
+
+    console.log('not working => ', txEvents);
+    
+    */
 
     return (
         <>
@@ -77,18 +95,18 @@ function NFTdetailsContent({
                                 >
                                     View NFT
                                 </Button>
-
-                                {hasPublicTransfer(nft) && (
-                                    <Button
-                                        isInline
-                                        buttonStyle="primary"
-                                        className="-mt-[15px]"
-                                        onClick={onClick}
-                                    >
-                                        Send
-                                    </Button>
-                                )}
                             </ExplorerLink>
+
+                            {hasPublicTransfer(nft) && (
+                                <Button
+                                    isInline
+                                    buttonStyle="primary"
+                                    className="-mt-[15px]"
+                                    onClick={onClick}
+                                >
+                                    Send
+                                </Button>
+                            )}
                             <div className={'w-full text-left'}>
                                 <BodyLarge className={'font-semibold mb-3'}>
                                     Activity
