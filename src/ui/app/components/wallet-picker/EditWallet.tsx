@@ -165,7 +165,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                         <>
                             {/* Backdrop */}
                             <div
-                                className="absolute -top-[223px] -left-[24px] w-[360px] h-[475px]"
+                                className="absolute -top-[223px] -left-[24px] w-[360px] h-[568px]"
                                 onClick={toggleIsColorPickerMenuOpen}
                             />
 
