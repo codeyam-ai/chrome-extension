@@ -46,7 +46,7 @@ const HomePage = () => {
                     <NavBarWithMenu />
                     <SettingsPage />
                     <WalletPickerPage />
-                    <main className="flex-grow">
+                    <main className="flex-grow h=[488px]">
                         <Outlet />
                     </main>
                     <TabBar />
