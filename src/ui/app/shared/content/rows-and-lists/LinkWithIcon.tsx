@@ -3,16 +3,15 @@ import BodyLarge from '../../typography/BodyLarge';
 import EthosLink from '../../typography/EthosLink';
 
 type LinkWithIconProps = {
-    key?: any;
     type: any;
     to?: string;
     text: string;
 };
 
-const LinkWithIcon = ({ key, type, to, text }: LinkWithIconProps) => {
+const LinkWithIcon = ({ type, to, text }: LinkWithIconProps) => {
     return (
-        <div className={'flex flex-row justify-between'} key={key}>
-            <BodyLarge key={key}>
+        <div className={'flex flex-row justify-between'}>
+            <BodyLarge>
                 <EthosLink type={type} to={to}>
                     {text}
                 </EthosLink>
