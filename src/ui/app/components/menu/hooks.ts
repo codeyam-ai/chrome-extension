@@ -47,6 +47,17 @@ export function useWalletEditorIsOpen() {
     return searchParams.get(WALLET_PICKER_PARAM) === '/' + WALLET_EDITOR_PARAM;
 }
 
+export function useShowBackBtn() {
+    /* Checks if a param for details page exists and returns boolean */
+    const [searchParams] = useSearchParams();
+
+    return (
+        searchParams.has('objectId') ||
+        searchParams.has('type') ||
+        searchParams.has('txdigest')
+    );
+}
+
 /**
  * Get the URL that contains the background page and the menu location
  *
