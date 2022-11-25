@@ -26,6 +26,7 @@ import CircleElipsis from '_src/ui/app/shared/svg/CircleElipsis';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 import Typography from '_src/ui/app/shared/typography/Typography';
+import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 
 import type { SuiObject } from '@mysten/sui.js';
 import type { ButtonHTMLAttributes } from 'react';
@@ -145,9 +146,40 @@ function NFTdetailsContent({
                             </div>
                             <div
                                 className={
-                                    'border-t-1 border-t-solid border-ethos-light-text-medium py-8'
+                                    'border-t-1 border-t-solid border-ethos-light-text-medium pt-8'
                                 }
                             >
+                                <div
+                                    className={'flex flex-row justify-between'}
+                                >
+                                    <BodyLarge>
+                                        <ExplorerLink
+                                            type={ExplorerLinkType.transaction}
+                                            transactionID={
+                                                nft.previousTransaction
+                                            }
+                                            title="View on Sui Explorer"
+                                            showIcon={true}
+                                        >
+                                            View on Sui Explorer
+                                        </ExplorerLink>
+                                    </BodyLarge>
+                                    <div
+                                        className={
+                                            'text-ethos-light-text-medium'
+                                        }
+                                    >
+                                        <ArrowUpRightIcon
+                                            width={16}
+                                            height={16}
+                                        />
+                                    </div>
+                                </div>
+                                {/*
+                                
+                                Add these buttons in when fully integrated with Keepsake and Clutchy
+                                Currently no way to determine that the NFTs are located on either. 
+                                
                                 <LinkListWithIcon
                                     textAndLinks={[
                                         {
@@ -168,6 +200,7 @@ function NFTdetailsContent({
                                         },
                                     ]}
                                 />
+                                */}
                             </div>
                         </div>
                     </div>
