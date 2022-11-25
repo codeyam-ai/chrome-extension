@@ -108,11 +108,11 @@ function NFTdetailsContent({
                                 </Button>
                             )}
                             <div className={'w-full text-left'}>
-                                <BodyLarge className={'font-semibold mb-3'}>
+                                <BodyLarge isSemibold className={'mb-3'}>
                                     Activity
                                 </BodyLarge>
                                 <NFTTransactionRows />
-                                <BodyLarge className={'font-semibold mb-3'}>
+                                <BodyLarge isSemibold className={'mb-3'}>
                                     Creator
                                 </BodyLarge>
                                 <KeyValueList
@@ -127,7 +127,7 @@ function NFTdetailsContent({
                                         },
                                     ]}
                                 />
-                                <BodyLarge className={'font-semibold mb-3'}>
+                                <BodyLarge isSemibold className={'mb-3'}>
                                     Details
                                 </BodyLarge>
                                 <KeyValueList
