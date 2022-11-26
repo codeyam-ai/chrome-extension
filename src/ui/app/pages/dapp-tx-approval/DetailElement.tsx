@@ -17,14 +17,16 @@ const DetailElement = ({ detail }: { detail: Detail }) => {
                     {detail.label}
                 </div>
             </div>
-            <div className="dark:text-gray-400 font-semibold">
+            <div className="dark:text-gray-400 font-semibold flex flex-col items-end gap-1">
                 {contents.map((content, index) => (
                     <div key={`detail-content-${index}`}>
                         {content.count !== undefined && (
                             <NumberedValue {...content} />
                         )}
                         {content.value && <CostValue {...content} />}
-                        {typeof content === 'string' && content}
+                        {(typeof content === 'string' ||
+                            typeof content === 'number') &&
+                            content}
                     </div>
                 ))}
             </div>

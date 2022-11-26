@@ -21,7 +21,7 @@ import {
 import { thunkExtras } from '_redux/store/thunk-extras';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
-import type { SuiMoveNormalizedType, TransactionEffects } from '@mysten/sui.js';
+import type { TransactionEffects } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 
 export enum TxApprovalTab {
@@ -50,21 +50,9 @@ export type Detail = {
 
 export type Section = {
     title: string;
+    subtitle?: string;
     tooltip?: string;
     details: Detail[];
-};
-
-export type AssetPermission = {
-    type: string;
-    count: number;
-};
-
-export type AssetPermissions = {
-    count: number;
-    read: AssetPermission[];
-    write: AssetPermission[];
-    transfer: AssetPermission[];
-    full: AssetPermission[];
 };
 
 export type TabSections = {
@@ -93,9 +81,6 @@ export function DappTxApprovalPage() {
     const txRequest = useAppSelector(txRequestSelector);
     const dispatch = useAppDispatch();
 
-    const [assetPermissions, setAssetPermissions] = useState<
-        AssetPermissions | undefined
-    >();
     const [effects, setEffects] = useState<
         TransactionEffects | undefined | null
     >();
@@ -109,6 +94,28 @@ export function DappTxApprovalPage() {
         ? gasUsed.computationCost +
           (gasUsed.storageCost - gasUsed.storageRebate)
         : null;
+    console.log('GAS', gas, gasUsed?.computationCost);
+
+    const ownedReading = useMemo(() => {
+        if (!txRequest) return [];
+        if (txRequest.tx.type === 'move-call') return [];
+        if (typeof txRequest.tx.data === 'string') return [];
+        if (!('packageObjectId' in txRequest.tx.data.data)) return [];
+
+        const {
+            packageObjectId,
+            module,
+            function: func,
+        } = txRequest.tx.data.data;
+
+        thunkExtras.api.instance.fullNode
+            .getNormalizedMoveFunction(packageObjectId, module, func)
+            .then((normalizedFunction) =>
+                console.log('NORMALIZED', normalizedFunction)
+            );
+
+        return [];
+    }, [txRequest]);
 
     const ownedCreating = useMemo(() => {
         if (!effects?.events) return [];
@@ -117,7 +124,7 @@ export function DappTxApprovalPage() {
         const ownedCreating = newEvents
             .map((event) => {
                 const typeParts = event.newObject.objectType.split('::');
-                return typeParts[2];
+                return typeParts[2].split('<')[0];
             })
             .reduce((summed, name) => {
                 const index = summed.findIndex(
@@ -134,10 +141,10 @@ export function DappTxApprovalPage() {
         return ownedCreating;
     }, [effects]);
 
-    const ownedMutated = useMemo(() => {
+    const ownedMutating = useMemo(() => {
         if (!effects?.mutated) return [];
 
-        const ownedMutated = effects.mutated.filter((object) => {
+        const ownedMutating = effects.mutated.filter((object) => {
             if (typeof object.owner === 'string') {
                 return false;
             }
@@ -158,29 +165,29 @@ export function DappTxApprovalPage() {
             return true;
         });
 
-        return ownedMutated;
+        return ownedMutating;
     }, [effects, address]);
 
-    const ownedTransferred = useMemo(() => {
+    const ownedTransferring = useMemo(() => {
         if (!effects?.events) return [];
 
-        const ownedTransferred = effects.events.filter(
+        const ownedTransferring = effects.events.filter(
             (event) => event.transferObject
         );
 
-        return ownedTransferred;
+        return ownedTransferring;
     }, [effects]);
 
-    const ownedDeleted = useMemo(() => {
+    const ownedDeleting = useMemo(() => {
         if (!effects?.deleted) return [];
 
-        const ownedDeleted: string[] = [];
+        const ownedDeleting: string[] = [];
         // effects.deleted.filter(
 
         // );
         console.log('DELETED', effects.deleted);
 
-        return ownedDeleted;
+        return ownedDeleting;
     }, [effects]);
 
     const suiSpent = useMemo(() => {
@@ -242,49 +249,6 @@ export function DappTxApprovalPage() {
     }, [txRequest, activeAccountIndex]);
     console.log('Effects', effects);
 
-    useEffect(() => {
-        const getNormalizedFunction = async () => {
-            if (!txRequest) return;
-            if (txRequest.tx.type === 'move-call') return;
-            if (typeof txRequest.tx.data === 'string') return;
-            if (!('packageObjectId' in txRequest.tx.data.data)) return;
-
-            const {
-                packageObjectId,
-                module,
-                function: func,
-            } = txRequest.tx.data.data;
-
-            const normalizedFunction =
-                await thunkExtras.api.instance.fullNode.getNormalizedMoveFunction(
-                    packageObjectId,
-                    module,
-                    func
-                );
-            const permissions = normalizedFunction.parameters
-                .slice(0, -1)
-                .filter(
-                    (parameter) =>
-                        typeof parameter !== 'string' &&
-                        'MutableReference' in parameter
-                )
-                .reduce(
-                    (
-                        assetPermissions: AssetPermissions,
-                        parameter: SuiMoveNormalizedType
-                    ) => {
-                        assetPermissions.count++;
-                        return assetPermissions;
-                    },
-                    { count: 0 } as AssetPermissions
-                );
-
-            setAssetPermissions(permissions);
-        };
-
-        getNormalizedFunction();
-    }, [txRequest]);
-
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
             if (txRequest) {
@@ -327,7 +291,11 @@ export function DappTxApprovalPage() {
                                     label: 'Permissions',
                                     content: {
                                         label: 'Assets',
-                                        count: assetPermissions?.count || 0,
+                                        count:
+                                            ownedReading.length +
+                                            ownedMutating.length +
+                                            ownedDeleting.length +
+                                            ownedTransferring.length,
                                     },
                                 },
                             ],
@@ -393,8 +361,54 @@ export function DappTxApprovalPage() {
 
                     summary.push(costs);
 
+                    const assets = [
+                        {
+                            title: 'Permissions Requested',
+                            subtitle:
+                                'This transaction has requested access to your assets:',
+                            details: [
+                                {
+                                    label: 'Read',
+                                    content: 'No files requested',
+                                },
+                            ],
+                        } as Section,
+                    ];
+
+                    const details = [
+                        {
+                            title: 'Gas',
+                            subtitle: 'All gas fees displayed in MIST',
+                            details: [
+                                {
+                                    label: 'Computation',
+                                    content: gasUsed?.computationCost,
+                                },
+                                {
+                                    label: 'Storage Cost',
+                                    content: gasUsed?.storageCost,
+                                },
+                                {
+                                    label: 'Storage Rebate',
+                                    content: gasUsed?.storageRebate,
+                                },
+                                {
+                                    break: true,
+                                },
+                                {
+                                    label: 'Total',
+                                    content: gas,
+                                },
+                            ],
+                        } as Section,
+                    ];
+
+                    console.log('IN GAS', gas, gasUsed?.computationCost);
+
                     return {
                         [TxApprovalTab.SUMMARY]: summary,
+                        [TxApprovalTab.ASSETS]: assets,
+                        [TxApprovalTab.DETAILS]: details,
                     };
                 } else {
                     return {};
@@ -405,7 +419,6 @@ export function DappTxApprovalPage() {
         }
     }, [
         txRequest?.tx,
-        ownedCreating,
         formattedCharges,
         chargesSymbol,
         chargeDollars,
@@ -415,6 +428,13 @@ export function DappTxApprovalPage() {
         formattedTotal,
         totalSymbol,
         totalDollars,
+        ownedReading,
+        ownedCreating,
+        ownedMutating,
+        ownedDeleting,
+        ownedTransferring,
+        gas,
+        gasUsed,
     ]);
 
     return (
