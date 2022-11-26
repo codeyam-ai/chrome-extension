@@ -466,6 +466,11 @@ class Transactions {
 
     private async storeTransactionRequest(txRequest: TransactionRequest) {
         const txs = await this.getTransactionRequests();
+
+        for (const id of Object.keys(txs)) {
+            if (txs[id].txResult) delete txs[id];
+        }
+
         txs[txRequest.id] = txRequest;
         await this.saveTransactionRequests(txs);
     }
