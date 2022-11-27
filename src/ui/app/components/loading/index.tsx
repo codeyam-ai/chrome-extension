@@ -17,10 +17,23 @@ type LoadingProps = {
 const Loading = ({ loading, children, className, big }: LoadingProps) => {
     useEffect(() => {
         if (loading) return;
-        window.resizeTo(
-            document.body.offsetWidth,
-            document.body.offsetHeight + 30
-        );
+        Promise.all(
+            Array.from(document.images)
+                .filter((img) => !img.complete)
+                .map(
+                    (img) =>
+                        new Promise((resolve) => {
+                            img.onload = img.onerror = resolve;
+                        })
+                )
+        ).then(() => {
+            setTimeout(() => {
+                window.resizeTo(
+                    document.body.offsetWidth,
+                    document.body.offsetHeight + 30
+                );
+            }, 100);
+        });
     }, [loading]);
 
     return loading ? (

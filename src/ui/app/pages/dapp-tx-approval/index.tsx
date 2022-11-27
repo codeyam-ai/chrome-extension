@@ -44,7 +44,7 @@ export type NumberedDetail = {
 
 export type Detail = {
     label?: string;
-    content?: string | number | NumberedDetail | Cost;
+    content?: string | number | NumberedDetail | Cost | NumberedDetail[];
     title?: string;
 };
 
@@ -96,7 +96,7 @@ export function DappTxApprovalPage() {
         : null;
     console.log('GAS', gas, gasUsed?.computationCost);
 
-    const ownedReading = useMemo(() => {
+    const reading = useMemo(() => {
         if (!txRequest) return [];
         if (txRequest.tx.type === 'move-call') return [];
         if (typeof txRequest.tx.data === 'string') return [];
@@ -117,11 +117,11 @@ export function DappTxApprovalPage() {
         return [];
     }, [txRequest]);
 
-    const ownedCreating = useMemo(() => {
+    const creating = useMemo(() => {
         if (!effects?.events) return [];
 
         const newEvents = effects.events.filter((event) => event.newObject);
-        const ownedCreating = newEvents
+        const creating = newEvents
             .map((event) => {
                 const typeParts = event.newObject.objectType.split('::');
                 return typeParts[2].split('<')[0];
@@ -138,56 +138,65 @@ export function DappTxApprovalPage() {
                 return summed;
             }, []);
 
-        return ownedCreating;
+        return creating;
     }, [effects]);
 
-    const ownedMutating = useMemo(() => {
-        if (!effects?.mutated) return [];
-
-        const ownedMutating = effects.mutated.filter((object) => {
-            if (typeof object.owner === 'string') {
-                return false;
-            }
-            if ('AddressOwner' in object.owner) {
-                if (object.owner.AddressOwner !== address) {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-            if (
-                object.reference.objectId ===
-                effects.gasObject.reference.objectId
-            ) {
-                return false;
-            }
-
-            return true;
-        });
-
-        return ownedMutating;
-    }, [effects, address]);
-
-    const ownedTransferring = useMemo(() => {
+    const mutating = useMemo(() => {
         if (!effects?.events) return [];
 
-        const ownedTransferring = effects.events.filter(
+        // const mutating = effects.mutated.filter((object) => {
+        //     if (typeof object.owner === 'string') {
+        //         return false;
+        //     }
+        //     if ('AddressOwner' in object.owner) {
+        //         if (object.owner.AddressOwner !== address) {
+        //             return false;
+        //         }
+        //     } else {
+        //         return false;
+        //     }
+        //     if (
+        //         object.reference.objectId ===
+        //         effects.gasObject.reference.objectId
+        //     ) {
+        //         return false;
+        //     }
+
+        //     return true;
+        // });
+
+        const mutating = effects.events
+            .filter((event) => event.mutateObject)
+            .map((event) => {
+                const objectTypeParts =
+                    event.mutateObject.objectType.split('::');
+                return objectTypeParts[objectTypeParts.length - 1];
+            });
+
+        return mutating;
+    }, [effects]);
+    console.log('MUTATING', mutating);
+
+    const transferring = useMemo(() => {
+        if (!effects?.events) return [];
+
+        const transferring = effects.events.filter(
             (event) => event.transferObject
         );
 
-        return ownedTransferring;
+        return transferring;
     }, [effects]);
 
-    const ownedDeleting = useMemo(() => {
+    const deleting = useMemo(() => {
         if (!effects?.deleted) return [];
 
-        const ownedDeleting: string[] = [];
+        const deleting: string[] = [];
         // effects.deleted.filter(
 
         // );
         console.log('DELETED', effects.deleted);
 
-        return ownedDeleting;
+        return deleting;
     }, [effects]);
 
     const suiSpent = useMemo(() => {
@@ -292,17 +301,17 @@ export function DappTxApprovalPage() {
                                     content: {
                                         label: 'Assets',
                                         count:
-                                            ownedReading.length +
-                                            ownedMutating.length +
-                                            ownedDeleting.length +
-                                            ownedTransferring.length,
+                                            reading.length +
+                                            mutating.length +
+                                            deleting.length +
+                                            transferring.length,
                                     },
                                 },
                             ],
                         } as Section,
                     ];
 
-                    if (ownedCreating.length > 0) {
+                    if (creating.length > 0 || mutating.length > 0) {
                         const effects = {
                             title: 'Effects',
                             tooltip:
@@ -310,14 +319,28 @@ export function DappTxApprovalPage() {
                             details: [] as Detail[],
                         } as Section;
 
-                        if (ownedCreating.length > 0) {
+                        if (creating.length > 0) {
                             effects.details.push({
                                 label: 'Creating',
-                                content: ownedCreating.map(
-                                    (creating: (string | number)[]) => ({
-                                        label: creating[0],
-                                        count: creating[1],
-                                    })
+                                content: creating.map(
+                                    (creating: (string | number)[]) =>
+                                        ({
+                                            label: creating[0],
+                                            count: creating[1],
+                                        } as NumberedDetail)
+                                ),
+                            });
+                        }
+
+                        if (mutating.length > 0) {
+                            effects.details.push({
+                                label: 'Mutating',
+                                content: mutating.map(
+                                    (mutating: (string | number)[]) =>
+                                        ({
+                                            label: mutating.toString(),
+                                            count: 1,
+                                        } as NumberedDetail)
                                 ),
                             });
                         }
@@ -369,7 +392,19 @@ export function DappTxApprovalPage() {
                             details: [
                                 {
                                     label: 'Read',
-                                    content: 'No files requested',
+                                    content: `${reading.length} Assets`,
+                                },
+                                {
+                                    label: 'Mutating',
+                                    content: `${mutating.length} Assets`,
+                                },
+                                {
+                                    label: 'Transferring',
+                                    content: `${transferring.length} Assets`,
+                                },
+                                {
+                                    label: 'Deleting',
+                                    content: `${deleting.length} Assets`,
                                 },
                             ],
                         } as Section,
@@ -428,11 +463,11 @@ export function DappTxApprovalPage() {
         formattedTotal,
         totalSymbol,
         totalDollars,
-        ownedReading,
-        ownedCreating,
-        ownedMutating,
-        ownedDeleting,
-        ownedTransferring,
+        reading,
+        creating,
+        mutating,
+        deleting,
+        transferring,
         gas,
         gasUsed,
     ]);
