@@ -21,19 +21,26 @@ const DetailElement = ({ detail }: { detail: Detail }) => {
     };
 
     return (
-        <div className="flex justify-between">
-            <div className="flex items-center gap-1">
-                <div className="text-gray-500 dark:text-gray-400">
-                    {detail.label}
+        <div className="flex flex-col gap-1">
+            <div className="flex justify-between">
+                <div className="flex items-center gap-1">
+                    <div className="text-gray-500 dark:text-gray-400">
+                        {detail.label}
+                    </div>
+                </div>
+                <div className="dark:text-gray-400 font-semibold flex flex-col items-end gap-1">
+                    {contents.map((content, index) => (
+                        <div key={`detail-content-${index}`}>
+                            {contentElement(content)}
+                        </div>
+                    ))}
                 </div>
             </div>
-            <div className="dark:text-gray-400 font-semibold flex flex-col items-end gap-1">
-                {contents.map((content, index) => (
-                    <div key={`detail-content-${index}`}>
-                        {contentElement(content)}
-                    </div>
-                ))}
-            </div>
+            {detail.detail && (
+                <div className="text-xs text-slate-800 text-right">
+                    {detail.detail}
+                </div>
+            )}
         </div>
     );
 };

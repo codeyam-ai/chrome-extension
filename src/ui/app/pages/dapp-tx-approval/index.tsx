@@ -21,8 +21,12 @@ import {
 import { thunkExtras } from '_redux/store/thunk-extras';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
-import type { TransactionEffects } from '@mysten/sui.js';
+import type {
+    SuiMoveNormalizedFunction,
+    TransactionEffects,
+} from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
+import truncateMiddle from '../../helpers/truncate-middle';
 
 export enum TxApprovalTab {
     SUMMARY = 'Summary',
@@ -46,6 +50,7 @@ export type Detail = {
     label?: string;
     content?: string | number | NumberedDetail | Cost | NumberedDetail[];
     title?: string;
+    detail?: string;
 };
 
 export type Section = {
@@ -70,9 +75,7 @@ export function DappTxApprovalPage() {
     const txRequestsLoading = useAppSelector(
         ({ transactionRequests }) => !transactionRequests.initialized
     );
-    const { activeAccountIndex, address } = useAppSelector(
-        ({ account }) => account
-    );
+    const { activeAccountIndex } = useAppSelector(({ account }) => account);
     const txRequestSelector = useMemo(
         () => (state: RootState) =>
             (txID && txRequestsSelectors.selectById(state, txID)) || null,
@@ -81,6 +84,9 @@ export function DappTxApprovalPage() {
     const txRequest = useAppSelector(txRequestSelector);
     const dispatch = useAppDispatch();
 
+    const [normalizedFunction, setNormalizedFunction] = useState<
+        SuiMoveNormalizedFunction | undefined
+    >();
     const [effects, setEffects] = useState<
         TransactionEffects | undefined | null
     >();
@@ -94,28 +100,28 @@ export function DappTxApprovalPage() {
         ? gasUsed.computationCost +
           (gasUsed.storageCost - gasUsed.storageRebate)
         : null;
-    console.log('GAS', gas, gasUsed?.computationCost);
 
     const reading = useMemo(() => {
-        if (!txRequest) return [];
-        if (txRequest.tx.type === 'move-call') return [];
-        if (typeof txRequest.tx.data === 'string') return [];
-        if (!('packageObjectId' in txRequest.tx.data.data)) return [];
+        if (!normalizedFunction) return [];
 
-        const {
-            packageObjectId,
-            module,
-            function: func,
-        } = txRequest.tx.data.data;
-
-        thunkExtras.api.instance.fullNode
-            .getNormalizedMoveFunction(packageObjectId, module, func)
-            .then((normalizedFunction) =>
-                console.log('NORMALIZED', normalizedFunction)
-            );
-
-        return [];
-    }, [txRequest]);
+        const readObjects = normalizedFunction.parameters
+            .filter(
+                (param) => typeof param !== 'string' && 'Reference' in param
+            )
+            .map((param) => {
+                if (typeof param !== 'string' && 'Reference' in param) {
+                    const reference = param.Reference;
+                    if (
+                        typeof reference !== 'string' &&
+                        'Struct' in reference
+                    ) {
+                        return reference.Struct;
+                    }
+                }
+                return null;
+            });
+        return readObjects;
+    }, [normalizedFunction]);
 
     const creating = useMemo(() => {
         if (!effects?.events) return [];
@@ -144,57 +150,48 @@ export function DappTxApprovalPage() {
     const mutating = useMemo(() => {
         if (!effects?.events) return [];
 
-        // const mutating = effects.mutated.filter((object) => {
-        //     if (typeof object.owner === 'string') {
-        //         return false;
-        //     }
-        //     if ('AddressOwner' in object.owner) {
-        //         if (object.owner.AddressOwner !== address) {
-        //             return false;
-        //         }
-        //     } else {
-        //         return false;
-        //     }
-        //     if (
-        //         object.reference.objectId ===
-        //         effects.gasObject.reference.objectId
-        //     ) {
-        //         return false;
-        //     }
-
-        //     return true;
-        // });
-
         const mutating = effects.events
-            .filter((event) => event.mutateObject)
+            .filter((event) => {
+                const mutation = event.mutateObject;
+                return (
+                    mutation &&
+                    mutation.objectType.indexOf(mutation.packageId) > -1
+                );
+            })
             .map((event) => {
                 const objectTypeParts =
                     event.mutateObject.objectType.split('::');
                 return objectTypeParts[objectTypeParts.length - 1];
             });
 
+        console.log('MUTATING', mutating);
         return mutating;
     }, [effects]);
-    console.log('MUTATING', mutating);
 
     const transferring = useMemo(() => {
         if (!effects?.events) return [];
 
-        const transferring = effects.events.filter(
-            (event) => event.transferObject
-        );
+        const transferring = effects.events
+            .filter((event) => event.transferObject)
+            .map((event) => {
+                const objectTypeParts =
+                    event.transferObject.objectType.split('::');
+                return objectTypeParts[objectTypeParts.length - 1];
+            });
 
         return transferring;
     }, [effects]);
 
     const deleting = useMemo(() => {
-        if (!effects?.deleted) return [];
+        if (!effects?.events) return [];
 
-        const deleting: string[] = [];
-        // effects.deleted.filter(
-
-        // );
-        console.log('DELETED', effects.deleted);
+        const deleting = effects.events
+            .filter((event) => event.deleteObject)
+            .map((event) => {
+                const objectTypeParts =
+                    event.deleteObject.objectType.split('::');
+                return objectTypeParts[objectTypeParts.length - 1];
+            });
 
         return deleting;
     }, [effects]);
@@ -256,7 +253,31 @@ export function DappTxApprovalPage() {
 
         getEffects();
     }, [txRequest, activeAccountIndex]);
-    console.log('Effects', effects);
+
+    useEffect(() => {
+        const getNormalizedFunction = async () => {
+            if (!txRequest) return [];
+            if (txRequest.tx.type === 'move-call') return [];
+            if (typeof txRequest.tx.data === 'string') return [];
+            if (!('packageObjectId' in txRequest.tx.data.data)) return [];
+
+            const {
+                packageObjectId,
+                module,
+                function: func,
+            } = txRequest.tx.data.data;
+
+            const normalizedFunction =
+                await thunkExtras.api.instance.fullNode.getNormalizedMoveFunction(
+                    packageObjectId,
+                    module,
+                    func
+                );
+            setNormalizedFunction(normalizedFunction);
+        };
+
+        getNormalizedFunction();
+    });
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
@@ -284,6 +305,21 @@ export function DappTxApprovalPage() {
         switch (txRequest?.tx.type) {
             case 'v2': {
                 if (txRequest.tx.data.kind === 'moveCall') {
+                    const permissions = [];
+                    if (reading.length > 0) {
+                        permissions.push({
+                            label: 'Reading',
+                            count: reading.length,
+                        });
+                    }
+
+                    if (mutating.length > 0) {
+                        permissions.push({
+                            label: 'Modifying',
+                            count: mutating.length,
+                        });
+                    }
+
                     const summary = [
                         {
                             title: 'Requesting Permission To Call',
@@ -298,14 +334,7 @@ export function DappTxApprovalPage() {
                                 },
                                 {
                                     label: 'Permissions',
-                                    content: {
-                                        label: 'Assets',
-                                        count:
-                                            reading.length +
-                                            mutating.length +
-                                            deleting.length +
-                                            transferring.length,
-                                    },
+                                    content: permissions,
                                 },
                             ],
                         } as Section,
@@ -391,11 +420,17 @@ export function DappTxApprovalPage() {
                                 'This transaction has requested access to your assets:',
                             details: [
                                 {
-                                    label: 'Read',
+                                    label: 'Reading',
                                     content: `${reading.length} Assets`,
+                                    detail: reading.map(
+                                        (r) =>
+                                            `${truncateMiddle(r?.address)}::${
+                                                r?.module
+                                            }::${r?.name}`
+                                    ),
                                 },
                                 {
-                                    label: 'Mutating',
+                                    label: 'Modifying',
                                     content: `${mutating.length} Assets`,
                                 },
                                 {
@@ -437,8 +472,6 @@ export function DappTxApprovalPage() {
                             ],
                         } as Section,
                     ];
-
-                    console.log('IN GAS', gas, gasUsed?.computationCost);
 
                     return {
                         [TxApprovalTab.SUMMARY]: summary,
