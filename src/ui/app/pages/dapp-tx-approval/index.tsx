@@ -161,10 +161,13 @@ export function DappTxApprovalPage() {
             .map((event) => {
                 const objectTypeParts =
                     event.mutateObject.objectType.split('::');
-                return objectTypeParts[objectTypeParts.length - 1];
+                return {
+                    address: objectTypeParts[0],
+                    module: objectTypeParts[1],
+                    name: objectTypeParts[2],
+                };
             });
 
-        console.log('MUTATING', mutating);
         return mutating;
     }, [effects]);
 
@@ -176,7 +179,11 @@ export function DappTxApprovalPage() {
             .map((event) => {
                 const objectTypeParts =
                     event.transferObject.objectType.split('::');
-                return objectTypeParts[objectTypeParts.length - 1];
+                return {
+                    address: objectTypeParts[0],
+                    module: objectTypeParts[1],
+                    name: objectTypeParts[2],
+                };
             });
 
         return transferring;
@@ -277,7 +284,7 @@ export function DappTxApprovalPage() {
         };
 
         getNormalizedFunction();
-    });
+    }, [txRequest]);
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
@@ -317,6 +324,20 @@ export function DappTxApprovalPage() {
                         permissions.push({
                             label: 'Modifying',
                             count: mutating.length,
+                        });
+                    }
+
+                    if (transferring.length > 0) {
+                        permissions.push({
+                            label: 'Transferring',
+                            count: transferring.length,
+                        });
+                    }
+
+                    if (permissions.length === 0) {
+                        permissions.push({
+                            label: 'None Requested',
+                            count: 0,
                         });
                     }
 
@@ -365,9 +386,22 @@ export function DappTxApprovalPage() {
                             effects.details.push({
                                 label: 'Mutating',
                                 content: mutating.map(
-                                    (mutating: (string | number)[]) =>
+                                    (mutating) =>
                                         ({
-                                            label: mutating.toString(),
+                                            label: mutating.name.toString(),
+                                            count: 1,
+                                        } as NumberedDetail)
+                                ),
+                            });
+                        }
+
+                        if (transferring.length > 0) {
+                            effects.details.push({
+                                label: 'Transferring',
+                                content: transferring.map(
+                                    (transferring) =>
+                                        ({
+                                            label: transferring.name.toString(),
                                             count: 1,
                                         } as NumberedDetail)
                                 ),
@@ -432,10 +466,22 @@ export function DappTxApprovalPage() {
                                 {
                                     label: 'Modifying',
                                     content: `${mutating.length} Assets`,
+                                    detail: mutating.map(
+                                        (m) =>
+                                            `${truncateMiddle(m?.address)}::${
+                                                m?.module
+                                            }::${m?.name}`
+                                    ),
                                 },
                                 {
                                     label: 'Transferring',
                                     content: `${transferring.length} Assets`,
+                                    detail: transferring.map(
+                                        (t) =>
+                                            `${truncateMiddle(t?.address)}::${
+                                                t?.module
+                                            }::${t?.name}`
+                                    ),
                                 },
                                 {
                                     label: 'Deleting',
