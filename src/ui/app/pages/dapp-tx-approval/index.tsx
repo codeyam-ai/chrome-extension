@@ -50,7 +50,7 @@ export type Detail = {
     label?: string;
     content?: string | number | NumberedDetail | Cost | NumberedDetail[];
     title?: string;
-    detail?: string;
+    detail?: string | string[];
 };
 
 export type Section = {
@@ -195,9 +195,9 @@ export function DappTxApprovalPage() {
         const deleting = effects.events
             .filter((event) => event.deleteObject)
             .map((event) => {
-                const objectTypeParts =
-                    event.deleteObject.objectType.split('::');
-                return objectTypeParts[objectTypeParts.length - 1];
+                return {
+                    name: event.deleteObject.objectId,
+                };
             });
 
         return deleting;
@@ -334,6 +334,13 @@ export function DappTxApprovalPage() {
                         });
                     }
 
+                    if (deleting.length > 0) {
+                        permissions.push({
+                            label: 'Deleting',
+                            count: deleting.length,
+                        });
+                    }
+
                     if (permissions.length === 0) {
                         permissions.push({
                             label: 'None Requested',
@@ -361,7 +368,12 @@ export function DappTxApprovalPage() {
                         } as Section,
                     ];
 
-                    if (creating.length > 0 || mutating.length > 0) {
+                    if (
+                        creating.length > 0 ||
+                        mutating.length > 0 ||
+                        transferring.length > 0 ||
+                        deleting.length > 0
+                    ) {
                         const effects = {
                             title: 'Effects',
                             tooltip:
@@ -402,6 +414,21 @@ export function DappTxApprovalPage() {
                                     (transferring) =>
                                         ({
                                             label: transferring.name.toString(),
+                                            count: 1,
+                                        } as NumberedDetail)
+                                ),
+                            });
+                        }
+
+                        if (deleting.length > 0) {
+                            effects.details.push({
+                                label: 'Deleting',
+                                content: deleting.map(
+                                    (deleting) =>
+                                        ({
+                                            label: truncateMiddle(
+                                                deleting.name
+                                            ),
                                             count: 1,
                                         } as NumberedDetail)
                                 ),
@@ -486,6 +513,9 @@ export function DappTxApprovalPage() {
                                 {
                                     label: 'Deleting',
                                     content: `${deleting.length} Assets`,
+                                    detail: deleting.map((d) =>
+                                        truncateMiddle(d?.name)
+                                    ),
                                 },
                             ],
                         } as Section,
