@@ -77,7 +77,7 @@ const CreateWalletProvider = ({
         if (authentication) {
             Authentication.updateAccountInfos(draftAccountInfos.current);
             await dispatch(setAccountInfos(draftAccountInfos.current));
-            setAccountInfos(draftAccountInfos.current);
+            await Authentication.getAccountInfos(true);
         } else {
             await dispatch(clearForNetworkOrWalletSwitch());
             await dispatch(saveAccountInfos(draftAccountInfos.current));
@@ -110,6 +110,7 @@ const CreateWalletProvider = ({
                     : accountInfos;
 
                 draftAccountInfos.current = newAccountInfos;
+                _saveAccountInfos();
             } else {
                 newAccountInfos = [
                     ...accountInfos,
