@@ -82,7 +82,7 @@ const DetailElement = ({ detail }: { detail: Detail }) => {
                 </div>
             </div>
             {detailDetailArray && (
-                <div className="text-xs text-slate-800 text-right">
+                <div className="text-xs text-slate-800 dark:text-slate-400 text-right">
                     {detailDetailArray.map(
                         (detailDetail: string, index: number) => (
                             <div

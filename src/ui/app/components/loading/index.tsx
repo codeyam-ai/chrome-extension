@@ -32,7 +32,7 @@ const Loading = ({ loading, children, className, big }: LoadingProps) => {
                     document.body.offsetWidth,
                     document.body.offsetHeight + 30
                 );
-            }, 100);
+            }, 250);
         });
     }, [loading]);
 

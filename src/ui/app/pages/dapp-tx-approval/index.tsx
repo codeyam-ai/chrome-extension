@@ -519,7 +519,7 @@ export function DappTxApprovalPage() {
                         title: 'Permissions Requested',
                         subtitle: anyPermissionsRequested
                             ? 'This transaction has requested access to your assets:'
-                            : 'No access requested.',
+                            : null,
                         details: anyPermissionsRequested
                             ? [
                                   {
@@ -560,13 +560,17 @@ export function DappTxApprovalPage() {
                                       ),
                                   },
                               ]
-                            : [],
+                            : [
+                                  {
+                                      label: 'No access requested.',
+                                  },
+                              ],
                     } as Section,
                     {
                         title: 'Asset Effects',
                         subtitle: anyAssetEffects
                             ? 'This transaction have the following effects on your assets (including creating new assets):'
-                            : 'No effects on any of your assets.',
+                            : null,
                         details: anyAssetEffects
                             ? [
                                   {
@@ -607,7 +611,11 @@ export function DappTxApprovalPage() {
                                       ),
                                   },
                               ]
-                            : [],
+                            : [
+                                  {
+                                      label: 'No effects on any of your assets.',
+                                  },
+                              ],
                     } as Section,
                 ];
 
