@@ -42,6 +42,10 @@ export type TabSections = {
     [key in TxApprovalTab]?: Section[];
 };
 
+const cleanObjectId = (objectId: string) => {
+    return objectId.replace('0x0', '').replace('0x', '');
+};
+
 export function DappTxApprovalPage() {
     const [tab, setTab] = useState(TxApprovalTab.SUMMARY);
 
@@ -106,7 +110,11 @@ export function DappTxApprovalPage() {
     const creating = useMemo(() => {
         if (!effects?.events) return [];
 
-        const newEvents = effects.events.filter((event) => event.newObject);
+        const newEvents = effects.events.filter(
+            (event) =>
+                event.newObject &&
+                event.newObject.recipient.AddressOwner === address
+        );
         const creating = newEvents.map((event) => {
             const objectTypeParts = event.newObject.objectType.split('::');
             return {
@@ -117,7 +125,7 @@ export function DappTxApprovalPage() {
         });
 
         return creating;
-    }, [effects]);
+    }, [effects, address]);
 
     const mutating = useMemo(() => {
         if (!effects?.events) return [];
@@ -129,11 +137,15 @@ export function DappTxApprovalPage() {
                 return (
                     mutation &&
                     mutated &&
-                    mutation.objectType.indexOf(mutation.packageId) > -1 &&
+                    mutation.objectType.indexOf(
+                        cleanObjectId(mutation.packageId)
+                    ) > -1 &&
                     mutated.find(
                         (asset) =>
-                            asset.reference.objectId === mutation.ObjectId &&
-                            asset.owner === address
+                            asset.reference.objectId === mutation.objectId &&
+                            typeof asset.owner !== 'string' &&
+                            'AddressOwner' in asset.owner &&
+                            asset.owner.AddressOwner === address
                     )
                 );
             })
@@ -154,7 +166,11 @@ export function DappTxApprovalPage() {
         if (!effects?.events) return [];
 
         const transferring = effects.events
-            .filter((event) => event.transferObject)
+            .filter(
+                (event) =>
+                    event.transferObject &&
+                    event.transferObject.recipient.AddressOwner
+            )
             .map((event) => {
                 const objectTypeParts =
                     event.transferObject.objectType.split('::');
@@ -460,6 +476,12 @@ export function DappTxApprovalPage() {
                         transferring.length > 0 ||
                         deleting.length > 0;
 
+                    const anyAssetEffects =
+                        creating.length > 0 ||
+                        mutating.length > 0 ||
+                        transferring.length > 0 ||
+                        deleting.length > 0;
+
                     const assets = [
                         {
                             title: 'Permissions Requested',
@@ -510,10 +532,10 @@ export function DappTxApprovalPage() {
                         } as Section,
                         {
                             title: 'Asset Effects',
-                            subtitle: anyPermissionsRequested
+                            subtitle: anyAssetEffects
                                 ? 'This transaction have the following effects on your assets (including creating new assets):'
                                 : 'No effects on any of your assets.',
-                            details: anyPermissionsRequested
+                            details: anyAssetEffects
                                 ? [
                                       {
                                           label: 'Creating',
