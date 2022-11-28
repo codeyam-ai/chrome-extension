@@ -307,54 +307,58 @@ export function DappTxApprovalPage() {
     const content: TabSections = useMemo(() => {
         switch (txRequest?.tx.type) {
             case 'v2': {
-                if (txRequest.tx.data.kind === 'moveCall') {
-                    const permissions = [];
-                    if (reading.length > 0) {
-                        permissions.push({
-                            label: 'Reading',
-                            count: reading.length,
-                        });
-                    }
+                const txInfo = txRequest.tx.data;
 
-                    if (mutating.length > 0) {
-                        permissions.push({
-                            label: 'Modifying',
-                            count: mutating.length,
-                        });
-                    }
+                const permissions = [];
+                if (reading.length > 0) {
+                    permissions.push({
+                        label: 'Reading',
+                        count: reading.length,
+                    });
+                }
 
-                    if (transferring.length > 0) {
-                        permissions.push({
-                            label: 'Transferring',
-                            count: transferring.length,
-                        });
-                    }
+                if (mutating.length > 0) {
+                    permissions.push({
+                        label: 'Modifying',
+                        count: mutating.length,
+                    });
+                }
 
-                    if (deleting.length > 0) {
-                        permissions.push({
-                            label: 'Deleting',
-                            count: deleting.length,
-                        });
-                    }
+                if (transferring.length > 0) {
+                    permissions.push({
+                        label: 'Transferring',
+                        count: transferring.length,
+                    });
+                }
 
-                    if (permissions.length === 0) {
-                        permissions.push({
-                            label: 'None Requested',
-                            count: 0,
-                        });
-                    }
+                if (deleting.length > 0) {
+                    permissions.push({
+                        label: 'Full Access',
+                        count: deleting.length,
+                    });
+                }
 
-                    const summary = [
+                if (permissions.length === 0) {
+                    permissions.push({
+                        label: 'None Requested',
+                        count: 0,
+                    });
+                }
+
+                let summary: Section[] = [];
+
+                if (txInfo.kind === 'moveCall') {
+                    summary = [
                         {
                             title: 'Requesting Permission To Call',
                             details: [
                                 {
                                     label: 'Contract',
-                                    content: txRequest.tx.data.data.module,
+                                    content: txInfo.data.module,
                                 },
                                 {
                                     label: 'Function',
-                                    content: txRequest.tx.data.data.function,
+                                    content: txInfo.data.function,
                                 },
                                 {
                                     label: 'Permissions',
@@ -363,322 +367,338 @@ export function DappTxApprovalPage() {
                             ],
                         } as Section,
                     ];
-
-                    if (
-                        creating.length > 0 ||
-                        mutating.length > 0 ||
-                        transferring.length > 0 ||
-                        deleting.length > 0
-                    ) {
-                        const effects = {
-                            title: 'Effects',
-                            tooltip:
-                                'This transaction will have the following effects on the assets in your wallet.',
-                            details: [] as Detail[],
-                        } as Section;
-
-                        if (creating.length > 0) {
-                            effects.details.push({
-                                label: 'Creating',
-                                content: creating.map(
-                                    (creating) =>
-                                        ({
-                                            label: creating.name.toString(),
-                                            count: 1,
-                                        } as NumberedDetail)
-                                ),
-                            });
-                        }
-
-                        if (mutating.length > 0) {
-                            effects.details.push({
-                                label: 'Mutating',
-                                content: mutating.map(
-                                    (mutating) =>
-                                        ({
-                                            label: mutating.name.toString(),
-                                            count: 1,
-                                        } as NumberedDetail)
-                                ),
-                            });
-                        }
-
-                        if (transferring.length > 0) {
-                            effects.details.push({
-                                label: 'Transferring',
-                                content: transferring.map(
-                                    (transferring) =>
-                                        ({
-                                            label: transferring.name.toString(),
-                                            count: 1,
-                                        } as NumberedDetail)
-                                ),
-                            });
-                        }
-
-                        if (deleting.length > 0) {
-                            effects.details.push({
-                                label: 'Deleting',
-                                content: deleting.map(
-                                    (deleting) =>
-                                        ({
-                                            label: truncateMiddle(
-                                                deleting.name
-                                            ),
-                                            count: 1,
-                                        } as NumberedDetail)
-                                ),
-                            });
-                        }
-
-                        summary.push(effects);
-                    }
-
-                    const costs = {
-                        title: 'Costs',
-                        details: [
-                            {
-                                label: 'Charges',
-                                content: {
-                                    value: formattedCharges,
-                                    symbol: chargesSymbol,
-                                    dollars: chargeDollars,
-                                },
-                            },
-                            {
-                                label: 'Gas',
-                                content: {
-                                    value: formattedGas,
-                                    symbol: gasSymbol,
-                                    dollars: gasDollars,
-                                },
-                            },
-                            {
-                                break: true,
-                            },
-                            {
-                                label: 'Total',
-                                content: {
-                                    value: formattedTotal,
-                                    symbol: totalSymbol,
-                                    dollars: totalDollars,
-                                    total: true,
-                                },
-                            },
-                        ],
-                    };
-
-                    summary.push(costs);
-
-                    const anyPermissionsRequested =
-                        reading.length > 0 ||
-                        mutating.length > 0 ||
-                        transferring.length > 0 ||
-                        deleting.length > 0;
-
-                    const anyAssetEffects =
-                        creating.length > 0 ||
-                        mutating.length > 0 ||
-                        transferring.length > 0 ||
-                        deleting.length > 0;
-
-                    const assets = [
+                } else if (txInfo.kind === 'transferObject') {
+                    summary = [
                         {
-                            title: 'Permissions Requested',
-                            subtitle: anyPermissionsRequested
-                                ? 'This transaction has requested access to your assets:'
-                                : 'No access requested.',
-                            details: anyPermissionsRequested
-                                ? [
-                                      {
-                                          label: 'Reading',
-                                          content: `${reading.length} Assets`,
-                                          detail: reading.map(
-                                              (r) =>
-                                                  `${truncateMiddle(
-                                                      r?.address
-                                                  )}::${r?.module}::${r?.name}`
-                                          ),
-                                      },
-                                      {
-                                          label: 'Modifying',
-                                          content: `${mutating.length} Assets`,
-                                          detail: mutating.map(
-                                              (m) =>
-                                                  `${truncateMiddle(
-                                                      m?.address
-                                                  )}::${m?.module}::${m?.name}`
-                                          ),
-                                      },
-                                      {
-                                          label: 'Transferring',
-                                          content: `${transferring.length} Assets`,
-                                          detail: transferring.map(
-                                              (t) =>
-                                                  `${truncateMiddle(
-                                                      t?.address
-                                                  )}::${t?.module}::${t?.name}`
-                                          ),
-                                      },
-                                      {
-                                          label: 'Deleting',
-                                          content: `${deleting.length} Assets`,
-                                          detail: deleting.map((d) =>
-                                              truncateMiddle(d?.name)
-                                          ),
-                                      },
-                                  ]
-                                : [],
-                        } as Section,
-                        {
-                            title: 'Asset Effects',
-                            subtitle: anyAssetEffects
-                                ? 'This transaction have the following effects on your assets (including creating new assets):'
-                                : 'No effects on any of your assets.',
-                            details: anyAssetEffects
-                                ? [
-                                      {
-                                          label: 'Creating',
-                                          content: `${creating.length} Assets`,
-                                          detail: creating.map(
-                                              (c) =>
-                                                  `${truncateMiddle(
-                                                      c?.address
-                                                  )}::${c?.module}::${c?.name}`
-                                          ),
-                                      },
-                                      {
-                                          label: 'Modifying',
-                                          content: `${mutating.length} Assets`,
-                                          detail: mutating.map(
-                                              (m) =>
-                                                  `${truncateMiddle(
-                                                      m?.address
-                                                  )}::${m?.module}::${m?.name}`
-                                          ),
-                                      },
-                                      {
-                                          label: 'Transferring',
-                                          content: `${transferring.length} Assets`,
-                                          detail: transferring.map(
-                                              (t) =>
-                                                  `${truncateMiddle(
-                                                      t?.address
-                                                  )}::${t?.module}::${t?.name}`
-                                          ),
-                                      },
-                                      {
-                                          label: 'Deleting',
-                                          content: `${deleting.length} Assets`,
-                                          detail: deleting.map((d) =>
-                                              truncateMiddle(d?.name)
-                                          ),
-                                      },
-                                  ]
-                                : [],
-                        } as Section,
-                    ];
-
-                    const { data: txRequestData } = txRequest.tx.data;
-                    const details = [
-                        {
-                            title: 'Transaction',
+                            title: 'Transfer Asset',
                             details: [
                                 {
-                                    label: 'Package',
-                                    content: {
-                                        type: 'small',
-                                        content: txRequestData.packageObjectId,
-                                    } as SmallDetail,
+                                    label: 'Asset',
+                                    content: transferring[0]?.name,
                                 },
                                 {
-                                    label: 'Module',
-                                    content: {
-                                        type: 'small',
-                                        content: txRequestData.module,
-                                    } as SmallDetail,
-                                },
-                                {
-                                    label: 'Function',
-                                    content: {
-                                        type: 'small',
-                                        content: txRequestData.function,
-                                    } as SmallDetail,
-                                },
-                                {
-                                    label: 'Arguments',
-                                    content: {
-                                        type: 'small',
-                                        content: txRequestData.arguments,
-                                    } as SmallDetail,
-                                },
-                                {
-                                    label: 'Gas Budget',
-                                    content: {
-                                        type: 'small',
-                                        content:
-                                            txRequestData.gasBudget || '---',
-                                    } as SmallDetail,
-                                },
-                                {
-                                    label: 'Gas Payment',
-                                    content: {
-                                        type: 'small',
-                                        content:
-                                            txRequestData.gasPayment || '---',
-                                    } as SmallDetail,
+                                    label: 'Recipient',
+                                    content: txInfo.data.recipient,
                                 },
                             ],
                         },
+                    ];
+                }
+
+                if (summary.length === 0) {
+                    summary = [
                         {
-                            title: 'Gas',
-                            subtitle: 'All gas fees displayed in MIST',
+                            title: 'Transaction Summary',
                             details: [
                                 {
-                                    label: 'Computation',
-                                    content: {
-                                        type: 'small',
-                                        content:
-                                            gasUsed?.computationCost || '---',
-                                    } as SmallDetail,
-                                },
-                                {
-                                    label: 'Storage Cost',
-                                    content: {
-                                        type: 'small',
-                                        content: gasUsed?.storageCost || '---',
-                                    } as SmallDetail,
-                                },
-                                {
-                                    label: 'Storage Rebate',
-                                    content: {
-                                        type: 'small',
-                                        content:
-                                            gasUsed?.storageRebate || '---',
-                                    } as SmallDetail,
-                                },
-                                {
-                                    break: true,
-                                },
-                                {
-                                    label: 'Total',
-                                    content: {
-                                        type: 'small',
-                                        content: gas,
-                                    } as SmallDetail,
+                                    label: 'No summary available for this transaction yet.',
                                 },
                             ],
-                        } as Section,
+                        },
                     ];
-
-                    return {
-                        [TxApprovalTab.SUMMARY]: summary,
-                        [TxApprovalTab.ASSETS]: assets,
-                        [TxApprovalTab.DETAILS]: details,
-                    };
-                } else {
-                    return {};
                 }
+
+                if (
+                    creating.length > 0 ||
+                    mutating.length > 0 ||
+                    transferring.length > 0 ||
+                    deleting.length > 0
+                ) {
+                    const effects = {
+                        title: 'Effects',
+                        tooltip:
+                            'This transaction will have the following effects on the assets in your wallet.',
+                        details: [] as Detail[],
+                    } as Section;
+
+                    if (creating.length > 0) {
+                        effects.details.push({
+                            label: 'Creating',
+                            content: creating.map(
+                                (creating) =>
+                                    ({
+                                        label: creating.name.toString(),
+                                        count: 1,
+                                    } as NumberedDetail)
+                            ),
+                        });
+                    }
+
+                    if (mutating.length > 0) {
+                        effects.details.push({
+                            label: 'Mutating',
+                            content: mutating.map(
+                                (mutating) =>
+                                    ({
+                                        label: mutating.name.toString(),
+                                        count: 1,
+                                    } as NumberedDetail)
+                            ),
+                        });
+                    }
+
+                    if (transferring.length > 0) {
+                        effects.details.push({
+                            label: 'Transferring',
+                            content: transferring.map(
+                                (transferring) =>
+                                    ({
+                                        label: transferring.name.toString(),
+                                        count: 1,
+                                    } as NumberedDetail)
+                            ),
+                        });
+                    }
+
+                    if (deleting.length > 0) {
+                        effects.details.push({
+                            label: 'Deleting',
+                            content: deleting.map(
+                                (deleting) =>
+                                    ({
+                                        label: truncateMiddle(deleting.name),
+                                        count: 1,
+                                    } as NumberedDetail)
+                            ),
+                        });
+                    }
+
+                    summary.push(effects);
+                }
+
+                const costs = {
+                    title: 'Costs',
+                    details: [
+                        {
+                            label: 'Charges',
+                            content: {
+                                value: formattedCharges,
+                                symbol: chargesSymbol,
+                                dollars: chargeDollars,
+                            },
+                        },
+                        {
+                            label: 'Gas',
+                            content: {
+                                value: formattedGas,
+                                symbol: gasSymbol,
+                                dollars: gasDollars,
+                            },
+                        },
+                        {
+                            break: true,
+                        },
+                        {
+                            label: 'Total',
+                            content: {
+                                value: formattedTotal,
+                                symbol: totalSymbol,
+                                dollars: totalDollars,
+                                total: true,
+                            },
+                        },
+                    ],
+                };
+
+                summary.push(costs);
+
+                const anyPermissionsRequested =
+                    reading.length > 0 ||
+                    mutating.length > 0 ||
+                    transferring.length > 0 ||
+                    deleting.length > 0;
+
+                const anyAssetEffects =
+                    creating.length > 0 ||
+                    mutating.length > 0 ||
+                    transferring.length > 0 ||
+                    deleting.length > 0;
+
+                const assets = [
+                    {
+                        title: 'Permissions Requested',
+                        subtitle: anyPermissionsRequested
+                            ? 'This transaction has requested access to your assets:'
+                            : 'No access requested.',
+                        details: anyPermissionsRequested
+                            ? [
+                                  {
+                                      label: 'Reading',
+                                      content: `${reading.length} Assets`,
+                                      detail: reading.map(
+                                          (r) =>
+                                              `${truncateMiddle(r?.address)}::${
+                                                  r?.module
+                                              }::${r?.name}`
+                                      ),
+                                  },
+                                  {
+                                      label: 'Modifying',
+                                      content: `${mutating.length} Assets`,
+                                      detail: mutating.map(
+                                          (m) =>
+                                              `${truncateMiddle(m?.address)}::${
+                                                  m?.module
+                                              }::${m?.name}`
+                                      ),
+                                  },
+                                  {
+                                      label: 'Transferring',
+                                      content: `${transferring.length} Assets`,
+                                      detail: transferring.map(
+                                          (t) =>
+                                              `${truncateMiddle(t?.address)}::${
+                                                  t?.module
+                                              }::${t?.name}`
+                                      ),
+                                  },
+                                  {
+                                      label: 'Full Access',
+                                      content: `${deleting.length} Assets`,
+                                      detail: deleting.map((d) =>
+                                          truncateMiddle(d?.name)
+                                      ),
+                                  },
+                              ]
+                            : [],
+                    } as Section,
+                    {
+                        title: 'Asset Effects',
+                        subtitle: anyAssetEffects
+                            ? 'This transaction have the following effects on your assets (including creating new assets):'
+                            : 'No effects on any of your assets.',
+                        details: anyAssetEffects
+                            ? [
+                                  {
+                                      label: 'Creating',
+                                      content: `${creating.length} Assets`,
+                                      detail: creating.map(
+                                          (c) =>
+                                              `${truncateMiddle(c?.address)}::${
+                                                  c?.module
+                                              }::${c?.name}`
+                                      ),
+                                  },
+                                  {
+                                      label: 'Modifying',
+                                      content: `${mutating.length} Assets`,
+                                      detail: mutating.map(
+                                          (m) =>
+                                              `${truncateMiddle(m?.address)}::${
+                                                  m?.module
+                                              }::${m?.name}`
+                                      ),
+                                  },
+                                  {
+                                      label: 'Transferring',
+                                      content: `${transferring.length} Assets`,
+                                      detail: transferring.map(
+                                          (t) =>
+                                              `${truncateMiddle(t?.address)}::${
+                                                  t?.module
+                                              }::${t?.name}`
+                                      ),
+                                  },
+                                  {
+                                      label: 'Deleting',
+                                      content: `${deleting.length} Assets`,
+                                      detail: deleting.map((d) =>
+                                          truncateMiddle(d?.name)
+                                      ),
+                                  },
+                              ]
+                            : [],
+                    } as Section,
+                ];
+
+                const transactionDetails = {
+                    title: 'Transaction',
+                    details: [] as Detail[],
+                };
+
+                const details = [];
+
+                if (txInfo.kind === 'bytes') {
+                    details.push({
+                        title: 'Transaction',
+                        details: [
+                            {
+                                label: 'Bytes',
+                                content: {
+                                    type: 'small',
+                                    content: txInfo.data.toLocaleString(),
+                                } as SmallDetail,
+                            },
+                        ],
+                    } as Section);
+                } else {
+                    for (const attribute of [
+                        'packageObjectId',
+                        'module',
+                        'function',
+                        'arguments',
+                        'gasBudget',
+                        'gasPayment',
+                    ]) {
+                        if (attribute in txInfo.data) {
+                            transactionDetails.details.push({
+                                label: attribute,
+                                content: {
+                                    type: 'small',
+                                    content: JSON.parse(
+                                        JSON.stringify(txInfo.data)
+                                    )[attribute],
+                                } as SmallDetail,
+                            });
+                        }
+                    }
+                }
+
+                details.push(transactionDetails);
+
+                details.push({
+                    title: 'Gas',
+                    subtitle: 'All gas fees displayed in MIST',
+                    details: [
+                        {
+                            label: 'Computation',
+                            content: {
+                                type: 'small',
+                                content: gasUsed?.computationCost || '---',
+                            } as SmallDetail,
+                        },
+                        {
+                            label: 'Storage Cost',
+                            content: {
+                                type: 'small',
+                                content: gasUsed?.storageCost || '---',
+                            } as SmallDetail,
+                        },
+                        {
+                            label: 'Storage Rebate',
+                            content: {
+                                type: 'small',
+                                content: gasUsed?.storageRebate || '---',
+                            } as SmallDetail,
+                        },
+                        {
+                            break: true,
+                        },
+                        {
+                            label: 'Total',
+                            content: {
+                                type: 'small',
+                                content: gas,
+                            } as SmallDetail,
+                        },
+                    ],
+                });
+
+                return {
+                    [TxApprovalTab.SUMMARY]: summary,
+                    [TxApprovalTab.ASSETS]: assets,
+                    [TxApprovalTab.DETAILS]: details,
+                };
             }
             default:
                 return {};
