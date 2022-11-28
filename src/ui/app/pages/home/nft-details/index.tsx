@@ -82,21 +82,6 @@ function NFTdetailsContent({
                             >
                                 SuiGod Collection
                             </Typography>
-                            <ExplorerLink
-                                type={ExplorerLinkType.object}
-                                objectID={nftObjectID}
-                                className={'w-full'}
-                            >
-                                <Button
-                                    isInline
-                                    buttonStyle="primary"
-                                    className={
-                                        'text-ethos-dark-text-default w-full mb-6'
-                                    }
-                                >
-                                    View NFT
-                                </Button>
-                            </ExplorerLink>
 
                             {hasPublicTransfer(nft) && (
                                 <Button
