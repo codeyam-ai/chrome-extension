@@ -53,7 +53,9 @@ export function DappTxApprovalPage() {
     const txRequestsLoading = useAppSelector(
         ({ transactionRequests }) => !transactionRequests.initialized
     );
-    const { activeAccountIndex } = useAppSelector(({ account }) => account);
+    const { activeAccountIndex, address } = useAppSelector(
+        ({ account }) => account
+    );
     const txRequestSelector = useMemo(
         () => (state: RootState) =>
             (txID && txRequestsSelectors.selectById(state, txID)) || null,
@@ -105,22 +107,14 @@ export function DappTxApprovalPage() {
         if (!effects?.events) return [];
 
         const newEvents = effects.events.filter((event) => event.newObject);
-        const creating = newEvents
-            .map((event) => {
-                const typeParts = event.newObject.objectType.split('::');
-                return typeParts[2].split('<')[0];
-            })
-            .reduce((summed, name) => {
-                const index = summed.findIndex(
-                    (info: (string | number)[]) => info[0] === name
-                );
-                if (index !== -1) {
-                    summed[index][1]++;
-                } else {
-                    summed.push([name, 1]);
-                }
-                return summed;
-            }, []);
+        const creating = newEvents.map((event) => {
+            const objectTypeParts = event.newObject.objectType.split('::');
+            return {
+                address: objectTypeParts[0],
+                module: objectTypeParts[1],
+                name: objectTypeParts[2].split('<')[0],
+            };
+        });
 
         return creating;
     }, [effects]);
@@ -131,9 +125,16 @@ export function DappTxApprovalPage() {
         const mutating = effects.events
             .filter((event) => {
                 const mutation = event.mutateObject;
+                const mutated = effects.mutated;
                 return (
                     mutation &&
-                    mutation.objectType.indexOf(mutation.packageId) > -1
+                    mutated &&
+                    mutation.objectType.indexOf(mutation.packageId) > -1 &&
+                    mutated.find(
+                        (asset) =>
+                            asset.reference.objectId === mutation.ObjectId &&
+                            asset.owner === address
+                    )
                 );
             })
             .map((event) => {
@@ -147,7 +148,7 @@ export function DappTxApprovalPage() {
             });
 
         return mutating;
-    }, [effects]);
+    }, [effects, address]);
 
     const transferring = useMemo(() => {
         if (!effects?.events) return [];
@@ -364,10 +365,10 @@ export function DappTxApprovalPage() {
                             effects.details.push({
                                 label: 'Creating',
                                 content: creating.map(
-                                    (creating: (string | number)[]) =>
+                                    (creating) =>
                                         ({
-                                            label: creating[0],
-                                            count: creating[1],
+                                            label: creating.name.toString(),
+                                            count: 1,
                                         } as NumberedDetail)
                                 ),
                             });
@@ -475,6 +476,53 @@ export function DappTxApprovalPage() {
                                                   `${truncateMiddle(
                                                       r?.address
                                                   )}::${r?.module}::${r?.name}`
+                                          ),
+                                      },
+                                      {
+                                          label: 'Modifying',
+                                          content: `${mutating.length} Assets`,
+                                          detail: mutating.map(
+                                              (m) =>
+                                                  `${truncateMiddle(
+                                                      m?.address
+                                                  )}::${m?.module}::${m?.name}`
+                                          ),
+                                      },
+                                      {
+                                          label: 'Transferring',
+                                          content: `${transferring.length} Assets`,
+                                          detail: transferring.map(
+                                              (t) =>
+                                                  `${truncateMiddle(
+                                                      t?.address
+                                                  )}::${t?.module}::${t?.name}`
+                                          ),
+                                      },
+                                      {
+                                          label: 'Deleting',
+                                          content: `${deleting.length} Assets`,
+                                          detail: deleting.map((d) =>
+                                              truncateMiddle(d?.name)
+                                          ),
+                                      },
+                                  ]
+                                : [],
+                        } as Section,
+                        {
+                            title: 'Asset Effects',
+                            subtitle: anyPermissionsRequested
+                                ? 'This transaction have the following effects on your assets (including creating new assets):'
+                                : 'No effects on any of your assets.',
+                            details: anyPermissionsRequested
+                                ? [
+                                      {
+                                          label: 'Creating',
+                                          content: `${creating.length} Assets`,
+                                          detail: creating.map(
+                                              (c) =>
+                                                  `${truncateMiddle(
+                                                      c?.address
+                                                  )}::${c?.module}::${c?.name}`
                                           ),
                                       },
                                       {
