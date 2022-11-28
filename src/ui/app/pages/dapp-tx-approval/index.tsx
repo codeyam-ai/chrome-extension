@@ -142,7 +142,7 @@ export function DappTxApprovalPage() {
                 return {
                     address: objectTypeParts[0],
                     module: objectTypeParts[1],
-                    name: objectTypeParts[2],
+                    name: objectTypeParts[2].split('<')[0],
                 };
             });
 
@@ -160,7 +160,7 @@ export function DappTxApprovalPage() {
                 return {
                     address: objectTypeParts[0],
                     module: objectTypeParts[1],
-                    name: objectTypeParts[2],
+                    name: objectTypeParts[2].split('<')[0],
                 };
             });
 

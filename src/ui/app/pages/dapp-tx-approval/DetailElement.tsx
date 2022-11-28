@@ -57,6 +57,13 @@ const DetailElement = ({ detail }: { detail: Detail }) => {
             return <SmallValue {...content} />;
     };
 
+    let detailDetailArray;
+    if (detail.detail) {
+        detailDetailArray = Array.isArray(detail.detail)
+            ? detail.detail
+            : [detail.detail];
+    }
+
     return (
         <div className="flex flex-col gap-1">
             <div className="flex justify-between">
@@ -73,9 +80,18 @@ const DetailElement = ({ detail }: { detail: Detail }) => {
                     ))}
                 </div>
             </div>
-            {detail.detail && (
+            {detailDetailArray && (
                 <div className="text-xs text-slate-800 text-right">
-                    {detail.detail}
+                    {detailDetailArray.map(
+                        (detailDetail: string, index: number) => (
+                            <div
+                                key={`detail-detail-${detailDetail}-${index}`}
+                                title={detailDetail}
+                            >
+                                {detailDetail}
+                            </div>
+                        )
+                    )}
                 </div>
             )}
         </div>
