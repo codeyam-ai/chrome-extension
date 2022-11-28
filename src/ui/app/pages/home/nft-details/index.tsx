@@ -18,11 +18,9 @@ import { accountNftsSelector } from '_redux/slices/account';
 import { LinkType } from '_src/enums/LinkType';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
-import LinkListWithIcon from '_src/ui/app/shared/content/rows-and-lists/LinkListWithIcon';
 import NFTTransactionRows from '_src/ui/app/shared/content/rows-and-lists/NFTTransactionRows';
 import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
 import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
-import CircleElipsis from '_src/ui/app/shared/svg/CircleElipsis';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 import Typography from '_src/ui/app/shared/typography/Typography';
@@ -65,16 +63,9 @@ function NFTdetailsContent({
                             fileExt={fileExtentionType?.name || 'NFT'}
                         />
                         <div className="mb-4 py-6">
-                            <div
-                                className={
-                                    'flex flex-row justify-between mb-2 items-center'
-                                }
-                            >
-                                <Title>{nftFields?.name}</Title>
-                                <div>
-                                    <CircleElipsis />
-                                </div>
-                            </div>
+                            <Title className={'text-left'}>
+                                {nftFields?.name}
+                            </Title>
                             <Typography
                                 className={
                                     'text-left text-ethos-light-text-medium font-weight-normal mb-6 text-size-ethos-subheader leading-line-height-ethos-subheader'
