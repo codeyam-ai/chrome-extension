@@ -1,3 +1,5 @@
+import truncateMiddle from '../../helpers/truncate-middle';
+
 import type { SuiJsonValue } from '@mysten/sui.js';
 
 export type SmallDetail = {
@@ -10,10 +12,22 @@ export type SmallDetail = {
         | (string | number | boolean | SuiJsonValue)[];
 };
 
-const SmallValue = ({ content, type }: { content: string; type: string }) => {
-    if (type !== 'small') return <></>;
+const SmallValue = ({ content, type }: SmallDetail) => {
+    if (type !== 'small' || !content) return <></>;
 
-    return <div className="text-xs font-normal">{content}</div>;
+    const contentArray = Array.isArray(content) ? content : [content];
+    return (
+        <div className="text-xs font-normal text-right">
+            {contentArray.map((contentItem, item) => (
+                <div
+                    key={`detail-${contentItem}`}
+                    title={contentItem.toString()}
+                >
+                    {truncateMiddle(contentItem.toString(), 12)}
+                </div>
+            ))}
+        </div>
+    );
 };
 
 export default SmallValue;
