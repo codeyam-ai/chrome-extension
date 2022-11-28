@@ -1,14 +1,11 @@
-const CostValue = ({
-    value,
-    symbol,
-    dollars,
-    total,
-}: {
+export type Cost = {
     value: string;
     symbol: string;
     dollars: string;
     total?: boolean;
-}) => {
+};
+
+const CostValue = ({ value, symbol, dollars, total }: Cost) => {
     return (
         <div
             className={`flex flex-row items-center gap-1 py-1 ${

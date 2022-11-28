@@ -1,3 +1,8 @@
+export type NumberedDetail = {
+    label: string;
+    count: number;
+};
+
 const NumberedValue = ({ label, count }: { label: string; count: number }) => {
     return (
         <div

@@ -4,6 +4,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import truncateMiddle from '../../helpers/truncate-middle';
 import { AppState } from '../../hooks/useInitializedGuard';
 import SectionElement from './SectionElement';
 import TabElement from './TabElement';
@@ -21,44 +22,21 @@ import {
 import { thunkExtras } from '_redux/store/thunk-extras';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
+import type { Detail } from './DetailElement';
+import type { NumberedDetail } from './NumberedValue';
+import type { Section } from './SectionElement';
+import type { SmallDetail } from './SmallValue';
 import type {
     SuiMoveNormalizedFunction,
     TransactionEffects,
 } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
-import truncateMiddle from '../../helpers/truncate-middle';
 
 export enum TxApprovalTab {
     SUMMARY = 'Summary',
     ASSETS = 'Assets',
     DETAILS = 'Details',
 }
-
-export type Cost = {
-    value: string;
-    symbol: string;
-    dollars: string;
-    total?: boolean;
-};
-
-export type NumberedDetail = {
-    label: string;
-    count: number;
-};
-
-export type Detail = {
-    label?: string;
-    content?: string | number | NumberedDetail | Cost | NumberedDetail[];
-    title?: string;
-    detail?: string | string[];
-};
-
-export type Section = {
-    title: string;
-    subtitle?: string;
-    tooltip?: string;
-    details: Detail[];
-};
 
 export type TabSections = {
     [key in TxApprovalTab]?: Section[];
@@ -299,6 +277,7 @@ export function DappTxApprovalPage() {
         },
         [dispatch, txRequest]
     );
+
     useEffect(() => {
         if (
             !loading &&
@@ -474,76 +453,149 @@ export function DappTxApprovalPage() {
 
                     summary.push(costs);
 
+                    const anyPermissionsRequested =
+                        reading.length > 0 ||
+                        mutating.length > 0 ||
+                        transferring.length > 0 ||
+                        deleting.length > 0;
+
                     const assets = [
                         {
                             title: 'Permissions Requested',
-                            subtitle:
-                                'This transaction has requested access to your assets:',
-                            details: [
-                                {
-                                    label: 'Reading',
-                                    content: `${reading.length} Assets`,
-                                    detail: reading.map(
-                                        (r) =>
-                                            `${truncateMiddle(r?.address)}::${
-                                                r?.module
-                                            }::${r?.name}`
-                                    ),
-                                },
-                                {
-                                    label: 'Modifying',
-                                    content: `${mutating.length} Assets`,
-                                    detail: mutating.map(
-                                        (m) =>
-                                            `${truncateMiddle(m?.address)}::${
-                                                m?.module
-                                            }::${m?.name}`
-                                    ),
-                                },
-                                {
-                                    label: 'Transferring',
-                                    content: `${transferring.length} Assets`,
-                                    detail: transferring.map(
-                                        (t) =>
-                                            `${truncateMiddle(t?.address)}::${
-                                                t?.module
-                                            }::${t?.name}`
-                                    ),
-                                },
-                                {
-                                    label: 'Deleting',
-                                    content: `${deleting.length} Assets`,
-                                    detail: deleting.map((d) =>
-                                        truncateMiddle(d?.name)
-                                    ),
-                                },
-                            ],
+                            subtitle: anyPermissionsRequested
+                                ? 'This transaction has requested access to your assets:'
+                                : 'No access requested.',
+                            details: anyPermissionsRequested
+                                ? [
+                                      {
+                                          label: 'Reading',
+                                          content: `${reading.length} Assets`,
+                                          detail: reading.map(
+                                              (r) =>
+                                                  `${truncateMiddle(
+                                                      r?.address
+                                                  )}::${r?.module}::${r?.name}`
+                                          ),
+                                      },
+                                      {
+                                          label: 'Modifying',
+                                          content: `${mutating.length} Assets`,
+                                          detail: mutating.map(
+                                              (m) =>
+                                                  `${truncateMiddle(
+                                                      m?.address
+                                                  )}::${m?.module}::${m?.name}`
+                                          ),
+                                      },
+                                      {
+                                          label: 'Transferring',
+                                          content: `${transferring.length} Assets`,
+                                          detail: transferring.map(
+                                              (t) =>
+                                                  `${truncateMiddle(
+                                                      t?.address
+                                                  )}::${t?.module}::${t?.name}`
+                                          ),
+                                      },
+                                      {
+                                          label: 'Deleting',
+                                          content: `${deleting.length} Assets`,
+                                          detail: deleting.map((d) =>
+                                              truncateMiddle(d?.name)
+                                          ),
+                                      },
+                                  ]
+                                : [],
                         } as Section,
                     ];
 
+                    const { data: txRequestData } = txRequest.tx.data;
                     const details = [
+                        {
+                            title: 'Transaction',
+                            details: [
+                                {
+                                    label: 'Package',
+                                    content: {
+                                        type: 'small',
+                                        content: txRequestData.packageObjectId,
+                                    } as SmallDetail,
+                                },
+                                {
+                                    label: 'Module',
+                                    content: {
+                                        type: 'small',
+                                        content: txRequestData.module,
+                                    } as SmallDetail,
+                                },
+                                {
+                                    label: 'Function',
+                                    content: {
+                                        type: 'small',
+                                        content: txRequestData.function,
+                                    } as SmallDetail,
+                                },
+                                {
+                                    label: 'Arguments',
+                                    content: {
+                                        type: 'small',
+                                        content: txRequestData.arguments,
+                                    } as SmallDetail,
+                                },
+                                {
+                                    label: 'Gas Budget',
+                                    content: {
+                                        type: 'small',
+                                        content:
+                                            txRequestData.gasBudget || '---',
+                                    } as SmallDetail,
+                                },
+                                {
+                                    label: 'Gas Payment',
+                                    content: {
+                                        type: 'small',
+                                        content:
+                                            txRequestData.gasPayment || '---',
+                                    } as SmallDetail,
+                                },
+                            ],
+                        },
                         {
                             title: 'Gas',
                             subtitle: 'All gas fees displayed in MIST',
                             details: [
                                 {
                                     label: 'Computation',
-                                    content: gasUsed?.computationCost,
+                                    content: {
+                                        type: 'small',
+                                        content:
+                                            gasUsed?.computationCost || '---',
+                                    } as SmallDetail,
                                 },
                                 {
                                     label: 'Storage Cost',
-                                    content: gasUsed?.storageCost,
+                                    content: {
+                                        type: 'small',
+                                        content: gasUsed?.storageCost || '---',
+                                    } as SmallDetail,
                                 },
                                 {
                                     label: 'Storage Rebate',
-                                    content: gasUsed?.storageRebate,
+                                    content: {
+                                        type: 'small',
+                                        content:
+                                            gasUsed?.storageRebate || '---',
+                                    } as SmallDetail,
                                 },
                                 {
                                     break: true,
                                 },
                                 {
                                     label: 'Total',
-                                    content: gas,
+                                    content: {
+                                        type: 'small',
+                                        content: gas,
+                                    } as SmallDetail,
                                 },
                             ],
                         } as Section,

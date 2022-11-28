@@ -1,7 +1,14 @@
 import Tooltip from '../../components/Tooltip';
 import DetailElement from './DetailElement';
 
-import type { Section } from './index';
+import type { Detail } from './DetailElement';
+
+export type Section = {
+    title: string;
+    subtitle?: string;
+    tooltip?: string;
+    details: Detail[];
+};
 
 const SectionElement = ({ section }: { section: Section }) => {
     return (
