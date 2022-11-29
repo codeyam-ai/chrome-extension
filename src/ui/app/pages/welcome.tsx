@@ -7,8 +7,8 @@ import TextLinkList from '../shared/content/rows-and-lists/TextLinkList';
 import GetStartedCard from '../shared/layouts/GetStartedCard';
 import Loading from '_components/loading';
 import { useInitializedGuard } from '_hooks';
-import PageLayout from '_pages/layout';
 import { LinkType } from '_src/enums/LinkType';
+import PageLayout from '_src/ui/app/pages/PageLayout';
 
 const WelcomePage = () => {
     const checkingInitialized = useInitializedGuard(AppState.UNINITIALIZED);

@@ -15,7 +15,7 @@ import LargePageHeaderWIthIcon from '../shared/headers/page-headers/LargePageHea
 import BaseLayout from '../shared/layouts/BaseLayout';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
-import PageLayout from '_pages/layout';
+import PageLayout from '_src/ui/app/pages/PageLayout';
 
 const LockedPage = () => {
     const dispatch = useAppDispatch();

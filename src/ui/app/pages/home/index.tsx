@@ -13,8 +13,8 @@ import NavBarWithSettingsAndWalletPicker from '../../shared/navigation/nav-bar/N
 import TabBar from '../../shared/navigation/tab-bar/TabBar';
 import Loading from '_components/loading';
 import { useInitializedGuard, useAppDispatch } from '_hooks';
-import PageLayout from '_pages/layout';
 import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
+import PageLayout from '_src/ui/app/pages/PageLayout';
 
 const POLL_SUI_OBJECTS_INTERVAL = 4000;
 
@@ -40,7 +40,7 @@ const HomePage = () => {
     }, [guardChecking, dispatch]);
 
     return (
-        <PageLayout limitToPopUpSize={true}>
+        <PageLayout>
             <Loading loading={guardChecking} big={true}>
                 <BaseLayout>
                     <NavBarWithSettingsAndWalletPicker />

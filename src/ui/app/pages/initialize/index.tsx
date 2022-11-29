@@ -7,7 +7,7 @@ import { AppState } from '../../hooks/useInitializedGuard';
 import GetStartedCard from '../../shared/layouts/GetStartedCard';
 import Loading from '_components/loading';
 import { useInitializedGuard } from '_hooks';
-import PageLayout from '_pages/layout';
+import PageLayout from '_src/ui/app/pages/PageLayout';
 
 const InitializePage = () => {
     const checkingInitialized = useInitializedGuard(AppState.UNINITIALIZED);
