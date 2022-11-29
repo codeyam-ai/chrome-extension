@@ -17,6 +17,14 @@ type LoadingProps = {
 const Loading = ({ loading, children, className, big }: LoadingProps) => {
     useEffect(() => {
         if (loading) return;
+
+        const resize = () => {
+            window.resizeTo(
+                document.body.offsetWidth,
+                document.body.offsetHeight + 30
+            );
+        };
+        resize();
         Promise.all(
             Array.from(document.images)
                 .filter((img) => !img.complete)
@@ -27,12 +35,9 @@ const Loading = ({ loading, children, className, big }: LoadingProps) => {
                         })
                 )
         ).then(() => {
-            setTimeout(() => {
-                window.resizeTo(
-                    document.body.offsetWidth,
-                    document.body.offsetHeight + 30
-                );
-            }, 250);
+            resize();
+            setTimeout(resize, 250);
+            setTimeout(resize, 500);
         });
     }, [loading]);
 

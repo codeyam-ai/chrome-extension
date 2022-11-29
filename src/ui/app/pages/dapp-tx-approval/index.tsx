@@ -230,6 +230,18 @@ export function DappTxApprovalPage() {
     );
 
     useEffect(() => {
+        window.onresize = () => {
+            const content = document.getElementById('content');
+
+            if (!content) return;
+
+            content.style.height = 'auto';
+            const contentHeight = content.offsetHeight;
+            content.style.height = `${contentHeight}px`;
+        };
+    }, []);
+
+    useEffect(() => {
         const getEffects = async () => {
             try {
                 if (!txRequest || txRequest.tx.type === 'move-call') {
@@ -375,6 +387,70 @@ export function DappTxApprovalPage() {
                                 {
                                     label: 'Asset',
                                     content: transferring[0]?.name,
+                                },
+                                {
+                                    label: 'Recipient',
+                                    content: txInfo.data.recipient,
+                                },
+                            ],
+                        },
+                    ];
+                } else if (txInfo.kind === 'transferSui') {
+                    summary = [
+                        {
+                            title: 'Transfer Asset',
+                            details: [
+                                {
+                                    label: 'Amount',
+                                    content: txInfo.data.amount || '---',
+                                },
+                                {
+                                    label: 'Recipient',
+                                    content: txInfo.data.recipient,
+                                },
+                            ],
+                        },
+                    ];
+                } else if (txInfo.kind === 'pay') {
+                    summary = [
+                        {
+                            title: 'Transfer Asset',
+                            details: [
+                                {
+                                    label: 'Amount',
+                                    content: txInfo.data.amounts,
+                                },
+                                {
+                                    label: 'Recipient',
+                                    content: txInfo.data.recipients,
+                                },
+                            ],
+                        },
+                    ];
+                } else if (txInfo.kind === 'paySui') {
+                    summary = [
+                        {
+                            title: 'Transfer Asset',
+                            details: [
+                                {
+                                    label: 'Amount',
+                                    content: txInfo.data.amounts,
+                                },
+                                {
+                                    label: 'Recipient',
+                                    content: txInfo.data.recipients,
+                                },
+                            ],
+                        },
+                    ];
+                } else if (txInfo.kind === 'payAllSui') {
+                    summary = [
+                        {
+                            title: 'Transfer Asset',
+                            details: [
+                                {
+                                    label: 'Amount',
+                                    content: `${txInfo.data.inputCoins.length} Coins`,
                                 },
                                 {
                                     label: 'Recipient',
@@ -742,33 +818,42 @@ export function DappTxApprovalPage() {
                     rejectTitle="Reject"
                     onSubmit={handleOnSubmit}
                 >
-                    <div className="flex flex-row justify-between items-baseline text-lg pb-6">
-                        {[
-                            TxApprovalTab.SUMMARY,
-                            TxApprovalTab.ASSETS,
-                            TxApprovalTab.DETAILS,
-                        ].map((t, index) => (
-                            <TabElement
-                                key={`tab-${index}`}
-                                type={t}
-                                isSelected={t === tab}
-                                setTab={setTab}
-                            />
-                        ))}
-                    </div>
-
-                    <div className="flex flex-col gap-6 grow">
-                        <>
-                            {(content[tab] || []).map(
-                                (section, sectionIndex) => (
-                                    <SectionElement
-                                        key={`section-${sectionIndex}`}
-                                        section={section}
+                    {dryRunError ? (
+                        <div className="bg-red-200 text-black p-3 rounded-lg h-60 overflow-auto">
+                            {dryRunError}
+                        </div>
+                    ) : (
+                        <div className="flex flex-col gap-6">
+                            <div className="flex flex-row justify-between items-baseline text-lg">
+                                {[
+                                    TxApprovalTab.SUMMARY,
+                                    TxApprovalTab.ASSETS,
+                                    TxApprovalTab.DETAILS,
+                                ].map((t, index) => (
+                                    <TabElement
+                                        key={`tab-${index}`}
+                                        type={t}
+                                        isSelected={t === tab}
+                                        setTab={setTab}
                                     />
-                                )
-                            )}
-                        </>
-                    </div>
+                                ))}
+                            </div>
+
+                            <div
+                                id="content"
+                                className="flex flex-col gap-6 overflow-auto"
+                            >
+                                {(content[tab] || []).map(
+                                    (section, sectionIndex) => (
+                                        <SectionElement
+                                            key={`section-${sectionIndex}`}
+                                            section={section}
+                                        />
+                                    )
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </UserApproveContainer>
             ) : null}
         </Loading>
