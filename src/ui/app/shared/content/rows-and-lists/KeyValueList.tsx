@@ -20,7 +20,9 @@ const KeyValueList = ({ keyNamesAndValues }: KeyValueListProps) => {
                         key={key}
                     >
                         <Body textColor={TextColor.Medium}>{item.keyName}</Body>
-                        <Body className={'font-semibold'}>{item.value}</Body>
+                        <Body className={'font-weight-ethos-semibold-body'}>
+                            {item.value}
+                        </Body>
                     </div>
                 );
             })}
