@@ -25,6 +25,7 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 import Typography from '_src/ui/app/shared/typography/Typography';
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
+import { truncateMiddle } from '_src/ui/app/helpers/truncate-string-middle';
 
 import type { SuiObject } from '@mysten/sui.js';
 import type { ButtonHTMLAttributes } from 'react';
@@ -48,8 +49,6 @@ function NFTdetailsContent({
     const txEvents = await provider.getEventsByTransaction(
         '6mn5W1CczLwitHCO9OIUbqirNrQ0cuKdyxaNe16SAME='
     );
-
-    console.log('not working => ', txEvents);
     
     */
 
@@ -63,32 +62,38 @@ function NFTdetailsContent({
                             fileExt={fileExtentionType?.name || 'NFT'}
                         />
                         <div className="mb-4 py-6">
-                            <Title className={'text-left'}>
+                            <Title className={'text-left mb-2'}>
                                 {nftFields?.name}
                             </Title>
-                            <Typography
+                            <BodyLarge
                                 className={
-                                    'text-left text-ethos-light-text-medium font-weight-normal mb-6 text-size-ethos-subheader leading-line-height-ethos-subheader'
+                                    'text-left text-ethos-light-text-medium font-weight-normal mb-6'
                                 }
                             >
-                                SuiGod Collection
-                            </Typography>
+                                {nftFields?.description}
+                            </BodyLarge>
 
                             {hasPublicTransfer(nft) && (
                                 <Button
                                     isInline
                                     buttonStyle="primary"
-                                    className="-mt-[15px]"
+                                    className="inline-block"
                                     onClick={onClick}
                                 >
                                     Send
                                 </Button>
                             )}
+
                             <div className={'w-full text-left'}>
+                                {/** 
+                                 * 
+                                 * Replace when NFT events are determined
+                                 * 
+                                 * 
                                 <BodyLarge isSemibold className={'mb-3'}>
                                     Activity
                                 </BodyLarge>
-                                <NFTTransactionRows />
+                                <NFTTransactionRows />*/}
                                 <BodyLarge isSemibold className={'mb-3'}>
                                     Creator
                                 </BodyLarge>
@@ -96,11 +101,9 @@ function NFTdetailsContent({
                                     keyNamesAndValues={[
                                         {
                                             keyName: 'Wallet Address',
-                                            value: '0xb8dc...ac1c',
-                                        },
-                                        {
-                                            keyName: 'Royalty',
-                                            value: '2.5%',
+                                            value: truncateMiddle(
+                                                nft.owner.AddressOwner
+                                            ),
                                         },
                                     ]}
                                 />
@@ -110,12 +113,22 @@ function NFTdetailsContent({
                                 <KeyValueList
                                     keyNamesAndValues={[
                                         {
-                                            keyName: 'Contract Address',
-                                            value: '0xb8dc...ac1c',
+                                            keyName: 'Has public transfer',
+                                            value: nft.data.has_public_transfer
+                                                ? 'Yes'
+                                                : 'No',
                                         },
                                         {
                                             keyName: 'Object ID',
-                                            value: '#1750',
+                                            value: truncateMiddle(
+                                                nft.reference.objectId
+                                            ),
+                                        },
+                                        {
+                                            keyName: 'Digest',
+                                            value: truncateMiddle(
+                                                nft.reference.digest
+                                            ),
                                         },
                                     ]}
                                 />
