@@ -56,7 +56,7 @@ function SettingsRouterPage() {
                 className={
                     (expanded ? 'h-full' : '') +
                     ' ' +
-                    'relative max-h-full overflow-y-auto drop-shadow-ethos-box-shadow sm:rounded-[20px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default'
+                    'relative flex flex-col max-h-full overflow-y-auto drop-shadow-ethos-box-shadow sm:rounded-[20px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default'
                 }
             >
                 {!settingsIsOpenOnSubPage ? (
@@ -67,27 +67,41 @@ function SettingsRouterPage() {
                 ) : (
                     <NavBarWithBackAndWalletPicker backUrl={settingsHomeUrl} />
                 )}
-                <Routes location={settingsUrl || ''}>
-                    <Route path="/" element={<SettingsHomePage />} />
-                    <Route path="/network" element={<NetworkPage />} />
-                    <Route path="/theme" element={<ThemePage />} />
-                    <Route path="/security" element={<SecurityPage />} />
-                    <Route path="/permissions" element={<PermissionsPage />} />
-                    <Route path="/lock" element={<LockPage />} />
-                    <Route path="/settings/view-seed" element={<ViewSeed />} />
-                    <Route path="/connected-apps" element={<ConnectedApps />} />
-                    <Route path="/preapprovals" element={<Preapprovals />} />
-                    <Route
-                        path="/import-wallet"
-                        element={<ImportWalletPage />}
-                    />
-                    <Route
-                        path="*"
-                        element={
-                            <Navigate to={settingsHomeUrl} replace={true} />
-                        }
-                    />
-                </Routes>
+                <div className="overflow-scroll">
+                    <Routes location={settingsUrl || ''}>
+                        <Route path="/" element={<SettingsHomePage />} />
+                        <Route path="/network" element={<NetworkPage />} />
+                        <Route path="/theme" element={<ThemePage />} />
+                        <Route path="/security" element={<SecurityPage />} />
+                        <Route
+                            path="/permissions"
+                            element={<PermissionsPage />}
+                        />
+                        <Route path="/lock" element={<LockPage />} />
+                        <Route
+                            path="/settings/view-seed"
+                            element={<ViewSeed />}
+                        />
+                        <Route
+                            path="/connected-apps"
+                            element={<ConnectedApps />}
+                        />
+                        <Route
+                            path="/preapprovals"
+                            element={<Preapprovals />}
+                        />
+                        <Route
+                            path="/import-wallet"
+                            element={<ImportWalletPage />}
+                        />
+                        <Route
+                            path="*"
+                            element={
+                                <Navigate to={settingsHomeUrl} replace={true} />
+                            }
+                        />
+                    </Routes>
+                </div>
             </div>
         </div>
     );
