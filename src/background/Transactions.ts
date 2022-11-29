@@ -388,6 +388,10 @@ class Transactions {
     }
 
     private async getActiveAccount(): Promise<AccountInfo> {
+        const locked = await getEncrypted('locked');
+        if (locked) {
+            throw new Error('Wallet is locked');
+        }
         const passphrase = await getEncrypted('passphrase');
         const authentication = await getEncrypted('authentication');
         const activeAccountIndex = await getEncrypted(

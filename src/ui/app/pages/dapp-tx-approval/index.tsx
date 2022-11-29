@@ -509,7 +509,7 @@ export function DappTxApprovalPage() {
 
                     if (mutating.length > 0) {
                         effects.details.push({
-                            label: 'Mutating',
+                            label: 'Modifying',
                             content: mutating.map(
                                 (mutating) =>
                                     ({

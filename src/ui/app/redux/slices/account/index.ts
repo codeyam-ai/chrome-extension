@@ -36,6 +36,7 @@ type InitialAccountInfo = {
     passphrase: string | null;
     accountInfos: AccountInfo[];
     activeAccountIndex: number;
+    locked: boolean;
 };
 
 export const LOCKED = 'locked';
@@ -74,6 +75,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 mnemonic: null,
                 accountInfos,
                 activeAccountIndex,
+                locked: false,
             };
         }
 
@@ -85,16 +87,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 mnemonic: null,
                 accountInfos: [],
                 activeAccountIndex: 0,
-            };
-        }
-
-        if (passphrase === LOCKED) {
-            return {
-                authentication: null,
-                passphrase: LOCKED,
-                mnemonic: null,
-                accountInfos: [],
-                activeAccountIndex: 0,
+                locked: false,
             };
         }
 
@@ -125,12 +118,25 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             activeAccountIndex = (accountInfos?.length || 1) - 1;
         }
 
+        const locked = await getEncrypted('locked');
+        if (locked) {
+            return {
+                authentication: null,
+                passphrase: passphrase || null,
+                mnemonic: mnemonic || null,
+                accountInfos,
+                activeAccountIndex,
+                locked: true,
+            };
+        }
+
         return {
             authentication: authentication || null,
             passphrase: passphrase || null,
             mnemonic: mnemonic || null,
             accountInfos,
             activeAccountIndex,
+            locked: false,
         };
     }
 );
@@ -284,12 +290,21 @@ export const reset = createAsyncThunk(
 export const logout = createAsyncThunk(
     'account/logout',
     async (_args): Promise<void> => {
-        await setEncrypted('passphrase', LOCKED);
+        await setEncrypted('locked', LOCKED);
         await deleteEncrypted('authentication');
-
-        window.location.reload();
     }
 );
+
+export const unlock: AsyncThunk<void, string | null, AppThunkConfig> =
+    createAsyncThunk<void, string | null, AppThunkConfig>(
+        'account/unlock',
+        async (passphrase): Promise<void> => {
+            const existingPassphrase = await getEncrypted('passphrase');
+            if (existingPassphrase !== passphrase) return;
+
+            await deleteEncrypted('locked');
+        }
+    );
 
 type AccountState = {
     loading: boolean;
@@ -302,6 +317,7 @@ type AccountState = {
     address: SuiAddress | null;
     accountInfos: AccountInfo[];
     activeAccountIndex: number;
+    locked: boolean;
 };
 
 const initialState: AccountState = {
@@ -315,6 +331,7 @@ const initialState: AccountState = {
     address: null,
     accountInfos: [],
     activeAccountIndex: 0,
+    locked: false,
 };
 
 const accountSlice = createSlice({
@@ -362,6 +379,7 @@ const accountSlice = createSlice({
                                 (accountInfo.index || 0) ===
                                 state.activeAccountIndex
                         )?.address || null;
+                    state.locked = action.payload.locked;
                 }
             )
             .addCase(createMnemonic.pending, (state) => {
@@ -395,6 +413,9 @@ const accountSlice = createSlice({
             })
             .addCase(saveEmail.fulfilled, (state, action) => {
                 state.email = action.payload;
+            })
+            .addCase(logout.pending, (state) => {
+                state.locked = true;
             }),
 });
 

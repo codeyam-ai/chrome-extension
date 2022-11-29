@@ -9,9 +9,10 @@ import type { FormikValues } from 'formik';
 
 type PassphraseFormProps = {
     onSubmit: (passphrase: string) => void;
+    confirm?: boolean;
 };
 
-const CustomFormikForm = () => {
+const CustomFormikForm = ({ confirm = true }: { confirm: boolean }) => {
     // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
     // which we can spread on <input> and alse replace ErrorMessage entirely.
     const [field, meta] = useField('password');
@@ -27,39 +28,38 @@ const CustomFormikForm = () => {
                 required={true}
                 errorText={meta.touched && meta.error ? meta.error : undefined}
             />
-            <Input
-                {...confirmField}
-                label="Confirm password"
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                required={true}
-                errorText={
-                    confirmMeta.touched && confirmMeta.error
-                        ? confirmMeta.error
-                        : undefined
-                }
-            />
+            {confirm && (
+                <Input
+                    {...confirmField}
+                    label="Confirm password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    required={true}
+                    errorText={
+                        confirmMeta.touched && confirmMeta.error
+                            ? confirmMeta.error
+                            : undefined
+                    }
+                />
+            )}
 
             <Button
                 buttonStyle="primary"
                 type="submit"
                 disabled={
                     !meta.value ||
-                    !confirmMeta.value ||
-                    meta.error ||
-                    confirmMeta.error
-                        ? true
-                        : false
+                    !!meta.error ||
+                    (confirm && (!confirmMeta.value || !!confirmMeta.error))
                 }
             >
-                Save
+                {confirm ? 'Save' : 'Submit'}
             </Button>
         </>
     );
 };
 
-const PassphraseForm = ({ onSubmit }: PassphraseFormProps) => {
+const PassphraseForm = ({ onSubmit, confirm = true }: PassphraseFormProps) => {
     const _onSubmit = useCallback(
         ({ password }: FormikValues) => {
             onSubmit(password);
@@ -73,19 +73,28 @@ const PassphraseForm = ({ onSubmit }: PassphraseFormProps) => {
                     password: '',
                     confirmPassword: '',
                 }}
-                validationSchema={Yup.object({
-                    password: Yup.string().required('Enter a password'),
-                    confirmPassword: Yup.string()
-                        .required('Confirm your password')
-                        .oneOf(
-                            [Yup.ref('password'), null],
-                            'Passwords must match'
-                        ),
-                })}
+                validationSchema={
+                    confirm
+                        ? Yup.object({
+                              password:
+                                  Yup.string().required('Enter a password'),
+                              confirmPassword: Yup.string()
+                                  .required('Confirm your password')
+                                  .oneOf(
+                                      [Yup.ref('password'), null],
+                                      'Passwords must match'
+                                  ),
+                          })
+                        : Yup.object({
+                              password: Yup.string().required(
+                                  'Enter your password'
+                              ),
+                          })
+                }
                 onSubmit={_onSubmit}
             >
                 <Form>
-                    <CustomFormikForm />
+                    <CustomFormikForm confirm={confirm} />
                 </Form>
             </Formik>
         </div>
