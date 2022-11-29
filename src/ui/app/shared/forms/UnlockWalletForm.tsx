@@ -9,23 +9,19 @@ import type { FormikValues } from 'formik';
 
 type PassphraseFormProps = {
     onSubmit: (passphrase: string) => void;
-    confirm?: boolean;
     isPasswordIncorrect?: boolean;
 };
 
 const CustomFormikForm = ({
-    confirm = true,
     isPasswordIncorrect = false,
 }: {
-    confirm: boolean;
     isPasswordIncorrect: boolean;
 }) => {
     // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
     // which we can spread on <input> and alse replace ErrorMessage entirely.
     const [field, meta] = useField('password');
-    const [confirmField, confirmMeta] = useField('confirmPassword');
     return (
-        <>
+        <div className="flex flex-col h-full justify-between">
             <Input
                 {...field}
                 label="Password"
@@ -41,40 +37,20 @@ const CustomFormikForm = ({
                         : undefined
                 }
             />
-            {confirm && (
-                <Input
-                    {...confirmField}
-                    label="Confirm password"
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    required={true}
-                    errorText={
-                        confirmMeta.touched && confirmMeta.error
-                            ? confirmMeta.error
-                            : undefined
-                    }
-                />
-            )}
 
             <Button
                 buttonStyle="primary"
                 type="submit"
-                disabled={
-                    !meta.value ||
-                    !!meta.error ||
-                    (confirm && (!confirmMeta.value || !!confirmMeta.error))
-                }
+                disabled={!meta.value || !!meta.error}
             >
-                {confirm ? 'Save' : 'Submit'}
+                Unlock Wallet
             </Button>
-        </>
+        </div>
     );
 };
 
-const PassphraseForm = ({
+const UnlockWalletForm = ({
     onSubmit,
-    confirm = true,
     isPasswordIncorrect = false,
 }: PassphraseFormProps) => {
     const _onSubmit = useCallback(
@@ -84,35 +60,19 @@ const PassphraseForm = ({
         [onSubmit]
     );
     return (
-        <div>
+        <div className="h-full">
             <Formik
                 initialValues={{
                     password: '',
                     confirmPassword: '',
                 }}
-                validationSchema={
-                    confirm
-                        ? Yup.object({
-                              password:
-                                  Yup.string().required('Enter a password'),
-                              confirmPassword: Yup.string()
-                                  .required('Confirm your password')
-                                  .oneOf(
-                                      [Yup.ref('password'), null],
-                                      'Passwords must match'
-                                  ),
-                          })
-                        : Yup.object({
-                              password: Yup.string().required(
-                                  'Enter your password'
-                              ),
-                          })
-                }
+                validationSchema={Yup.object({
+                    password: Yup.string().required('Enter your password'),
+                })}
                 onSubmit={_onSubmit}
             >
-                <Form>
+                <Form className="h-full">
                     <CustomFormikForm
-                        confirm={confirm}
                         isPasswordIncorrect={isPasswordIncorrect}
                     />
                 </Form>
@@ -121,4 +81,4 @@ const PassphraseForm = ({
     );
 };
 
-export default PassphraseForm;
+export default UnlockWalletForm;

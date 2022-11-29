@@ -4,19 +4,18 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import logo from '../components/logo/ethos-logo.png';
-import { AppState } from '../hooks/useInitializedGuard';
-import {
-    unlock,
-    loadAccountInformationFromStorage,
-} from '../redux/slices/account';
-import DescriptionList from '../shared/content/rows-and-lists/DescriptionList';
-import PassphraseForm from '../shared/forms/PassphraseForm';
-import LargePageHeaderWIthIcon from '../shared/headers/page-headers/LargePageHeaderWithIcon';
-import BaseLayout from '../shared/layouts/BaseLayout';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
 import PageLayout from '_pages/layout';
+import logo from '../components/logo/ethos-logo.png';
+import { AppState } from '../hooks/useInitializedGuard';
+import {
+    loadAccountInformationFromStorage,
+    unlock,
+} from '../redux/slices/account';
+import UnlockWalletForm from '../shared/forms/UnlockWalletForm';
+import LargePageHeaderWIthIcon from '../shared/headers/page-headers/LargePageHeaderWithIcon';
+import BaseLayout from '../shared/layouts/BaseLayout';
 
 const LockedPage = () => {
     const dispatch = useAppDispatch();
@@ -42,31 +41,15 @@ const LockedPage = () => {
     return (
         <PageLayout>
             <Loading loading={checkingInitialized}>
-                <BaseLayout>
+                <BaseLayout className="!min-h-0">
                     <LargePageHeaderWIthIcon
                         iconSrc={logo}
                         iconAlt="Ethos Wallet logo"
                         header="Ethos"
-                        description="The new web awaits"
+                        description="Unlock Wallet"
                     />
-
-                    <DescriptionList
-                        labelAndDescriptions={[
-                            {
-                                label: 'Welcome Back!',
-                                description: (
-                                    <>
-                                        Enter your password to unlock your
-                                        wallet. isPasswordIncorrect:{' '}
-                                        {isPasswordIncorrect ? 'true' : 'false'}
-                                    </>
-                                ),
-                            },
-                        ]}
-                    />
-                    <PassphraseForm
+                    <UnlockWalletForm
                         onSubmit={_save}
-                        confirm={false}
                         isPasswordIncorrect={isPasswordIncorrect}
                     />
                 </BaseLayout>
