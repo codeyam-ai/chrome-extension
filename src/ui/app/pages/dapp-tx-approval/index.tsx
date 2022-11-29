@@ -77,7 +77,9 @@ export function DappTxApprovalPage() {
     const [dryRunError, setDryRunError] = useState<string | undefined>();
 
     const loading =
-        guardLoading || txRequestsLoading || !(effects || dryRunError);
+        guardLoading ||
+        txRequestsLoading ||
+        (effects === undefined && !dryRunError);
 
     const gasUsed = effects?.gasUsed;
     const gas = gasUsed
@@ -784,8 +786,59 @@ export function DappTxApprovalPage() {
                     [TxApprovalTab.DETAILS]: details,
                 };
             }
+            case 'move-call':
+                return {
+                    [TxApprovalTab.SUMMARY]: [
+                        {
+                            title: 'Transaction',
+                            details: [
+                                {
+                                    label: 'Transaction Type',
+                                    content: 'MoveCall',
+                                },
+                                {
+                                    label: 'Function',
+                                    content: txRequest.tx.data.function,
+                                },
+                                {
+                                    label: 'Gas Fees',
+                                    content: txRequest.tx.data.gasBudget,
+                                },
+                            ],
+                        },
+                    ],
+                };
+            case 'serialized-move-call':
+                return {
+                    [TxApprovalTab.SUMMARY]: [
+                        {
+                            title: 'Transaction',
+                            details: [
+                                {
+                                    label: 'Transaction Type',
+                                    content: 'SerializedMoveCall',
+                                },
+                                {
+                                    label: 'Contents',
+                                    content: txRequest?.tx?.data,
+                                },
+                            ],
+                        },
+                    ],
+                };
             default:
-                return {};
+                return {
+                    [TxApprovalTab.DETAILS]: [
+                        {
+                            title: 'Transaction Information',
+                            details: [
+                                {
+                                    label: 'No transaction information available',
+                                },
+                            ],
+                        },
+                    ],
+                };
         }
     }, [
         txRequest?.tx,
@@ -829,14 +882,16 @@ export function DappTxApprovalPage() {
                                     TxApprovalTab.SUMMARY,
                                     TxApprovalTab.ASSETS,
                                     TxApprovalTab.DETAILS,
-                                ].map((t, index) => (
-                                    <TabElement
-                                        key={`tab-${index}`}
-                                        type={t}
-                                        isSelected={t === tab}
-                                        setTab={setTab}
-                                    />
-                                ))}
+                                ]
+                                    .filter((t) => content[t])
+                                    .map((t, index) => (
+                                        <TabElement
+                                            key={`tab-${index}`}
+                                            type={t}
+                                            isSelected={t === tab}
+                                            setTab={setTab}
+                                        />
+                                    ))}
                             </div>
 
                             <div
