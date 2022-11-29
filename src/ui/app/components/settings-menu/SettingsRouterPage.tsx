@@ -6,6 +6,7 @@ import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
 import HeaderWithClose from '../../shared/headers/section-headers/HeaderWithClose';
 import NavBarWithBackAndWalletPicker from '../../shared/navigation/nav-bar/NavBarWithBackAndWalletPicker';
+import LockPage from './subpages/LockPage';
 import ThemePage from './subpages/ThemePage';
 import {
     useSettingsIsOpen,
@@ -22,7 +23,6 @@ import ImportWalletPage from '_src/ui/app/components/settings-menu/subpages/Impo
 import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/PermissionsPage';
 import SecurityPage from '_src/ui/app/components/settings-menu/subpages/SecurityPage';
 import NetworkPage from '_src/ui/app/components/settings-menu/subpages/network/NetworkPage';
-import LockPage from './subpages/LockPage';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 

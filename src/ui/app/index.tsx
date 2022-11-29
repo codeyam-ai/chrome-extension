@@ -3,8 +3,14 @@
 
 import { useCallback, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-
 import Browser from 'webextension-polyfill';
+
+import useSizeWindow from './hooks/useSizeWindow';
+import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
+import BuyPage from './pages/home/buy';
+import ReceivePage from './pages/home/receive';
+import PasswordPage from './pages/password';
+import { AppType } from './redux/slices/app/AppType';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { DappTxApprovalPage } from '_pages/dapp-tx-approval';
 import HomePage, {
@@ -29,12 +35,6 @@ import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import ImportPage from '_src/ui/app/pages/initialize/import';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
-import useSizeWindow from './hooks/useSizeWindow';
-import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
-import BuyPage from './pages/home/buy';
-import ReceivePage from './pages/home/receive';
-import PasswordPage from './pages/password';
-import { AppType } from './redux/slices/app/AppType';
 
 const HIDDEN_MENU_PATHS = ['/nft-details', '/receipt'];
 
@@ -51,13 +51,10 @@ const App = () => {
             'lockWalletOnTimestamp'
         );
         if (lockWalletOnTimestamp > 0 && lockWalletOnTimestamp < Date.now()) {
-            console.log('locking wallet');
             Browser.storage.local.set({
                 lockWalletOnTimestamp: -1,
             });
             lockWallet();
-        } else {
-            console.log('not locking wallet');
         }
     };
 
@@ -99,7 +96,7 @@ const App = () => {
             window.removeEventListener('focus', onFocus);
             window.removeEventListener('blur', onBlur);
         };
-    }, []);
+    }, [lockWalletIfTimeIsExpired]);
 
     return (
         <ThemeProvider initialTheme={undefined}>
