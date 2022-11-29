@@ -4,6 +4,7 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import logo from '../components/logo/ethos-logo.png';
 import { AppState } from '../hooks/useInitializedGuard';
 import {
     unlock,
@@ -11,7 +12,8 @@ import {
 } from '../redux/slices/account';
 import DescriptionList from '../shared/content/rows-and-lists/DescriptionList';
 import PassphraseForm from '../shared/forms/PassphraseForm';
-import GetStartedCard from '../shared/layouts/GetStartedCard';
+import LargePageHeaderWIthIcon from '../shared/headers/page-headers/LargePageHeaderWithIcon';
+import BaseLayout from '../shared/layouts/BaseLayout';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
 import PageLayout from '_pages/layout';
@@ -31,9 +33,16 @@ const LockedPage = () => {
     );
 
     return (
-        <PageLayout forceFullscreen={true}>
+        <PageLayout>
             <Loading loading={checkingInitialized}>
-                <GetStartedCard showBack={true}>
+                <BaseLayout>
+                    <LargePageHeaderWIthIcon
+                        iconSrc={logo}
+                        iconAlt="Ethos Wallet logo"
+                        header="Ethos"
+                        description="The new web awaits"
+                    />
+
                     <DescriptionList
                         labelAndDescriptions={[
                             {
@@ -47,9 +56,8 @@ const LockedPage = () => {
                             },
                         ]}
                     />
-
                     <PassphraseForm onSubmit={_save} confirm={false} />
-                </GetStartedCard>
+                </BaseLayout>
             </Loading>
         </PageLayout>
     );
