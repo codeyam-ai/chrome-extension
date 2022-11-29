@@ -20,6 +20,7 @@ function openSignMessageWindow(signMessageRequestID: string) {
             `#/sign-message-approval/${encodeURIComponent(
                 signMessageRequestID
             )}`,
+        height: 540,
     });
 }
 

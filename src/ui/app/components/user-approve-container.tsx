@@ -46,6 +46,13 @@ function UserApproveContainer({
     const reject = useCallback(() => {
         onSubmit(false);
     }, [onSubmit]);
+    const showIcon = useCallback(
+        (e: SyntheticEvent<HTMLImageElement, Event>) => {
+            const img = e.target as HTMLImageElement;
+            img.classList.remove('hidden');
+        },
+        []
+    );
     const hideIcon = useCallback(
         (e: SyntheticEvent<HTMLImageElement, Event>) => {
             const img = e.target as HTMLImageElement;
@@ -53,6 +60,7 @@ function UserApproveContainer({
         },
         []
     );
+
     return (
         <div className="flex flex-col w-full px-6 items-center dark:bg-gray-800">
             <div className="flex w-full items-center justify-between pt-5 pb-6 border-b border-slate-400 dark:border-slate-600">
@@ -76,9 +84,10 @@ function UserApproveContainer({
                     {originFavIcon && originFavIcon.length > 0 && (
                         <img
                             src={originFavIcon}
-                            className="z-10 h-12 border-white dark:border-black border-2 rounded-full"
+                            className="z-10 h-12 border-white dark:border-black border-2 rounded-full hidden"
                             alt={`${originTitle} icon`}
                             onError={hideIcon}
+                            onLoad={showIcon}
                         />
                     )}
                     <div className="-ml-3">
@@ -108,7 +117,7 @@ function UserApproveContainer({
                 onClickButtonSecondary={handleOnResponse}
             /> */}
 
-            <div className={`grid grid-cols-2 gap-2 w-full mt-2`}>
+            <div className={`grid grid-cols-2 gap-2 w-full pt-6`}>
                 <Button
                     buttonStyle="secondary"
                     type="button"
