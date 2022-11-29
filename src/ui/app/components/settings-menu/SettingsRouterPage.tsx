@@ -13,7 +13,7 @@ import {
 } from '_components/menu/hooks';
 import { useOnKeyboardEvent } from '_hooks';
 import ConnectedApps from '_src/ui/app/components/menu/content/connected-apps';
-import Network from '_src/ui/app/components/menu/content/network';
+import NetworkPage from '_src/ui/app/components/settings-menu/subpages/network/NetworkPage';
 import Preapprovals from '_src/ui/app/components/menu/content/preapprovals';
 import ViewSeed from '_src/ui/app/components/menu/content/view-seed';
 import SettingsHomePage from '_src/ui/app/components/settings-menu/SettingsHomePage';
@@ -69,13 +69,13 @@ function SettingsRouterPage() {
                 )}
                 <Routes location={settingsUrl || ''}>
                     <Route path="/" element={<SettingsHomePage />} />
-                    <Route path="/settings/view-seed" element={<ViewSeed />} />
-                    <Route path="/connected-apps" element={<ConnectedApps />} />
-                    <Route path="/preapprovals" element={<Preapprovals />} />
-                    <Route path="/network" element={<Network />} />
+                    <Route path="/network" element={<NetworkPage />} />
                     <Route path="/theme" element={<ThemePage />} />
                     <Route path="/security" element={<SecurityPage />} />
                     <Route path="/permissions" element={<PermissionsPage />} />
+                    <Route path="/settings/view-seed" element={<ViewSeed />} />
+                    <Route path="/connected-apps" element={<ConnectedApps />} />
+                    <Route path="/preapprovals" element={<Preapprovals />} />
                     <Route
                         path="/import-wallet"
                         element={<ImportWalletPage />}

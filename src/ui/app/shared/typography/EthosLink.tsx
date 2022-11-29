@@ -1,15 +1,13 @@
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
-import { LinkType } from '_src/enums/LinkType';
-
 /*
     The EthosLink component should be used within an existing Typography component
     so its non-color font styles (other than weight) are inherited.
 */
 
 export interface EthosLinkProps {
-    type: LinkType;
+    type: 'external' | 'internal' | 'none';
     to?: string;
     onClick?: () => void;
     children: ReactNode;
@@ -18,13 +16,13 @@ export interface EthosLinkProps {
 const EthosLink = ({ to, type, onClick, children }: EthosLinkProps) => {
     const linkClasses =
         'font-weight-ethos-semibold-body text-ethos-light-primary-light dark:text-ethos-dark-primary-dark cursor-pointer';
-    if (type === LinkType.Internal && to) {
+    if (type === 'internal' && to) {
         return (
             <Link to={to} onClick={onClick} className={linkClasses}>
                 {children}
             </Link>
         );
-    } else if (type === LinkType.External && to) {
+    } else if (type === 'external' && to) {
         return (
             <a
                 href={to}
@@ -37,7 +35,7 @@ const EthosLink = ({ to, type, onClick, children }: EthosLinkProps) => {
             </a>
         );
     } else {
-        // LinkType = None
+        // linkType = 'none
         return (
             <span onClick={onClick} className={linkClasses}>
                 {children}

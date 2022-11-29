@@ -1,6 +1,6 @@
 import {
     ArrowDownTrayIcon,
-    ExclaimationTriangleIcon,
+    ExclamationTriangleIcon,
     PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
@@ -45,7 +45,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
     //TODO update the logic to account for other transfer type
     let TxIcon: JSX.Element;
     if (txn.status === 'failure') {
-        TxIcon = <ExclaimationTriangleIcon className={iconClasses} />;
+        TxIcon = <ExclamationTriangleIcon className={iconClasses} />;
     } else if (txn.isSender) {
         TxIcon = <PaperAirplaneIcon className={iconClasses} />;
     } else {

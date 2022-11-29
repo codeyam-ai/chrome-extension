@@ -5,7 +5,6 @@ import cl from 'classnames';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 
-import { CustomRPCInput } from './custom-rpc-input';
 import {
     API_ENV_TO_INFO,
     API_ENV,
@@ -14,6 +13,7 @@ import {
 import Icon from '_components/icon';
 import { useAppSelector, useAppDispatch } from '_hooks';
 import { changeRPCNetwork } from '_redux/slices/app';
+import { CustomRPCInput } from './custom-rpc-input';
 
 import st from './NetworkSelector.module.scss';
 

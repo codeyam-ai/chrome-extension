@@ -5,7 +5,8 @@ import Body from '../typography/Body';
 import type { MouseEventHandler } from 'react';
 
 export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
-    buttonStyle: 'primary' | 'secondary';
+    // Defaults to primary
+    buttonStyle?: 'primary' | 'secondary';
     className?: string;
     onClick?: MouseEventHandler<HTMLButtonElement>;
     to?: string;
@@ -43,9 +44,9 @@ const Button = (props: ButtonProps) => {
     const classes =
         (className ? className : '') +
         ' ' +
-        (buttonStyle === 'primary'
-            ? primaryButtonClassNames
-            : secondaryButtonClassNames);
+        (buttonStyle === 'secondary'
+            ? secondaryButtonClassNames
+            : primaryButtonClassNames);
 
     const buttonElement = (
         <button className={classes} {...reactProps}>
