@@ -6,11 +6,11 @@ import { useNavigate } from 'react-router-dom';
 
 import { AppState } from '../hooks/useInitializedGuard';
 import {
-    savePassphrase,
     loadAccountInformationFromStorage,
+    savePassphrase,
 } from '../redux/slices/account';
 import DescriptionList from '../shared/content/rows-and-lists/DescriptionList';
-import PassphraseForm from '../shared/forms/PassphraseForm';
+import CreatePasswordForm from '../shared/forms/CreatePasswordForm';
 import GetStartedCard from '../shared/layouts/GetStartedCard';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
@@ -48,7 +48,7 @@ const PasswordPage = () => {
                         ]}
                     />
 
-                    <PassphraseForm onSubmit={_save} />
+                    <CreatePasswordForm onSubmit={_save} />
                 </GetStartedCard>
             </Loading>
         </PageLayout>

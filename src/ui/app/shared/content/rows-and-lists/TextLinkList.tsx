@@ -13,7 +13,7 @@ interface TextLinkListProps {
 
 const TextLinkList = ({ textAndLinks }: TextLinkListProps) => {
     return (
-        <div className="mx-6 mb-6 text-left flex flex-col gap-2">
+        <div className="px-6 pb-6 text-left flex flex-col gap-2">
             {textAndLinks.map((textAndLink, key) => {
                 return (
                     <Body as="p" textColor={TextColor.Medium} key={key}>

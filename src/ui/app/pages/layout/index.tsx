@@ -1,7 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import cl from 'classnames';
 import { memo } from 'react';
 
 import darkGradientBackground from '../../../assets/images/dark-gradient-background.jpg';
@@ -11,8 +10,6 @@ import { useAppSelector, useFullscreenGuard } from '_hooks';
 import { getNavIsVisible } from '_redux/slices/app';
 
 import type { ReactNode } from 'react';
-
-import st from './Layout.module.scss';
 
 export type PageLayoutProps = {
     limitToPopUpSize?: boolean;
@@ -44,25 +41,8 @@ function PageLayout({
                     className="absolute h-full w-full hidden dark:sm:block"
                     width={1308}
                 />
-                <div className="relative mx-auto">
-                    <div
-                        className={cl(st.container, {
-                            [st.forcedPopupSize]: limitToPopUpSize,
-                            [st.navHidden]: !isNavVisible,
-                        })}
-                    >
-                        {children}
-                    </div>
-                </div>
+                <div className="relative mx-auto">{children}</div>
             </div>
-            {/* <div
-                className={cl(st.container, {
-                    [st.forcedPopupSize]: limitToPopUpSize,
-                    [st.navHidden]: !isNavVisible,
-                })}
-            >
-                {children}
-            </div> */}
         </Loading>
     );
 }

@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 
 import { queryClient } from '_app/helpers/queryClient';
+import { AppType } from '_redux/slices/app/AppType';
 import { createStore } from '_store';
 
 import type { PreloadedState } from '@reduxjs/toolkit';
@@ -13,7 +14,6 @@ import type { RootState } from '_redux/RootReducer';
 import type { AppStore } from '_store';
 import type React from 'react';
 import type { PropsWithChildren } from 'react';
-import { AppType } from '_redux/slices/app/AppType';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: PreloadedState<RootState>;

@@ -6,7 +6,7 @@ jest.mock('webextension-polyfill', () => {
     return fakeBrowser;
 });
 
-jest.spyOn(window, 'resizeTo').mockImplementation()
+jest.spyOn(window, 'resizeTo').mockImplementation();
 
 beforeEach(() => clearLocalStorage());
 
