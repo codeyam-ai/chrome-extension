@@ -257,7 +257,12 @@ export function DappTxApprovalPage() {
                 const transactionEffects = await signer.dryRunTransaction(
                     txRequest.tx.data
                 );
-                setEffects(transactionEffects);
+
+                if (transactionEffects.status.status === 'failure') {
+                    setDryRunError(transactionEffects.status.error);
+                } else {
+                    setEffects(transactionEffects);
+                }
             } catch (e) {
                 if ((e as Error).message === 'Account mnemonic is not set') {
                     setTimeout(getEffects, 100);
