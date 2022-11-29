@@ -4,9 +4,6 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import Loading from '_components/loading';
-import { useAppDispatch, useInitializedGuard } from '_hooks';
-import PageLayout from '_pages/layout';
 import { AppState } from '../hooks/useInitializedGuard';
 import {
     loadAccountInformationFromStorage,
@@ -15,6 +12,9 @@ import {
 import DescriptionList from '../shared/content/rows-and-lists/DescriptionList';
 import CreatePasswordForm from '../shared/forms/CreatePasswordForm';
 import GetStartedCard from '../shared/layouts/GetStartedCard';
+import Loading from '_components/loading';
+import { useAppDispatch, useInitializedGuard } from '_hooks';
+import PageLayout from '_pages/layout';
 
 const PasswordPage = () => {
     const dispatch = useAppDispatch();

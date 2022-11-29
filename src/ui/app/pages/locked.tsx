@@ -4,9 +4,6 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import Loading from '_components/loading';
-import { useAppDispatch, useInitializedGuard } from '_hooks';
-import PageLayout from '_pages/layout';
 import logo from '../components/logo/ethos-logo.png';
 import { AppState } from '../hooks/useInitializedGuard';
 import {
@@ -16,6 +13,9 @@ import {
 import UnlockWalletForm from '../shared/forms/UnlockWalletForm';
 import LargePageHeaderWIthIcon from '../shared/headers/page-headers/LargePageHeaderWithIcon';
 import BaseLayout from '../shared/layouts/BaseLayout';
+import Loading from '_components/loading';
+import { useAppDispatch, useInitializedGuard } from '_hooks';
+import PageLayout from '_pages/layout';
 
 const LockedPage = () => {
     const dispatch = useAppDispatch();
