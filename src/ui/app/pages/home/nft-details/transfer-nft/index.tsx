@@ -4,10 +4,10 @@
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import TransferNFTForm from './TransferNFTForm';
 import { createValidationSchema } from './validation';
-import NFTDisplayCard from '_components/nft-display';
 import { useAppSelector, useAppDispatch } from '_hooks';
 import {
     accountNftsSelector,
@@ -18,15 +18,13 @@ import {
     GAS_TYPE_ARG,
     DEFAULT_NFT_TRANSFER_GAS_FEE,
 } from '_redux/slices/sui-objects/Coin';
-import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 import type { ObjectId } from '@mysten/sui.js';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
 
 import st from './TransferNFTForm.module.scss';
-import Body from '_src/ui/app/shared/typography/Body';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import { toast } from 'react-toastify';
 
 const initialValues = {
     to: '',
@@ -79,7 +77,9 @@ function TransferNFTCard({ objectId }: TransferProps) {
             if (objectId === null) {
                 return;
             }
+
             setSendError(null);
+
             try {
                 const resp = await dispatch(
                     transferNFT({
@@ -90,12 +90,31 @@ function TransferNFTCard({ objectId }: TransferProps) {
                 ).unwrap();
 
                 resetForm();
+
                 if (resp.txId) {
-                    navigate(
-                        `/receipt?${new URLSearchParams({
-                            txdigest: resp.txId,
-                            transfer: 'nft',
-                        }).toString()}`
+                    // Redirect to nft page
+                    navigate('/nfts');
+
+                    // This nav link does not work...
+                    const navLink = `/receipt?${new URLSearchParams({
+                        txdigest: resp.txId,
+                    }).toString()}`;
+
+                    const receiptRedirect = () => {
+                        console.log('redirect to: ', navLink);
+                        // TODO: This is the correct link for the transaction digest but
+                        // the page is not loading correctly. After navigating to the
+                        // /transactions page and selecting the transaction it works fine
+                        navigate(navLink);
+                    };
+
+                    toast.success(
+                        <div className={'flex flex-row justify-between'}>
+                            <div>Transaction Successful.</div>
+                            <Link className={'font-semibold'} to={navLink}>
+                                View
+                            </Link>
+                        </div>
                     );
                 }
             } catch (e) {
@@ -113,12 +132,6 @@ function TransferNFTCard({ objectId }: TransferProps) {
         <div className={st.container}>
             {/* Remove nav bar and include a redux hook to show back in navigation => <NavBarWithBackAndTitle title="Send NFT" backLink="/nfts" /> */}
             <div className={'p-6 text-left'}>
-                <BodyLarge className={'text-ethos-light-text-medium mb-4'}>
-                    Sending
-                </BodyLarge>
-                {selectedNFTObj && (
-                    <NFTDisplayCard nftobj={selectedNFTObj} wideview={true} />
-                )}
                 <Formik
                     initialValues={initialValues}
                     validateOnMount={true}
@@ -126,6 +139,7 @@ function TransferNFTCard({ objectId }: TransferProps) {
                     onSubmit={onHandleSubmit}
                 >
                     <TransferNFTForm
+                        nftobj={selectedNFTObj}
                         submitError={sendError}
                         gasBalance={gasAggregateBalance.toString()}
                         onClearSubmitError={handleOnClearSubmitError}

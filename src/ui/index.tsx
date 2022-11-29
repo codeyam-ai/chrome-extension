@@ -15,6 +15,7 @@ import { initAppType, initNetworkFromStorage } from '_redux/slices/app';
 import { getFromLocationSearch } from '_redux/slices/app/AppType';
 import store from '_store';
 import { thunkExtras } from '_store/thunk-extras';
+import { ToastContainer, Slide } from 'react-toastify';
 
 import './styles/global.scss';
 import './styles/tailwind.css';
@@ -44,6 +45,18 @@ function renderApp() {
                     <IntlProvider locale={navigator.language}>
                         <QueryClientProvider client={queryClient}>
                             <App />
+                            <ToastContainer
+                                position="top-center"
+                                transition={Slide}
+                                autoClose={3500}
+                                hideProgressBar
+                                newestOnTop={true}
+                                closeOnClick={false}
+                                pauseOnFocusLoss
+                                draggable
+                                pauseOnHover
+                                theme={'dark'}
+                            />
                         </QueryClientProvider>
                     </IntlProvider>
                 </Provider>

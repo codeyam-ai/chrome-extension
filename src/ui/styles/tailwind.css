@@ -12,3 +12,14 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
 }
+
+.Toastify__toast {
+    border-radius: 40px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+}
+
+.Toastify__close-button {
+    display: none;
+}

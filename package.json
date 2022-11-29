@@ -112,6 +112,7 @@
         "react-redux": "^8.0.2",
         "react-router-dom": "^6.3.0",
         "react-textarea-autosize": "^8.3.4",
+        "react-toastify": "^9.1.1",
         "rxjs": "^7.5.6",
         "stream-browserify": "^3.0.0",
         "tweetnacl": "^1.0.3",
