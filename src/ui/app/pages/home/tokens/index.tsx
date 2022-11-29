@@ -23,11 +23,7 @@ function TokensPage() {
 
     return (
         <>
-            {true || (showError && error) ? (
-                // <Alert>
-                //     <strong>Something&apos;s wrong.</strong>{' '}
-                //     <small>{error.message}</small>
-                // </Alert>
+            {showError && error ? (
                 <div className="px-6 py-6">
                     <Alert
                         title="Something's wrong"
