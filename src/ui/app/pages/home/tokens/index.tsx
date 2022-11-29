@@ -44,7 +44,7 @@ function TokensPage() {
                             />
                             <SendReceiveButtonGroup mistBalance={mistBalance} />
                         </div>
-                        <div className="flex flex-col gap-6 pb-6 h-[198px] overflow-auto">
+                        <div className="flex flex-col gap-6 pb-6 h-[222px] overflow-auto">
                             <CoinList balances={balances} />
                             <ContentBlock>
                                 <Subheader as="h3">

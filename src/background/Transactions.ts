@@ -30,6 +30,7 @@ function openTxWindow(txRequestID: string) {
         url:
             Browser.runtime.getURL('ui.html') +
             `#/tx-approval/${encodeURIComponent(txRequestID)}`,
+        height: 720,
     });
 }
 
@@ -387,6 +388,10 @@ class Transactions {
     }
 
     private async getActiveAccount(): Promise<AccountInfo> {
+        const locked = await getEncrypted('locked');
+        if (locked) {
+            throw new Error('Wallet is locked');
+        }
         const passphrase = await getEncrypted('passphrase');
         const authentication = await getEncrypted('authentication');
         const activeAccountIndex = await getEncrypted(
@@ -465,6 +470,11 @@ class Transactions {
 
     private async storeTransactionRequest(txRequest: TransactionRequest) {
         const txs = await this.getTransactionRequests();
+
+        for (const id of Object.keys(txs)) {
+            if (txs[id].txResult) delete txs[id];
+        }
+
         txs[txRequest.id] = txRequest;
         await this.saveTransactionRequests(txs);
     }
