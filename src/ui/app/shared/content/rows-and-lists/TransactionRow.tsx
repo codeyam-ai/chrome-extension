@@ -8,7 +8,6 @@ import { Link } from 'react-router-dom';
 import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
 import { formatDate } from '_helpers';
-
 import { useFormatCoin, useMiddleEllipsis } from '_src/ui/app/hooks';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';

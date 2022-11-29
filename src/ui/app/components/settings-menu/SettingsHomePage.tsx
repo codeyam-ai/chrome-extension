@@ -14,6 +14,10 @@ import {
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { API_ENV_TO_INFO } from '../../ApiProvider';
+import { iframe } from '../../helpers';
+import SettingsList from '../../shared/navigation/nav-bar/SettingsList';
+import CreateWalletProvider from '../wallet-picker/CreateWalletProvider';
 import { useNextSettingsUrl } from '_components/menu/hooks';
 import {
     DASHBOARD_LINK,
@@ -21,13 +25,9 @@ import {
     MAILTO_SUPPORT_URL,
     ToS_LINK,
 } from '_src/shared/constants';
+import { ThemeContext } from '_src/shared/utils/themeContext';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { getEmail, logout, reset } from '_src/ui/app/redux/slices/account';
-import { API_ENV_TO_INFO } from '../../ApiProvider';
-import { iframe } from '../../helpers';
-import CreateWalletProvider from '../wallet-picker/CreateWalletProvider';
-import SettingsList from '../../shared/navigation/nav-bar/SettingsList';
-import { ThemeContext } from '_src/shared/utils/themeContext';
 
 const SettingsHomePage = () => {
     const orange = '#EE950F';
@@ -62,13 +62,12 @@ const SettingsHomePage = () => {
 
     const lockWallet = useCallback(async () => {
         await dispatch(logout());
-    }, []);
+    }, [dispatch]);
 
     const resetWallet = useCallback(async () => {
         setLoading(true);
         // iframe.listenForLogout();
         const email = await dispatch(getEmail());
-        console.log('email :>> ', email);
         if (email) {
             iframe.onReady(
                 async () => await iframe.logOut(email.payload as string)

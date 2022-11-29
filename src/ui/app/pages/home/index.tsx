@@ -5,11 +5,11 @@ import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { of, filter, switchMap, from, defer, repeat } from 'rxjs';
 
+import SettingsRouterPage from '../../components/settings-menu/SettingsRouterPage';
+import WalletPickerPage from '../../components/wallet-picker-menu/WalletPickerPage';
 import { AppState } from '../../hooks/useInitializedGuard';
 import BaseLayout from '../../shared/layouts/BaseLayout';
 import NavBarWithSettingsAndWalletPicker from '../../shared/navigation/nav-bar/NavBarWithSettingsAndWalletPicker';
-import SettingsRouterPage from '../../components/settings-menu/SettingsRouterPage';
-import WalletPickerPage from '../../components/wallet-picker-menu/WalletPickerPage';
 import TabBar from '../../shared/navigation/tab-bar/TabBar';
 import Loading from '_components/loading';
 import { useInitializedGuard, useAppDispatch } from '_hooks';

@@ -21,7 +21,6 @@ import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
 import Authentication from '_src/background/Authentication';
 import { LinkType } from '_src/enums/LinkType';
-
 import { IFRAME_URL } from '_src/shared/constants';
 
 export const AUTHENTICATION_REQUESTED = 'AUTHENTICATION_REQUESTED';

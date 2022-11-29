@@ -30,7 +30,7 @@ const WalletButton = ({
         if (isWalletEditing) return;
         await dispatch(clearForNetworkOrWalletSwitch());
         await dispatch(saveActiveAccountIndex(wallet.index));
-    }, [wallet.index, isWalletEditing, navigate, dispatch]);
+    }, [wallet.index, isWalletEditing, dispatch]);
 
     const editThisWallet = useCallback(() => {
         navigate(editWalletUrl);

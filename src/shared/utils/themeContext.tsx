@@ -56,7 +56,6 @@ export const ThemeProvider = ({
     const [theme, setTheme] = useState<ThemeName>(getTheme);
 
     const externalSetTheme = useCallback((theme: ThemeName) => {
-        console.log('trying to set theme :>> ', theme);
         setTheme(theme);
         rawSetTheme(theme);
         getTheme();

@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useMemo, useState } from 'react';
+
+import CustomRpcForm from './CustomRpcForm';
 import { LinkType } from '_src/enums/LinkType';
 import {
     API_ENV,
@@ -10,15 +12,14 @@ import {
 } from '_src/ui/app/ApiProvider';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { changeRPCNetwork } from '_src/ui/app/redux/slices/app';
-import SegmentedControl, {
-    SegmentedControlItem,
-} from '_src/ui/app/shared/inputs/SegmentedControl';
+import SegmentedControl from '_src/ui/app/shared/inputs/SegmentedControl';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Header from '_src/ui/app/shared/typography/Header';
-import CustomRpcForm from './CustomRpcForm';
+
+import type { SegmentedControlItem } from '_src/ui/app/shared/inputs/SegmentedControl';
 
 function NetworkPage() {
     const [selectedApiEnv, customRPC] = useAppSelector(({ app }) => [
@@ -39,20 +40,6 @@ function NetworkPage() {
 
     const dispatch = useAppDispatch();
 
-    const changeNetwork = (name: string) => {
-        setShowCustomRPCInput(name === API_ENV.customRPC);
-        const isEmptyCustomRpc = name === API_ENV.customRPC && !customRPC;
-
-        setSelectedNetworkName(name && !isEmptyCustomRpc ? name : '');
-
-        if (isEmptyCustomRpc) {
-            setShowCustomRPCInput(true);
-            return;
-        }
-        const apiEnv = API_ENV[name as keyof typeof API_ENV];
-        dispatch(changeRPCNetwork(apiEnv));
-    };
-
     const netWorks = useMemo(() => {
         return generateActiveNetworkList().map((itm) => ({
             ...API_ENV_TO_INFO[itm as keyof typeof API_ENV],
@@ -63,6 +50,21 @@ function NetworkPage() {
     const networkOptions = useMemo(() => {
         const options: SegmentedControlItem[] = [];
         netWorks.forEach((network) => {
+            const changeToThisNetwork = () => {
+                const name = network.networkName;
+                setShowCustomRPCInput(name === API_ENV.customRPC);
+                const isEmptyCustomRpc =
+                    name === API_ENV.customRPC && !customRPC;
+
+                setSelectedNetworkName(name && !isEmptyCustomRpc ? name : '');
+
+                if (isEmptyCustomRpc) {
+                    setShowCustomRPCInput(true);
+                    return;
+                }
+                const apiEnv = API_ENV[name as keyof typeof API_ENV];
+                dispatch(changeRPCNetwork(apiEnv));
+            };
             const isCustomRpc = network.name === 'Custom RPC URL';
             const isCustomRpcSelected =
                 selectedNetworkName === '' && isCustomRpc;
@@ -71,11 +73,11 @@ function NetworkPage() {
                 isActive:
                     selectedNetworkName === network.networkName ||
                     isCustomRpcSelected,
-                onClick: () => changeNetwork(network.networkName),
+                onClick: changeToThisNetwork,
             });
         });
         return options;
-    }, [netWorks, selectedNetworkName]);
+    }, [netWorks, selectedNetworkName, customRPC, dispatch]);
 
     return (
         <div className="flex flex-col">

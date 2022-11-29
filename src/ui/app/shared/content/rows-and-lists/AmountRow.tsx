@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import Body from '../../typography/Body';
 import Header from '../../typography/Header';
 import Subheader from '../../typography/Subheader';
-
 import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
 
 interface AmountRowProps {

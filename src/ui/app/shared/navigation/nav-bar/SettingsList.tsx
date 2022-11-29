@@ -1,7 +1,8 @@
 import { type ReactNode } from 'react';
 import Browser from 'webextension-polyfill';
-import EthosLogoGrayscale from '_src/ui/app/shared/svg/EthosLogoGrayscale';
+
 import SettingsListItem from './SettingsListItem';
+import EthosLogoGrayscale from '_src/ui/app/shared/svg/EthosLogoGrayscale';
 
 export interface SettingsListSectionItem {
     text: string;

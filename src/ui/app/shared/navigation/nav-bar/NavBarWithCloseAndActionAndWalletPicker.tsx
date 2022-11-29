@@ -1,9 +1,10 @@
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
-import { LinkType } from '_src/enums/LinkType';
+
 import WalletProfile from '../../content/rows-and-lists/WalletProfile';
 import BodyLarge from '../../typography/BodyLarge';
 import EthosLink from '../../typography/EthosLink';
+import { LinkType } from '_src/enums/LinkType';
 
 interface NavBarWithCloseAndActionAndWalletPickerProps {
     closeUrl: string;

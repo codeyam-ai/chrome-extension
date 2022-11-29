@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 
 import Body from '../../typography/Body';
 import { LinkType } from '_src/enums/LinkType';
-
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import { useExplorerPermission } from '_src/ui/app/hooks';
 

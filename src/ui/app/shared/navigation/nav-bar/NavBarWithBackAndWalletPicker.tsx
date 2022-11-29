@@ -1,5 +1,6 @@
-import { ArrowLeftIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
+
 import WalletProfile from '../../content/rows-and-lists/WalletProfile';
 import BodyLarge from '../../typography/BodyLarge';
 

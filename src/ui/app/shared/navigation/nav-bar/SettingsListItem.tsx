@@ -1,7 +1,9 @@
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
+
 import BodyLarge from '../../../shared/typography/BodyLarge';
-import { SettingsListSectionItem } from './SettingsList';
+
+import type { SettingsListSectionItem } from './SettingsList';
 
 interface SettingsListItemProps {
     item: SettingsListSectionItem;

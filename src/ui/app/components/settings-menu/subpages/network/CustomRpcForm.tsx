@@ -2,11 +2,12 @@ import { Form, Formik, useField } from 'formik';
 import { useCallback, useMemo } from 'react';
 import * as Yup from 'yup';
 
-import type { FormikValues } from 'formik';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { setCustomRPC } from '_src/ui/app/redux/slices/app';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Input from '_src/ui/app/shared/inputs/Input';
+
+import type { FormikValues } from 'formik';
 
 const MIN_CHAR = 5;
 
@@ -60,9 +61,12 @@ const CustomRpcForm = () => {
 
     const dispatch = useAppDispatch();
 
-    const _onSubmit = useCallback(({ networkUrl }: FormikValues) => {
-        dispatch(setCustomRPC(networkUrl));
-    }, []);
+    const _onSubmit = useCallback(
+        ({ networkUrl }: FormikValues) => {
+            dispatch(setCustomRPC(networkUrl));
+        },
+        [dispatch]
+    );
     return (
         <div>
             <Formik

@@ -4,7 +4,6 @@ import Body from '../../shared/typography/Body';
 import ContentBlock from '../../shared/typography/ContentBlock';
 import EthosLink from '../../shared/typography/EthosLink';
 import { LinkType } from '_src/enums/LinkType';
-
 import { DASHBOARD_LINK } from '_src/shared/constants';
 
 export default function ReceivePage() {

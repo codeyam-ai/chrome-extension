@@ -1,26 +1,18 @@
-import React, {
-    useRef,
-    useCallback,
-    ReactComponentElement,
-    ReactHTMLElement,
-    ReactNode,
-    useEffect,
-    Dispatch,
-    SetStateAction,
-} from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { type AccountInfo } from '../../KeypairVault';
 import getNextWalletColor from '../../helpers/getNextWalletColor';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import {
-    setAccountInfos,
     saveAccountInfos,
     saveActiveAccountIndex,
+    setAccountInfos,
 } from '../../redux/slices/account';
 import { clearForNetworkOrWalletSwitch } from '../../redux/slices/sui-objects';
 import { thunkExtras } from '../../redux/store/thunk-extras';
-import Button from '../../shared/buttons/Button';
 import Authentication from '_src/background/Authentication';
+
+import type { Dispatch, SetStateAction } from 'react';
 
 /*
     Because creating a wallet extensively uses hooks (and hooks can't be used outside
@@ -89,8 +81,6 @@ const CreateWalletProvider = ({
     }, [authentication, dispatch, getAccountInfos]);
 
     const createWallet = useCallback(() => {
-        console.log('creating wallet!');
-
         const loadAccFromStorage = async () => {
             const sortedAccountIndices = accountInfos
                 .map((a) => a.index || 0)
@@ -137,7 +127,7 @@ const CreateWalletProvider = ({
 
     useEffect(() => {
         setCreateWallet(() => createWallet);
-    }, [setCreateWallet, accountInfos]);
+    }, [createWallet, setCreateWallet, accountInfos]);
 
     return children;
 };

@@ -1,13 +1,10 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useCallback, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
-import WalletProfile from '../../shared/content/rows-and-lists/WalletProfile';
-import BodyLarge from '../../shared/typography/BodyLarge';
-import EthosLink from '../../shared/typography/EthosLink';
+import NavBarWithCloseAndActionAndWalletPicker from '../../shared/navigation/nav-bar/NavBarWithCloseAndActionAndWalletPicker';
 import {
     useNextWalletPickerUrl,
     useWalletEditorIsOpen,
@@ -15,12 +12,10 @@ import {
     useWalletPickerUrl,
 } from '_components/menu/hooks';
 import { useOnKeyboardEvent } from '_hooks';
-import { LinkType } from '_src/enums/LinkType';
 import EditWallet from '_src/ui/app/components/wallet-picker/EditWallet';
 import WalletPicker from '_src/ui/app/components/wallet-picker/WalletPicker';
 
 import type { MouseEvent } from 'react';
-import NavBarWithCloseAndActionAndWalletPicker from '../../shared/navigation/nav-bar/NavBarWithCloseAndActionAndWalletPicker';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
@@ -53,10 +48,9 @@ function WalletPickerPage() {
         setIsWalletEditing(!isWalletEditing);
     }, [isWalletEditing]);
 
-    const closeWalletPicker = useCallback(() => {
+    const onCloseWalletPicker = useCallback(() => {
         setIsWalletEditing(false);
-        // navigate(closeWalletPickerUrl);
-    }, [closeWalletPickerUrl, navigate]);
+    }, []);
 
     if (!isWalletPickerOpen) {
         return null;
@@ -74,10 +68,10 @@ function WalletPickerPage() {
                 {!isEditorOpen && (
                     <NavBarWithCloseAndActionAndWalletPicker
                         closeUrl={closeWalletPickerUrl}
-                        onClickClose={closeWalletPicker}
+                        onClickClose={onCloseWalletPicker}
                         actionText={isWalletEditing ? 'Done' : 'Edit'}
                         onClickAction={toggleIsWalletEditing}
-                        onClickWalletPicker={closeWalletPicker}
+                        onClickWalletPicker={onCloseWalletPicker}
                     />
                 )}
                 {/* Content: */}

@@ -5,6 +5,8 @@ import { useCallback } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
 import HeaderWithClose from '../../shared/headers/section-headers/HeaderWithClose';
+import NavBarWithBackAndWalletPicker from '../../shared/navigation/nav-bar/NavBarWithBackAndWalletPicker';
+import ThemePage from './subpages/ThemePage';
 import {
     useSettingsIsOpen,
     useSettingsUrl,
@@ -13,16 +15,13 @@ import {
 } from '_components/menu/hooks';
 import { useOnKeyboardEvent } from '_hooks';
 import ConnectedApps from '_src/ui/app/components/menu/content/connected-apps';
-import NetworkPage from '_src/ui/app/components/settings-menu/subpages/network/NetworkPage';
 import Preapprovals from '_src/ui/app/components/menu/content/preapprovals';
 import ViewSeed from '_src/ui/app/components/menu/content/view-seed';
 import SettingsHomePage from '_src/ui/app/components/settings-menu/SettingsHomePage';
 import ImportWalletPage from '_src/ui/app/components/settings-menu/subpages/ImportWalletPage';
-
 import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/PermissionsPage';
 import SecurityPage from '_src/ui/app/components/settings-menu/subpages/SecurityPage';
-import ThemePage from './subpages/ThemePage';
-import NavBarWithBackAndWalletPicker from '../../shared/navigation/nav-bar/NavBarWithBackAndWalletPicker';
+import NetworkPage from '_src/ui/app/components/settings-menu/subpages/network/NetworkPage';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
