@@ -1,8 +1,8 @@
+import { useNextSettingsUrl } from '../../hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import Header from '_src/ui/app/shared/typography/Header';
-import { useNextSettingsUrl } from '../../hooks';
 
 interface SecurityItem {
     title: string;

@@ -18,7 +18,6 @@ import { API_ENV_TO_INFO } from '../../ApiProvider';
 import { iframe } from '../../helpers';
 import SettingsList from '../../shared/navigation/nav-bar/SettingsList';
 import CreateWalletProvider from '../wallet-picker/CreateWalletProvider';
-import { useNextSettingsUrl } from '_src/ui/app/components/settings-menu/hooks';
 import {
     DASHBOARD_LINK,
     IFRAME_URL,
@@ -26,6 +25,7 @@ import {
     ToS_LINK,
 } from '_src/shared/constants';
 import { ThemeContext } from '_src/shared/utils/themeContext';
+import { useNextSettingsUrl } from '_src/ui/app/components/settings-menu/hooks';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { getEmail, logout, reset } from '_src/ui/app/redux/slices/account';
 

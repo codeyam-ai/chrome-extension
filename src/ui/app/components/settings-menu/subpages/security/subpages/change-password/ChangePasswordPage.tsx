@@ -1,5 +1,8 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { useNextSettingsUrl } from '../../../../hooks';
+import ChangePasswordForm from './ChangePasswordForm';
 import { useAppDispatch } from '_src/ui/app/hooks';
 import {
     savePassphrase,
@@ -8,8 +11,6 @@ import {
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import Header from '_src/ui/app/shared/typography/Header';
-import { useNextSettingsUrl } from '../../../../hooks';
-import ChangePasswordForm from './ChangePasswordForm';
 
 const ChangePasswordPage = () => {
     const dispatch = useAppDispatch();

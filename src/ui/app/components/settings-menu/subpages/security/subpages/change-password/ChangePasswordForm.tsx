@@ -2,9 +2,10 @@ import { Formik, Form, useField } from 'formik';
 import { useCallback } from 'react';
 import * as Yup from 'yup';
 
-import type { FormikValues } from 'formik';
-import Input from '_src/ui/app/shared/inputs/Input';
 import Button from '_src/ui/app/shared/buttons/Button';
+import Input from '_src/ui/app/shared/inputs/Input';
+
+import type { FormikValues } from 'formik';
 
 type ChangePassphraseFormProps = {
     onSubmit: (passphrase: string) => void;

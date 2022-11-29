@@ -5,13 +5,13 @@ import { useCallback, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
 import NavBarWithCloseAndActionAndWalletPicker from '../../shared/navigation/nav-bar/NavBarWithCloseAndActionAndWalletPicker';
+import { useOnKeyboardEvent } from '_hooks';
 import {
     useNextWalletPickerUrl,
     useWalletEditorIsOpen,
     useWalletPickerIsOpen,
     useWalletPickerUrl,
 } from '_src/ui/app/components/settings-menu/hooks';
-import { useOnKeyboardEvent } from '_hooks';
 import EditWallet from '_src/ui/app/components/wallet-picker/EditWallet';
 import WalletPicker from '_src/ui/app/components/wallet-picker/WalletPicker';
 

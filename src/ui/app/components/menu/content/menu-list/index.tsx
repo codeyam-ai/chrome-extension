@@ -11,9 +11,9 @@ import {
 } from '@heroicons/react/24/outline';
 import { useCallback } from 'react';
 
-import { useNextSettingsUrl } from '_src/ui/app/components/settings-menu/hooks';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
+import { useNextSettingsUrl } from '_src/ui/app/components/settings-menu/hooks';
 import { useAppDispatch } from '_src/ui/app/hooks';
 import { logout } from '_src/ui/app/redux/slices/account';
 import LinkList, {

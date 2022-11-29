@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
+import CustomRpcForm from './CustomRpcForm';
 import {
     API_ENV,
     API_ENV_TO_INFO,
@@ -14,7 +15,6 @@ import SegmentedControl from '_src/ui/app/shared/inputs/SegmentedControl';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import Header from '_src/ui/app/shared/typography/Header';
-import CustomRpcForm from './CustomRpcForm';
 
 import type { SegmentedControlItem } from '_src/ui/app/shared/inputs/SegmentedControl';
 
