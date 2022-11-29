@@ -22,6 +22,7 @@ import ImportWalletPage from '_src/ui/app/components/settings-menu/subpages/Impo
 import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/PermissionsPage';
 import SecurityPage from '_src/ui/app/components/settings-menu/subpages/SecurityPage';
 import NetworkPage from '_src/ui/app/components/settings-menu/subpages/network/NetworkPage';
+import LockPage from './subpages/LockPage';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
@@ -47,7 +48,7 @@ function SettingsRouterPage() {
         <div className="absolute w-full h-full z-10">
             <div
                 // The height class is added to adjust for the height of the nav bar and top padding of the main container.
-                // Without it, the backdrop will bleed over the bottom edge in the expanded veiw.
+                // Without it, the backdrop will bleed over the bottom edge in the expanded view.
                 className="absolute w-full sm:rounded-[20px] bg-black opacity-20 h-full"
                 onClick={handleOnCloseMenu}
             />
@@ -72,6 +73,7 @@ function SettingsRouterPage() {
                     <Route path="/theme" element={<ThemePage />} />
                     <Route path="/security" element={<SecurityPage />} />
                     <Route path="/permissions" element={<PermissionsPage />} />
+                    <Route path="/lock" element={<LockPage />} />
                     <Route path="/settings/view-seed" element={<ViewSeed />} />
                     <Route path="/connected-apps" element={<ConnectedApps />} />
                     <Route path="/preapprovals" element={<Preapprovals />} />

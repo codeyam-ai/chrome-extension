@@ -46,6 +46,7 @@ const SettingsHomePage = () => {
     const themeUrl = useNextSettingsUrl(true, '/theme');
     const securityUrl = useNextSettingsUrl(true, '/security');
     const permissionsUrl = useNextSettingsUrl(true, '/permissions');
+    const lockUrl = useNextSettingsUrl(true, '/lock');
     const importWalletUrl = useNextSettingsUrl(true, '/import-wallet');
     const { theme } = useContext(ThemeContext);
     const themeDisplay = useMemo(() => {
@@ -59,10 +60,6 @@ const SettingsHomePage = () => {
         createWallet();
         navigate('/tokens');
     }, [createWallet, navigate]);
-
-    const lockWallet = useCallback(async () => {
-        await dispatch(logout());
-    }, [dispatch]);
 
     const resetWallet = useCallback(async () => {
         setLoading(true);
@@ -147,7 +144,7 @@ const SettingsHomePage = () => {
                                 {
                                     text: 'Lock Ethos',
                                     iconWithNoClasses: <LockClosedIcon />,
-                                    onClick: lockWallet,
+                                    to: lockUrl,
                                 },
                             ],
                         },
