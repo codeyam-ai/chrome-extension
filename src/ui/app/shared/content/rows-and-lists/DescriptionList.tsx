@@ -16,7 +16,7 @@ const DescriptionList = ({ labelAndDescriptions }: DescriptionListProps) => {
         <div className="mx-6 mb-6 text-left">
             {labelAndDescriptions.map((item, key) => {
                 return (
-                    <div className="flex flex-col gap-2 pt-2" key={key}>
+                    <div className="flex flex-col gap-2" key={key}>
                         <Body isSemibold={true}>{item.label}</Body>
                         <Body isTextColorMedium>{item.description}</Body>
                     </div>

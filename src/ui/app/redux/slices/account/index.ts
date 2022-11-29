@@ -295,14 +295,15 @@ export const logout = createAsyncThunk(
     }
 );
 
-export const unlock: AsyncThunk<void, string | null, AppThunkConfig> =
-    createAsyncThunk<void, string | null, AppThunkConfig>(
+export const unlock: AsyncThunk<boolean, string | null, AppThunkConfig> =
+    createAsyncThunk<boolean, string | null, AppThunkConfig>(
         'account/unlock',
-        async (passphrase): Promise<void> => {
+        async (passphrase): Promise<boolean> => {
             const existingPassphrase = await getEncrypted('passphrase');
-            if (existingPassphrase !== passphrase) return;
+            if (existingPassphrase !== passphrase) return false;
 
             await deleteEncrypted('locked');
+            return true;
         }
     );
 

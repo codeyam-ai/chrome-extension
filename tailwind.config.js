@@ -68,7 +68,6 @@ module.exports = {
                 // Background
                 'ethos-light-background-default': '#FFFFFF',
                 'ethos-light-background-secondary': '#F2F2F2',
-                'ethos-light-background-accent': '#EDE9FE',
 
                 // Text and stroke
                 'ethos-light-text-default': '#000000',
@@ -92,7 +91,6 @@ module.exports = {
                 // Background
                 'ethos-dark-background-default': '#1F2937',
                 'ethos-dark-background-secondary': '#1A1C26',
-                'ethos-dark-background-accent': '#374151',
 
                 // Text and stroke
                 'ethos-dark-text-default': '#FFFFFF',
@@ -109,12 +107,6 @@ module.exports = {
                 // Feedback
                 'ethos-dark-green': '#16A349',
                 'ethos-dark-red': '#EF4444',
-
-                // FIX:::
-                'ethos-primary-dark': '#6b21a8',
-                'ethos-light-secondary': '#e9d5ff',
-                'ethos-dark-secondary': '#d8b4fe',
-                'ethos-background': '#FFFFFF',
             },
             backgroundImage: {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
