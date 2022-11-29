@@ -3,8 +3,6 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-import CustomRpcForm from './CustomRpcForm';
-import { LinkType } from '_src/enums/LinkType';
 import {
     API_ENV,
     API_ENV_TO_INFO,
@@ -13,11 +11,10 @@ import {
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { changeRPCNetwork } from '_src/ui/app/redux/slices/app';
 import SegmentedControl from '_src/ui/app/shared/inputs/SegmentedControl';
-import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
-import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Header from '_src/ui/app/shared/typography/Header';
+import CustomRpcForm from './CustomRpcForm';
 
 import type { SegmentedControlItem } from '_src/ui/app/shared/inputs/SegmentedControl';
 
@@ -50,6 +47,9 @@ function NetworkPage() {
     const networkOptions = useMemo(() => {
         const options: SegmentedControlItem[] = [];
         netWorks.forEach((network) => {
+            if (network.networkName === 'local') {
+                return;
+            }
             const changeToThisNetwork = () => {
                 const name = network.networkName;
                 setShowCustomRPCInput(name === API_ENV.customRPC);
@@ -91,19 +91,6 @@ function NetworkPage() {
             </ContentBlock>
             <SegmentedControl items={networkOptions} />
             {showCustomRPCInput && <CustomRpcForm />}
-            {selectedNetworkName === 'local' && (
-                <ContentBlock>
-                    <Body isTextColorMedium>
-                        Listening to{' '}
-                        <EthosLink
-                            to="http://127.0.0.1:9000/"
-                            type={LinkType.External}
-                        >
-                            http://127.0.0.1:9000/
-                        </EthosLink>
-                    </Body>
-                </ContentBlock>
-            )}
         </div>
     );
 }
