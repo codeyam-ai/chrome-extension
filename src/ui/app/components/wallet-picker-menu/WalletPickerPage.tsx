@@ -10,7 +10,7 @@ import {
     useWalletEditorIsOpen,
     useWalletPickerIsOpen,
     useWalletPickerUrl,
-} from '_components/menu/hooks';
+} from '_src/ui/app/components/settings-menu/hooks';
 import { useOnKeyboardEvent } from '_hooks';
 import EditWallet from '_src/ui/app/components/wallet-picker/EditWallet';
 import WalletPicker from '_src/ui/app/components/wallet-picker/WalletPicker';

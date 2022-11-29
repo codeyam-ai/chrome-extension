@@ -18,7 +18,7 @@ import { API_ENV_TO_INFO } from '../../ApiProvider';
 import { iframe } from '../../helpers';
 import SettingsList from '../../shared/navigation/nav-bar/SettingsList';
 import CreateWalletProvider from '../wallet-picker/CreateWalletProvider';
-import { useNextSettingsUrl } from '_components/menu/hooks';
+import { useNextSettingsUrl } from '_src/ui/app/components/settings-menu/hooks';
 import {
     DASHBOARD_LINK,
     IFRAME_URL,

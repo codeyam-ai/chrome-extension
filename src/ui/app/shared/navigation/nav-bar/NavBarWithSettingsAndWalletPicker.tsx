@@ -6,7 +6,7 @@ import {
     useSettingsIsOpen,
     useNextSettingsUrl,
     useWalletPickerIsOpen,
-} from '_src/ui/app/components/menu/hooks';
+} from '_src/ui/app/components/settings-menu/hooks';
 
 const NavBarWithSettingsAndWalletPicker = () => {
     const menuUrl = useNextSettingsUrl(true);

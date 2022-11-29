@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
 const SETTINGS_PARAM = 'menu';
+const SECURITY_PARAM = 'security';
 export const WALLET_PICKER_PARAM = 'wallet-picker';
 const WALLET_EDITOR_PARAM = 'edit';
 
@@ -12,6 +13,14 @@ export function useSettingsUrl() {
     const [searchParams] = useSearchParams();
     if (searchParams.has(SETTINGS_PARAM)) {
         return searchParams.get(SETTINGS_PARAM) || '/';
+    }
+    return false;
+}
+
+export function useSecurityUrl() {
+    const [searchParams] = useSearchParams();
+    if (searchParams.has(SECURITY_PARAM)) {
+        return searchParams.get(SECURITY_PARAM) || '/';
     }
     return false;
 }
@@ -32,6 +41,17 @@ export function useSettingsIsOpen() {
 export function useSettingsIsOpenOnSubPage() {
     const [searchParams] = useSearchParams();
     const settingsParamValue = searchParams.get(SETTINGS_PARAM);
+    return (
+        settingsParamValue !== null &&
+        // Just a slash means the home page is open
+        settingsParamValue !== '/' &&
+        settingsParamValue.length > 0
+    );
+}
+
+export function useSecurityIsOpenOnSubPage() {
+    const [searchParams] = useSearchParams();
+    const settingsParamValue = searchParams.get(SECURITY_PARAM);
     return (
         settingsParamValue !== null &&
         // Just a slash means the home page is open

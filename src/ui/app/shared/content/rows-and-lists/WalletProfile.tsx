@@ -9,7 +9,7 @@ import AccountAddress, {
 import {
     useNextWalletPickerUrl,
     useWalletPickerIsOpen,
-} from '_src/ui/app/components/menu/hooks';
+} from '_src/ui/app/components/settings-menu/hooks';
 import { useAppSelector } from '_src/ui/app/hooks';
 
 // This component contains the wallet icon, name, and address

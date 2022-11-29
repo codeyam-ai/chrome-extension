@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import Permissions from '../../../../../background/Permissions';
-import { useNextSettingsUrl } from '../hooks';
+import { useNextSettingsUrl } from '../../settings-menu/hooks';
 import formatUrl from '_src/ui/app/helpers/format-url';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector, useMiddleEllipsis } from '_src/ui/app/hooks';

@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import Button from '../../../shared/buttons/Button';
-import { useNextSettingsUrl } from '../hooks';
+import { useNextSettingsUrl } from '../../settings-menu/hooks';
 import { useAppSelector } from '_src/ui/app/hooks';
 import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 

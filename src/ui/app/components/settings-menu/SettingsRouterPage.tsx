@@ -13,7 +13,7 @@ import {
     useSettingsUrl,
     useNextSettingsUrl,
     useSettingsIsOpenOnSubPage,
-} from '_components/menu/hooks';
+} from '_src/ui/app/components/settings-menu/hooks';
 import { useOnKeyboardEvent } from '_hooks';
 import ConnectedApps from '_src/ui/app/components/menu/content/connected-apps';
 import Preapprovals from '_src/ui/app/components/menu/content/preapprovals';
@@ -21,8 +21,9 @@ import ViewSeed from '_src/ui/app/components/menu/content/view-seed';
 import SettingsHomePage from '_src/ui/app/components/settings-menu/SettingsHomePage';
 import ImportWalletPage from '_src/ui/app/components/settings-menu/subpages/ImportWalletPage';
 import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/PermissionsPage';
-import SecurityPage from '_src/ui/app/components/settings-menu/subpages/SecurityPage';
+import SecurityHomePage from '_src/ui/app/components/settings-menu/subpages/security/SecurityHomePage';
 import NetworkPage from '_src/ui/app/components/settings-menu/subpages/network/NetworkPage';
+import ChangePasswordPage from './subpages/security/subpages/change-password/ChangePasswordPage';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
@@ -72,7 +73,14 @@ function SettingsRouterPage() {
                         <Route path="/" element={<SettingsHomePage />} />
                         <Route path="/network" element={<NetworkPage />} />
                         <Route path="/theme" element={<ThemePage />} />
-                        <Route path="/security" element={<SecurityPage />} />
+                        <Route
+                            path="/security"
+                            element={<SecurityHomePage />}
+                        />
+                        <Route
+                            path="/security/change-password"
+                            element={<ChangePasswordPage />}
+                        />
                         <Route
                             path="/permissions"
                             element={<PermissionsPage />}

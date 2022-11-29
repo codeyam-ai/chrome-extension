@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useNextSettingsUrl } from '../hooks';
+import { useNextSettingsUrl } from '../../settings-menu/hooks';
 import Transactions from '_src/background/Transactions';
 import { useAppSelector, useMiddleEllipsis } from '_src/ui/app/hooks';
 import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
