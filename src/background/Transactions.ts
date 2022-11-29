@@ -205,6 +205,7 @@ class Transactions {
         tx: MoveCallTransaction;
     }) {
         const activeAccount = await this.getActiveAccount();
+        console.log('HI', activeAccount);
 
         const endpoint = process.env.API_ENDPOINT_DEV_NET_FULLNODE || '';
 
@@ -388,6 +389,10 @@ class Transactions {
     }
 
     private async getActiveAccount(): Promise<AccountInfo> {
+        const locked = await getEncrypted('locked');
+        if (locked) {
+            throw new Error('Wallet is locked');
+        }
         const passphrase = await getEncrypted('passphrase');
         const authentication = await getEncrypted('authentication');
         const activeAccountIndex = await getEncrypted(

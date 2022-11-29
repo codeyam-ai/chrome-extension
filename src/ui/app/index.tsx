@@ -12,6 +12,7 @@ import useSizeWindow from './hooks/useSizeWindow';
 import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
 import BuyPage from './pages/home/buy';
 import ReceivePage from './pages/home/receive';
+import LockedPage from './pages/locked';
 import PasswordPage from './pages/password';
 import { AppType } from './redux/slices/app/AppType';
 import { useAppDispatch, useAppSelector } from '_hooks';
@@ -132,6 +133,7 @@ const App = () => {
                     <Route path="backup" element={<BackupPage />} />
                 </Route>
                 <Route path="password" element={<PasswordPage />} />
+                <Route path="locked" element={<LockedPage />} />
                 <Route
                     path="/connect/:requestID"
                     element={<SiteConnectPage />}
