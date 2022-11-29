@@ -42,7 +42,6 @@ export default function useInitializedGuard(state: AppState | AppState[]) {
     }
 
     const locked = useAppSelector(({ account: { locked } }) => locked);
-    console.log('LOCKED', locked);
     if (locked) {
         currentState = AppState.LOCKED;
     }
@@ -56,7 +55,6 @@ export default function useInitializedGuard(state: AppState | AppState[]) {
         }
 
         const allStates = Array.isArray(state) ? state : [state];
-        console.log('STATES', currentState, allStates);
         return !allStates.includes(currentState);
     }, [authentication, pathname, state, currentState]);
 

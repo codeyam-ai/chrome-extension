@@ -119,7 +119,6 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
         }
 
         const locked = await getEncrypted('locked');
-        console.log('IS LOCKED', locked);
         if (locked) {
             return {
                 authentication: null,
@@ -293,8 +292,6 @@ export const logout = createAsyncThunk(
     async (_args): Promise<void> => {
         await setEncrypted('locked', LOCKED);
         await deleteEncrypted('authentication');
-
-        window.location.reload();
     }
 );
 
@@ -303,7 +300,6 @@ export const unlock: AsyncThunk<void, string | null, AppThunkConfig> =
         'account/unlock',
         async (passphrase): Promise<void> => {
             const existingPassphrase = await getEncrypted('passphrase');
-            console.log('UNLOCK', passphrase, existingPassphrase);
             if (existingPassphrase !== passphrase) return;
 
             await deleteEncrypted('locked');
@@ -419,7 +415,6 @@ const accountSlice = createSlice({
                 state.email = action.payload;
             })
             .addCase(logout.pending, (state) => {
-                console.log('LOCKED!');
                 state.locked = true;
             }),
 });

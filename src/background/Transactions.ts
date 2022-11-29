@@ -205,7 +205,6 @@ class Transactions {
         tx: MoveCallTransaction;
     }) {
         const activeAccount = await this.getActiveAccount();
-        console.log('HI', activeAccount);
 
         const endpoint = process.env.API_ENDPOINT_DEV_NET_FULLNODE || '';
 
