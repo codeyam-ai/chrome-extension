@@ -1,28 +1,26 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
-import useSizeWindow from './hooks/useSizeWindow';
-import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
-import BuyPage from './pages/home/buy';
-import ReceivePage from './pages/home/receive';
-import PasswordPage from './pages/password';
-import { AppType } from './redux/slices/app/AppType';
+import Browser from 'webextension-polyfill';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { DappTxApprovalPage } from '_pages/dapp-tx-approval';
 import HomePage, {
+    NFTDetailsPage,
     NftsPage,
+    ReceiptPage,
     TokensPage,
     TransactionDetailsPage,
     TransactionsPage,
     TransferCoinPage,
-    NFTDetailsPage,
-    ReceiptPage,
 } from '_pages/home';
 import InitializePage from '_pages/initialize';
-import { loadAccountInformationFromStorage } from '_redux/slices/account';
+import {
+    loadAccountInformationFromStorage,
+    logout,
+} from '_redux/slices/account';
 import { setNavVisibility } from '_redux/slices/app';
 import { ThemeProvider } from '_src/shared/utils/themeContext';
 import { DappPreapprovalPage } from '_src/ui/app/pages/dapp-preapproval';
@@ -31,12 +29,38 @@ import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import ImportPage from '_src/ui/app/pages/initialize/import';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
+import useSizeWindow from './hooks/useSizeWindow';
+import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
+import BuyPage from './pages/home/buy';
+import ReceivePage from './pages/home/receive';
+import PasswordPage from './pages/password';
+import { AppType } from './redux/slices/app/AppType';
 
 const HIDDEN_MENU_PATHS = ['/nft-details', '/receipt'];
 
 const App = () => {
     const dispatch = useAppDispatch();
     useSizeWindow();
+
+    const lockWallet = useCallback(async () => {
+        await dispatch(logout());
+    }, [dispatch]);
+
+    const lockWalletIfTimeIsExpired = async () => {
+        const { lockWalletOnTimestamp } = await Browser.storage.local.get(
+            'lockWalletOnTimestamp'
+        );
+        if (lockWalletOnTimestamp > 0 && lockWalletOnTimestamp < Date.now()) {
+            console.log('locking wallet');
+            Browser.storage.local.set({
+                lockWalletOnTimestamp: -1,
+            });
+            lockWallet();
+        } else {
+            console.log('not locking wallet');
+        }
+    };
+
     useEffect(() => {
         dispatch(loadAccountInformationFromStorage());
     }, [dispatch]);
@@ -51,6 +75,31 @@ const App = () => {
         const menuVisible = !HIDDEN_MENU_PATHS.includes(location.pathname);
         dispatch(setNavVisibility(menuVisible));
     }, [location, dispatch]);
+    useEffect(() => {
+        const lockTimeoutInMs = 15 * 60000;
+        setInterval(async () => {
+            // Check if should log out every 5 seconds
+            await lockWalletIfTimeIsExpired();
+        }, 5000);
+        const onFocus = () => {
+            Browser.storage.local.set({
+                lockWalletOnTimestamp: -1,
+            });
+        };
+        const onBlur = () => {
+            Browser.storage.local.set({
+                lockWalletOnTimestamp: Date.now() + lockTimeoutInMs,
+            });
+        };
+        lockWalletIfTimeIsExpired().then(() => onFocus());
+        window.addEventListener('focus', onFocus);
+        window.addEventListener('blur', onBlur);
+
+        return function cleanup() {
+            window.removeEventListener('focus', onFocus);
+            window.removeEventListener('blur', onBlur);
+        };
+    }, []);
 
     return (
         <ThemeProvider initialTheme={undefined}>
