@@ -14,7 +14,7 @@ import CreatePasswordForm from '../shared/forms/CreatePasswordForm';
 import GetStartedCard from '../shared/layouts/GetStartedCard';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
-import PageLayout from '_pages/layout';
+import PageLayout from '_src/ui/app/pages/PageLayout';
 
 const PasswordPage = () => {
     const dispatch = useAppDispatch();

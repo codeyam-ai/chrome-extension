@@ -70,4 +70,5 @@ After building the app, the extension needs to be installed to Chrome. Follow th
 ```
 npm run test
 ```
+
 ``
