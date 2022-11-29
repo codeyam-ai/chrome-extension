@@ -26,7 +26,7 @@ const LockPage = () => {
             </ContentBlock>
             <Well
                 header="Wallet Autolock"
-                subHeader="Ethos will autolock after 10 minutes."
+                subHeader="Ethos will autolock after 15 minutes."
             />
             <Button onClick={lockWallet}>Lock Wallet</Button>
         </div>
