@@ -7,7 +7,7 @@ import Input from '../inputs/Input';
 
 import type { FormikValues } from 'formik';
 
-type PassphraseFormProps = {
+type CreatePasswordFormProps = {
     onSubmit: (passphrase: string) => void;
 };
 
@@ -46,11 +46,9 @@ const CustomFormikForm = () => {
                 type="submit"
                 disabled={
                     !meta.value ||
+                    !!meta.error ||
                     !confirmMeta.value ||
-                    meta.error ||
-                    confirmMeta.error
-                        ? true
-                        : false
+                    !!confirmMeta.error
                 }
             >
                 Save
@@ -59,7 +57,7 @@ const CustomFormikForm = () => {
     );
 };
 
-const PassphraseForm = ({ onSubmit }: PassphraseFormProps) => {
+const CreatePasswordForm = ({ onSubmit }: CreatePasswordFormProps) => {
     const _onSubmit = useCallback(
         ({ password }: FormikValues) => {
             onSubmit(password);
@@ -92,4 +90,4 @@ const PassphraseForm = ({ onSubmit }: PassphraseFormProps) => {
     );
 };
 
-export default PassphraseForm;
+export default CreatePasswordForm;

@@ -1,6 +1,6 @@
-# Sui Wallet
+``# EThos Sui Wallet
 
-A chrome (v88+) extension wallet for [Sui](https://sui.io).
+A chrome (v88+) extension wallet for [Sui](https://sui.io) by [Ethos](https://https://ethoswallet.xyz).
 
 # Set Up
 
@@ -56,7 +56,7 @@ The output directory is the same [dist/](./dist/), all build artifacts will go t
 To build the app once in production mode run
 
 ```
-npm run build:prod
+npm run build:final
 ```
 
 Same as above the output is [dist/](./dist/).
@@ -70,3 +70,4 @@ After building the app, the extension needs to be installed to Chrome. Follow th
 ```
 npm run test
 ```
+``

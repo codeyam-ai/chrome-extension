@@ -5,7 +5,6 @@ import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { AUTHENTICATION_REQUESTED } from '../pages/initialize/hosted';
-import { LOCKED } from '../redux/slices/account';
 import useAppSelector from './useAppSelector';
 
 export enum AppState {
@@ -14,6 +13,7 @@ export enum AppState {
     MNEMONIC = 'mnemonic',
     PASSWORD = 'password',
     HOSTED = 'hosted',
+    LOCKED = 'locked',
 }
 
 export default function useInitializedGuard(state: AppState | AppState[]) {
@@ -41,11 +41,9 @@ export default function useInitializedGuard(state: AppState | AppState[]) {
         currentState = AppState.HOSTED;
     }
 
-    const locked = useAppSelector(
-        (state) => state.account.passphrase === LOCKED
-    );
+    const locked = useAppSelector(({ account: { locked } }) => locked);
     if (locked) {
-        currentState = AppState.PASSWORD;
+        currentState = AppState.LOCKED;
     }
 
     const guardAct = useMemo(() => {
@@ -81,6 +79,9 @@ export default function useInitializedGuard(state: AppState | AppState[]) {
                     break;
                 case AppState.PASSWORD:
                     destination = '/password';
+                    break;
+                case AppState.LOCKED:
+                    destination = '/locked';
                     break;
                 default:
                     destination = '/welcome';

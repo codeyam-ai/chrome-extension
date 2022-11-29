@@ -12,6 +12,7 @@ import { api } from '../redux/store/thunk-extras';
 type FormattedCoin = [
     formattedBalance: string,
     coinSymbol: string,
+    formattedDollars: string,
     queryResult: UseQueryResult
 ];
 
@@ -101,5 +102,11 @@ export function useFormatCoin(
         return formatBalance(balance, decimals);
     }, [decimals, isError, isFetched, intl, balance]);
 
-    return [formatted, symbol, queryResult];
+    const dollars = useMemo(() => {
+        if (typeof balance === 'undefined' || balance === null) return '';
+
+        return formatBalance(balance, 7);
+    }, [balance]);
+
+    return [formatted, symbol, dollars, queryResult];
 }

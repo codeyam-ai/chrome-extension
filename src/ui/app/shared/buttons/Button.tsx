@@ -19,7 +19,7 @@ const buttonChildrenClassNames =
     'inline-flex items-center justify-center gap-2';
 
 const baseButtonClassNames =
-    'w-full w-full p-4 mb-6 border border-transparent rounded-2xl';
+    'w-full w-full py-4 px-5 mb-6 border border-transparent rounded-[16px]';
 
 const primaryButtonClassNames =
     baseButtonClassNames +
@@ -29,7 +29,7 @@ const primaryButtonClassNames =
 const secondaryButtonClassNames =
     baseButtonClassNames +
     ' ' +
-    'text-ethos-light-primary-light bg-ethos-light-background-accent dark:text-ethos-dark-text-default dark:bg-ethos-dark-background-accent';
+    'bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary text-ethos-light-primary-light dark:text-ethos-dark-primary-dark';
 
 const Button = (props: ButtonProps) => {
     const { buttonStyle, to, className, isInline, children, ...reactProps } =
