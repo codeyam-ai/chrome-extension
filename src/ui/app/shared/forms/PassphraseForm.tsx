@@ -10,9 +10,16 @@ import type { FormikValues } from 'formik';
 type PassphraseFormProps = {
     onSubmit: (passphrase: string) => void;
     confirm?: boolean;
+    isPasswordIncorrect?: boolean;
 };
 
-const CustomFormikForm = ({ confirm = true }: { confirm: boolean }) => {
+const CustomFormikForm = ({
+    confirm = true,
+    isPasswordIncorrect = false,
+}: {
+    confirm: boolean;
+    isPasswordIncorrect: boolean;
+}) => {
     // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
     // which we can spread on <input> and alse replace ErrorMessage entirely.
     const [field, meta] = useField('password');
@@ -26,7 +33,13 @@ const CustomFormikForm = ({ confirm = true }: { confirm: boolean }) => {
                 name="password"
                 type="password"
                 required={true}
-                errorText={meta.touched && meta.error ? meta.error : undefined}
+                errorText={
+                    isPasswordIncorrect
+                        ? 'Password is incorrect'
+                        : meta.touched && meta.error
+                        ? meta.error
+                        : undefined
+                }
             />
             {confirm && (
                 <Input
@@ -59,7 +72,11 @@ const CustomFormikForm = ({ confirm = true }: { confirm: boolean }) => {
     );
 };
 
-const PassphraseForm = ({ onSubmit, confirm = true }: PassphraseFormProps) => {
+const PassphraseForm = ({
+    onSubmit,
+    confirm = true,
+    isPasswordIncorrect = false,
+}: PassphraseFormProps) => {
     const _onSubmit = useCallback(
         ({ password }: FormikValues) => {
             onSubmit(password);
@@ -94,7 +111,10 @@ const PassphraseForm = ({ onSubmit, confirm = true }: PassphraseFormProps) => {
                 onSubmit={_onSubmit}
             >
                 <Form>
-                    <CustomFormikForm confirm={confirm} />
+                    <CustomFormikForm
+                        confirm={confirm}
+                        isPasswordIncorrect={isPasswordIncorrect}
+                    />
                 </Form>
             </Formik>
         </div>

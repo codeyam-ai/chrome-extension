@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AppState } from '../hooks/useInitializedGuard';
@@ -20,10 +20,17 @@ const LockedPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const checkingInitialized = useInitializedGuard(AppState.LOCKED);
+    const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false);
 
     const _save = useCallback(
         async (passphrase: string) => {
-            await dispatch(unlock(passphrase));
+            const unlockResult = await dispatch(unlock(passphrase));
+            // If passwords don't match, unlock returns false
+            if (!unlockResult.payload) {
+                setIsPasswordIncorrect(true);
+                return;
+            }
+            setIsPasswordIncorrect(false);
             await dispatch(loadAccountInformationFromStorage());
             navigate('/');
         },
@@ -41,14 +48,19 @@ const LockedPage = () => {
                                 description: (
                                     <>
                                         Enter your password to unlock your
-                                        wallet.
+                                        wallet. isPasswordIncorrect:{' '}
+                                        {isPasswordIncorrect ? 'true' : 'false'}
                                     </>
                                 ),
                             },
                         ]}
                     />
 
-                    <PassphraseForm onSubmit={_save} confirm={false} />
+                    <PassphraseForm
+                        onSubmit={_save}
+                        confirm={false}
+                        isPasswordIncorrect={isPasswordIncorrect}
+                    />
                 </GetStartedCard>
             </Loading>
         </PageLayout>
