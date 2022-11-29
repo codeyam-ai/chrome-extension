@@ -1,25 +1,20 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
-import useSizeWindow from './hooks/useSizeWindow';
-import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
-import BuyPage from './pages/home/buy';
-import ReceivePage from './pages/home/receive';
-import PasswordPage from './pages/password';
-import { AppType } from './redux/slices/app/AppType';
+import Browser from 'webextension-polyfill';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { DappTxApprovalPage } from '_pages/dapp-tx-approval';
 import HomePage, {
+    NFTDetailsPage,
     NftsPage,
+    ReceiptPage,
     TokensPage,
     TransactionDetailsPage,
     TransactionsPage,
     TransferCoinPage,
-    NFTDetailsPage,
-    ReceiptPage,
 } from '_pages/home';
 import InitializePage from '_pages/initialize';
 import {
@@ -34,7 +29,12 @@ import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import ImportPage from '_src/ui/app/pages/initialize/import';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
-import Browser from 'webextension-polyfill';
+import useSizeWindow from './hooks/useSizeWindow';
+import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
+import BuyPage from './pages/home/buy';
+import ReceivePage from './pages/home/receive';
+import PasswordPage from './pages/password';
+import { AppType } from './redux/slices/app/AppType';
 
 const HIDDEN_MENU_PATHS = ['/nft-details', '/receipt'];
 
