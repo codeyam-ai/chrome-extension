@@ -10,12 +10,12 @@ interface AlertProps {
 
 const Alert = ({ title, subtitle }: AlertProps) => {
     return (
-        <div className="flex flex-row gap-2 py-4 px-4 rounded-lg bg-ethos-light-primary-light-translucent dark:bg-ethos-dark-primary-light-translucent">
+        <div className="flex flex-row gap-2 py-4 px-4 rounded-lg bg-ethos-light-primary-light-translucent">
             <span>
-                <ExclamationTriangleIcon className="h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-light" />
+                <ExclamationTriangleIcon className="h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
             </span>
             <span className="flex flex-col gap-1 text-left">
-                <BodyLarge className="text-ethos-light-primary-light dark:text-ethos-dark-primary-light">
+                <BodyLarge className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark">
                     {title}
                 </BodyLarge>
                 {subtitle && <Body>{subtitle}</Body>}

@@ -32,7 +32,7 @@ const RadioCard = ({ item }: RadioCardProps) => {
             </span>
             <span className="flex-1">
                 {selected && (
-                    <CheckIcon className="float-right h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-light" />
+                    <CheckIcon className="float-right h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
                 )}
             </span>
         </div>

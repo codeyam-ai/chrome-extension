@@ -32,7 +32,7 @@ const SegmentedControl = ({ items }: SegmentedControlProps) => {
                                 <span
                                     className={`h-5 w-5 ${
                                         item.isActive
-                                            ? 'text-ethos-light-primary-light dark:text-ethos-dark-primary-light'
+                                            ? 'text-ethos-light-primary-light dark:text-ethos-dark-primary-dark'
                                             : 'text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
                                     }`}
                                 >
@@ -43,7 +43,7 @@ const SegmentedControl = ({ items }: SegmentedControlProps) => {
                                 isSemibold
                                 className={
                                     item.isActive
-                                        ? 'text-ethos-light-primary-light dark:text-ethos-dark-primary-light'
+                                        ? 'text-ethos-light-primary-light dark:text-ethos-dark-primary-dark'
                                         : 'text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
                                 }
                             >

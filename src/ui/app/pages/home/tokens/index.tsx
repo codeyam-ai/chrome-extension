@@ -23,7 +23,7 @@ function TokensPage() {
 
     return (
         <>
-            {showError && error ? (
+            {true || (showError && error) ? (
                 // <Alert>
                 //     <strong>Something&apos;s wrong.</strong>{' '}
                 //     <small>{error.message}</small>
