@@ -14,11 +14,11 @@ import Input from '../../shared/inputs/Input';
 import ColorPickerMenu from '../../shared/inputs/colors/ColorPickerMenu';
 import NavBarWithBackAndClose from '../../shared/navigation/nav-bar/NavBarWithBackAndClose';
 import BodyLarge from '../../shared/typography/BodyLarge';
+import Loading from '../loading';
 import { useNextWalletPickerUrl } from '../settings-menu/hooks';
 import Authentication from '_src/background/Authentication';
 
 import type { AccountInfo } from '../../KeypairVault';
-import Loading from '../loading';
 
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;

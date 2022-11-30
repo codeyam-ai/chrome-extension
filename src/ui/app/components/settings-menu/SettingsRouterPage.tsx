@@ -10,9 +10,9 @@ import LockPage from './subpages/LockPage';
 import ThemePage from './subpages/ThemePage';
 import ChangePasswordPage from './subpages/security/subpages/change-password/ChangePasswordPage';
 import { useOnKeyboardEvent } from '_hooks';
+import { getEncrypted } from '_src/shared/storagex/store';
 import ConnectedApps from '_src/ui/app/components/menu/content/connected-apps';
 import Preapprovals from '_src/ui/app/components/menu/content/preapprovals';
-import ViewSeedPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewSeedPage';
 import SettingsHomePage from '_src/ui/app/components/settings-menu/SettingsHomePage';
 import {
     useSettingsIsOpen,
@@ -24,7 +24,7 @@ import ImportWalletPage from '_src/ui/app/components/settings-menu/subpages/Impo
 import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/PermissionsPage';
 import NetworkPage from '_src/ui/app/components/settings-menu/subpages/network/NetworkPage';
 import SecurityHomePage from '_src/ui/app/components/settings-menu/subpages/security/SecurityHomePage';
-import { getEncrypted } from '_src/shared/storagex/store';
+import ViewSeedPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewSeedPage';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 

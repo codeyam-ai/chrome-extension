@@ -283,7 +283,7 @@ export const changePassword: AsyncThunk<
             newPassword
         );
 
-        let activeAccountIndex = parseInt(
+        const activeAccountIndex = parseInt(
             (await getEncrypted('activeAccountIndex', currentPassword)) || '0'
         );
         await deleteEncrypted('activeAccountIndex');

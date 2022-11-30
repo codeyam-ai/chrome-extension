@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useNextSettingsUrl } from '../../settings-menu/hooks';
 import Transactions from '_src/background/Transactions';
 import { useAppSelector, useMiddleEllipsis } from '_src/ui/app/hooks';
-import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 import type { PreapprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
@@ -16,7 +14,6 @@ type GroupedPreapprovals = {
 };
 
 export default function Preapprovals() {
-    const mainMenuUrl = useNextSettingsUrl(true, '/');
 
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
     const [preapprovals, setPreapprovals] = useState<PreapprovalRequest[]>([]);
@@ -166,7 +163,7 @@ export default function Preapprovals() {
                                             0
                                         ) /
                                             transactions.length) *
-                                            100
+                                        100
                                     ) / 100}
                                 </div>
                             </div>

@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useNextSettingsUrl } from '../../../../hooks';
+import ChangePasswordForm from './ChangePasswordForm';
 import { useAppDispatch } from '_src/ui/app/hooks';
 import {
     assertPasswordIsCorrect,
@@ -10,8 +12,6 @@ import {
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import Header from '_src/ui/app/shared/typography/Header';
-import { useNextSettingsUrl } from '../../../../hooks';
-import ChangePasswordForm from './ChangePasswordForm';
 
 const ChangePasswordPage = () => {
     const dispatch = useAppDispatch();
@@ -24,19 +24,16 @@ const ChangePasswordPage = () => {
             const unlockResult = await dispatch(
                 assertPasswordIsCorrect(currentPassword)
             );
-            console.log('unlockResult :>> ', unlockResult);
             // If passwords don't match, unlock returns false
             if (!unlockResult.payload) {
                 setIsPasswordIncorrect(true);
                 return;
             }
             setIsPasswordIncorrect(false);
-            console.log('password changed to', newPassword);
 
-            const changePasswordRes = await dispatch(
+            await dispatch(
                 changePassword({ currentPassword, newPassword })
             );
-            console.log('changePasswordRes :>> ', changePasswordRes);
             await dispatch(loadAccountInformationFromStorage());
             navigate(settingsHomeUrl);
         },

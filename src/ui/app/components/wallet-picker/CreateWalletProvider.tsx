@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import Authentication from '_src/background/Authentication';
+import { type AccountInfo } from '../../KeypairVault';
 import getNextWalletColor from '../../helpers/getNextWalletColor';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { type AccountInfo } from '../../KeypairVault';
 import {
     saveAccountInfos,
     saveActiveAccountIndex,
@@ -11,6 +10,7 @@ import {
 } from '../../redux/slices/account';
 import { clearForNetworkOrWalletSwitch } from '../../redux/slices/sui-objects';
 import { thunkExtras } from '../../redux/store/thunk-extras';
+import Authentication from '_src/background/Authentication';
 
 import type { Dispatch, SetStateAction } from 'react';
 

@@ -10,8 +10,8 @@ import {
     useNextWalletPickerUrl,
     useWalletPickerIsOpen,
 } from '_src/ui/app/components/settings-menu/hooks';
-import { useAppSelector } from '_src/ui/app/hooks';
 import truncateString from '_src/ui/app/helpers/truncate-string';
+import { useAppSelector } from '_src/ui/app/hooks';
 
 // This component contains the wallet icon, name, and address
 const WalletProfile = ({ onClick }: { onClick?: () => void }) => {

@@ -1,10 +1,9 @@
+
 import { useNextSettingsUrl } from '../../hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import Header from '_src/ui/app/shared/typography/Header';
-import { useEffect, useState } from 'react';
-import { getEncrypted } from '_src/shared/storagex/store';
 
 interface SecurityHomePageProps {
     isHostedWallet: boolean;
@@ -17,7 +16,7 @@ interface SecurityItem {
     buttonTo: string;
 }
 
-const SecurityItem = ({ item }: { item: SecurityItem }) => {
+const SecurityItemDisplay = ({ item }: { item: SecurityItem }) => {
     const { title, description, buttonText, buttonTo } = item;
     return (
         <div className="flex flex-col pt-6">
@@ -38,10 +37,10 @@ const SecurityHomePage = ({ isHostedWallet }: SecurityHomePageProps) => {
         '/security/change-password'
     );
     const viewSeedUrl = useNextSettingsUrl(true, '/security/view-seed');
-    const viewPrivateKeyUrl = useNextSettingsUrl(
-        true,
-        '/security/view-private-key'
-    );
+    // const viewPrivateKeyUrl = useNextSettingsUrl(
+    //     true,
+    //     '/security/view-private-key'
+    // );
     const securityItems: SecurityItem[] = [
         {
             title: 'Passwords',
@@ -81,7 +80,7 @@ const SecurityHomePage = ({ isHostedWallet }: SecurityHomePageProps) => {
                 </BodyLarge>
             </ContentBlock>
             {securityItems.map((item, key) => {
-                return <SecurityItem item={item} key={key} />;
+                return <SecurityItemDisplay item={item} key={key} />;
             })}
         </div>
     );

@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import Permissions from '../../../../../background/Permissions';
-import { useNextSettingsUrl } from '../../settings-menu/hooks';
 import formatUrl from '_src/ui/app/helpers/format-url';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector, useMiddleEllipsis } from '_src/ui/app/hooks';
-import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 import type { Permission } from '_src/shared/messaging/messages/payloads/permissions';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
@@ -18,7 +16,6 @@ type GroupedPermissions = {
 };
 
 export default function ConnectedApps() {
-    const mainMenuUrl = useNextSettingsUrl(true, '/');
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
     const [permissions, setPermissions] = useState<Permission[]>([]);
     const [groupedPermissions, setGroupedPermissions] = useState<Record<

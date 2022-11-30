@@ -8,7 +8,7 @@ import {
     LockClosedIcon,
     PlusCircleIcon,
     ShieldExclamationIcon,
-    SignalIcon,
+    SignalIcon
 } from '@heroicons/react/24/solid';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -16,19 +16,19 @@ import { useNavigate } from 'react-router-dom';
 import { API_ENV_TO_INFO } from '../../ApiProvider';
 import { iframe } from '../../helpers';
 import SettingsList from '../../shared/navigation/nav-bar/SettingsList';
+import PaintBrushIcon from '../../shared/svg/PaintBrushIcon';
 import CreateWalletProvider from '../wallet-picker/CreateWalletProvider';
 import {
     DASHBOARD_LINK,
     IFRAME_URL,
     MAILTO_SUPPORT_URL,
-    ToS_LINK,
+    ToS_LINK
 } from '_src/shared/constants';
 import { ThemeContext } from '_src/shared/utils/themeContext';
 import { useNextSettingsUrl } from '_src/ui/app/components/settings-menu/hooks';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
-import { getEmail, logout, reset } from '_src/ui/app/redux/slices/account';
+import { getEmail, reset } from '_src/ui/app/redux/slices/account';
 // Temporary import - bug with hero icons where it doesn't show PaintBrushIcon to be exported
-import PaintBrushIcon from '../../shared/svg/PaintBrushIcon';
 
 const SettingsHomePage = () => {
     const orange = '#EE950F';
