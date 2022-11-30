@@ -51,10 +51,10 @@ const SecurityHomePage = ({ isHostedWallet }: SecurityHomePageProps) => {
             buttonTo: changePasswordUrl,
         },
         {
-            title: 'Recovery Phrases',
+            title: 'Recovery Phrase',
             description:
-                'Recovery phrases gives you access to all wallets that are associated with it. Here, you can manage your recovery phrases.',
-            buttonText: 'View Recovery Phrases',
+                'Recovery phrases give you access to all wallets that are associated with it. Here, you can manage your recovery phrases.',
+            buttonText: 'View Recovery Phrase',
             buttonTo: viewSeedUrl,
         },
         {

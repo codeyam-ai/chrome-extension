@@ -20,12 +20,12 @@ const buttonChildrenClassNames =
     'inline-flex items-center justify-center gap-2';
 
 const baseButtonClassNames =
-    'w-full w-full py-4 px-5 mb-6 border border-transparent rounded-[16px]';
+    'w-full w-full py-4 px-5 mb-6 border border-transparent rounded-[16px] disabled:opacity-50';
 
 const primaryButtonClassNames =
     baseButtonClassNames +
     ' ' +
-    'text-ethos-light-background-default bg-ethos-light-primary-light disabled:opacity-50';
+    'text-ethos-light-background-default bg-ethos-light-primary-light';
 
 const secondaryButtonClassNames =
     baseButtonClassNames +
