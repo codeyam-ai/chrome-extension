@@ -1,5 +1,4 @@
 import { screen } from '@testing-library/react';
-import * as React from 'react';
 
 import App from '_app/index';
 import { fakeBrowser } from '_src/test/utils/fake-browser';

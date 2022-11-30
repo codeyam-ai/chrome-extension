@@ -18,11 +18,14 @@ import { useNextWalletPickerUrl } from '../settings-menu/hooks';
 import Authentication from '_src/background/Authentication';
 
 import type { AccountInfo } from '../../KeypairVault';
+import Loading from '../loading';
+
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
+    const [loading, setLoading] = useState(false);
     const [isColorPickerMenuOpen, setIsColorPickerMenuOpen] = useState(false);
     const [searchParams] = useSearchParams();
     const walletPickerHomeUrl = useNextWalletPickerUrl(true, '/');
@@ -79,6 +82,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     }, [authentication, keypairVault]);
 
     const _saveAccountInfos = useCallback(async () => {
+        setLoading(true);
         if (authentication) {
             await Authentication.updateAccountInfos(draftAccountInfos.current);
             await dispatch(setAccountInfos(draftAccountInfos.current));
@@ -91,6 +95,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
             getAccountInfos();
         }
 
+        setLoading(false);
         setIsWalletEditing(true);
         navigate(walletPickerHomeUrl);
     }, [
@@ -180,7 +185,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                     )}
                 </div>
                 <Button buttonStyle="primary" onClick={_saveAccountInfos}>
-                    Done
+                    <Loading loading={loading}>Done</Loading>
                 </Button>
             </div>
         </>

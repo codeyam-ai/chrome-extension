@@ -118,8 +118,8 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             activeAccountIndex = (accountInfos?.length || 1) - 1;
         }
 
-        const locked = await getEncrypted('locked');
-        if (locked) {
+        const locked = await getEncrypted(LOCKED, passphrase);
+        if (!locked || locked !== `${LOCKED}${passphrase}`) {
             return {
                 authentication: null,
                 passphrase: passphrase || null,
@@ -254,7 +254,7 @@ export const changePassword: AsyncThunk<
         } = getState() as RootState;
 
         if (mnemonic) {
-            await deleteEncrypted('mnemonic', currentPassword);
+            await deleteEncrypted('mnemonic');
             await setEncrypted('mnemonic', mnemonic, newPassword);
         }
 
@@ -263,20 +263,20 @@ export const changePassword: AsyncThunk<
             currentPassword
         );
         if (authentication) {
-            await deleteEncrypted('authentication', currentPassword);
+            await deleteEncrypted('authentication');
             await setEncrypted('authentication', newPassword);
         }
 
         const email = await getEncrypted('email', currentPassword);
         if (email) {
-            await deleteEncrypted('email', currentPassword);
+            await deleteEncrypted('email');
             await setEncrypted('email', newPassword);
         }
 
         const accountInfos = JSON.parse(
             (await getEncrypted('accountInfos', currentPassword)) || '[]'
         );
-        await deleteEncrypted('accountInfos', currentPassword);
+        await deleteEncrypted('accountInfos');
         await setEncrypted(
             'accountInfos',
             JSON.stringify(accountInfos),
@@ -286,15 +286,18 @@ export const changePassword: AsyncThunk<
         let activeAccountIndex = parseInt(
             (await getEncrypted('activeAccountIndex', currentPassword)) || '0'
         );
-        await deleteEncrypted('activeAccountIndex', currentPassword);
+        await deleteEncrypted('activeAccountIndex');
         await setEncrypted(
             'activeAccountIndex',
             activeAccountIndex.toString(),
             newPassword
         );
 
-        await deleteEncrypted('passphrase', currentPassword);
+        await deleteEncrypted('passphrase');
         await setEncrypted('passphrase', newPassword);
+
+        await deleteEncrypted(LOCKED);
+        await setEncrypted(LOCKED, `${LOCKED}${newPassword}`, newPassword);
 
         return true;
     }
@@ -313,6 +316,7 @@ export const savePassphrase: AsyncThunk<
         }
 
         await setEncrypted('passphrase', passphrase);
+        await setEncrypted(LOCKED, `${LOCKED}${passphrase}`, passphrase);
 
         const {
             account: { mnemonic },
@@ -360,9 +364,16 @@ export const reset = createAsyncThunk(
 
 export const logout = createAsyncThunk(
     'account/logout',
-    async (_args): Promise<void> => {
-        await setEncrypted('locked', LOCKED);
-        await deleteEncrypted('authentication');
+    async (_args, { getState }): Promise<void> => {
+        const {
+            account: { authentication },
+        } = getState() as RootState;
+
+        if (authentication) {
+            await deleteEncrypted('authentication');
+        } else {
+            await deleteEncrypted(LOCKED);
+        }
     }
 );
 
@@ -389,8 +400,13 @@ export const unlock: AsyncThunk<boolean, string | null, AppThunkConfig> =
     createAsyncThunk<boolean, string | null, AppThunkConfig>(
         'account/unlock',
         async (passphrase): Promise<boolean> => {
-            if (await isPasswordCorrect(passphrase || '')) {
+            if (passphrase && (await isPasswordCorrect(passphrase))) {
                 await deleteEncrypted('locked');
+                await setEncrypted(
+                    LOCKED,
+                    `${LOCKED}${passphrase}`,
+                    passphrase
+                );
                 return true;
             }
             return false;
@@ -508,8 +524,12 @@ const accountSlice = createSlice({
             .addCase(saveEmail.fulfilled, (state, action) => {
                 state.email = action.payload;
             })
-            .addCase(logout.pending, (state) => {
-                state.locked = true;
+            .addCase(logout.fulfilled, (state) => {
+                if (state.authentication) {
+                    state.authentication = null;
+                } else {
+                    state.locked = true;
+                }
             }),
 });
 

@@ -11,6 +11,7 @@ import {
     useWalletPickerIsOpen,
 } from '_src/ui/app/components/settings-menu/hooks';
 import { useAppSelector } from '_src/ui/app/hooks';
+import truncateString from '_src/ui/app/helpers/truncate-string';
 
 // This component contains the wallet icon, name, and address
 const WalletProfile = ({ onClick }: { onClick?: () => void }) => {
@@ -24,6 +25,7 @@ const WalletProfile = ({ onClick }: { onClick?: () => void }) => {
     const isWalletPickerOpen = useWalletPickerIsOpen();
     const walletPickerUrl = useNextWalletPickerUrl(true, '/');
     const closeWalletPickerUrl = useNextWalletPickerUrl(false);
+    const shortenedName = truncateString(accountInfo?.name || 'Wallet', 8);
 
     const WalletPicker = () => (
         <div className="flex flex-row gap-2 items-center">
@@ -33,7 +35,7 @@ const WalletProfile = ({ onClick }: { onClick?: () => void }) => {
                     backgroundColor: accountInfo?.color || '#7E23CA',
                 }}
             />
-            <BodyLarge isSemibold>{accountInfo?.name || 'Wallet'}</BodyLarge>
+            <BodyLarge isSemibold>{shortenedName}</BodyLarge>
 
             <ChevronDownIcon className="h-4 w-4 text-ethos-light-text-medium dark:text-ethos-dark-text-medium cursor-pointer" />
         </div>

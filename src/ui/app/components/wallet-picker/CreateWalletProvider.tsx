@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { type AccountInfo } from '../../KeypairVault';
+import Authentication from '_src/background/Authentication';
 import getNextWalletColor from '../../helpers/getNextWalletColor';
 import { useAppDispatch, useAppSelector } from '../../hooks';
+import { type AccountInfo } from '../../KeypairVault';
 import {
     saveAccountInfos,
     saveActiveAccountIndex,
@@ -10,7 +11,6 @@ import {
 } from '../../redux/slices/account';
 import { clearForNetworkOrWalletSwitch } from '../../redux/slices/sui-objects';
 import { thunkExtras } from '../../redux/store/thunk-extras';
-import Authentication from '_src/background/Authentication';
 
 import type { Dispatch, SetStateAction } from 'react';
 
@@ -30,6 +30,7 @@ const CreateWalletProvider = ({
     children,
 }: CreateWalletProviderProps) => {
     const dispatch = useAppDispatch();
+    const [loading, setLoading] = useState(false);
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
     const authentication = useAppSelector(
         ({ account }) => account.authentication
@@ -81,6 +82,7 @@ const CreateWalletProvider = ({
     }, [authentication, dispatch, getAccountInfos]);
 
     const createWallet = useCallback(() => {
+        setLoading(true);
         const loadAccFromStorage = async () => {
             const sortedAccountIndices = accountInfos
                 .map((a) => a.index || 0)
@@ -120,6 +122,7 @@ const CreateWalletProvider = ({
             }
 
             setAccountInfos(newAccountInfos);
+            setLoading(false);
         };
         loadAccFromStorage();
         _saveAccountInfos();
