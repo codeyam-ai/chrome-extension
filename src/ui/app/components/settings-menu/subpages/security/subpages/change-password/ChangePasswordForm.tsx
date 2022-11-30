@@ -8,20 +8,25 @@ import Input from '_src/ui/app/shared/inputs/Input';
 import type { FormikValues } from 'formik';
 
 type ChangePassphraseFormProps = {
-    onSubmit: (passphrase: string) => void;
+    onSubmit: (currentPassword: string, newPassword: string) => void;
+    isPasswordIncorrect?: boolean;
 };
 
-const CustomFormikForm = () => {
+const CustomFormikForm = ({
+    isPasswordIncorrect = false,
+}: {
+    isPasswordIncorrect: boolean;
+}) => {
     // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
     // which we can spread on <input> and also replace ErrorMessage entirely.
-    const [existingPasswordField, existingPasswordMeta] =
-        useField('existingPassword');
+    const [currentPasswordField, currentPasswordMeta] =
+        useField('currentPassword');
     const [newPasswordField, newPasswordMeta] = useField('newPassword');
     const [confirmField, confirmMeta] = useField('confirmNewPassword');
     return (
         <>
             <Input
-                {...existingPasswordField}
+                {...currentPasswordField}
                 label="Current Password"
                 id="currentPassword"
                 name="currentPassword"
@@ -29,8 +34,11 @@ const CustomFormikForm = () => {
                 placeholder="Enter your current password"
                 required={true}
                 errorText={
-                    existingPasswordMeta.touched && existingPasswordMeta.error
-                        ? existingPasswordMeta.error
+                    isPasswordIncorrect
+                        ? 'Password is incorrect'
+                        : currentPasswordMeta.touched &&
+                          currentPasswordMeta.error
+                        ? currentPasswordMeta.error
                         : undefined
                 }
             />
@@ -80,10 +88,13 @@ const CustomFormikForm = () => {
     );
 };
 
-const ChangePasswordForm = ({ onSubmit }: ChangePassphraseFormProps) => {
+const ChangePasswordForm = ({
+    onSubmit,
+    isPasswordIncorrect = false,
+}: ChangePassphraseFormProps) => {
     const _onSubmit = useCallback(
-        ({ newPassword }: FormikValues) => {
-            onSubmit(newPassword);
+        ({ currentPassword, newPassword }: FormikValues) => {
+            onSubmit(currentPassword, newPassword);
         },
         [onSubmit]
     );
@@ -110,7 +121,9 @@ const ChangePasswordForm = ({ onSubmit }: ChangePassphraseFormProps) => {
                 onSubmit={_onSubmit}
             >
                 <Form>
-                    <CustomFormikForm />
+                    <CustomFormikForm
+                        isPasswordIncorrect={isPasswordIncorrect}
+                    />
                 </Form>
             </Formik>
         </div>

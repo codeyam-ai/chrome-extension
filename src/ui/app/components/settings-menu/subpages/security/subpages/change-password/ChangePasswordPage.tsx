@@ -1,12 +1,17 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useNextSettingsUrl } from '../../../../hooks';
 import ChangePasswordForm from './ChangePasswordForm';
-import { useAppDispatch } from '_src/ui/app/hooks';
+import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import {
     savePassphrase,
     loadAccountInformationFromStorage,
+    unlock,
+    changePassword,
+    assertPasswordIsCorrect as assertPasswordIsCorrect,
+    saveAccountInfos,
+    saveActiveAccountIndex,
 } from '_src/ui/app/redux/slices/account';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
@@ -16,11 +21,30 @@ const ChangePasswordPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const settingsHomeUrl = useNextSettingsUrl(true);
+    const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false);
+
+    const openToast = useCallback(() => {
+        console.log('opening toast...');
+    }, []);
 
     const onPasswordChanged = useCallback(
-        async (password: string) => {
-            console.log('password changed to', password);
-            await dispatch(savePassphrase(password));
+        async (currentPassword: string, newPassword: string) => {
+            const unlockResult = await dispatch(
+                assertPasswordIsCorrect(currentPassword)
+            );
+            console.log('unlockResult :>> ', unlockResult);
+            // If passwords don't match, unlock returns false
+            if (!unlockResult.payload) {
+                setIsPasswordIncorrect(true);
+                return;
+            }
+            setIsPasswordIncorrect(false);
+            console.log('password changed to', newPassword);
+
+            const changePasswordRes = await dispatch(
+                changePassword({ currentPassword, newPassword })
+            );
+            console.log('changePasswordRes :>> ', changePasswordRes);
             await dispatch(loadAccountInformationFromStorage());
             navigate(settingsHomeUrl);
         },
@@ -35,7 +59,11 @@ const ChangePasswordPage = () => {
                     First enter your current password, then your new password.
                 </BodyLarge>
             </ContentBlock>
-            <ChangePasswordForm onSubmit={onPasswordChanged} />
+            <button onClick={openToast}>Open toast</button>
+            <ChangePasswordForm
+                onSubmit={onPasswordChanged}
+                isPasswordIncorrect={isPasswordIncorrect}
+            />
         </div>
     );
 };

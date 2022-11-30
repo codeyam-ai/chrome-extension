@@ -229,6 +229,77 @@ export const saveEmail = createAsyncThunk(
     }
 );
 
+export const changePassword: AsyncThunk<
+    boolean,
+    { currentPassword: string; newPassword: string },
+    AppThunkConfig
+> = createAsyncThunk<
+    boolean,
+    { currentPassword: string; newPassword: string },
+    AppThunkConfig
+>(
+    'account/changePassword',
+    async (
+        { currentPassword, newPassword },
+        { extra: { keypairVault }, getState }
+    ) => {
+        if (!isPasswordCorrect(currentPassword)) {
+            return false;
+        }
+
+        // First, decrypt the existing data with the current password
+        // Then, encrypt it with the new password
+        const {
+            account: { mnemonic },
+        } = getState() as RootState;
+
+        if (mnemonic) {
+            await deleteEncrypted('mnemonic', currentPassword);
+            await setEncrypted('mnemonic', mnemonic, newPassword);
+        }
+
+        const authentication = await getEncrypted(
+            'authentication',
+            currentPassword
+        );
+        if (authentication) {
+            await deleteEncrypted('authentication', currentPassword);
+            await setEncrypted('authentication', newPassword);
+        }
+
+        const email = await getEncrypted('email', currentPassword);
+        if (email) {
+            await deleteEncrypted('email', currentPassword);
+            await setEncrypted('email', newPassword);
+        }
+
+        const accountInfos = JSON.parse(
+            (await getEncrypted('accountInfos', currentPassword)) || '[]'
+        );
+        await deleteEncrypted('accountInfos', currentPassword);
+        await setEncrypted(
+            'accountInfos',
+            JSON.stringify(accountInfos),
+            newPassword
+        );
+
+        let activeAccountIndex = parseInt(
+            (await getEncrypted('activeAccountIndex', currentPassword)) || '0'
+        );
+        await deleteEncrypted('activeAccountIndex', currentPassword);
+        await setEncrypted(
+            'activeAccountIndex',
+            activeAccountIndex.toString(),
+            newPassword
+        );
+
+        await deleteEncrypted('passphrase', currentPassword);
+        await setEncrypted('passphrase', newPassword);
+
+        return true;
+    }
+);
+
 export const savePassphrase: AsyncThunk<
     string | null,
     string | null,
@@ -295,15 +366,34 @@ export const logout = createAsyncThunk(
     }
 );
 
+const isPasswordCorrect = async (password: string) => {
+    const existingPassphrase = await getEncrypted('passphrase');
+
+    if (existingPassphrase !== password) return false;
+
+    return true;
+};
+
+export const assertPasswordIsCorrect: AsyncThunk<
+    boolean,
+    string | null,
+    AppThunkConfig
+> = createAsyncThunk<boolean, string | null, AppThunkConfig>(
+    'account/assertPasswordIsCorrect',
+    async (passphrase): Promise<boolean> => {
+        return await isPasswordCorrect(passphrase || '');
+    }
+);
+
 export const unlock: AsyncThunk<boolean, string | null, AppThunkConfig> =
     createAsyncThunk<boolean, string | null, AppThunkConfig>(
         'account/unlock',
         async (passphrase): Promise<boolean> => {
-            const existingPassphrase = await getEncrypted('passphrase');
-            if (existingPassphrase !== passphrase) return false;
-
-            await deleteEncrypted('locked');
-            return true;
+            if (await isPasswordCorrect(passphrase || '')) {
+                await deleteEncrypted('locked');
+                return true;
+            }
+            return false;
         }
     );
 
@@ -341,6 +431,9 @@ const accountSlice = createSlice({
     reducers: {
         setMnemonic: (state, action: PayloadAction<string | null>) => {
             state.mnemonic = action.payload;
+        },
+        changePassword: (state, action: PayloadAction<string | null>) => {
+            state.passphrase = action.payload;
         },
         setPassphrase: (state, action: PayloadAction<string | null>) => {
             state.passphrase = action.payload;

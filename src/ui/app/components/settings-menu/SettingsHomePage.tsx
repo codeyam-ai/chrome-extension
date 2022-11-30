@@ -6,7 +6,6 @@ import {
     FireIcon,
     GlobeAltIcon,
     LockClosedIcon,
-    PaintBrushIcon,
     PlusCircleIcon,
     ShieldExclamationIcon,
     SignalIcon,
@@ -28,6 +27,8 @@ import { ThemeContext } from '_src/shared/utils/themeContext';
 import { useNextSettingsUrl } from '_src/ui/app/components/settings-menu/hooks';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { getEmail, logout, reset } from '_src/ui/app/redux/slices/account';
+// Temporary import - bug with hero icons where it doesn't show PaintBrushIcon to be exported
+import PaintBrushIcon from '../../shared/svg/PaintBrushIcon';
 
 const SettingsHomePage = () => {
     const orange = '#EE950F';
