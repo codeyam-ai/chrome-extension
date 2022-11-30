@@ -161,7 +161,9 @@ function TransferNFTForm({
                                             Sending
                                         </Body>
                                         <Header
-                                            className={'font-semibold mb-3'}
+                                            className={
+                                                'font-weight-ethos-subheader'
+                                            }
                                         >
                                             {nftobj.data.fields.name}
                                         </Header>
@@ -208,7 +210,6 @@ function TransferNFTForm({
                                 isInline
                                 buttonStyle="primary"
                                 type="submit"
-                                className={'mt-[36px]'}
                             >
                                 {isSubmitting ? (
                                     <LoadingIndicator />

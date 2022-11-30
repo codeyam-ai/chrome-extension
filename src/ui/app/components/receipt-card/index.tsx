@@ -3,18 +3,20 @@
 
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { formatDate } from '_helpers';
-import { useMiddleEllipsis, useFormatCoin } from '_hooks';
+import { useMiddleEllipsis, useFormatCoin, useAppSelector } from '_hooks';
 import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
 import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline';
 import PageScrollView from '../../shared/layouts/PageScrollView';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
 import ExplorerLink from '_components/explorer-link';
-
 import { ArrowUpRightIcon } from '@heroicons/react/24/solid';
+import { AssetCard } from '../../shared/nfts/AssetCard';
 
-import LargeSent from '_src/ui/app/shared/svg/LargeSent';
-import LargeListed from '_src/ui/app/shared/svg/LargeListed';
-import LargeReceived from '_src/ui/app/shared/svg/LargeReceived';
+import TxSent from '_src/ui/app/shared/svg/TxSent';
+import TxReceived from '_src/ui/app/shared/svg/TxReceived';
+import TxMinted from '_src/ui/app/shared/svg/txMint';
+import TxCall from '_src/ui/app/shared/svg/TxCall';
+import TxFailed from '_src/ui/app/shared/svg/TxFailed';
 
 import type { TxResultState } from '_redux/slices/txresults';
 
@@ -22,6 +24,7 @@ import st from './ReceiptCard.module.scss';
 import Body from '../../shared/typography/Body';
 import Header from '../../shared/typography/Header';
 import BodyLarge from '../../shared/typography/BodyLarge';
+import { AccountInfo } from '../../KeypairVault';
 
 type TxResponseProps = {
     txDigest: TxResultState;
@@ -34,7 +37,79 @@ const TRUNCATE_PREFIX_LENGTH = 4;
 // Truncate text after one line (~ 35 characters)
 const TRUNCATE_MAX_CHAR = 40;
 
+const AvatarItem = ({
+    bgColor,
+    header,
+    subheader,
+}: {
+    bgColor?: string | undefined;
+    header?: string | undefined;
+    subheader?: string | undefined;
+}) => (
+    <div
+        className={
+            'p-[10px] flex flex-row space-around items-center align-center gap-4'
+        }
+    >
+        <div
+            className={'rounded-full w-[40px] h-[40px] auto'}
+            style={{ backgroundColor: bgColor || '#7E23CA' }}
+        ></div>
+        <div className={'flex flex-col items-left'}>
+            <BodyLarge isSemibold className={'text-left'}>
+                {header}
+            </BodyLarge>
+            <Body className={'text-ethos-light-text-medium text-left'}>
+                {subheader}
+            </Body>
+        </div>
+    </div>
+);
+
+const TxTransfer = ({
+    ToFrom,
+}: {
+    ToFrom: {
+        from: {
+            bgColor: string | undefined;
+            header: string | undefined;
+            subheader?: string;
+        };
+        to: {
+            bgColor: string | undefined;
+            header: string | undefined;
+            subheader?: string;
+        };
+    };
+}) => (
+    <div className={'flex flex-col'}>
+        <AvatarItem
+            bgColor={ToFrom.from.bgColor}
+            header={ToFrom.from.header}
+            subheader={ToFrom.from.subheader}
+        />
+        <div
+            className={'py-1 pl-[18px] text-left text-ethos-light-text-medium'}
+        >
+            <ChevronDoubleDownIcon width={25} height={23} />
+        </div>
+        <AvatarItem
+            bgColor={ToFrom.to.bgColor}
+            header={ToFrom.to.header}
+            subheader={ToFrom.to.subheader}
+        />
+    </div>
+);
+
 function ReceiptCard({ txDigest }: TxResponseProps) {
+    const accountInfo = useAppSelector(
+        ({ account: { accountInfos, activeAccountIndex } }) =>
+            accountInfos.find(
+                (accountInfo: AccountInfo) =>
+                    (accountInfo.index || 0) === activeAccountIndex
+            )
+    );
+
     const toAddrStr = useMiddleEllipsis(
         txDigest.to || '',
         TRUNCATE_MAX_LENGTH,
@@ -53,10 +128,24 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         TRUNCATE_MAX_CHAR - 1
     );
 
-    const truncatedNftDescription = useMiddleEllipsis(
-        txDigest?.description || '',
-        TRUNCATE_MAX_CHAR,
-        TRUNCATE_MAX_CHAR - 1
+    const walletAddrStr = useMiddleEllipsis(
+        accountInfo?.address || '',
+        TRUNCATE_MAX_LENGTH,
+        TRUNCATE_PREFIX_LENGTH
+    );
+
+    const [formatted, symbol] = useFormatCoin(
+        txDigest.amount || txDigest.balance || 0,
+        txDigest.coinType
+    );
+
+    const [gas, gasSymbol] = useFormatCoin(txDigest.txGas, GAS_TYPE_ARG);
+
+    const [total, totalSymbol] = useFormatCoin(
+        txDigest.amount && txDigest.isSender
+            ? txDigest.amount + txDigest.txGas
+            : null,
+        GAS_TYPE_ARG
     );
 
     const transferType =
@@ -66,16 +155,21 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             ? 'Sent'
             : 'Received';
 
+    const header = txDigest?.amount
+        ? txDigest.amount + ' MIST'
+        : truncatedNftName;
+
+    const isMinted = txDigest?.callFunctionName === 'mint';
+
     const transferMeta = {
         Call: {
-            txName:
-                txDigest?.name && txDigest?.url
-                    ? 'Minted'
-                    : `Call ${
-                          txDigest?.callFunctionName &&
-                          '(' + txDigest?.callFunctionName + ')'
-                      }`,
-
+            txName: isMinted
+                ? 'Minted'
+                : `Call ${
+                      txDigest?.callFunctionName &&
+                      '(' + txDigest?.callFunctionName + ')'
+                  }`,
+            txIcon: isMinted ? <TxMinted /> : <TxCall />,
             transfer: txDigest?.isSender ? 'To' : 'From',
             address: false,
             addressTruncate: false,
@@ -84,6 +178,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         Sent: {
             txName: 'Sent',
             transfer: 'To',
+            txIcon: <TxSent />,
             addressTruncate: toAddrStr,
             address: txDigest.to,
             failedMsg: txDigest?.error || 'Failed',
@@ -91,6 +186,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         Received: {
             txName: 'Received',
             transfer: 'From',
+            txIcon: <TxReceived />,
             addressTruncate: fromAddrStr,
             address: txDigest.from,
             failedMsg: '',
@@ -111,144 +207,76 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
           ])
         : false;
 
-    const AssetCard = ({ imgUrl }: { imgUrl: string }) => (
-        <div className={'w-full'}>
-            <div className={'flex flex-row justify-center mb-4'}>
-                <img
-                    className={'rounded-2xl w-[58px] h-[58px] auto'}
-                    src={imgUrl}
-                    alt={txDigest?.name || 'NFT'}
-                />
-                <LargeListed />
-            </div>
-        </div>
-    );
+    const fromWallet = accountInfo?.address === txDigest.from;
 
-    const AvatarItem = ({
-        imgUrl,
-        header,
-        subheader,
-    }: {
-        imgUrl?: string;
-        header: string;
-        subheader?: string;
-    }) => (
-        <div
-            className={
-                'p-[10px] flex flex-row space-around items-center align-center gap-4'
-            }
-        >
-            <img
-                className={'rounded-full w-[40px] h-[40px] auto'}
-                src={imgUrl}
-                alt={txDigest?.name || 'NFT'}
-            />
-            <div className={'flex flex-col items-left'}>
-                <BodyLarge className={'font-semibold text-left'}>
-                    {header}
-                </BodyLarge>
-                <Body className={'text-ethos-light-text-medium text-left'}>
-                    {subheader}
-                </Body>
-            </div>
-        </div>
-    );
-
-    const TxTransfer = ({
-        ToFrom,
-    }: {
-        ToFrom: {
-            to: {
-                imgSrc: string;
-                header: string;
-                subheader?: string;
-            };
-            from: {
-                imgSrc: string;
-                header: string;
-                subheader?: string;
-            };
-        };
-    }) => (
-        <div className={'flex flex-col'}>
-            <AvatarItem
-                imgUrl={ToFrom.from.imgSrc}
-                header={ToFrom.from.header}
-                subheader={ToFrom.from.subheader}
-            />
-            <div
-                className={
-                    'py-1 pl-[18px] text-left text-ethos-light-text-medium'
-                }
-            >
-                <ChevronDoubleDownIcon width={25} height={23} />
-            </div>
-            <AvatarItem
-                imgUrl={ToFrom.to.imgSrc}
-                header={ToFrom.to.header}
-                subheader={ToFrom.to.subheader}
-            />
-        </div>
-    );
-
-    const statusClassName =
-        txDigest.status === 'success' ? st.success : st.failed;
-
-    const [formatted, symbol] = useFormatCoin(
-        txDigest.amount || txDigest.balance || 0,
-        txDigest.coinType
-    );
-
-    const [gas, gasSymbol] = useFormatCoin(txDigest.txGas, GAS_TYPE_ARG);
-
-    const [total, totalSymbol] = useFormatCoin(
-        txDigest.amount && txDigest.isSender
-            ? txDigest.amount + txDigest.txGas
-            : null,
-        GAS_TYPE_ARG
-    );
+    console.log('DIGEST: ', txDigest);
+    console.log('from wallet: ', fromWallet);
+    console.log('Account Info: ', accountInfo);
 
     return (
         <>
-            <PageScrollView>
+            <PageScrollView heightInPx={360}>
                 <div className={'pt-6 px-6 pb-8'}>
-                    <AssetCard imgUrl={imgUrl ? imgUrl : ''} />
+                    <AssetCard
+                        imgUrl={imgUrl ? imgUrl : ''}
+                        name={txDigest?.name || 'NFT'}
+                        icon={
+                            txDigest.status === 'success' ? (
+                                transferMeta[transferType].txIcon
+                            ) : (
+                                <TxFailed />
+                            )
+                        }
+                    />
                     <Body className={'text-ethos-light-text-medium'}>
                         {txDigest.status === 'success'
                             ? transferMeta[transferType].txName
                             : transferMeta[transferType].failedMsg}
                     </Body>
-                    <Header className={'font-semibold mb-3'}>
-                        SuiGod #1750
+                    <Header className={'font-weight-ethos-subheader mb-3'}>
+                        {header}
                     </Header>
                     <Body className={'text-ethos-light-text-medium'}>
                         {date && date.replace(' AM', 'am').replace(' PM', 'pm')}
                     </Body>
                 </div>
-                <div className={'px-6 pb-6'}>
-                    <TxTransfer
-                        ToFrom={{
-                            to: {
-                                imgSrc: imgUrl ? imgUrl : '',
-                                header: 'Wallet 1', // TODO: get data for name of wallet
-                                subheader: toAddrStr,
-                            },
-                            from: {
-                                imgSrc: imgUrl ? imgUrl : '',
-                                header: fromAddrStr,
-                            },
-                        }}
-                    />
-                </div>
+                {!isMinted && (
+                    <div className={'px-6 pb-6'}>
+                        <TxTransfer
+                            ToFrom={{
+                                from: {
+                                    bgColor: fromWallet
+                                        ? accountInfo?.color
+                                        : '#6D28D9',
+                                    header: fromWallet
+                                        ? accountInfo?.name
+                                        : fromAddrStr,
+                                    subheader: fromWallet ? walletAddrStr : '',
+                                },
+                                to: {
+                                    bgColor: fromWallet
+                                        ? '#6D28D9'
+                                        : accountInfo?.color,
+                                    header: fromWallet
+                                        ? toAddrStr
+                                        : accountInfo?.name,
+                                    subheader: fromWallet
+                                        ? toAddrStr
+                                        : walletAddrStr,
+                                },
+                            }}
+                        />
+                    </div>
+                )}
                 <div className={'px-6 pb-6 text-left'}>
-                    <BodyLarge className={'font-semibold mb-3'}>
+                    <BodyLarge isSemibold className={'mb-3'}>
                         Details
                     </BodyLarge>
                     <KeyValueList
                         keyNamesAndValues={[
                             {
                                 keyName: 'Transaction Fee',
-                                value: gas,
+                                value: gas + ' ' + gasSymbol,
                             },
                             {
                                 keyName: 'Signature',
