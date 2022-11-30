@@ -1,9 +1,7 @@
 import {
-    ArrowDownOnSquareIcon,
     ArrowsPointingOutIcon,
     DocumentCheckIcon,
     DocumentTextIcon,
-    FireIcon,
     GlobeAltIcon,
     LockClosedIcon,
     PlusCircleIcon,
@@ -27,7 +25,7 @@ import {
 import { ThemeContext } from '_src/shared/utils/themeContext';
 import { useNextSettingsUrl } from '_src/ui/app/components/settings-menu/hooks';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
-import { getEmail, reset } from '_src/ui/app/redux/slices/account';
+import { reset } from '_src/ui/app/redux/slices/account';
 // Temporary import - bug with hero icons where it doesn't show PaintBrushIcon to be exported
 
 const SettingsHomePage = () => {
@@ -35,9 +33,8 @@ const SettingsHomePage = () => {
     const purple = '#9040F5';
     const blue = '#328EFA';
     const green = '#01C57E';
-    const pink = '#E81CA5';
 
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false);
     const [createWallet, setCreateWallet] = useState<() => void>(
         () => () => null
     );
@@ -48,7 +45,7 @@ const SettingsHomePage = () => {
     const securityUrl = useNextSettingsUrl(true, '/security');
     const permissionsUrl = useNextSettingsUrl(true, '/permissions');
     const lockUrl = useNextSettingsUrl(true, '/lock');
-    const importWalletUrl = useNextSettingsUrl(true, '/import-wallet');
+    // const importWalletUrl = useNextSettingsUrl(true, '/import-wallet');
     const { theme } = useContext(ThemeContext);
     const themeDisplay = useMemo(() => {
         return theme.charAt(0).toUpperCase() + theme.slice(1);
@@ -62,18 +59,18 @@ const SettingsHomePage = () => {
         navigate('/tokens');
     }, [createWallet, navigate]);
 
-    const resetWallet = useCallback(async () => {
-        setLoading(true);
-        // iframe.listenForLogout();
-        const email = await dispatch(getEmail());
-        if (email) {
-            iframe.onReady(
-                async () => await iframe.logOut(email.payload as string)
-            );
-        } else {
-            dispatch(reset);
-        }
-    }, [dispatch]);
+    // const resetWallet = useCallback(async () => {
+    //     setLoading(true);
+    //     // iframe.listenForLogout();
+    //     const email = await dispatch(getEmail());
+    //     if (email) {
+    //         iframe.onReady(
+    //             async () => await iframe.logOut(email.payload as string)
+    //         );
+    //     } else {
+    //         dispatch(reset);
+    //     }
+    // }, [dispatch]);
 
     useEffect(() => {
         const listenForLogOut = async () => {
@@ -82,7 +79,7 @@ const SettingsHomePage = () => {
             try {
                 await dispatch(reset());
             } finally {
-                setLoading(false);
+                // setLoading(false);
             }
         };
         listenForLogOut();

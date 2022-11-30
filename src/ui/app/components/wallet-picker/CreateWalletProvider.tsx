@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { type AccountInfo } from '../../KeypairVault';
 import getNextWalletColor from '../../helpers/getNextWalletColor';
@@ -30,7 +30,6 @@ const CreateWalletProvider = ({
     children,
 }: CreateWalletProviderProps) => {
     const dispatch = useAppDispatch();
-    const [loading, setLoading] = useState(false);
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
     const authentication = useAppSelector(
         ({ account }) => account.authentication
@@ -82,7 +81,6 @@ const CreateWalletProvider = ({
     }, [authentication, dispatch, getAccountInfos]);
 
     const createWallet = useCallback(() => {
-        setLoading(true);
         const loadAccFromStorage = async () => {
             const sortedAccountIndices = accountInfos
                 .map((a) => a.index || 0)
@@ -122,7 +120,6 @@ const CreateWalletProvider = ({
             }
 
             setAccountInfos(newAccountInfos);
-            setLoading(false);
         };
         loadAccFromStorage();
         _saveAccountInfos();
