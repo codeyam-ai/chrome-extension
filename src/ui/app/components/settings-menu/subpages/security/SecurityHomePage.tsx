@@ -57,13 +57,13 @@ const SecurityHomePage = ({ isHostedWallet }: SecurityHomePageProps) => {
             buttonText: 'View Recovery Phrase',
             buttonTo: viewSeedUrl,
         },
-        {
-            title: 'Private Key',
-            description:
-                'Your private key grants access to the wallet that you are currently in.',
-            buttonText: 'View Private Key',
-            buttonTo: viewPrivateKeyUrl,
-        },
+        // {
+        //     title: 'Private Key',
+        //     description:
+        //         'Your private key grants access to the wallet that you are currently in.',
+        //     buttonText: 'View Private Key',
+        //     buttonTo: viewPrivateKeyUrl,
+        // },
     ];
 
     // Email users cannot view their seed

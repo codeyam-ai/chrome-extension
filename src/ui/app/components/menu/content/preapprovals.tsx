@@ -219,10 +219,6 @@ export default function Preapprovals() {
 
     return (
         <>
-            <NavBarWithBackAndTitle
-                title="Pre-Approved Transactions"
-                backLink={mainMenuUrl}
-            />
             <div className="px-6 text-left">
                 {Object.keys(groupedPreapprovals || {})
                     .sort()

@@ -180,10 +180,6 @@ export default function ConnectedApps() {
 
     return (
         <>
-            <NavBarWithBackAndTitle
-                title="Connected Apps"
-                backLink={mainMenuUrl}
-            />
             <div className="px-6">
                 {Object.keys(groupedPermissions || {})
                     .sort()
