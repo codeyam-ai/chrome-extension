@@ -36,7 +36,7 @@ export default function useInitializedGuard(state: AppState | AppState[]) {
     const { authentication, accountInfos } = useAppSelector(
         ({ account }) => account
     );
-    
+
     if (authentication && (accountInfos?.length || 0) > 0) {
         currentState = AppState.HOSTED;
     }
