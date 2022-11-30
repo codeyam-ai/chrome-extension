@@ -119,7 +119,6 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
         }
 
         const locked = await getEncrypted(LOCKED, passphrase);
-        console.log('LOCKEDx', locked);
         if (!locked || locked !== `${LOCKED}${passphrase}`) {
             return {
                 authentication: null,
@@ -174,7 +173,6 @@ export const saveAuthentication = createAsyncThunk(
         if (!authentication) {
             await deleteEncrypted('authentication');
         } else {
-            console.log('SET AUTHENTICATION', authentication);
             await setEncrypted('authentication', authentication);
         }
         return authentication;
@@ -428,7 +426,6 @@ const accountSlice = createSlice({
                 state.email = action.payload;
             })
             .addCase(logout.fulfilled, (state) => {
-                console.log('STATE', state.authentication, state.locked);
                 if (state.authentication) {
                     state.authentication = null;
                 } else {

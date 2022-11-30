@@ -36,14 +36,12 @@ export default function useInitializedGuard(state: AppState | AppState[]) {
     const { authentication, accountInfos } = useAppSelector(
         ({ account }) => account
     );
-    console.log('AUTHENTICATIO', authentication);
-
+    
     if (authentication && (accountInfos?.length || 0) > 0) {
         currentState = AppState.HOSTED;
     }
 
     const locked = useAppSelector(({ account: { locked } }) => locked);
-    console.log('LOCKED', locked);
     if (locked) {
         currentState = AppState.LOCKED;
     }
