@@ -31,9 +31,7 @@ const ChangePasswordPage = () => {
             }
             setIsPasswordIncorrect(false);
 
-            await dispatch(
-                changePassword({ currentPassword, newPassword })
-            );
+            await dispatch(changePassword({ currentPassword, newPassword }));
             await dispatch(loadAccountInformationFromStorage());
             navigate(settingsHomeUrl);
         },

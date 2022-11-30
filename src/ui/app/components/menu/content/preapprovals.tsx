@@ -14,7 +14,6 @@ type GroupedPreapprovals = {
 };
 
 export default function Preapprovals() {
-
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
     const [preapprovals, setPreapprovals] = useState<PreapprovalRequest[]>([]);
     const [groupedPreapprovals, setGroupedPreapprovals] = useState<Record<
@@ -163,7 +162,7 @@ export default function Preapprovals() {
                                             0
                                         ) /
                                             transactions.length) *
-                                        100
+                                            100
                                     ) / 100}
                                 </div>
                             </div>

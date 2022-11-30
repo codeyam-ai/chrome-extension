@@ -8,7 +8,7 @@ import {
     LockClosedIcon,
     PlusCircleIcon,
     ShieldExclamationIcon,
-    SignalIcon
+    SignalIcon,
 } from '@heroicons/react/24/solid';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -22,7 +22,7 @@ import {
     DASHBOARD_LINK,
     IFRAME_URL,
     MAILTO_SUPPORT_URL,
-    ToS_LINK
+    ToS_LINK,
 } from '_src/shared/constants';
 import { ThemeContext } from '_src/shared/utils/themeContext';
 import { useNextSettingsUrl } from '_src/ui/app/components/settings-menu/hooks';
@@ -157,13 +157,13 @@ const SettingsHomePage = () => {
                                     iconWithNoClasses: <PlusCircleIcon />,
                                     onClick: handleCreateWallet,
                                 },
-                                {
-                                    text: 'Import Wallet',
-                                    iconWithNoClasses: (
-                                        <ArrowDownOnSquareIcon />
-                                    ),
-                                    to: importWalletUrl,
-                                },
+                                // {
+                                //     text: 'Import Wallet',
+                                //     iconWithNoClasses: (
+                                //         <ArrowDownOnSquareIcon />
+                                //     ),
+                                //     to: importWalletUrl,
+                                // },
                             ],
                         },
                         {
@@ -183,16 +183,16 @@ const SettingsHomePage = () => {
                                 },
                             ],
                         },
-                        {
-                            color: pink,
-                            items: [
-                                {
-                                    text: 'Reset Ethos',
-                                    iconWithNoClasses: <FireIcon />,
-                                    onClick: resetWallet,
-                                },
-                            ],
-                        },
+                        // {
+                        //     color: pink,
+                        //     items: [
+                        //         {
+                        //             text: 'Reset Ethos',
+                        //             iconWithNoClasses: <FireIcon />,
+                        //             onClick: resetWallet,
+                        //         },
+                        //     ],
+                        // },
                     ]}
                 />
             </CreateWalletProvider>
