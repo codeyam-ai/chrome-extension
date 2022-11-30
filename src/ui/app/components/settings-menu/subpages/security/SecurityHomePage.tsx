@@ -3,6 +3,12 @@ import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import Header from '_src/ui/app/shared/typography/Header';
+import { useEffect, useState } from 'react';
+import { getEncrypted } from '_src/shared/storagex/store';
+
+interface SecurityHomePageProps {
+    isHostedWallet: boolean;
+}
 
 interface SecurityItem {
     title: string;
@@ -26,10 +32,15 @@ const SecurityItem = ({ item }: { item: SecurityItem }) => {
     );
 };
 
-const SecurityHomePage = () => {
+const SecurityHomePage = ({ isHostedWallet }: SecurityHomePageProps) => {
     const changePasswordUrl = useNextSettingsUrl(
         true,
         '/security/change-password'
+    );
+    const viewSeedUrl = useNextSettingsUrl(true, '/security/view-seed');
+    const viewPrivateKeyUrl = useNextSettingsUrl(
+        true,
+        '/security/view-private-key'
     );
     const securityItems: SecurityItem[] = [
         {
@@ -44,16 +55,21 @@ const SecurityHomePage = () => {
             description:
                 'Recovery phrases gives you access to all wallets that are associated with it. Here, you can manage your recovery phrases.',
             buttonText: 'View Recovery Phrases',
-            buttonTo: '/',
+            buttonTo: viewSeedUrl,
         },
         {
             title: 'Private Key',
             description:
                 'Your private key grants access to the wallet that you are currently in.',
             buttonText: 'View Private Key',
-            buttonTo: '/',
+            buttonTo: viewPrivateKeyUrl,
         },
     ];
+
+    // Email users cannot view their seed
+    if (isHostedWallet) {
+        securityItems.splice(1, 1);
+    }
 
     return (
         <div className="flex flex-col px-6 divide-y divide-ethos-light-text-stroke dark:divide-ethos-dark-text-stroke">

@@ -1,13 +1,13 @@
 import { useCallback, useState } from 'react';
 
-import Button from '../../../shared/buttons/Button';
-import { useNextSettingsUrl } from '../../settings-menu/hooks';
+import Button from '../../../../../shared/buttons/Button';
 import { useAppSelector } from '_src/ui/app/hooks';
 import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 import type { ChangeEventHandler } from 'react';
+import { useNextSettingsUrl } from '../../../hooks';
 
-export default function ViewSeed() {
+export default function ViewSeedPage() {
     const menuUrl = useNextSettingsUrl(true, '/');
     const [hasConfirmed, setHasConfirmed] = useState(false);
     const [showSeed, setShowSeed] = useState(false);
