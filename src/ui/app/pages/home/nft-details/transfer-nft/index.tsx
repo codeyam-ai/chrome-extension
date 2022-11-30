@@ -4,8 +4,7 @@
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-
+import { SuccessAlert } from '_src/ui/app/shared/alerts/success-alert';
 import TransferNFTForm from './TransferNFTForm';
 import { createValidationSchema } from './validation';
 import { useAppSelector, useAppDispatch } from '_hooks';
@@ -95,26 +94,16 @@ function TransferNFTCard({ objectId }: TransferProps) {
                     // Redirect to nft page
                     navigate('/nfts');
 
-                    // This nav link does not work...
                     const navLink = `/receipt?${new URLSearchParams({
                         txdigest: resp.txId,
                     }).toString()}`;
 
-                    const receiptRedirect = () => {
-                        console.log('redirect to: ', navLink);
-                        // TODO: This is the correct link for the transaction digest but
-                        // the page is not loading correctly. After navigating to the
-                        // /transactions page and selecting the transaction it works fine
-                        navigate(navLink);
-                    };
-
-                    toast.success(
-                        <div className={'flex flex-row justify-between'}>
-                            <div>Transaction Successful.</div>
-                            <Link className={'font-semibold'} to={navLink}>
-                                View
-                            </Link>
-                        </div>
+                    toast(
+                        <SuccessAlert
+                            text={'Transaction successful.'}
+                            linkText={'View'}
+                            linkUrl={navLink}
+                        />
                     );
                 }
             } catch (e) {

@@ -13,6 +13,12 @@
     scrollbar-width: none; /* Firefox */
 }
 
+.Toastify__toast-container {
+    position: absolute;
+    top: 40px;
+    width: 312px;
+}
+
 .Toastify__toast {
     border-radius: 40px;
     min-height: 44px;
