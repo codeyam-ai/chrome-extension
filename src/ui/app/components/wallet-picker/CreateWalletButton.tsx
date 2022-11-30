@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useState } from 'react';
 
 import { type AccountInfo } from '../../KeypairVault';
 import getNextWalletColor from '../../helpers/getNextWalletColor';
@@ -11,10 +11,12 @@ import {
 import { clearForNetworkOrWalletSwitch } from '../../redux/slices/sui-objects';
 import { thunkExtras } from '../../redux/store/thunk-extras';
 import Button from '../../shared/buttons/Button';
+import Loading from '../loading';
 import Authentication from '_src/background/Authentication';
 
 const CreateWalletButton = () => {
     const dispatch = useAppDispatch();
+    const [loading, setLoading] = useState(false);
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
     const authentication = useAppSelector(
         ({ account }) => account.authentication
@@ -66,6 +68,7 @@ const CreateWalletButton = () => {
     }, [authentication, dispatch, getAccountInfos]);
 
     const createWallet = useCallback(() => {
+        setLoading(true);
         const loadAccFromStorage = async () => {
             const sortedAccountIndices = accountInfos
                 .map((a) => a.index || 0)
@@ -105,6 +108,7 @@ const CreateWalletButton = () => {
             }
 
             setAccountInfos(newAccountInfos);
+            setLoading(false);
         };
         loadAccFromStorage();
         _saveAccountInfos();
@@ -112,7 +116,7 @@ const CreateWalletButton = () => {
 
     return (
         <Button buttonStyle="primary" onClick={createWallet}>
-            Create Wallet
+            <Loading loading={loading}>Create Wallet</Loading>
         </Button>
     );
 };

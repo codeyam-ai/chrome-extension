@@ -118,8 +118,9 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             activeAccountIndex = (accountInfos?.length || 1) - 1;
         }
 
-        const locked = await getEncrypted('locked');
-        if (locked) {
+        const locked = await getEncrypted(LOCKED, passphrase);
+        console.log('LOCKEDx', locked);
+        if (!locked || locked !== `${LOCKED}${passphrase}`) {
             return {
                 authentication: null,
                 passphrase: passphrase || null,
@@ -173,6 +174,7 @@ export const saveAuthentication = createAsyncThunk(
         if (!authentication) {
             await deleteEncrypted('authentication');
         } else {
+            console.log('SET AUTHENTICATION', authentication);
             await setEncrypted('authentication', authentication);
         }
         return authentication;
@@ -242,6 +244,7 @@ export const savePassphrase: AsyncThunk<
         }
 
         await setEncrypted('passphrase', passphrase);
+        await setEncrypted(LOCKED, `${LOCKED}${passphrase}`, passphrase);
 
         const {
             account: { mnemonic },
@@ -289,9 +292,16 @@ export const reset = createAsyncThunk(
 
 export const logout = createAsyncThunk(
     'account/logout',
-    async (_args): Promise<void> => {
-        await setEncrypted('locked', LOCKED);
-        await deleteEncrypted('authentication');
+    async (_args, { getState }): Promise<void> => {
+        const {
+            account: { authentication },
+        } = getState() as RootState;
+
+        if (authentication) {
+            await deleteEncrypted('authentication');
+        } else {
+            await deleteEncrypted(LOCKED);
+        }
     }
 );
 
@@ -300,9 +310,11 @@ export const unlock: AsyncThunk<boolean, string | null, AppThunkConfig> =
         'account/unlock',
         async (passphrase): Promise<boolean> => {
             const existingPassphrase = await getEncrypted('passphrase');
+            if (!passphrase || !existingPassphrase) return false;
+
             if (existingPassphrase !== passphrase) return false;
 
-            await deleteEncrypted('locked');
+            await setEncrypted(LOCKED, `${LOCKED}${passphrase}`, passphrase);
             return true;
         }
     );
@@ -415,8 +427,13 @@ const accountSlice = createSlice({
             .addCase(saveEmail.fulfilled, (state, action) => {
                 state.email = action.payload;
             })
-            .addCase(logout.pending, (state) => {
-                state.locked = true;
+            .addCase(logout.fulfilled, (state) => {
+                console.log('STATE', state.authentication, state.locked);
+                if (state.authentication) {
+                    state.authentication = null;
+                } else {
+                    state.locked = true;
+                }
             }),
 });
 
