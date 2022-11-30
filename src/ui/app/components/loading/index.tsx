@@ -19,10 +19,7 @@ const Loading = ({ loading, children, className, big }: LoadingProps) => {
         if (loading) return;
 
         const resize = () => {
-            window.resizeTo(
-                document.body.offsetWidth,
-                document.body.offsetHeight + 30
-            );
+            window.resizeTo(window.innerWidth, document.body.offsetHeight + 30);
         };
         resize();
         Promise.all(
