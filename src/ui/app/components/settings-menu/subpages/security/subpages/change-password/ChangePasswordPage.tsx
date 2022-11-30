@@ -1,31 +1,23 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useNextSettingsUrl } from '../../../../hooks';
-import ChangePasswordForm from './ChangePasswordForm';
-import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
+import { useAppDispatch } from '_src/ui/app/hooks';
 import {
-    savePassphrase,
-    loadAccountInformationFromStorage,
-    unlock,
+    assertPasswordIsCorrect,
     changePassword,
-    assertPasswordIsCorrect as assertPasswordIsCorrect,
-    saveAccountInfos,
-    saveActiveAccountIndex,
+    loadAccountInformationFromStorage,
 } from '_src/ui/app/redux/slices/account';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import Header from '_src/ui/app/shared/typography/Header';
+import { useNextSettingsUrl } from '../../../../hooks';
+import ChangePasswordForm from './ChangePasswordForm';
 
 const ChangePasswordPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const settingsHomeUrl = useNextSettingsUrl(true);
     const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false);
-
-    const openToast = useCallback(() => {
-        console.log('opening toast...');
-    }, []);
 
     const onPasswordChanged = useCallback(
         async (currentPassword: string, newPassword: string) => {
@@ -59,7 +51,6 @@ const ChangePasswordPage = () => {
                     First enter your current password, then your new password.
                 </BodyLarge>
             </ContentBlock>
-            <button onClick={openToast}>Open toast</button>
             <ChangePasswordForm
                 onSubmit={onPasswordChanged}
                 isPasswordIncorrect={isPasswordIncorrect}
