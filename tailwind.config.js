@@ -89,7 +89,7 @@ module.exports = {
                 // ==========
 
                 // Background
-                'ethos-dark-background-default': '#1F2937',
+                'ethos-dark-background-default': '#111111',
                 'ethos-dark-background-secondary': '#1A1C26',
 
                 // Text and stroke
