@@ -4,18 +4,15 @@ import {
     DocumentTextIcon,
     GlobeAltIcon,
     LockClosedIcon,
-    PlusCircleIcon,
     ShieldExclamationIcon,
     SignalIcon,
 } from '@heroicons/react/24/solid';
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useContext, useEffect, useMemo } from 'react';
 
 import { API_ENV_TO_INFO } from '../../ApiProvider';
 import { iframe } from '../../helpers';
 import SettingsList from '../../shared/navigation/nav-bar/SettingsList';
 import PaintBrushIcon from '../../shared/svg/PaintBrushIcon';
-import CreateWalletProvider from '../wallet-picker/CreateWalletProvider';
 import {
     DASHBOARD_LINK,
     IFRAME_URL,
@@ -31,15 +28,15 @@ import { reset } from '_src/ui/app/redux/slices/account';
 const SettingsHomePage = () => {
     const orange = '#EE950F';
     const purple = '#9040F5';
-    const blue = '#328EFA';
+    // const blue = '#328EFA';
     const green = '#01C57E';
+    // const pink = '#E81CA5';
 
     // const [loading, setLoading] = useState(false);
-    const [createWallet, setCreateWallet] = useState<() => void>(
-        () => () => null
-    );
+    // const [createWallet, setCreateWallet] = useState<() => void>(
+    //     () => () => null
+    // );
     const dispatch = useAppDispatch();
-    const navigate = useNavigate();
     const networkUrl = useNextSettingsUrl(true, '/network');
     const themeUrl = useNextSettingsUrl(true, '/theme');
     const securityUrl = useNextSettingsUrl(true, '/security');
@@ -54,10 +51,10 @@ const SettingsHomePage = () => {
     const apiEnv = useAppSelector((state) => state.app.apiEnv);
     const networkName = API_ENV_TO_INFO[apiEnv].name;
 
-    const handleCreateWallet = useCallback(() => {
-        createWallet();
-        navigate('/tokens');
-    }, [createWallet, navigate]);
+    // const handleCreateWallet = useCallback(() => {
+    //     createWallet();
+    //     navigate('/tokens');
+    // }, [createWallet, navigate]);
 
     // const resetWallet = useCallback(async () => {
     //     setLoading(true);
@@ -90,109 +87,105 @@ const SettingsHomePage = () => {
 
     return (
         <div>
-            <CreateWalletProvider setCreateWallet={setCreateWallet}>
-                <SettingsList
-                    listSections={[
-                        {
-                            color: orange,
-                            items: [
-                                {
-                                    text: 'View Explorer',
-                                    iconWithNoClasses: <GlobeAltIcon />,
-                                    to: DASHBOARD_LINK,
-                                    isExternalLink: true,
-                                },
-                                {
-                                    text: 'OpenExpandedView',
-                                    iconWithNoClasses: (
-                                        <ArrowsPointingOutIcon />
-                                    ),
-                                    to: '/tokens',
-                                    isExpandView: true,
-                                },
-                            ],
-                        },
-                        {
-                            color: purple,
-                            items: [
-                                {
-                                    text: 'Network',
-                                    iconWithNoClasses: <SignalIcon />,
-                                    to: networkUrl,
-                                    detailText: networkName,
-                                },
-                                {
-                                    text: 'Theme',
-                                    iconWithNoClasses: <PaintBrushIcon />,
-                                    to: themeUrl,
-                                    detailText: themeDisplay,
-                                },
-                                {
-                                    text: 'Security',
-                                    iconWithNoClasses: (
-                                        <ShieldExclamationIcon />
-                                    ),
-                                    to: securityUrl,
-                                },
-                                {
-                                    text: 'Permissions',
-                                    iconWithNoClasses: <DocumentCheckIcon />,
-                                    to: permissionsUrl,
-                                },
-                                {
-                                    text: 'Lock Ethos',
-                                    iconWithNoClasses: <LockClosedIcon />,
-                                    to: lockUrl,
-                                },
-                            ],
-                        },
-                        {
-                            color: blue,
-                            items: [
-                                {
-                                    text: 'Create Wallet',
-                                    iconWithNoClasses: <PlusCircleIcon />,
-                                    onClick: handleCreateWallet,
-                                },
-                                // {
-                                //     text: 'Import Wallet',
-                                //     iconWithNoClasses: (
-                                //         <ArrowDownOnSquareIcon />
-                                //     ),
-                                //     to: importWalletUrl,
-                                // },
-                            ],
-                        },
-                        {
-                            color: green,
-                            items: [
-                                {
-                                    text: 'Terms of Service',
-                                    iconWithNoClasses: <DocumentTextIcon />,
-                                    to: ToS_LINK,
-                                    isExternalLink: true,
-                                },
-                                {
-                                    text: 'Contact Ethos Support',
-                                    iconWithNoClasses: <DocumentTextIcon />,
-                                    to: MAILTO_SUPPORT_URL,
-                                    isExternalLink: true,
-                                },
-                            ],
-                        },
-                        // {
-                        //     color: pink,
-                        //     items: [
-                        //         {
-                        //             text: 'Reset Ethos',
-                        //             iconWithNoClasses: <FireIcon />,
-                        //             onClick: resetWallet,
-                        //         },
-                        //     ],
-                        // },
-                    ]}
-                />
-            </CreateWalletProvider>
+            {/* <CreateWalletProvider setCreateWallet={setCreateWallet}> */}
+            <SettingsList
+                listSections={[
+                    {
+                        color: orange,
+                        items: [
+                            {
+                                text: 'View Explorer',
+                                iconWithNoClasses: <GlobeAltIcon />,
+                                to: DASHBOARD_LINK,
+                                isExternalLink: true,
+                            },
+                            {
+                                text: 'OpenExpandedView',
+                                iconWithNoClasses: <ArrowsPointingOutIcon />,
+                                to: '/tokens',
+                                isExpandView: true,
+                            },
+                        ],
+                    },
+                    {
+                        color: purple,
+                        items: [
+                            {
+                                text: 'Network',
+                                iconWithNoClasses: <SignalIcon />,
+                                to: networkUrl,
+                                detailText: networkName,
+                            },
+                            {
+                                text: 'Theme',
+                                iconWithNoClasses: <PaintBrushIcon />,
+                                to: themeUrl,
+                                detailText: themeDisplay,
+                            },
+                            {
+                                text: 'Security',
+                                iconWithNoClasses: <ShieldExclamationIcon />,
+                                to: securityUrl,
+                            },
+                            {
+                                text: 'Permissions',
+                                iconWithNoClasses: <DocumentCheckIcon />,
+                                to: permissionsUrl,
+                            },
+                            {
+                                text: 'Lock Ethos',
+                                iconWithNoClasses: <LockClosedIcon />,
+                                to: lockUrl,
+                            },
+                        ],
+                    },
+                    // {
+                    //     color: blue,
+                    //     items: [
+                    //         {
+                    //             text: 'Create Wallet',
+                    //             iconWithNoClasses: <PlusCircleIcon />,
+                    //             onClick: handleCreateWallet,
+                    //         },
+                    //         {
+                    //             text: 'Import Wallet',
+                    //             iconWithNoClasses: (
+                    //                 <ArrowDownOnSquareIcon />
+                    //             ),
+                    //             to: importWalletUrl,
+                    //         },
+                    //     ],
+                    // },
+                    {
+                        color: green,
+                        items: [
+                            {
+                                text: 'Terms of Service',
+                                iconWithNoClasses: <DocumentTextIcon />,
+                                to: ToS_LINK,
+                                isExternalLink: true,
+                            },
+                            {
+                                text: 'Contact Ethos Support',
+                                iconWithNoClasses: <DocumentTextIcon />,
+                                to: MAILTO_SUPPORT_URL,
+                                isExternalLink: true,
+                            },
+                        ],
+                    },
+                    // {
+                    //     color: pink,
+                    //     items: [
+                    //         {
+                    //             text: 'Reset Ethos',
+                    //             iconWithNoClasses: <FireIcon />,
+                    //             onClick: resetWallet,
+                    //         },
+                    //     ],
+                    // },
+                ]}
+            />
+            {/* </CreateWalletProvider> */}
             <iframe
                 id="wallet-iframe"
                 src={IFRAME_URL}
