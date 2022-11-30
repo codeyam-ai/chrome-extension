@@ -292,13 +292,13 @@ export const logout = createAsyncThunk(
     'account/logout',
     async (_args, { getState }): Promise<void> => {
         const {
-            account: { authentication },
+            account: { authentication, passphrase },
         } = getState() as RootState;
 
         if (authentication) {
             await deleteEncrypted('authentication');
-        } else {
-            await deleteEncrypted(LOCKED);
+        } else if (passphrase) {
+            await deleteEncrypted(LOCKED, passphrase);
         }
     }
 );
