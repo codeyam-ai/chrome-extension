@@ -57,7 +57,7 @@ export function DappTxApprovalPage() {
     const txRequestsLoading = useAppSelector(
         ({ transactionRequests }) => !transactionRequests.initialized
     );
-    const { activeAccountIndex, address } = useAppSelector(
+    const { activeAccountIndex, address, authentication } = useAppSelector(
         ({ account }) => account
     );
     const txRequestSelector = useMemo(
@@ -251,9 +251,17 @@ export function DappTxApprovalPage() {
                     return;
                 }
 
-                const signer = thunkExtras.api.getSignerInstance(
-                    thunkExtras.keypairVault.getKeyPair(activeAccountIndex)
-                );
+                let signer;
+                if (authentication) {
+                    signer = thunkExtras.api.getEthosSignerInstance(
+                        address || '',
+                        authentication
+                    );
+                } else {
+                    signer = thunkExtras.api.getSignerInstance(
+                        thunkExtras.keypairVault.getKeyPair(activeAccountIndex)
+                    );
+                }
                 const transactionEffects = await signer.dryRunTransaction(
                     txRequest.tx.data
                 );
@@ -273,7 +281,7 @@ export function DappTxApprovalPage() {
         };
 
         getEffects();
-    }, [txRequest, activeAccountIndex]);
+    }, [txRequest, activeAccountIndex, address, authentication]);
 
     useEffect(() => {
         const getNormalizedFunction = async () => {
