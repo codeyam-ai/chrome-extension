@@ -15,7 +15,7 @@ import Body from '_src/ui/app/shared/typography/Body';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
-import NavBarWithMenu from '_src/ui/app/shared/navigation/nav-bar/NavBarWithMenu';
+import NavBarWithSettingsAndWalletPicker from '_src/ui/app/shared/navigation/nav-bar/NavBarWithSettingsAndWalletPicker';
 
 function TokensPage() {
     const { loading, error, showError } = useObjectsState();
@@ -24,6 +24,7 @@ function TokensPage() {
 
     return (
         <>
+            <NavBarWithSettingsAndWalletPicker />
             {showError && error ? (
                 <div className="px-6 py-6">
                     <Alert
@@ -33,7 +34,6 @@ function TokensPage() {
                 </div>
             ) : (
                 <>
-                    <NavBarWithMenu />
                     <Loading
                         loading={loading}
                         big={true}

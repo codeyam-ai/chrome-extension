@@ -14,7 +14,7 @@ import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
 import type { TxResultState } from '_redux/slices/txresults';
 
 import st from './Transactions.module.scss';
-import NavBarWithMenu from '_src/ui/app/shared/navigation/nav-bar/NavBarWithMenu';
+import NavBarWithSettingsAndWalletPicker from '_src/ui/app/shared/navigation/nav-bar/NavBarWithSettingsAndWalletPicker';
 
 function TransactionsPage() {
     const dispatch = useAppDispatch();
@@ -29,7 +29,7 @@ function TransactionsPage() {
 
     return (
         <>
-            <NavBarWithMenu />
+            <NavBarWithSettingsAndWalletPicker />
             <Loading loading={loading} big={true}>
                 {txByAddress && txByAddress.length ? (
                     <div className={st.container}>

@@ -9,14 +9,14 @@ import NftGrid from '_src/ui/app/shared/content/rows-and-lists/NftGrid';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
-import NavBarWithMenu from '../../shared/navigation/nav-bar/NavBarWithMenu';
+import NavBarWithSettingsAndWalletPicker from '../../shared/navigation/nav-bar/NavBarWithSettingsAndWalletPicker';
 
 function NftsPage() {
     const nfts = useAppSelector(accountNftsSelector) || [];
 
     return (
         <div>
-            <NavBarWithMenu />
+            <NavBarWithSettingsAndWalletPicker />
             {nfts.length <= 0 ? (
                 <EmptyPageState
                     iconWithNoClasses={<PlaceholderImage />}

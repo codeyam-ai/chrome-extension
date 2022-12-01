@@ -26,7 +26,7 @@ import { truncateMiddle } from '_src/ui/app/helpers/truncate-string-middle';
 
 import type { SuiObject } from '@mysten/sui.js';
 import type { ButtonHTMLAttributes } from 'react';
-import NavBarWithMenu from '_src/ui/app/shared/navigation/nav-bar/NavBarWithMenu';
+import NavBarWithBackAndWalletPicker from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndWalletPicker';
 
 function NFTdetailsContent({
     nft,
@@ -231,7 +231,7 @@ function NFTDetailsPage() {
 
     return (
         <div className="">
-            <NavBarWithMenu backUrl={'/nfts'} />
+            <NavBarWithBackAndWalletPicker backUrl={'/nfts'} />
             <Loading loading={loadingBalance} big={true}>
                 {objectId && startNFTTransfer ? (
                     <TransferNFTCard objectId={objectId} />

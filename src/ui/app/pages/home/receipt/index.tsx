@@ -14,7 +14,7 @@ import {
 } from '_redux/slices/txresults';
 
 import st from './ReceiptPage.module.scss';
-import NavBarWithMenu from '_src/ui/app/shared/navigation/nav-bar/NavBarWithMenu';
+import NavBarWithBackAndWalletPicker from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndWalletPicker';
 
 // Response pages for all transactions
 // use txDigest for the transaction result
@@ -53,7 +53,7 @@ function ReceiptPage() {
 
     return (
         <div>
-            <NavBarWithMenu backUrl={'/transactions'} />
+            <NavBarWithBackAndWalletPicker backUrl={'/transactions'} />
             <Loading loading={loading} big={true}>
                 <div className={st.container}>
                     <Content>
