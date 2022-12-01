@@ -103,7 +103,8 @@ function TransferNFTCard({ objectId }: TransferProps) {
                             text={'Transaction successful.'}
                             linkText={'View'}
                             linkUrl={navLink}
-                        />
+                        />,
+                        { delay: 500 }
                     );
                 }
             } catch (e) {
