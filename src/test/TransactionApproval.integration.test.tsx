@@ -44,7 +44,7 @@ describe('The Transaction Approval popup', () => {
 
         act(() => {
             view.store.dispatch(setTransactionRequests([txRequest]));
-        })
+        });
         await screen.findByText('Transfer Asset');
     });
 });
