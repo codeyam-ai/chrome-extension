@@ -19,7 +19,7 @@ const BaseLayout = ({ className, children }: BaseLayoutProps) => {
             <ToastContainer
                 position="top-center"
                 transition={Fade}
-                autoClose={3500}
+                autoClose={2000}
                 hideProgressBar
                 newestOnTop={true}
                 closeOnClick={false}
