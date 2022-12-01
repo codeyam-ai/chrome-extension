@@ -34,7 +34,7 @@ function TransactionsPage() {
                 {txByAddress && txByAddress.length ? (
                     <div className={st.container}>
                         <TextPageTitle title="Activity" />
-                        <PageScrollView>
+                        <PageScrollView heightInPx={348}>
                             <TransactionRows transactions={txByAddress} />
                         </PageScrollView>
                     </div>
