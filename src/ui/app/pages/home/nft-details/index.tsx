@@ -54,12 +54,14 @@ function NFTdetailsContent({
         <>
             <div>
                 <PageScrollView heightInPx={425}>
-                    <div className="text-center w-full p-6">
-                        <BlurredImage
-                            imgSrc={filePath || ''}
-                            fileExt={fileExtentionType?.name || 'NFT'}
-                        />
-                        <div className="mb-4 py-6">
+                    <div className="text-center w-full">
+                        <div className={'px-6 pt-6'}>
+                            <BlurredImage
+                                imgSrc={filePath || ''}
+                                fileExt={fileExtentionType?.name || 'NFT'}
+                            />
+                        </div>
+                        <div className="p-6">
                             <Title className={'text-left mb-2'}>
                                 {nftFields?.name}
                             </Title>
@@ -75,15 +77,16 @@ function NFTdetailsContent({
                                 <Button
                                     isInline
                                     buttonStyle="primary"
-                                    className="inline-block"
+                                    className={'inline-block mb-0'}
                                     onClick={onClick}
                                 >
                                     Send
                                 </Button>
                             )}
+                        </div>
 
-                            <div className={'w-full text-left'}>
-                                {/** 
+                        <div className={'w-full text-left'}>
+                            {/** 
                                  * 
                                  * Replace when NFT events are determined
                                  * 
@@ -92,78 +95,62 @@ function NFTdetailsContent({
                                     Activity
                                 </BodyLarge>
                                 <NFTTransactionRows />*/}
-                                <BodyLarge isSemibold className={'mb-3'}>
-                                    Creator
-                                </BodyLarge>
-                                <KeyValueList
-                                    keyNamesAndValues={[
-                                        {
-                                            keyName: 'Wallet Address',
-                                            value: truncateMiddle(
-                                                nft?.owner?.AddressOwner
-                                            ),
-                                        },
-                                    ]}
-                                />
-                                <BodyLarge isSemibold className={'mb-3'}>
-                                    Details
-                                </BodyLarge>
-                                <KeyValueList
-                                    keyNamesAndValues={[
-                                        {
-                                            keyName: 'Has public transfer',
-                                            value: nft?.data
-                                                ?.has_public_transfer
-                                                ? 'Yes'
-                                                : 'No',
-                                        },
-                                        {
-                                            keyName: 'Object ID',
-                                            value: truncateMiddle(
-                                                nft.reference.objectId
-                                            ),
-                                        },
-                                        {
-                                            keyName: 'Digest',
-                                            value: truncateMiddle(
-                                                nft.reference.digest
-                                            ),
-                                        },
-                                    ]}
-                                />
-                            </div>
-                            <div
-                                className={
-                                    'border-t-1 border-t-solid border-ethos-light-text-medium pt-8'
-                                }
-                            >
-                                <div
-                                    className={'flex flex-row justify-between'}
-                                >
-                                    <BodyLarge>
-                                        <ExplorerLink
-                                            type={ExplorerLinkType.transaction}
-                                            transactionID={
-                                                nft.previousTransaction
-                                            }
-                                            title="View on Sui Explorer"
-                                            showIcon={true}
-                                        >
-                                            View on Sui Explorer
-                                        </ExplorerLink>
-                                    </BodyLarge>
-                                    <div
-                                        className={
-                                            'text-ethos-light-text-medium'
-                                        }
+                            <KeyValueList
+                                header={'Creator'}
+                                keyNamesAndValues={[
+                                    {
+                                        keyName: 'Wallet Address',
+                                        value: truncateMiddle(
+                                            nft?.owner?.AddressOwner
+                                        ),
+                                    },
+                                ]}
+                            />
+                            <KeyValueList
+                                header={'Details'}
+                                keyNamesAndValues={[
+                                    {
+                                        keyName: 'Has public transfer',
+                                        value: nft?.data?.has_public_transfer
+                                            ? 'Yes'
+                                            : 'No',
+                                    },
+                                    {
+                                        keyName: 'Object ID',
+                                        value: truncateMiddle(
+                                            nft.reference.objectId
+                                        ),
+                                    },
+                                    {
+                                        keyName: 'Digest',
+                                        value: truncateMiddle(
+                                            nft.reference.digest
+                                        ),
+                                    },
+                                ]}
+                            />
+                        </div>
+                        <div
+                            className={
+                                'border-t-1 border-t-solid border-ethos-light-text-medium pt-8 px-6'
+                            }
+                        >
+                            <div className={'flex flex-row justify-between'}>
+                                <BodyLarge>
+                                    <ExplorerLink
+                                        type={ExplorerLinkType.transaction}
+                                        transactionID={nft.previousTransaction}
+                                        title="View on Sui Explorer"
+                                        showIcon={true}
                                     >
-                                        <ArrowUpRightIcon
-                                            width={16}
-                                            height={16}
-                                        />
-                                    </div>
+                                        View on Sui Explorer
+                                    </ExplorerLink>
+                                </BodyLarge>
+                                <div className={'text-ethos-light-text-medium'}>
+                                    <ArrowUpRightIcon width={16} height={16} />
                                 </div>
-                                {/*
+                            </div>
+                            {/*
                                 
                                 Add these buttons in when fully integrated with Keepsake and Clutchy
                                 Currently no way to determine that the NFTs are located on either. 
@@ -189,7 +176,6 @@ function NFTdetailsContent({
                                     ]}
                                 />
                                 */}
-                            </div>
                         </div>
                     </div>
                 </PageScrollView>

@@ -75,7 +75,7 @@ function TransferNFTForm({
                     noValidate={true}
                 >
                     {!isReview ? (
-                        <div>
+                        <div className={'p-6'}>
                             <div className={'mb-6'}>
                                 <BodyLarge
                                     className={
@@ -144,7 +144,9 @@ function TransferNFTForm({
                         <div>
                             {nftobj && (
                                 <div>
-                                    <div className={'pb-8 text-center'}>
+                                    <div
+                                        className={'pb-8 px-6 pt-6 text-center'}
+                                    >
                                         <AssetCard
                                             isNft={true}
                                             imgUrl={
@@ -170,7 +172,7 @@ function TransferNFTForm({
                                         </Header>
                                     </div>
 
-                                    <div className={'pb-6 text-left'}>
+                                    <div className={'text-left'}>
                                         <KeyValueList
                                             keyNamesAndValues={[
                                                 {
@@ -207,18 +209,19 @@ function TransferNFTForm({
                                 </div>
                             )}
 
-                            <Button
-                                isInline
-                                buttonStyle="primary"
-                                type="submit"
-                                className={'mt-[13px]'}
-                            >
-                                {isSubmitting ? (
-                                    <LoadingIndicator />
-                                ) : (
-                                    'Confirm & Send'
-                                )}
-                            </Button>
+                            <div className={'p-6'}>
+                                <Button
+                                    isInline
+                                    buttonStyle="primary"
+                                    type="submit"
+                                >
+                                    {isSubmitting ? (
+                                        <LoadingIndicator />
+                                    ) : (
+                                        'Confirm & Send'
+                                    )}
+                                </Button>
+                            </div>
                         </div>
                     )}
                 </Form>

@@ -263,45 +263,42 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                         />
                     </div>
                 )}
-                <div className={'px-6 pb-6 text-left'}>
-                    <BodyLarge isSemibold className={'mb-3'}>
-                        Details
-                    </BodyLarge>
-                    {isNft ? (
-                        <KeyValueList
-                            keyNamesAndValues={[
-                                {
-                                    keyName: 'Transaction Fee',
-                                    value: `${gas} ${gasSymbol}`,
-                                },
-                                {
-                                    keyName: 'Signature',
-                                    value: fromAddrStr,
-                                },
-                            ]}
-                        />
-                    ) : (
-                        <KeyValueList
-                            keyNamesAndValues={[
-                                {
-                                    keyName:
-                                        transferType === 'Sent'
-                                            ? 'You Sent'
-                                            : 'You Received',
-                                    value: `${total} ${totalSymbol}`,
-                                },
-                                {
-                                    keyName: 'Transaction Fee',
-                                    value: `${gas} ${gasSymbol}`,
-                                },
-                                {
-                                    keyName: 'Total',
-                                    value: `$1.30`,
-                                },
-                            ]}
-                        />
-                    )}
-                </div>
+                {isNft ? (
+                    <KeyValueList
+                        header={'Details'}
+                        keyNamesAndValues={[
+                            {
+                                keyName: 'Transaction Fee',
+                                value: `${gas} ${gasSymbol}`,
+                            },
+                            {
+                                keyName: 'Signature',
+                                value: fromAddrStr,
+                            },
+                        ]}
+                    />
+                ) : (
+                    <KeyValueList
+                        header={'Details'}
+                        keyNamesAndValues={[
+                            {
+                                keyName:
+                                    transferType === 'Sent'
+                                        ? 'You Sent'
+                                        : 'You Received',
+                                value: `${total} ${totalSymbol}`,
+                            },
+                            {
+                                keyName: 'Transaction Fee',
+                                value: `${gas} ${gasSymbol}`,
+                            },
+                            {
+                                keyName: 'Total',
+                                value: `$1.30`,
+                            },
+                        ]}
+                    />
+                )}
                 {txDigest.txId && (
                     <div className={'px-6'}>
                         <div className={'flex flex-row justify-between'}>
