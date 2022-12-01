@@ -7,10 +7,8 @@ import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
-import TransferCoinForm from './TransferCoinForm';
-import { createTokenValidation } from './validation';
 import Loading from '_components/loading';
-import { useAppSelector, useAppDispatch } from '_hooks';
+import { useAppDispatch, useAppSelector } from '_hooks';
 import {
     accountAggregateBalancesSelector,
     accountCoinsSelector,
@@ -22,6 +20,8 @@ import {
     useFormatCoin,
 } from '_src/ui/app/hooks/useFormatCoin';
 import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
+import TransferCoinForm from './TransferCoinForm';
+import { createTokenValidation } from './validation';
 
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';

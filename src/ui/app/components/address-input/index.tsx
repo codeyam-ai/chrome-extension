@@ -1,15 +1,15 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { memo, useCallback, useMemo, useState } from 'react';
-
+import Input from '../../shared/inputs/Input';
 import lookup from './lookup';
+
+import { memo, useCallback, useMemo, useState } from 'react';
 import { SUI_ADDRESS_VALIDATION } from './validation';
 
 import type { SuiAddress } from '@mysten/sui.js';
 import type { FieldProps } from 'formik';
 import type { ChangeEventHandler } from 'react';
-import Input from '../../shared/inputs/Input';
 
 export interface AddressInputProps<Values>
     extends FieldProps<SuiAddress, Values> {

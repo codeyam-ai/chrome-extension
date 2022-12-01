@@ -3,7 +3,7 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { memo, useEffect } from 'react';
 
-import { useAppSelector, useAppDispatch } from '_hooks';
+import { useAppDispatch, useAppSelector } from '_hooks';
 import { getTransactionsByAddress } from '_redux/slices/txresults';
 import Loading from '_src/ui/app/components/loading';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
@@ -13,8 +13,8 @@ import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
 
 import type { TxResultState } from '_redux/slices/txresults';
 
-import st from './Transactions.module.scss';
 import NavBarWithSettingsAndWalletPicker from '_src/ui/app/shared/navigation/nav-bar/NavBarWithSettingsAndWalletPicker';
+import st from './Transactions.module.scss';
 
 function TransactionsPage() {
     const dispatch = useAppDispatch();

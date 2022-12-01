@@ -1,28 +1,24 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-    getObjectId,
-    hasPublicTransfer,
-    //JsonRpcProvider,
-} from '@mysten/sui.js';
-import { useMemo, useState, useCallback } from 'react';
+import { getObjectId, hasPublicTransfer } from '@mysten/sui.js';
+import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
-import TransferNFTCard from './transfer-nft';
+import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import Loading from '_components/loading';
 import { useAppSelector, useNFTBasicData } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account';
+import { truncateMiddle } from '_src/ui/app/helpers/truncate-string-middle';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
 import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
-import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
-import { truncateMiddle } from '_src/ui/app/helpers/truncate-string-middle';
+import TransferNFTCard from './transfer-nft';
 
 import type { SuiObject } from '@mysten/sui.js';
 import type { ButtonHTMLAttributes } from 'react';
@@ -37,18 +33,6 @@ function NFTdetailsContent({
 }) {
     const { filePath, nftObjectID, nftFields, fileExtentionType } =
         useNFTBasicData(nft);
-
-    /*
-
-    Could not get the example working for getEventsByTransaction
-    Error: Said method was not avaialable => possibly a devnet issue?
-
-    const provider = new JsonRpcProvider();
-    const txEvents = await provider.getEventsByTransaction(
-        '6mn5W1CczLwitHCO9OIUbqirNrQ0cuKdyxaNe16SAME='
-    );
-    
-    */
 
     return (
         <>

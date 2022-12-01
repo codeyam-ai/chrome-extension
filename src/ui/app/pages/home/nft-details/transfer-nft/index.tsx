@@ -2,28 +2,28 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Formik } from 'formik';
-import { useCallback, useMemo, useState, memo } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SuccessAlert } from '_src/ui/app/shared/alerts/success-alert';
-import TransferNFTForm from './TransferNFTForm';
-import { createValidationSchema } from './validation';
-import { useAppSelector, useAppDispatch } from '_hooks';
+import { useAppDispatch, useAppSelector } from '_hooks';
 import {
-    accountNftsSelector,
     accountAggregateBalancesSelector,
+    accountNftsSelector,
 } from '_redux/slices/account';
 import { transferNFT } from '_redux/slices/sui-objects';
 import {
-    GAS_TYPE_ARG,
     DEFAULT_NFT_TRANSFER_GAS_FEE,
+    GAS_TYPE_ARG,
 } from '_redux/slices/sui-objects/Coin';
+import { SuccessAlert } from '_src/ui/app/shared/alerts/success-alert';
+import TransferNFTForm from './TransferNFTForm';
+import { createValidationSchema } from './validation';
 
 import type { ObjectId } from '@mysten/sui.js';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
 
-import st from './TransferNFTForm.module.scss';
 import { toast } from 'react-toastify';
+import st from './TransferNFTForm.module.scss';
 
 const initialValues = {
     to: '',
