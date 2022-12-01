@@ -6,7 +6,7 @@ const CoinList = ({ balances }: { balances: Record<string, bigint> }) => {
         return <></>;
     }
     return (
-        <div className="text-left px-6">
+        <div className="text-left">
             <div className="text-lg">Coins</div>
             <Loading
                 className="py-3 flex justify-center items-center"

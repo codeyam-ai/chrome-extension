@@ -100,7 +100,7 @@ const SettingsHomePage = () => {
                                 isExternalLink: true,
                             },
                             {
-                                text: 'OpenExpandedView',
+                                text: 'Open Expanded View',
                                 iconWithNoClasses: <ArrowsPointingOutIcon />,
                                 to: '/tokens',
                                 isExpandView: true,

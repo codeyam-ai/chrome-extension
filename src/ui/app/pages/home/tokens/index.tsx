@@ -45,23 +45,29 @@ function TokensPage() {
                             <SendReceiveButtonGroup mistBalance={mistBalance} />
                         </div>
                         <div className="flex flex-col gap-6 pb-6 h-[222px] overflow-auto">
-                            <CoinList balances={balances} />
                             <ContentBlock>
-                                <Subheader as="h3">
-                                    Get started with Sui
-                                </Subheader>
-                                <Body as="p" isTextColorMedium>
-                                    Interested in SUI but not sure where to
-                                    start?
-                                </Body>
-                                <Body>
-                                    <EthosLink
-                                        type={LinkType.External}
-                                        to={DASHBOARD_LINK}
-                                    >
-                                        Discover New Apps →
-                                    </EthosLink>
-                                </Body>
+                                <CoinList balances={balances} />
+
+                                {(!balances ||
+                                    Object.keys(balances).length < 2) && (
+                                    <>
+                                        <Subheader as="h3">
+                                            Get started with Sui
+                                        </Subheader>
+                                        <Body as="p" isTextColorMedium>
+                                            Interested in SUI but not sure where
+                                            to start?
+                                        </Body>
+                                        <Body as="p" isTextColorMedium>
+                                            <EthosLink
+                                                type={LinkType.External}
+                                                to={DASHBOARD_LINK}
+                                            >
+                                                Discover New Apps →
+                                            </EthosLink>
+                                        </Body>
+                                    </>
+                                )}
                             </ContentBlock>
                         </div>
                     </Loading>

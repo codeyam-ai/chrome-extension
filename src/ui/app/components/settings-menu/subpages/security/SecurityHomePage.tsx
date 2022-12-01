@@ -36,10 +36,10 @@ const SecurityHomePage = ({ isHostedWallet }: SecurityHomePageProps) => {
         '/security/change-password'
     );
     const viewSeedUrl = useNextSettingsUrl(true, '/security/view-seed');
-    // const viewPrivateKeyUrl = useNextSettingsUrl(
-    //     true,
-    //     '/security/view-private-key'
-    // );
+    const viewPrivateKeyUrl = useNextSettingsUrl(
+        true,
+        '/security/view-private-key'
+    );
     const securityItems: SecurityItem[] = [
         {
             title: 'Passwords',
@@ -55,13 +55,13 @@ const SecurityHomePage = ({ isHostedWallet }: SecurityHomePageProps) => {
             buttonText: 'View Recovery Phrase',
             buttonTo: viewSeedUrl,
         },
-        // {
-        //     title: 'Private Key',
-        //     description:
-        //         'Your private key grants access to the wallet that you are currently in.',
-        //     buttonText: 'View Private Key',
-        //     buttonTo: viewPrivateKeyUrl,
-        // },
+        {
+            title: 'Private Key',
+            description:
+                'Your private key grants access to the wallet that you are currently in.',
+            buttonText: 'View Private Key',
+            buttonTo: viewPrivateKeyUrl,
+        },
     ];
 
     // Email users cannot view their seed

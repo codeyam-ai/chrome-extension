@@ -24,6 +24,7 @@ import ImportWalletPage from '_src/ui/app/components/settings-menu/subpages/Impo
 import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/PermissionsPage';
 import NetworkPage from '_src/ui/app/components/settings-menu/subpages/network/NetworkPage';
 import SecurityHomePage from '_src/ui/app/components/settings-menu/subpages/security/SecurityHomePage';
+import ViewPrivateKeyPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewPrivateKeyPage';
 import ViewSeedPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewSeedPage';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
@@ -100,14 +101,14 @@ function SettingsRouterPage() {
                             element={<ViewSeedPage />}
                         />
                         <Route
+                            path="/security/view-private-key"
+                            element={<ViewPrivateKeyPage />}
+                        />
+                        <Route
                             path="/permissions"
                             element={<PermissionsPage />}
                         />
                         <Route path="/lock" element={<LockPage />} />
-                        <Route
-                            path="/settings/view-seed"
-                            element={<ViewSeedPage />}
-                        />
                         <Route
                             path="/connected-apps"
                             element={<ConnectedApps />}

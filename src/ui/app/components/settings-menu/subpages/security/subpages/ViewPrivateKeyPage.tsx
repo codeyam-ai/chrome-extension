@@ -1,14 +1,16 @@
+import { Base64DataBuffer } from '@mysten/sui.js';
 import { useCallback, useState } from 'react';
 
 import Button from '../../../../../shared/buttons/Button';
+import { getKeypairFromMnemonics } from '_src/shared/cryptography/mnemonics';
 import { useAppSelector } from '_src/ui/app/hooks';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 
 import type { ChangeEventHandler } from 'react';
 
-export default function ViewSeedPage() {
+export default function ViewPrivateKeyPage() {
     const [hasConfirmed, setHasConfirmed] = useState(false);
-    const [showSeed, setShowSeed] = useState(false);
+    const [showPrivateKey, setShowPrivateKey] = useState(false);
     const onHandleConfirmed = useCallback<ChangeEventHandler<HTMLInputElement>>(
         (event) => {
             const checked = event.target.checked;
@@ -16,23 +18,31 @@ export default function ViewSeedPage() {
         },
         []
     );
-    const mnemonic = useAppSelector(
-        ({ account }) => account.createdMnemonic || account.mnemonic
-    );
-    const viewSeed = useCallback(async () => {
-        setShowSeed(true);
+    const privateKey = useAppSelector(({ account }) => {
+        const mnenonic = account.createdMnemonic || account.mnemonic;
+        if (!mnenonic) return;
+
+        const keypair = getKeypairFromMnemonics(
+            mnenonic,
+            account.activeAccountIndex
+        );
+        return new Base64DataBuffer(keypair.secretKey).toString();
+    });
+
+    const viewPrivateKey = useCallback(async () => {
+        setShowPrivateKey(true);
     }, []);
 
     return (
         <>
-            {showSeed ? (
+            {showPrivateKey ? (
                 <div className="p-6">
                     <textarea
                         rows={4}
-                        value={mnemonic || ''}
-                        id="mnemonic"
+                        value={privateKey || ''}
+                        id="privateKey"
                         className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
-                        name="mnemonic"
+                        name="privateKey"
                         disabled={true}
                     />
                 </div>
@@ -42,7 +52,7 @@ export default function ViewSeedPage() {
                         <Alert
                             title="Be careful!"
                             subtitle="Do not share your
-                                        recovery phrase. Anyone with it has full
+                                        private key. Anyone with it has full
                                         control over your wallet."
                         />
                     </div>
@@ -72,10 +82,10 @@ export default function ViewSeedPage() {
                     </div>
                     <Button
                         buttonStyle="secondary"
-                        onClick={viewSeed}
+                        onClick={viewPrivateKey}
                         disabled={!hasConfirmed}
                     >
-                        View recovery phrase
+                        View private key
                     </Button>
                 </>
             )}
