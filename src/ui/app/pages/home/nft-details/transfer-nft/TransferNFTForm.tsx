@@ -2,28 +2,28 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import cl from 'classnames';
-import { ErrorMessage, Form, Field, useFormikContext } from 'formik';
-import { useEffect, useState, useRef, memo } from 'react';
+import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
+import { memo, useEffect, useRef, useState } from 'react';
 
 import { Content } from '_app/shared/bottom-menu-layout';
 import AddressInput from '_components/address-input';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
-import { DEFAULT_NFT_TRANSFER_GAS_FEE } from '_redux/slices/sui-objects/Coin';
-import Button from '_src/ui/app/shared/buttons/Button';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 import NFTDisplayCard from '_components/nft-display';
-import { AssetCard } from '_src/ui/app/shared/nfts/AssetCard';
-import Body from '_src/ui/app/shared/typography/Body';
-import Header from '_src/ui/app/shared/typography/Header';
-import truncateString from '_src/ui/app/helpers/truncate-string';
+import { DEFAULT_NFT_TRANSFER_GAS_FEE } from '_redux/slices/sui-objects/Coin';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
+import Button from '_src/ui/app/shared/buttons/Button';
+import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
+import { AssetCard } from '_src/ui/app/shared/nfts/AssetCard';
+import Body from '_src/ui/app/shared/typography/Body';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import Header from '_src/ui/app/shared/typography/Header';
 
 import type { FormValues } from '.';
 
-import st from './TransferNFTForm.module.scss';
 import 'react-toastify/dist/ReactToastify.css';
+import st from './TransferNFTForm.module.scss';
+import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 
 export type TransferNFTFormProps = {
     submitError: string | null;
@@ -179,18 +179,14 @@ function TransferNFTForm({
                                                     keyName: 'From',
                                                     value: accountInfo?.name
                                                         ? accountInfo?.name
-                                                        : truncateString(
+                                                        : truncateMiddle(
                                                               nftobj.owner
-                                                                  .AddressOwner,
-                                                              4
+                                                                  .AddressOwner
                                                           ),
                                                 },
                                                 {
                                                     keyName: 'To',
-                                                    value: truncateString(
-                                                        to,
-                                                        4
-                                                    ),
+                                                    value: truncateMiddle(to),
                                                 },
                                                 {
                                                     keyName: 'NFT',
