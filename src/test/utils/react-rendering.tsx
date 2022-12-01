@@ -18,6 +18,7 @@ import type { PropsWithChildren } from 'react';
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: PreloadedState<RootState>;
     store?: AppStore;
+    initialRoute?: string;
 }
 
 export function renderWithProviders(
@@ -26,12 +27,15 @@ export function renderWithProviders(
         preloadedState = {},
         // Automatically create a store instance if no store was passed in
         store = createStore({ app: { appType: AppType.fullscreen } }),
+        initialRoute,
         ...renderOptions
     }: ExtendedRenderOptions = {}
 ) {
     function Wrapper({ children }: PropsWithChildren<unknown>): JSX.Element {
         return (
-            <MemoryRouter>
+            <MemoryRouter
+                initialEntries={initialRoute ? [initialRoute] : undefined}
+            >
                 <Provider store={store}>
                     <IntlProvider locale={'pt'}>
                         <QueryClientProvider client={queryClient}>

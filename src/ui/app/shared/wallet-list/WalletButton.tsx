@@ -10,6 +10,7 @@ import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import { clearForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
+import defaultColors from '_src/shared/defaultColorOptions';
 
 interface WalletButtonProps {
     wallet: AccountInfo;
@@ -44,9 +45,8 @@ const WalletButton = ({
 
     return (
         <div
-            className={`py-[10px] px-3 flex justify-between items-center ${
-                !isWalletEditing && 'cursor-pointer'
-            }`}
+            className={`py-[10px] px-3 flex justify-between items-center ${!isWalletEditing && 'cursor-pointer'
+                }`}
             onClick={switchToThisWallet}
         >
             <div className="flex gap-3">
@@ -57,7 +57,11 @@ const WalletButton = ({
                     emojiSizeClasses="h-6 w-6"
                 />
                 <div className="flex flex-col text-left" title={wallet.address}>
-                    <BodyLarge>{wallet.name}</BodyLarge>
+                    <BodyLarge>
+                        {wallet.name ||
+                            `Wallet${wallet.index > 0 ? ' ' + wallet.index + 1 : ''
+                            }`}
+                    </BodyLarge>
                     <Body isTextColorMedium>{shortenedAddress}</Body>
                 </div>
             </div>

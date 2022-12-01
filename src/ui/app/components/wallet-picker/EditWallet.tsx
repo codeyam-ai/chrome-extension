@@ -45,7 +45,12 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     const draftAccountInfos = useRef<AccountInfo[]>(_accountInfos);
 
     const [draftName, setDraftName] = useState<string>(
-        currentAccountInfo.name || `Wallet ${currentAccountInfo.index + 1}`
+        currentAccountInfo.name ||
+            `Wallet${
+                currentAccountInfo.index > 0
+                    ? ' ' + currentAccountInfo.index + 1
+                    : ''
+            }`
     );
 
     const [draftColor, setDraftColor] = useState<string>(
