@@ -101,6 +101,7 @@ const CreateWalletProvider = ({
                 if (newAccount) {
                     newAccount.name = `Wallet ${accountInfos.length + 1}`;
                     newAccount.color = getNextWalletColor(nextAccountIndex);
+                    newAccount.emoji = getNextEmoji(nextAccountIndex);
                 }
                 newAccountInfos = newAccount
                     ? [...accountInfos, newAccount]

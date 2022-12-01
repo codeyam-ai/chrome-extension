@@ -18,7 +18,7 @@ interface EmojiDisplayProps {
 }
 
 const EmojiDisplay = ({ emoji, className }: EmojiDisplayProps) => {
-    let baseEmoji = <DefaultEmoji />;
+    let baseEmoji = <Sparkles />;
     if (emoji === 'Rocket') baseEmoji = <Rocket />;
     if (emoji === 'Controller') baseEmoji = <Controller />;
     if (emoji === 'CrystalBall') baseEmoji = <CrystalBall />;
