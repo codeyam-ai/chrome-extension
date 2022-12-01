@@ -27,7 +27,7 @@ const Loading = ({
 
         const resizeWindow = () => {
             window.resizeTo(
-                document.body.offsetWidth,
+                window.outerWidth,
                 document.body.offsetHeight + 39
             );
         };
