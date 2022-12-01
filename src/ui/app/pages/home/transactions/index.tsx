@@ -14,6 +14,7 @@ import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
 import type { TxResultState } from '_redux/slices/txresults';
 
 import st from './Transactions.module.scss';
+import NavBarWithMenu from '_src/ui/app/shared/navigation/nav-bar/NavBarWithMenu';
 
 function TransactionsPage() {
     const dispatch = useAppDispatch();
@@ -27,24 +28,27 @@ function TransactionsPage() {
     }, [dispatch]);
 
     return (
-        <Loading loading={loading} big={true}>
-            {txByAddress && txByAddress.length ? (
-                <div className={st.container}>
-                    <TextPageTitle title="Activity" />
-                    <PageScrollView>
-                        <TransactionRows transactions={txByAddress} />
-                    </PageScrollView>
-                </div>
-            ) : (
-                <EmptyPageState
-                    iconWithNoClasses={<MagnifyingGlassIcon />}
-                    title="No transactions yet"
-                    subtitle="Set up DevNet SUI tokens to send coins."
-                    linkText="Learn more"
-                    linkUrl="https://docs.sui.io/build/devnet"
-                />
-            )}
-        </Loading>
+        <>
+            <NavBarWithMenu />
+            <Loading loading={loading} big={true}>
+                {txByAddress && txByAddress.length ? (
+                    <div className={st.container}>
+                        <TextPageTitle title="Activity" />
+                        <PageScrollView>
+                            <TransactionRows transactions={txByAddress} />
+                        </PageScrollView>
+                    </div>
+                ) : (
+                    <EmptyPageState
+                        iconWithNoClasses={<MagnifyingGlassIcon />}
+                        title="No transactions yet"
+                        subtitle="Set up DevNet SUI tokens to send coins."
+                        linkText="Learn more"
+                        linkUrl="https://docs.sui.io/build/devnet"
+                    />
+                )}
+            </Loading>
+        </>
     );
 }
 

@@ -43,7 +43,6 @@ const HomePage = () => {
         <PageLayout limitToPopUpSize={true}>
             <Loading loading={guardChecking} big={true}>
                 <BaseLayout>
-                    <NavBarWithMenu />
                     <SettingsPage />
                     <WalletPickerPage />
                     <main className="flex-grow h=[488px]">

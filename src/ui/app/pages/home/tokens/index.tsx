@@ -16,6 +16,7 @@ import Body from '_src/ui/app/shared/typography/Body';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
+import NavBarWithMenu from '_src/ui/app/shared/navigation/nav-bar/NavBarWithMenu';
 
 function TokensPage() {
     const { loading, error, showError } = useObjectsState();
@@ -37,6 +38,7 @@ function TokensPage() {
                 </div>
             ) : (
                 <>
+                    <NavBarWithMenu />
                     <Loading
                         loading={loading}
                         big={true}

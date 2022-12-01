@@ -25,6 +25,7 @@ import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBar
 
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
+import NavBarWithMenu from '_src/ui/app/shared/navigation/nav-bar/NavBarWithMenu';
 
 const initialValues = {
     to: '',
@@ -161,6 +162,7 @@ function TransferCoinPage() {
     }
     return (
         <>
+            <NavBarWithMenu />
             <NavBarWithBackAndTitle
                 title={'Send ' + coinSymbol}
                 backLink="/tokens"
