@@ -1,7 +1,9 @@
 import { useCallback } from 'react';
 
-import emojiOptions, { Emoji } from '_src/shared/emojiOptions';
 import EmojiDisplay from '../../EmojiDisplay';
+import emojiOptions from '_src/shared/emojiOptions';
+
+import type { Emoji } from '_src/shared/emojiOptions';
 
 interface EmojiButtonProps {
     emoji: Emoji;

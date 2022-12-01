@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { type AccountInfo } from '../../KeypairVault';
+import getNextEmoji from '../../helpers/getNextEmoji';
 import getNextWalletColor from '../../helpers/getNextWalletColor';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import {
@@ -13,7 +14,6 @@ import { thunkExtras } from '../../redux/store/thunk-extras';
 import Authentication from '_src/background/Authentication';
 
 import type { Dispatch, SetStateAction } from 'react';
-import getNextEmoji from '../../helpers/getNextEmoji';
 
 /*
     Because creating a wallet extensively uses hooks (and hooks can't be used outside

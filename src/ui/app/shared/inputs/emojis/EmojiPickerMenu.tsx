@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Emoji } from '_src/shared/emojiOptions';
 import EmojiRow from './EmojiRow';
+
+import type { Emoji } from '_src/shared/emojiOptions';
 
 interface ColorPickerMenuProps {
     selectedEmoji: Emoji;

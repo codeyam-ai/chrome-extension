@@ -1,6 +1,7 @@
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
 
+import EmojiDisplay from '../../EmojiDisplay';
 import BodyLarge from '../../typography/BodyLarge';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 import AccountAddress, {
@@ -12,7 +13,6 @@ import {
 } from '_src/ui/app/components/settings-menu/hooks';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector } from '_src/ui/app/hooks';
-import EmojiDisplay from '../../EmojiDisplay';
 
 // This component contains the wallet icon, name, and address
 const WalletProfile = ({ onClick }: { onClick?: () => void }) => {

@@ -1,7 +1,10 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { useMemo } from 'react';
+
 import CoinList from './CoinList';
+import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import Loading from '_components/loading';
 import { useAppSelector, useObjectsState } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
@@ -14,9 +17,8 @@ import Body from '_src/ui/app/shared/typography/Body';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
-import { AccountInfo } from '_src/ui/app/KeypairVault';
-import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
-import { useMemo } from 'react';
+
+import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 function TokensPage() {
     const { loading, error, showError } = useObjectsState();
@@ -37,7 +39,7 @@ function TokensPage() {
 
     return (
         <>
-            {false && showError && error ? (
+            {showError && error ? (
                 <div className="px-6 py-6">
                     <Alert
                         title="Something's wrong"
@@ -52,7 +54,7 @@ function TokensPage() {
                         className="flex py-6 justify-center items-center"
                     >
                         <WalletBalanceAndIconHomeView
-                            accountInfo={accountInfo!}
+                            accountInfo={accountInfo}
                             dollarValue={dollarValue}
                         />
                         <SendReceiveButtonGroup mistBalance={mistBalance} />

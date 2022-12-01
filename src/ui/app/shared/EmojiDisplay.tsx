@@ -1,4 +1,3 @@
-import { Emoji } from '_src/shared/emojiOptions';
 import Controller from '_src/ui/assets/emojis/Controller';
 import CrystalBall from '_src/ui/assets/emojis/CrystalBall';
 import DefaultEmoji from '_src/ui/assets/emojis/DefaultEmoji';
@@ -10,6 +9,8 @@ import PartyPopper from '_src/ui/assets/emojis/PartyPopper';
 import Rocket from '_src/ui/assets/emojis/Rocket';
 import Sparkles from '_src/ui/assets/emojis/Sparkles';
 import Tools from '_src/ui/assets/emojis/Tools';
+
+import type { Emoji } from '_src/shared/emojiOptions';
 
 interface EmojiDisplayProps {
     emoji?: Emoji;

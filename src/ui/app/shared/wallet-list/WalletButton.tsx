@@ -6,10 +6,10 @@ import { type AccountInfo } from '../../KeypairVault';
 import { useEditWalletUrl } from '../../components/settings-menu/hooks';
 import { useAppDispatch, useMiddleEllipsis } from '../../hooks';
 import { saveActiveAccountIndex } from '../../redux/slices/account';
+import EmojiDisplay from '../EmojiDisplay';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import { clearForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
-import EmojiDisplay from '../EmojiDisplay';
 
 interface WalletButtonProps {
     wallet: AccountInfo;

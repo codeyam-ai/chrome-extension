@@ -8,10 +8,12 @@ import {
     setAccountInfos,
 } from '../../redux/slices/account';
 import { thunkExtras } from '../../redux/store/thunk-extras';
+import EmojiDisplay from '../../shared/EmojiDisplay';
 import Button from '../../shared/buttons/Button';
 import BasicSectionHeader from '../../shared/headers/section-headers/BasicSectionHeader';
 import Input from '../../shared/inputs/Input';
 import ColorPickerMenu from '../../shared/inputs/colors/ColorPickerMenu';
+import EmojiPickerMenu from '../../shared/inputs/emojis/EmojiPickerMenu';
 import NavBarWithBackAndClose from '../../shared/navigation/nav-bar/NavBarWithBackAndClose';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Loading from '../loading';
@@ -19,9 +21,7 @@ import { useNextWalletPickerUrl } from '../settings-menu/hooks';
 import Authentication from '_src/background/Authentication';
 
 import type { AccountInfo } from '../../KeypairVault';
-import EmojiPickerMenu from '../../shared/inputs/emojis/EmojiPickerMenu';
-import { Emoji } from '_src/shared/emojiOptions';
-import EmojiDisplay from '../../shared/EmojiDisplay';
+import type { Emoji } from '_src/shared/emojiOptions';
 
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
