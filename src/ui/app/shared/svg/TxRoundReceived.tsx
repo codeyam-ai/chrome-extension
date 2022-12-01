@@ -14,7 +14,7 @@ const TxRoundReceived = () => {
                 height="56"
                 rx="28"
                 fill="black"
-                fill-opacity="0.08"
+                fillOpacity="0.08"
             />
             <path
                 fillRule="evenodd"

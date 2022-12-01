@@ -26,7 +26,7 @@ import st from './ReceiptCard.module.scss';
 import Body from '../../shared/typography/Body';
 import Header from '../../shared/typography/Header';
 import BodyLarge from '../../shared/typography/BodyLarge';
-import { AccountInfo } from '../../KeypairVault';
+import { type AccountInfo } from '../../KeypairVault';
 
 type TxResponseProps = {
     txDigest: TxResultState;

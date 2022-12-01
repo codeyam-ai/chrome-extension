@@ -15,7 +15,7 @@ const TxSui = () => {
                 rx="29.5"
                 fill="#3D5FF2"
             />
-            <g clip-path="url(#clip0_1021_2663)">
+            <g clipPath="url(#clip0_1021_2663)">
                 <path
                     fillRule="evenodd"
                     clipRule="evenodd"

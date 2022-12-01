@@ -10,7 +10,7 @@ import Loading from '_src/ui/app/components/loading';
 
 import {
     getTransactionsByAddress,
-    TxResultState,
+    type TxResultState,
 } from '_redux/slices/txresults';
 
 import st from './ReceiptPage.module.scss';

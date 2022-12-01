@@ -4,7 +4,7 @@
 import {
     getObjectId,
     hasPublicTransfer,
-    JsonRpcProvider,
+    //JsonRpcProvider,
 } from '@mysten/sui.js';
 import { useMemo, useState, useCallback } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
@@ -15,15 +15,12 @@ import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import Loading from '_components/loading';
 import { useAppSelector, useNFTBasicData } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account';
-import { LinkType } from '_src/enums/LinkType';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
-import NFTTransactionRows from '_src/ui/app/shared/content/rows-and-lists/NFTTransactionRows';
 import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
 import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
-import Typography from '_src/ui/app/shared/typography/Typography';
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 import { truncateMiddle } from '_src/ui/app/helpers/truncate-string-middle';
 
@@ -35,7 +32,7 @@ function NFTdetailsContent({
     nft,
     onClick,
 }: {
-    nft: SuiObject;
+    nft: any;
     onClick?: ButtonHTMLAttributes<HTMLButtonElement>['onClick'];
 }) {
     const { filePath, nftObjectID, nftFields, fileExtentionType } =
@@ -103,7 +100,7 @@ function NFTdetailsContent({
                                         {
                                             keyName: 'Wallet Address',
                                             value: truncateMiddle(
-                                                nft.owner.AddressOwner
+                                                nft?.owner?.AddressOwner
                                             ),
                                         },
                                     ]}
@@ -115,7 +112,8 @@ function NFTdetailsContent({
                                     keyNamesAndValues={[
                                         {
                                             keyName: 'Has public transfer',
-                                            value: nft.data.has_public_transfer
+                                            value: nft?.data
+                                                ?.has_public_transfer
                                                 ? 'Yes'
                                                 : 'No',
                                         },
