@@ -10,9 +10,6 @@ module.exports = {
             fontFamily: {
                 sans: ['Inter var', ...defaultTheme.fontFamily.sans],
             },
-            borderRadius: {
-                'large-images': '1.25em',
-            },
             fontWeight: {
                 'weight-ethos-title': '600',
                 'weight-ethos-header': '600',
@@ -42,8 +39,11 @@ module.exports = {
                 'letter-spacing-ethos-body-large': '',
                 'letter-spacing-ethos-body': '',
             },
+            borderRadius: {
+                'ethos-large-images': '1.25em',
+            },
             dropShadow: {
-                'lg-image': '0px 8px 24px rgba(0, 0, 0, 0.3)',
+                'ethos-lg-image': '0px 8px 24px rgba(0, 0, 0, 0.3)',
             },
             boxShadow: {
                 // ==========

@@ -1,5 +1,7 @@
-import type React from 'react';
 import { ToastContainer, cssTransition } from 'react-toastify';
+
+import type React from 'react';
+
 import 'animate.css/animate.min.css';
 
 export interface BaseLayoutProps extends React.HTMLAttributes<HTMLDivElement> {

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+
 import ToastCheck from '../svg/ToastCheck';
 
 type SuccessAlertProps = {

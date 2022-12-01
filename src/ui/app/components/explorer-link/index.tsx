@@ -3,13 +3,13 @@
 
 import { memo, useMemo } from 'react';
 
-import { useAppSelector } from '_hooks';
-import { activeAccountSelector } from '_redux/slices/account';
-import { LinkType } from '_src/enums/LinkType';
 import Body from '../../shared/typography/Body';
 import EthosLink from '../../shared/typography/EthosLink';
 import { Explorer } from './Explorer';
 import { ExplorerLinkType } from './ExplorerLinkType';
+import { useAppSelector } from '_hooks';
+import { activeAccountSelector } from '_redux/slices/account';
+import { LinkType } from '_src/enums/LinkType';
 
 import type { ObjectId, SuiAddress, TransactionDigest } from '@mysten/sui.js';
 import type { ReactNode } from 'react';

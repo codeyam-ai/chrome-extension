@@ -6,13 +6,13 @@ import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
 import { memo, useEffect, useRef, useState, useCallback } from 'react';
 
 import { Content } from '_app/shared/bottom-menu-layout';
-import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import AddressInput from '_components/address-input';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import NFTDisplayCard from '_components/nft-display';
 import { DEFAULT_NFT_TRANSFER_GAS_FEE } from '_redux/slices/sui-objects/Coin';
-import { useAppSelector } from '_src/ui/app/hooks';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
+import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
+import { useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 import { AssetCard } from '_src/ui/app/shared/nfts/AssetCard';

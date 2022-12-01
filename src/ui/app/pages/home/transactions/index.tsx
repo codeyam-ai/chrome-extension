@@ -10,10 +10,10 @@ import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/Transacti
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
+import NavBarWithSettingsAndWalletPicker from '_src/ui/app/shared/navigation/nav-bar/NavBarWithSettingsAndWalletPicker';
 
 import type { TxResultState } from '_redux/slices/txresults';
 
-import NavBarWithSettingsAndWalletPicker from '_src/ui/app/shared/navigation/nav-bar/NavBarWithSettingsAndWalletPicker';
 import st from './Transactions.module.scss';
 
 function TransactionsPage() {

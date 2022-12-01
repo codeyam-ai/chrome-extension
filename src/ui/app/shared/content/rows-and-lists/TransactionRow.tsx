@@ -3,6 +3,7 @@ import {
     ExclaimationTriangleIcon,
     PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
+
 import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
 import { useMiddleEllipsis } from '_src/ui/app/hooks';
