@@ -16,7 +16,7 @@ const KeyValueList = ({ keyNamesAndValues }: KeyValueListProps) => {
                 return (
                     <div className="flex flex-row justify-between" key={key}>
                         <Body isTextColorMedium>{item.keyName}</Body>
-                        <Body>{item.value}</Body>
+                        <Body isSemibold>{item.value}</Body>
                     </div>
                 );
             })}
