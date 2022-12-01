@@ -146,6 +146,7 @@ function TransferNFTForm({
                                 <div>
                                     <div className={'pb-8 text-center'}>
                                         <AssetCard
+                                            isNft={true}
                                             imgUrl={
                                                 nftobj.data.fields.url
                                                     ? nftobj.data.fields.url

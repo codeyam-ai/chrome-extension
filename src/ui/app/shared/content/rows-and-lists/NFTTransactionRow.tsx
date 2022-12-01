@@ -1,4 +1,4 @@
-import ListedIcon from '../../svg/ListedIcon';
+import ListedIcon from '../../svg/TxFailed';
 import SentIcon from '../../svg/SentIcon';
 import SoldIcon from '../../svg/SoldIcon';
 import { ActivityRow } from './ActivityRow';

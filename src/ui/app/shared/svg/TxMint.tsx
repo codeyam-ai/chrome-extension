@@ -1,4 +1,4 @@
-const TxMint = () => {
+const TxMinted = () => {
     return (
         <svg
             width="61"
@@ -27,4 +27,4 @@ const TxMint = () => {
     );
 };
 
-export default TxMint;
+export default TxMinted;

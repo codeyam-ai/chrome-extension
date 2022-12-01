@@ -31,9 +31,7 @@ function NFTDisplayCard({
 
     const wideviewSection = (
         <div className={'flex flex-col text-left'}>
-            <Body className={'font-weight-ethos-subheader'}>
-                {nftFields?.name}
-            </Body>
+            <Body isSemibold>{nftFields?.name}</Body>
             <Body className={'text-ethos-light-text-medium'}>
                 {fileExtentionType?.name} {fileExtentionType.type}
             </Body>

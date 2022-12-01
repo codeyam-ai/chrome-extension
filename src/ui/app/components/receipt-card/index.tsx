@@ -14,8 +14,10 @@ import { AssetCard } from '../../shared/nfts/AssetCard';
 
 import TxSent from '_src/ui/app/shared/svg/TxSent';
 import TxReceived from '_src/ui/app/shared/svg/TxReceived';
-import TxMinted from '_src/ui/app/shared/svg/txMint';
+import TxMinted from '_src/ui/app/shared/svg/TxMint';
 import TxCall from '_src/ui/app/shared/svg/TxCall';
+import TxRoundSend from '../../shared/svg/TxRoundSend';
+import TxRoundReceived from '../../shared/svg/TxRoundReceived';
 import TxFailed from '_src/ui/app/shared/svg/TxFailed';
 
 import type { TxResultState } from '_redux/slices/txresults';
@@ -148,6 +150,23 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         GAS_TYPE_ARG
     );
 
+    const imgUrl = txDigest?.url
+        ? txDigest?.url.replace(/^ipfs:\/\//, 'https://ipfs.io/ipfs/')
+        : false;
+
+    const date = txDigest?.timestampMs
+        ? formatDate(txDigest.timestampMs, [
+              'month',
+              'day',
+              'year',
+              'hour',
+              'minute',
+          ])
+        : false;
+
+    const fromWallet = accountInfo?.address === txDigest.from;
+    const isNft = typeof txDigest?.url !== 'undefined';
+
     const transferType =
         txDigest?.kind === 'Call'
             ? 'Call'
@@ -155,10 +174,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             ? 'Sent'
             : 'Received';
 
-    const header = txDigest?.amount
-        ? txDigest.amount + ' MIST'
-        : truncatedNftName;
-
+    const header = isNft ? truncatedNftName : totalSymbol;
     const isMinted = txDigest?.callFunctionName === 'mint';
 
     const transferMeta = {
@@ -178,7 +194,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         Sent: {
             txName: 'Sent',
             transfer: 'To',
-            txIcon: <TxSent />,
+            txIcon: isNft ? <TxSent /> : <TxRoundSend />,
             addressTruncate: toAddrStr,
             address: txDigest.to,
             failedMsg: txDigest?.error || 'Failed',
@@ -186,38 +202,19 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         Received: {
             txName: 'Received',
             transfer: 'From',
-            txIcon: <TxReceived />,
+            txIcon: isNft ? <TxReceived /> : <TxRoundReceived />,
             addressTruncate: fromAddrStr,
             address: txDigest.from,
             failedMsg: '',
         },
     };
 
-    const imgUrl = txDigest?.url
-        ? txDigest?.url.replace(/^ipfs:\/\//, 'https://ipfs.io/ipfs/')
-        : false;
-
-    const date = txDigest?.timestampMs
-        ? formatDate(txDigest.timestampMs, [
-              'month',
-              'day',
-              'year',
-              'hour',
-              'minute',
-          ])
-        : false;
-
-    const fromWallet = accountInfo?.address === txDigest.from;
-
-    console.log('DIGEST: ', txDigest);
-    console.log('from wallet: ', fromWallet);
-    console.log('Account Info: ', accountInfo);
-
     return (
         <>
-            <PageScrollView heightInPx={360}>
+            <PageScrollView heightInPx={410}>
                 <div className={'pt-6 px-6 pb-8'}>
                     <AssetCard
+                        isNft={isNft}
                         imgUrl={imgUrl ? imgUrl : ''}
                         name={txDigest?.name || 'NFT'}
                         icon={
@@ -260,9 +257,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                                     header: fromWallet
                                         ? toAddrStr
                                         : accountInfo?.name,
-                                    subheader: fromWallet
-                                        ? toAddrStr
-                                        : walletAddrStr,
+                                    subheader: fromWallet ? '' : walletAddrStr,
                                 },
                             }}
                         />
@@ -272,18 +267,40 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     <BodyLarge isSemibold className={'mb-3'}>
                         Details
                     </BodyLarge>
-                    <KeyValueList
-                        keyNamesAndValues={[
-                            {
-                                keyName: 'Transaction Fee',
-                                value: gas + ' ' + gasSymbol,
-                            },
-                            {
-                                keyName: 'Signature',
-                                value: fromAddrStr,
-                            },
-                        ]}
-                    />
+                    {isNft ? (
+                        <KeyValueList
+                            keyNamesAndValues={[
+                                {
+                                    keyName: 'Transaction Fee',
+                                    value: `${gas} ${gasSymbol}`,
+                                },
+                                {
+                                    keyName: 'Signature',
+                                    value: fromAddrStr,
+                                },
+                            ]}
+                        />
+                    ) : (
+                        <KeyValueList
+                            keyNamesAndValues={[
+                                {
+                                    keyName:
+                                        transferType === 'Sent'
+                                            ? 'You Sent'
+                                            : 'You Received',
+                                    value: `${total} ${totalSymbol}`,
+                                },
+                                {
+                                    keyName: 'Transaction Fee',
+                                    value: `${gas} ${gasSymbol}`,
+                                },
+                                {
+                                    keyName: 'Total',
+                                    value: `$1.30`,
+                                },
+                            ]}
+                        />
+                    )}
                 </div>
                 {txDigest.txId && (
                     <div className={'px-6'}>
