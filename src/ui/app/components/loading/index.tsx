@@ -12,16 +12,23 @@ type LoadingProps = {
     children: ReactNode | ReactNode[];
     className?: string;
     big?: boolean;
+    resize?: boolean;
 };
 
-const Loading = ({ loading, children, className, big }: LoadingProps) => {
+const Loading = ({
+    loading,
+    children,
+    className,
+    big,
+    resize = false,
+}: LoadingProps) => {
     useEffect(() => {
-        if (loading) return;
+        if (loading || !resize) return;
 
-        const resize = () => {
+        const resizeWindow = () => {
             window.resizeTo(window.innerWidth, document.body.offsetHeight + 30);
         };
-        resize();
+        resizeWindow();
         Promise.all(
             Array.from(document.images)
                 .filter((img) => !img.complete)
@@ -32,11 +39,11 @@ const Loading = ({ loading, children, className, big }: LoadingProps) => {
                         })
                 )
         ).then(() => {
-            resize();
-            setTimeout(resize, 250);
-            setTimeout(resize, 500);
+            resizeWindow();
+            setTimeout(resizeWindow, 250);
+            setTimeout(resizeWindow, 500);
         });
-    }, [loading]);
+    }, [loading, resize]);
 
     return loading ? (
         className ? (

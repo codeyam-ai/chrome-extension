@@ -328,7 +328,7 @@ export function DappPreapprovalPage() {
     }
 
     return (
-        <Loading loading={loading} big={true}>
+        <Loading loading={loading} big={true} resize={true}>
             {preapprovalRequest ? (
                 <UserApproveContainer
                     title="Pre-Approve Transactions"
