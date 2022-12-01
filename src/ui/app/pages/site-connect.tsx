@@ -81,7 +81,7 @@ function SiteConnectPage() {
     }, [loading, permissionRequest]);
 
     return (
-        <Loading loading={loading} big={true}>
+        <Loading loading={loading} big={true} resize={true}>
             {permissionRequest ? (
                 <UserApproveContainer
                     title={`Connect to ${
