@@ -3,9 +3,10 @@
 
 import cl from 'classnames';
 import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState, useCallback } from 'react';
 
 import { Content } from '_app/shared/bottom-menu-layout';
+import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import AddressInput from '_components/address-input';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import NFTDisplayCard from '_components/nft-display';
@@ -23,7 +24,6 @@ import type { FormValues } from '.';
 
 import 'react-toastify/dist/ReactToastify.css';
 import st from './TransferNFTForm.module.scss';
-import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 
 export type TransferNFTFormProps = {
     submitError: string | null;
@@ -61,10 +61,9 @@ function TransferNFTForm({
         onClearRef.current();
     }, [to, amount]);
 
-    // TODO: add QR code scanner
-    // const clearAddress = useCallback(() => {
-    //     setFieldValue('to', '');
-    // }, [setFieldValue]);
+    const setIsReviewTrue = useCallback(() => {
+        setIsReview(true);
+    }, []);
 
     return (
         <div>
@@ -133,7 +132,7 @@ function TransferNFTForm({
                             <Button
                                 isInline
                                 buttonStyle="primary"
-                                onClick={() => setIsReview(true)}
+                                onClick={setIsReviewTrue}
                                 disabled={!isValid || isSubmitting}
                                 className={'mt-[100px]'}
                             >
