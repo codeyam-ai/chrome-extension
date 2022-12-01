@@ -5,16 +5,16 @@ import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { of, filter, switchMap, from, defer, repeat } from 'rxjs';
 
+import SettingsRouterPage from '../../components/settings-menu/SettingsRouterPage';
+import WalletPickerPage from '../../components/wallet-picker-menu/WalletPickerPage';
 import { AppState } from '../../hooks/useInitializedGuard';
 import BaseLayout from '../../shared/layouts/BaseLayout';
-import NavBarWithMenu from '../../shared/navigation/nav-bar/NavBarWithMenu';
-import SettingsPage from '../../shared/navigation/nav-bar/SettingsPage';
-import WalletPickerPage from '../../shared/navigation/nav-bar/WalletPickerPage';
+import NavBarWithSettingsAndWalletPicker from '../../shared/navigation/nav-bar/NavBarWithSettingsAndWalletPicker';
 import TabBar from '../../shared/navigation/tab-bar/TabBar';
 import Loading from '_components/loading';
 import { useInitializedGuard, useAppDispatch } from '_hooks';
-import PageLayout from '_pages/layout';
 import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
+import PageLayout from '_src/ui/app/pages/PageLayout';
 
 const POLL_SUI_OBJECTS_INTERVAL = 4000;
 
@@ -40,12 +40,13 @@ const HomePage = () => {
     }, [guardChecking, dispatch]);
 
     return (
-        <PageLayout limitToPopUpSize={true}>
+        <PageLayout>
             <Loading loading={guardChecking} big={true}>
                 <BaseLayout>
-                    <SettingsPage />
+                    <NavBarWithSettingsAndWalletPicker />
+                    <SettingsRouterPage />
                     <WalletPickerPage />
-                    <main className="flex-grow h=[488px]">
+                    <main className="flex-grow">
                         <Outlet />
                     </main>
                     <TabBar />

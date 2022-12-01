@@ -4,7 +4,6 @@ import Body from '../../shared/typography/Body';
 import ContentBlock from '../../shared/typography/ContentBlock';
 import EthosLink from '../../shared/typography/EthosLink';
 import { LinkType } from '_src/enums/LinkType';
-import { TextColor } from '_src/enums/Typography';
 
 export default function BuyPage() {
     return (
@@ -12,11 +11,11 @@ export default function BuyPage() {
             <NavBarWithBackAndTitle title="Buy SUI" backLink="/tokens" />
             <ContentBlock>
                 <Body isSemibold={true}>Not Available Yet</Body>
-                <Body textColor={TextColor.Medium}>
+                <Body isTextColorMedium>
                     SUI is in the DevNet stage right now, so you can not
                     purchase SUI.
                 </Body>
-                <Body textColor={TextColor.Medium}>
+                <Body isTextColorMedium>
                     You can find a “faucet” that will give you free test tokens
                     in the{' '}
                     <EthosLink
@@ -27,7 +26,7 @@ export default function BuyPage() {
                     </EthosLink>
                     .
                 </Body>
-                <Body textColor={TextColor.Medium}>
+                <Body isTextColorMedium>
                     Here is your wallet address to request tokens:
                 </Body>
                 <AccountAddress showLink={false} showName={false} />

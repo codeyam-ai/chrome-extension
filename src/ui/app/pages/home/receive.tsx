@@ -4,7 +4,6 @@ import Body from '../../shared/typography/Body';
 import ContentBlock from '../../shared/typography/ContentBlock';
 import EthosLink from '../../shared/typography/EthosLink';
 import { LinkType } from '_src/enums/LinkType';
-import { TextColor } from '_src/enums/Typography';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 
 export default function ReceivePage() {
@@ -13,12 +12,12 @@ export default function ReceivePage() {
             <NavBarWithBackAndTitle title="Get Some SUI" backLink="/tokens" />
             <ContentBlock>
                 <Body isSemibold={true}>Wallet Address</Body>
-                <Body textColor={TextColor.Medium}>
+                <Body isTextColorMedium>
                     Coins and NFTs sent to this address will end up in your
                     wallet.
                 </Body>
                 <AccountAddress showLink={false} showName={false} />
-                <Body textColor={TextColor.Medium}>
+                <Body isTextColorMedium>
                     Interested in SUI but not sure where to start?
                 </Body>
                 <Body>

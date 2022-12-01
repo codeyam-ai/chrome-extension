@@ -7,7 +7,7 @@ const Subheader = (props: TypographyProps) => {
         <Typography
             className={props.className + ' ' + subheaderClasses}
             as={props.as}
-            textColor={props.textColor}
+            isTextColorMedium={props.isTextColorMedium}
         >
             {props.children}
         </Typography>

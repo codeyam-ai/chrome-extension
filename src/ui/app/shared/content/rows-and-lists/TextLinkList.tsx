@@ -1,6 +1,5 @@
 import Body from '../../typography/Body';
 import EthosLink, { type EthosLinkProps } from '../../typography/EthosLink';
-import { TextColor } from '_src/enums/Typography';
 
 interface textAndLink {
     description: string;
@@ -16,7 +15,7 @@ const TextLinkList = ({ textAndLinks }: TextLinkListProps) => {
         <div className="px-6 pb-6 text-left flex flex-col gap-2">
             {textAndLinks.map((textAndLink, key) => {
                 return (
-                    <Body as="p" textColor={TextColor.Medium} key={key}>
+                    <Body as="p" isTextColorMedium key={key}>
                         {textAndLink.description + ' '}
                         <EthosLink
                             type={textAndLink.link.type}

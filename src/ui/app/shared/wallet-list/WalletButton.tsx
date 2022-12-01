@@ -3,13 +3,12 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
-import { useEditWalletUrl } from '../../components/menu/hooks';
+import { useEditWalletUrl } from '../../components/settings-menu/hooks';
 import { useAppDispatch, useMiddleEllipsis } from '../../hooks';
 import { saveActiveAccountIndex } from '../../redux/slices/account';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import { clearForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
-import { TextColor } from '_src/enums/Typography';
 
 interface WalletButtonProps {
     wallet: AccountInfo;
@@ -24,7 +23,7 @@ const WalletButton = ({
 }: WalletButtonProps) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const shortenedAddress = useMiddleEllipsis(wallet.address, 16, 9);
+    const shortenedAddress = useMiddleEllipsis(wallet.address, 24, 12);
     const editWalletUrl = useEditWalletUrl(wallet.index);
 
     const switchToThisWallet = useCallback(async () => {
@@ -32,7 +31,7 @@ const WalletButton = ({
         await dispatch(clearForNetworkOrWalletSwitch());
         await dispatch(saveActiveAccountIndex(wallet.index));
         navigate('/');
-    }, [wallet.index, isWalletEditing, navigate, dispatch]);
+    }, [wallet.index, isWalletEditing, dispatch, navigate]);
 
     const editThisWallet = useCallback(() => {
         navigate(editWalletUrl);
@@ -56,9 +55,9 @@ const WalletButton = ({
                         backgroundColor: wallet.color || '#742AC2',
                     }}
                 />
-                <div className="flex flex-col text-left">
+                <div className="flex flex-col text-left" title={wallet.address}>
                     <BodyLarge>{wallet.name}</BodyLarge>
-                    <Body textColor={TextColor.Medium}>{shortenedAddress}</Body>
+                    <Body isTextColorMedium>{shortenedAddress}</Body>
                 </div>
             </div>
             <div>

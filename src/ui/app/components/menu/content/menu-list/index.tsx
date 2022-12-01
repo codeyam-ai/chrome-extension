@@ -11,9 +11,9 @@ import {
 } from '@heroicons/react/24/outline';
 import { useCallback } from 'react';
 
-import { useNextMenuUrl } from '_components/menu/hooks';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
+import { useNextSettingsUrl } from '_src/ui/app/components/settings-menu/hooks';
 import { useAppDispatch } from '_src/ui/app/hooks';
 import { logout } from '_src/ui/app/redux/slices/account';
 import LinkList, {
@@ -22,9 +22,9 @@ import LinkList, {
 
 function MenuList() {
     const dispatch = useAppDispatch();
-    const switchWalletUrl = useNextMenuUrl(true, '/switch-wallet');
-    const connectedAppsUrl = useNextMenuUrl(true, '/connected-apps');
-    const preapprovalsUrl = useNextMenuUrl(true, '/preapprovals');
+    const switchWalletUrl = useNextSettingsUrl(true, '/switch-wallet');
+    const connectedAppsUrl = useNextSettingsUrl(true, '/connected-apps');
+    const preapprovalsUrl = useNextSettingsUrl(true, '/preapprovals');
 
     const handleLogout = useCallback(async () => {
         await dispatch(logout());

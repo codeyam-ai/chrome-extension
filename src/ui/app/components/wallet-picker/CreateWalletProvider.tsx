@@ -1,19 +1,34 @@
-import { useRef, useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { type AccountInfo } from '../../KeypairVault';
 import getNextWalletColor from '../../helpers/getNextWalletColor';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import {
-    setAccountInfos,
     saveAccountInfos,
     saveActiveAccountIndex,
+    setAccountInfos,
 } from '../../redux/slices/account';
 import { clearForNetworkOrWalletSwitch } from '../../redux/slices/sui-objects';
 import { thunkExtras } from '../../redux/store/thunk-extras';
-import Button from '../../shared/buttons/Button';
 import Authentication from '_src/background/Authentication';
 
-const CreateWalletButton = () => {
+import type { Dispatch, SetStateAction } from 'react';
+
+/*
+    Because creating a wallet extensively uses hooks (and hooks can't be used outside
+    react components), this component wraps a given component and provides a function
+    to be called that creates a new wallet and navigates to the home page.
+*/
+
+interface CreateWalletProviderProps {
+    setCreateWallet: Dispatch<SetStateAction<() => void>>;
+    children: JSX.Element;
+}
+
+const CreateWalletProvider = ({
+    setCreateWallet,
+    children,
+}: CreateWalletProviderProps) => {
     const dispatch = useAppDispatch();
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
     const authentication = useAppSelector(
@@ -110,11 +125,11 @@ const CreateWalletButton = () => {
         _saveAccountInfos();
     }, [keypairVault, authentication, accountInfos, _saveAccountInfos]);
 
-    return (
-        <Button buttonStyle="primary" onClick={createWallet}>
-            Create Wallet
-        </Button>
-    );
+    useEffect(() => {
+        setCreateWallet(() => createWallet);
+    }, [createWallet, setCreateWallet, accountInfos]);
+
+    return children;
 };
 
-export default CreateWalletButton;
+export default CreateWalletProvider;

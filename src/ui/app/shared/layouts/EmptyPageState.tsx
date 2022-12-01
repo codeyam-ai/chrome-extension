@@ -2,7 +2,7 @@ import Body from '../typography/Body';
 import EthosLink from '../typography/EthosLink';
 import Subheader from '../typography/Subheader';
 import { LinkType } from '_src/enums/LinkType';
-import { TextColor } from '_src/enums/Typography';
+
 import type { ReactNode } from 'react';
 
 interface EmptyPageStateProps {
@@ -21,13 +21,15 @@ const EmptyPageState = ({
     linkUrl,
 }: EmptyPageStateProps) => {
     return (
-        <div className="flex flex-col gap-2 pt-6 px-6">
-            <div className="mx-auto">{iconWithNoClasses}</div>
+        <div className="flex flex-col gap-2 pt-8 px-6">
+            <span className="mx-auto h-16 w-16 text-ethos-light-text-medium dark:text-ethos-dark-text-medium">
+                {iconWithNoClasses}
+            </span>
             <Subheader as="h3">{title}</Subheader>
-            <Body textColor={TextColor.Medium}>{subtitle}</Body>
+            <Body isTextColorMedium>{subtitle}</Body>
             <Body>
                 <EthosLink to={linkUrl} type={LinkType.External}>
-                    <span>{linkText} →</span>
+                    {linkText}
                 </EthosLink>
             </Body>
         </div>

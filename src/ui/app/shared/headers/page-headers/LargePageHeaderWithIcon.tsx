@@ -1,6 +1,5 @@
 import Subheader from '../../typography/Subheader';
 import Title from '../../typography/Title';
-import { TextColor } from '_src/enums/Typography';
 import EthosLogo from '_src/ui/app/components/EthosLogo';
 
 type LargePageHeaderWIthIconProps = {
@@ -22,7 +21,7 @@ const LargePageHeaderWIthIcon = ({
                 <EthosLogo />
             </div>
             <Title as="h1">{header}</Title>
-            <Subheader textColor={TextColor.Medium}>{description}</Subheader>
+            <Subheader isTextColorMedium>{description}</Subheader>
         </div>
     );
 };

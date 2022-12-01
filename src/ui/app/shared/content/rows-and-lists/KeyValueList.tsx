@@ -1,5 +1,4 @@
 import Body from '../../typography/Body';
-import { TextColor } from '_src/enums/Typography';
 
 type KeyNameAndValue = {
     keyName: string;
@@ -12,17 +11,12 @@ interface KeyValueListProps {
 
 const KeyValueList = ({ keyNamesAndValues }: KeyValueListProps) => {
     return (
-        <div className={'mb-6'}>
+        <div className="px-6 pb-6">
             {keyNamesAndValues.map((item, key) => {
                 return (
-                    <div
-                        className="flex flex-row justify-between mb-2"
-                        key={key}
-                    >
-                        <Body textColor={TextColor.Medium}>{item.keyName}</Body>
-                        <Body className={'font-weight-ethos-semibold-body'}>
-                            {item.value}
-                        </Body>
+                    <div className="flex flex-row justify-between" key={key}>
+                        <Body isTextColorMedium>{item.keyName}</Body>
+                        <Body>{item.value}</Body>
                     </div>
                 );
             })}

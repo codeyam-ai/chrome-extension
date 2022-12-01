@@ -24,7 +24,7 @@ const ColorPickerMenu = ({
                     {/* <div className="pb-6">
                             <div className="flex gap-2 justify-start items-center">
                                 <div className="h-8 w-8 rounded-lg bg-[#F2F2F2]" />
-                                <BodyLarge textColor={TextColor.Medium}>
+                                <BodyLarge isTextColorMedium>
                                     Pick a Color...
                                 </BodyLarge>
                             </div>

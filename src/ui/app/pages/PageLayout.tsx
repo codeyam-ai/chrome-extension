@@ -3,27 +3,20 @@
 
 import { memo } from 'react';
 
-import darkGradientBackground from '../../../assets/images/dark-gradient-background.jpg';
-import lightGradientBackground from '../../../assets/images/light-gradient-background.jpg';
+import darkGradientBackground from '../../assets/images/dark-gradient-background.jpg';
+import lightGradientBackground from '../../assets/images/light-gradient-background.jpg';
 import Loading from '_components/loading';
-import { useAppSelector, useFullscreenGuard } from '_hooks';
-import { getNavIsVisible } from '_redux/slices/app';
+import { useFullscreenGuard } from '_hooks';
 
 import type { ReactNode } from 'react';
 
 export type PageLayoutProps = {
-    limitToPopUpSize?: boolean;
     forceFullscreen?: boolean;
     children: ReactNode | ReactNode[];
 };
 
-function PageLayout({
-    limitToPopUpSize = false,
-    forceFullscreen = false,
-    children,
-}: PageLayoutProps) {
+function PageLayout({ forceFullscreen = false, children }: PageLayoutProps) {
     const guardLoading = useFullscreenGuard(forceFullscreen);
-    const isNavVisible = useAppSelector(getNavIsVisible);
 
     return (
         <Loading loading={guardLoading} big={true}>

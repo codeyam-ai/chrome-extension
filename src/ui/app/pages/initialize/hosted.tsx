@@ -21,7 +21,6 @@ import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
 import Authentication from '_src/background/Authentication';
 import { LinkType } from '_src/enums/LinkType';
-import { TextColor } from '_src/enums/Typography';
 import { IFRAME_URL } from '_src/shared/constants';
 
 export const AUTHENTICATION_REQUESTED = 'AUTHENTICATION_REQUESTED';
@@ -83,22 +82,18 @@ const HostedPage = () => {
                 {emailSent ? (
                     <ContentBlock>
                         <Body isSemibold={true}>Email sent</Body>
-                        <Body as="p" textColor={TextColor.Medium}>
+                        <Body as="p" isTextColorMedium>
                             An email has been sent to {email} with a link that
                             will automatically log you in.
                         </Body>
                     </ContentBlock>
                 ) : error ? (
                     <div>
-                        <Body
-                            as="p"
-                            textColor={TextColor.Medium}
-                            className="mb-2"
-                        >
+                        <Body as="p" isTextColorMedium className="mb-2">
                             There&apos;s been an error and the team has been
                             notified.
                         </Body>
-                        <Body as="p" textColor={TextColor.Medium}>
+                        <Body as="p" isTextColorMedium>
                             If this continues, please reach out to{' '}
                             <EthosLink
                                 type={LinkType.External}

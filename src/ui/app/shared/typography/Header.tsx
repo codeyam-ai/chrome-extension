@@ -7,7 +7,7 @@ const Header = (props: TypographyProps) => {
         <Typography
             className={props.className + ' ' + headerClasses}
             as={props.as}
-            textColor={props.textColor}
+            isTextColorMedium={props.isTextColorMedium}
         >
             {props.children}
         </Typography>

@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useNextMenuUrl } from '../hooks';
 import Transactions from '_src/background/Transactions';
 import { useAppSelector, useMiddleEllipsis } from '_src/ui/app/hooks';
-import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
 
 import type { PreapprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
@@ -16,8 +14,6 @@ type GroupedPreapprovals = {
 };
 
 export default function Preapprovals() {
-    const mainMenuUrl = useNextMenuUrl(true, '/');
-
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
     const [preapprovals, setPreapprovals] = useState<PreapprovalRequest[]>([]);
     const [groupedPreapprovals, setGroupedPreapprovals] = useState<Record<
@@ -219,10 +215,6 @@ export default function Preapprovals() {
 
     return (
         <>
-            <NavBarWithBackAndTitle
-                title="Pre-Approved Transactions"
-                backLink={mainMenuUrl}
-            />
             <div className="px-6 text-left">
                 {Object.keys(groupedPreapprovals || {})
                     .sort()

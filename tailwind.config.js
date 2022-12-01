@@ -51,6 +51,7 @@ module.exports = {
                 // ==========
 
                 'ethos-box-shadow': '0px 4px 12px rgba(0, 0, 0, 0.09)',
+                'ethos-shadow-small': '0px 1px 2px rgba(0, 0, 0, 0.05)',
                 'ethos-hovering-element-box-shadow':
                     '0px 2px 8px rgba(0, 0, 0, 0.1)',
 
@@ -94,7 +95,7 @@ module.exports = {
                 // ==========
 
                 // Background
-                'ethos-dark-background-default': '#1F2937',
+                'ethos-dark-background-default': '#111111',
                 'ethos-dark-background-secondary': '#1A1C26',
 
                 // Text and stroke
