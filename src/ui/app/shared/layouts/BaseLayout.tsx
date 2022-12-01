@@ -12,6 +12,10 @@ const Fade = cssTransition({
 });
 
 const BaseLayout = ({ className, children }: BaseLayoutProps) => {
+    const isDarkTheme = document
+        .getElementsByTagName('html')[0]
+        .classList.contains('dark');
+
     const defaultClasses =
         'relative mx-auto w-[360px] min-h-[568px] shadow-ethos-box-shadow sm:rounded-[20px] text-center bg-ethos-light-background-default dark:bg-ethos-dark-background-default';
     return (
@@ -19,14 +23,14 @@ const BaseLayout = ({ className, children }: BaseLayoutProps) => {
             <ToastContainer
                 position="top-center"
                 transition={Fade}
-                autoClose={2000}
+                autoClose={2500}
                 hideProgressBar
                 newestOnTop={true}
                 closeOnClick={false}
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
-                theme={'dark'}
+                theme={isDarkTheme ? 'light' : 'dark'}
             />
             {children}
         </div>
