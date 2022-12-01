@@ -122,8 +122,8 @@ function NFTdetailsContent({
                             <div className={'flex flex-row justify-between'}>
                                 <BodyLarge>
                                     <ExplorerLink
-                                        type={ExplorerLinkType.transaction}
-                                        transactionID={nft.previousTransaction}
+                                        type={ExplorerLinkType.object}
+                                        objectID={nftObjectID}
                                         title="View on Sui Explorer"
                                         showIcon={true}
                                     >
