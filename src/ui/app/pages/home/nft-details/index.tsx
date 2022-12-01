@@ -55,7 +55,7 @@ function NFTdetailsContent({
     return (
         <>
             <div>
-                <PageScrollView heightInPx={360}>
+                <PageScrollView heightInPx={425}>
                     <div className="text-center w-full p-6">
                         <BlurredImage
                             imgSrc={filePath || ''}
