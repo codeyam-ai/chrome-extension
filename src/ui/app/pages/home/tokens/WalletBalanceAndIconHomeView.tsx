@@ -1,6 +1,8 @@
 import { AccountInfo } from '_src/ui/app/KeypairVault';
+import EmojiDisplay from '_src/ui/app/shared/EmojiDisplay';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
+import Rocket from '_src/ui/assets/emojis/Rocket';
 
 interface WalletBalanceAndIconHomeViewProps {
     accountInfo: AccountInfo;
@@ -8,7 +10,7 @@ interface WalletBalanceAndIconHomeViewProps {
 }
 
 const WalletBalanceAndIconHomeView = ({
-    accountInfo: currentAccountInfo,
+    accountInfo,
     dollarValue,
 }: WalletBalanceAndIconHomeViewProps) => {
     const dollarFormatter = new Intl.NumberFormat('en-US', {
@@ -25,9 +27,11 @@ const WalletBalanceAndIconHomeView = ({
             <div
                 className="h-[104px] w-[104px] rounded-full flex items-center justify-center"
                 style={{
-                    backgroundColor: currentAccountInfo?.color || '#7E23CA',
+                    backgroundColor: accountInfo?.color || '#7E23CA',
                 }}
-            />
+            >
+                <EmojiDisplay emoji={accountInfo.emoji} className="h-14 w-14" />
+            </div>
             <div className="flex flex-col gap-1">
                 <BodyLarge isSemibold isTextColorMedium>
                     Wallet Balance

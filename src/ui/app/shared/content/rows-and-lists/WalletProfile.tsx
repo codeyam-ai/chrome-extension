@@ -12,6 +12,7 @@ import {
 } from '_src/ui/app/components/settings-menu/hooks';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector } from '_src/ui/app/hooks';
+import EmojiDisplay from '../../EmojiDisplay';
 
 // This component contains the wallet icon, name, and address
 const WalletProfile = ({ onClick }: { onClick?: () => void }) => {
@@ -34,7 +35,9 @@ const WalletProfile = ({ onClick }: { onClick?: () => void }) => {
                 style={{
                     backgroundColor: accountInfo?.color || '#7E23CA',
                 }}
-            />
+            >
+                <EmojiDisplay emoji={accountInfo?.emoji} className="h-3 w-3" />
+            </div>
             <BodyLarge isSemibold>{shortenedName}</BodyLarge>
 
             <ChevronDownIcon className="h-4 w-4 text-ethos-light-text-medium dark:text-ethos-dark-text-medium cursor-pointer" />

@@ -19,6 +19,9 @@ import { useNextWalletPickerUrl } from '../settings-menu/hooks';
 import Authentication from '_src/background/Authentication';
 
 import type { AccountInfo } from '../../KeypairVault';
+import EmojiPickerMenu from '../../shared/inputs/emojis/EmojiPickerMenu';
+import { Emoji } from '_src/shared/emojiOptions';
+import EmojiDisplay from '../../shared/EmojiDisplay';
 
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,6 +30,7 @@ interface EditWalletProps {
 const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     const [loading, setLoading] = useState(false);
     const [isColorPickerMenuOpen, setIsColorPickerMenuOpen] = useState(false);
+    const [isEmojiPickerMenuOpen, setIsEmojiPickerMenuOpen] = useState(false);
     const [searchParams] = useSearchParams();
     const walletPickerHomeUrl = useNextWalletPickerUrl(true, '/');
     const closeWalletPickerUrl = useNextWalletPickerUrl(false);
@@ -48,6 +52,10 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
         currentAccountInfo.color || '#7E23CA'
     );
 
+    const [draftEmoji, setDraftEmoji] = useState<Emoji>(
+        currentAccountInfo.emoji || 'Rocket'
+    );
+
     const authentication = useAppSelector(
         ({ account }) => account.authentication
     );
@@ -58,6 +66,10 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     const toggleIsColorPickerMenuOpen = useCallback(() => {
         setIsColorPickerMenuOpen(!isColorPickerMenuOpen);
     }, [isColorPickerMenuOpen]);
+
+    const toggleIsEmojiPickerMenuOpen = useCallback(() => {
+        setIsEmojiPickerMenuOpen(!isEmojiPickerMenuOpen);
+    }, [isEmojiPickerMenuOpen]);
 
     const setIsWalletEditingToFalse = useCallback(() => {
         setIsWalletEditing(false);
@@ -108,7 +120,15 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     ]);
 
     const _handleChange = useCallback(
-        ({ name, color }: { name?: string; color?: string }) => {
+        ({
+            name,
+            color,
+            emoji,
+        }: {
+            name?: string;
+            color?: string;
+            emoji?: Emoji;
+        }) => {
             draftAccountInfos.current = draftAccountInfos.current.map(
                 (accountInfo: AccountInfo) => {
                     if (accountInfo.index === currentAccountInfo.index) {
@@ -116,6 +136,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                             ...accountInfo,
                             name: name || accountInfo.name,
                             color: color || accountInfo.color,
+                            emoji: emoji || accountInfo.emoji,
                         };
                     } else {
                         return accountInfo;
@@ -141,6 +162,16 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
             setDraftColor(color);
             _handleChange({ color });
             setIsColorPickerMenuOpen(false);
+        },
+        [_handleChange]
+    );
+
+    const _handleEmojiChange = useCallback(
+        (emojiResult: Emoji) => {
+            const emoji = emojiResult;
+            setDraftEmoji(emoji);
+            _handleChange({ emoji });
+            setIsEmojiPickerMenuOpen(false);
         },
         [_handleChange]
     );
@@ -179,6 +210,38 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                                 <ColorPickerMenu
                                     selectedColor={draftColor}
                                     setSelectedColor={_handleColorChange}
+                                />
+                            </div>
+                        </>
+                    )}
+                </div>
+                <div className="flex justify-between items-center px-6 pb-6">
+                    <BodyLarge isSemibold>Choose an Emoji</BodyLarge>
+                    <div
+                        className="p-1 rounded-md cursor-pointer border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke"
+                        onClick={toggleIsEmojiPickerMenuOpen}
+                    >
+                        <div className="flex w-12 h-12 rounded-sm place-content-center items-center">
+                            <EmojiDisplay
+                                emoji={draftEmoji}
+                                className="h-10 w-10"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div className="relative mx-6">
+                    {isEmojiPickerMenuOpen && (
+                        <>
+                            {/* Backdrop */}
+                            <div
+                                className="absolute -top-[223px] -left-[24px] w-[360px] h-[475px]"
+                                onClick={toggleIsEmojiPickerMenuOpen}
+                            />
+
+                            <div className="absolute">
+                                <EmojiPickerMenu
+                                    selectedEmoji={draftEmoji}
+                                    setSelectedEmoji={_handleEmojiChange}
                                 />
                             </div>
                         </>

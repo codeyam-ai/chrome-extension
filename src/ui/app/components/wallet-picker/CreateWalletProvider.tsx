@@ -13,6 +13,7 @@ import { thunkExtras } from '../../redux/store/thunk-extras';
 import Authentication from '_src/background/Authentication';
 
 import type { Dispatch, SetStateAction } from 'react';
+import getNextEmoji from '../../helpers/getNextEmoji';
 
 /*
     Because creating a wallet extensively uses hooks (and hooks can't be used outside
@@ -108,6 +109,7 @@ const CreateWalletProvider = ({
                         index: nextAccountIndex,
                         name: `Wallet ${accountInfos.length + 1}`,
                         color: getNextWalletColor(nextAccountIndex),
+                        emoji: getNextEmoji(nextAccountIndex),
                         address:
                             keypairVault.getAddress(nextAccountIndex) || '',
                         seed: (

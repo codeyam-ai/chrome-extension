@@ -7,6 +7,7 @@ import {
     getKeypairFromMnemonics,
     getSeedFromMnemonics,
 } from '_shared/cryptography/mnemonics';
+import { Emoji } from '_src/shared/emojiOptions';
 
 export type AccountInfo = {
     index: number;
@@ -14,6 +15,7 @@ export type AccountInfo = {
     seed: string;
     name?: string;
     color?: string;
+    emoji?: Emoji;
     chain?: string;
 };
 

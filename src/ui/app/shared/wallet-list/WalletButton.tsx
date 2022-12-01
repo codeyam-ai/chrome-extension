@@ -9,6 +9,7 @@ import { saveActiveAccountIndex } from '../../redux/slices/account';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import { clearForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
+import EmojiDisplay from '../EmojiDisplay';
 
 interface WalletButtonProps {
     wallet: AccountInfo;
@@ -54,7 +55,9 @@ const WalletButton = ({
                     style={{
                         backgroundColor: wallet.color || '#742AC2',
                     }}
-                />
+                >
+                    <EmojiDisplay emoji={wallet.emoji} className="h-6 w-6" />
+                </div>
                 <div className="flex flex-col text-left" title={wallet.address}>
                     <BodyLarge>{wallet.name}</BodyLarge>
                     <Body isTextColorMedium>{shortenedAddress}</Body>
