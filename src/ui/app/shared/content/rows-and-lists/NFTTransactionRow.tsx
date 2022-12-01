@@ -1,11 +1,11 @@
-import ListedIcon from '../../svg/TxFailed';
 import SentIcon from '../../svg/SentIcon';
 import SoldIcon from '../../svg/SoldIcon';
+import ListedIcon from '../../svg/TxFailed';
 import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
 import { useMiddleEllipsis } from '_src/ui/app/hooks';
 
-interface NFTTransactionRowProps {
+interface NftTransactionRowProps {
     txn: any;
 }
 
@@ -18,7 +18,7 @@ const Header = ({ bolded, regular }: { bolded: string; regular: string }) => (
     </div>
 );
 
-const NFTTransactionRow = ({ txn }: NFTTransactionRowProps) => {
+const NftTransactionRow = ({ txn }: NftTransactionRowProps) => {
     const drilldownLink = `/receipt?${new URLSearchParams({
         txdigest: txn.txId,
     }).toString()}`;
@@ -86,4 +86,4 @@ const NFTTransactionRow = ({ txn }: NFTTransactionRowProps) => {
     );
 };
 
-export default NFTTransactionRow;
+export default NftTransactionRow;

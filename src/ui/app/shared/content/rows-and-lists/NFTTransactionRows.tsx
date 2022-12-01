@@ -1,12 +1,12 @@
-import NFTTransactionRow from './NFTTransactionRow';
+import NftTransactionRow from './NftTransactionRow';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
-interface NFTTransactionRowsProps {
+interface NftTransactionRowsProps {
     transactions?: TxResultState[];
 }
 
-const NFTTransactionRows = ({ transactions }: NFTTransactionRowsProps) => {
+const NftTransactionRows = ({ transactions }: NftTransactionRowsProps) => {
     /*
     
     TODO: Determine where the event data comes from for NFT transactions. Are the
@@ -49,10 +49,10 @@ const NFTTransactionRows = ({ transactions }: NFTTransactionRowsProps) => {
     return (
         <div className="pb-6 dark:divide-ethos-dark-text-stroke">
             {tempData.map((txn, idx) => {
-                return <NFTTransactionRow txn={txn} key={idx} />;
+                return <NftTransactionRow txn={txn} key={idx} />;
             })}
         </div>
     );
 };
 
-export default NFTTransactionRows;
+export default NftTransactionRows;
