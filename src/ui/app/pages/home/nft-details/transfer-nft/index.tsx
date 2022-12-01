@@ -120,7 +120,6 @@ function TransferNFTCard({ objectId }: TransferProps) {
 
     return (
         <div className={st.container}>
-            {/* Remove nav bar and include a redux hook to show back in navigation => <NavBarWithBackAndTitle title="Send NFT" backLink="/nfts" /> */}
             <div className={'text-left'}>
                 <Formik
                     initialValues={initialValues}
