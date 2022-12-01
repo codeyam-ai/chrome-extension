@@ -26,7 +26,12 @@ const Loading = ({
         if (loading || !resize) return;
 
         const resizeWindow = () => {
-            window.resizeTo(window.innerWidth, document.body.offsetHeight + 30);
+            if (window.innerHeight < document.body.offsetHeight + 30) {
+                window.resizeTo(
+                    window.innerWidth,
+                    document.body.offsetHeight + 30
+                );
+            }
         };
         resizeWindow();
         Promise.all(
