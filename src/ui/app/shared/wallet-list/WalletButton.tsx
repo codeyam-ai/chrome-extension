@@ -6,7 +6,7 @@ import { type AccountInfo } from '../../KeypairVault';
 import { useEditWalletUrl } from '../../components/settings-menu/hooks';
 import { useAppDispatch, useMiddleEllipsis } from '../../hooks';
 import { saveActiveAccountIndex } from '../../redux/slices/account';
-import EmojiDisplay from '../EmojiDisplay';
+import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import { clearForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
@@ -50,14 +50,12 @@ const WalletButton = ({
             onClick={switchToThisWallet}
         >
             <div className="flex gap-3">
-                <div
-                    className="h-10 w-10 rounded-full flex items-center justify-center"
-                    style={{
-                        backgroundColor: wallet.color || '#742AC2',
-                    }}
-                >
-                    <EmojiDisplay emoji={wallet.emoji} className="h-6 w-6" />
-                </div>
+                <WalletColorAndEmojiCircle
+                    color={wallet.color}
+                    emoji={wallet.emoji}
+                    circleSizeClasses="h-10 w-10"
+                    emojiSizeClasses="h-6 w-6"
+                />
                 <div className="flex flex-col text-left" title={wallet.address}>
                     <BodyLarge>{wallet.name}</BodyLarge>
                     <Body isTextColorMedium>{shortenedAddress}</Body>

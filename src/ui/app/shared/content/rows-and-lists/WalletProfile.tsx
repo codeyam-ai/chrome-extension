@@ -1,7 +1,7 @@
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
 
-import EmojiDisplay from '../../EmojiDisplay';
+import WalletColorAndEmojiCircle from '../../WalletColorAndEmojiCircle';
 import BodyLarge from '../../typography/BodyLarge';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 import AccountAddress, {
@@ -30,14 +30,12 @@ const WalletProfile = ({ onClick }: { onClick?: () => void }) => {
 
     const WalletPicker = () => (
         <div className="flex flex-row gap-2 items-center">
-            <div
-                className="h-6 w-6 rounded-full flex items-center justify-center"
-                style={{
-                    backgroundColor: accountInfo?.color || '#7E23CA',
-                }}
-            >
-                <EmojiDisplay emoji={accountInfo?.emoji} className="h-3 w-3" />
-            </div>
+            <WalletColorAndEmojiCircle
+                color={accountInfo?.color}
+                emoji={accountInfo?.emoji}
+                circleSizeClasses="h-6 w-6"
+                emojiSizeClasses="h-3 w-3"
+            />
             <BodyLarge isSemibold>{shortenedName}</BodyLarge>
 
             <ChevronDownIcon className="h-4 w-4 text-ethos-light-text-medium dark:text-ethos-dark-text-medium cursor-pointer" />

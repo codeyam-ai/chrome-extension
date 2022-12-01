@@ -30,7 +30,7 @@ const EmojiDisplay = ({ emoji, className }: EmojiDisplayProps) => {
     if (emoji === 'Sparkles') baseEmoji = <Sparkles />;
     if (emoji === 'Tools') baseEmoji = <Tools />;
 
-    return <div className={className}>{baseEmoji}</div>;
+    return <div className={className || ''}>{baseEmoji}</div>;
 };
 
 export default EmojiDisplay;

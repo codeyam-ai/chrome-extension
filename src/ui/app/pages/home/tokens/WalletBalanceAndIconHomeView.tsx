@@ -1,4 +1,4 @@
-import EmojiDisplay from '_src/ui/app/shared/EmojiDisplay';
+import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 
@@ -24,17 +24,12 @@ const WalletBalanceAndIconHomeView = ({
     }
     return (
         <div className="flex flex-col gap-6 py-8 px-6 place-items-center">
-            <div
-                className="h-[104px] w-[104px] rounded-full flex items-center justify-center"
-                style={{
-                    backgroundColor: accountInfo?.color || '#7E23CA',
-                }}
-            >
-                <EmojiDisplay
-                    emoji={accountInfo?.emoji}
-                    className="h-14 w-14"
-                />
-            </div>
+            <WalletColorAndEmojiCircle
+                color={accountInfo?.color}
+                emoji={accountInfo?.emoji}
+                circleSizeClasses="h-[104px] w-[104px]"
+                emojiSizeClasses="h-14 w-14"
+            />
             <div className="flex flex-col gap-1">
                 <BodyLarge isSemibold isTextColorMedium>
                     Wallet Balance
