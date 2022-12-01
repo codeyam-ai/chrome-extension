@@ -69,7 +69,7 @@ const TabBar = () => {
     const setExplorerPermission = useExplorerPermission();
 
     return (
-        <nav className="flex flex-row h-16 w-full rounded-b-2xl items-center absolute inset-x-0 bottom-0 border-t bg-ethos-light-background-default border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
+        <nav className="flex flex-row h-16 w-full rounded-b-2xl items-center absolute inset-x-0 bottom-0 border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
             <>
                 {navItems.map((item, key) => {
                     //
