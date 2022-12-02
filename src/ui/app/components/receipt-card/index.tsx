@@ -26,7 +26,6 @@ import TxSent from '_src/ui/app/shared/svg/TxSent';
 
 import type { TxResultState } from '_redux/slices/txresults';
 
-
 import st from './ReceiptCard.module.scss';
 
 type TxResponseProps = {

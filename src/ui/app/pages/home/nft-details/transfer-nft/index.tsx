@@ -4,10 +4,6 @@
 import { Formik } from 'formik';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-
-import TransferNFTForm from './TransferNFTForm';
-import { createValidationSchema } from './validation';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import {
     accountAggregateBalancesSelector,
@@ -18,13 +14,15 @@ import {
     DEFAULT_NFT_TRANSFER_GAS_FEE,
     GAS_TYPE_ARG,
 } from '_redux/slices/sui-objects/Coin';
-import { SuccessAlert } from '_src/ui/app/shared/alerts/success-alert';
+import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
+import TransferNFTForm from './TransferNFTForm';
+import { createValidationSchema } from './validation';
 
 import type { ObjectId } from '@mysten/sui.js';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
 
-
+import { toast } from 'react-toastify';
 import st from './TransferNFTForm.module.scss';
 
 const initialValues = {
