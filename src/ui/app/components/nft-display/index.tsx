@@ -1,6 +1,5 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-import cl from 'classnames';
 
 import Body from '../../shared/typography/Body';
 import ExplorerLink from '_components/explorer-link';
@@ -8,8 +7,7 @@ import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { useNFTBasicData } from '_hooks';
 
 import type { SuiObject as SuiObjectType } from '@mysten/sui.js';
-
-import st from './NFTDisplay.module.scss';
+import truncateString from '../../helpers/truncate-string';
 
 export type NFTsProps = {
     nftobj: SuiObjectType;
@@ -22,7 +20,6 @@ export type NFTsProps = {
 function NFTDisplayCard({
     nftobj,
     showlabel,
-    size = 'medium',
     expandable,
     wideview,
 }: NFTsProps) {
@@ -30,10 +27,10 @@ function NFTDisplayCard({
         useNFTBasicData(nftobj);
 
     const wideviewSection = (
-        <div className={'flex flex-col text-left'}>
+        <div>
             <Body isSemibold>{nftFields?.name}</Body>
-            <Body className={'text-ethos-light-text-medium'}>
-                {fileExtentionType?.name} {fileExtentionType.type}
+            <Body isTextColorMedium>
+                {truncateString(nftFields?.description, 30)}
             </Body>
         </div>
     );
@@ -53,18 +50,19 @@ function NFTDisplayCard({
                 </div>
             ) : null}
             {showlabel && nftFields?.name ? (
-                <div className={st.nftfields + ' dark:text-gray-400'}>
-                    {nftFields.name}
+                <div>
+                    <Body isSemibold>{nftFields.name}</Body>
+                    <Body isTextColorMedium>{nftFields.description}</Body>
                 </div>
             ) : null}
         </>
     );
 
     return (
-        <div className={cl(st.nftimage, wideview && st.wideview)}>
+        <div className={'flex flex-row items-center'}>
             {filePath && (
                 <img
-                    className={cl(st.img, st[size])}
+                    className={'w-[40px] h-[40px] mr-2'}
                     src={filePath}
                     alt={fileExtentionType?.name || 'NFT'}
                 />
