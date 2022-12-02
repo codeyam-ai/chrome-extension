@@ -1,11 +1,11 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import truncateString from '../../helpers/truncate-string';
 import Body from '../../shared/typography/Body';
 import { useNFTBasicData } from '_hooks';
 
 import type { SuiObject as SuiObjectType } from '@mysten/sui.js';
-import truncateString from '../../helpers/truncate-string';
 
 export type NFTsProps = {
     nftobj: SuiObjectType;

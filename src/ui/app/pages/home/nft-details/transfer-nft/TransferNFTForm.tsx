@@ -22,8 +22,8 @@ import Header from '_src/ui/app/shared/typography/Header';
 
 import type { FormValues } from '.';
 
-import 'react-toastify/dist/ReactToastify.css';
 import st from './TransferNFTForm.module.scss';
+import 'react-toastify/dist/ReactToastify.css';
 
 export type TransferNFTFormProps = {
     submitError: string | null;
