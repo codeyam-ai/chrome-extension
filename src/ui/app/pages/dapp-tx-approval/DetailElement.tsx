@@ -1,4 +1,5 @@
 import truncateMiddle from '../../helpers/truncate-middle';
+import Body from '../../shared/typography/Body';
 import CostValue from './CostValue';
 import NumberedValue from './NumberedValue';
 import SmallValue from './SmallValue';
@@ -68,29 +69,27 @@ const DetailElement = ({ detail }: { detail: Detail }) => {
     return (
         <div className="flex flex-col gap-1">
             <div className="flex justify-between">
-                <div className="flex items-center gap-1">
-                    <div className="text-gray-500 dark:text-gray-400">
-                        {detail.label}
-                    </div>
+                <div className="flex items-center gap-2">
+                    <Body isTextColorMedium>{detail.label}</Body>
                 </div>
-                <div className="dark:text-gray-400 font-semibold flex flex-col items-end gap-1">
+                <div className="flex flex-col items-end gap-2">
                     {contents.map((content, index) => (
-                        <div key={`detail-content-${index}`}>
+                        <Body isSemibold key={`detail-content-${index}`}>
                             {contentElement(content)}
-                        </div>
+                        </Body>
                     ))}
                 </div>
             </div>
             {detailDetailArray && (
-                <div className="text-xs text-slate-800 dark:text-slate-400 text-right">
+                <div className="text-right">
                     {detailDetailArray.map(
                         (detailDetail: string, index: number) => (
-                            <div
+                            <Body
+                                isSemibold
                                 key={`detail-detail-${detailDetail}-${index}`}
-                                title={detailDetail}
                             >
                                 {detailDetail}
-                            </div>
+                            </Body>
                         )
                     )}
                 </div>

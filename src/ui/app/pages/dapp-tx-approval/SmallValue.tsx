@@ -1,4 +1,5 @@
 import truncateMiddle from '../../helpers/truncate-middle';
+import Body from '../../shared/typography/Body';
 
 import type { SuiJsonValue } from '@mysten/sui.js';
 
@@ -17,14 +18,11 @@ const SmallValue = ({ content, type }: SmallDetail) => {
 
     const contentArray = Array.isArray(content) ? content : [content];
     return (
-        <div className="text-xs font-normal text-right">
+        <div className="text-right">
             {contentArray.map((contentItem, item) => (
-                <div
-                    key={`detail-${contentItem}`}
-                    title={contentItem.toString()}
-                >
-                    {truncateMiddle(contentItem.toString(), 12)}
-                </div>
+                <Body key={`detail-${contentItem}`}>
+                    {truncateMiddle(contentItem.toString(), 5)}
+                </Body>
             ))}
         </div>
     );

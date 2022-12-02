@@ -48,7 +48,7 @@ function UserApproveContainer({
     }, [onSubmit]);
 
     return (
-        <div className="text-ethos-light-text-default dark:text-ethos-dark-text-default bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
+        <div className="w-full text-ethos-light-text-default dark:text-ethos-dark-text-default bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
             <ApproveContainerNavBar reject={reject} />
 
             <HeaderWithIconRow

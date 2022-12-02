@@ -47,6 +47,10 @@ const cleanObjectId = (objectId: string) => {
     return objectId.replace('0x0', '').replace('0x', '');
 };
 
+const formatAddress = (address?: string) => {
+    return truncateMiddle(address, 5);
+};
+
 export function DappTxApprovalPage() {
     const [tab, setTab] = useState(TxApprovalTab.SUMMARY);
 
@@ -619,7 +623,7 @@ export function DappTxApprovalPage() {
                                       content: `${reading.length} Assets`,
                                       detail: reading.map(
                                           (r) =>
-                                              `${truncateMiddle(r?.address)}::${
+                                              `${formatAddress(r?.address)}::${
                                                   r?.module
                                               }::${r?.name}`
                                       ),
@@ -629,7 +633,7 @@ export function DappTxApprovalPage() {
                                       content: `${mutating.length} Assets`,
                                       detail: mutating.map(
                                           (m) =>
-                                              `${truncateMiddle(m?.address)}::${
+                                              `${formatAddress(m?.address)}::${
                                                   m?.module
                                               }::${m?.name}`
                                       ),
@@ -639,7 +643,7 @@ export function DappTxApprovalPage() {
                                       content: `${transferring.length} Assets`,
                                       detail: transferring.map(
                                           (t) =>
-                                              `${truncateMiddle(t?.address)}::${
+                                              `${formatAddress(t?.address)}::${
                                                   t?.module
                                               }::${t?.name}`
                                       ),
@@ -670,7 +674,7 @@ export function DappTxApprovalPage() {
                                       content: `${creating.length} Assets`,
                                       detail: creating.map(
                                           (c) =>
-                                              `${truncateMiddle(c?.address)}::${
+                                              `${formatAddress(c?.address)}::${
                                                   c?.module
                                               }::${c?.name}`
                                       ),
@@ -680,7 +684,7 @@ export function DappTxApprovalPage() {
                                       content: `${mutating.length} Assets`,
                                       detail: mutating.map(
                                           (m) =>
-                                              `${truncateMiddle(m?.address)}::${
+                                              `${formatAddress(m?.address)}::${
                                                   m?.module
                                               }::${m?.name}`
                                       ),
@@ -690,7 +694,7 @@ export function DappTxApprovalPage() {
                                       content: `${transferring.length} Assets`,
                                       detail: transferring.map(
                                           (t) =>
-                                              `${truncateMiddle(t?.address)}::${
+                                              `${formatAddress(t?.address)}::${
                                                   t?.module
                                               }::${t?.name}`
                                       ),
@@ -894,8 +898,8 @@ export function DappTxApprovalPage() {
                             />
                         </div>
                     ) : (
-                        <div className="flex flex-col gap-6">
-                            <div className="flex flex-row justify-between items-baseline text-lg">
+                        <div className="flex flex-col gap-6 pb-6">
+                            <div className="flex flex-row gap-2 justify-between items-baseline px-6">
                                 {[
                                     TxApprovalTab.SUMMARY,
                                     TxApprovalTab.ASSETS,
@@ -914,7 +918,7 @@ export function DappTxApprovalPage() {
 
                             <div
                                 id="content"
-                                className="flex flex-col gap-6 overflow-auto"
+                                className="flex flex-col gap-6 w-full px-6 overflow-auto"
                             >
                                 {(content[tab] || []).map(
                                     (section, sectionIndex) => (
