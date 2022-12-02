@@ -12,19 +12,22 @@ import truncateString from '../../helpers/truncate-string';
 export type NFTsProps = {
     nftobj: SuiObjectType;
     showlabel?: boolean;
-    size?: 'small' | 'medium' | 'large';
-    expandable?: boolean;
     wideview?: boolean;
 };
 
-function NFTDisplayCard({
-    nftobj,
-    showlabel,
-    expandable,
-    wideview,
-}: NFTsProps) {
-    const { filePath, nftObjectID, nftFields, fileExtentionType } =
-        useNFTBasicData(nftobj);
+function NFTDisplayCard({ nftobj, showlabel, wideview }: NFTsProps) {
+    const { filePath, nftFields, fileExtentionType } = useNFTBasicData(nftobj);
+
+    const defaultSection = (
+        <>
+            {showlabel && nftFields?.name ? (
+                <div>
+                    <Body isSemibold>{nftFields.name}</Body>
+                    <Body isTextColorMedium>{nftFields.description}</Body>
+                </div>
+            ) : null}
+        </>
+    );
 
     const wideviewSection = (
         <div>
@@ -33,29 +36,6 @@ function NFTDisplayCard({
                 {truncateString(nftFields?.description, 30)}
             </Body>
         </div>
-    );
-
-    const defaultSection = (
-        <>
-            {expandable ? (
-                <div className="flex items-center content-center mt-3">
-                    <ExplorerLink
-                        type={ExplorerLinkType.object}
-                        objectID={nftObjectID}
-                        showIcon={false}
-                        className="text-purple-700 hover:text-purple-800 dark:text-violet-400 dark:hover:text-violet-300"
-                    >
-                        View On Sui Explorer →
-                    </ExplorerLink>
-                </div>
-            ) : null}
-            {showlabel && nftFields?.name ? (
-                <div>
-                    <Body isSemibold>{nftFields.name}</Body>
-                    <Body isTextColorMedium>{nftFields.description}</Body>
-                </div>
-            ) : null}
-        </>
     );
 
     return (
