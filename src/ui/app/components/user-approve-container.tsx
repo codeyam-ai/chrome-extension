@@ -40,7 +40,6 @@ function UserApproveContainer({
     const approve = useCallback(() => {
         setSubmitting(true);
         onSubmit(true);
-        setSubmitting(false);
     }, [onSubmit]);
 
     const reject = useCallback(() => {
@@ -50,14 +49,12 @@ function UserApproveContainer({
     return (
         <div className="w-full text-ethos-light-text-default dark:text-ethos-dark-text-default bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
             <ApproveContainerNavBar reject={reject} />
-
             <HeaderWithIconRow
                 iconSrc={originFavIcon}
                 iconAlt={`${originTitle} icon`}
                 title={title}
                 description={description}
             />
-
             <div className="w-full">{children}</div>
 
             {!hasError && (

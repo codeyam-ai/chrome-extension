@@ -1,6 +1,11 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import {
+    ChevronDownIcon,
+    ChevronUpIcon,
+    QuestionMarkCircleIcon,
+} from '@heroicons/react/24/solid';
 import { JsonRpcProvider, Network } from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -8,6 +13,9 @@ import { useParams } from 'react-router-dom';
 import Tooltip from '../../components/Tooltip';
 import NFTDisplayCard from '../../components/nft-display';
 import { AppState } from '../../hooks/useInitializedGuard';
+import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
+import Input from '../../shared/inputs/Input';
+import Body from '../../shared/typography/Body';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
 import {
@@ -16,6 +24,7 @@ import {
 } from '_redux/slices/preapproval-requests';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
+import type { KeyNameAndValue } from '../../shared/content/rows-and-lists/KeyValueList';
 import type { SuiObject } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 
@@ -69,26 +78,22 @@ const PermissionInput = ({
     );
 
     return (
-        <div className="flex flex-col gap-1">
-            <div className="text-sm flex justify-between items-center">
-                <div className="flex gap-1">
-                    <div className="font-bold dark:text-gray-300">{title}</div>
+        <div className="flex flex-col gap-2 px-6 pb-6">
+            <div className="flex justify-between items-center">
+                <div className="flex gap-2">
+                    <Body isSemibold>{title}</Body>
                     {description && (
                         <Tooltip tooltipText={description}>
-                            <div className="cursor-help flex justify-center items-center rounded-full bg-gray-400 text-white text-xs h-5 w-5 scale-75">
-                                ?
-                            </div>
+                            <QuestionMarkCircleIcon className="w-5 h-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
                         </Tooltip>
                     )}
                 </div>
-                <div>
-                    <input
-                        className="text-right border p-1 rounded-md focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 border-gray-300 dark:border-gray-500 dark:bg-gray-700"
-                        style={{ width: '6em' }}
-                        onChange={_handleChange}
-                        value={value}
-                    />
-                </div>
+                <Input
+                    onChange={_handleChange}
+                    value={value}
+                    isTextAlignRight
+                    className="!px-0 !py-0 max-w-[112px]"
+                />
             </div>
         </div>
     );
@@ -249,70 +254,40 @@ export function DappPreapprovalPage() {
             setShowDetails((prev) => !prev);
         }, []);
 
+        const keyValueListItems: KeyNameAndValue[] = [
+            {
+                keyName: 'Module',
+                value: preapproval?.module || '',
+            },
+            {
+                keyName: 'Object',
+                value: truncateMiddle(preapproval?.objectId, 6),
+            },
+            {
+                keyName: 'Function',
+                value: preapproval?.function || '',
+            },
+            {
+                keyName: 'Package',
+                value: truncateMiddle(preapproval?.packageObjectId || '', 6),
+            },
+        ];
+
         return (
-            <div
-                className="text-sm cursor-pointer relative py-3"
-                onClick={_toggleDetails}
-            >
-                <div className="flex justify-between items-center">
-                    <div>View Details</div>
-                    <div className="text-xs">
-                        {showDetails ? (
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className="w-5 h-5"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M4.5 15.75l7.5-7.5 7.5 7.5"
-                                />
-                            </svg>
-                        ) : (
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className="w-5 h-5"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                                />
-                            </svg>
-                        )}
-                    </div>
+            <div className="flex flex-col gap-2 relative">
+                <div
+                    className="flex justify-between items-center px-6 cursor-pointer"
+                    onClick={_toggleDetails}
+                >
+                    <Body isSemibold>View Details</Body>
+                    {showDetails ? (
+                        <ChevronDownIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                    ) : (
+                        <ChevronUpIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                    )}
                 </div>
                 {showDetails && (
-                    <div className="flex flex-col gap-3 pt-2 text-xs">
-                        <div className="flex justify-between">
-                            <div className="text-gray-400">Module</div>
-                            <div>{preapproval?.module}</div>
-                        </div>
-                        <div className="flex justify-between">
-                            <div className="text-gray-400">Object</div>
-                            <div title={preapproval?.objectId}>
-                                {truncateMiddle(preapproval?.objectId, 6)}
-                            </div>
-                        </div>
-                        <div className="flex justify-between">
-                            <div className="text-gray-400">Function</div>
-                            <div>{preapproval?.function}</div>
-                        </div>
-                        <div className="flex justify-between">
-                            <div className="text-gray-400">Package</div>
-                            <div title={preapproval?.packageObjectId}>
-                                {truncateMiddle(preapproval?.packageObjectId)}
-                            </div>
-                        </div>
-                    </div>
+                    <KeyValueList keyNamesAndValues={keyValueListItems} />
                 )}
             </div>
         );
@@ -344,47 +319,43 @@ export function DappPreapprovalPage() {
                             pre-approved transaction.
                         </div>
                     ) : (
-                        <>
-                            <div className="text-sm flex flex-col justify-center items-center">
-                                <div className="text-gray-500 dark:text-gray-400">
+                        <div className="flex flex-col gap-4 pb-6">
+                            <div className="flex flex-col justify-center items-center gap-2">
+                                <Body isTextColorMedium>
                                     Transactions can only {modifier} this NFT:
-                                </div>
+                                </Body>
                                 {nft && (
-                                    <div className="text-xs my-3 text-center">
+                                    <div className="text-center">
                                         <NFTDisplayCard
                                             nftobj={nft}
                                             showlabel={true}
                                         />
-                                        <div className="pt-1 dark:text-gray-400">
+                                        <Body isTextColorMedium>
                                             {truncateMiddle(
                                                 preapproval?.objectId || '',
                                                 12
                                             )}
-                                        </div>
+                                        </Body>
                                     </div>
                                 )}
                             </div>
-                            <div className="flex flex-col gap-3">
-                                <div className="flex flex-col gap-1 py-3 text-xs">
-                                    <div className="font-extrabold text-sm dark:text-gray-300">
-                                        Description
-                                    </div>
-                                    <p className="text-gray-500 dark:text-gray-400">
-                                        {preapproval?.description}
-                                    </p>
-                                </div>
-                                <div className="flex flex-col gap-3 dark:text-gray-300">
-                                    {permissionInputs.map((info, index) => (
-                                        <PermissionInput
-                                            key={`permission-input-${index}`}
-                                            onChange={onChange}
-                                            {...info}
-                                        />
-                                    ))}
-                                    <Details />
-                                </div>
+                            <div className="flex flex-col px-6">
+                                <Body isSemibold>Description</Body>
+                                <Body isTextColorMedium>
+                                    {preapproval?.description}
+                                </Body>
                             </div>
-                        </>
+                            <div className="flex flex-col">
+                                {permissionInputs.map((info, index) => (
+                                    <PermissionInput
+                                        key={`permission-input-${index}`}
+                                        onChange={onChange}
+                                        {...info}
+                                    />
+                                ))}
+                                <Details />
+                            </div>
+                        </div>
                     )}
                 </UserApproveContainer>
             ) : (

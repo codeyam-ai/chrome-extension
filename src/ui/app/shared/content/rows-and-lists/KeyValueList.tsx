@@ -1,6 +1,6 @@
 import Body from '../../typography/Body';
 
-type KeyNameAndValue = {
+export type KeyNameAndValue = {
     keyName: string;
     value: string;
 };
