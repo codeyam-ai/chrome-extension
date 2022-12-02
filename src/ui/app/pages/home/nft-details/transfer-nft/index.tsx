@@ -73,6 +73,9 @@ function TransferNFTCard({ objectId }: TransferProps) {
             { to }: FormValues,
             { resetForm }: FormikHelpers<FormValues>
         ) => {
+            // Let the user know the transaction is en route
+            toast(<SuccessAlert text={'Transaction submitted.'} />);
+
             if (objectId === null) {
                 return;
             }
