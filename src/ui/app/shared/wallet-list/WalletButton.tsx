@@ -9,6 +9,7 @@ import { saveActiveAccountIndex } from '../../redux/slices/account';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import { clearForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
+import defaultColors from '_src/shared/defaultColorOptions';
 
 interface WalletButtonProps {
     wallet: AccountInfo;
@@ -52,11 +53,16 @@ const WalletButton = ({
                 <div
                     className="h-10 w-10 rounded-full flex items-center justify-center"
                     style={{
-                        backgroundColor: wallet.color || '#742AC2',
+                        backgroundColor: wallet.color || defaultColors[0],
                     }}
                 />
                 <div className="flex flex-col text-left" title={wallet.address}>
-                    <BodyLarge>{wallet.name}</BodyLarge>
+                    <BodyLarge>
+                        {wallet.name ||
+                            `Wallet${
+                                wallet.index > 0 ? ' ' + wallet.index + 1 : ''
+                            }`}
+                    </BodyLarge>
                     <Body isTextColorMedium>{shortenedAddress}</Body>
                 </div>
             </div>
