@@ -14,6 +14,7 @@ export type AccountInfo = {
     seed: string;
     name?: string;
     color?: string;
+    emoji?: string;
     chain?: string;
 };
 

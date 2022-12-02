@@ -1,7 +1,10 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { useMemo } from 'react';
+
 import CoinList from './CoinList';
+import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import Loading from '_components/loading';
 import { useAppSelector, useObjectsState } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
@@ -9,17 +12,30 @@ import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import SendReceiveButtonGroup from '_src/ui/app/shared/buttons/SendReceiveButtonGroup';
-import AmountRow from '_src/ui/app/shared/content/rows-and-lists/AmountRow';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 import Body from '_src/ui/app/shared/typography/Body';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
+import type { AccountInfo } from '_src/ui/app/KeypairVault';
+
 function TokensPage() {
     const { loading, error, showError } = useObjectsState();
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const mistBalance = balances[GAS_TYPE_ARG] || BigInt(0);
+    // TODO: make this an actual calculation
+    const dollarValue = useMemo(
+        () => Number(mistBalance / BigInt(10000000)),
+        [mistBalance]
+    );
+    const accountInfo = useAppSelector(
+        ({ account: { accountInfos, activeAccountIndex } }) =>
+            accountInfos.find(
+                (accountInfo: AccountInfo) =>
+                    (accountInfo.index || 0) === activeAccountIndex
+            )
+    );
 
     return (
         <>
@@ -37,14 +53,12 @@ function TokensPage() {
                         big={true}
                         className="flex py-6 justify-center items-center"
                     >
-                        <div className="pt-6">
-                            <AmountRow
-                                balance={mistBalance}
-                                type={GAS_TYPE_ARG}
-                            />
-                            <SendReceiveButtonGroup mistBalance={mistBalance} />
-                        </div>
-                        <div className="flex flex-col gap-6 pb-6 h-[222px] overflow-auto">
+                        <WalletBalanceAndIconHomeView
+                            accountInfo={accountInfo}
+                            dollarValue={dollarValue}
+                        />
+                        <SendReceiveButtonGroup mistBalance={mistBalance} />
+                        <div className="flex flex-col gap-6 pb-6 overflow-auto">
                             <ContentBlock>
                                 <CoinList balances={balances} />
 
