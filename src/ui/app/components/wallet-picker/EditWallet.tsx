@@ -1,3 +1,5 @@
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 import { useCallback, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -13,7 +15,6 @@ import Button from '../../shared/buttons/Button';
 import BasicSectionHeader from '../../shared/headers/section-headers/BasicSectionHeader';
 import Input from '../../shared/inputs/Input';
 import ColorPickerMenu from '../../shared/inputs/colors/ColorPickerMenu';
-import EmojiPickerMenu from '../../shared/inputs/emojis/EmojiPickerMenu';
 import NavBarWithBackAndClose from '../../shared/navigation/nav-bar/NavBarWithBackAndClose';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Loading from '../loading';
@@ -21,7 +22,10 @@ import { useNextWalletPickerUrl } from '../settings-menu/hooks';
 import Authentication from '_src/background/Authentication';
 
 import type { AccountInfo } from '../../KeypairVault';
-import type { Emoji } from '_src/shared/emojiOptions';
+
+type EmojiPickerResult = {
+    shortcodes: string;
+};
 
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -57,7 +61,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
         currentAccountInfo.color || '#7E23CA'
     );
 
-    const [draftEmoji, setDraftEmoji] = useState<Emoji>(
+    const [draftEmoji, setDraftEmoji] = useState<string>(
         currentAccountInfo.emoji || 'Rocket'
     );
 
@@ -132,7 +136,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
         }: {
             name?: string;
             color?: string;
-            emoji?: Emoji;
+            emoji?: string;
         }) => {
             draftAccountInfos.current = draftAccountInfos.current.map(
                 (accountInfo: AccountInfo) => {
@@ -172,10 +176,9 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     );
 
     const _handleEmojiChange = useCallback(
-        (emojiResult: Emoji) => {
-            const emoji = emojiResult;
-            setDraftEmoji(emoji);
-            _handleChange({ emoji });
+        (emojiPickerResult: EmojiPickerResult) => {
+            setDraftEmoji(emojiPickerResult.shortcodes);
+            _handleChange({ emoji: emojiPickerResult.shortcodes });
             setIsEmojiPickerMenuOpen(false);
         },
         [_handleChange]
@@ -227,31 +230,31 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                         onClick={toggleIsEmojiPickerMenuOpen}
                     >
                         <div className="flex w-12 h-12 rounded-sm place-content-center items-center">
-                            <EmojiDisplay
-                                emoji={draftEmoji}
-                                className="h-10 w-10"
-                            />
+                            <EmojiDisplay emoji={draftEmoji} sizeInPx={48} />
                         </div>
                     </div>
                 </div>
-                <div className="relative mx-6">
-                    {isEmojiPickerMenuOpen && (
-                        <>
-                            {/* Backdrop */}
-                            <div
-                                className="absolute -top-[223px] -left-[24px] w-[360px] h-[475px]"
-                                onClick={toggleIsEmojiPickerMenuOpen}
-                            />
+                {isEmojiPickerMenuOpen && (
+                    <>
+                        {/* Backdrop */}
+                        <div
+                            className="absolute w-full h-full top-0"
+                            onClick={toggleIsEmojiPickerMenuOpen}
+                        />
 
-                            <div className="absolute">
-                                <EmojiPickerMenu
+                        <div className="absolute left-1">
+                            {/* <EmojiPickerMenu
                                     selectedEmoji={draftEmoji}
                                     setSelectedEmoji={_handleEmojiChange}
-                                />
-                            </div>
-                        </>
-                    )}
-                </div>
+                                /> */}
+                            <Picker
+                                data={data}
+                                onEmojiSelect={_handleEmojiChange}
+                            />
+                        </div>
+                    </>
+                )}
+                <div className="relative mx-6"></div>
                 <Button buttonStyle="primary" onClick={_saveAccountInfos}>
                     <Loading loading={loading}>Done</Loading>
                 </Button>

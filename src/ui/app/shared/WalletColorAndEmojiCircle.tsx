@@ -1,19 +1,18 @@
 import EmojiDisplay from './EmojiDisplay';
 import defaultColors from '_src/shared/defaultColorOptions';
-import { type Emoji } from '_src/shared/emojiOptions';
 
 interface WalletColorAndEmojiCircleProps {
     color?: string;
-    emoji?: Emoji;
+    emoji?: string;
     circleSizeClasses?: string;
-    emojiSizeClasses?: string;
+    emojiSizeInPx?: number;
 }
 
 const WalletColorAndEmojiCircle = ({
     color,
     emoji,
     circleSizeClasses,
-    emojiSizeClasses,
+    emojiSizeInPx,
 }: WalletColorAndEmojiCircleProps) => {
     return (
         <div
@@ -24,7 +23,7 @@ const WalletColorAndEmojiCircle = ({
                 backgroundColor: color || defaultColors[0],
             }}
         >
-            <EmojiDisplay emoji={emoji} className={emojiSizeClasses} />
+            <EmojiDisplay emoji={emoji} sizeInPx={emojiSizeInPx} />
         </div>
     );
 };

@@ -1,9 +1,7 @@
-import emojiOptions from '_src/shared/emojiOptions';
+import defaultEmojis from '_src/shared/emojiOptions';
 
-import type { Emoji } from '_src/shared/emojiOptions';
-
-const getNextEmoji = (nextAccountIndex: number): Emoji => {
-    return emojiOptions[nextAccountIndex % emojiOptions.length];
+const getNextEmoji = (nextAccountIndex: number): string => {
+    return defaultEmojis[nextAccountIndex % defaultEmojis.length];
 };
 
 export default getNextEmoji;

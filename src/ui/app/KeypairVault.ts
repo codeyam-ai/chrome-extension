@@ -8,15 +8,13 @@ import {
     getSeedFromMnemonics,
 } from '_shared/cryptography/mnemonics';
 
-import type { Emoji } from '_src/shared/emojiOptions';
-
 export type AccountInfo = {
     index: number;
     address: string;
     seed: string;
     name?: string;
     color?: string;
-    emoji?: Emoji;
+    emoji?: string;
     chain?: string;
 };
 

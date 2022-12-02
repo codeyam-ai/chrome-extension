@@ -34,7 +34,7 @@ const WalletProfile = ({ onClick }: { onClick?: () => void }) => {
                 color={accountInfo?.color}
                 emoji={accountInfo?.emoji}
                 circleSizeClasses="h-6 w-6"
-                emojiSizeClasses="h-3 w-3"
+                emojiSizeInPx={16}
             />
             <BodyLarge isSemibold>{shortenedName}</BodyLarge>
 

@@ -28,7 +28,7 @@ const WalletBalanceAndIconHomeView = ({
                 color={accountInfo?.color}
                 emoji={accountInfo?.emoji}
                 circleSizeClasses="h-[104px] w-[104px]"
-                emojiSizeClasses="h-14 w-14"
+                emojiSizeInPx={58}
             />
             <div className="flex flex-col gap-1">
                 <BodyLarge isSemibold isTextColorMedium>

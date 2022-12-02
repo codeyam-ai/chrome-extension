@@ -1,27 +1,16 @@
-export type Emoji =
-    | 'Rocket'
-    | 'Controller'
-    | 'CrystalBall'
-    | 'Flower'
-    | 'Monster'
-    | 'Music'
-    | 'Palette'
-    | 'PartyPopper'
-    | 'Sparkles'
-    | 'Tools';
-
 // This will govern the order the emoji will be chosen for new wallets, and how they are displayed in a list
-const emojiOptions: Emoji[] = [
-    'Sparkles',
-    'Controller',
-    'Palette',
-    'Music',
-    'Rocket',
-    'CrystalBall',
-    'Flower',
-    'Monster',
-    'PartyPopper',
-    'Tools',
+// These are the shortcodes for the emojis
+const defaultEmojis = [
+    ':sparkles:',
+    ':joystick:',
+    ':art:',
+    ':musical_note:',
+    ':rocket:',
+    ':crystal_ball:',
+    ':sunflower:',
+    ':space_invader:',
+    ':tada:',
+    ':hammer_and_wrench:',
 ];
 
-export default emojiOptions;
+export default defaultEmojis;

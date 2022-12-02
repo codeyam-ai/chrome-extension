@@ -5,3 +5,4 @@ node_modules/
 out/
 font-icons/output/
 src/ui/app/components/gradientBackground/
+src/types/@emoji-mart/emoji-component.d.ts
