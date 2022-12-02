@@ -14,8 +14,13 @@ import {
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector } from '_src/ui/app/hooks';
 
+interface WalletProfileProps {
+    onClick?: () => void;
+    hideWalletPicker?: boolean;
+}
+
 // This component contains the wallet icon, name, and address
-const WalletProfile = ({ onClick }: { onClick?: () => void }) => {
+const WalletProfile = ({ onClick, hideWalletPicker }: WalletProfileProps) => {
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex } }) =>
             accountInfos.find(
@@ -38,32 +43,29 @@ const WalletProfile = ({ onClick }: { onClick?: () => void }) => {
             />
             <BodyLarge isSemibold>{shortenedName}</BodyLarge>
 
-            <ChevronDownIcon className="h-4 w-4 text-ethos-light-text-medium dark:text-ethos-dark-text-medium cursor-pointer" />
+            {!hideWalletPicker && (
+                <ChevronDownIcon className="h-4 w-4 text-ethos-light-text-medium dark:text-ethos-dark-text-medium cursor-pointer" />
+            )}
         </div>
     );
 
     return (
         <div className="flex flex-row gap-2 items-center">
             <div className="flex flex-row gap-2 items-center py-1">
-                {/* {onClick ? (
-                    <div onClick={onClick} className="cursor-pointer">
-                        <WalletPicker />
-                    </div>
+                {hideWalletPicker ? (
+                    <WalletPicker />
                 ) : (
-                    <Link to={walletPickerUrl}>
+                    <Link
+                        to={
+                            isWalletPickerOpen
+                                ? closeWalletPickerUrl
+                                : walletPickerUrl
+                        }
+                        onClick={onClick}
+                    >
                         <WalletPicker />
                     </Link>
-                )} */}
-                <Link
-                    to={
-                        isWalletPickerOpen
-                            ? closeWalletPickerUrl
-                            : walletPickerUrl
-                    }
-                    onClick={onClick}
-                >
-                    <WalletPicker />
-                </Link>
+                )}
             </div>
             <AccountAddress
                 showName={false}

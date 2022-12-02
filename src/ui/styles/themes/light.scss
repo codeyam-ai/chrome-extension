@@ -3,8 +3,8 @@
 @use '_values/colors' as c-val;
 
 $values: (
-    c-var.$background: c-val.$gray-40,
-    c-var.$background-color: c-val.$gray-40,
+    c-var.$background: #fff,
+    c-var.$background-color: #fff,
     c-var.$text-on-background: c-val.$gray-95,
     c-var.$main-content-background: c-val.$white,
     c-var.$text-on-main-content-background: c-val.$gray-100,

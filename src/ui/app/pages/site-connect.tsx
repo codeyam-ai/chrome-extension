@@ -1,12 +1,14 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { CheckCircleIcon, EyeIcon } from '@heroicons/react/24/solid';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import formatUrl from '../helpers/format-url';
+import truncateString from '../helpers/truncate-string';
 import { AppState } from '../hooks/useInitializedGuard';
-import Check from '../shared/svg/Check';
-import Eye from '../shared/svg/Eye';
+import PermissionList from '../shared/content/rows-and-lists/PermissionList';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
 import {
@@ -15,25 +17,28 @@ import {
 } from '_redux/slices/permissions';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
+import type { PermissionListItem } from '../shared/content/rows-and-lists/PermissionList';
 import type { PermissionType } from '_messages/payloads/permissions';
 import type { RootState } from '_redux/RootReducer';
 import type { ReactNode } from 'react';
 
-const permissionTypeToTxt: Record<
-    PermissionType,
-    Record<string, string | ReactNode>
-> = {
+interface PermissionInfo {
+    text: string;
+    icon: ReactNode;
+}
+
+const permissionTypeToTxt: Record<PermissionType, PermissionInfo> = {
     viewAccount: {
         text: 'View your wallet address',
-        icon: <Eye />,
+        icon: <EyeIcon />,
     },
     suggestTransactions: {
         text: 'Suggest transactions to approve',
-        icon: <Check />,
+        icon: <CheckCircleIcon />,
     },
     suggestSignMessages: {
         text: 'Suggest messages to sign',
-        icon: <Check />,
+        icon: <CheckCircleIcon />,
     },
 };
 
@@ -56,7 +61,24 @@ function SiteConnectPage() {
     );
     const dispatch = useAppDispatch();
     const permissionRequest = useAppSelector(permissionSelector);
+    const formattedRequestTitle =
+        !permissionRequest?.title || permissionRequest.title?.includes('http')
+            ? truncateString(formatUrl(permissionRequest?.origin || ''), 25)
+            : permissionRequest.title;
+
+    const permissionItems: PermissionListItem[] = [];
+
+    permissionRequest?.permissions.forEach((permission) => {
+        const info = permissionTypeToTxt[permission];
+
+        permissionItems.push({
+            iconWithNoClasses: info.icon,
+            title: info.text,
+        });
+    });
+
     const activeAccount = useAppSelector(({ account }) => account.address);
+
     const handleOnSubmit = useCallback(
         (allowed: boolean) => {
             if (requestID && activeAccount) {
@@ -84,35 +106,16 @@ function SiteConnectPage() {
         <Loading loading={loading} big={true} resize={true}>
             {permissionRequest ? (
                 <UserApproveContainer
-                    title={`Connect to ${
-                        permissionRequest.title || permissionRequest.origin
-                    }`}
+                    title={`Connect to ${formattedRequestTitle}`}
                     origin={permissionRequest.origin}
                     originFavIcon={permissionRequest.favIcon}
-                    originTitle={permissionRequest.title}
+                    originTitle={formattedRequestTitle}
                     description="Allow this app to:"
                     approveTitle="Connect"
                     rejectTitle="Cancel"
                     onSubmit={handleOnSubmit}
                 >
-                    <div className="flex flex-col gap-3 pb-6">
-                        {permissionRequest.permissions.map((aPermission) => {
-                            const info = permissionTypeToTxt[aPermission];
-                            return (
-                                <div
-                                    className="flex flex-row items-center gap-2"
-                                    key={aPermission}
-                                >
-                                    <div className="flex justify-center w-[22px]">
-                                        {info.icon}
-                                    </div>
-                                    <span className="text-sm dark:text-gray-400">
-                                        {info.text}
-                                    </span>
-                                </div>
-                            );
-                        })}
-                    </div>
+                    <PermissionList items={permissionItems} />
                 </UserApproveContainer>
             ) : null}
         </Loading>

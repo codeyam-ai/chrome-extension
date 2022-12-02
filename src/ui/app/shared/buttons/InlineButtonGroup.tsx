@@ -6,7 +6,7 @@ type InlineButtonGroupProps = {
     className?: string;
     onClickButtonPrimary?: MouseEventHandler<HTMLButtonElement>;
     buttonPrimaryTo?: string;
-    buttonPrimarytype?: 'button' | 'submit' | 'reset' | undefined;
+    buttonPrimaryType?: 'button' | 'submit' | 'reset' | undefined;
     buttonPrimaryChildren?: React.ReactNode;
     isButtonPrimaryDisabled?: boolean;
     onClickButtonSecondary?: MouseEventHandler<HTMLButtonElement>;
@@ -20,7 +20,7 @@ const InlineButtonGroup = ({
     className,
     onClickButtonPrimary,
     buttonPrimaryTo,
-    buttonPrimarytype,
+    buttonPrimaryType,
     buttonPrimaryChildren,
     isButtonPrimaryDisabled,
     onClickButtonSecondary,
@@ -45,7 +45,7 @@ const InlineButtonGroup = ({
                 buttonStyle="primary"
                 onClick={onClickButtonPrimary}
                 to={buttonPrimaryTo}
-                type={buttonPrimarytype}
+                type={buttonPrimaryType}
                 isInline={true}
                 disabled={isButtonPrimaryDisabled}
             >
