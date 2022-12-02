@@ -9,7 +9,7 @@ export const AssetCard = ({
     isNft: boolean;
     imgUrl?: string;
     name: string;
-    icon?: any;
+    icon?: JSX.Element;
 }) => (
     <div className={'w-full'}>
         <div className={'flex flex-row justify-center mb-4'}>

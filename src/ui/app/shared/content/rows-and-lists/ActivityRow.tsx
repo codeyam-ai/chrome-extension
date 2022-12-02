@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
+
 import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
 import { useFormatCoin } from '_src/ui/app/hooks';
 
 type ActivityRowProps = {
-    icon: any;
+    icon: JSX.Element;
     link: string;
     header: JSX.Element | string;
     subheader: string;
