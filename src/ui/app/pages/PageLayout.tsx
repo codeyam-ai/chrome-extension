@@ -34,7 +34,9 @@ function PageLayout({ forceFullscreen = false, children }: PageLayoutProps) {
                     className="absolute h-full w-full hidden dark:sm:block"
                     width={1308}
                 />
-                <div className="relative mx-auto">{children}</div>
+                <div className="relative mx-auto sm:rounded-[20px]">
+                    {children}
+                </div>
             </div>
         </Loading>
     );

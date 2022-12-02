@@ -5,6 +5,7 @@ import { useAppSelector } from '../../hooks';
 import Button from '../../shared/buttons/Button';
 import Body from '../../shared/typography/Body';
 import WalletList from '../../shared/wallet-list/WalletList';
+import LoadingIndicator from '../loading/LoadingIndicator';
 import CreateWalletProvider from './CreateWalletProvider';
 
 interface WalletPickerProps {
@@ -15,6 +16,7 @@ const WalletPicker = ({ isWalletEditing }: WalletPickerProps) => {
     const [createWallet, setCreateWallet] = useState<() => void>(
         () => () => null
     );
+    const [loading, setLoading] = useState(false);
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
     const activeAccountIndex = useAppSelector(
         ({ account: { activeAccountIndex } }) => activeAccountIndex
@@ -31,12 +33,20 @@ const WalletPicker = ({ isWalletEditing }: WalletPickerProps) => {
             <div className="border-t border-t-ethos-light-text-stroke dark:border-t-ethos-dark-text-stroke">
                 {!isWalletEditing ? (
                     <div className="pt-6">
-                        <CreateWalletProvider setCreateWallet={setCreateWallet}>
+                        <CreateWalletProvider
+                            setCreateWallet={setCreateWallet}
+                            setLoading={setLoading}
+                        >
                             <Button
                                 buttonStyle="primary"
                                 onClick={createWallet}
+                                disabled={loading}
                             >
-                                Create Wallet
+                                {loading ? (
+                                    <LoadingIndicator />
+                                ) : (
+                                    'Create Wallet'
+                                )}
                             </Button>
                         </CreateWalletProvider>
                     </div>

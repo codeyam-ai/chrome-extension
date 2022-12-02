@@ -22,11 +22,13 @@ import type { Dispatch, SetStateAction } from 'react';
 
 interface CreateWalletProviderProps {
     setCreateWallet: Dispatch<SetStateAction<() => void>>;
+    setLoading: Dispatch<SetStateAction<boolean>>;
     children: JSX.Element;
 }
 
 const CreateWalletProvider = ({
     setCreateWallet,
+    setLoading,
     children,
 }: CreateWalletProviderProps) => {
     const dispatch = useAppDispatch();
@@ -95,6 +97,10 @@ const CreateWalletProvider = ({
                 const newAccount = await Authentication.createAccount(
                     nextAccountIndex
                 );
+                if (newAccount) {
+                    newAccount.name = `Wallet ${accountInfos.length + 1}`;
+                    newAccount.color = getNextWalletColor(nextAccountIndex);
+                }
                 newAccountInfos = newAccount
                     ? [...accountInfos, newAccount]
                     : accountInfos;
@@ -121,9 +127,21 @@ const CreateWalletProvider = ({
 
             setAccountInfos(newAccountInfos);
         };
-        loadAccFromStorage();
-        _saveAccountInfos();
-    }, [keypairVault, authentication, accountInfos, _saveAccountInfos]);
+
+        const executeWithLoading = async () => {
+            setLoading(true);
+            await loadAccFromStorage();
+            await _saveAccountInfos();
+            setLoading(false);
+        };
+        executeWithLoading();
+    }, [
+        keypairVault,
+        authentication,
+        accountInfos,
+        _saveAccountInfos,
+        setLoading,
+    ]);
 
     useEffect(() => {
         setCreateWallet(() => createWallet);
