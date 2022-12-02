@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
 
+import Subheader from '../../shared/typography/Subheader';
+
 import type { TxApprovalTab } from './index';
 
 export type TabElementProps = {
@@ -12,15 +14,15 @@ const TabElement = ({ type, isSelected, setTab }: TabElementProps) => {
     const _setTab = useCallback(() => setTab(type), [setTab, type]);
 
     const selectedClass = isSelected
-        ? 'border-b-purple-800 text-purple-800 dark:border-b-purple-500 dark:text-purple-500 '
-        : 'border-b-slate-200 text-slate-400 dark:border-b-slate-500 dark:text-slate-500';
+        ? 'text-ethos-light-primary-light dark:text-ethos-dark-primary-dark border-b-ethos-light-primary-light dark:border-b-ethos-dark-primary-dark'
+        : 'text-ethos-light-text-medium dark:text-ethos-dark-text-medium border-b-ethos-light-text-medium dark:border-b-ethos-dark-text-medium';
 
     return (
         <div
-            className={`cursor-pointer border-b ${selectedClass} font-semibold px-5 py-1`}
+            className={`cursor-pointer border-b ${selectedClass} font-semibold px-3 py-1`}
             onClick={_setTab}
         >
-            {type}
+            <Subheader>{type}</Subheader>
         </div>
     );
 };

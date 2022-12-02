@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { type AccountInfo } from '../../KeypairVault';
+import getNextEmoji from '../../helpers/getNextEmoji';
 import getNextWalletColor from '../../helpers/getNextWalletColor';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import {
@@ -100,6 +101,7 @@ const CreateWalletProvider = ({
                 if (newAccount) {
                     newAccount.name = `Wallet ${accountInfos.length + 1}`;
                     newAccount.color = getNextWalletColor(nextAccountIndex);
+                    newAccount.emoji = getNextEmoji(nextAccountIndex);
                 }
                 newAccountInfos = newAccount
                     ? [...accountInfos, newAccount]
@@ -114,6 +116,7 @@ const CreateWalletProvider = ({
                         index: nextAccountIndex,
                         name: `Wallet ${accountInfos.length + 1}`,
                         color: getNextWalletColor(nextAccountIndex),
+                        emoji: getNextEmoji(nextAccountIndex),
                         address:
                             keypairVault.getAddress(nextAccountIndex) || '',
                         seed: (

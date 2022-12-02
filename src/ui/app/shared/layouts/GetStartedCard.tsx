@@ -1,7 +1,6 @@
 import { type ReactNode } from 'react';
 
-import logo from '../../components/logo/ethos-logo.png';
-import LargePageHeaderWIthIcon from '../headers/page-headers/LargePageHeaderWithIcon';
+import HeaderWithIconRow from '../headers/page-headers/HeaderWithIconRow';
 import SignInFlowNavBar from '../navigation/nav-bar/SignInFlowNavBar';
 import BaseLayout from './BaseLayout';
 
@@ -15,10 +14,8 @@ const GetStartedCard = ({ showBack, children }: GetStartedCardProps) => {
         <>
             <BaseLayout>
                 <SignInFlowNavBar showBackButton={showBack || false} />
-                <LargePageHeaderWIthIcon
-                    iconSrc={logo}
-                    iconAlt="Ethos Wallet logo"
-                    header="Ethos"
+                <HeaderWithIconRow
+                    title="Ethos"
                     description="The new web awaits"
                 />
                 {children}

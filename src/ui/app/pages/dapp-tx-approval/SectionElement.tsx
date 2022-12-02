@@ -1,4 +1,5 @@
 import Tooltip from '../../components/Tooltip';
+import Body from '../../shared/typography/Body';
 import DetailElement from './DetailElement';
 
 import type { Detail } from './DetailElement';
@@ -13,25 +14,25 @@ export type Section = {
 const SectionElement = ({ section }: { section: Section }) => {
     return (
         <div className="flex flex-col gap-2">
-            <div className="text-base text-slate-800 dark:text-slate-200">
-                {section.tooltip ? (
-                    <div className="flex flex-row gap-1 items-center">
-                        <div>{section.title}</div>
-                        <Tooltip tooltipText={section.tooltip}>
-                            <div className="cursor-help flex justify-center items-center rounded-full bg-gray-500 text-white text-xs h-5 w-5 scale-75">
-                                ?
-                            </div>
-                        </Tooltip>
-                    </div>
-                ) : (
-                    section.title
+            <div>
+                <Body isSemibold>
+                    {section.tooltip ? (
+                        <div className="flex flex-row gap-1 items-center">
+                            <div>{section.title}</div>
+                            <Tooltip tooltipText={section.tooltip}>
+                                <div className="cursor-help flex justify-center items-center rounded-full bg-gray-500 text-white text-xs h-5 w-5 scale-75">
+                                    ?
+                                </div>
+                            </Tooltip>
+                        </div>
+                    ) : (
+                        section.title
+                    )}
+                </Body>
+                {section.subtitle && (
+                    <Body isTextColorMedium>{section.subtitle}</Body>
                 )}
             </div>
-            {section.subtitle && (
-                <div className="text-slate-600 dark:text-slate-400 py-1">
-                    {section.subtitle}
-                </div>
-            )}
             <div className="flex flex-col text-sm gap-2">
                 {section.details.map((detail, detailIndex) => (
                     <DetailElement

@@ -13,9 +13,13 @@ const BodyLarge = ({ isSemibold, ...props }: BodyLargeProps) => {
         ' ' +
         'text-size-ethos-body-large leading-line-height-ethos-body-large tracking-letter-spacing-ethos-body-large';
 
+    const displayClasses = props.className
+        ? props.className + ' ' + bodyLargeClasses
+        : bodyLargeClasses;
+
     return (
         <Typography
-            className={props.className + ' ' + bodyLargeClasses}
+            className={displayClasses}
             as={props.as}
             isTextColorMedium={props.isTextColorMedium}
         >

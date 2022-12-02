@@ -4,14 +4,13 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import logo from '../components/logo/ethos-logo.png';
 import { AppState } from '../hooks/useInitializedGuard';
 import {
     loadAccountInformationFromStorage,
     unlock,
 } from '../redux/slices/account';
 import UnlockWalletForm from '../shared/forms/UnlockWalletForm';
-import LargePageHeaderWIthIcon from '../shared/headers/page-headers/LargePageHeaderWithIcon';
+import HeaderWithIconRow from '../shared/headers/page-headers/HeaderWithIconRow';
 import BaseLayout from '../shared/layouts/BaseLayout';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
@@ -42,10 +41,8 @@ const LockedPage = () => {
         <PageLayout>
             <Loading loading={checkingInitialized}>
                 <BaseLayout className="!min-h-0">
-                    <LargePageHeaderWIthIcon
-                        iconSrc={logo}
-                        iconAlt="Ethos Wallet logo"
-                        header="Ethos"
+                    <HeaderWithIconRow
+                        title="Ethos"
                         description="Unlock Wallet"
                     />
                     <UnlockWalletForm

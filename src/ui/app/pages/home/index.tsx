@@ -44,7 +44,8 @@ const HomePage = () => {
                 <BaseLayout>
                     <SettingsRouterPage />
                     <WalletPickerPage />
-                    <main className="flex-grow">
+                    {/* Height of 420 px = 564px total - 80px for nav bar - 64px for tab bar */}
+                    <main className="flex-grow h-[420px] overflow-scroll">
                         <Outlet />
                     </main>
                     <TabBar />

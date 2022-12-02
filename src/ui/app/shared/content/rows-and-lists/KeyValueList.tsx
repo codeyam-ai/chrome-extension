@@ -1,7 +1,7 @@
 import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
 
-type KeyNameAndValue = {
+export type KeyNameAndValue = {
     keyName: string;
     value: string;
 };

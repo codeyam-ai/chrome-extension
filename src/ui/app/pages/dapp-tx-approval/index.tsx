@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 
 import truncateMiddle from '../../helpers/truncate-middle';
 import { AppState } from '../../hooks/useInitializedGuard';
+import Alert from '../../shared/feedback/Alert';
 import SectionElement from './SectionElement';
 import TabElement from './TabElement';
 import Loading from '_components/loading';
@@ -44,6 +45,10 @@ export type TabSections = {
 
 const cleanObjectId = (objectId: string) => {
     return objectId.replace('0x0', '').replace('0x', '');
+};
+
+const formatAddress = (address?: string) => {
+    return truncateMiddle(address, 5);
 };
 
 export function DappTxApprovalPage() {
@@ -618,7 +623,7 @@ export function DappTxApprovalPage() {
                                       content: `${reading.length} Assets`,
                                       detail: reading.map(
                                           (r) =>
-                                              `${truncateMiddle(r?.address)}::${
+                                              `${formatAddress(r?.address)}::${
                                                   r?.module
                                               }::${r?.name}`
                                       ),
@@ -628,7 +633,7 @@ export function DappTxApprovalPage() {
                                       content: `${mutating.length} Assets`,
                                       detail: mutating.map(
                                           (m) =>
-                                              `${truncateMiddle(m?.address)}::${
+                                              `${formatAddress(m?.address)}::${
                                                   m?.module
                                               }::${m?.name}`
                                       ),
@@ -638,7 +643,7 @@ export function DappTxApprovalPage() {
                                       content: `${transferring.length} Assets`,
                                       detail: transferring.map(
                                           (t) =>
-                                              `${truncateMiddle(t?.address)}::${
+                                              `${formatAddress(t?.address)}::${
                                                   t?.module
                                               }::${t?.name}`
                                       ),
@@ -669,7 +674,7 @@ export function DappTxApprovalPage() {
                                       content: `${creating.length} Assets`,
                                       detail: creating.map(
                                           (c) =>
-                                              `${truncateMiddle(c?.address)}::${
+                                              `${formatAddress(c?.address)}::${
                                                   c?.module
                                               }::${c?.name}`
                                       ),
@@ -679,7 +684,7 @@ export function DappTxApprovalPage() {
                                       content: `${mutating.length} Assets`,
                                       detail: mutating.map(
                                           (m) =>
-                                              `${truncateMiddle(m?.address)}::${
+                                              `${formatAddress(m?.address)}::${
                                                   m?.module
                                               }::${m?.name}`
                                       ),
@@ -689,7 +694,7 @@ export function DappTxApprovalPage() {
                                       content: `${transferring.length} Assets`,
                                       detail: transferring.map(
                                           (t) =>
-                                              `${truncateMiddle(t?.address)}::${
+                                              `${formatAddress(t?.address)}::${
                                                   t?.module
                                               }::${t?.name}`
                                       ),
@@ -883,14 +888,18 @@ export function DappTxApprovalPage() {
                     approveTitle="Approve"
                     rejectTitle="Reject"
                     onSubmit={handleOnSubmit}
+                    hasError={!!dryRunError}
                 >
                     {dryRunError ? (
-                        <div className="bg-red-200 text-black p-3 rounded-lg h-60 overflow-auto">
-                            {dryRunError}
+                        <div className="pb-6">
+                            <Alert
+                                title="Dry run error"
+                                subtitle={dryRunError}
+                            />
                         </div>
                     ) : (
-                        <div className="flex flex-col gap-6">
-                            <div className="flex flex-row justify-between items-baseline text-lg">
+                        <div className="flex flex-col gap-6 pb-6">
+                            <div className="flex flex-row gap-2 justify-between items-baseline px-6">
                                 {[
                                     TxApprovalTab.SUMMARY,
                                     TxApprovalTab.ASSETS,
@@ -909,7 +918,7 @@ export function DappTxApprovalPage() {
 
                             <div
                                 id="content"
-                                className="flex flex-col gap-6 overflow-auto"
+                                className="flex flex-col gap-6 w-full px-6 overflow-auto"
                             >
                                 {(content[tab] || []).map(
                                     (section, sectionIndex) => (
