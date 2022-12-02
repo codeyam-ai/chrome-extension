@@ -76,11 +76,7 @@ function TransferNFTForm({
                     {!isReview ? (
                         <div className={'p-6'}>
                             <div className={'mb-6'}>
-                                <BodyLarge
-                                    className={
-                                        'text-ethos-light-text-medium mb-4'
-                                    }
-                                >
+                                <BodyLarge isTextColorMedium className={'mb-4'}>
                                     Sending
                                 </BodyLarge>
                                 {nftobj && (
@@ -155,13 +151,7 @@ function TransferNFTForm({
                                             }
                                             name={nftobj.data.fields.name}
                                         />
-                                        <Body
-                                            className={
-                                                'text-ethos-light-text-medium'
-                                            }
-                                        >
-                                            Sending
-                                        </Body>
+                                        <Body isTextColorMedium>Sending</Body>
                                         <Header
                                             className={
                                                 'font-weight-ethos-subheader'

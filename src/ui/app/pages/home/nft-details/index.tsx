@@ -51,7 +51,7 @@ function NFTdetailsContent({
                             </Title>
                             <BodyLarge
                                 className={
-                                    'text-left text-ethos-light-text-medium font-weight-normal mb-6'
+                                    'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal mb-6'
                                 }
                             >
                                 {nftFields?.description}
@@ -130,7 +130,11 @@ function NFTdetailsContent({
                                         View on Sui Explorer
                                     </ExplorerLink>
                                 </BodyLarge>
-                                <div className={'text-ethos-light-text-medium'}>
+                                <div
+                                    className={
+                                        'text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
+                                    }
+                                >
                                     <ArrowUpRightIcon width={16} height={16} />
                                 </div>
                             </div>

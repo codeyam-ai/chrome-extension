@@ -11,7 +11,11 @@ const TextPageTitle = ({ title, count }: TextPageTitleProps) => {
             <Header>
                 {title}
                 {count && (
-                    <span className={'pl-2 text-ethos-light-text-medium'}>
+                    <span
+                        className={
+                            'pl-2 text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
+                        }
+                    >
                         {count}
                     </span>
                 )}
