@@ -39,7 +39,7 @@ const WalletProfile = ({ onClick, hideWalletPicker }: WalletProfileProps) => {
                 color={accountInfo?.color}
                 emoji={accountInfo?.emoji}
                 circleSizeClasses="h-6 w-6"
-                emojiSizeInPx={16}
+                emojiSizeInPx={12}
             />
             <BodyLarge isSemibold>{shortenedName}</BodyLarge>
 

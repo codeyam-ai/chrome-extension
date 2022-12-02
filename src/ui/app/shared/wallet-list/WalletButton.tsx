@@ -54,7 +54,7 @@ const WalletButton = ({
                     color={wallet.color}
                     emoji={wallet.emoji}
                     circleSizeClasses="h-10 w-10"
-                    emojiSizeInPx={24}
+                    emojiSizeInPx={22}
                 />
                 <div className="flex flex-col text-left" title={wallet.address}>
                     <BodyLarge>

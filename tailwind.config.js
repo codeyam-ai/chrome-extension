@@ -11,6 +11,7 @@ module.exports = {
                 sans: ['Inter var', ...defaultTheme.fontFamily.sans],
             },
             fontWeight: {
+                'weight-ethos-jumbo-title': '600',
                 'weight-ethos-title': '600',
                 'weight-ethos-header': '600',
                 'weight-ethos-subheader': '600',
@@ -19,6 +20,7 @@ module.exports = {
                 'weight-ethos-body': '400',
             },
             fontSize: {
+                'size-ethos-jumbo-title': '32px',
                 'size-ethos-title': '24px',
                 'size-ethos-header': '20px',
                 'size-ethos-subheader': '18px',
@@ -26,6 +28,7 @@ module.exports = {
                 'size-ethos-body': '14px',
             },
             lineHeight: {
+                'line-height-ethos-jumbo-title': '40px',
                 'line-height-ethos-title': '32px',
                 'line-height-ethos-header': '28px',
                 'line-height-ethos-subheader': '28px',
@@ -33,6 +36,7 @@ module.exports = {
                 'line-height-ethos-body': '20px',
             },
             letterSpacing: {
+                'letter-spacing-ethos-jumbo-title': '-0.01em',
                 'letter-spacing-ethos-title': '-0.01em',
                 'letter-spacing-ethos-header': '-0.01em',
                 'letter-spacing-ethos-subheader': '',
