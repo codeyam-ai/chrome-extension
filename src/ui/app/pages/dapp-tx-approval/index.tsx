@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 
 import truncateMiddle from '../../helpers/truncate-middle';
 import { AppState } from '../../hooks/useInitializedGuard';
+import Alert from '../../shared/feedback/Alert';
 import SectionElement from './SectionElement';
 import TabElement from './TabElement';
 import Loading from '_components/loading';
@@ -883,10 +884,14 @@ export function DappTxApprovalPage() {
                     approveTitle="Approve"
                     rejectTitle="Reject"
                     onSubmit={handleOnSubmit}
+                    hasError={!!dryRunError}
                 >
                     {dryRunError ? (
-                        <div className="bg-red-200 text-black p-3 rounded-lg h-60 overflow-auto">
-                            {dryRunError}
+                        <div className="pb-6">
+                            <Alert
+                                title="Dry run error"
+                                subtitle={dryRunError}
+                            />
                         </div>
                     ) : (
                         <div className="flex flex-col gap-6">

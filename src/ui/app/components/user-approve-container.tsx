@@ -20,6 +20,7 @@ type UserApproveContainerProps = {
     rejectTitle: string;
     approveTitle: string;
     onSubmit: (approved: boolean) => void;
+    hasError?: boolean;
 };
 
 function UserApproveContainer({
@@ -32,6 +33,7 @@ function UserApproveContainer({
     rejectTitle,
     approveTitle,
     onSubmit,
+    hasError,
 }: UserApproveContainerProps) {
     const [submitting, setSubmitting] = useState(false);
 
@@ -58,18 +60,20 @@ function UserApproveContainer({
 
             <div className="w-full">{children}</div>
 
-            <InlineButtonGroup
-                onClickButtonPrimary={approve}
-                buttonPrimaryType="button"
-                buttonPrimaryChildren={
-                    submitting ? <LoadingIndicator /> : approveTitle
-                }
-                isButtonPrimaryDisabled={submitting}
-                onClickButtonSecondary={reject}
-                buttonSecondaryType="button"
-                buttonSecondaryChildren={rejectTitle}
-                isButtonSecondaryDisabled={submitting}
-            />
+            {!hasError && (
+                <InlineButtonGroup
+                    onClickButtonPrimary={approve}
+                    buttonPrimaryType="button"
+                    buttonPrimaryChildren={
+                        submitting ? <LoadingIndicator /> : approveTitle
+                    }
+                    isButtonPrimaryDisabled={submitting}
+                    onClickButtonSecondary={reject}
+                    buttonSecondaryType="button"
+                    buttonSecondaryChildren={rejectTitle}
+                    isButtonSecondaryDisabled={submitting}
+                />
+            )}
         </div>
     );
 }
