@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import Body from '../../shared/typography/Body';
-import ExplorerLink from '_components/explorer-link';
-import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { useNFTBasicData } from '_hooks';
 
 import type { SuiObject as SuiObjectType } from '@mysten/sui.js';
