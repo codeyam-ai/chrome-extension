@@ -136,11 +136,6 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         TRUNCATE_PREFIX_LENGTH
     );
 
-    const [formatted, symbol] = useFormatCoin(
-        txDigest.amount || txDigest.balance || 0,
-        txDigest.coinType
-    );
-
     const [gas, gasSymbol] = useFormatCoin(txDigest.txGas, GAS_TYPE_ARG);
 
     const [total, totalSymbol] = useFormatCoin(
@@ -303,15 +298,27 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     <div className={'px-6'}>
                         <div className={'flex flex-row justify-between'}>
                             <BodyLarge>
-                                <ExplorerLink
-                                    type={ExplorerLinkType.transaction}
-                                    transactionID={txDigest.txId}
-                                    title="View on Sui Explorer"
-                                    className={st['explorer-link']}
-                                    showIcon={true}
-                                >
-                                    View on Sui Explorer
-                                </ExplorerLink>
+                                {isNft ? (
+                                    <ExplorerLink
+                                        type={ExplorerLinkType.object}
+                                        objectID={txDigest.objectId || ''}
+                                        title="View on Sui Explorer"
+                                        className={st['explorer-link']}
+                                        showIcon={true}
+                                    >
+                                        View NFT on Sui Explorer
+                                    </ExplorerLink>
+                                ) : (
+                                    <ExplorerLink
+                                        type={ExplorerLinkType.transaction}
+                                        transactionID={txDigest.txId}
+                                        title="View on Sui Explorer"
+                                        className={st['explorer-link']}
+                                        showIcon={true}
+                                    >
+                                        View on Sui Explorer
+                                    </ExplorerLink>
+                                )}
                             </BodyLarge>
                             <div className={'text-ethos-light-text-medium'}>
                                 <ArrowUpRightIcon width={16} height={16} />
