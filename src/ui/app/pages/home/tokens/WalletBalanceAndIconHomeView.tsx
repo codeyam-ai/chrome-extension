@@ -1,6 +1,6 @@
 import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import Title from '_src/ui/app/shared/typography/Title';
+import JumboTitle from '_src/ui/app/shared/typography/JumboTitle';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
@@ -23,18 +23,18 @@ const WalletBalanceAndIconHomeView = ({
         formattedDollarValue = formattedDollarValue.slice(0, -3);
     }
     return (
-        <div className="flex flex-col gap-6 py-8 px-6 place-items-center">
+        <div className="flex flex-col gap-3 p-4 place-items-center">
             <WalletColorAndEmojiCircle
                 color={accountInfo?.color}
                 emoji={accountInfo?.emoji}
-                circleSizeClasses="h-[104px] w-[104px]"
-                emojiSizeInPx={58}
+                circleSizeClasses="h-[80px] w-[80px]"
+                emojiSizeInPx={42}
             />
             <div className="flex flex-col gap-1">
                 <BodyLarge isSemibold isTextColorMedium>
                     Wallet Balance
                 </BodyLarge>
-                <Title>{formattedDollarValue}</Title>
+                <JumboTitle>{formattedDollarValue}</JumboTitle>
             </div>
         </div>
     );

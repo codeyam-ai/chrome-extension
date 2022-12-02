@@ -29,7 +29,11 @@ const Input = ({
         (isTextAlignRight ? 'text-right' : '');
 
     return (
-        <div className={`${className || ''} flex flex-col gap-2 px-6 pb-6`}>
+        <div
+            className={`${
+                className || ''
+            } flex flex-col gap-2 px-6 pb-6 text-left`}
+        >
             {label && (
                 <label htmlFor={id}>
                     <BodyLarge isSemibold={true}>{label}</BodyLarge>
