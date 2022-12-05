@@ -21,6 +21,8 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Header from '_src/ui/app/shared/typography/Header';
 
 import type { FormValues } from '.';
+// import type { EnhancedSuiObject } from '../../../dapp-preapproval/index';
+import type { SuiObject } from '@mysten/sui.js';
 
 import st from './TransferNFTForm.module.scss';
 import 'react-toastify/dist/ReactToastify.css';
@@ -28,7 +30,7 @@ import 'react-toastify/dist/ReactToastify.css';
 export type TransferNFTFormProps = {
     submitError: string | null;
     gasBalance: string;
-    nftobj: any;
+    nftobj: SuiObject;
     onClearSubmitError: () => void;
 };
 
@@ -64,6 +66,16 @@ function TransferNFTForm({
     const setIsReviewTrue = useCallback(() => {
         setIsReview(true);
     }, []);
+
+    let address;
+    if (typeof nftobj.owner !== 'string' && 'AddressOwner' in nftobj.owner) {
+        address = nftobj.owner.AddressOwner;
+    }
+
+    let fields;
+    if ('fields' in nftobj.data) {
+        fields = nftobj.data.fields;
+    }
 
     return (
         <div>
@@ -145,11 +157,9 @@ function TransferNFTForm({
                                         <AssetCard
                                             isNft={true}
                                             imgUrl={
-                                                nftobj.data.fields.url
-                                                    ? nftobj.data.fields.url
-                                                    : ''
+                                                fields?.url ? fields.url : ''
                                             }
-                                            name={nftobj.data.fields.name}
+                                            name={fields?.name}
                                         />
                                         <Body isTextColorMedium>Sending</Body>
                                         <Header
@@ -157,7 +167,7 @@ function TransferNFTForm({
                                                 'font-weight-ethos-subheader'
                                             }
                                         >
-                                            {nftobj.data.fields.name}
+                                            {fields?.name}
                                         </Header>
                                     </div>
 
@@ -169,8 +179,7 @@ function TransferNFTForm({
                                                     value: accountInfo?.name
                                                         ? accountInfo?.name
                                                         : truncateMiddle(
-                                                              nftobj.owner
-                                                                  .AddressOwner
+                                                              address || ''
                                                           ),
                                                 },
                                                 {
@@ -179,8 +188,7 @@ function TransferNFTForm({
                                                 },
                                                 {
                                                     keyName: 'NFT',
-                                                    value: nftobj.data.fields
-                                                        .name,
+                                                    value: fields?.name,
                                                 },
                                                 {
                                                     keyName: 'Transaction Fee',

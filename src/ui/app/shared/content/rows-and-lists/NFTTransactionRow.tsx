@@ -5,8 +5,10 @@ import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
 import { useMiddleEllipsis } from '_src/ui/app/hooks';
 
+import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
+
 interface NftTransactionRowProps {
-    txn: any;
+    txn: TxResultState;
 }
 
 const TRUNCATE_MAX_LENGTH = 8;

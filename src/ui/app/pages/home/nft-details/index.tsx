@@ -28,11 +28,22 @@ function NFTdetailsContent({
     nft,
     onClick,
 }: {
-    nft: any;
+    nft: SuiObject;
     onClick?: ButtonHTMLAttributes<HTMLButtonElement>['onClick'];
 }) {
     const { filePath, nftObjectID, nftFields, fileExtentionType } =
         useNFTBasicData(nft);
+
+    let address;
+
+    if (typeof nft.owner !== 'string' && 'AddressOwner' in nft.owner) {
+        address = nft.owner.AddressOwner;
+    }
+
+    let has_public_transfer: boolean | undefined;
+    if ('has_public_transfer' in nft.data) {
+        has_public_transfer = nft.data.has_public_transfer;
+    }
 
     return (
         <>
@@ -84,9 +95,7 @@ function NFTdetailsContent({
                                 keyNamesAndValues={[
                                     {
                                         keyName: 'Wallet Address',
-                                        value: truncateMiddle(
-                                            nft?.owner?.AddressOwner
-                                        ),
+                                        value: truncateMiddle(address || ''),
                                     },
                                 ]}
                             />
@@ -95,7 +104,7 @@ function NFTdetailsContent({
                                 keyNamesAndValues={[
                                     {
                                         keyName: 'Has public transfer',
-                                        value: nft?.data?.has_public_transfer
+                                        value: has_public_transfer
                                             ? 'Yes'
                                             : 'No',
                                     },

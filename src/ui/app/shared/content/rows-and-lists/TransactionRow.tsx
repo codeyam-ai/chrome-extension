@@ -8,8 +8,10 @@ import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
 import { useMiddleEllipsis } from '_src/ui/app/hooks';
 
+import type { TxResultState } from '../../../redux/slices/txresults/index';
+
 interface TransactionRowProps {
-    txn: any; // TODO: Update when NFT events are complete
+    txn: TxResultState;
 }
 
 const TRUNCATE_MAX_LENGTH = 8;
