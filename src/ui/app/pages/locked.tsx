@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
+import useAppSelector from '../hooks/useAppSelector';
 import { AppState } from '../hooks/useInitializedGuard';
 import {
     loadAccountInformationFromStorage,
@@ -19,6 +20,8 @@ import PageLayout from '_src/ui/app/pages/PageLayout';
 const LockedPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const { pathname } = useLocation();
+
     const checkingInitialized = useInitializedGuard(AppState.LOCKED);
     const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false);
 
@@ -32,9 +35,9 @@ const LockedPage = () => {
             }
             setIsPasswordIncorrect(false);
             await dispatch(loadAccountInformationFromStorage());
-            navigate('/');
+            navigate((pathname || '/').replace('/locked', ''));
         },
-        [dispatch, navigate]
+        [pathname, dispatch, navigate]
     );
 
     return (
