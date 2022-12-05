@@ -1,8 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useMemo } from 'react';
-
+import { useFormatCoin } from '../../../hooks/useFormatCoin';
 import CoinList from './CoinList';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import Loading from '_components/loading';
@@ -23,12 +22,9 @@ import type { AccountInfo } from '_src/ui/app/KeypairVault';
 function TokensPage() {
     const { loading, error, showError } = useObjectsState();
     const balances = useAppSelector(accountAggregateBalancesSelector);
-    const mistBalance = balances[GAS_TYPE_ARG] || BigInt(0);
-    // TODO: make this an actual calculation
-    const dollarValue = useMemo(
-        () => Number(mistBalance / BigInt(10000000)),
-        [mistBalance]
-    );
+    const mistBalance = balances[GAS_TYPE_ARG] || 0;
+    const [, , usdAmount] = useFormatCoin(mistBalance, 'SUI');
+
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex } }) =>
             accountInfos.find(
@@ -55,7 +51,7 @@ function TokensPage() {
                     >
                         <WalletBalanceAndIconHomeView
                             accountInfo={accountInfo}
-                            dollarValue={dollarValue}
+                            dollarValue={usdAmount}
                         />
                         <SendReceiveButtonGroup mistBalance={mistBalance} />
                         <div className="flex flex-col gap-6 pb-6 overflow-auto">
@@ -64,7 +60,7 @@ function TokensPage() {
 
                                 {(!balances ||
                                     Object.keys(balances).length < 2) && (
-                                    <>
+                                    <div className="py-3">
                                         <Subheader as="h3">
                                             Get started with Sui
                                         </Subheader>
@@ -80,7 +76,7 @@ function TokensPage() {
                                                 Discover New Apps →
                                             </EthosLink>
                                         </Body>
-                                    </>
+                                    </div>
                                 )}
                             </ContentBlock>
                         </div>
