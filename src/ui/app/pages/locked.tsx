@@ -4,7 +4,6 @@
 import { useCallback, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import useAppSelector from '../hooks/useAppSelector';
 import { AppState } from '../hooks/useInitializedGuard';
 import {
     loadAccountInformationFromStorage,
