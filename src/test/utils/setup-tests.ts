@@ -8,8 +8,8 @@ jest.mock('webextension-polyfill', () => {
 
 jest.spyOn(window, 'resizeTo').mockImplementation();
 
-jest.mock('animate.css/animate.min.css', () => "")
-jest.mock('react-toastify/dist/ReactToastify.css', () => "")
+jest.mock('animate.css/animate.min.css', () => '');
+jest.mock('react-toastify/dist/ReactToastify.css', () => '');
 
 beforeEach(() => clearLocalStorage());
 
