@@ -86,67 +86,12 @@ function NFTdetailsContent({
                                     Activity
                                 </BodyLarge>
                                 <NFTTransactionRows />*/}
-<<<<<<< HEAD
-                            <KeyValueList
-                                header={'Creator'}
-                                keyNamesAndValues={[
-                                    {
-                                        keyName: 'Wallet Address',
-                                        value: truncateMiddle(address || ''),
-                                    },
-                                ]}
-                            />
-                            <KeyValueList
-                                header={'Details'}
-                                keyNamesAndValues={[
-                                    {
-                                        keyName: 'Has public transfer',
-                                        value: has_public_transfer
-                                            ? 'Yes'
-                                            : 'No',
-                                    },
-                                    {
-                                        keyName: 'Object ID',
-                                        value: truncateMiddle(
-                                            nft.reference.objectId
-                                        ),
-                                    },
-                                    {
-                                        keyName: 'Digest',
-                                        value: truncateMiddle(
-                                            nft.reference.digest
-                                        ),
-                                    },
-                                ]}
-                            />
-                        </div>
-                        <div
-                            className={
-                                'border-t-1 border-t-solid border-ethos-light-text-medium pt-8 px-6'
-                            }
-                        >
-                            <div className={'flex flex-row justify-between'}>
-                                <BodyLarge>
-                                    <ExplorerLink
-                                        type={ExplorerLinkType.object}
-                                        objectID={nftObjectID}
-                                        title="View on Sui Explorer"
-                                        showIcon={true}
-                                    >
-                                        View on Sui Explorer
-                                    </ExplorerLink>
-                                </BodyLarge>
-                                <div
-                                    className={
-                                        'text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
-                                    }
-=======
                         <KeyValueList
                             header={'Creator'}
                             keyNamesAndValues={[
                                 {
                                     keyName: 'Wallet Address',
-                                    value: truncateMiddle(ownerAddress),
+                                    value: truncateMiddle(address || ''),
                                 },
                             ]}
                         />
@@ -155,7 +100,7 @@ function NFTdetailsContent({
                             keyNamesAndValues={[
                                 {
                                     keyName: 'Has public transfer',
-                                    value: publicTransfer ? 'Yes' : 'No',
+                                    value: has_public_transfer ? 'Yes' : 'No',
                                 },
                                 {
                                     keyName: 'Object ID',
@@ -182,7 +127,6 @@ function NFTdetailsContent({
                                     objectID={nftObjectID}
                                     title="View on Sui Explorer"
                                     showIcon={true}
->>>>>>> 2a43f0d581018b62b3a4a52d7ba187abe7f3842d
                                 >
                                     View on Sui Explorer
                                 </ExplorerLink>
