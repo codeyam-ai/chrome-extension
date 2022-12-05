@@ -6,7 +6,6 @@ import { ArrowUpRightIcon } from '@heroicons/react/24/solid';
 
 import { type AccountInfo } from '../../KeypairVault';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
-import PageScrollView from '../../shared/layouts/PageScrollView';
 import { AssetCard } from '../../shared/nfts/AssetCard';
 import TxRoundReceived from '../../shared/svg/TxRoundReceived';
 import TxRoundSend from '../../shared/svg/TxRoundSend';
@@ -206,127 +205,125 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
 
     return (
         <>
-            <PageScrollView heightInPx={410}>
-                <div className={'pt-6 px-6 pb-8'}>
-                    <AssetCard
-                        isNft={isNft}
-                        imgUrl={imgUrl ? imgUrl : ''}
-                        name={txDigest?.name || 'NFT'}
-                        icon={
-                            txDigest.status === 'success' ? (
-                                transferMeta[transferType].txIcon
-                            ) : (
-                                <TxFailed />
-                            )
-                        }
+            <div className={'pt-6 px-6 pb-8'}>
+                <AssetCard
+                    isNft={isNft}
+                    imgUrl={imgUrl ? imgUrl : ''}
+                    name={txDigest?.name || 'NFT'}
+                    icon={
+                        txDigest.status === 'success' ? (
+                            transferMeta[transferType].txIcon
+                        ) : (
+                            <TxFailed />
+                        )
+                    }
+                />
+                <Body className={'text-ethos-light-text-medium'}>
+                    {txDigest.status === 'success'
+                        ? transferMeta[transferType].txName
+                        : transferMeta[transferType].failedMsg}
+                </Body>
+                <Header className={'font-weight-ethos-subheader mb-3'}>
+                    {header}
+                </Header>
+                <Body className={'text-ethos-light-text-medium'}>
+                    {date && date.replace(' AM', 'am').replace(' PM', 'pm')}
+                </Body>
+            </div>
+            {!isMinted && (
+                <div className={'px-6 pb-6'}>
+                    <TxTransfer
+                        ToFrom={{
+                            from: {
+                                bgColor: fromWallet
+                                    ? accountInfo?.color
+                                    : '#6D28D9',
+                                header: fromWallet
+                                    ? accountInfo?.name
+                                    : fromAddrStr,
+                                subheader: fromWallet ? walletAddrStr : '',
+                            },
+                            to: {
+                                bgColor: fromWallet
+                                    ? '#6D28D9'
+                                    : accountInfo?.color,
+                                header: fromWallet
+                                    ? toAddrStr
+                                    : accountInfo?.name,
+                                subheader: fromWallet ? '' : walletAddrStr,
+                            },
+                        }}
                     />
-                    <Body className={'text-ethos-light-text-medium'}>
-                        {txDigest.status === 'success'
-                            ? transferMeta[transferType].txName
-                            : transferMeta[transferType].failedMsg}
-                    </Body>
-                    <Header className={'font-weight-ethos-subheader mb-3'}>
-                        {header}
-                    </Header>
-                    <Body className={'text-ethos-light-text-medium'}>
-                        {date && date.replace(' AM', 'am').replace(' PM', 'pm')}
-                    </Body>
                 </div>
-                {!isMinted && (
-                    <div className={'px-6 pb-6'}>
-                        <TxTransfer
-                            ToFrom={{
-                                from: {
-                                    bgColor: fromWallet
-                                        ? accountInfo?.color
-                                        : '#6D28D9',
-                                    header: fromWallet
-                                        ? accountInfo?.name
-                                        : fromAddrStr,
-                                    subheader: fromWallet ? walletAddrStr : '',
-                                },
-                                to: {
-                                    bgColor: fromWallet
-                                        ? '#6D28D9'
-                                        : accountInfo?.color,
-                                    header: fromWallet
-                                        ? toAddrStr
-                                        : accountInfo?.name,
-                                    subheader: fromWallet ? '' : walletAddrStr,
-                                },
-                            }}
-                        />
-                    </div>
-                )}
-                {isNft ? (
-                    <KeyValueList
-                        header={'Details'}
-                        keyNamesAndValues={[
-                            {
-                                keyName: 'Transaction Fee',
-                                value: `${gas} ${gasSymbol}`,
-                            },
-                            {
-                                keyName: 'Signature',
-                                value: fromAddrStr,
-                            },
-                        ]}
-                    />
-                ) : (
-                    <KeyValueList
-                        header={'Details'}
-                        keyNamesAndValues={[
-                            {
-                                keyName:
-                                    transferType === 'Sent'
-                                        ? 'You Sent'
-                                        : 'You Received',
-                                value: `${total} ${totalSymbol}`,
-                            },
-                            {
-                                keyName: 'Transaction Fee',
-                                value: `${gas} ${gasSymbol}`,
-                            },
-                            {
-                                keyName: 'Total',
-                                value: `$1.30`,
-                            },
-                        ]}
-                    />
-                )}
-                {txDigest.txId && (
-                    <div className={'px-6'}>
-                        <div className={'flex flex-row justify-between'}>
-                            <BodyLarge>
-                                {isNft ? (
-                                    <ExplorerLink
-                                        type={ExplorerLinkType.object}
-                                        objectID={txDigest.objectId || ''}
-                                        title="View on Sui Explorer"
-                                        className={st['explorer-link']}
-                                        showIcon={true}
-                                    >
-                                        View NFT on Sui Explorer
-                                    </ExplorerLink>
-                                ) : (
-                                    <ExplorerLink
-                                        type={ExplorerLinkType.transaction}
-                                        transactionID={txDigest.txId}
-                                        title="View on Sui Explorer"
-                                        className={st['explorer-link']}
-                                        showIcon={true}
-                                    >
-                                        View on Sui Explorer
-                                    </ExplorerLink>
-                                )}
-                            </BodyLarge>
-                            <div className={'text-ethos-light-text-medium'}>
-                                <ArrowUpRightIcon width={16} height={16} />
-                            </div>
+            )}
+            {isNft ? (
+                <KeyValueList
+                    header={'Details'}
+                    keyNamesAndValues={[
+                        {
+                            keyName: 'Transaction Fee',
+                            value: `${gas} ${gasSymbol}`,
+                        },
+                        {
+                            keyName: 'Signature',
+                            value: fromAddrStr,
+                        },
+                    ]}
+                />
+            ) : (
+                <KeyValueList
+                    header={'Details'}
+                    keyNamesAndValues={[
+                        {
+                            keyName:
+                                transferType === 'Sent'
+                                    ? 'You Sent'
+                                    : 'You Received',
+                            value: `${total} ${totalSymbol}`,
+                        },
+                        {
+                            keyName: 'Transaction Fee',
+                            value: `${gas} ${gasSymbol}`,
+                        },
+                        {
+                            keyName: 'Total',
+                            value: `$1.30`,
+                        },
+                    ]}
+                />
+            )}
+            {txDigest.txId && (
+                <div className={'px-6'}>
+                    <div className={'flex flex-row justify-between'}>
+                        <BodyLarge>
+                            {isNft ? (
+                                <ExplorerLink
+                                    type={ExplorerLinkType.object}
+                                    objectID={txDigest.objectId || ''}
+                                    title="View on Sui Explorer"
+                                    className={st['explorer-link']}
+                                    showIcon={true}
+                                >
+                                    View NFT on Sui Explorer
+                                </ExplorerLink>
+                            ) : (
+                                <ExplorerLink
+                                    type={ExplorerLinkType.transaction}
+                                    transactionID={txDigest.txId}
+                                    title="View on Sui Explorer"
+                                    className={st['explorer-link']}
+                                    showIcon={true}
+                                >
+                                    View on Sui Explorer
+                                </ExplorerLink>
+                            )}
+                        </BodyLarge>
+                        <div className={'text-ethos-light-text-medium'}>
+                            <ArrowUpRightIcon width={16} height={16} />
                         </div>
                     </div>
-                )}
-            </PageScrollView>
+                </div>
+            )}
         </>
     );
 }

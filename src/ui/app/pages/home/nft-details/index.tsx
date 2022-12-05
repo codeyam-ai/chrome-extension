@@ -16,8 +16,6 @@ import { truncateMiddle } from '_src/ui/app/helpers/truncate-string-middle';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
-import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
-import NavBarWithBackAndWalletPicker from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndWalletPicker';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 
@@ -37,40 +35,39 @@ function NFTdetailsContent({
     return (
         <>
             <div>
-                <PageScrollView heightInPx={425}>
-                    <div className="text-center w-full">
-                        <div className={'px-6 pt-6'}>
-                            <BlurredImage
-                                imgSrc={filePath || ''}
-                                fileExt={fileExtentionType?.name || 'NFT'}
-                            />
-                        </div>
-                        <div className="p-6">
-                            <Title className={'text-left mb-2'}>
-                                {nftFields?.name}
-                            </Title>
-                            <BodyLarge
-                                className={
-                                    'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal mb-6'
-                                }
+                <div className="text-center w-full">
+                    <div className={'px-6 pt-6'}>
+                        <BlurredImage
+                            imgSrc={filePath || ''}
+                            fileExt={fileExtentionType?.name || 'NFT'}
+                        />
+                    </div>
+                    <div className="p-6">
+                        <Title className={'text-left mb-2'}>
+                            {nftFields?.name}
+                        </Title>
+                        <BodyLarge
+                            className={
+                                'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal mb-6'
+                            }
+                        >
+                            {nftFields?.description}
+                        </BodyLarge>
+
+                        {hasPublicTransfer(nft) && (
+                            <Button
+                                isInline
+                                buttonStyle="primary"
+                                className={'inline-block mb-0'}
+                                onClick={onClick}
                             >
-                                {nftFields?.description}
-                            </BodyLarge>
+                                Send
+                            </Button>
+                        )}
+                    </div>
 
-                            {hasPublicTransfer(nft) && (
-                                <Button
-                                    isInline
-                                    buttonStyle="primary"
-                                    className={'inline-block mb-0'}
-                                    onClick={onClick}
-                                >
-                                    Send
-                                </Button>
-                            )}
-                        </div>
-
-                        <div className={'w-full text-left'}>
-                            {/** 
+                    <div className={'w-full text-left'}>
+                        {/** 
                                  * 
                                  * Replace when NFT events are determined
                                  * 
@@ -79,66 +76,64 @@ function NFTdetailsContent({
                                     Activity
                                 </BodyLarge>
                                 <NFTTransactionRows />*/}
-                            <KeyValueList
-                                header={'Creator'}
-                                keyNamesAndValues={[
-                                    {
-                                        keyName: 'Wallet Address',
-                                        value: truncateMiddle(
-                                            nft?.owner?.AddressOwner
-                                        ),
-                                    },
-                                ]}
-                            />
-                            <KeyValueList
-                                header={'Details'}
-                                keyNamesAndValues={[
-                                    {
-                                        keyName: 'Has public transfer',
-                                        value: nft?.data?.has_public_transfer
-                                            ? 'Yes'
-                                            : 'No',
-                                    },
-                                    {
-                                        keyName: 'Object ID',
-                                        value: truncateMiddle(
-                                            nft.reference.objectId
-                                        ),
-                                    },
-                                    {
-                                        keyName: 'Digest',
-                                        value: truncateMiddle(
-                                            nft.reference.digest
-                                        ),
-                                    },
-                                ]}
-                            />
-                        </div>
-                        <div
-                            className={
-                                'border-t-1 border-t-solid border-ethos-light-text-medium pt-8 px-6'
-                            }
-                        >
-                            <div className={'flex flex-row justify-between'}>
-                                <BodyLarge>
-                                    <ExplorerLink
-                                        type={ExplorerLinkType.object}
-                                        objectID={nftObjectID}
-                                        title="View on Sui Explorer"
-                                        showIcon={true}
-                                    >
-                                        View on Sui Explorer
-                                    </ExplorerLink>
-                                </BodyLarge>
-                                <div
-                                    className={
-                                        'text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
-                                    }
+                        <KeyValueList
+                            header={'Creator'}
+                            keyNamesAndValues={[
+                                {
+                                    keyName: 'Wallet Address',
+                                    value: truncateMiddle(
+                                        nft?.owner?.AddressOwner
+                                    ),
+                                },
+                            ]}
+                        />
+                        <KeyValueList
+                            header={'Details'}
+                            keyNamesAndValues={[
+                                {
+                                    keyName: 'Has public transfer',
+                                    value: nft?.data?.has_public_transfer
+                                        ? 'Yes'
+                                        : 'No',
+                                },
+                                {
+                                    keyName: 'Object ID',
+                                    value: truncateMiddle(
+                                        nft.reference.objectId
+                                    ),
+                                },
+                                {
+                                    keyName: 'Digest',
+                                    value: truncateMiddle(nft.reference.digest),
+                                },
+                            ]}
+                        />
+                    </div>
+                    <div
+                        className={
+                            'border-t-1 border-t-solid border-ethos-light-text-medium pt-8 px-6'
+                        }
+                    >
+                        <div className={'flex flex-row justify-between'}>
+                            <BodyLarge>
+                                <ExplorerLink
+                                    type={ExplorerLinkType.object}
+                                    objectID={nftObjectID}
+                                    title="View on Sui Explorer"
+                                    showIcon={true}
                                 >
-                                    <ArrowUpRightIcon width={16} height={16} />
-                                </div>
+                                    View on Sui Explorer
+                                </ExplorerLink>
+                            </BodyLarge>
+                            <div
+                                className={
+                                    'text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
+                                }
+                            >
+                                <ArrowUpRightIcon width={16} height={16} />
                             </div>
-                            {/*
+                        </div>
+                        {/*
                                 
                                 Add these buttons in when fully integrated with Keepsake and Clutchy
                                 Currently no way to determine that the NFTs are located on either. 
@@ -164,9 +159,8 @@ function NFTdetailsContent({
                                     ]}
                                 />
                                 */}
-                        </div>
                     </div>
-                </PageScrollView>
+                </div>
             </div>
         </>
     );
@@ -205,7 +199,6 @@ function NFTDetailsPage() {
 
     return (
         <div className="">
-            <NavBarWithBackAndWalletPicker backUrl={'/nfts'} />
             <Loading loading={loadingBalance} big={true}>
                 {objectId && startNFTTransfer ? (
                     <TransferNFTCard objectId={objectId} />

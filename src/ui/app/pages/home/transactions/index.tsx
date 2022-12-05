@@ -9,8 +9,6 @@ import Loading from '_src/ui/app/components/loading';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
-import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
-import NavBarWithSettingsAndWalletPicker from '_src/ui/app/shared/navigation/nav-bar/NavBarWithSettingsAndWalletPicker';
 
 import type { TxResultState } from '_redux/slices/txresults';
 
@@ -29,14 +27,11 @@ function TransactionsPage() {
 
     return (
         <>
-            <NavBarWithSettingsAndWalletPicker />
             <Loading loading={loading} big={true}>
                 {txByAddress && txByAddress.length ? (
                     <div className={st.container}>
                         <TextPageTitle title="Activity" />
-                        <PageScrollView heightInPx={348}>
-                            <TransactionRows transactions={txByAddress} />
-                        </PageScrollView>
+                        <TransactionRows transactions={txByAddress} />
                     </div>
                 ) : (
                     <EmptyPageState

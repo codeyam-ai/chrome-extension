@@ -12,7 +12,6 @@ import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import SendReceiveButtonGroup from '_src/ui/app/shared/buttons/SendReceiveButtonGroup';
 import Alert from '_src/ui/app/shared/feedback/Alert';
-import NavBarWithSettingsAndWalletPicker from '_src/ui/app/shared/navigation/nav-bar/NavBarWithSettingsAndWalletPicker';
 import Body from '_src/ui/app/shared/typography/Body';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
@@ -36,7 +35,6 @@ function TokensPage() {
 
     return (
         <>
-            <NavBarWithSettingsAndWalletPicker />
             {showError && error ? (
                 <div className="px-6 py-6">
                     <Alert

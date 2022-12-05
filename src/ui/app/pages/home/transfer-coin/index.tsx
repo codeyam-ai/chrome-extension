@@ -22,7 +22,6 @@ import {
     useFormatCoin,
 } from '_src/ui/app/hooks/useFormatCoin';
 import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
-import NavBarWithBackAndWalletPicker from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndWalletPicker';
 
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
@@ -162,7 +161,6 @@ function TransferCoinPage() {
     }
     return (
         <>
-            <NavBarWithBackAndWalletPicker backUrl={'/tokens'} />
             <NavBarWithBackAndTitle
                 title={'Send ' + coinSymbol}
                 backLink="/tokens"

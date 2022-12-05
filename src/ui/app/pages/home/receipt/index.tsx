@@ -11,7 +11,6 @@ import {
     type TxResultState,
 } from '_redux/slices/txresults';
 import Loading from '_src/ui/app/components/loading';
-import NavBarWithBackAndWalletPicker from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndWalletPicker';
 
 import st from './ReceiptPage.module.scss';
 
@@ -52,7 +51,6 @@ function ReceiptPage() {
 
     return (
         <div>
-            <NavBarWithBackAndWalletPicker backUrl={'/transactions'} />
             <Loading loading={loading} big={true}>
                 <div className={st.container}>
                     <Content>
