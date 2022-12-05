@@ -293,7 +293,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                 />
             )}
             {txDigest.txId && (
-                <div className={'px-6'}>
+                <div className={'px-6 pb-6'}>
                     <div className={'flex flex-row justify-between'}>
                         <BodyLarge>
                             {isNft ? (

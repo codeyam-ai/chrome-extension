@@ -130,7 +130,7 @@ function TransferNFTForm({
                                 buttonStyle="primary"
                                 onClick={setIsReviewTrue}
                                 disabled={!isValid || isSubmitting}
-                                className={'mt-[100px]'}
+                                className={'mt-[150px] mb-0'}
                             >
                                 Continue
                             </Button>
@@ -199,6 +199,7 @@ function TransferNFTForm({
                                     isInline
                                     buttonStyle="primary"
                                     type="submit"
+                                    className={'mt-[50px] mb-0'}
                                 >
                                     {isSubmitting ? (
                                         <LoadingIndicator />

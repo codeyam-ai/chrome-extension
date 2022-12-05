@@ -40,7 +40,7 @@ function NFTDisplayCard({ nftobj, showlabel, wideview }: NFTsProps) {
         <div className={'flex flex-row items-center'}>
             {filePath && (
                 <img
-                    className={'w-[40px] h-[40px] mr-2'}
+                    className={'w-[40px] h-[40px] mr-2 rounded-sm'}
                     src={filePath}
                     alt={fileExtentionType?.name || 'NFT'}
                 />

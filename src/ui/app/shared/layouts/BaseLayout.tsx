@@ -1,9 +1,10 @@
-import { ToastContainer, cssTransition } from 'react-toastify';
+import { cssTransition, ToastContainer } from 'react-toastify';
+
+import NavBarWithSettingsAndWalletPicker from '../navigation/nav-bar/NavBarWithSettingsAndWalletPicker';
 
 import type React from 'react';
 
 import 'animate.css/animate.min.css';
-import NavBarWithSettingsAndWalletPicker from '../navigation/nav-bar/NavBarWithSettingsAndWalletPicker';
 
 export interface BaseLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
     className?: string;
