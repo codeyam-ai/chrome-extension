@@ -120,10 +120,6 @@ class Transactions {
         }
     }
 
-    // public async mergeCoins() {
-
-    // }
-
     public async executeTransaction(
         tx: TransactionDataType,
         connection: ContentScriptConnection
