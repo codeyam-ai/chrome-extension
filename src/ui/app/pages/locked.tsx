@@ -41,7 +41,7 @@ const LockedPage = () => {
 
     return (
         <PageLayout>
-            <Loading loading={checkingInitialized}>
+            <Loading loading={checkingInitialized} resize={true}>
                 <BaseLayout className="!min-h-0">
                     <HeaderWithIconRow
                         title="Ethos"
