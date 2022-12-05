@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { AppState } from '../hooks/useInitializedGuard';
 import {
@@ -19,6 +19,8 @@ import PageLayout from '_src/ui/app/pages/PageLayout';
 const LockedPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const { pathname } = useLocation();
+
     const checkingInitialized = useInitializedGuard(AppState.LOCKED);
     const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false);
 
@@ -32,14 +34,14 @@ const LockedPage = () => {
             }
             setIsPasswordIncorrect(false);
             await dispatch(loadAccountInformationFromStorage());
-            navigate('/');
+            navigate((pathname || '/').replace('/locked', ''));
         },
-        [dispatch, navigate]
+        [pathname, dispatch, navigate]
     );
 
     return (
         <PageLayout>
-            <Loading loading={checkingInitialized}>
+            <Loading loading={checkingInitialized} resize={true}>
                 <BaseLayout className="!min-h-0">
                     <HeaderWithIconRow
                         title="Ethos"
