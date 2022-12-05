@@ -9,7 +9,7 @@ import { formatDate } from '_helpers';
 import { useMiddleEllipsis } from '_src/ui/app/hooks';
 
 interface TransactionRowProps {
-    txn: any; // TODO: Update when NFT events are complete
+    txn: any;
 }
 
 const TRUNCATE_MAX_LENGTH = 8;
