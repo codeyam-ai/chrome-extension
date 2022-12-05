@@ -10,7 +10,7 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import TransferCoinForm from './TransferCoinForm';
 import { createTokenValidation } from './validation';
 import Loading from '_components/loading';
-import { useAppSelector, useAppDispatch } from '_hooks';
+import { useAppDispatch, useAppSelector } from '_hooks';
 import {
     accountAggregateBalancesSelector,
     accountCoinsSelector,

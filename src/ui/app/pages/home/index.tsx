@@ -9,7 +9,6 @@ import SettingsRouterPage from '../../components/settings-menu/SettingsRouterPag
 import WalletPickerPage from '../../components/wallet-picker-menu/WalletPickerPage';
 import { AppState } from '../../hooks/useInitializedGuard';
 import BaseLayout from '../../shared/layouts/BaseLayout';
-import NavBarWithSettingsAndWalletPicker from '../../shared/navigation/nav-bar/NavBarWithSettingsAndWalletPicker';
 import TabBar from '../../shared/navigation/tab-bar/TabBar';
 import Loading from '_components/loading';
 import { useInitializedGuard, useAppDispatch } from '_hooks';
@@ -43,11 +42,9 @@ const HomePage = () => {
         <PageLayout>
             <Loading loading={guardChecking} big={true}>
                 <BaseLayout>
-                    <NavBarWithSettingsAndWalletPicker />
                     <SettingsRouterPage />
                     <WalletPickerPage />
-                    {/* Height of 455 px = 600px total - 65px for nav bar (including 1px border) - 64px for tab bar */}
-                    <main className="flex-grow h-[471px] overflow-scroll">
+                    <main className="flex-grow h-[471px] overflow-scroll no-scrollbar">
                         <Outlet />
                     </main>
                     <TabBar />

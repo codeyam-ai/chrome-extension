@@ -1,24 +1,23 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-
 import { Formik } from 'formik';
-import { useCallback, useMemo, useState, memo } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import TransferNFTForm from './TransferNFTForm';
 import { createValidationSchema } from './validation';
-import NFTDisplayCard from '_components/nft-display';
-import { useAppSelector, useAppDispatch } from '_hooks';
+import { useAppDispatch, useAppSelector } from '_hooks';
 import {
-    accountNftsSelector,
     accountAggregateBalancesSelector,
+    accountNftsSelector,
 } from '_redux/slices/account';
 import { transferNFT } from '_redux/slices/sui-objects';
 import {
-    GAS_TYPE_ARG,
     DEFAULT_NFT_TRANSFER_GAS_FEE,
+    GAS_TYPE_ARG,
 } from '_redux/slices/sui-objects/Coin';
-import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
+import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 
 import type { ObjectId } from '@mysten/sui.js';
 import type { SerializedError } from '@reduxjs/toolkit';
@@ -74,10 +73,15 @@ function TransferNFTCard({ objectId }: TransferProps) {
             { to }: FormValues,
             { resetForm }: FormikHelpers<FormValues>
         ) => {
+            // Let the user know the transaction is en route
+            toast(<SuccessAlert text={'Transaction submitted.'} />);
+
             if (objectId === null) {
                 return;
             }
+
             setSendError(null);
+
             try {
                 const resp = await dispatch(
                     transferNFT({
@@ -88,12 +92,22 @@ function TransferNFTCard({ objectId }: TransferProps) {
                 ).unwrap();
 
                 resetForm();
+
                 if (resp.txId) {
-                    navigate(
-                        `/receipt?${new URLSearchParams({
-                            txdigest: resp.txId,
-                            transfer: 'nft',
-                        }).toString()}`
+                    // Redirect to nft page
+                    navigate('/nfts');
+
+                    const navLink = `/receipt?${new URLSearchParams({
+                        txdigest: resp.txId,
+                    }).toString()}`;
+
+                    toast(
+                        <SuccessAlert
+                            text={'Transaction successful.'}
+                            linkText={'View'}
+                            linkUrl={navLink}
+                        />,
+                        { delay: 500 }
                     );
                 }
             } catch (e) {
@@ -109,16 +123,7 @@ function TransferNFTCard({ objectId }: TransferProps) {
 
     return (
         <div className={st.container}>
-            <NavBarWithBackAndTitle title="Send NFT" backLink="/nfts" />
-            <div className={st.content}>
-                {selectedNFTObj && (
-                    <div className="px-6">
-                        <NFTDisplayCard
-                            nftobj={selectedNFTObj}
-                            wideview={true}
-                        />
-                    </div>
-                )}
+            <div className={'text-left'}>
                 <Formik
                     initialValues={initialValues}
                     validateOnMount={true}
@@ -126,6 +131,7 @@ function TransferNFTCard({ objectId }: TransferProps) {
                     onSubmit={onHandleSubmit}
                 >
                     <TransferNFTForm
+                        nftobj={selectedNFTObj}
                         submitError={sendError}
                         gasBalance={gasAggregateBalance.toString()}
                         onClearSubmitError={handleOnClearSubmitError}

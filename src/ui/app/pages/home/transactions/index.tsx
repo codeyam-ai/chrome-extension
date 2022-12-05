@@ -3,13 +3,12 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { memo, useEffect } from 'react';
 
-import { useAppSelector, useAppDispatch } from '_hooks';
+import { useAppDispatch, useAppSelector } from '_hooks';
 import { getTransactionsByAddress } from '_redux/slices/txresults';
 import Loading from '_src/ui/app/components/loading';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
-import PageScrollView from '_src/ui/app/shared/layouts/PageScrollView';
 
 import type { TxResultState } from '_redux/slices/txresults';
 
@@ -27,24 +26,24 @@ function TransactionsPage() {
     }, [dispatch]);
 
     return (
-        <Loading loading={loading} big={true}>
-            {txByAddress && txByAddress.length ? (
-                <div className={st.container}>
-                    <TextPageTitle title="Activity" />
-                    <PageScrollView>
+        <>
+            <Loading loading={loading} big={true}>
+                {txByAddress && txByAddress.length ? (
+                    <div className={st.container}>
+                        <TextPageTitle title="Activity" />
                         <TransactionRows transactions={txByAddress} />
-                    </PageScrollView>
-                </div>
-            ) : (
-                <EmptyPageState
-                    iconWithNoClasses={<MagnifyingGlassIcon />}
-                    title="No transactions yet"
-                    subtitle="Set up DevNet SUI tokens to send coins."
-                    linkText="Learn more"
-                    linkUrl="https://docs.sui.io/build/devnet"
-                />
-            )}
-        </Loading>
+                    </div>
+                ) : (
+                    <EmptyPageState
+                        iconWithNoClasses={<MagnifyingGlassIcon />}
+                        title="No transactions yet"
+                        subtitle="Set up DevNet SUI tokens to send coins."
+                        linkText="Learn more"
+                        linkUrl="https://docs.sui.io/build/devnet"
+                    />
+                )}
+            </Loading>
+        </>
     );
 }
 

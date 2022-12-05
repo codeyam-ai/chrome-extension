@@ -17,8 +17,8 @@ const WalletList = ({
     return (
         <div
             className={`${hasTopPadding ? 'pt-3' : 'pt-0'} ${
-                isWalletEditing ? 'max-h-[342px]' : 'max-h-[300px]'
-            } px-3 pb-4 flex flex-col gap-1 overflow-scroll`}
+                isWalletEditing ? 'max-h-[342px]' : 'max-h-[360px]'
+            } px-3 pb-4 flex flex-col gap-1 overflow-scroll no-scrollbar`}
         >
             {wallets.map((wallet, key) => {
                 const isActive = (wallet.index || 0) === activeAccountIndex;

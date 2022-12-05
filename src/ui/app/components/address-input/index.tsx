@@ -3,6 +3,7 @@
 
 import { memo, useCallback, useMemo, useState } from 'react';
 
+import Input from '../../shared/inputs/Input';
 import lookup from './lookup';
 import { SUI_ADDRESS_VALIDATION } from './validation';
 
@@ -15,12 +16,14 @@ export interface AddressInputProps<Values>
     disabled?: boolean;
     placeholder?: string;
     className?: string;
+    label?: string;
 }
 
 function AddressInput<FormValues>({
     disabled: forcedDisabled,
     placeholder = '0x... or SuiNS name',
     className,
+    label,
     form: { isSubmitting, setFieldValue },
     field: { onBlur, name, value },
 }: AddressInputProps<FormValues>) {
@@ -49,16 +52,14 @@ function AddressInput<FormValues>({
     );
     return (
         <div className="flex flex-col gap-1 flex-1">
-            <input
-                type="text"
-                {...{
-                    disabled,
-                    placeholder,
-                    className,
-                    onBlur,
-                    value: displayedValue,
-                    onChange: handleOnChange,
-                }}
+            <Input
+                label={label}
+                className={className}
+                disabled={disabled}
+                placeholder={placeholder}
+                onBlur={onBlur}
+                value={displayedValue}
+                onChange={handleOnChange}
             />
             <input
                 type="hidden"

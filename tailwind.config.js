@@ -43,6 +43,12 @@ module.exports = {
                 'letter-spacing-ethos-body-large': '',
                 'letter-spacing-ethos-body': '',
             },
+            borderRadius: {
+                'ethos-large-images': '1.25em',
+            },
+            dropShadow: {
+                'ethos-lg-image': '0px 8px 24px rgba(0, 0, 0, 0.3)',
+            },
             boxShadow: {
                 // ==========
                 // Shadow

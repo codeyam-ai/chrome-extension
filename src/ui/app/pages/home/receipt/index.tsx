@@ -1,14 +1,16 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-import { useMemo } from 'react';
-import { Navigate, useSearchParams } from 'react-router-dom';
+import { useEffect, useMemo } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { Content } from '_app/shared/bottom-menu-layout';
 import ReceiptCard from '_components/receipt-card';
-import { useAppSelector } from '_hooks';
-import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
-
-import type { TxResultState } from '_redux/slices/txresults';
+import { useAppDispatch, useAppSelector } from '_hooks';
+import {
+    getTransactionsByAddress,
+    type TxResultState,
+} from '_redux/slices/txresults';
+import Loading from '_src/ui/app/components/loading';
 
 import st from './ReceiptPage.module.scss';
 
@@ -16,12 +18,23 @@ import st from './ReceiptPage.module.scss';
 // use txDigest for the transaction result
 function ReceiptPage() {
     const [searchParams] = useSearchParams();
+    const dispatch = useAppDispatch();
+
+    const navigate = useNavigate();
+
+    const loading = useAppSelector(({ txresults }) => txresults.loading);
+
+    useEffect(() => {
+        const getTxByAddr = async () => {
+            await dispatch(getTransactionsByAddress()).unwrap();
+        };
+
+        getTxByAddr();
+    }, [dispatch]);
 
     // get tx results from url params
     const txDigest = searchParams.get('txdigest');
-
     const tranferType = searchParams.get('transfer');
-
     const txResults: TxResultState[] = useAppSelector(
         ({ txresults }) => txresults.latestTx
     );
@@ -32,18 +45,19 @@ function ReceiptPage() {
 
     const linkTo = tranferType ? '/nfts' : '/transactions';
 
-    if (!txDigest || (txResults && !txnItem)) {
-        return <Navigate to={linkTo} replace={true} />;
+    if (!loading && (!txDigest || (txResults && !txnItem))) {
+        navigate(linkTo);
     }
 
     return (
-        <div className={st.container}>
-            <NavBarWithBackAndTitle title="" backLink={linkTo} />
-            <div className="px-6">
-                <Content>
-                    {txnItem && <ReceiptCard txDigest={txnItem} />}
-                </Content>
-            </div>
+        <div>
+            <Loading loading={loading} big={true}>
+                <div className={st.container}>
+                    <Content>
+                        {txnItem && <ReceiptCard txDigest={txnItem} />}
+                    </Content>
+                </div>
+            </Loading>
         </div>
     );
 }

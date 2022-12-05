@@ -1,13 +1,25 @@
-import Title from '../../typography/Title';
+import Header from '../../typography/Header';
 
 interface TextPageTitleProps {
     title: string;
+    count?: number;
 }
 
-const TextPageTitle = ({ title }: TextPageTitleProps) => {
+const TextPageTitle = ({ title, count }: TextPageTitleProps) => {
     return (
-        <div className="py-4 px-6 text-left">
-            <Title>{title}</Title>
+        <div className="p-6 text-left">
+            <Header>
+                {title}
+                {count && (
+                    <span
+                        className={
+                            'pl-2 text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
+                        }
+                    >
+                        {count}
+                    </span>
+                )}
+            </Header>
         </div>
     );
 };

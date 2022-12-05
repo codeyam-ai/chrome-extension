@@ -1,28 +1,27 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 import { getObjectId, hasPublicTransfer } from '@mysten/sui.js';
-import { useMemo, useState, useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
 import TransferNFTCard from './transfer-nft';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import Loading from '_components/loading';
-import { useAppSelector, useMiddleEllipsis, useNFTBasicData } from '_hooks';
+import { useAppSelector, useNFTBasicData } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account';
+import { truncateMiddle } from '_src/ui/app/helpers/truncate-string-middle';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
-import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
-import Body from '_src/ui/app/shared/typography/Body';
+import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import Title from '_src/ui/app/shared/typography/Title';
 
 import type { SuiObject } from '@mysten/sui.js';
 import type { ButtonHTMLAttributes } from 'react';
 
-import st from './NFTDetails.module.scss';
-
-const TRUNCATE_MAX_LENGTH = 10;
-const TRUNCATE_PREFIX_LENGTH = 6;
 function NFTdetailsContent({
     nft,
     onClick,
@@ -33,106 +32,141 @@ function NFTdetailsContent({
     const { filePath, nftObjectID, nftFields, fileExtentionType } =
         useNFTBasicData(nft);
 
-    const shortenedObjectId = useMiddleEllipsis(
-        nftObjectID,
-        TRUNCATE_MAX_LENGTH,
-        TRUNCATE_PREFIX_LENGTH
-    );
+    let address;
+    if (typeof nft.owner !== 'string' && 'AddressOwner' in nft.owner) {
+        address = nft.owner.AddressOwner;
+    }
 
-    // const NFTDetails = (
-    //     <div className="mt-5 p-5 rounded-md dark:bg-gray-700">
-    //         <div className="flex flex-row items-center justify-between">
-    //             <div className={st.label}>Object ID</div>
-    //             <div className={st.value}>
-    //                 <ExplorerLink
-    //                     type={ExplorerLinkType.object}
-    //                     objectID={nftObjectID}
-    //                     title="View on Sui Explorer"
-    //                     className={st.explorerLink}
-    //                     showIcon={false}
-    //                 >
-    //                     {shortenedObjectId}
-    //                 </ExplorerLink>
-    //             </div>
-    //         </div>
-
-    //         {fileExtentionType.name !== '' && (
-    //             <div className={st.nftItemDetail}>
-    //                 <div className={st.label}>Media Type</div>
-    //                 <div className={st.value}>
-    //                     {fileExtentionType?.name} {fileExtentionType.type}
-    //                 </div>
-    //             </div>
-    //         )}
-    //     </div>
-    // );
+    let has_public_transfer: boolean | undefined;
+    if ('has_public_transfer' in nft.data) {
+        has_public_transfer = nft.data.has_public_transfer;
+    }
 
     return (
         <>
-            <div className={st.container}>
-                <NavBarWithBackAndTitle
-                    // title={nftFields?.name}
-                    backLink="/nfts"
-                />
-                <div className="text-center w-full">
-                    <Body className="pb-2">{nftFields?.name}</Body>
-                    <img
-                        className="mx-auto h-36 w-36 mb-4 shadow-sm rounded-2xl"
-                        src={filePath || ''}
-                        alt={fileExtentionType?.name || 'NFT'}
-                    />
-                    <div className="mb-4">
-                        <ExplorerLink
-                            type={ExplorerLinkType.object}
-                            objectID={nftObjectID}
-                        >
-                            View On Sui Explorer →
-                        </ExplorerLink>
+            <div>
+                <div className="text-center w-full mb-6">
+                    <div className={'px-6 pt-6'}>
+                        <BlurredImage
+                            imgSrc={filePath || ''}
+                            fileExt={fileExtentionType?.name || 'NFT'}
+                        />
                     </div>
-                    <KeyValueList
-                        keyNamesAndValues={[
-                            {
-                                keyName: 'Object ID',
-                                value: shortenedObjectId,
-                            },
-                        ]}
-                    />
-                </div>
-                {/* This margin top is a temporary fix - we need to figure out if the page should scroll */}
-                {hasPublicTransfer(nft) && (
-                    <Button
-                        buttonStyle="primary"
-                        className="-mt-[15px]"
-                        onClick={onClick}
-                    >
-                        Send
-                    </Button>
-                )}
-                {/* <BottomMenuLayout>
-                    <Content>
-                        <section className={st.nftDetail}>
-                            <NFTDisplayCard
-                                nftobj={nft}
-                                size="large"
-                                expandable={true}
-                            />
-                            {NFTDetails}
-                        </section>
-                    </Content>
-                    <Menu stuckClass={st.shadow} className={st.shadow}>
-                        <Button
-                            buttonStyle={ButtonStyle.PRIMARY}
-                            onClick={onClick}
-                            className="mt-2"
+                    <div className="p-6">
+                        <Title className={'text-left mb-2'}>
+                            {nftFields?.name}
+                        </Title>
+                        <BodyLarge
+                            className={
+                                'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal mb-6'
+                            }
                         >
-                            <Icon
-                                className="mr-2 text-xs"
-                                icon={SuiIcons.Send}
-                            />
-                            Send
-                        </Button>
-                    </Menu>
-                </BottomMenuLayout> */}
+                            {nftFields?.description}
+                        </BodyLarge>
+
+                        {hasPublicTransfer(nft) && (
+                            <Button
+                                isInline
+                                buttonStyle="primary"
+                                className={'inline-block mb-0'}
+                                onClick={onClick}
+                            >
+                                Send
+                            </Button>
+                        )}
+                    </div>
+
+                    <div className={'w-full text-left'}>
+                        {/** 
+                                 * 
+                                 * Replace when NFT events are determined
+                                 * 
+                                 * 
+                                <BodyLarge isSemibold className={'mb-3'}>
+                                    Activity
+                                </BodyLarge>
+                                <NFTTransactionRows />*/}
+                        <KeyValueList
+                            header={'Creator'}
+                            keyNamesAndValues={[
+                                {
+                                    keyName: 'Wallet Address',
+                                    value: truncateMiddle(address || ''),
+                                },
+                            ]}
+                        />
+                        <KeyValueList
+                            header={'Details'}
+                            keyNamesAndValues={[
+                                {
+                                    keyName: 'Has public transfer',
+                                    value: has_public_transfer ? 'Yes' : 'No',
+                                },
+                                {
+                                    keyName: 'Object ID',
+                                    value: truncateMiddle(
+                                        nft.reference.objectId
+                                    ),
+                                },
+                                {
+                                    keyName: 'Digest',
+                                    value: truncateMiddle(nft.reference.digest),
+                                },
+                            ]}
+                        />
+                    </div>
+                    <div
+                        className={
+                            'border-t-1 border-t-solid border-ethos-light-text-medium pt-8 px-6'
+                        }
+                    >
+                        <div className={'flex flex-row justify-between'}>
+                            <BodyLarge>
+                                <ExplorerLink
+                                    type={ExplorerLinkType.object}
+                                    objectID={nftObjectID}
+                                    title="View on Sui Explorer"
+                                    showIcon={true}
+                                >
+                                    View on Sui Explorer
+                                </ExplorerLink>
+                            </BodyLarge>
+                            <div
+                                className={
+                                    'text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
+                                }
+                            >
+                                <ArrowUpRightIcon width={16} height={16} />
+                            </div>
+                        </div>
+                        {/*
+                                
+                                Add these buttons in when fully integrated with Keepsake and Clutchy
+                                Currently no way to determine that the NFTs are located on either. 
+                                
+                                <LinkListWithIcon
+                                    textAndLinks={[
+                                        {
+                                            text: 'View on Keepsake',
+                                            link: {
+                                                type: LinkType.External,
+                                                to: 'https://ethoswallet.xyz/dev',
+                                                children: 'Learn how →',
+                                            },
+                                        },
+                                        {
+                                            text: 'View on Clutchy',
+                                            link: {
+                                                type: LinkType.External,
+                                                to: 'https://ethoswallet.xyz/dev',
+                                                children: 'Learn how →',
+                                            },
+                                        },
+                                    ]}
+                                />
+                                */}
+                    </div>
+                </div>
             </div>
         </>
     );

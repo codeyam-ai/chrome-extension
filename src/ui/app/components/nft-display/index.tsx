@@ -1,77 +1,46 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-import cl from 'classnames';
 
-import ExplorerLink from '_components/explorer-link';
-import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
+import truncateString from '../../helpers/truncate-string';
+import Body from '../../shared/typography/Body';
 import { useNFTBasicData } from '_hooks';
 
 import type { SuiObject as SuiObjectType } from '@mysten/sui.js';
 
-import st from './NFTDisplay.module.scss';
-
 export type NFTsProps = {
     nftobj: SuiObjectType;
     showlabel?: boolean;
-    size?: 'small' | 'medium' | 'large';
-    expandable?: boolean;
     wideview?: boolean;
 };
 
-function NFTDisplayCard({
-    nftobj,
-    showlabel,
-    size = 'medium',
-    expandable,
-    wideview,
-}: NFTsProps) {
-    const { filePath, nftObjectID, nftFields, fileExtentionType } =
-        useNFTBasicData(nftobj);
+function NFTDisplayCard({ nftobj, showlabel, wideview }: NFTsProps) {
+    const { filePath, nftFields, fileExtentionType } = useNFTBasicData(nftobj);
 
-    const wideviewSection = (
-        <div className={st.nftfields}>
-            <div className="capitalize dark:text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-                {nftFields?.name}
-            </div>
-            <div className={st.nftType}>
-                {fileExtentionType?.name} {fileExtentionType.type}
-            </div>
-        </div>
-    );
     const defaultSection = (
         <>
-            {expandable ? (
-                <div className="flex items-center content-center mt-3">
-                    <ExplorerLink
-                        type={ExplorerLinkType.object}
-                        objectID={nftObjectID}
-                        showIcon={false}
-                        className="text-purple-700 hover:text-purple-800 dark:text-violet-400 dark:hover:text-violet-300"
-                    >
-                        View On Sui Explorer →
-                    </ExplorerLink>
-                </div>
-            ) : null}
             {showlabel && nftFields?.name ? (
-                <div className={st.nftfields + ' dark:text-gray-400'}>
-                    {nftFields.name}
+                <div>
+                    <Body isSemibold>{nftFields.name}</Body>
+                    <Body isTextColorMedium>{nftFields.description}</Body>
                 </div>
             ) : null}
         </>
     );
 
+    const wideviewSection = (
+        <div>
+            <Body isSemibold>{nftFields?.name}</Body>
+            <Body isTextColorMedium>
+                {truncateString(nftFields?.description, 30)}
+            </Body>
+        </div>
+    );
+
     return (
-        <div
-            className={cl(
-                st.nftimage,
-                wideview &&
-                    st.wideview +
-                        ' dark:bg-gray-700 dark:border-gray-500 dark:border-[1px]'
-            )}
-        >
+        <div className={'flex flex-row items-center'}>
             {filePath && (
                 <img
-                    className={cl(st.img, st[size])}
+                    className={'w-[40px] h-[40px] mr-2 rounded-sm'}
                     src={filePath}
                     alt={fileExtentionType?.name || 'NFT'}
                 />

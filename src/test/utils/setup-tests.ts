@@ -8,6 +8,9 @@ jest.mock('webextension-polyfill', () => {
 
 jest.spyOn(window, 'resizeTo').mockImplementation();
 
+jest.mock('animate.css/animate.min.css', () => '');
+jest.mock('react-toastify/dist/ReactToastify.css', () => '');
+
 beforeEach(() => clearLocalStorage());
 
 // ref: https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom

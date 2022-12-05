@@ -52,6 +52,10 @@ export type TxResultState = {
     callFunctionName?: string;
     coinSymbol?: string;
     coinType?: string;
+    toAddr?: string;
+    txAmount?: number;
+    vendor?: string;
+    txType?: string;
 };
 
 interface TransactionManualState {
