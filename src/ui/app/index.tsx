@@ -128,6 +128,7 @@ const App = () => {
                 </Route>
                 <Route path="password" element={<PasswordPage />} />
                 <Route path="locked" element={<LockedPage />} />
+                <Route path="locked/*" element={<LockedPage />} />
                 <Route
                     path="/connect/:requestID"
                     element={<SiteConnectPage />}

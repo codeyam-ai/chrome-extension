@@ -16,13 +16,8 @@ export type CoinProps = {
 };
 
 function CoinBalance({ type, balance }: CoinProps) {
-    const isBalanceZero = useMemo(() => balance.toString() === '0', [balance]);
-    const [balanceFormatted, symbol] = useFormatCoin(balance, type);
-    // TODO: make this an actual calculation
-    const usdAmount = useMemo(
-        () => (isBalanceZero ? '$0.00' : '$54.32'),
-        [isBalanceZero]
-    );
+    const [balanceFormatted, symbol, usdAmount] = useFormatCoin(balance, type);
+
     const sendUrl = useMemo(
         () => `/send?${new URLSearchParams({ type }).toString()}`,
         [type]

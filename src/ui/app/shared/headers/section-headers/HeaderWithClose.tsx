@@ -9,7 +9,7 @@ interface HeaderWithCloseProps {
 
 const HeaderWithClose = ({ title, onClickClose }: HeaderWithCloseProps) => {
     return (
-        <div className="flex justify-between p-6 text-left border-b border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
+        <div className="flex justify-between px-6 py-4 text-left border-b border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
             <Header>{title}</Header>
             <button onClick={onClickClose}>
                 <XMarkIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />

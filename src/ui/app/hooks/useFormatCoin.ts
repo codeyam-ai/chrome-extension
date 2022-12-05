@@ -105,7 +105,12 @@ export function useFormatCoin(
     const dollars = useMemo(() => {
         if (typeof balance === 'undefined' || balance === null) return '';
 
-        return formatBalance(balance, 7);
+        const dollarFormatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        });
+
+        return dollarFormatter.format(parseFloat(formatBalance(balance, 7)));
     }, [balance]);
 
     return [formatted, symbol, dollars, queryResult];

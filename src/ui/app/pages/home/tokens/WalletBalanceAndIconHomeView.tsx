@@ -6,21 +6,15 @@ import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 interface WalletBalanceAndIconHomeViewProps {
     accountInfo?: AccountInfo;
-    dollarValue: number;
+    dollarValue: string;
 }
 
 const WalletBalanceAndIconHomeView = ({
     accountInfo,
     dollarValue,
 }: WalletBalanceAndIconHomeViewProps) => {
-    const dollarFormatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    });
-
-    let formattedDollarValue = dollarFormatter.format(dollarValue);
-    if (formattedDollarValue.endsWith('.00')) {
-        formattedDollarValue = formattedDollarValue.slice(0, -3);
+    if (dollarValue.endsWith('.00')) {
+        dollarValue = dollarValue.slice(0, -3);
     }
     return (
         <div className="flex flex-col gap-3 p-4 place-items-center">
@@ -34,7 +28,7 @@ const WalletBalanceAndIconHomeView = ({
                 <BodyLarge isSemibold isTextColorMedium>
                     Wallet Balance
                 </BodyLarge>
-                <JumboTitle>{formattedDollarValue}</JumboTitle>
+                <JumboTitle>{dollarValue}</JumboTitle>
             </div>
         </div>
     );
