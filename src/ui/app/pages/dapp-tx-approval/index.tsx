@@ -892,10 +892,10 @@ export function DappTxApprovalPage() {
                     hasError={!!dryRunError}
                 >
                     {dryRunError ? (
-                        <div className="pb-6">
+                        <div className="px-6 pb-6">
                             <Alert
                                 title="Dry run error"
-                                subtitle={dryRunError}
+                                subtitle="Your transaction couldn't be estimated. Please make sure you have SUI in your wallet and try again later."
                             />
                         </div>
                     ) : (
