@@ -7,7 +7,6 @@ import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
 import { renderWithProviders } from '_src/test/utils/react-rendering';
 
 import type { TransactionRequest } from '_payloads/transactions';
-import nock from 'nock';
 
 describe('The Transaction Approval popup', () => {
     beforeEach(async () => {
