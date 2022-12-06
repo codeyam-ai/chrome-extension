@@ -14,6 +14,7 @@ import Loading from '_components/loading';
 import { useInitializedGuard, useAppDispatch } from '_hooks';
 import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
 import PageLayout from '_src/ui/app/pages/PageLayout';
+import NavBar from '../../shared/navigation/nav-bar/NavBar';
 
 const POLL_SUI_OBJECTS_INTERVAL = 4000;
 
@@ -42,6 +43,7 @@ const HomePage = () => {
         <PageLayout>
             <Loading loading={guardChecking} big={true}>
                 <BaseLayout>
+                    <NavBar />
                     <SettingsRouterPage />
                     <WalletPickerPage />
                     <main className="flex-grow h-[471px] overflow-scroll no-scrollbar">

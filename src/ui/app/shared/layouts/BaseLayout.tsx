@@ -7,7 +7,6 @@ import NavBar from '../navigation/nav-bar/NavBar';
 
 export interface BaseLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
     className?: string;
-    hideNavbar?: boolean;
 }
 
 const Fade = cssTransition({
@@ -15,7 +14,7 @@ const Fade = cssTransition({
     exit: 'animate__animated animate__fadeOut',
 });
 
-const BaseLayout = ({ className, hideNavbar, children }: BaseLayoutProps) => {
+const BaseLayout = ({ className, children }: BaseLayoutProps) => {
     const isDarkTheme = document
         .getElementsByTagName('html')[0]
         .classList.contains('dark');
@@ -24,8 +23,6 @@ const BaseLayout = ({ className, hideNavbar, children }: BaseLayoutProps) => {
         'mx-auto w-[360px] min-h-[600px] shadow-ethos-box-shadow sm:rounded-[20px] text-center bg-ethos-light-background-default dark:bg-ethos-dark-background-default';
     return (
         <div className={`${className || ''} ${defaultClasses}`}>
-            {!hideNavbar && <NavBar />}
-
             <ToastContainer
                 position="top-center"
                 transition={Fade}

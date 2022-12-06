@@ -65,7 +65,7 @@ function WalletPickerPage() {
 
             <div className="relative flex flex-col max-h-full drop-shadow-ethos-box-shadow rounded-b-[20px] sm:rounded-[20px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
                 {/* Nav bar: */}
-                {!isEditorOpen && (
+                {/* {!isEditorOpen && (
                     <NavBarWithCloseAndActionAndWalletPicker
                         closeUrl={closeWalletPickerUrl}
                         onClickClose={onCloseWalletPicker}
@@ -73,7 +73,7 @@ function WalletPickerPage() {
                         onClickAction={toggleIsWalletEditing}
                         onClickWalletPicker={onCloseWalletPicker}
                     />
-                )}
+                )} */}
                 {/* Content: */}
                 <Routes location={walletPickerUrl || ''}>
                     <Route
