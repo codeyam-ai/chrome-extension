@@ -91,7 +91,6 @@ export default function useInitializedGuard(state: AppState | AppState[]) {
                 destination += pathname;
             }
 
-            // console.log('NAVIGATE', destination, currentState, state, pathname);
             navigate(destination, { replace: true });
         }
     }, [

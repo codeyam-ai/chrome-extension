@@ -1,20 +1,21 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import * as React from 'react';
 
+import mockSuiObjects from './utils/mockchain';
 import App from '_app/index';
-import mockSuiObjects from '_src/test/utils/mockchain';
+import { BASE_URL } from '_src/shared/constants';
 import { renderWithProviders } from '_src/test/utils/react-rendering';
 
 describe('Email Authentication', () => {
     test('User can enter email and is prompted to wait for the magic login link', async () => {
-        mockSuiObjects();
         renderWithProviders(<App />);
         await screen.findByText('The new web awaits');
         await userEvent.click(screen.getByText('Sign in with Email'));
         await userEvent.type(
             screen.getByRole('textbox', { name: 'Email address' }),
-            'sbf@federalprison.gov'
+            'sam@example.com'
         );
         await userEvent.click(screen.getByRole('button'));
 
@@ -28,5 +29,44 @@ describe('Email Authentication', () => {
         );
 
         await screen.findByText('Email sent');
+    });
+
+    test('User can see tokens page after logged in via the iframe', async () => {
+        const fakeAccessToken = '12345';
+        mockSuiObjects();
+        nock(BASE_URL, {
+            reqheaders: { 'x-supabase-access-token': fakeAccessToken },
+        })
+            .post('/api/wallet/accounts')
+            .reply(200, {
+                accounts: [
+                    {
+                        address: '0x218d1ea2ce30efd16394f81569f69cf8531d05ea',
+                        index: 0,
+                    },
+                ],
+            });
+
+        renderWithProviders(<App />, {
+            initialRoute: '/initialize/hosted?log-in=true',
+        });
+
+        await screen.findByText(/The new web awaits/i);
+
+        // simulate the iframe sending the access token over to the extension
+        window.dispatchEvent(
+            new MessageEvent('message', {
+                source: window,
+                origin: 'http://localhost:3000',
+                data: {
+                    action: 'sendKey',
+                    data: {
+                        key: `{"currentSession": {"access_token": "${fakeAccessToken}"}}`,
+                    },
+                },
+            })
+        );
+
+        await screen.findByText('Get started with Sui');
     });
 });

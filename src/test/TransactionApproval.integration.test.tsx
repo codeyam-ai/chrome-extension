@@ -14,6 +14,8 @@ describe('The Transaction Approval popup', () => {
     });
 
     test('it shows basic info about the transaction', async () => {
+        // TODO: mock out the blockchain calls that the code under test makes.
+
         const view = renderWithProviders(<App />, {
             initialRoute: '/tx-approval/95ae4a0d-0b7b-478b-ab70-bc3fe291540e',
         });
