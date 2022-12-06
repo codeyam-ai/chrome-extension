@@ -3,9 +3,11 @@ import { ExclaimationTriangleIcon } from '@heroicons/react/24/outline';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 
+import type { ReactNode } from 'react';
+
 interface AlertProps {
     title: string;
-    subtitle?: string;
+    subtitle?: string | ReactNode;
 }
 
 const Alert = ({ title, subtitle }: AlertProps) => {
@@ -18,7 +20,11 @@ const Alert = ({ title, subtitle }: AlertProps) => {
                 <BodyLarge className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark">
                     {title}
                 </BodyLarge>
-                {subtitle && <Body>{subtitle}</Body>}
+                {subtitle && typeof subtitle === 'string' ? (
+                    <Body>{subtitle}</Body>
+                ) : (
+                    subtitle
+                )}
             </span>
         </div>
     );
