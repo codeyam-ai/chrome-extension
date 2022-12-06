@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
 import { useFormatCoin } from '_src/ui/app/hooks';
+import { GAS_TYPE_ARG } from '_src/ui/app/redux/slices/sui-objects/Coin';
 
 type ActivityRowProps = {
     icon: JSX.Element;
@@ -23,10 +24,7 @@ export const ActivityRow = ({
     coinType,
     amountSubtext,
 }: ActivityRowProps) => {
-    const [formattedAmount] = useFormatCoin(
-        txAmount,
-        coinType || '0x2::sui::SUI'
-    );
+    const [formattedAmount] = useFormatCoin(txAmount, coinType || GAS_TYPE_ARG);
 
     return (
         <Link to={link} className="flex flex-row justify-between py-3">

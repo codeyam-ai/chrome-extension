@@ -5,6 +5,7 @@ import cl from 'classnames';
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
 
+import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import Divider from '../../shared/Divider';
 import Icon, { SuiIcons } from '_components/icon';
 import { formatDate } from '_helpers';
@@ -49,7 +50,7 @@ function TransactionCard({ txn }: { txn: TxResultState }) {
 
     const [formattedAmount] = useFormatCoin(
         txn.amount,
-        txn.coinType || '0x2::sui::SUI'
+        txn.coinType || GAS_TYPE_ARG
     );
 
     return (

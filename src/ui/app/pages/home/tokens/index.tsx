@@ -23,7 +23,7 @@ function TokensPage() {
     const { loading, error, showError } = useObjectsState();
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const mistBalance = balances[GAS_TYPE_ARG] || 0;
-    const [, , usdAmount] = useFormatCoin(mistBalance, 'SUI');
+    const [, , usdAmount] = useFormatCoin(mistBalance, GAS_TYPE_ARG);
 
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex } }) =>
