@@ -293,8 +293,6 @@ export function DappTxApprovalPage() {
                 if (errorMessage === 'Account mnemonic is not set') {
                     setTimeout(getEffects, 100);
                 } else {
-                    // eslint-disable-next-line no-console
-                    console.error(errorMessage);
                     if (isErrorCausedByUserNotHavingEnoughSui(errorMessage)) {
                         setUserHasNoSuiError(true);
                     } else {
