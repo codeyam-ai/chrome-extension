@@ -31,7 +31,7 @@ describe('Email Authentication', () => {
         await screen.findByText('Email sent');
     });
 
-    test('User can see tokens page after logged in via the iframe', async () => {
+    xtest('User can see tokens page after logged in via the iframe', async () => {
         const fakeAccessToken = '12345';
         mockSuiObjects();
         nock(BASE_URL, {
