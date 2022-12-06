@@ -107,6 +107,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
         if (authentication) {
             await Authentication.updateAccountInfos(draftAccountInfos.current);
             await dispatch(setAccountInfos(draftAccountInfos.current));
+            await Authentication.getAccountInfos(true);
         } else {
             await dispatch(saveAccountInfos(draftAccountInfos.current));
             await dispatch(
