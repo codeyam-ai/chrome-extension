@@ -5,7 +5,6 @@ import { memo, useCallback, useMemo, useState } from 'react';
 
 import { SuiIcons } from '_font-icons/output/sui-icons';
 // import { useMiddleEllipsis } from '_hooks';
-import { Coin } from '_redux/slices/sui-objects/Coin';
 import Icon from '_src/ui/app/components/icon';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import { useAppSelector } from '_src/ui/app/hooks';

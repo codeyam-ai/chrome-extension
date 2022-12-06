@@ -4,7 +4,7 @@ import BodyLarge from '../../typography/BodyLarge';
 import EthosLink from '../../typography/EthosLink';
 
 type LinkWithIconProps = {
-    type: any;
+    type: 'external' | 'internal' | 'none';
     to?: string;
     text: string;
 };
