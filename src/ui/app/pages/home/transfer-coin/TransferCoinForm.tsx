@@ -8,7 +8,7 @@ import AddressInput from '_components/address-input';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import NumberInput from '_components/number-input';
 import { SuiIcons } from '_font-icons/output/sui-icons';
-import { GAS_SYMBOL } from '_redux/slices/sui-objects/Coin';
+import { GAS_SYMBOL, GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
 import Icon from '_src/ui/app/components/icon';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
@@ -43,7 +43,7 @@ function TransferCoinForm({
     useEffect(() => {
         onClearRef.current();
     }, [amount, to]);
-    const [formattedGasAmount] = useFormatCoin(gasBudget, '0x2::sui::SUI');
+    const [formattedGasAmount] = useFormatCoin(gasBudget, GAS_TYPE_ARG);
 
     return (
         <Form className={st.container} autoComplete="off" noValidate={true}>

@@ -56,7 +56,11 @@ export function useCoinDecimals(coinType?: string | null) {
                 );
             }
 
-            return api.instance.fullNode.getCoinDenominationInfo(coinType);
+            if (coinType === '0x2::sui::SUI') {
+                return api.instance.fullNode.getCoinDenominationInfo(coinType);
+            }   
+            
+            return { decimalNumber: 9 };
         },
         {
             // This is currently expected to fail for non-SUI tokens, so disable retries:

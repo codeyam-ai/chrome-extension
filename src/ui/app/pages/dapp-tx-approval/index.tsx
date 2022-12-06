@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 
 import truncateMiddle from '../../helpers/truncate-middle';
 import { AppState } from '../../hooks/useInitializedGuard';
+import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import Alert from '../../shared/feedback/Alert';
 import SectionElement from './SectionElement';
 import TabElement from './TabElement';
@@ -225,15 +226,15 @@ export function DappTxApprovalPage() {
     const charges = useMemo(() => suiSpent - (gas || 0), [suiSpent, gas]);
     const [formattedCharges, chargesSymbol, chargeDollars] = useFormatCoin(
         charges,
-        '0x2::sui::SUI'
+        GAS_TYPE_ARG
     );
     const [formattedGas, gasSymbol, gasDollars] = useFormatCoin(
         gas,
-        '0x2::sui::SUI'
+        GAS_TYPE_ARG
     );
     const [formattedTotal, totalSymbol, totalDollars] = useFormatCoin(
         suiSpent,
-        '0x2::sui::SUI'
+        GAS_TYPE_ARG
     );
 
     useEffect(() => {
