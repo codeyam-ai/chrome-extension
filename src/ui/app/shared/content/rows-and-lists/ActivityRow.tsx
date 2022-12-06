@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
 import { useFormatCoin } from '_src/ui/app/hooks';
+import { GAS_TYPE_ARG } from '_src/ui/app/redux/slices/sui-objects/Coin';
 
 type ActivityRowProps = {
     failed: boolean;
@@ -33,7 +34,7 @@ export const ActivityRow = ({
 }: ActivityRowProps) => {
     const [formattedAmount, symbol, dollars] = useFormatCoin(
         txAmount,
-        coinType || '0x2::sui::SUI'
+        coinType || GAS_TYPE_ARG
     );
 
     return (
