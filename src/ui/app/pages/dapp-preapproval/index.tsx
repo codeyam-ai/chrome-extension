@@ -325,7 +325,7 @@ export function DappPreapprovalPage() {
                                     Transactions can only {modifier} this NFT:
                                 </Body>
                                 {nft && (
-                                    <div className="text-center">
+                                    <div className="text-center px-6">
                                         <NFTDisplayCard
                                             nftobj={nft}
                                             showlabel={true}

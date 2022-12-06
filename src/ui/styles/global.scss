@@ -33,6 +33,11 @@ body {
     box-sizing: border-box;
 }
 
+.dark {
+    // Add dark scrollbar for Windows
+    color-scheme: dark;
+}
+
 .btn {
     padding: 15px;
     border-radius: 4px;
