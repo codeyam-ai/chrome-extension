@@ -1,10 +1,9 @@
 import { cssTransition, ToastContainer } from 'react-toastify';
 
-import NavBarWithSettingsAndWalletPicker from '../navigation/nav-bar/NavBarWithSettingsAndWalletPicker';
-
 import type React from 'react';
 
 import 'animate.css/animate.min.css';
+import NavBar from '../navigation/nav-bar/NavBar';
 
 export interface BaseLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
     className?: string;
@@ -25,7 +24,7 @@ const BaseLayout = ({ className, hideNavbar, children }: BaseLayoutProps) => {
         'mx-auto w-[360px] min-h-[600px] shadow-ethos-box-shadow sm:rounded-[20px] text-center bg-ethos-light-background-default dark:bg-ethos-dark-background-default';
     return (
         <div className={`${className || ''} ${defaultClasses}`}>
-            {!hideNavbar && <NavBarWithSettingsAndWalletPicker />}
+            {!hideNavbar && <NavBar />}
 
             <ToastContainer
                 position="top-center"
