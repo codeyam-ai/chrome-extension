@@ -61,8 +61,8 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
         currentAccountInfo.color || '#7E23CA'
     );
 
-    const [draftEmoji, setDraftEmoji] = useState<string>(
-        currentAccountInfo.emoji || 'Rocket'
+    const [draftEmoji, setDraftEmoji] = useState<string | undefined>(
+        currentAccountInfo.emoji
     );
 
     const authentication = useAppSelector(
@@ -107,7 +107,6 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
         if (authentication) {
             await Authentication.updateAccountInfos(draftAccountInfos.current);
             await dispatch(setAccountInfos(draftAccountInfos.current));
-            await Authentication.getAccountInfos(true);
         } else {
             await dispatch(saveAccountInfos(draftAccountInfos.current));
             await dispatch(
