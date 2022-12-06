@@ -12,10 +12,10 @@ export const AssetCard = ({
     icon?: JSX.Element;
 }) => (
     <div className={'w-full'}>
-        <div className={'flex flex-row justify-center mb-4'}>
+        <div className={'flex flex-row justify-center items-center mb-4'}>
             {isNft && imgUrl ? (
                 <img
-                    className={'rounded-2xl w-[58px] h-[58px] auto'}
+                    className={'rounded-2xl w-[56px] h-[56px] auto'}
                     src={imgUrl}
                     alt={name}
                 />

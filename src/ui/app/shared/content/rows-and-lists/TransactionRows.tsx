@@ -8,7 +8,7 @@ interface TransactionRowsProps {
 
 const TransactionRows = ({ transactions }: TransactionRowsProps) => {
     return (
-        <div className="px-6 pb-6 divide-y divide-ethos-light-text-stroke dark:divide-ethos-dark-text-stroke">
+        <div className="px-6 pb-6 divide-ethos-light-text-stroke">
             {transactions.map((txn) => {
                 return <TransactionRow txn={txn} key={txn.txId} />;
             })}

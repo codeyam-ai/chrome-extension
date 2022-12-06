@@ -2,13 +2,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline';
-import { ArrowUpRightIcon } from '@heroicons/react/24/solid';
+import {
+    ArrowUpRightIcon,
+    ArrowUpCircleIcon,
+    ArrowDownCircleIcon,
+    SparklesIcon,
+    CodeIcon,
+    XMarkIcon,
+} from '@heroicons/react/24/solid';
 
 import { type AccountInfo } from '../../KeypairVault';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
 import { AssetCard } from '../../shared/nfts/AssetCard';
-import TxRoundReceived from '../../shared/svg/TxRoundReceived';
-import TxRoundSend from '../../shared/svg/TxRoundSend';
 import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Header from '../../shared/typography/Header';
@@ -17,15 +22,12 @@ import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { formatDate } from '_helpers';
 import { useAppSelector, useFormatCoin, useMiddleEllipsis } from '_hooks';
 import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
-import TxCall from '_src/ui/app/shared/svg/TxCall';
-import TxFailed from '_src/ui/app/shared/svg/TxFailed';
-import TxMinted from '_src/ui/app/shared/svg/TxMint';
-import TxReceived from '_src/ui/app/shared/svg/TxReceived';
-import TxSent from '_src/ui/app/shared/svg/TxSent';
 
 import type { TxResultState } from '_redux/slices/txresults';
 
 import st from './ReceiptCard.module.scss';
+import { Icon } from '../../shared/icons/Icon';
+import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
 
 type TxResponseProps = {
     txDigest: TxResultState;
@@ -52,10 +54,10 @@ const AvatarItem = ({
             'p-[10px] flex flex-row space-around items-center align-center gap-4'
         }
     >
-        <div
-            className={'rounded-full w-[40px] h-[40px] auto'}
-            style={{ backgroundColor: bgColor || '#7E23CA' }}
-        ></div>
+        <WalletColorAndEmojiCircle
+            circleSizeClasses={'w-[40px] h-[40px] auto'}
+            color={bgColor || '#7E23CA'}
+        />
         <div className={'flex flex-col items-left'}>
             <BodyLarge isSemibold className={'text-left'}>
                 {header}
@@ -137,7 +139,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
 
     const [gas, gasSymbol] = useFormatCoin(txDigest.txGas, GAS_TYPE_ARG);
 
-    const [total, totalSymbol] = useFormatCoin(
+    const [total, totalSymbol, dollars] = useFormatCoin(
         txDigest.amount && txDigest.isSender
             ? txDigest.amount + txDigest.txGas
             : null,
@@ -179,7 +181,11 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                       txDigest?.callFunctionName &&
                       '(' + txDigest?.callFunctionName + ')'
                   }`,
-            txIcon: isMinted ? <TxMinted /> : <TxCall />,
+            txIcon: isMinted ? (
+                <Icon displayIcon={<SparklesIcon />} />
+            ) : (
+                <Icon displayIcon={<CodeIcon />} />
+            ),
             transfer: txDigest?.isSender ? 'To' : 'From',
             address: false,
             addressTruncate: false,
@@ -188,7 +194,12 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         Sent: {
             txName: 'Sent',
             transfer: 'To',
-            txIcon: isNft ? <TxSent /> : <TxRoundSend />,
+            txIcon: (
+                <Icon
+                    displayIcon={<ArrowUpCircleIcon />}
+                    isRound={isNft ? false : true}
+                />
+            ),
             addressTruncate: toAddrStr,
             address: txDigest.to,
             failedMsg: txDigest?.error || 'Failed',
@@ -196,7 +207,12 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         Received: {
             txName: 'Received',
             transfer: 'From',
-            txIcon: isNft ? <TxReceived /> : <TxRoundReceived />,
+            txIcon: (
+                <Icon
+                    displayIcon={<ArrowDownCircleIcon />}
+                    isRound={isNft ? false : true}
+                />
+            ),
             addressTruncate: fromAddrStr,
             address: txDigest.from,
             failedMsg: '',
@@ -214,7 +230,10 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                         txDigest.status === 'success' ? (
                             transferMeta[transferType].txIcon
                         ) : (
-                            <TxFailed />
+                            <Icon
+                                displayIcon={<XMarkIcon />}
+                                isRound={isNft ? false : true}
+                            />
                         )
                     }
                 />
@@ -286,8 +305,8 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                             value: `${gas} ${gasSymbol}`,
                         },
                         {
-                            keyName: 'Total',
-                            value: `$1.30`,
+                            keyName: dollars ? 'Total' : '',
+                            value: dollars,
                         },
                     ]}
                 />
