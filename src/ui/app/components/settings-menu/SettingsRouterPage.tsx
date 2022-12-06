@@ -79,7 +79,7 @@ function SettingsRouterPage() {
                 ) : (
                     <NavBarWithBackAndWalletPicker backUrl={settingsHomeUrl} />
                 )}
-                <div className="overflow-scroll">
+                <div className="overflow-scroll no-scrollbar">
                     <Routes location={settingsUrl || ''}>
                         <Route path="/" element={<SettingsHomePage />} />
                         <Route path="/network" element={<NetworkPage />} />

@@ -1,14 +1,13 @@
-import { screen } from '@testing-library/react';
+import { act, cleanup, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
 
 import App from '_app/index';
-import mockSuiObjects from '_src/test/utils/mockchain';
 import { renderWithProviders } from '_src/test/utils/react-rendering';
+import { preventActWarning } from '_src/test/utils/test-helpers';
 
 describe('Email Authentication', () => {
     test('User can enter email and is prompted to wait for the magic login link', async () => {
-        mockSuiObjects();
         renderWithProviders(<App />);
         await screen.findByText('The new web awaits');
         await userEvent.click(screen.getByText('Sign in with Email'));
@@ -28,5 +27,13 @@ describe('Email Authentication', () => {
         );
 
         await screen.findByText('Email sent');
+    });
+
+    test('User can see tokens page after logged in via the iframe', async () => {
+        renderWithProviders(<App />, {
+            initialRoute: '/initialize/hosted?log-in=true',
+        });
+        expect(await screen.findByText(/The new web awaits/i)).not.toBeNull();
+        preventActWarning();
     });
 });

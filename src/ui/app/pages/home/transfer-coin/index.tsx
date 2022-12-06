@@ -45,7 +45,7 @@ function TransferCoinPage() {
     );
     const [formattedBalance] = useFormatCoin(
         coinBalance,
-        coinType || '0x2::sui::SUI'
+        coinType || GAS_TYPE_ARG
     );
 
     const gasAggregateBalance = useMemo(

@@ -12,7 +12,7 @@ type GetStartedCardProps = {
 const GetStartedCard = ({ showBack, children }: GetStartedCardProps) => {
     return (
         <>
-            <BaseLayout>
+            <BaseLayout hideNavbar>
                 <SignInFlowNavBar showBackButton={showBack || false} />
                 <HeaderWithIconRow
                     title="Ethos"

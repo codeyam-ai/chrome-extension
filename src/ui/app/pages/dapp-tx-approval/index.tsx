@@ -6,7 +6,10 @@ import { useParams } from 'react-router-dom';
 
 import truncateMiddle from '../../helpers/truncate-middle';
 import { AppState } from '../../hooks/useInitializedGuard';
+import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import Alert from '../../shared/feedback/Alert';
+import Body from '../../shared/typography/Body';
+import EthosLink from '../../shared/typography/EthosLink';
 import SectionElement from './SectionElement';
 import TabElement from './TabElement';
 import Loading from '_components/loading';
@@ -21,6 +24,7 @@ import {
     txRequestsSelectors,
 } from '_redux/slices/transaction-requests';
 import { thunkExtras } from '_redux/store/thunk-extras';
+import { MAILTO_SUPPORT_URL } from '_src/shared/constants';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
 import type { Detail } from './DetailElement';
@@ -80,11 +84,12 @@ export function DappTxApprovalPage() {
         TransactionEffects | undefined | null
     >();
     const [dryRunError, setDryRunError] = useState<string | undefined>();
+    const [userHasNoSuiError, setUserHasNoSuiError] = useState(false);
 
     const loading =
         guardLoading ||
         txRequestsLoading ||
-        (effects === undefined && !dryRunError);
+        (effects === undefined && !dryRunError && !userHasNoSuiError);
 
     const gasUsed = effects?.gasUsed;
     const gas = gasUsed
@@ -225,15 +230,15 @@ export function DappTxApprovalPage() {
     const charges = useMemo(() => suiSpent - (gas || 0), [suiSpent, gas]);
     const [formattedCharges, chargesSymbol, chargeDollars] = useFormatCoin(
         charges,
-        '0x2::sui::SUI'
+        GAS_TYPE_ARG
     );
     const [formattedGas, gasSymbol, gasDollars] = useFormatCoin(
         gas,
-        '0x2::sui::SUI'
+        GAS_TYPE_ARG
     );
     const [formattedTotal, totalSymbol, totalDollars] = useFormatCoin(
         suiSpent,
-        '0x2::sui::SUI'
+        GAS_TYPE_ARG
     );
 
     useEffect(() => {
@@ -247,6 +252,13 @@ export function DappTxApprovalPage() {
             content.style.height = `${contentHeight}px`;
         };
     }, []);
+
+    const isErrorCausedByUserNotHavingEnoughSui = (errorMessage: string) => {
+        return (
+            errorMessage.includes('Cannot find gas coin for signer address') &&
+            errorMessage.includes('with amount sufficient for the budget')
+        );
+    };
 
     useEffect(() => {
         const getEffects = async () => {
@@ -277,10 +289,15 @@ export function DappTxApprovalPage() {
                     setEffects(transactionEffects);
                 }
             } catch (e) {
-                if ((e as Error).message === 'Account mnemonic is not set') {
+                const errorMessage = (e as Error).message;
+                if (errorMessage === 'Account mnemonic is not set') {
                     setTimeout(getEffects, 100);
                 } else {
-                    setDryRunError((e as Error).message);
+                    if (isErrorCausedByUserNotHavingEnoughSui(errorMessage)) {
+                        setUserHasNoSuiError(true);
+                    } else {
+                        setDryRunError(errorMessage);
+                    }
                 }
             }
         };
@@ -888,15 +905,39 @@ export function DappTxApprovalPage() {
                     approveTitle="Approve"
                     rejectTitle="Reject"
                     onSubmit={handleOnSubmit}
-                    hasError={!!dryRunError}
+                    hasError={!!dryRunError || !!userHasNoSuiError}
                 >
-                    {dryRunError ? (
-                        <div className="pb-6">
-                            <Alert
-                                title="Dry run error"
-                                subtitle={dryRunError}
-                            />
-                        </div>
+                    {dryRunError || userHasNoSuiError ? (
+                        <>
+                            {userHasNoSuiError ? (
+                                <div className="px-6 pb-6">
+                                    <Alert
+                                        title="You don't have enough SUI"
+                                        subtitle="It looks like your wallet doesn't have enough SUI to pay for the gas for this transaction."
+                                    />
+                                </div>
+                            ) : (
+                                <div className="px-6 pb-6">
+                                    <Alert
+                                        title="Dry run error"
+                                        subtitle={
+                                            <Body>
+                                                Your transaction couldn&apos;t
+                                                be estimated. Please try again
+                                                later. If this issue persists,{' '}
+                                                <EthosLink
+                                                    type="external"
+                                                    to={MAILTO_SUPPORT_URL}
+                                                >
+                                                    contact Ethos
+                                                </EthosLink>
+                                                .
+                                            </Body>
+                                        }
+                                    />
+                                </div>
+                            )}
+                        </>
                     ) : (
                         <div className="flex flex-col gap-6 pb-6">
                             <div className="flex flex-row gap-2 justify-between items-baseline px-6">
