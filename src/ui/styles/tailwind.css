@@ -29,3 +29,8 @@
 .Toastify__close-button {
     display: none;
 }
+
+.Toastify__toast-theme--dark {
+    background-color: #1a1c26;
+    color: white;
+}
