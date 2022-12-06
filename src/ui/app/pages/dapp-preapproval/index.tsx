@@ -11,13 +11,17 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Tooltip from '../../components/Tooltip';
-import NFTDisplayCard from '../../components/nft-display';
 import { AppState } from '../../hooks/useInitializedGuard';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
 import Input from '../../shared/inputs/Input';
 import Body from '../../shared/typography/Body';
 import Loading from '_components/loading';
-import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
+import {
+    useAppDispatch,
+    useAppSelector,
+    useInitializedGuard,
+    useNFTBasicData,
+} from '_hooks';
 import {
     respondToPreapprovalRequest,
     preapprovalRequestsSelectors,
@@ -59,6 +63,23 @@ interface EnhancedSuiObject extends SuiObject {
     objectName: string;
     action: string;
 }
+
+const NftDisplay = ({ nft }: { nft: SuiObject }) => {
+    const { filePath, nftFields, fileExtentionType } = useNFTBasicData(nft);
+
+    if (!filePath) return <></>;
+
+    return (
+        <div className="flex flex-col gap-3 items-center">
+            <img
+                className={'w-24 h-24 mr-2 rounded-sm'}
+                src={filePath}
+                alt={fileExtentionType?.name || 'NFT'}
+            />
+            <div className="text-sm">{nftFields?.title}</div>
+        </div>
+    );
+};
 
 const PermissionInput = ({
     property,
@@ -326,10 +347,7 @@ export function DappPreapprovalPage() {
                                 </Body>
                                 {nft && (
                                     <div className="text-center px-6">
-                                        <NFTDisplayCard
-                                            nftobj={nft}
-                                            showlabel={true}
-                                        />
+                                        <NftDisplay nft={nft} />
                                         <Body isTextColorMedium>
                                             {truncateMiddle(
                                                 preapproval?.objectId || '',
