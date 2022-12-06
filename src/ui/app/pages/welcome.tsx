@@ -17,6 +17,7 @@ const WelcomePage = () => {
             <Loading loading={checkingInitialized} big={true}>
                 <GetStartedCard showBack={false}>
                     <VerticalButtonGroup
+                        className="flex flex-col gap-3"
                         buttonPrimaryTo="/initialize/backup"
                         buttonPrimaryChildren="Create a New Wallet"
                         buttonSecondaryTo="/initialize/hosted"

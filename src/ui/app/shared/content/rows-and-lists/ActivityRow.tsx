@@ -24,10 +24,7 @@ export const ActivityRow = ({
     coinType,
     amountSubtext,
 }: ActivityRowProps) => {
-    const [formattedAmount] = useFormatCoin(
-        txAmount,
-        coinType || GAS_TYPE_ARG
-    );
+    const [formattedAmount] = useFormatCoin(txAmount, coinType || GAS_TYPE_ARG);
 
     return (
         <Link to={link} className="flex flex-row justify-between py-3">

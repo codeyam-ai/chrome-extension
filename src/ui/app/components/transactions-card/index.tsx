@@ -15,7 +15,6 @@ import type { TxResultState } from '_redux/slices/txresults';
 
 import st from './TransactionsCard.module.scss';
 
-
 const TRUNCATE_MAX_LENGTH = 8;
 const TRUNCATE_PREFIX_LENGTH = 4;
 

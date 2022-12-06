@@ -58,8 +58,8 @@ export function useCoinDecimals(coinType?: string | null) {
 
             if (coinType === '0x2::sui::SUI') {
                 return api.instance.fullNode.getCoinDenominationInfo(coinType);
-            }   
-            
+            }
+
             return { decimalNumber: 9 };
         },
         {
