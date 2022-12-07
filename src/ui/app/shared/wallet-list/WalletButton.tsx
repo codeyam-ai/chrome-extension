@@ -40,6 +40,7 @@ const WalletButton = ({
 
     return (
         <div
+            data-testid={`wallet${wallet.index + 1}`}
             className={`py-[10px] px-3 flex justify-between items-center ${
                 isActive && !isWalletEditing ? '' : 'cursor-pointer'
             }`}

@@ -28,8 +28,8 @@ describe('Rendering the Tokens page', () => {
         await userEvent.click(edit);
         await screen.findByText("Select the wallet you'd like to edit");
 
-        const wallet2s = await screen.findAllByText('Wallet 2');
-        await userEvent.click(wallet2s[2]);
+        const wallet2 = screen.getByTestId('wallet2')
+        await userEvent.click(wallet2);
         await screen.findByText('Edit Wallet');
 
         const input = screen.getByDisplayValue('Wallet 2');
