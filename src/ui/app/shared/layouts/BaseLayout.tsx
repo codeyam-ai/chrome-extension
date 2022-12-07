@@ -1,9 +1,10 @@
 import { cssTransition, ToastContainer } from 'react-toastify';
 
+import { getTheme } from '../../helpers/getTheme';
+
 import type React from 'react';
 
 import 'animate.css/animate.min.css';
-import NavBar from '../navigation/nav-bar/NavBar';
 
 export interface BaseLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
     className?: string;
@@ -15,9 +16,7 @@ const Fade = cssTransition({
 });
 
 const BaseLayout = ({ className, children }: BaseLayoutProps) => {
-    const isDarkTheme = document
-        .getElementsByTagName('html')[0]
-        .classList.contains('dark');
+    const theme = getTheme();
 
     const defaultClasses =
         'mx-auto w-[360px] min-h-[600px] shadow-ethos-box-shadow sm:rounded-[20px] text-center bg-ethos-light-background-default dark:bg-ethos-dark-background-default';
@@ -29,11 +28,11 @@ const BaseLayout = ({ className, children }: BaseLayoutProps) => {
                 autoClose={2500}
                 hideProgressBar
                 newestOnTop={true}
-                closeOnClick={false}
+                closeOnClick={true}
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
-                theme={isDarkTheme ? 'light' : 'dark'}
+                theme={theme === 'light' ? 'light' : 'dark'}
             />
             {children}
         </div>

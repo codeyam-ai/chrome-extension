@@ -1,7 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import cl from 'classnames';
 import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
 import { memo, useEffect, useRef, useState, useCallback } from 'react';
 
@@ -43,7 +42,6 @@ function TransferNFTForm({
     const {
         isSubmitting,
         isValid,
-        dirty,
         values: { to, amount },
     } = useFormikContext<FormValues>();
 
@@ -102,14 +100,7 @@ function TransferNFTForm({
                                     />
                                 )}
                             </div>
-                            <div
-                                className={cl(
-                                    st.group,
-                                    dirty && to !== '' && !isValid
-                                        ? st.invalidAddr
-                                        : ''
-                                )}
-                            >
+                            <div className={'relative'}>
                                 <Field
                                     className={
                                         'flex flex-col gap-2 text-left pl-0 pr-0'
@@ -118,6 +109,15 @@ function TransferNFTForm({
                                     name="to"
                                     label={'Recipient'}
                                 />{' '}
+                                <div
+                                    className={`absolute top-0 right-0 mt-1 text-red-500 dark:text-red-400 ${
+                                        isValid && 'hidden'
+                                    }`}
+                                >
+                                    {!isValid && to !== ''
+                                        ? 'Please use a valid address'
+                                        : ' '}
+                                </div>
                             </div>
                             <ErrorMessage
                                 className="mt-1 text-red-500 dark:text-red-400"
@@ -135,7 +135,7 @@ function TransferNFTForm({
                                 className={
                                     'mt-1 text-red-500 dark:text-red-400' &&
                                     submitError
-                                        ? ''
+                                        ? 'block'
                                         : 'hidden'
                                 }
                             >
@@ -146,7 +146,7 @@ function TransferNFTForm({
                                 buttonStyle="primary"
                                 onClick={setIsReviewTrue}
                                 disabled={!isValid || isSubmitting}
-                                className={'mt-[150px] mb-0'}
+                                className={'mt-[150px] mb-0 relative'}
                             >
                                 Continue
                             </Button>

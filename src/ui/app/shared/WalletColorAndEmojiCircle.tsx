@@ -14,14 +14,14 @@ const WalletColorAndEmojiCircle = ({
     circleSizeClasses,
     emojiSizeInPx,
 }: WalletColorAndEmojiCircleProps) => {
+    const backgroundColor = color || defaultColors[0];
     return (
         <div
+            data-testid={`color-${backgroundColor}`}
             className={`rounded-full flex items-center justify-center ${
                 circleSizeClasses || ''
             }`}
-            style={{
-                backgroundColor: color || defaultColors[0],
-            }}
+            style={{ backgroundColor }}
         >
             <EmojiDisplay emoji={emoji} sizeInPx={emojiSizeInPx} />
         </div>

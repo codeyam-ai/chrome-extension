@@ -75,7 +75,7 @@ const NftTransactionRow = ({ txn }: NftTransactionRowProps) => {
 
     return (
         <div>
-            <ActivityRow
+            {/*<ActivityRow
                 icon={TxIcon}
                 link={drilldownLink}
                 header={head}
@@ -83,7 +83,7 @@ const NftTransactionRow = ({ txn }: NftTransactionRowProps) => {
                 txAmount={txn.txAmount}
                 coinType={txn.coinType}
                 amountSubtext={'SUI'}
-            />
+            />*/}
         </div>
     );
 };

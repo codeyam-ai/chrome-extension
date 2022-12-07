@@ -1,5 +1,3 @@
-import { fetch } from 'cross-fetch';
-
 import { BASE_URL } from '../constants';
 
 type FetchData = {
