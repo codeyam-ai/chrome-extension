@@ -52,7 +52,7 @@ describe('Rendering the Tokens page', () => {
 
         const colorPicker = screen.getByTestId('color-picker');
         fireEvent.click(colorPicker);
-        const green = await screen.findByTestId('color-picker-#EB154C')
+        const green = await screen.findByTestId('color-picker-#EB154C');
         fireEvent.click(green);
 
         const done = await screen.findByText('Done');
@@ -62,6 +62,6 @@ describe('Rendering the Tokens page', () => {
         // await screen.findByText('Gaming');
         // await screen.findByText('😱');
 
-        await screen.findAllByTestId('color-#EB154C')
+        await screen.findAllByTestId('color-#EB154C');
     });
 });

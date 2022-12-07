@@ -199,7 +199,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                     <BodyLarge isSemibold>Choose a Color</BodyLarge>
                     <div className="p-1 rounded-md border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
                         <div
-                            data-testid='color-picker'
+                            data-testid="color-picker"
                             className="w-12 h-12 rounded-sm cursor-pointer"
                             style={{ backgroundColor: draftColor }}
                             onClick={toggleIsColorPickerMenuOpen}
