@@ -39,11 +39,7 @@ export const ActivityRow = ({
 
     return (
         <Link to={link} className="flex flex-col">
-            <div
-                className={
-                    'flex flex-row justify-between mb-[18px] items-center'
-                }
-            >
+            <div className={'flex flex-row justify-between mb-4 items-center'}>
                 {failed ? (
                     <Body isTextColorMedium className={'flex flex-row gap-3'}>
                         <XMarkIcon width={20} height={20} color={'grey'} />{' '}

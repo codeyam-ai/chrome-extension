@@ -53,6 +53,7 @@ function TokensPage() {
                             accountInfo={accountInfo}
                             dollarValue={usdAmount}
                         />
+
                         <SendReceiveButtonGroup mistBalance={mistBalance} />
                         <div className="flex flex-col gap-6 pb-6 overflow-auto">
                             <ContentBlock>
