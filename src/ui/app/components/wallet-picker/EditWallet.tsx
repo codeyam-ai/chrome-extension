@@ -118,7 +118,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
 
         setLoading(false);
         setIsWalletEditing(true);
-        navigate(walletPickerHomeUrl);
+        navigate(-1);
     }, [
         authentication,
         dispatch,
@@ -186,12 +186,6 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
 
     return (
         <>
-            <NavBarWithBackAndClose
-                backUrl={walletPickerHomeUrl}
-                onClickBack={setIsWalletEditingToTrue}
-                closeUrl={closeWalletPickerUrl}
-                onClickClose={setIsWalletEditingToFalse}
-            />
             <BasicSectionHeader text="Edit Wallet"></BasicSectionHeader>
             <div className="flex flex-col">
                 <Input value={draftName} onChange={_handleNameChange} />

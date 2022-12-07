@@ -13,6 +13,7 @@ import {
     useWalletPickerIsOpen,
     useSettingsIsOpenOnSubPage,
     useNextWalletPickerUrl,
+    useWalletEditorIsOpen,
 } from '_src/ui/app/components/settings-menu/hooks';
 import Header from '../../typography/Header';
 import { useCallback, useState } from 'react';
@@ -21,23 +22,32 @@ import BodyLarge from '../../typography/BodyLarge';
 import NavBarWithCloseAndActionAndWalletPicker from './NavBarWithCloseAndActionAndWalletPicker';
 import EthosLink from '../../typography/EthosLink';
 import { useOnKeyboardEvent } from '_src/ui/app/hooks';
+import WalletPickerPage from '_src/ui/app/components/wallet-picker-menu/WalletPickerPage';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
 const WalletPickerNavBar = () => {
+    const [isWalletEditing, setIsWalletEditing] = useState(false);
     const isWalletPickerOpen = useWalletPickerIsOpen();
     const closeWalletPickerUrl = useNextWalletPickerUrl(false);
+    const isEditorOpen = useWalletEditorIsOpen();
 
     const navigate = useNavigate();
     const goBack = useCallback(() => {
         navigate(-1);
     }, [navigate]);
+
+    const closeWalletPicker = useCallback(() => {
+        console.log('wallet picker closing');
+        navigate(closeWalletPickerUrl);
+    }, [navigate]);
+
     const handleOnCloseMenu = useCallback(
         (e: KeyboardEvent | MouseEvent<HTMLDivElement>) => {
             if (isWalletPickerOpen) {
                 e.preventDefault();
                 setIsWalletEditing(false);
-                navigate(-1);
+                closeWalletPicker();
             }
         },
         [isWalletPickerOpen, navigate, closeWalletPickerUrl]
@@ -49,8 +59,6 @@ const WalletPickerNavBar = () => {
         isWalletPickerOpen
     );
 
-    const [isWalletEditing, setIsWalletEditing] = useState(false);
-
     const toggleIsWalletEditing = useCallback(() => {
         setIsWalletEditing(!isWalletEditing);
     }, [isWalletEditing]);
@@ -60,19 +68,40 @@ const WalletPickerNavBar = () => {
     }, []);
 
     return (
-        <div className="flex flex-row items-center justify-between px-6 py-4 border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
-            <div className="flex flex-row gap-4 items-center">
-                <button onClick={goBack}>
-                    <XMarkIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
-                </button>
-                <BodyLarge isSemibold>
-                    <EthosLink type="internal" onClick={toggleIsWalletEditing}>
-                        {isWalletEditing ? 'Done' : 'Edit'}
-                    </EthosLink>
-                </BodyLarge>
-            </div>
-            <WalletProfile onClick={onCloseWalletPicker} />
-        </div>
+        <>
+            {isEditorOpen ? (
+                <div className="flex justify-between py-6 px-6 items-center">
+                    <button
+                        onClick={goBack}
+                        className="flex gap-2 items-center"
+                    >
+                        <ArrowLeftIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                        <BodyLarge isTextColorMedium>Back</BodyLarge>
+                    </button>
+                </div>
+            ) : (
+                <div className="relative flex flex-row items-center justify-between px-6 py-4 rounded-t-[20px] border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
+                    <div className="flex flex-row gap-4 items-center">
+                        <button onClick={goBack}>
+                            <XMarkIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                        </button>
+                        <BodyLarge isSemibold>
+                            <EthosLink
+                                type="internal"
+                                onClick={toggleIsWalletEditing}
+                            >
+                                {isWalletEditing ? 'Done' : 'Edit'}
+                            </EthosLink>
+                        </BodyLarge>
+                    </div>
+                    <WalletProfile onClick={onCloseWalletPicker} />
+                </div>
+            )}
+            <WalletPickerPage
+                isWalletEditing={isWalletEditing}
+                setIsWalletEditing={setIsWalletEditing}
+            />
+        </>
     );
 };
 

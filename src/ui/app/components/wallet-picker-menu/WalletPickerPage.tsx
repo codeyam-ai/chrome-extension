@@ -19,8 +19,15 @@ import type { MouseEvent } from 'react';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
-function WalletPickerPage() {
-    const [isWalletEditing, setIsWalletEditing] = useState(false);
+interface WalletPickerPageProps {
+    isWalletEditing: boolean;
+    setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+function WalletPickerPage({
+    isWalletEditing,
+    setIsWalletEditing,
+}: WalletPickerPageProps) {
     const isWalletPickerOpen = useWalletPickerIsOpen();
     const isEditorOpen = useWalletEditorIsOpen();
     const walletPickerUrl = useWalletPickerUrl();
@@ -59,7 +66,7 @@ function WalletPickerPage() {
         <div className="absolute w-full h-full z-10">
             {/* Backdrop: */}
             <div
-                className="absolute top-0 w-full h-full sm:rounded-[20px] bg-black opacity-20 dark:opacity-80"
+                className="absolute top-0 w-full h-[535px] sm:rounded-[20px] bg-black opacity-20 dark:opacity-80"
                 onClick={handleOnCloseMenu}
             />
 

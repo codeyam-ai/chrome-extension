@@ -28,7 +28,7 @@ const WalletButton = ({
     const editWalletUrl = useEditWalletUrl(wallet.index);
 
     const switchToThisWallet = useCallback(async () => {
-        if (isWalletEditing) return;
+        if (isWalletEditing || isActive) return;
         await dispatch(clearForNetworkOrWalletSwitch());
         await dispatch(saveActiveAccountIndex(wallet.index));
         navigate('/');
@@ -44,7 +44,9 @@ const WalletButton = ({
 
     return (
         <div
-            className={`py-[10px] px-3 flex justify-between items-center cursor-pointer`}
+            className={`py-[10px] px-3 flex justify-between items-center ${
+                isActive ? '' : 'cursor-pointer'
+            }`}
             onClick={isWalletEditing ? editThisWallet : switchToThisWallet}
         >
             <div className="flex gap-3">
