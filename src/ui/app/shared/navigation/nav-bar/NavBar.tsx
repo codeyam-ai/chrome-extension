@@ -4,9 +4,10 @@ import {
     XMarkIcon,
 } from '@heroicons/react/24/solid';
 import { useCallback, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 import WalletProfile from '../../content/rows-and-lists/WalletProfile';
+import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
 import EthosLink from '../../typography/EthosLink';
 import Header from '../../typography/Header';
@@ -119,7 +120,16 @@ const NavBar = () => {
     const isSettingsOpen = useSettingsIsOpen();
     const isSettingsOpenOnSubpage = useSettingsIsOpenOnSubPage();
     const isWalletPickerOpen = useWalletPickerIsOpen();
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+
+    const params = [];
+
+    for (const param of searchParams.entries()) {
+        params.push(param);
+    }
+
+    const isDetailsPage = params.length > 0;
 
     const goBack = useCallback(() => {
         navigate(-1);
@@ -167,9 +177,19 @@ const NavBar = () => {
 
     return (
         <div className="flex flex-row items-center justify-between px-6 py-4 border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
-            <Link to={settingsUrl}>
-                <Cog6ToothIcon className="h-6 w-6 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
-            </Link>
+            {isDetailsPage ? (
+                <button
+                    onClick={goBack}
+                    className={'flex flex-row gap-3 items-center'}
+                >
+                    <ArrowLeftIcon className="h-6 w-6 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />{' '}
+                    <Body isTextColorMedium>Back</Body>
+                </button>
+            ) : (
+                <Link to={settingsUrl}>
+                    <Cog6ToothIcon className="h-6 w-6 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                </Link>
+            )}
             <WalletProfile />
         </div>
     );
