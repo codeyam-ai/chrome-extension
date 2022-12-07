@@ -15,10 +15,8 @@ import Button from '../../shared/buttons/Button';
 import BasicSectionHeader from '../../shared/headers/section-headers/BasicSectionHeader';
 import Input from '../../shared/inputs/Input';
 import ColorPickerMenu from '../../shared/inputs/colors/ColorPickerMenu';
-import NavBarWithBackAndClose from '../../shared/navigation/nav-bar/NavBarWithBackAndClose';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Loading from '../loading';
-import { useNextWalletPickerUrl } from '../settings-menu/hooks';
 import Authentication from '_src/background/Authentication';
 
 import type { AccountInfo } from '../../KeypairVault';
@@ -36,8 +34,6 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     const [isColorPickerMenuOpen, setIsColorPickerMenuOpen] = useState(false);
     const [isEmojiPickerMenuOpen, setIsEmojiPickerMenuOpen] = useState(false);
     const [searchParams] = useSearchParams();
-    const walletPickerHomeUrl = useNextWalletPickerUrl(true, '/');
-    const closeWalletPickerUrl = useNextWalletPickerUrl(false);
 
     const _accountInfos = useAppSelector(({ account }) => account.accountInfos);
     let walletIndex = 0;
@@ -80,14 +76,6 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
         setIsEmojiPickerMenuOpen(!isEmojiPickerMenuOpen);
     }, [isEmojiPickerMenuOpen]);
 
-    const setIsWalletEditingToFalse = useCallback(() => {
-        setIsWalletEditing(false);
-    }, [setIsWalletEditing]);
-
-    const setIsWalletEditingToTrue = useCallback(() => {
-        setIsWalletEditing(true);
-    }, [setIsWalletEditing]);
-
     const getAccountInfos = useCallback(async () => {
         if (authentication) return;
 
@@ -118,13 +106,12 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
 
         setLoading(false);
         setIsWalletEditing(true);
-        navigate(walletPickerHomeUrl);
+        navigate(-1);
     }, [
         authentication,
         dispatch,
         getAccountInfos,
         navigate,
-        walletPickerHomeUrl,
         setIsWalletEditing,
     ]);
 
@@ -186,12 +173,6 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
 
     return (
         <>
-            <NavBarWithBackAndClose
-                backUrl={walletPickerHomeUrl}
-                onClickBack={setIsWalletEditingToTrue}
-                closeUrl={closeWalletPickerUrl}
-                onClickClose={setIsWalletEditingToFalse}
-            />
             <BasicSectionHeader text="Edit Wallet"></BasicSectionHeader>
             <div className="flex flex-col">
                 <Input value={draftName} onChange={_handleNameChange} />
@@ -199,7 +180,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                     <BodyLarge isSemibold>Choose a Color</BodyLarge>
                     <div className="p-1 rounded-md border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
                         <div
-                            data-testid='color-picker'
+                            data-testid="color-picker"
                             className="w-12 h-12 rounded-sm cursor-pointer"
                             style={{ backgroundColor: draftColor }}
                             onClick={toggleIsColorPickerMenuOpen}
@@ -246,10 +227,6 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                         />
 
                         <div className="absolute left-1">
-                            {/* <EmojiPickerMenu
-                                    selectedEmoji={draftEmoji}
-                                    setSelectedEmoji={_handleEmojiChange}
-                                /> */}
                             <Picker
                                 data={data}
                                 onEmojiSelect={_handleEmojiChange}

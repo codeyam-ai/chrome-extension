@@ -180,9 +180,12 @@ export const getTransactionsByAddress = createAsyncThunk<
             const txn = txns[0];
             const txKind = getTransactionKindName(txn);
             const transferSui = getTransferSuiTransaction(txn);
+            const paySui = getPaySuiTransaction(txn);
             const txTransferObject = getTransferObjectTransaction(txn);
             const recipient =
-                transferSui?.recipient ?? txTransferObject?.recipient;
+                transferSui?.recipient ||
+                txTransferObject?.recipient ||
+                paySui?.recipients[0];
             const moveCallTxn = getMoveCallTransaction(txn);
             const metaDataObjectId = getTxnEffectsEventID(
                 txEff.effects,

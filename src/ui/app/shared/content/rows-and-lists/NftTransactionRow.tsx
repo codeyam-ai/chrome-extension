@@ -1,7 +1,6 @@
 import SentIcon from '../../svg/SentIcon';
 import SoldIcon from '../../svg/SoldIcon';
 import ListedIcon from '../../svg/TxFailed';
-import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
 import { useMiddleEllipsis } from '_src/ui/app/hooks';
 
@@ -75,7 +74,7 @@ const NftTransactionRow = ({ txn }: NftTransactionRowProps) => {
 
     return (
         <div>
-            <ActivityRow
+            {/*<ActivityRow
                 icon={TxIcon}
                 link={drilldownLink}
                 header={head}
@@ -83,7 +82,7 @@ const NftTransactionRow = ({ txn }: NftTransactionRowProps) => {
                 txAmount={txn.txAmount}
                 coinType={txn.coinType}
                 amountSubtext={'SUI'}
-            />
+            />*/}
         </div>
     );
 };

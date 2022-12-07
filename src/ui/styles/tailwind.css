@@ -24,6 +24,8 @@
     min-height: 44px;
     display: flex;
     align-items: center;
+    background-color: #1a1c26;
+    color: white;
 }
 
 .Toastify__close-button {

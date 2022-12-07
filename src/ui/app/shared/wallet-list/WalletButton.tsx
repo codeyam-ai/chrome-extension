@@ -28,23 +28,21 @@ const WalletButton = ({
     const editWalletUrl = useEditWalletUrl(wallet.index);
 
     const switchToThisWallet = useCallback(async () => {
-        if (isWalletEditing) return;
+        if (isWalletEditing || isActive) return;
         await dispatch(clearForNetworkOrWalletSwitch());
         await dispatch(saveActiveAccountIndex(wallet.index));
         navigate('/');
-    }, [wallet.index, isWalletEditing, dispatch, navigate]);
+    }, [wallet.index, isWalletEditing, dispatch, navigate, isActive]);
 
     const editThisWallet = useCallback(() => {
         navigate(editWalletUrl);
     }, [navigate, editWalletUrl]);
 
-    // const hideThisWallet = useCallback(() => {
-    //     console.log('hiding wallet.index :>> ', wallet.index);
-    // }, [wallet.index]);
-
     return (
         <div
-            className={`py-[10px] px-3 flex justify-between items-center cursor-pointer`}
+            className={`py-[10px] px-3 flex justify-between items-center ${
+                isActive && !isWalletEditing ? '' : 'cursor-pointer'
+            }`}
             onClick={isWalletEditing ? editThisWallet : switchToThisWallet}
         >
             <div className="flex gap-3">
@@ -66,14 +64,9 @@ const WalletButton = ({
             </div>
             <div>
                 {isWalletEditing && (
-                    <div className="flex gap-4">
-                        <button>
-                            <PencilIcon className="h-5 w-5 text-black dark:text-white" />
-                        </button>
-                        {/* <button onClick={hideThisWallet}>
-                            <MinusCircleIcon className="h-5 w-5 text-black dark:text-white" />
-                        </button> */}
-                    </div>
+                    <button>
+                        <PencilIcon className="h-5 w-5 text-black dark:text-white" />
+                    </button>
                 )}
                 {isActive && !isWalletEditing && (
                     <CheckCircleIcon className="h-5 w-5 text-ethos-light-primary-light" />

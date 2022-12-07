@@ -3,15 +3,14 @@
 
 import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
-import { of, filter, switchMap, from, defer, repeat } from 'rxjs';
+import { defer, filter, from, of, repeat, switchMap } from 'rxjs';
 
-import SettingsRouterPage from '../../components/settings-menu/SettingsRouterPage';
-import WalletPickerPage from '../../components/wallet-picker-menu/WalletPickerPage';
 import { AppState } from '../../hooks/useInitializedGuard';
 import BaseLayout from '../../shared/layouts/BaseLayout';
+import NavBar from '../../shared/navigation/nav-bar/NavBar';
 import TabBar from '../../shared/navigation/tab-bar/TabBar';
 import Loading from '_components/loading';
-import { useInitializedGuard, useAppDispatch } from '_hooks';
+import { useAppDispatch, useInitializedGuard } from '_hooks';
 import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
 import PageLayout from '_src/ui/app/pages/PageLayout';
 
@@ -42,8 +41,7 @@ const HomePage = () => {
         <PageLayout>
             <Loading loading={guardChecking} big={true}>
                 <BaseLayout>
-                    <SettingsRouterPage />
-                    <WalletPickerPage />
+                    <NavBar />
                     <main className="flex-grow h-[471px] overflow-scroll no-scrollbar">
                         <Outlet />
                     </main>
@@ -55,10 +53,11 @@ const HomePage = () => {
 };
 
 export default HomePage;
+export { default as NFTDetailsPage } from './nft-details';
 export { default as NftsPage } from './nfts';
+export { default as ReceiptPage } from './receipt';
 export { default as TokensPage } from './tokens';
 export { default as TransactionDetailsPage } from './transaction-details';
 export { default as TransactionsPage } from './transactions';
 export { default as TransferCoinPage } from './transfer-coin';
-export { default as NFTDetailsPage } from './nft-details';
-export { default as ReceiptPage } from './receipt';
+

@@ -62,6 +62,6 @@ describe('Rendering the Tokens page', () => {
         await screen.findAllByText('Gaming');
         // await screen.findByText('😱');
 
-        await screen.findAllByTestId('color-#EB154C')
+        await screen.findAllByTestId('color-#EB154C');
     });
 });
