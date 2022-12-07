@@ -32,7 +32,7 @@ const BaseLayout = ({ className, hideNavbar, children }: BaseLayoutProps) => {
                 autoClose={2500}
                 hideProgressBar
                 newestOnTop={true}
-                closeOnClick={false}
+                closeOnClick={true}
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
