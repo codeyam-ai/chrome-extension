@@ -199,6 +199,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                     <BodyLarge isSemibold>Choose a Color</BodyLarge>
                     <div className="p-1 rounded-md border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
                         <div
+                            data-testid='color-picker'
                             className="w-12 h-12 rounded-sm cursor-pointer"
                             style={{ backgroundColor: draftColor }}
                             onClick={toggleIsColorPickerMenuOpen}
@@ -210,6 +211,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                         <>
                             {/* Backdrop */}
                             <div
+                                data-testid="emoji-picker"
                                 className="absolute -top-[223px] -left-[24px] w-[360px] h-[564px]"
                                 onClick={toggleIsColorPickerMenuOpen}
                             />
@@ -226,6 +228,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                 <div className="flex justify-between items-center px-6 pb-6">
                     <BodyLarge isSemibold>Choose an Emoji</BodyLarge>
                     <div
+                        data-testid="emoji-picker"
                         className="p-1 rounded-md cursor-pointer border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke"
                         onClick={toggleIsEmojiPickerMenuOpen}
                     >
