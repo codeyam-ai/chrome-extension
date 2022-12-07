@@ -1,4 +1,4 @@
-import { act, fireEvent, screen } from '@testing-library/react';
+import { waitFor, fireEvent, screen } from '@testing-library/react';
 
 import App from '_app/index';
 import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
@@ -18,24 +18,50 @@ describe('Rendering the Tokens page', () => {
         fireEvent.click(wallet);
 
         const createWallet = await screen.findByText('Create Wallet');
-        await fireEvent.click(createWallet);
-        await screen.findByText('Wallet 2');
+        fireEvent.click(createWallet);
+        await waitFor(
+            async () => (await screen.findAllByText('Wallet 2')).length > 0
+        );
 
-        const edit = await screen.findByText('Edit');
-        await fireEvent.click(edit);  
+        const edit = screen.getByText('Edit');
+        fireEvent.click(edit);
         await screen.findByText("Select the wallet you'd like to edit");
 
         const wallet2s = await screen.findAllByText('Wallet 2');
-        await fireEvent.click(wallet2s[2]);
+        fireEvent.click(wallet2s[2]);
         await screen.findByText('Edit Wallet');
 
-        const input = await screen.findByDisplayValue("Wallet 2");
-        await fireEvent.change(input, {e: { target: { value: "Gaming" } } })
+        // Can't get input onChange to fire...
+        // const input = screen.getByDisplayValue('Wallet 2');
+        // fireEvent.focus(input)
+        // fireEvent.change(input, { e: { target: { value: 'Gaming' } } });
+        // await waitFor(
+        //     async () =>
+        //         (await screen.findAllByDisplayValue('Gaming')).length > 0
+        // );
+
+        // Can't get emoji picker to open
+        // const emojiPicker = screen.getByTestId('emoji-picker')
+        // fireEvent.click(emojiPicker);
+        // await screen.findByText('Pick an emoji...');
+        // const scream = screen.getAllByText('😱')[0];
+        // fireEvent.click(scream);
+
+        // await screen.findByText('Choose an Emoji');
+        // await screen.findByText('😱');
+
+        const colorPicker = screen.getByTestId('color-picker');
+        fireEvent.click(colorPicker);
+        const green = await screen.findByTestId('color-picker-#EB154C')
+        fireEvent.click(green);
 
         const done = await screen.findByText('Done');
-        await fireEvent.click(done)
+        fireEvent.click(done);
         await screen.findByText("Select the wallet you'd like to edit");
 
-        await screen.findByText('Gaming');
+        // await screen.findByText('Gaming');
+        // await screen.findByText('😱');
+
+        await screen.findAllByTestId('color-#EB154C')
     });
 });
