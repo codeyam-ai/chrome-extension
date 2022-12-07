@@ -18,6 +18,7 @@ const ColorButton = ({
     }, [color, setSelectedColor]);
     return (
         <div
+            data-testid={`color-picker-${color}`}
             className={`h-12 w-12 rounded-[10px] cursor-pointer ${
                 color === selectedColor && 'border-[4px] border-black/[.3]'
             }`}

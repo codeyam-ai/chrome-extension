@@ -44,10 +44,8 @@ const WalletButton = ({
 
     return (
         <div
-            className={`py-[10px] px-3 flex justify-between items-center ${
-                !isWalletEditing && 'cursor-pointer'
-            }`}
-            onClick={switchToThisWallet}
+            className={`py-[10px] px-3 flex justify-between items-center cursor-pointer`}
+            onClick={isWalletEditing ? editThisWallet : switchToThisWallet}
         >
             <div className="flex gap-3">
                 <WalletColorAndEmojiCircle
@@ -69,7 +67,7 @@ const WalletButton = ({
             <div>
                 {isWalletEditing && (
                     <div className="flex gap-4">
-                        <button onClick={editThisWallet}>
+                        <button>
                             <PencilIcon className="h-5 w-5 text-black dark:text-white" />
                         </button>
                         {/* <button onClick={hideThisWallet}>
