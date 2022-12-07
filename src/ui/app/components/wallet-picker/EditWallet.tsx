@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import {
     saveAccountInfos,
     saveActiveAccountIndex,
-    setAccountInfos
+    setAccountInfos,
 } from '../../redux/slices/account';
 import { thunkExtras } from '../../redux/store/thunk-extras';
 import EmojiDisplay from '../../shared/EmojiDisplay';
@@ -46,10 +46,11 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
 
     const [draftName, setDraftName] = useState<string>(
         currentAccountInfo.name ||
-        `Wallet${currentAccountInfo.index > 0
-            ? ' ' + currentAccountInfo.index + 1
-            : ''
-        }`
+            `Wallet${
+                currentAccountInfo.index > 0
+                    ? ' ' + currentAccountInfo.index + 1
+                    : ''
+            }`
     );
 
     const [draftColor, setDraftColor] = useState<string>(

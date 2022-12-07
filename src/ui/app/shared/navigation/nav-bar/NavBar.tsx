@@ -1,7 +1,7 @@
 import {
     ArrowLeftIcon,
     Cog6ToothIcon,
-    XMarkIcon
+    XMarkIcon,
 } from '@heroicons/react/24/solid';
 import { useCallback, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -10,60 +10,39 @@ import WalletProfile from '../../content/rows-and-lists/WalletProfile';
 import BodyLarge from '../../typography/BodyLarge';
 import EthosLink from '../../typography/EthosLink';
 import Header from '../../typography/Header';
+import SettingsRouterPage from '_src/ui/app/components/settings-menu/SettingsRouterPage';
 import {
     useNextSettingsUrl,
-    useNextWalletPickerUrl,
     useSettingsIsOpen,
     useSettingsIsOpenOnSubPage,
     useWalletEditorIsOpen,
-    useWalletPickerIsOpen
+    useWalletPickerIsOpen,
 } from '_src/ui/app/components/settings-menu/hooks';
 import WalletPickerPage from '_src/ui/app/components/wallet-picker-menu/WalletPickerPage';
 import { useOnKeyboardEvent } from '_src/ui/app/hooks';
 
-import type { MouseEvent } from 'react';
-
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
-const WalletPickerNavBar = () => {
-    const [isWalletEditing, setIsWalletEditing] = useState(false);
-    const isWalletPickerOpen = useWalletPickerIsOpen();
-    const closeWalletPickerUrl = useNextWalletPickerUrl(false);
+interface WalletPickerNavBarProps {
+    goBack: () => void;
+    isWalletEditing: boolean;
+    setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const WalletPickerNavBar = ({
+    goBack,
+    isWalletEditing,
+    setIsWalletEditing,
+}: WalletPickerNavBarProps) => {
     const isEditorOpen = useWalletEditorIsOpen();
-
-    const navigate = useNavigate();
-    const goBack = useCallback(() => {
-        navigate(-1);
-    }, [navigate]);
-
-    const closeWalletPicker = useCallback(() => {
-        navigate(closeWalletPickerUrl);
-    }, [navigate, closeWalletPickerUrl]);
-
-    const handleOnCloseMenu = useCallback(
-        (e: KeyboardEvent | MouseEvent<HTMLDivElement>) => {
-            if (isWalletPickerOpen) {
-                e.preventDefault();
-                setIsWalletEditing(false);
-                closeWalletPicker();
-            }
-        },
-        [isWalletPickerOpen, closeWalletPicker]
-    );
-    useOnKeyboardEvent(
-        'keydown',
-        CLOSE_KEY_CODES,
-        handleOnCloseMenu,
-        isWalletPickerOpen
-    );
 
     const toggleIsWalletEditing = useCallback(() => {
         setIsWalletEditing(!isWalletEditing);
-    }, [isWalletEditing]);
+    }, [isWalletEditing, setIsWalletEditing]);
 
     const onCloseWalletPicker = useCallback(() => {
         setIsWalletEditing(false);
-    }, []);
+    }, [setIsWalletEditing]);
 
     return (
         <>
@@ -103,13 +82,8 @@ const WalletPickerNavBar = () => {
     );
 };
 
-const SettingsNavBar = () => {
-    const navigate = useNavigate();
+const SettingsNavBar = ({ goBack }: { goBack: () => void }) => {
     const settingsIsOpenOnSubPage = useSettingsIsOpenOnSubPage();
-
-    const goBack = useCallback(() => {
-        navigate(-1);
-    }, [navigate]);
 
     return (
         <>
@@ -134,20 +108,55 @@ const SettingsNavBar = () => {
                     <WalletProfile />
                 </div>
             )}
+            <SettingsRouterPage />
         </>
     );
 };
 
 const NavBar = () => {
+    const [isWalletEditing, setIsWalletEditing] = useState(false);
     const settingsUrl = useNextSettingsUrl(true);
-    const isMenuOpen = useSettingsIsOpen();
+    const isSettingsOpen = useSettingsIsOpen();
+    const isSettingsOpenOnSubpage = useSettingsIsOpenOnSubPage();
     const isWalletPickerOpen = useWalletPickerIsOpen();
+    const navigate = useNavigate();
 
-    if (isMenuOpen) {
-        return <SettingsNavBar />;
+    const goBack = useCallback(() => {
+        navigate(-1);
+    }, [navigate]);
+
+    const handleOnCloseMenu = useCallback(
+        (e: KeyboardEvent) => {
+            if (
+                isWalletPickerOpen ||
+                isSettingsOpen ||
+                isSettingsOpenOnSubpage
+            ) {
+                e.preventDefault();
+                isWalletPickerOpen && setIsWalletEditing(false);
+                goBack();
+            }
+        },
+        [isWalletPickerOpen, isSettingsOpen, isSettingsOpenOnSubpage, setIsWalletEditing, goBack]
+    );
+    useOnKeyboardEvent(
+        'keydown',
+        CLOSE_KEY_CODES,
+        handleOnCloseMenu,
+        isWalletPickerOpen || isSettingsOpen || isSettingsOpenOnSubpage
+    );
+
+    if (isSettingsOpen) {
+        return <SettingsNavBar goBack={goBack} />;
     }
     if (isWalletPickerOpen) {
-        return <WalletPickerNavBar />;
+        return (
+            <WalletPickerNavBar
+                goBack={goBack}
+                isWalletEditing={isWalletEditing}
+                setIsWalletEditing={setIsWalletEditing}
+            />
+        );
     }
 
     return (

@@ -4,17 +4,14 @@
 import { useCallback } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
-import { useOnKeyboardEvent } from '_hooks';
 import {
-    useNextWalletPickerUrl, useWalletPickerIsOpen,
+    useNextWalletPickerUrl,
+    useWalletPickerIsOpen,
     useWalletPickerUrl
 } from '_src/ui/app/components/settings-menu/hooks';
 import EditWallet from '_src/ui/app/components/wallet-picker/EditWallet';
 import WalletPicker from '_src/ui/app/components/wallet-picker/WalletPicker';
 
-import type { MouseEvent } from 'react';
-
-const CLOSE_KEY_CODES: string[] = ['Escape'];
 
 interface WalletPickerPageProps {
     isWalletEditing: boolean;
@@ -30,22 +27,10 @@ function WalletPickerPage({
     const walletPickerHomeUrl = useNextWalletPickerUrl(true, '/');
     const closeWalletPickerUrl = useNextWalletPickerUrl(false);
     const navigate = useNavigate();
-    const handleOnCloseMenu = useCallback(
-        (e: KeyboardEvent | MouseEvent<HTMLDivElement>) => {
-            if (isWalletPickerOpen) {
-                e.preventDefault();
-                setIsWalletEditing(false);
-                navigate(closeWalletPickerUrl);
-            }
-        },
-        [isWalletPickerOpen, navigate, closeWalletPickerUrl, setIsWalletEditing]
-    );
-    useOnKeyboardEvent(
-        'keydown',
-        CLOSE_KEY_CODES,
-        handleOnCloseMenu,
-        isWalletPickerOpen
-    );
+    const handleOnCloseMenu = useCallback(() => {
+        setIsWalletEditing(false);
+        navigate(closeWalletPickerUrl);
+    }, [navigate, setIsWalletEditing]);
 
     if (!isWalletPickerOpen) {
         return null;

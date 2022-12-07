@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { defer, filter, from, of, repeat, switchMap } from 'rxjs';
 
-import SettingsRouterPage from '../../components/settings-menu/SettingsRouterPage';
 import { AppState } from '../../hooks/useInitializedGuard';
 import BaseLayout from '../../shared/layouts/BaseLayout';
 import NavBar from '../../shared/navigation/nav-bar/NavBar';
@@ -43,7 +42,6 @@ const HomePage = () => {
             <Loading loading={guardChecking} big={true}>
                 <BaseLayout>
                     <NavBar />
-                    <SettingsRouterPage />
                     <main className="flex-grow h-[471px] overflow-scroll no-scrollbar">
                         <Outlet />
                     </main>

@@ -38,14 +38,11 @@ const WalletButton = ({
         navigate(editWalletUrl);
     }, [navigate, editWalletUrl]);
 
-    // const hideThisWallet = useCallback(() => {
-    //     console.log('hiding wallet.index :>> ', wallet.index);
-    // }, [wallet.index]);
-
     return (
         <div
-            className={`py-[10px] px-3 flex justify-between items-center ${isActive ? '' : 'cursor-pointer'
-                }`}
+            className={`py-[10px] px-3 flex justify-between items-center ${
+                isActive && !isWalletEditing ? '' : 'cursor-pointer'
+            }`}
             onClick={isWalletEditing ? editThisWallet : switchToThisWallet}
         >
             <div className="flex gap-3">
@@ -58,7 +55,8 @@ const WalletButton = ({
                 <div className="flex flex-col text-left" title={wallet.address}>
                     <BodyLarge>
                         {wallet.name ||
-                            `Wallet${wallet.index > 0 ? ' ' + wallet.index + 1 : ''
+                            `Wallet${
+                                wallet.index > 0 ? ' ' + wallet.index + 1 : ''
                             }`}
                     </BodyLarge>
                     <Body isTextColorMedium>{shortenedAddress}</Body>
@@ -66,14 +64,9 @@ const WalletButton = ({
             </div>
             <div>
                 {isWalletEditing && (
-                    <div className="flex gap-4">
-                        <button>
-                            <PencilIcon className="h-5 w-5 text-black dark:text-white" />
-                        </button>
-                        {/* <button onClick={hideThisWallet}>
-                            <MinusCircleIcon className="h-5 w-5 text-black dark:text-white" />
-                        </button> */}
-                    </div>
+                    <button>
+                        <PencilIcon className="h-5 w-5 text-black dark:text-white" />
+                    </button>
                 )}
                 {isActive && !isWalletEditing && (
                     <CheckCircleIcon className="h-5 w-5 text-ethos-light-primary-light" />

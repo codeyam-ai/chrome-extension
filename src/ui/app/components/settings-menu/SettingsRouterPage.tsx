@@ -1,19 +1,20 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useEffect, useState } from 'react';
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import LockPage from './subpages/LockPage';
 import ThemePage from './subpages/ThemePage';
 import ChangePasswordPage from './subpages/security/subpages/change-password/ChangePasswordPage';
-import { useOnKeyboardEvent } from '_hooks';
 import { getEncrypted } from '_src/shared/storagex/store';
 import ConnectedApps from '_src/ui/app/components/menu/content/connected-apps';
 import Preapprovals from '_src/ui/app/components/menu/content/preapprovals';
 import SettingsHomePage from '_src/ui/app/components/settings-menu/SettingsHomePage';
 import {
-    useNextSettingsUrl, useSettingsIsOpen, useSettingsIsOpenOnSubPage, useSettingsUrl
+    useNextSettingsUrl,
+    useSettingsIsOpen,
+    useSettingsUrl,
 } from '_src/ui/app/components/settings-menu/hooks';
 import ImportWalletPage from '_src/ui/app/components/settings-menu/subpages/ImportWalletPage';
 import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/PermissionsPage';
@@ -22,21 +23,11 @@ import SecurityHomePage from '_src/ui/app/components/settings-menu/subpages/secu
 import ViewPrivateKeyPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewPrivateKeyPage';
 import ViewSeedPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewSeedPage';
 
-const CLOSE_KEY_CODES: string[] = ['Escape'];
-
 function SettingsRouterPage() {
     const [isHostedWallet, setIsHostedWallet] = useState(false);
     const isOpen = useSettingsIsOpen();
     const settingsUrl = useSettingsUrl();
     const settingsHomeUrl = useNextSettingsUrl(true, '/');
-    const closeSettingsUrl = useNextSettingsUrl(false);
-    const navigate = useNavigate();
-    const handleOnCloseMenu = useCallback(() => {
-        if (isOpen) {
-            navigate(closeSettingsUrl);
-        }
-    }, [isOpen, navigate, closeSettingsUrl]);
-    useOnKeyboardEvent('keydown', CLOSE_KEY_CODES, handleOnCloseMenu, isOpen);
 
     useEffect(() => {
         const _setIsHosted = async () => {

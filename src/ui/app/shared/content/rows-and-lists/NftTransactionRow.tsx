@@ -42,12 +42,12 @@ const NftTransactionRow = ({ txn }: NftTransactionRowProps) => {
 
     const date = txn?.timestampMs
         ? formatDate(txn.timestampMs, [
-            'weekday',
-            'month',
-            'day',
-            // 'hour',
-            // 'minute',
-        ])
+              'weekday',
+              'month',
+              'day',
+              // 'hour',
+              // 'minute',
+          ])
         : false;
 
     switch (txn.txType) {
