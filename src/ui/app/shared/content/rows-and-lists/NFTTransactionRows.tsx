@@ -1,4 +1,4 @@
-import NftTransactionRow from './NFTTransactionRow';
+import NftTransactionRow from './NftTransactionRow';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
