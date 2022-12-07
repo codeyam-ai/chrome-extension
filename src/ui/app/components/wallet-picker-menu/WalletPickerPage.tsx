@@ -29,7 +29,7 @@ function WalletPickerPage({
     const handleOnCloseMenu = useCallback(() => {
         setIsWalletEditing(false);
         navigate(closeWalletPickerUrl);
-    }, [navigate, setIsWalletEditing]);
+    }, [navigate, setIsWalletEditing, closeWalletPickerUrl]);
 
     if (!isWalletPickerOpen) {
         return null;
