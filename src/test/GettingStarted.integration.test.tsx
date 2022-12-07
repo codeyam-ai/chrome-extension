@@ -1,6 +1,5 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import * as React from 'react';
 
 import App from '_app/index';
 import mockSuiObjects from '_src/test/utils/mockchain';
