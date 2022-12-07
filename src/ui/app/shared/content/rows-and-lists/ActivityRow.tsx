@@ -63,13 +63,23 @@ export const ActivityRow = ({
                 <div className="flex flex-row justify-between">
                     {txAmount && (
                         <div className={'text-right'}>
-                            <BodyLarge isSemibold>
-                                {formattedAmount} {symbol}
+                            <BodyLarge
+                                isSemibold
+                                className={
+                                    type === 'Send'
+                                        ? 'text-[#CE3838]'
+                                        : 'text-[#238044]'
+                                }
+                            >
+                                {type === 'Send'
+                                    ? `-${formattedAmount}`
+                                    : `+${formattedAmount}`}{' '}
+                                {symbol}
                             </BodyLarge>
                             <Body
                                 isTextColorMedium
                                 className={
-                                    'inline p-[3px] bg-white bg-opacity-[0.08] rounded-sm'
+                                    'inline p-[3px] bg-[#f5f5f5] rounded-[4px]'
                                 }
                             >
                                 {dollars}
