@@ -137,7 +137,13 @@ const NavBar = () => {
                 goBack();
             }
         },
-        [isWalletPickerOpen, isSettingsOpen, isSettingsOpenOnSubpage, setIsWalletEditing, goBack]
+        [
+            isWalletPickerOpen,
+            isSettingsOpen,
+            isSettingsOpenOnSubpage,
+            setIsWalletEditing,
+            goBack,
+        ]
     );
     useOnKeyboardEvent(
         'keydown',
