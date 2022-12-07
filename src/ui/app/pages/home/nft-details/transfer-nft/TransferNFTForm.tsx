@@ -113,10 +113,12 @@ function TransferNFTForm({
                                 />{' '}
                                 <div
                                     className={`absolute top-0 right-0 mt-1 text-red-500 dark:text-red-400 ${
-                                        !dirty && 'hidden'
+                                        isValid && 'hidden'
                                     }`}
                                 >
-                                    {dirty ? 'Please use a valid address' : ' '}
+                                    {!isValid && to !== ''
+                                        ? 'Please use a valid address'
+                                        : ' '}
                                 </div>
                             </div>
                             <ErrorMessage
