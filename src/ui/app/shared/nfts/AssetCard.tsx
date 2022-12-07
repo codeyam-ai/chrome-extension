@@ -1,11 +1,13 @@
 import TxSui from '../svg/TxSui';
 
 export const AssetCard = ({
+    theme,
     isNft,
     imgUrl,
     name,
     icon,
 }: {
+    theme?: string;
     isNft: boolean;
     imgUrl?: string;
     name: string;
@@ -20,7 +22,11 @@ export const AssetCard = ({
                     alt={name}
                 />
             ) : (
-                <TxSui />
+                <div className={'relative'} style={{ zIndex: 1 }}>
+                    <TxSui
+                        borderColor={theme === 'light' ? 'white' : '#111111'}
+                    />
+                </div>
             )}
             {icon && icon}
         </div>

@@ -113,6 +113,8 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             )
     );
 
+    const theme = getTheme();
+
     const toAddrStr = useMiddleEllipsis(
         txDigest.to || '',
         TRUNCATE_MAX_LENGTH,
