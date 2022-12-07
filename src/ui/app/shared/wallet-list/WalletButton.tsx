@@ -32,7 +32,7 @@ const WalletButton = ({
         await dispatch(clearForNetworkOrWalletSwitch());
         await dispatch(saveActiveAccountIndex(wallet.index));
         navigate('/');
-    }, [wallet.index, isWalletEditing, dispatch, navigate]);
+    }, [wallet.index, isWalletEditing, dispatch, navigate, isActive]);
 
     const editThisWallet = useCallback(() => {
         navigate(editWalletUrl);
@@ -44,9 +44,8 @@ const WalletButton = ({
 
     return (
         <div
-            className={`py-[10px] px-3 flex justify-between items-center ${
-                isActive ? '' : 'cursor-pointer'
-            }`}
+            className={`py-[10px] px-3 flex justify-between items-center ${isActive ? '' : 'cursor-pointer'
+                }`}
             onClick={isWalletEditing ? editThisWallet : switchToThisWallet}
         >
             <div className="flex gap-3">
@@ -59,8 +58,7 @@ const WalletButton = ({
                 <div className="flex flex-col text-left" title={wallet.address}>
                     <BodyLarge>
                         {wallet.name ||
-                            `Wallet${
-                                wallet.index > 0 ? ' ' + wallet.index + 1 : ''
+                            `Wallet${wallet.index > 0 ? ' ' + wallet.index + 1 : ''
                             }`}
                     </BodyLarge>
                     <Body isTextColorMedium>{shortenedAddress}</Body>

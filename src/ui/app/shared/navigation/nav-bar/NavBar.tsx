@@ -1,28 +1,27 @@
 import {
     ArrowLeftIcon,
     Cog6ToothIcon,
-    XMarkIcon,
+    XMarkIcon
 } from '@heroicons/react/24/solid';
+import { useCallback, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import type { MouseEvent } from 'react';
 
 import WalletProfile from '../../content/rows-and-lists/WalletProfile';
-import {
-    useSettingsIsOpen,
-    useNextSettingsUrl,
-    useWalletPickerIsOpen,
-    useSettingsIsOpenOnSubPage,
-    useNextWalletPickerUrl,
-    useWalletEditorIsOpen,
-} from '_src/ui/app/components/settings-menu/hooks';
-import Header from '../../typography/Header';
-import { useCallback, useState } from 'react';
-import NavBarWithBackAndWalletPicker from './NavBarWithBackAndWalletPicker';
 import BodyLarge from '../../typography/BodyLarge';
-import NavBarWithCloseAndActionAndWalletPicker from './NavBarWithCloseAndActionAndWalletPicker';
 import EthosLink from '../../typography/EthosLink';
-import { useOnKeyboardEvent } from '_src/ui/app/hooks';
+import Header from '../../typography/Header';
+import {
+    useNextSettingsUrl,
+    useNextWalletPickerUrl,
+    useSettingsIsOpen,
+    useSettingsIsOpenOnSubPage,
+    useWalletEditorIsOpen,
+    useWalletPickerIsOpen
+} from '_src/ui/app/components/settings-menu/hooks';
 import WalletPickerPage from '_src/ui/app/components/wallet-picker-menu/WalletPickerPage';
+import { useOnKeyboardEvent } from '_src/ui/app/hooks';
+
+import type { MouseEvent } from 'react';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
@@ -38,9 +37,8 @@ const WalletPickerNavBar = () => {
     }, [navigate]);
 
     const closeWalletPicker = useCallback(() => {
-        console.log('wallet picker closing');
         navigate(closeWalletPickerUrl);
-    }, [navigate]);
+    }, [navigate, closeWalletPickerUrl]);
 
     const handleOnCloseMenu = useCallback(
         (e: KeyboardEvent | MouseEvent<HTMLDivElement>) => {
@@ -50,7 +48,7 @@ const WalletPickerNavBar = () => {
                 closeWalletPicker();
             }
         },
-        [isWalletPickerOpen, navigate, closeWalletPickerUrl]
+        [isWalletPickerOpen, closeWalletPicker]
     );
     useOnKeyboardEvent(
         'keydown',
@@ -148,7 +146,6 @@ const NavBar = () => {
     if (isMenuOpen) {
         return <SettingsNavBar />;
     }
-    console.log('isWalletPickerOpen :>> ', isWalletPickerOpen);
     if (isWalletPickerOpen) {
         return <WalletPickerNavBar />;
     }

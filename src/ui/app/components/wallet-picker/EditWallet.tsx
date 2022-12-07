@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import {
     saveAccountInfos,
     saveActiveAccountIndex,
-    setAccountInfos,
+    setAccountInfos
 } from '../../redux/slices/account';
 import { thunkExtras } from '../../redux/store/thunk-extras';
 import EmojiDisplay from '../../shared/EmojiDisplay';
@@ -15,10 +15,8 @@ import Button from '../../shared/buttons/Button';
 import BasicSectionHeader from '../../shared/headers/section-headers/BasicSectionHeader';
 import Input from '../../shared/inputs/Input';
 import ColorPickerMenu from '../../shared/inputs/colors/ColorPickerMenu';
-import NavBarWithBackAndClose from '../../shared/navigation/nav-bar/NavBarWithBackAndClose';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Loading from '../loading';
-import { useNextWalletPickerUrl } from '../settings-menu/hooks';
 import Authentication from '_src/background/Authentication';
 
 import type { AccountInfo } from '../../KeypairVault';
@@ -36,8 +34,6 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     const [isColorPickerMenuOpen, setIsColorPickerMenuOpen] = useState(false);
     const [isEmojiPickerMenuOpen, setIsEmojiPickerMenuOpen] = useState(false);
     const [searchParams] = useSearchParams();
-    const walletPickerHomeUrl = useNextWalletPickerUrl(true, '/');
-    const closeWalletPickerUrl = useNextWalletPickerUrl(false);
 
     const _accountInfos = useAppSelector(({ account }) => account.accountInfos);
     let walletIndex = 0;
@@ -50,11 +46,10 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
 
     const [draftName, setDraftName] = useState<string>(
         currentAccountInfo.name ||
-            `Wallet${
-                currentAccountInfo.index > 0
-                    ? ' ' + currentAccountInfo.index + 1
-                    : ''
-            }`
+        `Wallet${currentAccountInfo.index > 0
+            ? ' ' + currentAccountInfo.index + 1
+            : ''
+        }`
     );
 
     const [draftColor, setDraftColor] = useState<string>(
@@ -79,14 +74,6 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     const toggleIsEmojiPickerMenuOpen = useCallback(() => {
         setIsEmojiPickerMenuOpen(!isEmojiPickerMenuOpen);
     }, [isEmojiPickerMenuOpen]);
-
-    const setIsWalletEditingToFalse = useCallback(() => {
-        setIsWalletEditing(false);
-    }, [setIsWalletEditing]);
-
-    const setIsWalletEditingToTrue = useCallback(() => {
-        setIsWalletEditing(true);
-    }, [setIsWalletEditing]);
 
     const getAccountInfos = useCallback(async () => {
         if (authentication) return;
@@ -124,7 +111,6 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
         dispatch,
         getAccountInfos,
         navigate,
-        walletPickerHomeUrl,
         setIsWalletEditing,
     ]);
 
@@ -240,10 +226,6 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                         />
 
                         <div className="absolute left-1">
-                            {/* <EmojiPickerMenu
-                                    selectedEmoji={draftEmoji}
-                                    setSelectedEmoji={_handleEmojiChange}
-                                /> */}
                             <Picker
                                 data={data}
                                 onEmojiSelect={_handleEmojiChange}

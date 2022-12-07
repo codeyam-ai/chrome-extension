@@ -1,7 +1,6 @@
 import SentIcon from '../../svg/SentIcon';
 import SoldIcon from '../../svg/SoldIcon';
 import ListedIcon from '../../svg/TxFailed';
-import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
 import { useMiddleEllipsis } from '_src/ui/app/hooks';
 
@@ -43,12 +42,12 @@ const NftTransactionRow = ({ txn }: NftTransactionRowProps) => {
 
     const date = txn?.timestampMs
         ? formatDate(txn.timestampMs, [
-              'weekday',
-              'month',
-              'day',
-              // 'hour',
-              // 'minute',
-          ])
+            'weekday',
+            'month',
+            'day',
+            // 'hour',
+            // 'minute',
+        ])
         : false;
 
     switch (txn.txType) {

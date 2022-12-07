@@ -4,8 +4,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
-import HeaderWithClose from '../../shared/headers/section-headers/HeaderWithClose';
-import NavBarWithBackAndWalletPicker from '../../shared/navigation/nav-bar/NavBarWithBackAndWalletPicker';
 import LockPage from './subpages/LockPage';
 import ThemePage from './subpages/ThemePage';
 import ChangePasswordPage from './subpages/security/subpages/change-password/ChangePasswordPage';
@@ -15,10 +13,7 @@ import ConnectedApps from '_src/ui/app/components/menu/content/connected-apps';
 import Preapprovals from '_src/ui/app/components/menu/content/preapprovals';
 import SettingsHomePage from '_src/ui/app/components/settings-menu/SettingsHomePage';
 import {
-    useSettingsIsOpen,
-    useSettingsUrl,
-    useNextSettingsUrl,
-    useSettingsIsOpenOnSubPage,
+    useNextSettingsUrl, useSettingsIsOpen, useSettingsIsOpenOnSubPage, useSettingsUrl
 } from '_src/ui/app/components/settings-menu/hooks';
 import ImportWalletPage from '_src/ui/app/components/settings-menu/subpages/ImportWalletPage';
 import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/PermissionsPage';
@@ -32,7 +27,6 @@ const CLOSE_KEY_CODES: string[] = ['Escape'];
 function SettingsRouterPage() {
     const [isHostedWallet, setIsHostedWallet] = useState(false);
     const isOpen = useSettingsIsOpen();
-    const settingsIsOpenOnSubPage = useSettingsIsOpenOnSubPage();
     const settingsUrl = useSettingsUrl();
     const settingsHomeUrl = useNextSettingsUrl(true, '/');
     const closeSettingsUrl = useNextSettingsUrl(false);
@@ -43,7 +37,6 @@ function SettingsRouterPage() {
         }
     }, [isOpen, navigate, closeSettingsUrl]);
     useOnKeyboardEvent('keydown', CLOSE_KEY_CODES, handleOnCloseMenu, isOpen);
-    const expanded = settingsUrl !== '/';
 
     useEffect(() => {
         const _setIsHosted = async () => {
