@@ -143,9 +143,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     const [gas, gasSymbol] = useFormatCoin(txDigest.txGas, GAS_TYPE_ARG);
 
     const [total, totalSymbol, dollars] = useFormatCoin(
-        txDigest.amount && txDigest.isSender
-            ? txDigest.amount + txDigest.txGas
-            : null,
+        txDigest.amount ? txDigest.amount : null,
         GAS_TYPE_ARG
     );
 
