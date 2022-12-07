@@ -1,6 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { QueueListIcon } from '@heroicons/react/24/solid';
 import { memo, useEffect } from 'react';
 
 import { useAppDispatch, useAppSelector } from '_hooks';
@@ -9,6 +9,7 @@ import Loading from '_src/ui/app/components/loading';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
+import { Icon } from '_src/ui/app/shared/icons/Icon';
 
 import type { TxResultState } from '_redux/slices/txresults';
 
@@ -35,7 +36,9 @@ function TransactionsPage() {
                     </div>
                 ) : (
                     <EmptyPageState
-                        iconWithNoClasses={<MagnifyingGlassIcon />}
+                        iconWithNoClasses={
+                            <Icon displayIcon={<QueueListIcon />} />
+                        }
                         title="No transactions yet"
                         subtitle="Set up DevNet SUI tokens to send coins."
                         linkText="Learn more"
