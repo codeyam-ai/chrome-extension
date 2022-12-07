@@ -79,7 +79,7 @@ export const ActivityRow = ({
                             <Body
                                 isTextColorMedium
                                 className={
-                                    'inline p-[3px] bg-[#f5f5f5] rounded-[4px]'
+                                    'inline p-[3px] light:bg-[#f5f5f5] dark:bg-ethos-dark-background-secondary rounded-[4px]'
                                 }
                             >
                                 {dollars}
