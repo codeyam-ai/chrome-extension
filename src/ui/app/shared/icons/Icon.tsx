@@ -20,12 +20,12 @@ export const Icon = ({
             ? {
                   backgroundColor: '#F1EAFC',
                   iconColor: '#6D28D9',
-                  left: '-10px',
+                  left: isRound ? '-10px' : '',
               }
             : {
                   backgroundColor: 'rgba(156, 120, 247, 0.2)',
                   iconColor: '#9C78F7',
-                  left: '-10px',
+                  left: isRound ? '-10px' : '',
               };
 
     const clonedIcon = React.cloneElement(displayIcon, {
