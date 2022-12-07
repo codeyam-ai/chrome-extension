@@ -20,13 +20,11 @@ export const Icon = ({
             ? {
                   backgroundColor: '#F1EAFC',
                   iconColor: '#6D28D9',
-                  position: 'relative',
                   left: '-10px',
               }
             : {
                   backgroundColor: 'rgba(156, 120, 247, 0.2)',
                   iconColor: '#9C78F7',
-                  position: 'relative',
                   left: '-10px',
               };
 
@@ -38,7 +36,7 @@ export const Icon = ({
 
     return (
         <div
-            className={`flex w-[56px] h-[56px] justify-center items-center bg-[#F1EAFC] ${
+            className={`relative flex w-[56px] h-[56px] justify-center items-center bg-[#F1EAFC] ${
                 isRound ? 'rounded-full mr-[-5px]' : 'rounded-2xl'
             }`}
             style={styles}

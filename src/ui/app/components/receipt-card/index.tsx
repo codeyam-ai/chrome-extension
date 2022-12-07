@@ -12,6 +12,7 @@ import {
 } from '@heroicons/react/24/solid';
 
 import { type AccountInfo } from '../../KeypairVault';
+import { getTheme } from '../../helpers/getTheme';
 import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
 import { Icon } from '../../shared/icons/Icon';
@@ -24,7 +25,6 @@ import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { formatDate } from '_helpers';
 import { useAppSelector, useFormatCoin, useMiddleEllipsis } from '_hooks';
 import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
-import { getTheme } from '../../helpers/getTheme';
 
 import type { TxResultState } from '_redux/slices/txresults';
 
