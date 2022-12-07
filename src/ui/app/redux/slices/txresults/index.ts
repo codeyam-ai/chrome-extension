@@ -18,7 +18,6 @@ import {
     isSuiObject,
     getPaySuiTransaction,
     getPayTransaction,
-    isSuiTransactionKind,
 } from '@mysten/sui.js';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 

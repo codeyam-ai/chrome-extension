@@ -3,16 +3,18 @@
 
 import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline';
 import {
-    ArrowUpRightIcon,
-    ArrowUpCircleIcon,
     ArrowDownCircleIcon,
-    SparklesIcon,
+    ArrowUpCircleIcon,
+    ArrowUpRightIcon,
     CodeIcon,
+    SparklesIcon,
     XMarkIcon,
 } from '@heroicons/react/24/solid';
 
 import { type AccountInfo } from '../../KeypairVault';
+import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
+import { Icon } from '../../shared/icons/Icon';
 import { AssetCard } from '../../shared/nfts/AssetCard';
 import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';
@@ -26,8 +28,6 @@ import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
 import type { TxResultState } from '_redux/slices/txresults';
 
 import st from './ReceiptCard.module.scss';
-import { Icon } from '../../shared/icons/Icon';
-import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
 
 type TxResponseProps = {
     txDigest: TxResultState;

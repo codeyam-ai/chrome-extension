@@ -1,7 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import cl from 'classnames';
 import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
 import { memo, useEffect, useRef, useState, useCallback } from 'react';
 
@@ -43,7 +42,6 @@ function TransferNFTForm({
     const {
         isSubmitting,
         isValid,
-        dirty,
         values: { to, amount },
     } = useFormikContext<FormValues>();
 

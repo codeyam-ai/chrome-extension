@@ -1,6 +1,6 @@
 import { cssTransition, ToastContainer } from 'react-toastify';
-import { getTheme } from '../../helpers/getTheme';
 
+import { getTheme } from '../../helpers/getTheme';
 import NavBarWithSettingsAndWalletPicker from '../navigation/nav-bar/NavBarWithSettingsAndWalletPicker';
 
 import type React from 'react';

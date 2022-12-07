@@ -8,8 +8,8 @@ import { getTransactionsByAddress } from '_redux/slices/txresults';
 import Loading from '_src/ui/app/components/loading';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
-import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 import { Icon } from '_src/ui/app/shared/icons/Icon';
+import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
 import type { TxResultState } from '_redux/slices/txresults';
 

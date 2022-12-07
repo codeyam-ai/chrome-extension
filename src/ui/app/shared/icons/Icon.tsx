@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { getTheme } from '../../helpers/getTheme';
 
 export const Icon = ({

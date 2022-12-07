@@ -4,12 +4,12 @@ import {
     SparklesIcon,
 } from '@heroicons/react/24/solid';
 
+import SuiIcon from '../../svg/SuiIcon';
 import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
 import { useMiddleEllipsis } from '_src/ui/app/hooks';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
-import SuiIcon from '../../svg/SuiIcon';
 
 interface TransactionRowProps {
     txn: TxResultState;
