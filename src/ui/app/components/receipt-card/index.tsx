@@ -24,6 +24,7 @@ import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { formatDate } from '_helpers';
 import { useAppSelector, useFormatCoin, useMiddleEllipsis } from '_hooks';
 import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
+import { getTheme } from '../../helpers/getTheme';
 
 import type { TxResultState } from '_redux/slices/txresults';
 
@@ -225,6 +226,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         <>
             <div className={'pt-6 px-6 pb-8'}>
                 <AssetCard
+                    theme={theme}
                     isNft={isNft}
                     imgUrl={imgUrl ? imgUrl : ''}
                     name={txDigest?.name || 'NFT'}
