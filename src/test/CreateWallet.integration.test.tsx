@@ -28,12 +28,12 @@ describe('Rendering the Tokens page', () => {
         await userEvent.click(edit);
         await screen.findByText("Select the wallet you'd like to edit");
 
-        const wallet2 = screen.getByTestId('wallet2')
+        const wallet2 = screen.getByTestId('wallet2');
         await userEvent.click(wallet2);
         await screen.findByText('Edit Wallet');
 
         const input = screen.getByDisplayValue('Wallet 2');
-        await userEvent.clear(input)
+        await userEvent.clear(input);
         await userEvent.type(input, 'Gaming');
         await waitFor(
             async () =>
@@ -52,11 +52,11 @@ describe('Rendering the Tokens page', () => {
 
         const colorPicker = screen.getByTestId('color-picker');
         await userEvent.click(colorPicker);
-        const green = await screen.findByTestId('color-picker-#EB154C')
+        const green = await screen.findByTestId('color-picker-#EB154C');
         await userEvent.click(green);
 
         const done = await screen.findByText('Done');
-        await  userEvent.click(done);
+        await userEvent.click(done);
         await screen.findByText("Select the wallet you'd like to edit");
 
         await screen.findAllByText('Gaming');
