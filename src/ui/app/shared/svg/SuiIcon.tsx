@@ -1,9 +1,9 @@
-const SuiIcon = () => {
+const SuiIcon = ({ width, height }: { width: number; height: number }) => {
     return (
         <svg
-            width="15"
-            height="21"
-            viewBox="0 0 15 21"
+            width={width ? `${width}` : '15'}
+            height={height ? `${height}` : '21'}
+            viewBox={`0 0 15 21`}
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
         >

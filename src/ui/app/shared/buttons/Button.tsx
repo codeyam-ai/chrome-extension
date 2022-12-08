@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
 
-import Body from '../typography/Body';
-
 import type { MouseEventHandler } from 'react';
+import BodyLarge from '../typography/BodyLarge';
 
 export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
     // Defaults to primary
@@ -17,7 +16,7 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
 }
 
 const buttonChildrenClassNames =
-    'inline-flex items-center justify-center gap-2';
+    ' inline-flex items-center justify-center gap-2';
 
 const baseButtonClassNames =
     'w-full w-full py-4 px-5 mb-6 border border-transparent rounded-[16px] disabled:opacity-50';
@@ -50,13 +49,13 @@ const Button = (props: ButtonProps) => {
 
     const buttonElement = (
         <button className={classes} {...reactProps}>
-            <Body
+            <BodyLarge
                 as="span"
                 isSemibold={true}
                 className={buttonChildrenClassNames}
             >
                 {children}
-            </Body>
+            </BodyLarge>
         </button>
     );
 

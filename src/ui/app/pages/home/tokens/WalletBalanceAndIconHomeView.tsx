@@ -17,7 +17,7 @@ const WalletBalanceAndIconHomeView = ({
         dollarValue = dollarValue.slice(0, -3);
     }
     return (
-        <div className="flex flex-col gap-3 p-4 place-items-center">
+        <div className="flex flex-col gap-3 p-6 pt-8 place-items-center">
             <WalletColorAndEmojiCircle
                 color={accountInfo?.color}
                 emoji={accountInfo?.emoji}

@@ -1,15 +1,13 @@
-import {
-    CreditCardIcon,
-    PaperAirplaneIcon,
-    CloudArrowDownIcon,
-} from '@heroicons/react/24/outline';
+import { CreditCardIcon } from '@heroicons/react/24/outline';
 import { useCallback, useMemo, useState } from 'react';
+import SuiIcon from '../svg/SuiIcon';
 
 import LoadingIndicator from '../../components/loading/LoadingIndicator';
 import { useAppSelector } from '../../hooks';
 import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import Alert from '../feedback/Alert';
 import InlineButtonGroup from './InlineButtonGroup';
+import { ArrowUpCircleIcon } from '@heroicons/react/24/solid';
 
 interface SendReceiveButtonGroupProps {
     mistBalance: number | bigint;
@@ -76,7 +74,7 @@ const SendReceiveButtonGroup = ({
                     isButtonPrimaryDisabled={isFaucetInProgress}
                     buttonPrimaryChildren={
                         <>
-                            <CloudArrowDownIcon className={iconClasses} />
+                            <SuiIcon width={11} height={16} />
 
                             {isFaucetInProgress ? (
                                 <LoadingIndicator />
@@ -91,7 +89,7 @@ const SendReceiveButtonGroup = ({
                             {isBalanceZero ? (
                                 <CreditCardIcon className={iconClasses} />
                             ) : (
-                                <PaperAirplaneIcon className={iconClasses} />
+                                <ArrowUpCircleIcon className={iconClasses} />
                             )}
 
                             {isBalanceZero ? 'Buy' : 'Send'}
