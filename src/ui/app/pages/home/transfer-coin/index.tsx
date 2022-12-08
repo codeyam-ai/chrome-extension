@@ -161,10 +161,6 @@ function TransferCoinPage() {
     }
     return (
         <>
-            <NavBarWithBackAndTitle
-                title={'Send ' + coinSymbol}
-                backLink="/tokens"
-            />
             <Loading loading={loadingBalance} big={true}>
                 <Formik
                     initialValues={initialValues}

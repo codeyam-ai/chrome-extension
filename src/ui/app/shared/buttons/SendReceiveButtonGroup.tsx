@@ -89,7 +89,7 @@ const SendReceiveButtonGroup = ({
                             {isBalanceZero ? (
                                 <CreditCardIcon className={iconClasses} />
                             ) : (
-                                <ArrowUpCircleIcon className={iconClasses} />
+                                <ArrowUpCircleIcon width={20} height={20} />
                             )}
 
                             {isBalanceZero ? 'Buy' : 'Send'}
