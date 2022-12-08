@@ -45,10 +45,12 @@ const AvatarItem = ({
     bgColor,
     header,
     subheader,
+    emoji,
 }: {
-    bgColor?: string | undefined;
-    header?: string | undefined;
-    subheader?: string | undefined;
+    bgColor?: string;
+    header?: string;
+    subheader?: string;
+    emoji?: string;
 }) => (
     <div
         className={
@@ -56,8 +58,10 @@ const AvatarItem = ({
         }
     >
         <WalletColorAndEmojiCircle
+            emojiSizeInPx={20}
             circleSizeClasses={'w-[40px] h-[40px] auto'}
             color={bgColor || '#7E23CA'}
+            emoji={emoji}
         />
         <div className={'flex flex-col items-left'}>
             <BodyLarge isSemibold className={'text-left'}>
@@ -75,11 +79,13 @@ const TxTransfer = ({
 }: {
     ToFrom: {
         from: {
+            emoji: string | undefined;
             bgColor: string | undefined;
             header: string | undefined;
             subheader?: string;
         };
         to: {
+            emoji: string | undefined;
             bgColor: string | undefined;
             header: string | undefined;
             subheader?: string;
@@ -91,6 +97,7 @@ const TxTransfer = ({
             bgColor={ToFrom.from.bgColor}
             header={ToFrom.from.header}
             subheader={ToFrom.from.subheader}
+            emoji={ToFrom.from.emoji}
         />
         <div
             className={'py-1 pl-[18px] text-left text-ethos-light-text-medium'}
@@ -101,6 +108,7 @@ const TxTransfer = ({
             bgColor={ToFrom.to.bgColor}
             header={ToFrom.to.header}
             subheader={ToFrom.to.subheader}
+            emoji={ToFrom.to.emoji}
         />
     </div>
 );
@@ -256,6 +264,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     <TxTransfer
                         ToFrom={{
                             from: {
+                                emoji: fromWallet ? accountInfo?.emoji : '',
                                 bgColor: fromWallet
                                     ? accountInfo?.color
                                     : '#6D28D9',
@@ -265,6 +274,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                                 subheader: fromWallet ? walletAddrStr : '',
                             },
                             to: {
+                                emoji: fromWallet ? '' : accountInfo?.emoji,
                                 bgColor: fromWallet
                                     ? '#6D28D9'
                                     : accountInfo?.color,
