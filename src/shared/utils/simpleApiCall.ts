@@ -1,3 +1,5 @@
+import fetch from 'isomorphic-unfetch';
+
 import { BASE_URL } from '../constants';
 
 type FetchData = {
