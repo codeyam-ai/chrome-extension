@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 
 import Body from '../typography/Body';
 
-import type { ReactNode} from 'react';
+import type { ReactNode } from 'react';
 
 interface ExpandProps {
     title: string;

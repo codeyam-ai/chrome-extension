@@ -9,9 +9,7 @@ import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { ConnectedApp } from './PermissionsPage';
-import type {
-    KeyNameAndValue,
-} from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
+import type { KeyNameAndValue } from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 
 const FallbackIcon = () => {
     return (

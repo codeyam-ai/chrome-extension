@@ -16,13 +16,6 @@ export interface ConnectedApp extends Permission {
 
 const PermissionsPage = () => {
     const [connectedApps, setConnectedApps] = useState<ConnectedApp[]>([]);
-    const [permissions, setPermissions] = useState<Permission[]>([]);
-    const [, setPreapprovals] = useState<PreapprovalRequest[]>([]);
-
-    const getPreapprovals = useCallback(async () => {
-        const _preapprovals = await Transactions.getPreapprovalRequests();
-        setPreapprovals(Object.values(_preapprovals));
-    }, []);
 
     const getConnectedApps = async () => {
         const _permissions = Object.values(await Permissions.getPermissions());
@@ -69,34 +62,10 @@ const PermissionsPage = () => {
         }
     };
 
-    const revokeAccess = useCallback(
-        async (connectedApp: ConnectedApp) => {
-            await Permissions.revokeAllPermissions(connectedApp.origin);
-
-            await revokePreapprovals(connectedApp.preappovals);
-
-            // remove site from UI (thinking about how I can do this by having state keep track of current permissions instead)
-            const updatedConnectedApps = connectedApps.filter(
-                (c) => c.origin !== connectedApp.origin
-            );
-            getConnectedApps();
-            setPermissions(updatedConnectedApps);
-        },
-        [connectedApps]
-    );
-
-    useEffect(() => {
-        getPreapprovals();
-    }, [getPreapprovals]);
-
-    useEffect(() => {
-        const getPermissions = async () => {
-            const _permissions = Object.values(
-                await Permissions.getPermissions()
-            );
-            setPermissions(_permissions);
-        };
-        getPermissions();
+    const revokeAccess = useCallback(async (connectedApp: ConnectedApp) => {
+        await Permissions.revokeAllPermissions(connectedApp.origin);
+        await revokePreapprovals(connectedApp.preappovals);
+        getConnectedApps();
     }, []);
 
     useEffect(() => {

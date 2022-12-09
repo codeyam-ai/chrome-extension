@@ -1,9 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-    QuestionMarkCircleIcon
-} from '@heroicons/react/24/solid';
+import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid';
 import { JsonRpcProvider, Network } from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -20,10 +18,11 @@ import {
     useAppDispatch,
     useAppSelector,
     useInitializedGuard,
-    useNFTBasicData
+    useNFTBasicData,
 } from '_hooks';
 import {
-    preapprovalRequestsSelectors, respondToPreapprovalRequest
+    preapprovalRequestsSelectors,
+    respondToPreapprovalRequest,
 } from '_redux/slices/preapproval-requests';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
@@ -211,7 +210,7 @@ export function DappPreapprovalPage() {
                     if (!struct && key === 'MutableReference') {
                         struct = (
                             (parameter as SuiParameter)[
-                            key
+                                key
                             ] as SuiMutableReference
                         )?.Struct;
                         mutableCount += 1;

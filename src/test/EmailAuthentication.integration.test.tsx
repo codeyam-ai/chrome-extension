@@ -9,7 +9,6 @@ import { BASE_URL } from '_src/shared/constants';
 import { renderWithProviders } from '_src/test/utils/react-rendering';
 
 describe('Email Authentication', () => {
-
     test('User can enter email and is prompted to wait for the magic login link', async () => {
         const fakeAccessToken = '12345';
         mockSuiObjects();
@@ -49,7 +48,7 @@ describe('Email Authentication', () => {
 
         // TODO(mike/tommy): remove this code when this page is no longer responsible for both submitting the email
         // and receiving the access code.
-        simulateIframeSendingAccessCode('12345')
+        simulateIframeSendingAccessCode('12345');
         await screen.findByText('Get started with Sui');
     });
 
