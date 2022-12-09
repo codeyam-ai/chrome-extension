@@ -23,7 +23,10 @@ const SendReceiveButtonGroup = ({
         [mistBalance]
     );
     const sendUrl = useMemo(
-        () => `/send?${new URLSearchParams({ type: GAS_TYPE_ARG }).toString()}`,
+        () =>
+            `/send/recipient?${new URLSearchParams({
+                type: GAS_TYPE_ARG,
+            }).toString()}`,
         []
     );
 

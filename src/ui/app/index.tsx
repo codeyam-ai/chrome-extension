@@ -21,7 +21,6 @@ import HomePage, {
     TokensPage,
     TransactionDetailsPage,
     TransactionsPage,
-    TransferCoinPage,
 } from '_pages/home';
 import InitializePage from '_pages/initialize';
 import {
@@ -36,6 +35,9 @@ import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import ImportPage from '_src/ui/app/pages/initialize/import';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
+import TransferCoinRecipientPage from './pages/home/transfer-coin-recipient';
+import TransferCoinAmountPage from './pages/home/transfer-coin-amount';
+import TransferCoinReviewPage from './pages/home/transfer-coin-review';
 
 const HIDDEN_MENU_PATHS = ['/nft-details', '/receipt'];
 
@@ -111,7 +113,20 @@ const App = () => {
                     <Route path="nfts" element={<NftsPage />} />
                     <Route path="nft-details" element={<NFTDetailsPage />} />
                     <Route path="transactions" element={<TransactionsPage />} />
-                    <Route path="send" element={<TransferCoinPage />} />
+                    <Route path="send">
+                        <Route
+                            path="recipient"
+                            element={<TransferCoinRecipientPage />}
+                        />
+                        <Route
+                            path="amount"
+                            element={<TransferCoinAmountPage />}
+                        />
+                        <Route
+                            path="review"
+                            element={<TransferCoinReviewPage />}
+                        />
+                    </Route>
                     <Route path="receive" element={<ReceivePage />} />
                     <Route path="buy" element={<BuyPage />} />
                     <Route
