@@ -12,6 +12,7 @@ import suiObjects from './slices/sui-objects';
 import transactionRequests from './slices/transaction-requests';
 import transactions from './slices/transactions';
 import txresults from './slices/txresults';
+import forms from './slices/forms';
 
 const rootReducer = combineReducers({
     account,
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
     transactions,
     txresults,
     permissions,
+    forms,
     transactionRequests,
     preapprovalRequests,
     signMessageRequests,
