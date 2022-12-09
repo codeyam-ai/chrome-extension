@@ -27,12 +27,12 @@ const formatPageTitle = (title: string) => {
 
 interface ConnectedAppDisplayProps {
     connectedApp: ConnectedApp;
-    revokeAccess: (connectedApp: ConnectedApp) => void;
+    onClickRevoke: (connectedApp: ConnectedApp) => void;
 }
 
 const ConnectedAppDisplay = ({
     connectedApp,
-    revokeAccess,
+    onClickRevoke,
 }: ConnectedAppDisplayProps) => {
     const [shouldShowFallbackIcon, setShouldShowFallbackIcon] = useState(false);
 
@@ -48,8 +48,8 @@ const ConnectedAppDisplay = ({
     // remove a permission by updating the "permissions" field
     // to be empty.
     const _handleRevoke = useCallback(() => {
-        revokeAccess(connectedApp);
-    }, [revokeAccess, connectedApp]);
+        onClickRevoke(connectedApp);
+    }, [onClickRevoke, connectedApp]);
 
     return (
         <div className="flex flex-col pb-6">
