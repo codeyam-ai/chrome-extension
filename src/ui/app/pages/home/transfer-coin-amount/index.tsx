@@ -34,7 +34,7 @@ const initialValues = {
 export type FormValues = typeof initialValues;
 
 // TODO: show out of sync when sui objects locally might be outdated
-function TransferCoinPage() {
+function TransferCoinAmountPage() {
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
 
@@ -156,29 +156,11 @@ function TransferCoinPage() {
     const loadingBalance = useAppSelector(
         ({ suiObjects }) => suiObjects.loading && !suiObjects.lastSync
     );
-    if (!coinType) {
-        return <Navigate to="/" replace={true} />;
-    }
     return (
         <>
-            <Loading loading={loadingBalance} big={true}>
-                <Formik
-                    initialValues={initialValues}
-                    validateOnMount={true}
-                    validationSchema={validationSchema}
-                    onSubmit={onHandleSubmit}
-                >
-                    <TransferCoinForm
-                        submitError={sendError}
-                        coinBalance={formattedBalance.toString()}
-                        coinSymbol={coinSymbol}
-                        gasBudget={gasBudget}
-                        onClearSubmitError={handleOnClearSubmitError}
-                    />
-                </Formik>
-            </Loading>
+            <h1>COIN AMOUNT.</h1>
         </>
     );
 }
 
-export default TransferCoinPage;
+export default TransferCoinAmountPage;
