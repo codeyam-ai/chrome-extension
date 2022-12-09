@@ -65,13 +65,13 @@ class Transactions {
 
             const found = moveCall
                 ? moveCall.packageObjectId ===
-                      existingPreapproval.packageObjectId &&
-                  moveCall.function === existingPreapproval.function &&
-                  moveCall.arguments.indexOf(existingPreapproval.objectId) > -1
+                existingPreapproval.packageObjectId &&
+                moveCall.function === existingPreapproval.function &&
+                moveCall.arguments.indexOf(existingPreapproval.objectId) > -1
                 : preapproval?.packageObjectId ===
-                      existingPreapproval.packageObjectId &&
-                  preapproval?.function === existingPreapproval.function &&
-                  preapproval?.objectId === existingPreapproval.objectId;
+                existingPreapproval.packageObjectId &&
+                preapproval?.function === existingPreapproval.function &&
+                preapproval?.objectId === existingPreapproval.objectId;
 
             if (found) {
                 return preapprovalRequest;

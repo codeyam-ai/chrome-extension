@@ -2,9 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-    ChevronDownIcon,
-    ChevronUpIcon,
-    QuestionMarkCircleIcon,
+    QuestionMarkCircleIcon
 } from '@heroicons/react/24/solid';
 import { JsonRpcProvider, Network } from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -12,7 +10,9 @@ import { useParams } from 'react-router-dom';
 
 import Tooltip from '../../components/Tooltip';
 import { AppState } from '../../hooks/useInitializedGuard';
+import Accordion from '../../shared/content/Accordion';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
+import Alert from '../../shared/feedback/Alert';
 import Input from '../../shared/inputs/Input';
 import Body from '../../shared/typography/Body';
 import Loading from '_components/loading';
@@ -20,11 +20,10 @@ import {
     useAppDispatch,
     useAppSelector,
     useInitializedGuard,
-    useNFTBasicData,
+    useNFTBasicData
 } from '_hooks';
 import {
-    respondToPreapprovalRequest,
-    preapprovalRequestsSelectors,
+    preapprovalRequestsSelectors, respondToPreapprovalRequest
 } from '_redux/slices/preapproval-requests';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
@@ -212,7 +211,7 @@ export function DappPreapprovalPage() {
                     if (!struct && key === 'MutableReference') {
                         struct = (
                             (parameter as SuiParameter)[
-                                key
+                            key
                             ] as SuiMutableReference
                         )?.Struct;
                         mutableCount += 1;
@@ -269,12 +268,6 @@ export function DappPreapprovalPage() {
     );
 
     const Details = () => {
-        const [showDetails, setShowDetails] = useState(false);
-
-        const _toggleDetails = useCallback(() => {
-            setShowDetails((prev) => !prev);
-        }, []);
-
         const keyValueListItems: KeyNameAndValue[] = [
             {
                 keyName: 'Module',
@@ -295,22 +288,9 @@ export function DappPreapprovalPage() {
         ];
 
         return (
-            <div className="flex flex-col gap-2 relative">
-                <div
-                    className="flex justify-between items-center px-6 cursor-pointer"
-                    onClick={_toggleDetails}
-                >
-                    <Body isSemibold>View Details</Body>
-                    {showDetails ? (
-                        <ChevronDownIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
-                    ) : (
-                        <ChevronUpIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
-                    )}
-                </div>
-                {showDetails && (
-                    <KeyValueList keyNamesAndValues={keyValueListItems} />
-                )}
-            </div>
+            <Accordion title="View Details">
+                <KeyValueList keyNamesAndValues={keyValueListItems} />
+            </Accordion>
         );
     };
 
@@ -335,12 +315,14 @@ export function DappPreapprovalPage() {
                     onSubmit={handleOnSubmit}
                 >
                     {showError ? (
-                        <div className="p-24">
-                            Error: only one object can be mutated in a
-                            pre-approved transaction.
+                        <div className="px-6 pb-6">
+                            <Alert
+                                title="Error"
+                                subtitle="Only one object can be mutated in a pre-approved transaction."
+                            />
                         </div>
                     ) : (
-                        <div className="flex flex-col gap-4 pb-6">
+                        <div className="flex flex-col gap-4">
                             <div className="flex flex-col justify-center items-center gap-2">
                                 <Body isTextColorMedium>
                                     Transactions can only {modifier} this NFT:

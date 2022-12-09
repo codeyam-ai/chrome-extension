@@ -6,7 +6,7 @@ import type { MouseEventHandler } from 'react';
 
 export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
     // Defaults to primary
-    buttonStyle?: 'primary' | 'secondary';
+    buttonStyle?: 'primary' | 'secondary' | 'danger';
     className?: string;
     onClick?: MouseEventHandler<HTMLButtonElement>;
     to?: string;
@@ -20,7 +20,7 @@ const buttonChildrenClassNames =
     'inline-flex items-center justify-center gap-2';
 
 const baseButtonClassNames =
-    'w-full w-full py-4 px-5 mb-6 border border-transparent rounded-[16px] disabled:opacity-50';
+    'w-full py-4 px-5 mb-6 border border-transparent rounded-[16px] disabled:opacity-50';
 
 const primaryButtonClassNames =
     baseButtonClassNames +
@@ -32,6 +32,11 @@ const secondaryButtonClassNames =
     ' ' +
     'bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary text-ethos-light-primary-light dark:text-ethos-dark-primary-dark';
 
+const dangerButtonClassNames =
+    baseButtonClassNames +
+    ' ' +
+    'bg-ethos-light-red dark:bg-ethos-dark-red text-ethos-light-background-default';
+
 const Button = (props: ButtonProps) => {
     const { buttonStyle, to, className, isInline, children, ...reactProps } =
         props;
@@ -41,12 +46,14 @@ const Button = (props: ButtonProps) => {
 
     const buttonWrapperClassNames = isInline ? '' : 'px-6';
 
-    const classes =
-        (className ? className : '') +
-        ' ' +
-        (buttonStyle === 'secondary'
-            ? secondaryButtonClassNames
-            : primaryButtonClassNames);
+    let classes = className ? className + ' ' : '';
+    if (buttonStyle === 'secondary') {
+        classes += secondaryButtonClassNames;
+    } else if (buttonStyle === 'danger') {
+        classes += dangerButtonClassNames;
+    } else {
+        classes += primaryButtonClassNames;
+    }
 
     const buttonElement = (
         <button className={classes} {...reactProps}>
