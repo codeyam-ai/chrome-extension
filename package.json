@@ -91,7 +91,7 @@
         "@growthbook/growthbook": "^0.18.1",
         "@growthbook/growthbook-react": "^0.10.0",
         "@heroicons/react": "^2.0.1",
-        "@mysten/sui.js": "^0.0.0-experimental-20221117105600",
+        "@mysten/sui.js": "^0.18.0",
         "@mysten/wallet-standard": "^0.2.0",
         "@reduxjs/toolkit": "^1.8.3",
         "@tailwindcss/forms": "^0.5.2",

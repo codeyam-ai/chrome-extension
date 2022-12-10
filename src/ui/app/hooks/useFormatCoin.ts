@@ -12,7 +12,7 @@ import { api } from '../redux/store/thunk-extras';
 type FormattedCoin = [
     formattedBalance: string,
     coinSymbol: string,
-    formattedDollars: string,
+    dollars: string,
     queryResult: UseQueryResult
 ];
 
@@ -55,12 +55,7 @@ export function useCoinDecimals(coinType?: string | null) {
                     'Fetching coin denomination should be disabled when coin type is disabled.'
                 );
             }
-
-            if (coinType === '0x2::sui::SUI') {
-                return api.instance.fullNode.getCoinDenominationInfo(coinType);
-            }
-
-            return { decimalNumber: 9 };
+            return api.instance.fullNode.getCoinMetadata(coinType);
         },
         {
             // This is currently expected to fail for non-SUI tokens, so disable retries:
@@ -74,7 +69,7 @@ export function useCoinDecimals(coinType?: string | null) {
         }
     );
 
-    return [queryResult.data?.decimalNumber || 0, queryResult] as const;
+    return [queryResult.data?.decimals || 0, queryResult] as const;
 }
 
 // TODO: This handles undefined values to make it easier to integrate with the reset of the app as it is

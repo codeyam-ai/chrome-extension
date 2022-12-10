@@ -124,10 +124,13 @@ export function DappTxApprovalPage() {
 
         const newEvents = effects.events.filter(
             (event) =>
-                event.newObject &&
+                'newObject' in event &&
+                typeof event.newObject.recipient !== 'string' &&
+                'AddressOwner' in event.newObject.recipient &&
                 event.newObject.recipient.AddressOwner === address
         );
         const creating = newEvents.map((event) => {
+            if (!('newObject' in event)) return { name: '' };
             const objectTypeParts = event.newObject.objectType.split('::');
             return {
                 address: objectTypeParts[0],
@@ -144,6 +147,7 @@ export function DappTxApprovalPage() {
 
         const mutating = effects.events
             .filter((event) => {
+                if (!('mutateObject' in event)) return false;
                 const mutation = event.mutateObject;
                 const mutated = effects.mutated;
                 return (
@@ -162,6 +166,8 @@ export function DappTxApprovalPage() {
                 );
             })
             .map((event) => {
+                if (!('mutateObject' in event)) return { name: '' };
+
                 const objectTypeParts =
                     event.mutateObject.objectType.split('::');
                 return {
@@ -180,10 +186,14 @@ export function DappTxApprovalPage() {
         const transferring = effects.events
             .filter(
                 (event) =>
-                    event.transferObject &&
+                    'transferObject' in event &&
+                    typeof event.transferObject.recipient !== 'string' &&
+                    'AddressOwner' in event.transferObject.recipient &&
                     event.transferObject.recipient.AddressOwner
             )
             .map((event) => {
+                if (!('transferObject' in event)) return { name: '' };
+
                 const objectTypeParts =
                     event.transferObject.objectType.split('::');
                 return {
@@ -200,8 +210,10 @@ export function DappTxApprovalPage() {
         if (!effects?.events) return [];
 
         const deleting = effects.events
-            .filter((event) => event.deleteObject)
+            .filter((event) => 'deleteObject' in event)
             .map((event) => {
+                if (!('deleteObject' in event)) return { name: '' };
+
                 return {
                     name: event.deleteObject.objectId,
                 };
@@ -215,15 +227,15 @@ export function DappTxApprovalPage() {
 
         const coinBalanceChangeEvents = effects.events.filter(
             (e) =>
-                e.coinBalanceChange &&
+                'coinBalanceChange' in e &&
                 e.coinBalanceChange.coinType === '0x2::sui::SUI'
         );
 
         return (
-            coinBalanceChangeEvents.reduce(
-                (total, e) => total + e.coinBalanceChange.amount,
-                0
-            ) * -1
+            coinBalanceChangeEvents.reduce((total, e) => {
+                if (!('coinBalanceChange' in e)) return total;
+                return total + e.coinBalanceChange.amount;
+            }, 0) * -1
         );
     }, [effects]);
 
