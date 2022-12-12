@@ -45,10 +45,14 @@ const slice = createSlice({
         setSuiAmount: (state, { payload }: { payload: string }) => {
             state.sendSui.amount = payload;
         },
+        resetSendSuiForm: (state) => {
+            state.sendSui = initialState.sendSui;
+        },
     },
     initialState,
 });
 
-export const { setSuiRecipient, setSuiAmount } = slice.actions;
+export const { setSuiRecipient, setSuiAmount, resetSendSuiForm } =
+    slice.actions;
 
 export default slice.reducer;

@@ -4,23 +4,14 @@
 // import { getTransactionDigest } from '@mysten/sui.js';
 import BigNumber from 'bignumber.js';
 import { Formik } from 'formik';
-import { useCallback, useMemo, useState } from 'react';
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { useCallback, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import TransferCoinForm from './TransferCoinReviewForm';
-import { createTokenValidation } from './validation';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector } from '_hooks';
-import {
-    accountAggregateBalancesSelector,
-    accountCoinsSelector,
-} from '_redux/slices/account';
-import { Coin, GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
 import { sendTokens } from '_redux/slices/transactions';
-import {
-    useCoinDecimals,
-    useFormatCoin,
-} from '_src/ui/app/hooks/useFormatCoin';
+import { resetSendSuiForm } from '_redux/slices/forms';
+import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
 
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
@@ -76,6 +67,7 @@ function TransferCoinReviewPage() {
                 );
 
                 resetForm();
+                dispatch(resetSendSuiForm());
 
                 const navLink = `/receipt?${new URLSearchParams({
                     txdigest: '/link-to-tx',
