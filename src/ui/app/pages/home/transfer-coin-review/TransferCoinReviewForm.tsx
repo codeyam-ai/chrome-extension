@@ -85,7 +85,7 @@ function TransferCoinForm({
                     },
                 ]}
             />
-            <div className="flex flex-col mt-2 absolute w-full bottom-[63px] bg-white pt-4">
+            <div className="flex flex-col mt-2 absolute w-full bottom-[63px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4">
                 <Button buttonStyle="primary" type="submit" className="mt-2">
                     {isSubmitting ? <LoadingIndicator /> : 'Confirm & Send'}
                 </Button>

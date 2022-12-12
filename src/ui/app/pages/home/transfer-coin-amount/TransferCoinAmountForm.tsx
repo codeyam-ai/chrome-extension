@@ -29,6 +29,7 @@ import CoinList from '../tokens/CoinList';
 import CoinBalance from '../tokens/CoinBalance';
 import Sui from '../tokens/Sui';
 import { useSearchParams } from 'react-router-dom';
+import { CoinSelect } from '_src/ui/app/shared/coin-select/coin-dropdown';
 
 export type TransferCoinFormProps = {
     submitError: string | null;
@@ -113,20 +114,7 @@ function TransferCoinForm({
             <div className="pt-6 px-6 text-left flex flex-col mb-[40px]">
                 <div className={'mb-5 flex flex-row items-center gap-6'}>
                     <BodyLarge isTextColorMedium>Sending</BodyLarge>
-                    <div
-                        className={
-                            'pr-6 flex flex-row gap-2 p-2 rounded-full items-center bg-ethos-light-background-secondary dark:ethos-light-background-secondary'
-                        }
-                    >
-                        <div
-                            className={
-                                'rounded-full w-6 h-6 flex justify-center items-center bg-[#3D5FF2]'
-                            }
-                        >
-                            <SuiIcon width={16} height={16} />
-                        </div>
-                        <BodyLarge>SUI</BodyLarge>
-                    </div>
+                    <CoinSelect />
                 </div>
                 <Body isTextColorMedium>{`To: ${truncateMiddle(
                     formState.to
@@ -140,7 +128,7 @@ function TransferCoinForm({
                     allowNegative={false}
                     name="amount"
                     decimals
-                    className="p-0 border-transparent focus:border-transparent focus:ring-0 font-weight-ethos-title outline-none border-none h-[40px] w-full text-size-ethos-jumbo-title dark:bg-gray-700"
+                    className="p-0 border-transparent focus:border-transparent focus:ring-0 font-weight-ethos-title outline-none border-none h-[40px] w-full text-size-ethos-jumbo-title dark:bg-ethos-dark-background-default"
                 />
                 <BodyLarge isSemibold isTextColorMedium>
                     {parseInt(amount) >= 0 ? dollars : '$0.00'}
@@ -161,7 +149,7 @@ function TransferCoinForm({
                     <AvailableBalance balances={balances} />
                 </div>
             </ContentBlock>
-            <div className="flex flex-col mt-2 absolute w-full bottom-[63px] bg-white pt-4">
+            <div className="flex flex-col mt-2 absolute w-full bottom-[63px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4">
                 <Button
                     buttonStyle="primary"
                     type="submit"
