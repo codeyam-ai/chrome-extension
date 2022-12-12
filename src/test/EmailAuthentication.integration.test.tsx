@@ -10,6 +10,22 @@ import { renderWithProviders } from '_src/test/utils/react-rendering';
 
 describe('Email Authentication', () => {
     test('User can enter email and is prompted to wait for the magic login link', async () => {
+        const fakeAccessToken = '12345';
+        mockSuiObjects();
+        nock(BASE_URL, {
+            reqheaders: { 'x-supabase-access-token': fakeAccessToken },
+        })
+            .persist()
+            .post('/api/wallet/accounts')
+            .reply(200, {
+                accounts: [
+                    {
+                        address: '0x218d1ea2ce30efd16394f81569f69cf8531d05ea',
+                        index: 0,
+                    },
+                ],
+            });
+
         renderWithProviders(<App />);
         await screen.findByText('The new web awaits');
         await userEvent.click(screen.getByText('Sign in with Email'));
@@ -29,9 +45,14 @@ describe('Email Authentication', () => {
         );
 
         await screen.findByText('Email sent');
+
+        // TODO(mike/tommy): remove this code when this page is no longer responsible for both submitting the email
+        // and receiving the access code.
+        simulateIframeSendingAccessCode('12345');
+        await screen.findByText('Get started with Sui');
     });
 
-    xtest('User can see tokens page after logged in via the iframe', async () => {
+    test('User can see tokens page after logged in via the iframe', async () => {
         const fakeAccessToken = '12345';
         mockSuiObjects();
         nock(BASE_URL, {
@@ -53,7 +74,11 @@ describe('Email Authentication', () => {
 
         await screen.findByText(/The new web awaits/i);
 
-        // simulate the iframe sending the access token over to the extension
+        simulateIframeSendingAccessCode(fakeAccessToken);
+        await screen.findByText('Get started with Sui');
+    });
+
+    function simulateIframeSendingAccessCode(fakeAccessToken: string) {
         window.dispatchEvent(
             new MessageEvent('message', {
                 source: window,
@@ -66,7 +91,5 @@ describe('Email Authentication', () => {
                 },
             })
         );
-
-        await screen.findByText('Get started with Sui');
-    });
+    }
 });

@@ -58,6 +58,7 @@ module.exports = {
                 'ethos-shadow-small': '0px 1px 2px rgba(0, 0, 0, 0.05)',
                 'ethos-hovering-element-box-shadow':
                     '0px 2px 8px rgba(0, 0, 0, 0.1)',
+                'ethos-modal-box-shadow': '0px 4px 64px rgba(0, 0, 0, 0.2)',
 
                 // ==========
                 // Stroke

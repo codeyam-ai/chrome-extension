@@ -17,8 +17,8 @@ import {
     useSettingsUrl,
 } from '_src/ui/app/components/settings-menu/hooks';
 import ImportWalletPage from '_src/ui/app/components/settings-menu/subpages/ImportWalletPage';
-import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/PermissionsPage';
 import NetworkPage from '_src/ui/app/components/settings-menu/subpages/network/NetworkPage';
+import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/permissions/PermissionsPage';
 import SecurityHomePage from '_src/ui/app/components/settings-menu/subpages/security/SecurityHomePage';
 import ViewPrivateKeyPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewPrivateKeyPage';
 import ViewSeedPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewSeedPage';

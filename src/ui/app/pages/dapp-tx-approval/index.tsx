@@ -917,7 +917,7 @@ export function DappTxApprovalPage() {
                                     />
                                 </div>
                             ) : (
-                                <div className="px-6 pb-6">
+                                <div className="px-6 pb-6 flex flex-col gap-6">
                                     <Alert
                                         title="Dry run error"
                                         subtitle={
@@ -934,6 +934,10 @@ export function DappTxApprovalPage() {
                                                 .
                                             </Body>
                                         }
+                                    />
+                                    <Alert
+                                        title="Error details"
+                                        subtitle={<Body>{dryRunError}</Body>}
                                     />
                                 </div>
                             )}

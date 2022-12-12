@@ -28,6 +28,7 @@ const Loading = ({
         const resizeWindow = () => {
             window.resizeTo(window.outerWidth, document.body.offsetHeight + 39);
         };
+
         resizeWindow();
         Promise.all(
             Array.from(document.images)
@@ -40,8 +41,9 @@ const Loading = ({
                 )
         ).then(() => {
             resizeWindow();
-            setTimeout(resizeWindow, 250);
-            setTimeout(resizeWindow, 500);
+            for (let i = 0; i < 10; ++i) {
+                setTimeout(resizeWindow, 250 * (i + 1));
+            }
         });
     }, [loading, resize]);
 

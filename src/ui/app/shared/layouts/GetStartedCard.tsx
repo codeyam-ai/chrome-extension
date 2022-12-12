@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 
-import HeaderWithIconRow from '../headers/page-headers/HeaderWithIconRow';
+import HeaderWithLargeEthosIcon from '../headers/page-headers/HeaderWithLargeEthosIcon';
 import SignInFlowNavBar from '../navigation/nav-bar/SignInFlowNavBar';
 import BaseLayout from './BaseLayout';
 
@@ -14,7 +14,7 @@ const GetStartedCard = ({ showBack, children }: GetStartedCardProps) => {
         <>
             <BaseLayout>
                 <SignInFlowNavBar showBackButton={showBack || false} />
-                <HeaderWithIconRow
+                <HeaderWithLargeEthosIcon
                     title="Ethos"
                     description="The new web awaits"
                 />
