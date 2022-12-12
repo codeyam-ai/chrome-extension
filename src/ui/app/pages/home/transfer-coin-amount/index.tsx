@@ -33,7 +33,7 @@ export type FormValues = typeof initialValues;
 function TransferCoinAmountPage() {
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
-
+    const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
     const aggregateBalances = useAppSelector(accountAggregateBalancesSelector);
     const coinBalance = useMemo(
         () => (coinType && aggregateBalances[coinType]) || BigInt(0),
@@ -125,6 +125,10 @@ function TransferCoinAmountPage() {
     const handleOnClearSubmitError = useCallback(() => {
         setSendError(null);
     }, []);
+
+    const initialValues = {
+        amount: formState.amount,
+    };
 
     return (
         <>

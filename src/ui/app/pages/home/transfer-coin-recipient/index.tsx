@@ -17,6 +17,7 @@ import { setSuiRecipient } from '_src/ui/app/redux/slices/forms';
 // TODO: show out of sync when sui objects locally might be outdated
 function TransferCoinRecipientPage() {
     const account = useAppSelector(({ account }) => account);
+    const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
     const activeAccountIndex = useAppSelector(
         ({ account: { activeAccountIndex } }) => activeAccountIndex
     );
@@ -68,7 +69,7 @@ function TransferCoinRecipientPage() {
     }, []);
 
     let initState = {
-        to: '',
+        to: formState.to,
     };
 
     return (
