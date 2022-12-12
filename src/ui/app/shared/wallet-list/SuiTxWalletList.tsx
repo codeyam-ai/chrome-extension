@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
 import { type AccountInfo } from '../../KeypairVault';
 import { useAppDispatch, useAppSelector, useMiddleEllipsis } from '../../hooks';
@@ -6,15 +6,12 @@ import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import { setSuiRecipient } from '../../redux/slices/forms';
-import { useFormikContext } from 'formik';
-import { CheckCircleIcon } from '@heroicons/react/24/solid';
 
 interface WalletSelectorProps {
     wallet: AccountInfo;
-    isActive: boolean;
 }
 
-const WalletSelector = ({ wallet, isActive }: WalletSelectorProps) => {
+const WalletSelector = ({ wallet }: WalletSelectorProps) => {
     const dispatch = useAppDispatch();
     const shortenedAddress = useMiddleEllipsis(wallet.address, 24, 12);
     const account = useAppSelector(({ account }) => account);
@@ -56,11 +53,6 @@ const WalletSelector = ({ wallet, isActive }: WalletSelectorProps) => {
                     </BodyLarge>
                     <Body isTextColorMedium>{shortenedAddress}</Body>
                 </div>
-                <div>
-                    {isActive && (
-                        <CheckCircleIcon className="h-5 w-5 text-ethos-light-primary-light" />
-                    )}
-                </div>
             </div>
         </div>
     );
@@ -79,7 +71,6 @@ const WalletList = ({
     wallets,
     activeAccountIndex,
 }: SuiTxWalletListProps) => {
-    const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
     return (
         <div
             className={`${
@@ -97,10 +88,7 @@ const WalletList = ({
                 if ((wallet.index || 0) !== activeAccountIndex) {
                     return (
                         <div key={key}>
-                            <WalletSelector
-                                wallet={wallet}
-                                isActive={wallet.index === formState.walletIdx}
-                            />
+                            <WalletSelector wallet={wallet} />
                         </div>
                     );
                 } else {
