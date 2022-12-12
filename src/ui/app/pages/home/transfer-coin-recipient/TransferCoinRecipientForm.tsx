@@ -6,18 +6,27 @@ import { useEffect, useRef, memo } from 'react';
 
 import AddressInput from '_components/address-input';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
-import { useAppSelector } from '_src/ui/app/hooks';
+import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import SuiIcon from '_src/ui/app/shared/svg/SuiIcon';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import WalletList from '_src/ui/app/shared/wallet-list/WalletList';
+import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 
-import type { FormValues } from '.';
+import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
+import { setSuiRecipient } from '_src/ui/app/redux/slices/forms';
+import account from '_src/ui/app/redux/slices/account';
+import { CoinSelect } from '_src/ui/app/shared/coin-select/coin-dropdown';
 
 export type TransferCoinRecipientFormProps = {
     submitError: string | null;
     onClearSubmitError: () => void;
 };
+
+const vals = {
+    to: '',
+};
+
+export type FormValues = typeof vals;
 
 function TransferCoinRecipientForm({
     onClearSubmitError,
@@ -27,9 +36,12 @@ function TransferCoinRecipientForm({
         ({ account: { activeAccountIndex } }) => activeAccountIndex
     );
 
+    const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
+
     const {
         isSubmitting,
         isValid,
+        setValues,
         values: { to },
     } = useFormikContext<FormValues>();
 
@@ -37,36 +49,37 @@ function TransferCoinRecipientForm({
     onClearRef.current = onClearSubmitError;
 
     useEffect(() => {
-        onClearRef.current();
-    }, [to]);
+        setValues({ to: formState.to });
+        console.log('form state: ', formState);
+    }, [formState.to]);
+
+    const dispatch = useAppDispatch();
 
     return (
         <Form autoComplete="off" noValidate={true}>
             <div className="pt-6 px-6 text-left flex flex-col">
                 <div className={'mb-6 flex flex-row items-center gap-6'}>
                     <BodyLarge isTextColorMedium>Sending</BodyLarge>
-                    <div
-                        className={
-                            'pr-6 flex flex-row gap-2 p-2 rounded-full items-center bg-ethos-light-background-secondary dark:ethos-light-background-secondary'
-                        }
-                    >
-                        <div
-                            className={
-                                'rounded-full w-6 h-6 flex justify-center items-center bg-[#3D5FF2]'
-                            }
-                        >
-                            <SuiIcon width={16} height={16} />
-                        </div>
-                        <BodyLarge>SUI</BodyLarge>
-                    </div>
+                    <CoinSelect />
                 </div>
                 <div className={'relative'}>
                     <Field
+                        id="to"
+                        placeholder={to || '0x... or SuiNS name'}
                         className={'flex flex-col gap-2 pl-0 pr-0'}
                         component={AddressInput}
                         name="to"
                         label={'Recipient'}
-                    />{' '}
+                        onChange={(e: { target: { name: string } }) => {
+                            dispatch(
+                                setSuiRecipient({
+                                    walletIdx: undefined,
+                                    to: e.target.name,
+                                    from: 'Wallet',
+                                })
+                            );
+                        }}
+                    />
                     <div
                         className={`absolute top-0 right-0 mt-1 text-red-500 dark:text-red-400 ${
                             isValid && 'hidden'
@@ -79,14 +92,15 @@ function TransferCoinRecipientForm({
                 </div>
             </div>
             <div className={'pb-[80px]'}>
-                <WalletList
-                    header={'Transfer Between My Wallets'}
-                    wallets={accountInfos}
-                    isWalletEditing={false}
-                    activeAccountIndex={activeAccountIndex}
-                />
+                {accountInfos.length > 1 && (
+                    <SuiTxWalletList
+                        header={'Transfer Between My Wallets'}
+                        wallets={accountInfos}
+                        activeAccountIndex={activeAccountIndex}
+                    />
+                )}
             </div>
-            <div className="flex flex-col mt-2 absolute w-full bottom-[63px] bg-white pt-4">
+            <div className="flex flex-col mt-2 absolute w-full bottom-[63px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4">
                 <Button
                     buttonStyle="primary"
                     type="submit"

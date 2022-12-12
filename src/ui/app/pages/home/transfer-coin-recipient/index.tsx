@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // import { getTransactionDigest } from '@mysten/sui.js';
+import { useEffect } from 'react';
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
@@ -11,34 +12,46 @@ import { createValidationSchema } from './validation';
 import { useAppDispatch, useAppSelector } from '_hooks';
 
 import type { SerializedError } from '@reduxjs/toolkit';
-
-const initialValues = {
-    to: '',
-    amount: '',
-};
-
-export type FormValues = typeof initialValues;
+import { setSuiRecipient } from '_src/ui/app/redux/slices/forms';
 
 // TODO: show out of sync when sui objects locally might be outdated
 function TransferCoinRecipientPage() {
-    const address = useAppSelector(({ account: { address } }) => address);
+    const account = useAppSelector(({ account }) => account);
+    const activeAccountIndex = useAppSelector(
+        ({ account: { activeAccountIndex } }) => activeAccountIndex
+    );
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
     const [sendError, setSendError] = useState<string | null>(null);
     const validationSchema = useMemo(
-        () => createValidationSchema(address || ''),
-        [address]
+        () => createValidationSchema(account.address || ''),
+        [account.address]
     );
 
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const onHandleSubmit = useCallback(
-        async ({ to }: FormValues) => {
+        async ({ to }: { to: string }) => {
             if (coinType === null) {
                 return;
             }
             setSendError(null);
             try {
-                navigate('/send/amount');
+                dispatch(
+                    setSuiRecipient({
+                        walletIdx: undefined,
+                        to: to,
+                        from:
+                            account.accountInfos[activeAccountIndex].name ||
+                            'Wallet',
+                    })
+                );
+
+                navigate(
+                    `/send/amount?${new URLSearchParams({
+                        type: coinType,
+                    }).toString()}`
+                );
             } catch (e) {
                 setSendError((e as SerializedError).message || null);
             }
@@ -54,10 +67,14 @@ function TransferCoinRecipientPage() {
         setSendError(null);
     }, []);
 
+    let initState = {
+        to: '',
+    };
+
     return (
         <>
             <Formik
-                initialValues={initialValues}
+                initialValues={initState}
                 validateOnMount={true}
                 validationSchema={validationSchema}
                 onSubmit={onHandleSubmit}

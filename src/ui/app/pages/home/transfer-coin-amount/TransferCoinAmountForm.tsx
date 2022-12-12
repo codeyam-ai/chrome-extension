@@ -1,34 +1,20 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-
-import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
-import { useEffect, useRef, memo, useCallback, MouseEventHandler } from 'react';
-
-import AddressInput from '_components/address-input';
+import { useEffect, useRef, memo } from 'react';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import NumberInput from '_components/number-input';
-import { SuiIcons } from '_font-icons/output/sui-icons';
-import { GAS_SYMBOL, GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
-import Icon from '_src/ui/app/components/icon';
-import NFTDisplayCard from '_src/ui/app/components/nft-display';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Alert from '_src/ui/app/shared/feedback/Alert';
-import SuiIcon from '_src/ui/app/shared/svg/SuiIcon';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 
-import { useFormik } from 'formik';
-
 import type { FormValues } from '.';
-import CoinList from '../tokens/CoinList';
-import CoinBalance from '../tokens/CoinBalance';
 import Sui from '../tokens/Sui';
-import { useSearchParams } from 'react-router-dom';
 import { CoinSelect } from '_src/ui/app/shared/coin-select/coin-dropdown';
 
 export type TransferCoinFormProps = {
@@ -84,15 +70,10 @@ const AvailableBalance = ({
 
 function TransferCoinForm({
     submitError,
-    coinBalance,
-    coinSymbol,
-    gasBudget,
     onClearSubmitError,
 }: TransferCoinFormProps) {
     const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
     const balances = useAppSelector(accountAggregateBalancesSelector);
-    const [searchParams] = useSearchParams();
-    const coinType = searchParams.get('type');
 
     const {
         isSubmitting,
@@ -107,7 +88,10 @@ function TransferCoinForm({
         onClearRef.current();
     }, [amount]);
 
-    let [formatted, symbol, dollars] = useFormatCoin(amount, coinType);
+    const dollars = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    }).format(parseFloat(amount) * 100);
 
     return (
         <Form autoComplete="off" noValidate={false}>
