@@ -55,7 +55,7 @@ function TransferCoinReviewPage() {
                         .toString()
                 );
 
-                await dispatch(
+                const tx = await dispatch(
                     sendTokens({
                         amount: bigIntAmount,
                         recipientAddress: to,
@@ -63,11 +63,14 @@ function TransferCoinReviewPage() {
                     })
                 );
 
+                const txDigest =
+                    tx.payload.EffectsCert.certificate.transactionDigest;
+
                 resetForm();
                 dispatch(resetSendSuiForm());
 
                 const navLink = `/receipt?${new URLSearchParams({
-                    txdigest: '/link-to-tx',
+                    txdigest: txDigest,
                 }).toString()}`;
 
                 toast(
