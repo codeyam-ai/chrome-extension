@@ -55,9 +55,6 @@ function TransferCoinReviewPage() {
                         .toString()
                 );
 
-                console.log('amount: ', bigIntAmount);
-                console.log('recipient: ', to);
-
                 await dispatch(
                     sendTokens({
                         amount: bigIntAmount,

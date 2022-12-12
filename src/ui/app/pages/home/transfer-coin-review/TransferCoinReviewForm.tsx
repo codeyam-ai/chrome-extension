@@ -38,14 +38,11 @@ function TransferCoinForm({
 }: TransferCoinFormProps) {
     const {
         isSubmitting,
-        isValid,
         values: { amount, to },
     } = useFormikContext<FormValues>();
 
     const formData = useAppSelector(({ forms: { sendSui } }) => sendSui);
-
     const theme = getTheme();
-
     const onClearRef = useRef(onClearSubmitError);
     onClearRef.current = onClearSubmitError;
 
@@ -53,7 +50,10 @@ function TransferCoinForm({
         onClearRef.current();
     }, [amount, to]);
 
-    const [val, symb, dollars] = useFormatCoin(amount, 'SUI');
+    const dollars = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    }).format(parseFloat(amount) * 100);
 
     return (
         <Form autoComplete="off" noValidate={true}>
@@ -61,7 +61,7 @@ function TransferCoinForm({
                 <AssetCard theme={theme} isNft={false} imgUrl={''} name={''} />
                 <Body isTextColorMedium>Sending</Body>
                 <Header className={'font-weight-ethos-subheader'}>
-                    {val} {symb}
+                    {amount} Sui
                 </Header>
                 <Subheader isTextColorMedium>{dollars}</Subheader>
             </div>
