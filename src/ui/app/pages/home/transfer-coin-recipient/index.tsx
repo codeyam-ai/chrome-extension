@@ -40,7 +40,6 @@ function TransferCoinRecipientPage() {
             try {
                 dispatch(
                     setSuiRecipient({
-                        walletIdx: undefined,
                         to: to,
                         from:
                             account.accountInfos[activeAccountIndex].name ||

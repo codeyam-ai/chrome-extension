@@ -8,7 +8,6 @@ type AppState = {
         from: string;
         to: string;
         amount: string;
-        walletIdx: number | undefined;
     };
 };
 
@@ -17,7 +16,6 @@ const initialState: AppState = {
         from: '',
         to: '',
         amount: '',
-        walletIdx: undefined,
     },
 };
 
@@ -32,15 +30,11 @@ const slice = createSlice({
                 payload: {
                     from: string;
                     to: string;
-                    walletIdx: number | undefined;
                 };
             }
         ) => {
             state.sendSui.to = payload.to;
             state.sendSui.from = payload.from;
-            payload.walletIdx
-                ? (state.sendSui.walletIdx = payload.walletIdx)
-                : (state.sendSui.walletIdx = undefined);
         },
         setSuiAmount: (state, { payload }: { payload: string }) => {
             state.sendSui.amount = payload;
