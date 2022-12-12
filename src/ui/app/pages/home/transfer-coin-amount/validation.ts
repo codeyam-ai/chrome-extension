@@ -21,7 +21,7 @@ export function createTokenValidation(
             return new BigNumber(original);
         })
         .test('required', `\${path} is a required field`, (value) => {
-            return !!value;
+            return false;
         })
         .test(
             'valid',
