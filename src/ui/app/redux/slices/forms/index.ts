@@ -3,36 +3,52 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 
-import type { PayloadAction } from '@reduxjs/toolkit';
-
 type AppState = {
     sendSui: {
-        to: void;
-        amount: void;
-        isValid: boolean;
-        dirty: boolean;
+        from: string;
+        to: string;
+        amount: string;
+        walletIdx: number | undefined;
     };
 };
 
 const initialState: AppState = {
     sendSui: {
-        to: undefined,
-        amount: undefined,
-        isValid: false,
-        dirty: false,
+        from: '',
+        to: '',
+        amount: '',
+        walletIdx: undefined,
     },
 };
 
 const slice = createSlice({
     name: 'forms',
     reducers: {
-        setSuiRecipient: (state, { payload }: PayloadAction) => {
-            state.sendSui.to = payload;
+        setSuiRecipient: (
+            state,
+            {
+                payload,
+            }: {
+                payload: {
+                    from: string;
+                    to: string;
+                    walletIdx: number | undefined;
+                };
+            }
+        ) => {
+            state.sendSui.to = payload.to;
+            state.sendSui.from = payload.from;
+            payload.walletIdx
+                ? (state.sendSui.walletIdx = payload.walletIdx)
+                : (state.sendSui.walletIdx = undefined);
+        },
+        setSuiAmount: (state, { payload }: { payload: string }) => {
+            state.sendSui.amount = payload;
         },
     },
     initialState,
 });
 
-export const { setSuiRecipient } = slice.actions;
+export const { setSuiRecipient, setSuiAmount } = slice.actions;
 
 export default slice.reducer;
