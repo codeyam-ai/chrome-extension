@@ -88,7 +88,7 @@ export function DappSignMessageApprovalPage() {
                                 <div>has requested you sign a message</div>
                             </div>
                         </div>
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col gap-1 p-6">
                             <div className="text-sm px-1">Message To Sign</div>
                             <div className="bg-gray-200 text-slate-800 rounded-lg p-3">
                                 <div>
