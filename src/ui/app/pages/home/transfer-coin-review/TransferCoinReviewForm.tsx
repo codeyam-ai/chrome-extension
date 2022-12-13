@@ -74,7 +74,7 @@ function TransferCoinForm({ onClearSubmitError }: TransferCoinFormProps) {
                     },
                     {
                         keyName: 'Transaction Fee',
-                        value: '**calculate**',
+                        value: '5000 MIST',
                     },
                 ]}
             />
