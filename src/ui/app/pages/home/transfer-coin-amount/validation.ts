@@ -16,68 +16,77 @@ export function createTokenValidation(
     gasDecimals: number,
     gasBudget: number
 ) {
-    return Yup.mixed()
-        .transform((_, original) => {
-            return new BigNumber(original);
-        })
-        .test('required', `\${path} is a required field`, (value) => {
-            return !!value;
-        })
-        .test(
-            'valid',
-            'The value provided is not valid.',
-            (value?: BigNumber) => {
-                if (!value || value.isNaN() || !value.isFinite()) {
-                    return false;
-                }
-                return true;
-            }
-        )
-        .test(
-            'min',
-            `\${path} must be greater than 0 ${coinSymbol}`,
-            (amount?: BigNumber) => (amount ? amount.gt(0) : false)
-        )
-        .test(
-            'max',
-            `\${path} must be less than ${formatBalance(
-                coinBalance,
-                decimals
-            )} ${coinSymbol}`,
-            (amount?: BigNumber) =>
-                amount
-                    ? amount.shiftedBy(decimals).lte(coinBalance.toString())
-                    : false
-        )
-        .test(
-            'max-decimals',
-            `The value exeeds the maximum decimals (${decimals}).`,
-            (amount?: BigNumber) => {
-                return amount ? amount.shiftedBy(decimals).isInteger() : false;
-            }
-        )
-        .test(
-            'gas-balance-check',
-            `Insufficient ${GAS_SYMBOL} balance to cover gas fee (${formatBalance(
-                gasBudget,
-                gasDecimals
-            )} ${GAS_SYMBOL})`,
-            (amount?: BigNumber) => {
-                if (!amount) {
-                    return false;
-                }
-                try {
-                    let availableGas = gasBalance;
-                    if (coinType === GAS_TYPE_ARG) {
-                        availableGas -= BigInt(
-                            amount.shiftedBy(decimals).toString()
-                        );
+    return Yup.object().shape({
+        amount: Yup.mixed()
+            .transform((_, original) => {
+                return new BigNumber(original);
+            })
+            .test('required', `\${path} is a required field`, (value) => {
+                return !!value;
+            })
+            .test(
+                'valid',
+                'The value provided is not valid.',
+                (value?: BigNumber) => {
+                    if (!value || value.isNaN() || !value.isFinite()) {
+                        return false;
                     }
-                    return availableGas >= gasBudget;
-                } catch (e) {
-                    return false;
+                    return true;
                 }
-            }
-        )
-        .label('Amount');
+            )
+            .test(
+                'min',
+                `\${path} must be greater than 0 ${coinSymbol}`,
+                (amount?: BigNumber) => (amount ? amount.gt(0) : false)
+            )
+            .test(
+                'max',
+                `\${path} must be less than ${formatBalance(
+                    coinBalance,
+                    decimals
+                )} ${coinSymbol}`,
+                (amount?: BigNumber) =>
+                    amount
+                        ? amount.shiftedBy(decimals).lte(coinBalance.toString())
+                        : false
+            )
+            .test(
+                'max-decimals',
+                `The value exeeds the maximum decimals (${decimals}).`,
+                (amount?: BigNumber) => {
+                    return amount
+                        ? amount.shiftedBy(decimals).isInteger()
+                        : false;
+                }
+            )
+            .test(
+                'gas-balance-check',
+                `Insufficient ${GAS_SYMBOL} balance to cover gas fee (${formatBalance(
+                    gasBudget,
+                    gasDecimals
+                )} ${GAS_SYMBOL})`,
+                (amount?: BigNumber) => {
+                    console.log(
+                        'AMOUNT: ',
+                        amount?.shiftedBy(decimals).toString()
+                    );
+
+                    if (!amount) {
+                        return false;
+                    }
+                    try {
+                        let availableGas = gasBalance;
+                        if (coinType === GAS_TYPE_ARG) {
+                            availableGas -= BigInt(
+                                amount.shiftedBy(decimals).toString()
+                            );
+                        }
+                        return availableGas >= gasBudget;
+                    } catch (e) {
+                        return false;
+                    }
+                }
+            )
+            .label('amount'),
+    });
 }
