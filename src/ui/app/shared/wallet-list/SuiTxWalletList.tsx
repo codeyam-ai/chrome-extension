@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { type MouseEventHandler, useCallback } from 'react';
 
 import { type AccountInfo } from '../../KeypairVault';
 import { useAppDispatch, useAppSelector, useMiddleEllipsis } from '../../hooks';
@@ -16,25 +16,22 @@ const WalletSelector = ({ wallet }: WalletSelectorProps) => {
     const shortenedAddress = useMiddleEllipsis(wallet.address, 24, 12);
     const account = useAppSelector(({ account }) => account);
 
-    const selectWallet = useCallback(
-        (addr: string) => {
-            dispatch(
-                setSuiRecipient({
-                    to: addr,
-                    from:
-                        account.accountInfos[account.activeAccountIndex].name ||
-                        'Wallet',
-                })
-            );
-        },
-        [account, dispatch]
-    );
+    const selectWallet: MouseEventHandler<HTMLDivElement> = useCallback(() => {
+        dispatch(
+            setSuiRecipient({
+                to: wallet.address,
+                from:
+                    account.accountInfos[account.activeAccountIndex].name ||
+                    'Wallet',
+            })
+        );
+    }, [account, wallet.address, dispatch]);
 
     return (
         <div
             data-testid={`wallet${wallet.index + 1}`}
             className={`py-[10px] px-3 flex justify-between items-center cursor-pointer`}
-            onClick={() => selectWallet(wallet.address)}
+            onClick={selectWallet}
         >
             <div className="flex gap-3">
                 <WalletColorAndEmojiCircle

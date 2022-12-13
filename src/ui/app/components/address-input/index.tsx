@@ -45,7 +45,7 @@ function AddressInput<FormValues>({
         } else {
             setFieldValue(name, SUI_ADDRESS_VALIDATION.cast(_value));
         }
-    }, [setFieldValue, setDisplayedValue, formState.to]);
+    }, [setFieldValue, setDisplayedValue, formState.to, name]);
 
     const handleOnChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
         (e) => {

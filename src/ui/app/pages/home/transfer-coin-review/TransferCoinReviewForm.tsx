@@ -5,7 +5,7 @@ import { Form, useFormikContext } from 'formik';
 import { useEffect, useRef, memo } from 'react';
 import { Navigate } from 'react-router-dom';
 
-import { FormValues } from '.';
+import { type FormValues } from '.';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import { getTheme } from '_src/ui/app/helpers/getTheme';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
