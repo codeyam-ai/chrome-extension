@@ -9,7 +9,7 @@ export function createValidationSchema(senderAddress: string) {
         to: SUI_ADDRESS_VALIDATION.test(
             'sender-address',
             // eslint-disable-next-line no-template-curly-in-string
-            `NFT is owned by this address`,
+            `Cannot send Sui to sender's address`,
             (value) => senderAddress !== value
         ),
     });
