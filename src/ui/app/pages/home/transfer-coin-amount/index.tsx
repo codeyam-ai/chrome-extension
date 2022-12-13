@@ -4,7 +4,7 @@
 // import { getTransactionDigest } from '@mysten/sui.js';
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { createTokenValidation } from './validation';
 import { useAppDispatch, useAppSelector } from '_hooks';
@@ -129,6 +129,10 @@ function TransferCoinAmountPage() {
     const initialValues = {
         amount: formState.amount,
     };
+
+    if (formState.to === '') {
+        return <Navigate to={'/tokens'} />;
+    }
 
     return (
         <>
