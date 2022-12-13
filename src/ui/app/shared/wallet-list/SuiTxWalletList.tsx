@@ -17,10 +17,9 @@ const WalletSelector = ({ wallet }: WalletSelectorProps) => {
     const account = useAppSelector(({ account }) => account);
 
     const selectWallet = useCallback(
-        (idx: number, addr: string) => {
+        (addr: string) => {
             dispatch(
                 setSuiRecipient({
-                    walletIdx: idx,
                     to: addr,
                     from:
                         account.accountInfos[account.activeAccountIndex].name ||
@@ -35,7 +34,7 @@ const WalletSelector = ({ wallet }: WalletSelectorProps) => {
         <div
             data-testid={`wallet${wallet.index + 1}`}
             className={`py-[10px] px-3 flex justify-between items-center cursor-pointer`}
-            onClick={() => selectWallet(wallet.index, wallet.address)}
+            onClick={() => selectWallet(wallet.address)}
         >
             <div className="flex gap-3">
                 <WalletColorAndEmojiCircle
