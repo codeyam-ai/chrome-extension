@@ -1,8 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-// import { getTransactionDigest } from '@mysten/sui.js';
-import { useEffect } from 'react';
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
@@ -10,9 +8,9 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import TransferCoinRecipientForm from './TransferCoinRecipientForm';
 import { createValidationSchema } from './validation';
 import { useAppDispatch, useAppSelector } from '_hooks';
+import { setSuiRecipient } from '_src/ui/app/redux/slices/forms';
 
 import type { SerializedError } from '@reduxjs/toolkit';
-import { setSuiRecipient } from '_src/ui/app/redux/slices/forms';
 
 // TODO: show out of sync when sui objects locally might be outdated
 function TransferCoinRecipientPage() {
@@ -56,36 +54,38 @@ function TransferCoinRecipientPage() {
                 setSendError((e as SerializedError).message || null);
             }
         },
-        [navigate, coinType]
+        [navigate, coinType, account.accountInfos, activeAccountIndex, dispatch]
     );
-
-    if (!coinType) {
-        return <Navigate to="/" replace={true} />;
-    }
 
     const handleOnClearSubmitError = useCallback(() => {
         setSendError(null);
     }, []);
 
-    let initState = {
+    const initState = {
         to: formState.to,
     };
 
-    return (
-        <>
-            <Formik
-                initialValues={initState}
-                validateOnMount={true}
-                validationSchema={validationSchema}
-                onSubmit={onHandleSubmit}
-            >
-                <TransferCoinRecipientForm
-                    submitError={sendError}
-                    onClearSubmitError={handleOnClearSubmitError}
-                />
-            </Formik>
-        </>
-    );
+    console.log('THE STATE HAS CHANGED **** ');
+
+    if (!coinType) {
+        return <Navigate to="/" replace={true} />;
+    } else {
+        return (
+            <>
+                <Formik
+                    initialValues={initState}
+                    validateOnMount={true}
+                    validationSchema={validationSchema}
+                    onSubmit={onHandleSubmit}
+                >
+                    <TransferCoinRecipientForm
+                        submitError={sendError}
+                        onClearSubmitError={handleOnClearSubmitError}
+                    />
+                </Formik>
+            </>
+        );
+    }
 }
 
 export default TransferCoinRecipientPage;

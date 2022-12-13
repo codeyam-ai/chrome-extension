@@ -2,20 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Field, Form, useFormikContext } from 'formik';
-import { useEffect, useRef, memo } from 'react';
+import { memo, useCallback, useRef } from 'react';
 
 import AddressInput from '_components/address-input';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
-import Button from '_src/ui/app/shared/buttons/Button';
-import SuiIcon from '_src/ui/app/shared/svg/SuiIcon';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
-
-import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
 import { setSuiRecipient } from '_src/ui/app/redux/slices/forms';
-import account from '_src/ui/app/redux/slices/account';
+import Button from '_src/ui/app/shared/buttons/Button';
 import { CoinSelect } from '_src/ui/app/shared/coin-select/coin-dropdown';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
 
 export type TransferCoinRecipientFormProps = {
     submitError: string | null;
@@ -36,24 +32,28 @@ function TransferCoinRecipientForm({
         ({ account: { activeAccountIndex } }) => activeAccountIndex
     );
 
-    const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
-
     const {
         isSubmitting,
         isValid,
-        setValues,
         values: { to },
     } = useFormikContext<FormValues>();
 
     const onClearRef = useRef(onClearSubmitError);
     onClearRef.current = onClearSubmitError;
 
-    useEffect(() => {
-        setValues({ to: formState.to });
-        console.log('form state: ', formState);
-    }, [formState.to]);
-
     const dispatch = useAppDispatch();
+
+    const handleOnChange = useCallback(
+        (e: { target: { name: string } }) => {
+            dispatch(
+                setSuiRecipient({
+                    to: e.target.name,
+                    from: accountInfos[activeAccountIndex].name || 'Wallet',
+                })
+            );
+        },
+        [accountInfos, activeAccountIndex, dispatch]
+    );
 
     return (
         <Form autoComplete="off" noValidate={true}>
@@ -64,21 +64,13 @@ function TransferCoinRecipientForm({
                 </div>
                 <div className={'relative'}>
                     <Field
-                        id="to"
-                        placeholder={to || '0x... or SuiNS name'}
+                        placeholder={'0x... or SuiNS name'}
                         className={'flex flex-col gap-2 pl-0 pr-0'}
                         component={AddressInput}
                         name="to"
+                        id="to"
                         label={'Recipient'}
-                        onChange={(e: { target: { name: string } }) => {
-                            dispatch(
-                                setSuiRecipient({
-                                    walletIdx: undefined,
-                                    to: e.target.name,
-                                    from: 'Wallet',
-                                })
-                            );
-                        }}
+                        onChange={handleOnChange}
                     />
                     <div
                         className={`absolute top-0 right-0 mt-1 text-red-500 dark:text-red-400 ${
