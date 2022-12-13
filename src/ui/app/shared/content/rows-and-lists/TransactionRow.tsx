@@ -97,7 +97,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 'flex w-[40px] h-[40px] justify-center items-center bg-[#3D5FF2] rounded-full'
             }
         >
-            <SuiIcon />
+            <SuiIcon width={15} height={15} />
         </div>
     );
 

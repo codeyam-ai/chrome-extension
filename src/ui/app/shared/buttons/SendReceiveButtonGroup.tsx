@@ -1,13 +1,13 @@
 import { CreditCardIcon } from '@heroicons/react/24/outline';
+import { ArrowUpCircleIcon } from '@heroicons/react/24/solid';
 import { useCallback, useMemo, useState } from 'react';
-import SuiIcon from '../svg/SuiIcon';
 
 import LoadingIndicator from '../../components/loading/LoadingIndicator';
 import { useAppSelector } from '../../hooks';
 import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import Alert from '../feedback/Alert';
+import SuiIcon from '../svg/SuiIcon';
 import InlineButtonGroup from './InlineButtonGroup';
-import { ArrowUpCircleIcon } from '@heroicons/react/24/solid';
 
 interface SendReceiveButtonGroupProps {
     mistBalance: number | bigint;

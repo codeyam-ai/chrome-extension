@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 
-import type { MouseEventHandler } from 'react';
 import BodyLarge from '../typography/BodyLarge';
+
+import type { MouseEventHandler } from 'react';
 
 export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
     // Defaults to primary

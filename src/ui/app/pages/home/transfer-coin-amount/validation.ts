@@ -66,11 +66,6 @@ export function createTokenValidation(
                     gasDecimals
                 )} ${GAS_SYMBOL})`,
                 (amount?: BigNumber) => {
-                    console.log(
-                        'AMOUNT: ',
-                        amount?.shiftedBy(decimals).toString()
-                    );
-
                     if (!amount) {
                         return false;
                     }

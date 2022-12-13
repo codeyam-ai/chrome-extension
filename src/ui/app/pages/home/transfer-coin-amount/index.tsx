@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // import { getTransactionDigest } from '@mysten/sui.js';
+
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
+import TransferCoinAmountForm from './TransferCoinAmountForm';
 import { createTokenValidation } from './validation';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import {
@@ -17,11 +19,10 @@ import {
     useCoinDecimals,
     useFormatCoin,
 } from '_src/ui/app/hooks/useFormatCoin';
+import { setSuiAmount } from '_src/ui/app/redux/slices/forms';
 
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
-import TransferCoinAmountForm from './TransferCoinAmountForm';
-import { setSuiAmount } from '_src/ui/app/redux/slices/forms';
 
 const initialValues = {
     amount: '',
@@ -120,7 +121,7 @@ function TransferCoinAmountPage() {
                 setSendError((e as SerializedError).message || null);
             }
         },
-        [dispatch, navigate, coinType, coinDecimals]
+        [dispatch, navigate, coinType]
     );
     const handleOnClearSubmitError = useCallback(() => {
         setSendError(null);

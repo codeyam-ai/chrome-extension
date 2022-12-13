@@ -3,10 +3,12 @@
 
 import { Form, useFormikContext } from 'formik';
 import { useEffect, useRef, memo } from 'react';
+import { Navigate } from 'react-router-dom';
 
-import { getTheme } from '_src/ui/app/helpers/getTheme';
-
+import { FormValues } from '.';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
+import { getTheme } from '_src/ui/app/helpers/getTheme';
+import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
@@ -14,10 +16,6 @@ import { AssetCard } from '_src/ui/app/shared/nfts/AssetCard';
 import Body from '_src/ui/app/shared/typography/Body';
 import Header from '_src/ui/app/shared/typography/Header';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
-
-import type { FormValues } from '.';
-import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
-import { Navigate } from 'react-router-dom';
 
 export type TransferCoinFormProps = {
     submitError: string | null;

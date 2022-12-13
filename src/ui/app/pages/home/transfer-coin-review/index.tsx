@@ -6,18 +6,18 @@ import BigNumber from 'bignumber.js';
 import { Formik } from 'formik';
 import { useCallback, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
+import TransferCoinReviewForm from './TransferCoinReviewForm';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector } from '_hooks';
-import { sendTokens } from '_redux/slices/transactions';
 import { resetSendSuiForm } from '_redux/slices/forms';
+import { sendTokens } from '_redux/slices/transactions';
 import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
+import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
-import TransferCoinReviewForm from './TransferCoinReviewForm';
-import { toast } from 'react-toastify';
-import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 
 const initialValues = {
     to: '',

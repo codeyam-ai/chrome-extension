@@ -2,10 +2,10 @@ import { useCallback } from 'react';
 
 import { type AccountInfo } from '../../KeypairVault';
 import { useAppDispatch, useAppSelector, useMiddleEllipsis } from '../../hooks';
+import { setSuiRecipient } from '../../redux/slices/forms';
 import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
-import { setSuiRecipient } from '../../redux/slices/forms';
 
 interface WalletSelectorProps {
     wallet: AccountInfo;
@@ -27,7 +27,7 @@ const WalletSelector = ({ wallet }: WalletSelectorProps) => {
                 })
             );
         },
-        [account]
+        [account, dispatch]
     );
 
     return (

@@ -9,6 +9,9 @@ import useSizeWindow from './hooks/useSizeWindow';
 import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
 import BuyPage from './pages/home/buy';
 import ReceivePage from './pages/home/receive';
+import TransferCoinAmountPage from './pages/home/transfer-coin-amount';
+import TransferCoinRecipientPage from './pages/home/transfer-coin-recipient';
+import TransferCoinReviewPage from './pages/home/transfer-coin-review';
 import LockedPage from './pages/locked';
 import PasswordPage from './pages/password';
 import { AppType } from './redux/slices/app/AppType';
@@ -35,9 +38,6 @@ import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import ImportPage from '_src/ui/app/pages/initialize/import';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
-import TransferCoinRecipientPage from './pages/home/transfer-coin-recipient';
-import TransferCoinAmountPage from './pages/home/transfer-coin-amount';
-import TransferCoinReviewPage from './pages/home/transfer-coin-review';
 
 const HIDDEN_MENU_PATHS = ['/nft-details', '/receipt'];
 

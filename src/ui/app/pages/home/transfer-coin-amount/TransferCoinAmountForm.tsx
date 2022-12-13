@@ -2,20 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0
 import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
 import { useEffect, useRef, memo } from 'react';
+
+import Sui from '../tokens/Sui';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import NumberInput from '_components/number-input';
+import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
+import { CoinSelect } from '_src/ui/app/shared/coin-select/coin-dropdown';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
-import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 
 import type { FormValues } from '.';
-import Sui from '../tokens/Sui';
-import { CoinSelect } from '_src/ui/app/shared/coin-select/coin-dropdown';
 
 export type TransferCoinFormProps = {
     submitError: string | null;
@@ -30,11 +31,19 @@ const AvailableBalance = ({
 }: {
     balances: Record<string, bigint>;
 }) => {
+    const FormatCoin = (balance: bigint, type: string) => {
+        const [balanceFormatted, symbol, usdAmount] = useFormatCoin(
+            balance,
+            type
+        );
+
+        return [balanceFormatted, symbol, usdAmount];
+    };
     return (
         <div className="text-left">
             {Object.keys(balances).map((type: string, idx: number) => {
                 const balance = balances[type];
-                const [balanceFormatted, symbol, usdAmount] = useFormatCoin(
+                const [balanceFormatted, symbol, usdAmount] = FormatCoin(
                     balance,
                     type
                 );

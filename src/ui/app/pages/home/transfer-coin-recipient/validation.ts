@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as Yup from 'yup';
+
 import { SUI_ADDRESS_VALIDATION } from '_components/address-input/validation';
 
 export function createValidationSchema(senderAddress: string) {
