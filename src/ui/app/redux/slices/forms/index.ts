@@ -8,6 +8,7 @@ type AppState = {
         from: string;
         to: string;
         amount: string;
+        gasFee: string | undefined;
     };
 };
 
@@ -16,6 +17,7 @@ const initialState: AppState = {
         from: '',
         to: '',
         amount: '',
+        gasFee: undefined,
     },
 };
 
@@ -36,8 +38,19 @@ const slice = createSlice({
             state.sendSui.to = payload.to;
             state.sendSui.from = payload.from;
         },
-        setSuiAmount: (state, { payload }: { payload: string }) => {
-            state.sendSui.amount = payload;
+        setSuiAmount: (
+            state,
+            {
+                payload,
+            }: {
+                payload: {
+                    amount: string;
+                    gasFee: string;
+                };
+            }
+        ) => {
+            state.sendSui.amount = payload.amount;
+            state.sendSui.gasFee = payload.gasFee;
         },
         resetSendSuiForm: (state) => {
             state.sendSui = initialState.sendSui;
