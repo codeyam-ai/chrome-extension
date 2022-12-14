@@ -1,40 +1,32 @@
 import { useCallback } from 'react';
 
 import { type AccountInfo } from '../../KeypairVault';
-import { useAppDispatch, useAppSelector, useMiddleEllipsis } from '../../hooks';
-import { setSuiRecipient } from '../../redux/slices/forms';
+import { useMiddleEllipsis } from '../../hooks';
 import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 
 interface WalletSelectorProps {
     wallet: AccountInfo;
+    setFieldValue: (
+        field: string,
+        value: string,
+        shouldValidate?: boolean | undefined
+    ) => void;
 }
 
-const WalletSelector = ({ wallet }: WalletSelectorProps) => {
-    const dispatch = useAppDispatch();
+const WalletSelector = ({ wallet, setFieldValue }: WalletSelectorProps) => {
     const shortenedAddress = useMiddleEllipsis(wallet.address, 24, 12);
-    const account = useAppSelector(({ account }) => account);
 
-    const selectWallet = useCallback(
-        (addr: string) => {
-            dispatch(
-                setSuiRecipient({
-                    to: addr,
-                    from:
-                        account.accountInfos[account.activeAccountIndex].name ||
-                        'Wallet',
-                })
-            );
-        },
-        [account, dispatch]
-    );
+    const selectWallet = useCallback(() => {
+        setFieldValue('to', wallet.address);
+    }, [setFieldValue, wallet.address]);
 
     return (
         <div
             data-testid={`wallet${wallet.index + 1}`}
             className={`py-[10px] px-3 flex justify-between items-center cursor-pointer`}
-            onClick={() => selectWallet(wallet.address)}
+            onClick={selectWallet}
         >
             <div className="flex gap-3">
                 <WalletColorAndEmojiCircle
@@ -62,6 +54,11 @@ export type SuiTxWalletListProps = {
     hasTopPadding?: boolean;
     wallets: AccountInfo[];
     activeAccountIndex: number;
+    setFieldValue: (
+        field: string,
+        value: string,
+        shouldValidate?: boolean | undefined
+    ) => void;
 };
 
 const WalletList = ({
@@ -69,6 +66,7 @@ const WalletList = ({
     hasTopPadding,
     wallets,
     activeAccountIndex,
+    setFieldValue,
 }: SuiTxWalletListProps) => {
     return (
         <div
@@ -87,7 +85,10 @@ const WalletList = ({
                 if ((wallet.index || 0) !== activeAccountIndex) {
                     return (
                         <div key={key}>
-                            <WalletSelector wallet={wallet} />
+                            <WalletSelector
+                                wallet={wallet}
+                                setFieldValue={setFieldValue}
+                            />
                         </div>
                     );
                 } else {

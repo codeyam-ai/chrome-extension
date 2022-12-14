@@ -65,8 +65,6 @@ function TransferCoinRecipientPage() {
         to: formState.to,
     };
 
-    console.log('THE STATE HAS CHANGED **** ');
-
     if (!coinType) {
         return <Navigate to="/" replace={true} />;
     } else {

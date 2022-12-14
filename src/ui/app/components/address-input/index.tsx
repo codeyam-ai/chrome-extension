@@ -3,7 +3,6 @@
 
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useAppSelector } from '../../hooks';
 import Input from '../../shared/inputs/Input';
 import lookup from './lookup';
 import { SUI_ADDRESS_VALIDATION } from './validation';
@@ -30,22 +29,12 @@ function AddressInput<FormValues>({
 }: AddressInputProps<FormValues>) {
     const [displayedValue, setDisplayedValue] = useState<string>(value);
     const [showAddress, setShowAddress] = useState<boolean>(false);
-    const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
     const disabled =
         forcedDisabled !== undefined ? forcedDisabled : isSubmitting;
 
     useEffect(() => {
-        const _value = formState.to;
-        setDisplayedValue(_value);
-        if (!_value.startsWith('0x')) {
-            lookup(_value).then((address: string) => {
-                setShowAddress(address !== _value);
-                setFieldValue(name, SUI_ADDRESS_VALIDATION.cast(address));
-            });
-        } else {
-            setFieldValue(name, SUI_ADDRESS_VALIDATION.cast(_value));
-        }
-    }, [setFieldValue, setDisplayedValue, formState.to]);
+        setDisplayedValue(value);
+    }, [value]);
 
     const handleOnChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
         (e) => {

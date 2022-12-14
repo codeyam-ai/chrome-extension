@@ -3,6 +3,7 @@
 
 import { Field, Form, useFormikContext } from 'formik';
 import { memo, useCallback, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import AddressInput from '_components/address-input';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
@@ -32,10 +33,14 @@ function TransferCoinRecipientForm({
         ({ account: { activeAccountIndex } }) => activeAccountIndex
     );
 
+    const [searchParams] = useSearchParams();
+    const coinType = searchParams.get('type');
+
     const {
         isSubmitting,
         isValid,
         values: { to },
+        setFieldValue,
     } = useFormikContext<FormValues>();
 
     const onClearRef = useRef(onClearSubmitError);
@@ -60,7 +65,7 @@ function TransferCoinRecipientForm({
             <div className="pt-6 px-6 text-left flex flex-col">
                 <div className={'mb-6 flex flex-row items-center gap-6'}>
                     <BodyLarge isTextColorMedium>Sending</BodyLarge>
-                    <CoinSelect />
+                    <CoinSelect type={coinType} />
                 </div>
                 <div className={'relative'}>
                     <Field
@@ -89,6 +94,7 @@ function TransferCoinRecipientForm({
                         header={'Transfer Between My Wallets'}
                         wallets={accountInfos}
                         activeAccountIndex={activeAccountIndex}
+                        setFieldValue={setFieldValue}
                     />
                 )}
             </div>

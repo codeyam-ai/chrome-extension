@@ -43,7 +43,7 @@ export const sendTokens = createAsyncThunk<
     async (
         { tokenTypeArg, amount, recipientAddress },
         { getState, extra: { api, keypairVault }, dispatch }
-    ) => {
+    ): Promise<TransactionResult> => {
         const state = getState();
         const {
             account: { authentication, address, activeAccountIndex },

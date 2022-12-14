@@ -61,26 +61,28 @@ function TransferCoinReviewPage() {
                         recipientAddress: to,
                         tokenTypeArg: coinType,
                     })
-                );
-
-                const txDigest =
-                    tx.payload.EffectsCert.certificate.transactionDigest;
+                ).unwrap();
 
                 resetForm();
                 dispatch(resetSendSuiForm());
 
-                const navLink = `/receipt?${new URLSearchParams({
-                    txdigest: txDigest,
-                }).toString()}`;
+                if ('EffectsCert' in tx) {
+                    const txDigest =
+                        tx.EffectsCert.certificate.transactionDigest;
 
-                toast(
-                    <SuccessAlert
-                        text={'Transaction successful.'}
-                        linkText={'View'}
-                        linkUrl={navLink}
-                    />,
-                    { delay: 500 }
-                );
+                    const navLink = `/receipt?${new URLSearchParams({
+                        txdigest: txDigest,
+                    }).toString()}`;
+
+                    toast(
+                        <SuccessAlert
+                            text={'Transaction successful.'}
+                            linkText={'View'}
+                            linkUrl={navLink}
+                        />,
+                        { delay: 500 }
+                    );
+                }
 
                 const receiptUrl = '/tokens';
                 navigate(receiptUrl);
