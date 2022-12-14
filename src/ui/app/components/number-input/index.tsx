@@ -40,6 +40,7 @@ function NumberInput<FormValues>({
     return (
         <NumberFormat
             type="text"
+            onKeyDown={onBlur}
             {...{
                 className,
                 placeholder,
