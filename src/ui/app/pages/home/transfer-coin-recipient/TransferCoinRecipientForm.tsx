@@ -46,6 +46,11 @@ function TransferCoinRecipientForm({
         txresults.latestTx.filter((tx) => tx.isSender)
     );
 
+    const recentTxs: string[] = [];
+    txByAddress.forEach((tx) => {
+        return recentTxs.push(tx.to || '');
+    });
+
     const loading = useAppSelector(({ txresults }) => txresults.loading);
     const dispatch = useAppDispatch();
 
@@ -108,7 +113,7 @@ function TransferCoinRecipientForm({
                     {txByAddress.length > 1 && (
                         <SuiTxWalletList
                             header={'Recent Wallets'}
-                            transactions={txByAddress}
+                            transactions={[...new Set(recentTxs)]}
                             activeAccountIndex={activeAccountIndex}
                             setFieldValue={setFieldValue}
                         />

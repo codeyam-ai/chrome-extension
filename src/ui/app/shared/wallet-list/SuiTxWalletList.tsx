@@ -5,7 +5,6 @@ import { useMiddleEllipsis } from '../../hooks';
 import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
-import { TxResultState } from '../../redux/slices/txresults';
 
 interface WalletSelectorProps {
     wallet: AccountInfo;
@@ -17,7 +16,7 @@ interface WalletSelectorProps {
 }
 
 interface TxSelectorProps {
-    tx: TxResultState;
+    tx: string;
     setFieldValue: (
         field: string,
         value: string,
@@ -60,18 +59,18 @@ const WalletSelector = ({ wallet, setFieldValue }: WalletSelectorProps) => {
 };
 
 const TxSelector = ({ tx, setFieldValue }: TxSelectorProps) => {
-    if (!tx.to) {
+    if (!tx) {
         return <></>;
     } else {
-        const shortenedAddress = useMiddleEllipsis(tx.to, 12, 12);
+        const shortenedAddress = useMiddleEllipsis(tx, 12, 12);
 
         const selectWallet = useCallback(() => {
-            setFieldValue('to', tx.to || '');
-        }, [setFieldValue, tx.to]);
+            setFieldValue('to', tx);
+        }, [setFieldValue, tx]);
 
         return (
             <div
-                data-testid={`tx-${tx.txId + 1}`}
+                data-testid={`tx-${tx}`}
                 className={`py-[10px] px-3 flex justify-between items-center cursor-pointer`}
                 onClick={selectWallet}
             >
@@ -95,7 +94,7 @@ export type SuiTxWalletListProps = {
     header?: string;
     hasTopPadding?: boolean;
     wallets?: AccountInfo[];
-    transactions?: TxResultState[];
+    transactions?: string[];
     activeAccountIndex: number;
     setFieldValue: (
         field: string,
