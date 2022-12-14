@@ -1,4 +1,4 @@
-import { type MouseEventHandler, useCallback } from 'react';
+import { useCallback } from 'react';
 
 import { type AccountInfo } from '../../KeypairVault';
 import { useMiddleEllipsis } from '../../hooks';

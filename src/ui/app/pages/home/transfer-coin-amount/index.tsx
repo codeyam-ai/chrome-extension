@@ -129,7 +129,7 @@ function TransferCoinAmountPage() {
                 setSendError((e as SerializedError).message || null);
             }
         },
-        [dispatch, navigate, coinType]
+        [dispatch, navigate, coinType, gasFee]
     );
     const handleOnClearSubmitError = useCallback(() => {
         setSendError(null);
