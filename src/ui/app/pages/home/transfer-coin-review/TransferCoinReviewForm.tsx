@@ -45,45 +45,54 @@ function TransferCoinForm({ onClearSubmitError }: TransferCoinFormProps) {
 
     if (amount === '' || to === '') {
         return <Navigate to={'/tokens'} />;
+    } else {
+        return (
+            <Form autoComplete="off" noValidate={true}>
+                <div className="p-6 flex flex-col">
+                    <AssetCard
+                        theme={theme}
+                        isNft={false}
+                        imgUrl={''}
+                        name={''}
+                    />
+                    <Body isTextColorMedium>Sending</Body>
+                    <Header className={'font-weight-ethos-subheader'}>
+                        {amount} Sui
+                    </Header>
+                    <Subheader isTextColorMedium>{dollars}</Subheader>
+                </div>
+                <KeyValueList
+                    keyNamesAndValues={[
+                        {
+                            keyName: 'From',
+                            value: formData.from,
+                        },
+                        {
+                            keyName: 'To',
+                            value: truncateMiddle(formData.to),
+                        },
+                        {
+                            keyName: 'Token',
+                            value: 'SUI',
+                        },
+                        {
+                            keyName: 'Transaction Fee',
+                            value: formData.gasFee || '',
+                        },
+                    ]}
+                />
+                <div className="flex flex-col mt-2 absolute w-full bottom-[63px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4">
+                    <Button
+                        buttonStyle="primary"
+                        type="submit"
+                        className="mt-2"
+                    >
+                        {isSubmitting ? <LoadingIndicator /> : 'Confirm & Send'}
+                    </Button>
+                </div>
+            </Form>
+        );
     }
-
-    return (
-        <Form autoComplete="off" noValidate={true}>
-            <div className="p-6 flex flex-col">
-                <AssetCard theme={theme} isNft={false} imgUrl={''} name={''} />
-                <Body isTextColorMedium>Sending</Body>
-                <Header className={'font-weight-ethos-subheader'}>
-                    {amount} Sui
-                </Header>
-                <Subheader isTextColorMedium>{dollars}</Subheader>
-            </div>
-            <KeyValueList
-                keyNamesAndValues={[
-                    {
-                        keyName: 'From',
-                        value: formData.from,
-                    },
-                    {
-                        keyName: 'To',
-                        value: truncateMiddle(formData.to),
-                    },
-                    {
-                        keyName: 'Token',
-                        value: 'SUI',
-                    },
-                    {
-                        keyName: 'Transaction Fee',
-                        value: '5000 MIST',
-                    },
-                ]}
-            />
-            <div className="flex flex-col mt-2 absolute w-full bottom-[63px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4">
-                <Button buttonStyle="primary" type="submit" className="mt-2">
-                    {isSubmitting ? <LoadingIndicator /> : 'Confirm & Send'}
-                </Button>
-            </div>
-        </Form>
-    );
 }
 
 export default memo(TransferCoinForm);

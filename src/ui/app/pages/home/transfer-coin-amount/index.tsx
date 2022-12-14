@@ -16,6 +16,7 @@ import {
 } from '_redux/slices/account';
 import { Coin, GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
 import {
+    formatBalance,
     useCoinDecimals,
     useFormatCoin,
 } from '_src/ui/app/hooks/useFormatCoin';
@@ -99,6 +100,8 @@ function TransferCoinAmountPage() {
         ]
     );
 
+    const gasFee = `${formatBalance(gasBudget, gasDecimals)} ${coinSymbol}`;
+
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const onHandleSubmit = useCallback(
@@ -109,7 +112,12 @@ function TransferCoinAmountPage() {
             if (coinType === null) {
                 return;
             }
-            dispatch(setSuiAmount(amount));
+            dispatch(
+                setSuiAmount({
+                    amount: amount,
+                    gasFee: gasFee,
+                })
+            );
             setSendError(null);
             try {
                 resetForm();
