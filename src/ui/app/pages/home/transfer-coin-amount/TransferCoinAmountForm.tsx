@@ -59,10 +59,7 @@ const AvailableBalance = ({
                     type
                 );
                 return (
-                    <div
-                        className="flex items-align justify-between mt-3"
-                        key={idx}
-                    >
+                    <div className="flex items-align justify-between" key={idx}>
                         <div className="flex gap-4 items-align">
                             <div className="flex items-center">
                                 <Sui />
@@ -130,17 +127,19 @@ function TransferCoinForm({
                     formState.to
                 )}`}</Body>
             </div>
-            <div className="flex flex-col mb-2 px-6 text-left">
-                <Field
-                    autoFocus
-                    value={formState.amount}
-                    placeholder="Amount"
-                    component={NumberInput}
-                    allowNegative={false}
-                    name="amount"
-                    decimals
-                    className={inputClasses}
-                />
+            <div className="flex flex-col mb-8 px-6 text-left">
+                <div className={'mb-3'}>
+                    <Field
+                        autoFocus
+                        value={formState.amount}
+                        placeholder="Amount"
+                        component={NumberInput}
+                        allowNegative={false}
+                        name="amount"
+                        decimals
+                        className={inputClasses}
+                    />
+                </div>
                 <BodyLarge isSemibold isTextColorMedium>
                     {parseInt(amount) >= 0 ? dollars : '$0.00'}
                 </BodyLarge>
@@ -149,12 +148,12 @@ function TransferCoinForm({
                     name="amount"
                     component="div"
                 />
+                {submitError ? (
+                    <div className="flex flex-col mb-2">
+                        <Alert title="Transfer failed" subtitle={submitError} />
+                    </div>
+                ) : null}
             </div>
-            {submitError ? (
-                <div className="flex flex-col mb-2">
-                    <Alert title="Transfer failed" subtitle={submitError} />
-                </div>
-            ) : null}
             <ContentBlock className="mb-2">
                 <div>
                     <AvailableBalance
