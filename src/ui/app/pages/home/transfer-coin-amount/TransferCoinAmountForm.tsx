@@ -1,7 +1,8 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
-import { useEffect, useRef, memo } from 'react';
+import { useEffect, useMemo, useRef, memo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import Sui from '../tokens/Sui';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
@@ -28,8 +29,10 @@ export type TransferCoinFormProps = {
 
 const AvailableBalance = ({
     balances,
+    filterType,
 }: {
     balances: Record<string, bigint>;
+    filterType?: string | null;
 }) => {
     const FormatCoin = (balance: bigint, type: string) => {
         const [balanceFormatted, symbol, usdAmount] = useFormatCoin(
@@ -39,9 +42,17 @@ const AvailableBalance = ({
 
         return [balanceFormatted, symbol, usdAmount];
     };
+
+    const filterdTypes = useMemo(() => {
+        const types = Object.keys(balances);
+        if (!filterType) return types;
+
+        return types.filter((type: string) => filterType === type);
+    }, [balances, filterType]);
+
     return (
         <div className="text-left">
-            {Object.keys(balances).map((type: string, idx: number) => {
+            {filterdTypes.map((type: string, idx: number) => {
                 const balance = balances[type];
                 const [balanceFormatted, symbol, usdAmount] = FormatCoin(
                     balance,
@@ -84,6 +95,9 @@ function TransferCoinForm({
     const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
     const balances = useAppSelector(accountAggregateBalancesSelector);
 
+    const [searchParams] = useSearchParams();
+    const coinType = searchParams.get('type');
+
     const {
         isSubmitting,
         isValid,
@@ -102,26 +116,30 @@ function TransferCoinForm({
         currency: 'USD',
     }).format(parseFloat(amount) * 100);
 
+    const inputClasses =
+        'flex flex-row w-full py-[16px] px-[20px] focus:py-[15px] focus:px-[19px] resize-none shadow-sm rounded-[16px] bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary font-weight-ethos-body-large text-size-ethos-body-large leading-line-height-ethos-body-large tracking-letter-spacing-ethos-body-large bg-ethos-light-background-default dark:bg-ethos-dark-background-default border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke focus:ring-0 focus:border-2 focus:border-ethos-light-primary-light focus:dark:border-ethos-dark-primary-dark focus:shadow-ethos-light-stroke-focused dark:focus:shadow-ethos-dark-stroke-focused';
+
     return (
         <Form autoComplete="off" noValidate={false}>
-            <div className="pt-6 px-6 text-left flex flex-col mb-[40px]">
+            <div className="pt-6 px-6 text-left flex flex-col mb-2">
                 <div className={'mb-5 flex flex-row items-center gap-6'}>
                     <BodyLarge isTextColorMedium>Sending</BodyLarge>
-                    <CoinSelect />
+                    <CoinSelect type={coinType} />
                 </div>
                 <Body isTextColorMedium>{`To: ${truncateMiddle(
                     formState.to
                 )}`}</Body>
             </div>
-            <div className="flex flex-col mt-2 px-6 text-left">
+            <div className="flex flex-col mb-2 px-6 text-left">
                 <Field
                     autoFocus
-                    value={formState.amount || 'SUI'}
+                    value={formState.amount}
+                    placeholder="Amount"
                     component={NumberInput}
                     allowNegative={false}
                     name="amount"
                     decimals
-                    className="p-0 border-transparent focus:border-transparent focus:ring-0 font-weight-ethos-title outline-none border-none h-[40px] w-full text-size-ethos-jumbo-title dark:bg-ethos-dark-background-default"
+                    className={inputClasses}
                 />
                 <BodyLarge isSemibold isTextColorMedium>
                     {parseInt(amount) >= 0 ? dollars : '$0.00'}
@@ -133,16 +151,19 @@ function TransferCoinForm({
                 />
             </div>
             {submitError ? (
-                <div className="flex flex-col mt-2">
+                <div className="flex flex-col mb-2">
                     <Alert title="Transfer failed" subtitle={submitError} />
                 </div>
             ) : null}
-            <ContentBlock className={'mt-8'}>
+            <ContentBlock className="mb-2">
                 <div>
-                    <AvailableBalance balances={balances} />
+                    <AvailableBalance
+                        balances={balances}
+                        filterType={coinType}
+                    />
                 </div>
             </ContentBlock>
-            <div className="flex flex-col mt-2 absolute w-full bottom-[63px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4">
+            <div className="flex flex-col mb-2 absolute w-full bottom-[63px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4">
                 <Button
                     buttonStyle="primary"
                     type="submit"

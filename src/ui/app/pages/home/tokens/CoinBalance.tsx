@@ -19,7 +19,7 @@ function CoinBalance({ type, balance }: CoinProps) {
     const [balanceFormatted, symbol, usdAmount] = useFormatCoin(balance, type);
 
     const sendUrl = useMemo(
-        () => `/send?${new URLSearchParams({ type }).toString()}`,
+        () => `/send/recipient?${new URLSearchParams({ type }).toString()}`,
         [type]
     );
 
