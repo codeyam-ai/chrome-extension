@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Field, Form, useFormikContext } from 'formik';
-import { memo, useCallback, useRef } from 'react';
+import { memo, useCallback, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import AddressInput from '_components/address-input';
@@ -13,6 +13,11 @@ import Button from '_src/ui/app/shared/buttons/Button';
 import { CoinSelect } from '_src/ui/app/shared/coin-select/coin-dropdown';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
+import {
+    getTransactionsByAddress,
+    TxResultState,
+} from '_src/ui/app/redux/slices/txresults';
+import Loading from '_src/ui/app/components/loading';
 
 export type TransferCoinRecipientFormProps = {
     submitError: string | null;
@@ -36,6 +41,17 @@ function TransferCoinRecipientForm({
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
 
+    const txByAddress: TxResultState[] = useAppSelector(
+        ({ txresults }) => txresults.latestTx
+    );
+
+    const loading = useAppSelector(({ txresults }) => txresults.loading);
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(getTransactionsByAddress()).unwrap();
+    }, [dispatch]);
+
     const {
         isSubmitting,
         isValid,
@@ -45,8 +61,6 @@ function TransferCoinRecipientForm({
 
     const onClearRef = useRef(onClearSubmitError);
     onClearRef.current = onClearSubmitError;
-
-    const dispatch = useAppDispatch();
 
     const handleOnChange = useCallback(
         (e: { target: { name: string } }) => {
@@ -60,55 +74,69 @@ function TransferCoinRecipientForm({
         [accountInfos, activeAccountIndex, dispatch]
     );
 
+    if (!loading) {
+        console.log('tx by address: ', txByAddress);
+    }
+
     return (
-        <Form autoComplete="off" noValidate={true}>
-            <div className="pt-6 px-6 text-left flex flex-col">
-                <div className={'mb-6 flex flex-row items-center gap-6'}>
-                    <BodyLarge isTextColorMedium>Sending</BodyLarge>
-                    <CoinSelect type={coinType} />
-                </div>
-                <div className={'relative'}>
-                    <Field
-                        placeholder={'0x... or SuiNS name'}
-                        className={'flex flex-col gap-2 pl-0 pr-0'}
-                        component={AddressInput}
-                        name="to"
-                        id="to"
-                        label={'Recipient'}
-                        onChange={handleOnChange}
-                    />
-                    <div
-                        className={`absolute top-0 right-0 mt-1 text-red-500 dark:text-red-400 ${
-                            isValid && 'hidden'
-                        }`}
-                    >
-                        {!isValid && to !== ''
-                            ? 'Please use a valid address'
-                            : ' '}
+        <Loading loading={loading} big={true}>
+            <Form autoComplete="off" noValidate={true}>
+                <div className="pt-6 px-6 text-left flex flex-col">
+                    <div className={'mb-6 flex flex-row items-center gap-6'}>
+                        <BodyLarge isTextColorMedium>Sending</BodyLarge>
+                        <CoinSelect type={coinType} />
+                    </div>
+                    <div className={'relative'}>
+                        <Field
+                            placeholder={'0x... or SuiNS name'}
+                            className={'flex flex-col gap-2 pl-0 pr-0'}
+                            component={AddressInput}
+                            name="to"
+                            id="to"
+                            label={'Recipient'}
+                            onChange={handleOnChange}
+                        />
+                        <div
+                            className={`absolute top-0 right-0 mt-1 text-red-500 dark:text-red-400 ${
+                                isValid && 'hidden'
+                            }`}
+                        >
+                            {!isValid && to !== ''
+                                ? 'Please use a valid address'
+                                : ' '}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div className={'pb-[80px]'}>
-                {accountInfos.length > 1 && (
-                    <SuiTxWalletList
-                        header={'Transfer Between My Wallets'}
-                        wallets={accountInfos}
-                        activeAccountIndex={activeAccountIndex}
-                        setFieldValue={setFieldValue}
-                    />
-                )}
-            </div>
-            <div className="flex flex-col mt-2 absolute w-full bottom-[63px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4">
-                <Button
-                    buttonStyle="primary"
-                    type="submit"
-                    disabled={!isValid || isSubmitting}
-                    className="mt-2"
-                >
-                    {isSubmitting ? <LoadingIndicator /> : 'Continue'}
-                </Button>
-            </div>
-        </Form>
+                <div className={'pb-[80px]'}>
+                    {txByAddress.length > 1 && (
+                        <SuiTxWalletList
+                            header={'Recent Wallets'}
+                            transactions={txByAddress}
+                            activeAccountIndex={activeAccountIndex}
+                            setFieldValue={setFieldValue}
+                        />
+                    )}
+                    {accountInfos.length > 1 && (
+                        <SuiTxWalletList
+                            header={'Transfer Between My Wallets'}
+                            wallets={accountInfos}
+                            activeAccountIndex={activeAccountIndex}
+                            setFieldValue={setFieldValue}
+                        />
+                    )}
+                </div>
+                <div className="flex flex-col mt-2 absolute w-full bottom-[63px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4">
+                    <Button
+                        buttonStyle="primary"
+                        type="submit"
+                        disabled={!isValid || isSubmitting}
+                        className="mt-2"
+                    >
+                        {isSubmitting ? <LoadingIndicator /> : 'Continue'}
+                    </Button>
+                </div>
+            </Form>
+        </Loading>
     );
 }
 

@@ -5,9 +5,19 @@ import { useMiddleEllipsis } from '../../hooks';
 import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
+import { TxResultState } from '../../redux/slices/txresults';
 
 interface WalletSelectorProps {
     wallet: AccountInfo;
+    setFieldValue: (
+        field: string,
+        value: string,
+        shouldValidate?: boolean | undefined
+    ) => void;
+}
+
+interface TxSelectorProps {
+    tx: TxResultState;
     setFieldValue: (
         field: string,
         value: string,
@@ -49,10 +59,43 @@ const WalletSelector = ({ wallet, setFieldValue }: WalletSelectorProps) => {
     );
 };
 
+const TxSelector = ({ tx, setFieldValue }: TxSelectorProps) => {
+    if (!tx.to) {
+        return <></>;
+    } else {
+        const shortenedAddress = useMiddleEllipsis(tx.to, 12, 12);
+
+        const selectWallet = useCallback(() => {
+            setFieldValue('to', tx.to || '');
+        }, [setFieldValue, tx.to]);
+
+        return (
+            <div
+                data-testid={`tx-${tx.txId + 1}`}
+                className={`py-[10px] px-3 flex justify-between items-center cursor-pointer`}
+                onClick={selectWallet}
+            >
+                <div className="flex gap-3">
+                    <WalletColorAndEmojiCircle
+                        color={'#6D28D9'}
+                        emoji={undefined}
+                        circleSizeClasses="h-10 w-10"
+                        emojiSizeInPx={22}
+                    />
+                    <div className="flex flex-row text-left items-center">
+                        <BodyLarge isSemibold>{shortenedAddress}</BodyLarge>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+};
+
 export type SuiTxWalletListProps = {
     header?: string;
     hasTopPadding?: boolean;
-    wallets: AccountInfo[];
+    wallets?: AccountInfo[];
+    transactions?: TxResultState[];
     activeAccountIndex: number;
     setFieldValue: (
         field: string,
@@ -65,6 +108,7 @@ const WalletList = ({
     header,
     hasTopPadding,
     wallets,
+    transactions,
     activeAccountIndex,
     setFieldValue,
 }: SuiTxWalletListProps) => {
@@ -81,20 +125,32 @@ const WalletList = ({
             >
                 {header}
             </BodyLarge>
-            {wallets.map((wallet, key) => {
-                if ((wallet.index || 0) !== activeAccountIndex) {
-                    return (
-                        <div key={key}>
-                            <WalletSelector
-                                wallet={wallet}
-                                setFieldValue={setFieldValue}
-                            />
-                        </div>
-                    );
-                } else {
-                    return null;
-                }
-            })}
+            {transactions
+                ? transactions.map((tx, key) => {
+                      return (
+                          <div key={key}>
+                              <TxSelector
+                                  tx={tx}
+                                  setFieldValue={setFieldValue}
+                              />
+                          </div>
+                      );
+                  })
+                : wallets &&
+                  wallets.map((wallet, key) => {
+                      if ((wallet.index || 0) !== activeAccountIndex) {
+                          return (
+                              <div key={key}>
+                                  <WalletSelector
+                                      wallet={wallet}
+                                      setFieldValue={setFieldValue}
+                                  />
+                              </div>
+                          );
+                      } else {
+                          return null;
+                      }
+                  })}
         </div>
     );
 };
