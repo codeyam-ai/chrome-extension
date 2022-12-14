@@ -162,7 +162,7 @@ function TransferCoinForm({
                     />
                 </div>
             </ContentBlock>
-            <div className="flex flex-col mb-2 absolute w-full bottom-[63px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4">
+            <div className="flex flex-col mb-2 absolute w-full bottom-0 bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4 rounded-b-2xl">
                 <Button
                     buttonStyle="primary"
                     type="submit"

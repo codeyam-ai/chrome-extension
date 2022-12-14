@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Field, Form, useFormikContext } from 'formik';
-import { memo, useCallback, useEffect, useRef } from 'react';
+import { memo, useCallback, useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import AddressInput from '_components/address-input';
@@ -34,6 +34,7 @@ function TransferCoinRecipientForm({
     onClearSubmitError,
 }: TransferCoinRecipientFormProps) {
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
+
     const activeAccountIndex = useAppSelector(
         ({ account: { activeAccountIndex } }) => activeAccountIndex
     );
@@ -74,14 +75,10 @@ function TransferCoinRecipientForm({
         [accountInfos, activeAccountIndex, dispatch]
     );
 
-    if (!loading) {
-        console.log('tx by address: ', txByAddress);
-    }
-
     return (
         <Loading loading={loading} big={true}>
             <Form autoComplete="off" noValidate={true}>
-                <div className="pt-6 px-6 text-left flex flex-col">
+                <div className="pt-6 px-6 text-left flex flex-col absolute w-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
                     <div className={'mb-6 flex flex-row items-center gap-6'}>
                         <BodyLarge isTextColorMedium>Sending</BodyLarge>
                         <CoinSelect type={coinType} />
@@ -107,7 +104,7 @@ function TransferCoinRecipientForm({
                         </div>
                     </div>
                 </div>
-                <div className={'pb-[80px]'}>
+                <div className={'pb-[80px] pt-[202px]'}>
                     {txByAddress.length > 1 && (
                         <SuiTxWalletList
                             header={'Recent Wallets'}
@@ -125,7 +122,7 @@ function TransferCoinRecipientForm({
                         />
                     )}
                 </div>
-                <div className="flex flex-col mt-2 absolute w-full bottom-[63px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4">
+                <div className="flex flex-col mb-2 absolute w-full bottom-0 bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4 rounded-b-2xl">
                     <Button
                         buttonStyle="primary"
                         type="submit"
