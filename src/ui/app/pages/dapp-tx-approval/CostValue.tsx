@@ -21,7 +21,7 @@ const CostValue = ({ value, symbol, dollars, total }: Cost) => {
     );
 };
 
-const Dot = () => (
+export const Dot = () => (
     <svg
         width="6"
         height="6"

@@ -10,6 +10,7 @@ import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import Alert from '../../shared/feedback/Alert';
 import Body from '../../shared/typography/Body';
 import EthosLink from '../../shared/typography/EthosLink';
+import { Dot } from './CostValue';
 import SectionElement from './SectionElement';
 import TabElement from './TabElement';
 import Loading from '_components/loading';
@@ -47,6 +48,8 @@ export type TabSections = {
     [key in TxApprovalTab]?: Section[];
 };
 
+const coinName = (coin: string) => coin.split('::')[2];
+
 const cleanObjectId = (objectId: string) => {
     return objectId.replace('0x0', '').replace('0x', '');
 };
@@ -56,6 +59,8 @@ const formatAddress = (address?: string) => {
 };
 
 export function DappTxApprovalPage() {
+    const suiName = useMemo(() => coinName(GAS_TYPE_ARG), []);
+
     const [tab, setTab] = useState(TxApprovalTab.SUMMARY);
 
     const { txID } = useParams();
@@ -210,24 +215,26 @@ export function DappTxApprovalPage() {
         return deleting;
     }, [effects]);
 
-    const suiSpent = useMemo(() => {
+    const coinChanges = useMemo(() => {
         if (!effects?.events) return 0;
 
         const coinBalanceChangeEvents = effects.events.filter(
-            (e) =>
-                e.coinBalanceChange &&
-                e.coinBalanceChange.coinType === '0x2::sui::SUI'
+            (e) => e.coinBalanceChange
         );
 
-        return (
-            coinBalanceChangeEvents.reduce(
-                (total, e) => total + e.coinBalanceChange.amount,
-                0
-            ) * -1
-        );
+        return coinBalanceChangeEvents.reduce((totals, e) => {
+            const { coinType, amount } = e.coinBalanceChange;
+            const name = coinName(coinType);
+            if (!totals[name]) totals[name] = 0;
+            totals[name] += amount * -1;
+            return totals;
+        }, {});
     }, [effects]);
 
-    const charges = useMemo(() => suiSpent - (gas || 0), [suiSpent, gas]);
+    const charges = useMemo(
+        () => coinChanges[suiName] - (gas || 0),
+        [coinChanges, suiName, gas]
+    );
     const [formattedCharges, chargesSymbol, chargeDollars] = useFormatCoin(
         charges,
         GAS_TYPE_ARG
@@ -237,7 +244,7 @@ export function DappTxApprovalPage() {
         GAS_TYPE_ARG
     );
     const [formattedTotal, totalSymbol, totalDollars] = useFormatCoin(
-        suiSpent,
+        coinChanges[suiName],
         GAS_TYPE_ARG
     );
 
@@ -515,7 +522,8 @@ export function DappTxApprovalPage() {
                     creating.length > 0 ||
                     mutating.length > 0 ||
                     transferring.length > 0 ||
-                    deleting.length > 0
+                    deleting.length > 0 ||
+                    Object.keys(coinChanges).length > 1
                 ) {
                     const effects = {
                         title: 'Effects',
@@ -576,6 +584,27 @@ export function DappTxApprovalPage() {
                         });
                     }
 
+                    if (Object.keys(coinChanges).length > 1) {
+                        effects.details.push({
+                            label: 'Coins',
+                            content: Object.keys(coinChanges)
+                                .filter(
+                                    (name) => name !== coinName(GAS_TYPE_ARG)
+                                )
+                                .map(
+                                    (coinName) =>
+                                        ({
+                                            label: coinName,
+                                            count: `${
+                                                coinChanges[coinName] > 0
+                                                    ? ''
+                                                    : '+'
+                                            }${coinChanges[coinName] * -1}`,
+                                        } as NumberedDetail)
+                                ),
+                        });
+                    }
+
                     summary.push(effects);
                 }
 
@@ -619,13 +648,15 @@ export function DappTxApprovalPage() {
                     reading.length > 0 ||
                     mutating.length > 0 ||
                     transferring.length > 0 ||
-                    deleting.length > 0;
+                    deleting.length > 0 ||
+                    Object.keys(coinChanges).length > 0;
 
                 const anyAssetEffects =
                     creating.length > 0 ||
                     mutating.length > 0 ||
                     transferring.length > 0 ||
-                    deleting.length > 0;
+                    deleting.length > 0 ||
+                    Object.keys(coinChanges).length > 0;
 
                 const assets = [
                     {
@@ -670,6 +701,22 @@ export function DappTxApprovalPage() {
                                       content: `${deleting.length} Assets`,
                                       detail: deleting.map((d) =>
                                           truncateMiddle(d?.name)
+                                      ),
+                                  },
+                                  {
+                                      label: 'Coins',
+                                      content: `${
+                                          Object.keys(coinChanges).length
+                                      } Coins`,
+                                      detail: Object.keys(coinChanges).map(
+                                          (c, index) => (
+                                              <div
+                                                  key={`coin-detail-${index}`}
+                                                  className="text-xs"
+                                              >
+                                                  <div>{c}</div>
+                                              </div>
+                                          )
                                       ),
                                   },
                               ]
@@ -721,6 +768,29 @@ export function DappTxApprovalPage() {
                                       content: `${deleting.length} Assets`,
                                       detail: deleting.map((d) =>
                                           truncateMiddle(d?.name)
+                                      ),
+                                  },
+                                  {
+                                      label: 'Balances',
+                                      content: `${
+                                          Object.keys(coinChanges).length
+                                      } Coins`,
+                                      detail: Object.keys(coinChanges).map(
+                                          (c, index) => (
+                                              <div
+                                                  key={`coin-detail-${index}`}
+                                                  className="text-xs flex gap-1 justify-end items-center"
+                                              >
+                                                  <div>{c}</div>
+                                                  <Dot />
+                                                  <div className="text-slate-500">
+                                                      {coinChanges[c] > 0
+                                                          ? ''
+                                                          : '+'}
+                                                      {coinChanges[c] * -1}
+                                                  </div>
+                                              </div>
+                                          )
                                       ),
                                   },
                               ]
@@ -893,6 +963,7 @@ export function DappTxApprovalPage() {
         transferring,
         gas,
         gasUsed,
+        coinChanges,
     ]);
 
     return (
