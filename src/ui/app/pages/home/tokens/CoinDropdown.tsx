@@ -63,7 +63,7 @@ export const CoinSelect = ({ type }: { type?: string | null }) => {
                     open ? '' : 'hidden'
                 }`}
             >
-                <CoinPickerList balances={balances} />
+                <CoinPickerList balances={balances} coinType={type} />
             </div>
         </>
     );
