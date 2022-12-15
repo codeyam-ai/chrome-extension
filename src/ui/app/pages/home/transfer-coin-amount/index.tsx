@@ -24,6 +24,7 @@ import { setSuiAmount } from '_src/ui/app/redux/slices/forms';
 
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
+import truncateString from '_src/ui/app/helpers/truncate-string';
 
 const initialValues = {
     amount: '',
@@ -100,7 +101,10 @@ function TransferCoinAmountPage() {
         ]
     );
 
-    const gasFee = `${formatBalance(gasBudget, gasDecimals)} ${coinSymbol}`;
+    const gasFee = `${formatBalance(gasBudget, gasDecimals)} ${truncateString(
+        coinSymbol,
+        8
+    )}`;
 
     const dispatch = useAppDispatch();
     const navigate = useNavigate();

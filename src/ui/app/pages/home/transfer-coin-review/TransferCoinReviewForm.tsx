@@ -1,22 +1,26 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { Coin } from '@mysten/sui.js';
 import { Form, useFormikContext } from 'formik';
-import { useEffect, useRef, memo } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useEffect, useRef, memo, useMemo } from 'react';
+import { Navigate, useSearchParams } from 'react-router-dom';
 
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import { getTheme } from '_src/ui/app/helpers/getTheme';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
+import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 import { AssetCard } from '_src/ui/app/shared/nfts/AssetCard';
+import TxSui from '_src/ui/app/shared/svg/TxSui';
 import Body from '_src/ui/app/shared/typography/Body';
 import Header from '_src/ui/app/shared/typography/Header';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { FormValues } from '.';
+import UnknownToken from '../tokens/UnknownToken';
 
 export type TransferCoinFormProps = {
     submitError: string | null;
@@ -28,7 +32,8 @@ function TransferCoinForm({ onClearSubmitError }: TransferCoinFormProps) {
         isSubmitting,
         values: { amount, to },
     } = useFormikContext<FormValues>();
-
+    const [searchParams] = useSearchParams();
+    const coinType = searchParams.get('type');
     const formData = useAppSelector(({ forms: { sendSui } }) => sendSui);
     const theme = getTheme();
     const onClearRef = useRef(onClearSubmitError);
@@ -43,21 +48,44 @@ function TransferCoinForm({ onClearSubmitError }: TransferCoinFormProps) {
         currency: 'USD',
     }).format(parseFloat(amount) * 100);
 
-    if (amount === '' || to === '') {
+    const coinSymbol = useMemo(
+        () => (coinType && Coin.getCoinSymbol(coinType)) || '',
+        [coinType]
+    );
+
+    const icon = useMemo(() => {
+        if (!coinSymbol) return null;
+        const dim = 59;
+        switch (coinSymbol) {
+            case 'SUI':
+                return (
+                    <TxSui
+                        borderColor={
+                            getTheme() === 'light' ? 'white' : '#111111'
+                        }
+                    />
+                );
+            default:
+                return <UnknownToken width={dim} height={dim} />;
+        }
+    }, [coinSymbol]);
+
+    if (amount === '' || to === '' || !coinSymbol) {
         return <Navigate to={'/tokens'} />;
     } else {
         return (
             <Form autoComplete="off" noValidate={true}>
                 <div className="p-6 flex flex-col">
-                    <AssetCard
-                        theme={theme}
-                        isNft={false}
-                        imgUrl={''}
-                        name={''}
-                    />
+                    {icon && (
+                        <AssetCard
+                            isNft={false}
+                            coinType={coinSymbol}
+                            name={coinSymbol}
+                        />
+                    )}
                     <Body isTextColorMedium>Sending</Body>
                     <Header className={'font-weight-ethos-subheader'}>
-                        {amount} Sui
+                        {amount} {truncateString(coinSymbol, 8)}
                     </Header>
                     <Subheader isTextColorMedium>{dollars}</Subheader>
                 </div>
@@ -73,7 +101,7 @@ function TransferCoinForm({ onClearSubmitError }: TransferCoinFormProps) {
                         },
                         {
                             keyName: 'Token',
-                            value: 'SUI',
+                            value: truncateString(coinSymbol, 12),
                         },
                         {
                             keyName: 'Transaction Fee',

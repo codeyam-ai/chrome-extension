@@ -10,7 +10,7 @@ import LoadingIndicator from '_components/loading/LoadingIndicator';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { setSuiRecipient } from '_src/ui/app/redux/slices/forms';
 import Button from '_src/ui/app/shared/buttons/Button';
-import { CoinSelect } from '_src/ui/app/shared/coin-select/coin-dropdown';
+import { CoinSelect } from '_src/ui/app/pages/home/tokens/CoinDropdown';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
 import {
@@ -84,7 +84,11 @@ function TransferCoinRecipientForm({
         <Loading loading={loading} big={true}>
             <Form autoComplete="off" noValidate={true}>
                 <div className="pt-6 px-6 text-left flex flex-col absolute w-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
-                    <div className={'mb-6 flex flex-row items-center gap-6'}>
+                    <div
+                        className={
+                            'mb-6 flex flex-row items-center gap-6 relative z-20'
+                        }
+                    >
                         <BodyLarge isTextColorMedium>Sending</BodyLarge>
                         <CoinSelect type={coinType} />
                     </div>

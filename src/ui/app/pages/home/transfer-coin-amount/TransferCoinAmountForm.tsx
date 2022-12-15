@@ -11,7 +11,7 @@ import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
-import { CoinSelect } from '_src/ui/app/shared/coin-select/coin-dropdown';
+import { CoinSelect } from '_src/ui/app/pages/home/tokens/CoinDropdown';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
@@ -119,7 +119,9 @@ function TransferCoinForm({
     return (
         <Form autoComplete="off" noValidate={false}>
             <div className="pt-6 px-6 text-left flex flex-col mb-2">
-                <div className={'mb-5 flex flex-row items-center gap-6'}>
+                <div
+                    className={'mb-5 relative flex flex-row items-center gap-6'}
+                >
                     <BodyLarge isTextColorMedium>Sending</BodyLarge>
                     <CoinSelect type={coinType} />
                 </div>

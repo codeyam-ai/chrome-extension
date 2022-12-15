@@ -155,6 +155,8 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         GAS_TYPE_ARG
     );
 
+    console.log('TX DIGEST: ", ', txDigest);
+
     const imgUrl = txDigest?.url
         ? txDigest?.url.replace(/^ipfs:\/\//, 'https://ipfs.io/ipfs/')
         : false;
@@ -234,6 +236,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                 <AssetCard
                     theme={theme}
                     isNft={isNft}
+                    coinType={totalSymbol}
                     imgUrl={imgUrl ? imgUrl : ''}
                     name={txDigest?.name || 'NFT'}
                     icon={

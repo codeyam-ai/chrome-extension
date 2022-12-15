@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import Sui from './Sui';
 import UnknownToken from './UnknownToken';
 import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
+import truncateString from '_src/ui/app/helpers/truncate-string';
 
 export type CoinProps = {
     type: string;
@@ -25,13 +26,15 @@ function CoinBalance({ type, balance }: CoinProps) {
 
     return (
         <Link to={sendUrl}>
-            <div className="flex items-align justify-between mt-3">
+            <div className="flex items-align justify-between">
                 <div className="flex gap-4 items-align">
                     <div className="flex items-center">
                         {symbol === 'SUI' ? <Sui /> : <UnknownToken />}
                     </div>
                     <div className="flex flex-col items-start">
-                        <div className="font-light text-base">{symbol}</div>
+                        <div className="font-light text-base">
+                            {truncateString(symbol, 10)}
+                        </div>
                         <div className="font-light text-sm text-slate-500 dark:text-slate-400">
                             {balanceFormatted}
                         </div>
