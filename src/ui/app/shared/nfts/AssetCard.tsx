@@ -14,7 +14,7 @@ export const AssetCard = ({
     imgUrl?: string;
     name: string;
     icon?: JSX.Element;
-    coinType: string;
+    coinType?: string;
 }) => (
     <div className={'w-full'}>
         <div className={'flex flex-row justify-center items-center mb-4'}>

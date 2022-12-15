@@ -16,15 +16,12 @@ const CoinPickerList = ({ balances }: { balances: Record<string, bigint> }) => {
                     const balance = balances[type];
                     return (
                         <div
+                            key={type}
                             className={
                                 'p-2 hover:bg-ethos-light-background-secondary dark:hover:bg-ethos-dark-background-secondary rounded-lg'
                             }
                         >
-                            <CoinBalance
-                                type={type}
-                                balance={balance}
-                                key={type}
-                            />
+                            <CoinBalance type={type} balance={balance} />
                         </div>
                     );
                 })}

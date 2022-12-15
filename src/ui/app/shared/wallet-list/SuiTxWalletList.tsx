@@ -59,15 +59,14 @@ const WalletSelector = ({ wallet, setFieldValue }: WalletSelectorProps) => {
 };
 
 const TxSelector = ({ tx, setFieldValue }: TxSelectorProps) => {
+    const shortenedAddress = useMiddleEllipsis(tx, 12, 12);
+    const selectWallet = useCallback(() => {
+        setFieldValue('to', tx);
+    }, [setFieldValue, tx]);
+
     if (!tx) {
         return <></>;
     } else {
-        const shortenedAddress = useMiddleEllipsis(tx, 12, 12);
-
-        const selectWallet = useCallback(() => {
-            setFieldValue('to', tx);
-        }, [setFieldValue, tx]);
-
         return (
             <div
                 data-testid={`tx-${tx}`}

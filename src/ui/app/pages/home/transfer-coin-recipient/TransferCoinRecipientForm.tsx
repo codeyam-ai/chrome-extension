@@ -15,7 +15,7 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
 import {
     getTransactionsByAddress,
-    TxResultState,
+    type TxResultState,
 } from '_src/ui/app/redux/slices/txresults';
 import Loading from '_src/ui/app/components/loading';
 

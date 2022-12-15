@@ -16,12 +16,8 @@ const CoinList = ({ balances }: { balances: Record<string, bigint> }) => {
                 {Object.keys(balances).map((type: string) => {
                     const balance = balances[type];
                     return (
-                        <div className={'mt-3'}>
-                            <CoinBalance
-                                type={type}
-                                balance={balance}
-                                key={type}
-                            />
+                        <div className={'mt-3'} key={type}>
+                            <CoinBalance type={type} balance={balance} />
                         </div>
                     );
                 })}
