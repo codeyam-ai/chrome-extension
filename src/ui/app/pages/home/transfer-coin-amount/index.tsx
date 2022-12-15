@@ -15,6 +15,7 @@ import {
     accountCoinsSelector,
 } from '_redux/slices/account';
 import { Coin, GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
+import truncateString from '_src/ui/app/helpers/truncate-string';
 import {
     formatBalance,
     useCoinDecimals,
@@ -24,7 +25,6 @@ import { setSuiAmount } from '_src/ui/app/redux/slices/forms';
 
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
-import truncateString from '_src/ui/app/helpers/truncate-string';
 
 const initialValues = {
     amount: '',

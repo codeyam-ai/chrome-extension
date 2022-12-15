@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom';
 
 import Sui from './Sui';
 import UnknownToken from './UnknownToken';
-import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
 import truncateString from '_src/ui/app/helpers/truncate-string';
+import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
 
 export type CoinProps = {
     type: string;

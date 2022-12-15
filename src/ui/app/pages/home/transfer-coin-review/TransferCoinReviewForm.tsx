@@ -6,6 +6,7 @@ import { Form, useFormikContext } from 'formik';
 import { useEffect, useRef, memo, useMemo } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
+import UnknownToken from '../tokens/UnknownToken';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import { getTheme } from '_src/ui/app/helpers/getTheme';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
@@ -20,7 +21,6 @@ import Header from '_src/ui/app/shared/typography/Header';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { FormValues } from '.';
-import UnknownToken from '../tokens/UnknownToken';
 
 export type TransferCoinFormProps = {
     submitError: string | null;
@@ -35,7 +35,6 @@ function TransferCoinForm({ onClearSubmitError }: TransferCoinFormProps) {
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
     const formData = useAppSelector(({ forms: { sendSui } }) => sendSui);
-    const theme = getTheme();
     const onClearRef = useRef(onClearSubmitError);
     onClearRef.current = onClearSubmitError;
 

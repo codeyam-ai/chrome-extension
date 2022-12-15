@@ -1,11 +1,11 @@
+import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import { useCallback, useMemo, useState } from 'react';
 
-import UnknownToken from './UnknownToken';
+import truncateString from '../../../helpers/truncate-string';
 import SuiIcon from '../../../shared/svg/SuiIcon';
 import BodyLarge from '../../../shared/typography/BodyLarge';
-import truncateString from '../../../helpers/truncate-string';
-import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import CoinPickerList from './CoinPickerList';
+import UnknownToken from './UnknownToken';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
 
@@ -31,11 +31,11 @@ export const CoinSelect = ({ type }: { type?: string | null }) => {
 
     const openCoinPicker = useCallback(() => {
         setOpen(true);
-    }, [open]);
+    }, []);
 
     const closeCoinPicker = useCallback(() => {
         setOpen(false);
-    }, [open]);
+    }, []);
 
     if (!type || !name) return <></>;
 

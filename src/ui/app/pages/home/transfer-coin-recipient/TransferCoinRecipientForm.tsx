@@ -2,22 +2,22 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Field, Form, useFormikContext } from 'formik';
-import { memo, useCallback, useEffect, useState, useRef } from 'react';
+import { memo, useCallback, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import AddressInput from '_components/address-input';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
+import Loading from '_src/ui/app/components/loading';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
-import { setSuiRecipient } from '_src/ui/app/redux/slices/forms';
-import Button from '_src/ui/app/shared/buttons/Button';
 import { CoinSelect } from '_src/ui/app/pages/home/tokens/CoinDropdown';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
+import { setSuiRecipient } from '_src/ui/app/redux/slices/forms';
 import {
     getTransactionsByAddress,
     type TxResultState,
 } from '_src/ui/app/redux/slices/txresults';
-import Loading from '_src/ui/app/components/loading';
+import Button from '_src/ui/app/shared/buttons/Button';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
 
 export type TransferCoinRecipientFormProps = {
     submitError: string | null;
