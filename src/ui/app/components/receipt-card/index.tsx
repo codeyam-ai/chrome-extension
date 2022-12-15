@@ -173,7 +173,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
 
     const fromWallet = accountInfo?.address === txDigest.from;
     const isNft = typeof txDigest?.url !== 'undefined';
-
+    const coinType = txDigest?.kind === 'PaySui' ? 'SUI' : 'Coin';
     const transferType =
         txDigest?.kind === 'Call'
             ? 'Call'
@@ -181,8 +181,10 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             ? 'Sent'
             : 'Received';
 
-    const header = isNft ? truncatedNftName : totalSymbol;
+    const header = isNft ? truncatedNftName : coinType;
     const isMinted = txDigest?.callFunctionName === 'mint';
+
+    console.log('TX DIGEST: ', txDigest);
 
     const transferMeta = {
         Call: {
@@ -236,7 +238,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                 <AssetCard
                     theme={theme}
                     isNft={isNft}
-                    coinType={totalSymbol}
+                    coinType={coinType}
                     imgUrl={imgUrl ? imgUrl : ''}
                     name={txDigest?.name || 'NFT'}
                     icon={
@@ -313,11 +315,15 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                                 transferType === 'Sent'
                                     ? 'You Sent'
                                     : 'You Received',
-                            value: `${total} ${totalSymbol}`,
+                            value: `${total} ${
+                                coinType === 'SUI' ? coinType : ''
+                            }`,
                         },
                         {
                             keyName: 'Transaction Fee',
-                            value: `${gas} ${gasSymbol}`,
+                            value: `${gas} ${
+                                coinType === 'SUI' ? coinType : ''
+                            }`,
                         },
                         {
                             keyName: dollars ? 'Total' : '',

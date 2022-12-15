@@ -10,6 +10,7 @@ import { formatDate } from '_helpers';
 import { useMiddleEllipsis } from '_src/ui/app/hooks';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
+import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
 
 interface TransactionRowProps {
     txn: TxResultState;
@@ -44,12 +45,18 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         }
     };
 
-    const isNft = getIsNft();
+    const getIsSui = () => {
+        if (!getIsNft() && txn?.kind === 'PaySui') {
+            return true;
+        } else {
+            return false;
+        }
+    };
 
     const getTransactionType = () => {
         let type = undefined;
 
-        if (txn.callFunctionName === 'mint') {
+        if (txn.callFunctionName === 'mint' || txn.type === 'Mint') {
             type = 'Mint';
         } else if (txn.isSender) {
             type = 'Send';
@@ -63,23 +70,23 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
     const type = getTransactionType();
 
     const drilldownLink = `/receipt?${new URLSearchParams({
-        txdigest: txn.txId,
+        txdigest: txn?.txId,
     }).toString()}`;
 
     const toAddrStr = useMiddleEllipsis(
-        txn.to || '',
+        txn?.to || '',
         TRUNCATE_MAX_LENGTH,
         TRUNCATE_PREFIX_LENGTH
     );
     const fromAddrStr = useMiddleEllipsis(
-        txn.from || '',
+        txn?.from || '',
         TRUNCATE_MAX_LENGTH,
         TRUNCATE_PREFIX_LENGTH
     );
 
     const shared: SharedTypes = {
         txFailed: txn?.status === 'failure',
-        hasAmount: !isNft,
+        hasAmount: !getIsNft(),
         amount: txn?.amount || undefined,
         coinType: txn?.coinType || '',
         type: type,
@@ -92,13 +99,19 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
     };
 
     const CurrencyIcon = () => (
-        <div
-            className={
-                'flex w-[40px] h-[40px] justify-center items-center bg-[#3D5FF2] rounded-full'
-            }
-        >
-            <SuiIcon width={15} height={15} />
-        </div>
+        <>
+            {getIsSui() ? (
+                <div
+                    className={
+                        'flex w-[40px] h-[40px] justify-center items-center bg-[#3D5FF2] rounded-full'
+                    }
+                >
+                    <SuiIcon width={15} height={15} />
+                </div>
+            ) : (
+                <UnknownToken width={40} height={40} />
+            )}
+        </>
     );
 
     const NftImg = ({ src, alt }: { src: string; alt: string }) => (
@@ -112,6 +125,9 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
             [key: string]: RowDataTypes;
         };
         sui: {
+            [key: string]: RowDataTypes;
+        };
+        coin: {
             [key: string]: RowDataTypes;
         };
     } = {
@@ -154,12 +170,54 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 icon: <CurrencyIcon />,
                 header: 'SUI',
             },
+            Mint: {
+                ...shared,
+                typeIcon: <SparklesIcon {...iconProps} />,
+                icon: <CurrencyIcon />,
+                header: 'Coin',
+            },
+        },
+        coin: {
+            Send: {
+                ...shared,
+                typeIcon: <ArrowUpIcon {...iconProps} />,
+                icon: <CurrencyIcon />,
+                header: 'Coin',
+            },
+            Receive: {
+                ...shared,
+                typeIcon: <ArrowDownIcon {...iconProps} />,
+                icon: <CurrencyIcon />,
+                header: 'Coin',
+            },
+            Mint: {
+                ...shared,
+                typeIcon: <SparklesIcon {...iconProps} />,
+                icon: <CurrencyIcon />,
+                header: 'Coin',
+            },
         },
     };
 
-    const rowData = isNft ? dataMap.nft[type] : dataMap.sui[type];
+    let rowData;
 
-    if (!txn) return <></>;
+    if (getIsNft()) {
+        rowData = dataMap.nft[type];
+    } else if (getIsSui()) {
+        rowData = dataMap.sui[type];
+    } else {
+        rowData = dataMap.coin[type];
+    }
+
+    if (txn) {
+        console.log('txn Data: ', txn);
+        console.log('type Data: ', type);
+        console.log('Map Mint data: ', dataMap.nft[type]);
+        console.log('Is an nft: ', getIsNft());
+        console.log('Row Data: ', rowData);
+    }
+
+    if (!rowData) return <></>;
 
     return (
         <ActivityRow
