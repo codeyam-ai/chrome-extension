@@ -8,9 +8,9 @@ import SuiIcon from '../../svg/SuiIcon';
 import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
 import { useMiddleEllipsis } from '_src/ui/app/hooks';
+import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
-import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
 
 interface TransactionRowProps {
     txn: TxResultState;
@@ -207,14 +207,6 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         rowData = dataMap.sui[type];
     } else {
         rowData = dataMap.coin[type];
-    }
-
-    if (txn) {
-        console.log('txn Data: ', txn);
-        console.log('type Data: ', type);
-        console.log('Map Mint data: ', dataMap.nft[type]);
-        console.log('Is an nft: ', getIsNft());
-        console.log('Row Data: ', rowData);
     }
 
     if (!rowData) return <></>;

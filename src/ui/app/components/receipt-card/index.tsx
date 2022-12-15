@@ -155,8 +155,6 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         GAS_TYPE_ARG
     );
 
-    console.log('TX DIGEST: ", ', txDigest);
-
     const imgUrl = txDigest?.url
         ? txDigest?.url.replace(/^ipfs:\/\//, 'https://ipfs.io/ipfs/')
         : false;
@@ -183,8 +181,6 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
 
     const header = isNft ? truncatedNftName : coinType;
     const isMinted = txDigest?.callFunctionName === 'mint';
-
-    console.log('TX DIGEST: ', txDigest);
 
     const transferMeta = {
         Call: {
@@ -316,13 +312,13 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                                     ? 'You Sent'
                                     : 'You Received',
                             value: `${total} ${
-                                coinType === 'SUI' ? coinType : ''
+                                coinType === 'SUI' ? totalSymbol : ''
                             }`,
                         },
                         {
                             keyName: 'Transaction Fee',
                             value: `${gas} ${
-                                coinType === 'SUI' ? coinType : ''
+                                coinType === 'SUI' ? totalSymbol : ''
                             }`,
                         },
                         {

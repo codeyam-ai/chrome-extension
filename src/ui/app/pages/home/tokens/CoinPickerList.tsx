@@ -21,8 +21,6 @@ const CoinPickerList = ({
                 {Object.keys(balances).map((type: string) => {
                     const balance = balances[type];
 
-                    console.log(type, coinType);
-
                     if (type !== coinType) {
                         return (
                             <div
@@ -34,6 +32,8 @@ const CoinPickerList = ({
                                 <CoinBalance type={type} balance={balance} />
                             </div>
                         );
+                    } else {
+                        return <></>;
                     }
                 })}
             </Loading>

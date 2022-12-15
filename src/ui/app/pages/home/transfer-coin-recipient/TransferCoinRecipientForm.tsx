@@ -86,7 +86,7 @@ function TransferCoinRecipientForm({
                 <div className="pt-6 px-6 text-left flex flex-col absolute w-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
                     <div
                         className={
-                            'mb-6 flex flex-row items-center gap-6 relative z-20'
+                            'mb-6 flex flex-row items-center gap-6 relative z-5'
                         }
                     >
                         <BodyLarge isTextColorMedium>Sending</BodyLarge>
