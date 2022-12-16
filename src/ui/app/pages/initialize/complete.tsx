@@ -97,13 +97,12 @@ const CompletePage = () => {
             }),
         });
 
+        setFaucetCompletedSuccessfully(true);
         if (result.status !== 201 && result.status !== 200) {
             setError(true);
             setSuiAmount(0);
             return;
         }
-
-        setFaucetCompletedSuccessfully(true);
     }, [address, faucetCompletedSuccessfully]);
 
     const setupButtons: OnboardingButtonProps[] = [
