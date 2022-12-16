@@ -1,14 +1,12 @@
-import {
-    CreditCardIcon,
-    PaperAirplaneIcon,
-    CloudArrowDownIcon,
-} from '@heroicons/react/24/outline';
+import { CreditCardIcon } from '@heroicons/react/24/outline';
+import { ArrowUpCircleIcon } from '@heroicons/react/24/solid';
 import { useCallback, useMemo, useState } from 'react';
 
 import LoadingIndicator from '../../components/loading/LoadingIndicator';
 import { useAppSelector } from '../../hooks';
 import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import Alert from '../feedback/Alert';
+import SuiIcon from '../svg/SuiIcon';
 import InlineButtonGroup from './InlineButtonGroup';
 
 interface SendReceiveButtonGroupProps {
@@ -25,7 +23,10 @@ const SendReceiveButtonGroup = ({
         [mistBalance]
     );
     const sendUrl = useMemo(
-        () => `/send?${new URLSearchParams({ type: GAS_TYPE_ARG }).toString()}`,
+        () =>
+            `/send/recipient?${new URLSearchParams({
+                type: GAS_TYPE_ARG,
+            }).toString()}`,
         []
     );
 
@@ -76,7 +77,7 @@ const SendReceiveButtonGroup = ({
                     isButtonPrimaryDisabled={isFaucetInProgress}
                     buttonPrimaryChildren={
                         <>
-                            <CloudArrowDownIcon className={iconClasses} />
+                            <SuiIcon width={11} height={16} />
 
                             {isFaucetInProgress ? (
                                 <LoadingIndicator />
@@ -91,7 +92,7 @@ const SendReceiveButtonGroup = ({
                             {isBalanceZero ? (
                                 <CreditCardIcon className={iconClasses} />
                             ) : (
-                                <PaperAirplaneIcon className={iconClasses} />
+                                <ArrowUpCircleIcon width={20} height={20} />
                             )}
 
                             {isBalanceZero ? 'Buy' : 'Send'}

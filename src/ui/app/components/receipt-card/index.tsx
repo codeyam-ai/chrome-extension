@@ -99,17 +99,23 @@ const TxTransfer = ({
             subheader={ToFrom.from.subheader}
             emoji={ToFrom.from.emoji}
         />
-        <div
-            className={'py-1 pl-[18px] text-left text-ethos-light-text-medium'}
-        >
-            <ChevronDoubleDownIcon width={25} height={23} />
-        </div>
-        <AvatarItem
-            bgColor={ToFrom.to.bgColor}
-            header={ToFrom.to.header}
-            subheader={ToFrom.to.subheader}
-            emoji={ToFrom.to.emoji}
-        />
+        {ToFrom.to.header && (
+            <>
+                <div
+                    className={
+                        'py-1 pl-[18px] text-left text-ethos-light-text-medium'
+                    }
+                >
+                    <ChevronDoubleDownIcon width={25} height={23} />
+                </div>
+                <AvatarItem
+                    bgColor={ToFrom.to.bgColor}
+                    header={ToFrom.to.header}
+                    subheader={ToFrom.to.subheader}
+                    emoji={ToFrom.to.emoji}
+                />
+            </>
+        )}
     </div>
 );
 
@@ -171,7 +177,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
 
     const fromWallet = accountInfo?.address === txDigest.from;
     const isNft = typeof txDigest?.url !== 'undefined';
-
+    const coinType = txDigest?.kind === 'PaySui' ? 'SUI' : 'Coin';
     const transferType =
         txDigest?.kind === 'Call'
             ? 'Call'
@@ -179,7 +185,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             ? 'Sent'
             : 'Received';
 
-    const header = isNft ? truncatedNftName : totalSymbol;
+    const header = isNft ? truncatedNftName : coinType;
     const isMinted = txDigest?.callFunctionName === 'mint';
 
     const transferMeta = {
@@ -191,7 +197,10 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                       '(' + txDigest?.callFunctionName + ')'
                   }`,
             txIcon: isMinted ? (
-                <Icon displayIcon={<SparklesIcon />} />
+                <Icon
+                    isRound={header === 'Coin'}
+                    displayIcon={<SparklesIcon />}
+                />
             ) : (
                 <Icon displayIcon={<CodeIcon />} />
             ),
@@ -228,12 +237,15 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         },
     };
 
+    console.log('tx digest: ', txDigest);
+
     return (
         <>
             <div className={'pt-6 px-6 pb-8'}>
                 <AssetCard
                     theme={theme}
                     isNft={isNft}
+                    coinType={coinType}
                     imgUrl={imgUrl ? imgUrl : ''}
                     name={txDigest?.name || 'NFT'}
                     icon={
@@ -309,12 +321,18 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                             keyName:
                                 transferType === 'Sent'
                                     ? 'You Sent'
-                                    : 'You Received',
-                            value: `${total} ${totalSymbol}`,
+                                    : header !== 'Coin'
+                                    ? 'You Received'
+                                    : '',
+                            value: `${total} ${
+                                coinType === 'SUI' ? totalSymbol : ''
+                            }`,
                         },
                         {
                             keyName: 'Transaction Fee',
-                            value: `${gas} ${gasSymbol}`,
+                            value: `${gas} ${
+                                coinType === 'SUI' ? totalSymbol : ''
+                            }`,
                         },
                         {
                             keyName: dollars ? 'Total' : '',

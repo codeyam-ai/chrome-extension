@@ -410,14 +410,6 @@ class Transactions {
             accountInfos = JSON.parse(accountInfosString || '[]');
         }
 
-        // console.log(
-        //     'accountInfos',
-        //     passphrase,
-        //     authentication,
-        //     accountInfos,
-        //     activeAccountIndex
-        // );
-
         return accountInfos.find(
             (accountInfo: AccountInfo) =>
                 (accountInfo.index || 0) === parseInt(activeAccountIndex || '0')

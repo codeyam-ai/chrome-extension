@@ -20,6 +20,9 @@ import SavePhrasePage from './pages/initialize/save-phrase';
 import StylePage from './pages/initialize/style';
 import OnboardingThemePage from './pages/initialize/theme';
 import VerifyPhrasePage from './pages/initialize/verify-phrase';
+import TransferCoinAmountPage from './pages/home/transfer-coin-amount';
+import TransferCoinRecipientPage from './pages/home/transfer-coin-recipient';
+import TransferCoinReviewPage from './pages/home/transfer-coin-review';
 import LockedPage from './pages/locked';
 import PasswordPage from './pages/password';
 import { AppType } from './redux/slices/app/AppType';
@@ -32,7 +35,6 @@ import HomePage, {
     TokensPage,
     TransactionDetailsPage,
     TransactionsPage,
-    TransferCoinPage,
 } from '_pages/home';
 import InitializePage from '_pages/initialize';
 import {
@@ -125,7 +127,20 @@ const App = () => {
                     <Route path="nfts" element={<NftsPage />} />
                     <Route path="nft-details" element={<NFTDetailsPage />} />
                     <Route path="transactions" element={<TransactionsPage />} />
-                    <Route path="send" element={<TransferCoinPage />} />
+                    <Route path="send">
+                        <Route
+                            path="recipient"
+                            element={<TransferCoinRecipientPage />}
+                        />
+                        <Route
+                            path="amount"
+                            element={<TransferCoinAmountPage />}
+                        />
+                        <Route
+                            path="review"
+                            element={<TransferCoinReviewPage />}
+                        />
+                    </Route>
                     <Route path="receive" element={<ReceivePage />} />
                     <Route path="buy" element={<BuyPage />} />
                     <Route

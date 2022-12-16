@@ -1,8 +1,14 @@
-const UnknownToken = () => {
+const UnknownToken = ({
+    width = 39,
+    height = 39,
+}: {
+    width?: number;
+    height?: number;
+}) => {
     return (
         <svg
-            width="39"
-            height="39"
+            width={width}
+            height={height}
             viewBox="0 0 41 41"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
