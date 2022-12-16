@@ -12,6 +12,7 @@ import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/accou
 export const CoinSelect = ({ type }: { type?: string | null }) => {
     const [open, setOpen] = useState(false);
     const balances = useAppSelector(accountAggregateBalancesSelector);
+    const multiCoins = Object.keys(balances).length > 0;
 
     const name = useMemo(() => {
         if (!type) return null;
@@ -30,8 +31,10 @@ export const CoinSelect = ({ type }: { type?: string | null }) => {
     }, [name]);
 
     const openCoinPicker = useCallback(() => {
-        setOpen(true);
-    }, []);
+        if (multiCoins) {
+            setOpen(true);
+        }
+    }, [balances]);
 
     const closeCoinPicker = useCallback(() => {
         setOpen(false);
@@ -55,7 +58,7 @@ export const CoinSelect = ({ type }: { type?: string | null }) => {
                     {icon}
                 </div>
                 <BodyLarge>{truncateString(name, 14)}</BodyLarge>
-                <ChevronDownIcon width={14} />
+                {multiCoins && <ChevronDownIcon width={14} />}
             </div>
             <div
                 onMouseLeave={closeCoinPicker}
