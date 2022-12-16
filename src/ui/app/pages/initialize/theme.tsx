@@ -9,9 +9,9 @@ import Button from '../../shared/buttons/Button';
 import OnboardingCard from '../../shared/layouts/OnboardingCard';
 import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';
-import darkSrc from '_/assets/images/themePreview/dark.png';
-import lightSrc from '_/assets/images/themePreview/light.png';
-import systemSrc from '_/assets/images/themePreview/system.png';
+import darkSrc from '_assets/images/themePreview/dark.png';
+import lightSrc from '_assets/images/themePreview/light.png';
+import systemSrc from '_assets/images/themePreview/system.png';
 import { getEncrypted } from '_src/shared/storagex/store';
 import { ThemeContext } from '_src/shared/utils/themeContext';
 

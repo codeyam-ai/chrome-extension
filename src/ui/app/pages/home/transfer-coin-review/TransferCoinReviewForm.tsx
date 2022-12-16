@@ -68,7 +68,7 @@ function TransferCoinForm({ onClearSubmitError }: TransferCoinFormProps) {
             default:
                 return <UnknownToken width={dim} height={dim} />;
         }
-    }, [coinSymbol]);
+    }, [coinSymbol, theme]);
 
     if (amount === '' || to === '' || !coinSymbol) {
         return <Navigate to={'/tokens'} />;
