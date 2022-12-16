@@ -60,8 +60,11 @@ export default function useInitializedGuard(state: AppState | AppState[]) {
 
     useEffect(() => {
         if (authentication === AUTHENTICATION_REQUESTED) {
-            if (pathname !== '/initialize/hosted') {
-                navigate('/initialize/hosted', { replace: true });
+            if (
+                pathname !== '/initialize/hosted' &&
+                pathname !== '/initialize/hosted/logging-in'
+            ) {
+                navigate('/initialize/hosted/logging-in', { replace: true });
             }
             return;
         }

@@ -1,16 +1,22 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Authentication from '_src/background/Authentication';
 import { IFRAME_URL } from '_src/shared/constants';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import { iframe } from '_src/ui/app/helpers';
-import { useAppDispatch } from '_src/ui/app/hooks';
+import { useAppDispatch, useInitializedGuard } from '_src/ui/app/hooks';
+import { AppState } from '_src/ui/app/hooks/useInitializedGuard';
 import {
-    saveAccountInfos, saveAuthentication, setAddress
+    saveAccountInfos,
+    saveAuthentication,
+    setAddress,
 } from '_src/ui/app/redux/slices/account';
 
 const LoggingInPage = () => {
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    useInitializedGuard([AppState.UNINITIALIZED]);
     useEffect(() => {
         const listenForSuccessfulLogin = async () => {
             const accessToken = await iframe.listenForAccessToken();
@@ -24,9 +30,10 @@ const LoggingInPage = () => {
                 Authentication.set(null);
                 dispatch(saveAuthentication(null));
             }
+            navigate('/');
         };
         listenForSuccessfulLogin();
-    }, [dispatch]);
+    }, [dispatch, navigate]);
 
     useEffect(() => {
         iframe.listenForReady();
