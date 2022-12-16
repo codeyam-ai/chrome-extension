@@ -85,12 +85,12 @@ const PinPage = () => {
                         {/* Line going from puzzle icon to pin icon */}
                         <div
                             id="puzzle-to-pin"
-                            className="absolute left-[72px] bg-gradient-to-r from-ethos-light-text-medium/0 via-ethos-light-text-medium/80 to-ethos-light-text-medium/0 h-[3px] w-[360px]"
+                            className="hidden md:block absolute left-[72px] bg-gradient-to-r from-ethos-light-text-medium/0 via-ethos-light-text-medium/80 to-ethos-light-text-medium/0 h-[3px] w-[360px]"
                         />
                         {/* Line going from pin icon to rounded edge */}
                         <div
                             id="pin-to-round"
-                            className="absolute left-[552px] bg-gradient-to-r from-ethos-light-text-medium/0 to-[#9b9ea1] h-[3px]"
+                            className="hidden md:block absolute left-[552px] bg-gradient-to-r from-ethos-light-text-medium/0 to-[#9b9ea1] h-[3px]"
                             style={{
                                 width:
                                     (lineUp?.x || 0) -
@@ -101,14 +101,14 @@ const PinPage = () => {
                         />
                         {/* Curved line */}
                         <div
-                            className="fixed right-[116px] w-[25px] h-[25px] border-[3px] border-b-[#9b9ea1] border-r-[#9b9ea1] border-t-transparent border-l-transparent rounded-br-2xl"
+                            className="hidden md:block fixed right-[116px] w-[25px] h-[25px] border-[3px] border-b-[#9b9ea1] border-r-[#9b9ea1] border-t-transparent border-l-transparent rounded-br-2xl"
                             // 22px = height (25px) - border width (3px)
                             style={{ top: (pinToRound?.top || 0) - 22 }}
                         />
                         {/* Line going up */}
                         <div
                             id="line-up"
-                            className="fixed right-[116px] bg-[#9b9ea1] h-[200px] w-[3px]"
+                            className="hidden md:block fixed right-[116px] bg-[#9b9ea1] h-[200px] w-[3px]"
                             style={{
                                 top: 22,
                                 // 22px for top offset, 15px to connect to the curved line
@@ -117,11 +117,11 @@ const PinPage = () => {
                         />
                         {/* Arrow head left side */}
                         <div
-                            className="fixed rotate-45 h-[20px] w-[3px] rounded-sm bg-[#9b9ea1]"
+                            className="hidden md:block fixed rotate-45 h-[20px] w-[3px] rounded-sm bg-[#9b9ea1]"
                             style={{ top: 22 - 3, right: 122 }}
                         />
                         <div
-                            className="fixed rotate-[135deg] h-[20px] w-[3px] rounded-sm bg-[#9b9ea1]"
+                            className="hidden md:block fixed rotate-[135deg] h-[20px] w-[3px] rounded-sm bg-[#9b9ea1]"
                             style={{ top: 22 - 3, right: 110 }}
                         />
                     </div>

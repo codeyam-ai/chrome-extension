@@ -9,11 +9,11 @@ import {
 import SuiIcon from '../../svg/SuiIcon';
 import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
+import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useMiddleEllipsis } from '_src/ui/app/hooks';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
-import truncateString from '_src/ui/app/helpers/truncate-string';
 
 interface TransactionRowProps {
     txn: TxResultState;
