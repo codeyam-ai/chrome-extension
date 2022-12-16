@@ -52,10 +52,6 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         return txn?.callFunctionName && txn?.callFunctionName !== 'mint';
     };
 
-    const getIsObj = () => {
-        return '';
-    };
-
     const getTransactionType = () => {
         let type = undefined;
 
@@ -254,9 +250,6 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
     }
 
     if (!rowData) return <></>;
-
-    console.log('TYPE: ', type);
-    console.log('Transaction Data: ', txn);
 
     return (
         <ActivityRow

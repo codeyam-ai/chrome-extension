@@ -237,8 +237,6 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         },
     };
 
-    console.log('tx digest: ', txDigest);
-
     return (
         <>
             <div className={'pt-6 px-6 pb-8'}>

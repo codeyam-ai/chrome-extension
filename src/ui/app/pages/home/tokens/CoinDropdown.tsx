@@ -34,7 +34,7 @@ export const CoinSelect = ({ type }: { type?: string | null }) => {
         if (multiCoins) {
             setOpen(true);
         }
-    }, [balances]);
+    }, [multiCoins]);
 
     const closeCoinPicker = useCallback(() => {
         setOpen(false);
