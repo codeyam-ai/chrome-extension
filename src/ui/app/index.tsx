@@ -54,27 +54,31 @@ const App = () => {
             'lockWalletOnTimestamp'
         );
         if (lockWalletOnTimestamp > 0 && lockWalletOnTimestamp < Date.now()) {
+            await lockWallet();
             Browser.storage.local.set({
                 lockWalletOnTimestamp: -1,
             });
-            lockWallet();
         }
     }, [lockWallet]);
 
     useEffect(() => {
         dispatch(loadAccountInformationFromStorage());
     }, [dispatch]);
+
     const isPopup = useAppSelector(
         (state) => state.app.appType === AppType.popup
     );
+
     useEffect(() => {
         document.body.classList[isPopup ? 'add' : 'remove']('is-popup');
     }, [isPopup]);
     const location = useLocation();
+
     useEffect(() => {
         const menuVisible = !HIDDEN_MENU_PATHS.includes(location.pathname);
         dispatch(setNavVisibility(menuVisible));
     }, [location, dispatch]);
+
     useEffect(() => {
         const lockTimeoutInMs = 15 * 60000;
         setInterval(async () => {
