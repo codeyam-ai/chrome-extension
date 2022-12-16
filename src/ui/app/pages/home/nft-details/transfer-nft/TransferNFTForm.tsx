@@ -141,15 +141,22 @@ function TransferNFTForm({
                             >
                                 {submitError ? submitError : ' '}
                             </div>
-                            <Button
-                                isInline
-                                buttonStyle="primary"
-                                onClick={setIsReviewTrue}
-                                disabled={!isValid || isSubmitting}
-                                className={'mt-[150px] mb-0 relative'}
+                            <div
+                                className={
+                                    'bg-ethos-light-background-default dark:ethos-dark-background-default absolute bottom-0 w-full p-6 left-0 right-0 rounded-b-2xl'
+                                }
                             >
-                                Continue
-                            </Button>
+                                <Button
+                                    isInline
+                                    removeContainerPadding
+                                    buttonStyle="primary"
+                                    onClick={setIsReviewTrue}
+                                    disabled={!isValid || isSubmitting}
+                                    className={'mb-0 relative'}
+                                >
+                                    Continue
+                                </Button>
+                            </div>
                         </div>
                     ) : (
                         <div>
@@ -206,9 +213,14 @@ function TransferNFTForm({
                                 </div>
                             )}
 
-                            <div className={'p-6'}>
+                            <div
+                                className={
+                                    'bg-ethos-light-background-default dark:ethos-dark-background-default absolute bottom-0 w-full p-6 left-0 right-0 rounded-b-2xl'
+                                }
+                            >
                                 <Button
                                     isInline
+                                    removeContainerPadding
                                     buttonStyle="primary"
                                     type="submit"
                                     className={'mt-[50px] mb-0'}
