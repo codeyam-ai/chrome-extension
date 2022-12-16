@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import HeaderWithIcons from './HeaderWithIcons';
-import EthosLogo from '_src/ui/app/components/EthosLogo';
+import EthosLogo from '_src/ui/app/components/logos/EthosLogo';
 
 import type { SyntheticEvent } from 'react';
 

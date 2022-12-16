@@ -71,7 +71,7 @@ export class ContentScriptConnection extends Connection {
                 this.sendAccounts(existingPermission.accounts, msg.id);
             }
         } else if (isGetUrl(payload)) {
-            openInNewTab('ui.html#/initialize/hosted?log-in=true');
+            openInNewTab('ui.html#/initialize/hosted/logging-in');
             this.send(
                 createMessage<OpenWalletResponse>(
                     {

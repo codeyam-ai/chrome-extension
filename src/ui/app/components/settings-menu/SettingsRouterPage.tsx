@@ -8,8 +8,6 @@ import LockPage from './subpages/LockPage';
 import ThemePage from './subpages/ThemePage';
 import ChangePasswordPage from './subpages/security/subpages/change-password/ChangePasswordPage';
 import { getEncrypted } from '_src/shared/storagex/store';
-import ConnectedApps from '_src/ui/app/components/menu/content/connected-apps';
-import Preapprovals from '_src/ui/app/components/menu/content/preapprovals';
 import SettingsHomePage from '_src/ui/app/components/settings-menu/SettingsHomePage';
 import {
     useNextSettingsUrl,
@@ -67,8 +65,6 @@ function SettingsRouterPage() {
                     />
                     <Route path="/permissions" element={<PermissionsPage />} />
                     <Route path="/lock" element={<LockPage />} />
-                    <Route path="/connected-apps" element={<ConnectedApps />} />
-                    <Route path="/preapprovals" element={<Preapprovals />} />
                     <Route
                         path="/import-wallet"
                         element={<ImportWalletPage />}

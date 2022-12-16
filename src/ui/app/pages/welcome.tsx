@@ -1,51 +1,77 @@
-// Copyright (c) 2022, Mysten Labs, Inc.
-// SPDX-License-Identifier: Apache-2.0
+import {
+    ArrowDownOnSquareIcon,
+    EnvelopeIcon,
+    PlusCircleIcon,
+} from '@heroicons/react/24/solid';
 
+import { useInitializedGuard } from '../hooks';
 import { AppState } from '../hooks/useInitializedGuard';
-import VerticalButtonGroup from '../shared/buttons/VerticalButtonGroup';
-import TextLinkList from '../shared/content/rows-and-lists/TextLinkList';
-import GetStartedCard from '../shared/layouts/GetStartedCard';
-import Loading from '_components/loading';
-import { useInitializedGuard } from '_hooks';
-import { LinkType } from '_src/enums/LinkType';
-import PageLayout from '_src/ui/app/pages/PageLayout';
+import OnboardingButton from '../shared/buttons/OnboardingButton';
+import OnboardingHeader from '../shared/headers/page-headers/OnboardingHeader';
+import OnboardingLayout from '../shared/layouts/OnboardingLayout';
+import Title from '../shared/typography/Title';
+
+import type { OnboardingButtonProps } from '../shared/buttons/OnboardingButton';
+
+const setupButtons: OnboardingButtonProps[] = [
+    {
+        title: 'Generate New Wallet',
+        to: '/initialize/create-password',
+        linkType: 'internal',
+        iconWithNoClasses: <PlusCircleIcon />,
+        iconBackgroundColor: '#E81CA5',
+        buttonGradientColor: '#F8ECF4',
+    },
+    {
+        title: 'Sign in with Email',
+        to: '/initialize/hosted',
+        linkType: 'internal',
+        iconWithNoClasses: <EnvelopeIcon />,
+        iconBackgroundColor: '#6D28D9',
+        buttonGradientColor: '#EFECF8',
+    },
+    {
+        title: 'Import an Existing Wallet',
+        to: '/initialize/import/seed',
+        // Uncomment below line when we add the functionality to import just a private key
+        // Also be sure to change the progressCompleted and progressTotal properties in seed.tsx to be 2 and 4, respectively
+        // to: '/initialize/import',
+        linkType: 'internal',
+        iconWithNoClasses: <ArrowDownOnSquareIcon />,
+        iconBackgroundColor: '#328EFA',
+        buttonGradientColor: '#F0F4F9',
+    },
+];
 
 const WelcomePage = () => {
-    const checkingInitialized = useInitializedGuard(AppState.UNINITIALIZED);
+    useInitializedGuard([AppState.UNINITIALIZED, AppState.LOCKED]);
+
     return (
-        <PageLayout forceFullscreen={true}>
-            <Loading loading={checkingInitialized} big={true}>
-                <GetStartedCard showBack={false}>
-                    <VerticalButtonGroup
-                        className="flex flex-col gap-3"
-                        buttonPrimaryTo="/initialize/backup"
-                        buttonPrimaryChildren="Create a New Wallet"
-                        buttonSecondaryTo="/initialize/hosted"
-                        buttonSecondaryChildren="Sign in with Email"
-                    />
-                    <TextLinkList
-                        textAndLinks={[
-                            {
-                                description: 'Have a recovery phrase?',
-                                link: {
-                                    type: LinkType.Internal,
-                                    to: '/initialize/import',
-                                    children: 'Import →',
-                                },
-                            },
-                            {
-                                description: 'Add Ethos sign-in to your dApp.',
-                                link: {
-                                    type: LinkType.External,
-                                    to: 'https://ethoswallet.xyz/dev',
-                                    children: 'Learn how →',
-                                },
-                            },
-                        ]}
-                    />
-                </GetStartedCard>
-            </Loading>
-        </PageLayout>
+        <OnboardingLayout>
+            <div className="flex flex-col w-[464px]">
+                <OnboardingHeader />
+                <div className="flex flex-col gap-8 text-center pt-10 pb-4 rounded-2xl bg-ethos-light-background-default">
+                    <Title className="px-10">
+                        Choose how you would like to setup your wallet.
+                    </Title>
+                    <div className="flex flex-col gap-3 px-10">
+                        {setupButtons.map((b, key) => {
+                            return (
+                                <OnboardingButton
+                                    title={b.title}
+                                    to={b.to}
+                                    linkType={b.linkType}
+                                    iconWithNoClasses={b.iconWithNoClasses}
+                                    iconBackgroundColor={b.iconBackgroundColor}
+                                    buttonGradientColor={b.buttonGradientColor}
+                                    key={key}
+                                />
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+        </OnboardingLayout>
     );
 };
 

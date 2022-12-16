@@ -16,7 +16,7 @@ function NftsPage() {
 
     return (
         <div>
-            {nfts.length <= 0 ? (
+            {nfts.length === 0 ? (
                 <EmptyPageState
                     iconWithNoClasses={<Icon displayIcon={<PhotoIcon />} />}
                     title="No NFTs here yet"

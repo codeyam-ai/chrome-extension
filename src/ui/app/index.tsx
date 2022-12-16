@@ -9,6 +9,17 @@ import useSizeWindow from './hooks/useSizeWindow';
 import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
 import BuyPage from './pages/home/buy';
 import ReceivePage from './pages/home/receive';
+import CompletePage from './pages/initialize/complete';
+import LoggingInPage from './pages/initialize/hosted/logging-in';
+import ImportPage from './pages/initialize/import';
+import ConfirmImportPage from './pages/initialize/import/confirm';
+import ImportPrivateKeyPage from './pages/initialize/import/key';
+import ImportSeedPage from './pages/initialize/import/seed';
+import PinPage from './pages/initialize/pin';
+import SavePhrasePage from './pages/initialize/save-phrase';
+import StylePage from './pages/initialize/style';
+import OnboardingThemePage from './pages/initialize/theme';
+import VerifyPhrasePage from './pages/initialize/verify-phrase';
 import LockedPage from './pages/locked';
 import PasswordPage from './pages/password';
 import { AppType } from './redux/slices/app/AppType';
@@ -31,9 +42,8 @@ import {
 import { setNavVisibility } from '_redux/slices/app';
 import { ThemeProvider } from '_src/shared/utils/themeContext';
 import { DappPreapprovalPage } from '_src/ui/app/pages/dapp-preapproval';
-import BackupPage from '_src/ui/app/pages/initialize/backup';
+import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
 import HostedPage from '_src/ui/app/pages/initialize/hosted';
-import ImportPage from '_src/ui/app/pages/initialize/import';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
 
@@ -125,10 +135,30 @@ const App = () => {
                     <Route path="receipt" element={<ReceiptPage />} />
                 </Route>
                 <Route path="welcome" element={<WelcomePage />} />
-                <Route path="/initialize" element={<InitializePage />}>
-                    <Route path="hosted" element={<HostedPage />} />
-                    <Route path="import" element={<ImportPage />} />
-                    <Route path="backup" element={<BackupPage />} />
+                <Route path="initialize" element={<InitializePage />}>
+                    <Route path="hosted">
+                        <Route path="" element={<HostedPage />} />
+                        <Route path="logging-in" element={<LoggingInPage />} />
+                    </Route>
+                    <Route path="import">
+                        <Route path="" element={<ImportPage />} />
+                        <Route path="key" element={<ImportPrivateKeyPage />} />
+                        <Route path="seed" element={<ImportSeedPage />} />
+                        <Route path="confirm" element={<ConfirmImportPage />} />
+                    </Route>
+                    <Route
+                        path="create-password"
+                        element={<CreatePasswordPage />}
+                    />
+                    <Route path="save-phrase" element={<SavePhrasePage />} />
+                    <Route
+                        path="verify-phrase"
+                        element={<VerifyPhrasePage />}
+                    />
+                    <Route path="style" element={<StylePage />} />
+                    <Route path="theme" element={<OnboardingThemePage />} />
+                    <Route path="pin" element={<PinPage />} />
+                    <Route path="complete" element={<CompletePage />} />
                 </Route>
                 <Route path="password" element={<PasswordPage />} />
                 <Route path="locked" element={<LockedPage />} />

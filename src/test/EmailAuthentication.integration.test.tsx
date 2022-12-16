@@ -69,7 +69,7 @@ describe('Email Authentication', () => {
             });
 
         renderWithProviders(<App />, {
-            initialRoute: '/initialize/hosted?log-in=true',
+            initialRoute: '/initialize/hosted/logging-in',
         });
 
         await screen.findByText(/The new web awaits/i);

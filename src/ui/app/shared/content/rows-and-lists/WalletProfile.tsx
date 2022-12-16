@@ -44,7 +44,7 @@ const WalletProfile = ({ onClick, hideWalletPicker }: WalletProfileProps) => {
             <BodyLarge isSemibold>{shortenedName}</BodyLarge>
 
             {!hideWalletPicker && (
-                <ChevronDownIcon className="h-4 w-4 text-ethos-light-text-medium dark:text-ethos-dark-text-medium cursor-pointer" />
+                <ChevronDownIcon className="h-4 w-4 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
             )}
         </div>
     );

@@ -20,6 +20,7 @@ module.exports = {
                 'weight-ethos-body': '400',
             },
             fontSize: {
+                'size-ethos-ultra-jumbo': '44px',
                 'size-ethos-jumbo-title': '32px',
                 'size-ethos-title': '24px',
                 'size-ethos-header': '20px',
@@ -28,6 +29,7 @@ module.exports = {
                 'size-ethos-body': '14px',
             },
             lineHeight: {
+                'line-height-ethos-ultra-jumbo': '55px',
                 'line-height-ethos-jumbo-title': '40px',
                 'line-height-ethos-title': '32px',
                 'line-height-ethos-header': '28px',
@@ -59,6 +61,9 @@ module.exports = {
                 'ethos-hovering-element-box-shadow':
                     '0px 2px 8px rgba(0, 0, 0, 0.1)',
                 'ethos-modal-box-shadow': '0px 4px 64px rgba(0, 0, 0, 0.2)',
+                'ethos-onboarding-icon-container-box-shadow':
+                    '0px 13px 40px rgba(0, 0, 0, 0.16)',
+                'ethos-pin-card-box-shadow': '0px 4px 76px rgba(0, 0, 0, 0.2)',
 
                 // ==========
                 // Stroke
@@ -79,11 +84,13 @@ module.exports = {
                 // Background
                 'ethos-light-background-default': '#FFFFFF',
                 'ethos-light-background-secondary': '#F2F2F2',
+                'ethos-light-fullscreen-backdrop': '#FAFAFB',
 
                 // Text and stroke
                 'ethos-light-text-default': '#000000',
                 'ethos-light-text-medium': '#74777C',
                 'ethos-light-text-stroke': 'rgba(0, 0, 0, 0.08)',
+                'ethos-light-mnemonic-word': 'rgba(0, 0, 0, 0.7)',
 
                 // Primary
                 'ethos-light-primary-light': '#6D28D9',
@@ -102,11 +109,13 @@ module.exports = {
                 // Background
                 'ethos-dark-background-default': '#111111',
                 'ethos-dark-background-secondary': '#1A1C26',
+                'ethos-dark-fullscreen-backdrop': '#000',
 
                 // Text and stroke
                 'ethos-dark-text-default': '#FFFFFF',
                 'ethos-dark-text-medium': '#9CA3AF',
                 'ethos-dark-text-stroke': 'rgba(255, 255, 255, 0.12)',
+                'ethos-dark-mnemonic-word': 'rgba(255, 255, 255, 0.7)',
 
                 // Primary
                 'ethos-dark-primary-dark': '#9C78F7',

@@ -11,6 +11,7 @@ export interface InputProps
     description?: string;
     errorText?: string;
     isTextAlignRight?: boolean;
+    forceLightTheme?: boolean;
 }
 
 const Input = ({
@@ -19,14 +20,19 @@ const Input = ({
     description,
     errorText,
     isTextAlignRight,
+    forceLightTheme,
     className,
     ...reactProps
 }: InputProps) => {
     const inputClasses =
         // the addition of focus:py-[15px] focus:px-[19px] is to compensate for the 1px border that gets added on focus, so the element doesn't change sizes
-        'flex flex-row w-full py-[16px] px-[20px] focus:py-[15px] focus:px-[19px] resize-none shadow-sm rounded-[16px] bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary font-weight-ethos-body-large text-size-ethos-body-large leading-line-height-ethos-body-large tracking-letter-spacing-ethos-body-large bg-ethos-light-background-default dark:bg-ethos-dark-background-default border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke focus:ring-0 focus:border-2 focus:border-ethos-light-primary-light focus:dark:border-ethos-dark-primary-dark focus:shadow-ethos-light-stroke-focused dark:focus:shadow-ethos-dark-stroke-focused' +
+        'flex flex-row w-full py-[16px] px-[20px] focus:py-[15px] focus:px-[19px] resize-none shadow-sm rounded-[16px] bg-ethos-light-background-secondary font-weight-ethos-body-large text-size-ethos-body-large leading-line-height-ethos-body-large tracking-letter-spacing-ethos-body-large bg-ethos-light-background-default border border-ethos-light-text-stroke focus:ring-0 focus:border-2 focus:border-ethos-light-primary-light focus:shadow-ethos-light-stroke-focused' +
         ' ' +
-        (isTextAlignRight ? 'text-right' : '');
+        (isTextAlignRight ? 'text-right' : '') +
+        ' ' +
+        (forceLightTheme
+            ? ''
+            : 'dark:bg-ethos-dark-background-secondary dark:bg-ethos-dark-background-default dark:border-ethos-dark-text-stroke focus:dark:border-ethos-dark-primary-dark dark:focus:shadow-ethos-dark-stroke-focused');
 
     return (
         <div

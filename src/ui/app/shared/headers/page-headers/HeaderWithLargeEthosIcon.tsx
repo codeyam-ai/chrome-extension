@@ -1,6 +1,6 @@
 import Subheader from '../../typography/Subheader';
 import Title from '../../typography/Title';
-import EthosLogo from '_src/ui/app/components/EthosLogo';
+import EthosLogo from '_src/ui/app/components/logos/EthosLogo';
 
 interface HeaderWithLargeEthosIconProps {
     title: string;

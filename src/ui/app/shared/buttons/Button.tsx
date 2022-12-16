@@ -13,6 +13,7 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
     type?: 'button' | 'submit' | 'reset' | undefined;
     disabled?: boolean;
     isInline?: boolean;
+    removeContainerPadding?: boolean;
     isDanger?: boolean;
     children?: React.ReactNode;
 }
@@ -21,7 +22,7 @@ const buttonChildrenClassNames =
     'inline-flex items-center justify-center gap-2';
 
 const baseButtonClassNames =
-    'w-full py-4 px-5 mb-6 border border-transparent rounded-[16px] disabled:opacity-50';
+    'w-full py-4 px-5 border border-transparent rounded-[16px] disabled:opacity-50';
 
 const primaryButtonClassNames =
     baseButtonClassNames +
@@ -49,6 +50,7 @@ const Button = (props: ButtonProps) => {
         to,
         className,
         isInline,
+        removeContainerPadding,
         isDanger,
         children,
         ...reactProps
@@ -57,7 +59,14 @@ const Button = (props: ButtonProps) => {
     // ex) !py-2. This will only work if done from the component implementation
     // (not adding the "!") later in this file
 
-    const buttonWrapperClassNames = isInline ? '' : 'px-6';
+    // const buttonWrapperClassNames = isInline ? '' : 'px-6';
+    let buttonWrapperClassNames = 'px-6 pb-6';
+    if (isInline) {
+        buttonWrapperClassNames = 'pb-6';
+    }
+    if (removeContainerPadding) {
+        buttonWrapperClassNames = '';
+    }
 
     let classes = className ? className + ' ' : '';
     if (buttonStyle === 'secondary' && isDanger) {
