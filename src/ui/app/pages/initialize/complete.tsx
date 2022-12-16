@@ -111,7 +111,7 @@ const CompletePage = () => {
             title: 'Use Faucet',
             linkType: 'none',
             onClick: onFaucetClicked,
-            iconWithNoClasses: <SuiIcon width={50} height={50} />,
+            iconWithNoClasses: <SuiIcon width={20} height={20} />,
             iconBackgroundColor: '#3D5FF2',
             buttonGradientColor: '#DDEEFA',
             disabled: hasUsedFaucet,
@@ -129,9 +129,7 @@ const CompletePage = () => {
     const rightCardContent = (
         <div className="flex flex-col gap-3 p-4 place-items-center">
             <div className="flex place-content-center place-items-center h-[104px] w-[104px] rounded-full bg-ethos-light-background-default">
-                <span className="w-[50px] h-[50px] text-black">
-                    <SuiIcon width={50} height={50} />
-                </span>
+                <SuiIcon width={50} height={50} color="black" />
             </div>
             <div className="flex flex-col gap-2 text-center">
                 <JumboTitle>
