@@ -52,16 +52,17 @@ function TransferCoinForm({ onClearSubmitError }: TransferCoinFormProps) {
         [coinType]
     );
 
+    const theme = getTheme();
+
     const icon = useMemo(() => {
         if (!coinSymbol) return null;
         const dim = 59;
+
         switch (coinSymbol) {
             case 'SUI':
                 return (
                     <TxSui
-                        borderColor={
-                            getTheme() === 'light' ? 'white' : '#111111'
-                        }
+                        borderColor={theme === 'light' ? '#ffffff' : '#111111'}
                     />
                 );
             default:
@@ -77,6 +78,7 @@ function TransferCoinForm({ onClearSubmitError }: TransferCoinFormProps) {
                 <div className="p-6 flex flex-col">
                     {icon && (
                         <AssetCard
+                            theme={theme}
                             isNft={false}
                             coinType={coinSymbol}
                             name={coinSymbol}
