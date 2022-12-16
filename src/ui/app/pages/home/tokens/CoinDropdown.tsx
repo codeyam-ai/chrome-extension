@@ -12,7 +12,7 @@ import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/accou
 export const CoinSelect = ({ type }: { type?: string | null }) => {
     const [open, setOpen] = useState(false);
     const balances = useAppSelector(accountAggregateBalancesSelector);
-    const multiCoins = Object.keys(balances).length > 0;
+    const multiCoins = Object.keys(balances).length > 1;
 
     const name = useMemo(() => {
         if (!type) return null;
