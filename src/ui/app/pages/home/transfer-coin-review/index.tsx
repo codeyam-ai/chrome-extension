@@ -18,6 +18,7 @@ import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
+import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 
 const initialValues = {
     to: '',
@@ -87,6 +88,11 @@ function TransferCoinReviewPage() {
                 const receiptUrl = '/tokens';
                 navigate(receiptUrl);
             } catch (e) {
+                const receiptUrl = '/tokens';
+                navigate(receiptUrl);
+                toast(<FailAlert text={'Transaction unsuccessful.'} />, {
+                    delay: 250,
+                });
                 setSendError((e as SerializedError).message || null);
             }
         },
