@@ -56,6 +56,7 @@ export type TxResultState = {
     txAmount?: number;
     vendor?: string;
     txType?: string;
+    type: string;
 };
 
 interface TransactionManualState {
@@ -179,10 +180,12 @@ export const getTransactionsByAddress = createAsyncThunk<
 
             const txn = txns[0];
             const txKind = getTransactionKindName(txn);
+            const payCoin = getPayTransaction(txn);
             const transferSui = getTransferSuiTransaction(txn);
             const paySui = getPaySuiTransaction(txn);
             const txTransferObject = getTransferObjectTransaction(txn);
             const recipient =
+                payCoin?.recipients[0] ||
                 transferSui?.recipient ||
                 txTransferObject?.recipient ||
                 paySui?.recipients[0];

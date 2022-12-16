@@ -45,7 +45,7 @@ const Input = ({
                     <BodyLarge isSemibold={true}>{label}</BodyLarge>
                 </label>
             )}
-            <input id={id} className={inputClasses} {...reactProps} />
+            <input id={id} name={id} className={inputClasses} {...reactProps} />
             {description && <Body isTextColorMedium>{description}</Body>}
             {errorText && (
                 <span className="text-ethos-light-red dark:text-ethos-dark-red">

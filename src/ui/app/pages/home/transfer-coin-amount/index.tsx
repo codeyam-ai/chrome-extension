@@ -2,42 +2,41 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // import { getTransactionDigest } from '@mysten/sui.js';
-import BigNumber from 'bignumber.js';
+
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
-import TransferCoinForm from './TransferCoinForm';
+import TransferCoinAmountForm from './TransferCoinAmountForm';
 import { createTokenValidation } from './validation';
-import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import {
     accountAggregateBalancesSelector,
     accountCoinsSelector,
 } from '_redux/slices/account';
 import { Coin, GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
-import { sendTokens } from '_redux/slices/transactions';
+import truncateString from '_src/ui/app/helpers/truncate-string';
 import {
+    formatBalance,
     useCoinDecimals,
     useFormatCoin,
 } from '_src/ui/app/hooks/useFormatCoin';
-import NavBarWithBackAndTitle from '_src/ui/app/shared/navigation/nav-bar/NavBarWithBackAndTitle';
+import { setSuiAmount } from '_src/ui/app/redux/slices/forms';
 
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
 
 const initialValues = {
-    to: '',
     amount: '',
 };
 
 export type FormValues = typeof initialValues;
 
 // TODO: show out of sync when sui objects locally might be outdated
-function TransferCoinPage() {
+function TransferCoinAmountPage() {
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
-
+    const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
     const aggregateBalances = useAppSelector(accountAggregateBalancesSelector);
     const coinBalance = useMemo(
         () => (coinType && aggregateBalances[coinType]) || BigInt(0),
@@ -59,7 +58,6 @@ function TransferCoinPage() {
     );
 
     const [sendError, setSendError] = useState<string | null>(null);
-    // const [formData] = useState<FormValues>(initialValues);
 
     const [coinDecimals] = useCoinDecimals(coinType);
     const [gasDecimals] = useCoinDecimals(GAS_TYPE_ARG);
@@ -102,87 +100,71 @@ function TransferCoinPage() {
             gasBudget,
         ]
     );
+
+    const gasFee = `${formatBalance(gasBudget, gasDecimals)} ${truncateString(
+        coinSymbol,
+        8
+    )}`;
+
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const onHandleSubmit = useCallback(
         async (
-            { to, amount }: FormValues,
+            { amount }: FormValues,
             { resetForm }: FormikHelpers<FormValues>
         ) => {
             if (coinType === null) {
                 return;
             }
+            dispatch(
+                setSuiAmount({
+                    amount: amount,
+                    gasFee: gasFee,
+                })
+            );
             setSendError(null);
             try {
-                const bigIntAmount = BigInt(
-                    new BigNumber(amount)
-                        .shiftedBy(coinDecimals)
-                        .integerValue()
-                        .toString()
-                );
-
-                // const response = await dispatch(
-                //     sendTokens({
-                //         amount: bigIntAmount,
-                //         recipientAddress: to,
-                //         tokenTypeArg: coinType,
-                //     })
-                // ).unwrap();
-                await dispatch(
-                    sendTokens({
-                        amount: bigIntAmount,
-                        recipientAddress: to,
-                        tokenTypeArg: coinType,
-                    })
-                );
-
                 resetForm();
-                // const txDigest = getTransactionDigest(response);
-                // const receiptUrl = `/receipt?txdigest=${encodeURIComponent(
-                //     txDigest
-                // )}&transfer=coin`;
-                const receiptUrl = '/tokens';
-
-                navigate(receiptUrl);
+                const reviewUrl = `/send/review?${new URLSearchParams({
+                    type: coinType,
+                }).toString()}`;
+                navigate(reviewUrl);
             } catch (e) {
                 setSendError((e as SerializedError).message || null);
             }
         },
-        [dispatch, navigate, coinType, coinDecimals]
+        [dispatch, navigate, coinType, gasFee]
     );
     const handleOnClearSubmitError = useCallback(() => {
         setSendError(null);
     }, []);
-    const loadingBalance = useAppSelector(
-        ({ suiObjects }) => suiObjects.loading && !suiObjects.lastSync
-    );
-    if (!coinType) {
-        return <Navigate to="/" replace={true} />;
+
+    const initialValues = {
+        amount: formState.amount,
+    };
+
+    if (formState.to === '') {
+        return <Navigate to={'/tokens'} />;
     }
+
     return (
         <>
-            <NavBarWithBackAndTitle
-                title={'Send ' + coinSymbol}
-                backLink="/tokens"
-            />
-            <Loading loading={loadingBalance} big={true}>
-                <Formik
-                    initialValues={initialValues}
-                    validateOnMount={true}
-                    validationSchema={validationSchema}
-                    onSubmit={onHandleSubmit}
-                >
-                    <TransferCoinForm
-                        submitError={sendError}
-                        coinBalance={formattedBalance.toString()}
-                        coinSymbol={coinSymbol}
-                        gasBudget={gasBudget}
-                        onClearSubmitError={handleOnClearSubmitError}
-                    />
-                </Formik>
-            </Loading>
+            <Formik
+                initialValues={initialValues}
+                validateOnMount={true}
+                validationSchema={validationSchema}
+                onSubmit={onHandleSubmit}
+            >
+                <TransferCoinAmountForm
+                    submitError={sendError}
+                    coinBalance={formattedBalance.toString()}
+                    coinSymbol={coinSymbol}
+                    gasBudget={gasBudget}
+                    onClearSubmitError={handleOnClearSubmitError}
+                />
+            </Formik>
         </>
     );
 }
 
-export default TransferCoinPage;
+export default TransferCoinAmountPage;
