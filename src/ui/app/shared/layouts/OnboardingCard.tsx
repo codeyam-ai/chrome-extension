@@ -14,7 +14,7 @@ import WalletIcon from '../svg/WalletIcon';
 import BodyLarge from '../typography/BodyLarge';
 import JumboTitle from '../typography/JumboTitle';
 import Subheader from '../typography/Subheader';
-import texture from '_assets/images/onboarding-card-texture.png';
+import texture from '_/assets/images/onboarding-card-texture.png';
 
 interface OnboardingCardProps {
     title: string;

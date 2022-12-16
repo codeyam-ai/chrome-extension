@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 
 import OnboardingCard from '../../../shared/layouts/OnboardingCard';
 import ImportOptionButton from './ImportOptionButton';
-import keyCardSrc from '_assets/images/onboarding-options/key-card.png';
-import keySrc from '_assets/images/onboarding-options/key.png';
-import seedCardSrc from '_assets/images/onboarding-options/seed-card.png';
-import seedSrc from '_assets/images/onboarding-options/seed.png';
+import keyCardSrc from '_/assets/images/onboarding-options/key-card.png';
+import keySrc from '_/assets/images/onboarding-options/key.png';
+import seedCardSrc from '_/assets/images/onboarding-options/seed-card.png';
+import seedSrc from '_/assets/images/onboarding-options/seed.png';
 import Button from '_src/ui/app/shared/buttons/Button';
 
 import type { ImportOptionButtonProps } from './ImportOptionButton';
