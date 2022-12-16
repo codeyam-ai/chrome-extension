@@ -52,22 +52,22 @@ const HostedPage = () => {
         [emailSent, dispatch]
     );
 
-    // useEffect(() => {
-    //     const listenForSuccessfulLogin = async () => {
-    //         const accessToken = await iframe.listenForAccessToken();
-    //         Authentication.set(accessToken);
-    //         const accountInfos = await Authentication.getAccountInfos();
-    //         if (accountInfos && accountInfos.length > 0) {
-    //             await dispatch(saveAccountInfos(accountInfos));
-    //             await dispatch(setAddress(accountInfos[0]?.address));
-    //             dispatch(saveAuthentication(accessToken));
-    //         } else {
-    //             Authentication.set(null);
-    //             dispatch(saveAuthentication(null));
-    //         }
-    //     };
-    //     listenForSuccessfulLogin();
-    // }, [loading, dispatch]);
+    useEffect(() => {
+        const listenForSuccessfulLogin = async () => {
+            const accessToken = await iframe.listenForAccessToken();
+            Authentication.set(accessToken);
+            const accountInfos = await Authentication.getAccountInfos();
+            if (accountInfos && accountInfos.length > 0) {
+                await dispatch(saveAccountInfos(accountInfos));
+                await dispatch(setAddress(accountInfos[0]?.address));
+                dispatch(saveAuthentication(accessToken));
+            } else {
+                Authentication.set(null);
+                dispatch(saveAuthentication(null));
+            }
+        };
+        listenForSuccessfulLogin();
+    }, [loading, dispatch]);
 
     useEffect(() => {
         iframe.listenForReady();
@@ -111,7 +111,7 @@ const HostedPage = () => {
                         </Body>
                     </div>
                 ) : loading && authentication === AUTHENTICATION_REQUESTED ? (
-                    <div className="flex justify-center items-center p-10 text-xl">
+                    <div className="flex justify-center items-center p-6 text-xl">
                         <LoadingIndicator />
                     </div>
                 ) : (
