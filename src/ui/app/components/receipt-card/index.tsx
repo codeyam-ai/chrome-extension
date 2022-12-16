@@ -99,17 +99,23 @@ const TxTransfer = ({
             subheader={ToFrom.from.subheader}
             emoji={ToFrom.from.emoji}
         />
-        <div
-            className={'py-1 pl-[18px] text-left text-ethos-light-text-medium'}
-        >
-            <ChevronDoubleDownIcon width={25} height={23} />
-        </div>
-        <AvatarItem
-            bgColor={ToFrom.to.bgColor}
-            header={ToFrom.to.header}
-            subheader={ToFrom.to.subheader}
-            emoji={ToFrom.to.emoji}
-        />
+        {ToFrom.to.header && (
+            <>
+                <div
+                    className={
+                        'py-1 pl-[18px] text-left text-ethos-light-text-medium'
+                    }
+                >
+                    <ChevronDoubleDownIcon width={25} height={23} />
+                </div>
+                <AvatarItem
+                    bgColor={ToFrom.to.bgColor}
+                    header={ToFrom.to.header}
+                    subheader={ToFrom.to.subheader}
+                    emoji={ToFrom.to.emoji}
+                />
+            </>
+        )}
     </div>
 );
 
@@ -191,7 +197,10 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                       '(' + txDigest?.callFunctionName + ')'
                   }`,
             txIcon: isMinted ? (
-                <Icon displayIcon={<SparklesIcon />} />
+                <Icon
+                    isRound={header === 'Coin'}
+                    displayIcon={<SparklesIcon />}
+                />
             ) : (
                 <Icon displayIcon={<CodeIcon />} />
             ),
@@ -227,6 +236,8 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             failedMsg: '',
         },
     };
+
+    console.log('tx digest: ', txDigest);
 
     return (
         <>
@@ -310,7 +321,9 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                             keyName:
                                 transferType === 'Sent'
                                     ? 'You Sent'
-                                    : 'You Received',
+                                    : header !== 'Coin'
+                                    ? 'You Received'
+                                    : '',
                             value: `${total} ${
                                 coinType === 'SUI' ? totalSymbol : ''
                             }`,
