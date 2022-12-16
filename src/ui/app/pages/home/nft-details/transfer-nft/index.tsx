@@ -24,6 +24,7 @@ import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
 
 import st from './TransferNFTForm.module.scss';
+import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 
 const initialValues = {
     to: '',
@@ -111,6 +112,9 @@ function TransferNFTCard({ objectId }: TransferProps) {
                     );
                 }
             } catch (e) {
+                toast(<FailAlert text={'Transaction unsuccessful.'} />, {
+                    delay: 500,
+                });
                 setSendError((e as SerializedError).message || null);
             }
         },
