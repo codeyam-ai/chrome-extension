@@ -3,7 +3,6 @@
 
 import { PhotoIcon } from '@heroicons/react/24/solid';
 
-import Loading from '../../components/loading';
 import { Icon } from '../../shared/icons/Icon';
 import { useAppSelector } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account';
@@ -17,22 +16,20 @@ function NftsPage() {
 
     return (
         <div>
-            <Loading loading={nfts.length === 0} big={true}>
-                {nfts.length === 0 ? (
-                    <EmptyPageState
-                        iconWithNoClasses={<Icon displayIcon={<PhotoIcon />} />}
-                        title="No NFTs here yet"
-                        subtitle="This is where your created or purchased NFTs will appear..."
-                        linkText="Explore NFTs on Ethos"
-                        linkUrl={NFT_EXPERIMENT_LINK}
-                    />
-                ) : (
-                    <>
-                        <TextPageTitle title="NFTs" count={nfts.length} />
-                        <NftGrid nfts={nfts} />
-                    </>
-                )}
-            </Loading>
+            {nfts.length <= 0 ? (
+                <EmptyPageState
+                    iconWithNoClasses={<Icon displayIcon={<PhotoIcon />} />}
+                    title="No NFTs here yet"
+                    subtitle="This is where your created or purchased NFTs will appear..."
+                    linkText="Explore NFTs on Ethos"
+                    linkUrl={NFT_EXPERIMENT_LINK}
+                />
+            ) : (
+                <>
+                    <TextPageTitle title="NFTs" count={nfts.length} />
+                    <NftGrid nfts={nfts} />
+                </>
+            )}
         </div>
     );
 }
