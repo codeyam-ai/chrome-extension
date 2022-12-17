@@ -28,11 +28,11 @@ const WalletButton = ({
     const editWalletUrl = useEditWalletUrl(wallet.index);
 
     const switchToThisWallet = useCallback(async () => {
-        if (isWalletEditing || isActive) return;
+        if (isWalletEditing) return;
         await dispatch(clearForNetworkOrWalletSwitch());
         await dispatch(saveActiveAccountIndex(wallet.index));
         navigate('/');
-    }, [wallet.index, isWalletEditing, dispatch, navigate, isActive]);
+    }, [wallet.index, isWalletEditing, dispatch, navigate]);
 
     const editThisWallet = useCallback(() => {
         navigate(editWalletUrl);
