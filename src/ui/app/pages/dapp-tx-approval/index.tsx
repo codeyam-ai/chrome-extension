@@ -33,8 +33,6 @@ import type { NumberedDetail } from './NumberedValue';
 import type { Section } from './SectionElement';
 import type { SmallDetail } from './SmallValue';
 import type {
-    CoinBalanceChangeEvent,
-    NewObjectEvent,
     SuiMoveNormalizedFunction,
     TransactionEffects,
 } from '@mysten/sui.js';
