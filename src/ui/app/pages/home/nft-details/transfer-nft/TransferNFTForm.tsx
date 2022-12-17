@@ -143,7 +143,7 @@ function TransferNFTForm({
                             </div>
                             <div
                                 className={
-                                    'bg-ethos-light-background-default dark:ethos-dark-background-default absolute bottom-0 w-full p-6 left-0 right-0 rounded-b-2xl'
+                                    'bg-ethos-light-background-default dark:bg-ethos-dark-background-default absolute bottom-0 w-full p-6 left-0 right-0 rounded-b-2xl'
                                 }
                             >
                                 <Button
@@ -215,7 +215,7 @@ function TransferNFTForm({
 
                             <div
                                 className={
-                                    'bg-ethos-light-background-default dark:ethos-dark-background-default absolute bottom-0 w-full p-6 left-0 right-0 rounded-b-2xl'
+                                    'bg-ethos-light-background-default dark:bg-ethos-dark-background-default absolute bottom-0 w-full p-6 left-0 right-0 rounded-b-2xl'
                                 }
                             >
                                 <Button
