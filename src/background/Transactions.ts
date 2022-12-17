@@ -1,6 +1,12 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import {
+    Base64DataBuffer,
+    Ed25519Keypair,
+    RawSigner,
+    SIGNATURE_SCHEME_TO_FLAG,
+} from '@mysten/sui.js';
 import { filter, lastValueFrom, map, race, Subject, take } from 'rxjs';
 import nacl from 'tweetnacl';
 import { v4 as uuidV4 } from 'uuid';
@@ -208,14 +214,6 @@ class Transactions {
 
         const endpoint = process.env.API_ENDPOINT_DEV_NET_FULLNODE || '';
 
-        const toBase64 = (data: string): Uint8Array => {
-            return new Uint8Array(Buffer.from(data, 'base64'));
-        };
-
-        const base64ToString = (data: Uint8Array): string => {
-            return Buffer.from(data).toString('base64');
-        };
-
         const callData = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -243,18 +241,32 @@ class Transactions {
             result: { txBytes },
         } = json;
 
+        const txBytesBuffer = new Base64DataBuffer(txBytes);
         let signature;
         let publicKey;
         if (activeAccount.seed) {
             const seed = Uint8Array.from(
                 activeAccount.seed.split(',').map((s) => parseInt(s))
             );
-            const keypair = nacl.sign.keyPair.fromSeed(new Uint8Array(seed));
-            publicKey = base64ToString(keypair.publicKey);
 
-            signature = base64ToString(
-                nacl.sign.detached(toBase64(txBytes), keypair.secretKey)
+            const keypair = new Ed25519Keypair(
+                nacl.sign.keyPair.fromSeed(new Uint8Array(seed))
             );
+
+            const INTENT_BYTES = [0, 0, 0];
+            const intentMessage = new Uint8Array(
+                INTENT_BYTES.length + txBytesBuffer.getLength()
+            );
+            intentMessage.set(INTENT_BYTES);
+            intentMessage.set(txBytesBuffer.getData(), INTENT_BYTES.length);
+
+            const dataToSign = new Base64DataBuffer(intentMessage);
+
+            const signer = new RawSigner(keypair);
+
+            const signed = await signer.signData(dataToSign);
+            signature = signed.signature;
+            publicKey = signed.pubKey;
         } else {
             const signed = await Authentication.sign(
                 activeAccount.address,
@@ -266,17 +278,22 @@ class Transactions {
 
         if (!signature) return;
 
+        const serializedSig = new Uint8Array(
+            1 + signature.getLength() + publicKey.toBytes().length
+        );
+        serializedSig.set([SIGNATURE_SCHEME_TO_FLAG['ED25519']]);
+        serializedSig.set(signature.getData(), 1);
+        serializedSig.set(publicKey.toBytes(), 1 + signature.getLength());
+
         const data = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 jsonrpc: '2.0',
-                method: 'sui_executeTransaction',
+                method: 'sui_executeTransactionSerializedSig',
                 params: [
-                    txBytes,
-                    'ED25519',
-                    signature,
-                    publicKey,
+                    txBytesBuffer.toString(),
+                    new Base64DataBuffer(serializedSig).toString(),
                     'WaitForLocalExecution',
                 ],
                 id: 1,
