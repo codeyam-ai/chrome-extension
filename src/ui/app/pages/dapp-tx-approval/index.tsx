@@ -129,10 +129,16 @@ export function DappTxApprovalPage() {
 
         const newEvents = effects.events.filter(
             (event) =>
+                'newObject' in event &&
                 event.newObject &&
+                typeof event.newObject.recipient !== 'string' &&
+                'AddressOwner' in event.newObject.recipient &&
                 event.newObject.recipient.AddressOwner === address
         );
+
         const creating = newEvents.map((event) => {
+            if (!('newObject' in event)) return {};
+
             const objectTypeParts = event.newObject.objectType.split('::');
             return {
                 address: objectTypeParts[0],
@@ -149,6 +155,7 @@ export function DappTxApprovalPage() {
 
         const mutating = effects.events
             .filter((event) => {
+                if (!('mutateObject' in event)) return false;
                 const mutation = event.mutateObject;
                 const mutated = effects.mutated;
                 return (
@@ -167,6 +174,8 @@ export function DappTxApprovalPage() {
                 );
             })
             .map((event) => {
+                if (!('mutateObject' in event)) return {};
+
                 const objectTypeParts =
                     event.mutateObject.objectType.split('::');
                 return {
@@ -185,10 +194,15 @@ export function DappTxApprovalPage() {
         const transferring = effects.events
             .filter(
                 (event) =>
+                    'transferObject' in event &&
                     event.transferObject &&
+                    typeof event.transferObject.recipient !== 'string' &&
+                    'AddressOwner' in event.transferObject.recipient &&
                     event.transferObject.recipient.AddressOwner
             )
             .map((event) => {
+                if (!('transferObject' in event)) return {};
+
                 const objectTypeParts =
                     event.transferObject.objectType.split('::');
                 return {
@@ -205,8 +219,9 @@ export function DappTxApprovalPage() {
         if (!effects?.events) return [];
 
         const deleting = effects.events
-            .filter((event) => event.deleteObject)
+            .filter((event) => 'deleteObject' in event)
             .map((event) => {
+                if (!('deleteObject' in event)) return {};
                 return {
                     name: event.deleteObject.objectId,
                 };
@@ -216,19 +231,23 @@ export function DappTxApprovalPage() {
     }, [effects]);
 
     const coinChanges = useMemo(() => {
-        if (!effects?.events) return 0;
+        const zero: Record<string, number> = {};
+
+        if (!effects?.events) return zero;
 
         const coinBalanceChangeEvents = effects.events.filter(
-            (e) => e.coinBalanceChange
+            (e) => 'coinBalanceChange' in e
         );
 
         return coinBalanceChangeEvents.reduce((totals, e) => {
+            if (!('coinBalanceChange' in e)) return totals;
+
             const { coinType, amount } = e.coinBalanceChange;
             const name = coinName(coinType);
             if (!totals[name]) totals[name] = 0;
             totals[name] += amount * -1;
             return totals;
-        }, {});
+        }, zero);
     }, [effects]);
 
     const charges = useMemo(
@@ -538,7 +557,9 @@ export function DappTxApprovalPage() {
                             content: creating.map(
                                 (creating) =>
                                     ({
-                                        label: creating.name.toString(),
+                                        label: (
+                                            creating?.name || ''
+                                        ).toString(),
                                         count: 1,
                                     } as NumberedDetail)
                             ),
@@ -551,7 +572,9 @@ export function DappTxApprovalPage() {
                             content: mutating.map(
                                 (mutating) =>
                                     ({
-                                        label: mutating.name.toString(),
+                                        label: (
+                                            mutating?.name ?? ''
+                                        ).toString(),
                                         count: 1,
                                     } as NumberedDetail)
                             ),
@@ -564,7 +587,9 @@ export function DappTxApprovalPage() {
                             content: transferring.map(
                                 (transferring) =>
                                     ({
-                                        label: transferring.name.toString(),
+                                        label: (
+                                            transferring?.name || ''
+                                        ).toString(),
                                         count: 1,
                                     } as NumberedDetail)
                             ),
