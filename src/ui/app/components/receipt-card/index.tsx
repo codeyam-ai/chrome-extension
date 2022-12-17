@@ -6,7 +6,7 @@ import {
     ArrowDownCircleIcon,
     ArrowUpCircleIcon,
     ArrowUpRightIcon,
-    CodeIcon,
+    CogIcon,
     SparklesIcon,
     XMarkIcon,
 } from '@heroicons/react/24/solid';
@@ -193,7 +193,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             txIcon: isMinted ? (
                 <Icon displayIcon={<SparklesIcon />} />
             ) : (
-                <Icon displayIcon={<CodeIcon />} />
+                <Icon displayIcon={<CogIcon />} />
             ),
             transfer: txDigest?.isSender ? 'To' : 'From',
             address: false,
