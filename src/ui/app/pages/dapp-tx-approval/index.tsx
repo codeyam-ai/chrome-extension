@@ -370,14 +370,14 @@ export function DappTxApprovalPage() {
         [dispatch, txRequest]
     );
 
-    // useEffect(() => {
-    //     if (
-    //         !loading &&
-    //         (!txRequest || (txRequest && txRequest.approved !== null))
-    //     ) {
-    //         window.close();
-    //     }
-    // }, [loading, txRequest]);
+    useEffect(() => {
+        if (
+            !loading &&
+            (!txRequest || (txRequest && txRequest.approved !== null))
+        ) {
+            window.close();
+        }
+    }, [loading, txRequest]);
 
     const content: TabSections = useMemo(() => {
         switch (txRequest?.tx.type) {

@@ -41,9 +41,7 @@ const WalletButton = ({
     return (
         <div
             data-testid={`wallet${wallet.index + 1}`}
-            className={`py-[10px] px-3 flex justify-between items-center ${
-                isActive && !isWalletEditing ? '' : 'cursor-pointer'
-            }`}
+            className="py-[10px] px-3 flex justify-between items-center cursor-pointer"
             onClick={isWalletEditing ? editThisWallet : switchToThisWallet}
         >
             <div className="flex gap-3">
