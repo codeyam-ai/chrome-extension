@@ -114,7 +114,9 @@ export const respondToTransactionRequest = createAsyncThunk<
                               }
                             : txRequest.tx.data;
 
+                    console.log('address', await signer.getAddress());
                     response = await signer.signAndExecuteTransaction(txn);
+                    console.log('response', response);
                 } else if (txRequest.tx.type === 'serialized-move-call') {
                     const txBytes = new Base64DataBuffer(txRequest.tx.data);
                     response = await signer.signAndExecuteTransaction(txBytes);
@@ -133,6 +135,7 @@ export const respondToTransactionRequest = createAsyncThunk<
                     parsed_data: null,
                 };
             } catch (e) {
+                console.log('ERROR', e);
                 tsResultError = (e as Error).message;
             }
         }

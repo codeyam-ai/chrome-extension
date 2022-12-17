@@ -36,6 +36,7 @@ export default class KeypairVault {
         }
 
         const key = index.toString();
+        console.log('KEYPAIR', this._mnemonic, index);
         const keypair = new Ed25519Keypair(
             getKeypairFromMnemonics(this._mnemonic, index)
         );
