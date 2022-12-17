@@ -72,6 +72,7 @@ export const sendTokens = createAsyncThunk<
                 amount
             )
         );
+
         // TODO: better way to sync latest objects
         dispatch(fetchAllOwnedAndRequiredObjects());
         return response;
