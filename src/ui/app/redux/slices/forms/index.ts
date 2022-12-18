@@ -10,6 +10,12 @@ type AppState = {
         amount: string;
         gasFee: string | undefined;
     };
+    transferNft: {
+        from: string;
+        to: string;
+        nftId: string;
+        gasFee: string | undefined;
+    };
 };
 
 const initialState: AppState = {
@@ -17,6 +23,12 @@ const initialState: AppState = {
         from: '',
         to: '',
         amount: '',
+        gasFee: undefined,
+    },
+    transferNft: {
+        from: '',
+        to: '',
+        nftId: '',
         gasFee: undefined,
     },
 };
@@ -55,11 +67,34 @@ const slice = createSlice({
         resetSendSuiForm: (state) => {
             state.sendSui = initialState.sendSui;
         },
+        setNftDetails: (
+            state,
+            {
+                payload,
+            }: {
+                payload: {
+                    from: string;
+                    to: string;
+                    nftId: string;
+                    gasFee: string;
+                };
+            }
+        ) => {
+            state.transferNft = payload;
+        },
+        resettransferNftForm: (state) => {
+            state.transferNft = initialState.transferNft;
+        },
     },
     initialState,
 });
 
-export const { setSuiRecipient, setSuiAmount, resetSendSuiForm } =
-    slice.actions;
+export const {
+    setSuiRecipient,
+    setSuiAmount,
+    resetSendSuiForm,
+    setNftDetails,
+    resettransferNftForm,
+} = slice.actions;
 
 export default slice.reducer;

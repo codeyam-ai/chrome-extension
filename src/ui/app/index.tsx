@@ -48,6 +48,8 @@ import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
 import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
+import TransferNftRecipient from './pages/home/nft-details/transfer-nft-recipient';
+import TransferNftReview from './pages/home/nft-details/transfer-nft-review';
 
 const HIDDEN_MENU_PATHS = ['/nft-details', '/receipt'];
 
@@ -125,7 +127,17 @@ const App = () => {
                     />
                     <Route path="tokens" element={<TokensPage />} />
                     <Route path="nfts" element={<NftsPage />} />
-                    <Route path="nft-details" element={<NFTDetailsPage />} />
+                    <Route path="nft">
+                        <Route path="details" element={<NFTDetailsPage />} />
+                        <Route
+                            path="transfer/recipient"
+                            element={<TransferNftRecipient />}
+                        />
+                        <Route
+                            path="transfer/review"
+                            element={<TransferNftReview />}
+                        />
+                    </Route>
                     <Route path="transactions" element={<TransactionsPage />} />
                     <Route path="send">
                         <Route
