@@ -14,11 +14,11 @@ import { useAppDispatch, useAppSelector } from '_hooks';
 import { resetSendSuiForm } from '_redux/slices/forms';
 import { sendTokens } from '_redux/slices/transactions';
 import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
+import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
-import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 
 const initialValues = {
     to: '',

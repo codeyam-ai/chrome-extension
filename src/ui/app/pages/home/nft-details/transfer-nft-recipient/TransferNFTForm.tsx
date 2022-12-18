@@ -43,21 +43,6 @@ function TransferNFTForm({
         onClearRef.current();
     }, [to, amount]);
 
-    let address;
-
-    if (
-        nftobj &&
-        typeof nftobj.owner !== 'string' &&
-        'AddressOwner' in nftobj.owner
-    ) {
-        address = nftobj.owner.AddressOwner;
-    }
-
-    let fields;
-    if (nftobj && 'fields' in nftobj.data) {
-        fields = nftobj.data.fields;
-    }
-
     return (
         <div>
             <Content>

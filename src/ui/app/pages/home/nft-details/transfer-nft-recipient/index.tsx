@@ -16,15 +16,13 @@ import {
     DEFAULT_NFT_TRANSFER_GAS_FEE,
     GAS_TYPE_ARG,
 } from '_redux/slices/sui-objects/Coin';
+import { formatBalance } from '_src/ui/app/hooks/useFormatCoin';
+import { setNftDetails } from '_src/ui/app/redux/slices/forms';
+import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 
-import type { ObjectId } from '@mysten/sui.js';
 import type { SerializedError } from '@reduxjs/toolkit';
 
 import st from './TransferNFTForm.module.scss';
-import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
-import { setNftDetails } from '_src/ui/app/redux/slices/forms';
-import truncateString from '_src/ui/app/helpers/truncate-string';
-import { formatBalance } from '_src/ui/app/hooks/useFormatCoin';
 
 const initialValues = {
     to: '',
@@ -100,7 +98,7 @@ function TransferNFTRecipient() {
                 setSendError((e as SerializedError).message || null);
             }
         },
-        [dispatch, navigate, objectId]
+        [dispatch, navigate, objectId, address, gasFee]
     );
 
     const handleOnClearSubmitError = useCallback(() => {

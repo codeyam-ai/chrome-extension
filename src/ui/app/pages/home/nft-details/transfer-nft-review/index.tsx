@@ -1,19 +1,18 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-import { Formik } from 'formik';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+import TransferNFTReviewForm from './TransferNFTReviewForm';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { transferNFT } from '_redux/slices/sui-objects';
+import { accountNftsSelector } from '_src/ui/app/redux/slices/account';
+import { resettransferNftForm } from '_src/ui/app/redux/slices/forms';
+import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 
 import st from './TransferNFTForm.module.scss';
-import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
-import { resettransferNftForm } from '_src/ui/app/redux/slices/forms';
-import TransferNFTReviewForm from './TransferNFTReviewForm';
-import { accountNftsSelector } from '_src/ui/app/redux/slices/account';
 
 const initialValues = {
     to: '',
@@ -22,7 +21,6 @@ const initialValues = {
 export type FormValues = typeof initialValues;
 
 function TransferNFTReview() {
-    console.log('NFT REVIEW: ');
     const formState = useAppSelector(
         ({ forms: { transferNft } }) => transferNft
     );
