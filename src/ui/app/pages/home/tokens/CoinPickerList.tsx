@@ -8,7 +8,7 @@ const CoinPickerList = ({
     balances: Record<string, bigint>;
     coinType: string;
 }) => {
-    if (Object.keys(balances).length === 0) {
+    if (Object.entries(balances).length === 0) {
         return <></>;
     }
 
@@ -18,13 +18,11 @@ const CoinPickerList = ({
                 className="py-3 flex justify-center items-center"
                 loading={!balances}
             >
-                {Object.keys(balances).map((type: string) => {
-                    const balance = balances[type];
-
+                {Object.entries(balances).map(([type, balance], idx) => {
                     if (type !== coinType) {
                         return (
                             <div
-                                key={type}
+                                key={'coin-' + idx}
                                 className={
                                     'p-2 hover:bg-ethos-light-background-secondary dark:hover:bg-ethos-dark-background-secondary rounded-lg'
                                 }
@@ -33,7 +31,7 @@ const CoinPickerList = ({
                             </div>
                         );
                     } else {
-                        return <></>;
+                        return <div key={idx}></div>;
                     }
                 })}
             </Loading>

@@ -4,9 +4,8 @@
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 import { getObjectId, hasPublicTransfer } from '@mysten/sui.js';
 import { useCallback, useMemo, useState } from 'react';
-import { Navigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
-import TransferNFTCard from './transfer-nft';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import Loading from '_components/loading';
@@ -174,8 +173,8 @@ function NFTdetailsContent({
 
 function NFTDetailsPage() {
     const [searchParams] = useSearchParams();
-    const [startNFTTransfer, setStartNFTTransfer] = useState<boolean>(false);
     const [selectedNFT, setSelectedNFT] = useState<SuiObject | null>(null);
+    const navigate = useNavigate();
     const objectId = useMemo(
         () => searchParams.get('objectId'),
         [searchParams]
@@ -195,25 +194,24 @@ function NFTDetailsPage() {
         ({ suiObjects }) => suiObjects.loading && !suiObjects.lastSync
     );
 
-    const startNFTTransferHandler = useCallback(() => {
-        setStartNFTTransfer(true);
-    }, []);
+    const transferNft = useCallback(() => {
+        if (objectId) {
+            navigate(
+                `/nft/transfer/recipient?${new URLSearchParams({
+                    objectId: objectId,
+                }).toString()}`
+            );
+        }
+    }, [navigate, objectId]);
 
-    if (!objectId || (!loadingBalance && !selectedNFT && !startNFTTransfer)) {
+    if (!objectId || (!loadingBalance && !selectedNFT)) {
         return <Navigate to="/nfts" replace={true} />;
     }
 
     return (
         <div className="">
             <Loading loading={loadingBalance} big={true}>
-                {objectId && startNFTTransfer ? (
-                    <TransferNFTCard objectId={objectId} />
-                ) : (
-                    <NFTdetailsContent
-                        nft={activeNFT}
-                        onClick={startNFTTransferHandler}
-                    />
-                )}
+                <NFTdetailsContent nft={activeNFT} onClick={transferNft} />
             </Loading>
         </div>
     );

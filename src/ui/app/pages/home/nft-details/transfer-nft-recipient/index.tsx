@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { Formik } from 'formik';
 import { memo, useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import TransferNFTForm from './TransferNFTForm';
@@ -12,16 +12,15 @@ import {
     accountAggregateBalancesSelector,
     accountNftsSelector,
 } from '_redux/slices/account';
-import { transferNFT } from '_redux/slices/sui-objects';
 import {
     DEFAULT_NFT_TRANSFER_GAS_FEE,
     GAS_TYPE_ARG,
 } from '_redux/slices/sui-objects/Coin';
-import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
+import { formatBalance } from '_src/ui/app/hooks/useFormatCoin';
+import { setNftDetails } from '_src/ui/app/redux/slices/forms';
+import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 
-import type { ObjectId } from '@mysten/sui.js';
 import type { SerializedError } from '@reduxjs/toolkit';
-import type { FormikHelpers } from 'formik';
 
 import st from './TransferNFTForm.module.scss';
 
@@ -32,14 +31,14 @@ const initialValues = {
 
 export type FormValues = typeof initialValues;
 
-interface TransferProps {
-    objectId: ObjectId;
-}
-
-function TransferNFTCard({ objectId }: TransferProps) {
+function TransferNFTRecipient() {
     const address = useAppSelector(({ account: { address } }) => address);
+    const formData = useAppSelector(
+        ({ forms: { transferNft } }) => transferNft
+    );
     const dispatch = useAppDispatch();
-
+    const [searchParams] = useSearchParams();
+    const objectId = searchParams.get('objectId');
     const nftCollections = useAppSelector(accountNftsSelector);
     const selectedNFTObj = useMemo(
         () =>
@@ -67,15 +66,12 @@ function TransferNFTCard({ objectId }: TransferProps) {
             ),
         [gasAggregateBalance, address, objectId]
     );
+
+    const gasFee = `${formatBalance(gasAggregateBalance, 16)} SUI`;
+
     const navigate = useNavigate();
     const onHandleSubmit = useCallback(
-        async (
-            { to }: FormValues,
-            { resetForm }: FormikHelpers<FormValues>
-        ) => {
-            // Let the user know the transaction is en route
-            toast(<SuccessAlert text={'Transaction submitted.'} />);
-
+        async ({ to }: FormValues) => {
             if (objectId === null) {
                 return;
             }
@@ -83,38 +79,26 @@ function TransferNFTCard({ objectId }: TransferProps) {
             setSendError(null);
 
             try {
-                const resp = await dispatch(
-                    transferNFT({
-                        recipientAddress: to,
+                dispatch(
+                    setNftDetails({
+                        from: address || 'Wallet',
+                        to: to,
                         nftId: objectId,
-                        transferCost: DEFAULT_NFT_TRANSFER_GAS_FEE,
+                        gasFee: gasFee,
                     })
-                ).unwrap();
+                );
 
-                resetForm();
-
-                if (resp.txId) {
-                    // Redirect to nft page
-                    navigate('/nfts');
-
-                    const navLink = `/receipt?${new URLSearchParams({
-                        txdigest: resp.txId,
-                    }).toString()}`;
-
-                    toast(
-                        <SuccessAlert
-                            text={'Transaction successful.'}
-                            linkText={'View'}
-                            linkUrl={navLink}
-                        />,
-                        { delay: 500 }
-                    );
-                }
+                navigate(
+                    `/nft/transfer/review?${new URLSearchParams({
+                        objectId: objectId,
+                    }).toString()}`
+                );
             } catch (e) {
+                toast(<FailAlert text={'Could not set address'} />);
                 setSendError((e as SerializedError).message || null);
             }
         },
-        [dispatch, navigate, objectId]
+        [dispatch, navigate, objectId, address, gasFee]
     );
 
     const handleOnClearSubmitError = useCallback(() => {
@@ -125,7 +109,10 @@ function TransferNFTCard({ objectId }: TransferProps) {
         <div className={st.container}>
             <div className={'text-left'}>
                 <Formik
-                    initialValues={initialValues}
+                    initialValues={{
+                        to: formData.to,
+                        amount: DEFAULT_NFT_TRANSFER_GAS_FEE,
+                    }}
                     validateOnMount={true}
                     validationSchema={validationSchema}
                     onSubmit={onHandleSubmit}
@@ -142,4 +129,4 @@ function TransferNFTCard({ objectId }: TransferProps) {
     );
 }
 
-export default memo(TransferNFTCard);
+export default memo(TransferNFTRecipient);

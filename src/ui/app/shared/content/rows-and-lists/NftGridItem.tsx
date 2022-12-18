@@ -10,7 +10,7 @@ interface NftGridItemProps {
 
 const NftGridItem = ({ nft }: NftGridItemProps) => {
     const { filePath, fileExtentionType } = useNFTBasicData(nft);
-    const drilldownLink = `/nft-details?${new URLSearchParams({
+    const drilldownLink = `/nft/details?${new URLSearchParams({
         objectId: nft.reference.objectId,
     }).toString()}`;
 

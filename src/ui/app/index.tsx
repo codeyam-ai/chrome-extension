@@ -8,6 +8,8 @@ import Browser from 'webextension-polyfill';
 import useSizeWindow from './hooks/useSizeWindow';
 import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
 import BuyPage from './pages/home/buy';
+import TransferNftRecipient from './pages/home/nft-details/transfer-nft-recipient';
+import TransferNftReview from './pages/home/nft-details/transfer-nft-review';
 import ReceivePage from './pages/home/receive';
 import TransferCoinAmountPage from './pages/home/transfer-coin-amount';
 import TransferCoinRecipientPage from './pages/home/transfer-coin-recipient';
@@ -125,7 +127,17 @@ const App = () => {
                     />
                     <Route path="tokens" element={<TokensPage />} />
                     <Route path="nfts" element={<NftsPage />} />
-                    <Route path="nft-details" element={<NFTDetailsPage />} />
+                    <Route path="nft">
+                        <Route path="details" element={<NFTDetailsPage />} />
+                        <Route
+                            path="transfer/recipient"
+                            element={<TransferNftRecipient />}
+                        />
+                        <Route
+                            path="transfer/review"
+                            element={<TransferNftReview />}
+                        />
+                    </Route>
                     <Route path="transactions" element={<TransactionsPage />} />
                     <Route path="send">
                         <Route
