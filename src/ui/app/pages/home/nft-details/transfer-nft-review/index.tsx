@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { Formik } from 'formik';
 import { memo, useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { useAppDispatch, useAppSelector } from '_hooks';
@@ -81,6 +81,10 @@ function TransferNFTReview() {
             });
         }
     }, [dispatch, navigate, formState]);
+
+    if (!formState.to) {
+        return <Navigate to={'/nfts'} />;
+    }
 
     return (
         <div className={st.container}>

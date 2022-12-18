@@ -69,10 +69,7 @@ function TransferNFTRecipient() {
         [gasAggregateBalance, address, objectId]
     );
 
-    const gasFee = `${formatBalance(gasAggregateBalance, 9)} ${truncateString(
-        'SUI',
-        8
-    )}`;
+    const gasFee = `${formatBalance(gasAggregateBalance, 16)} SUI`;
 
     const navigate = useNavigate();
     const onHandleSubmit = useCallback(
