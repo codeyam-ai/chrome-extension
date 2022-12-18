@@ -8,6 +8,8 @@ import Browser from 'webextension-polyfill';
 import useSizeWindow from './hooks/useSizeWindow';
 import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
 import BuyPage from './pages/home/buy';
+import TransferNftRecipient from './pages/home/nft-details/transfer-nft-recipient';
+import TransferNftReview from './pages/home/nft-details/transfer-nft-review';
 import ReceivePage from './pages/home/receive';
 import TransferCoinAmountPage from './pages/home/transfer-coin-amount';
 import TransferCoinRecipientPage from './pages/home/transfer-coin-recipient';
@@ -48,8 +50,6 @@ import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
 import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
-import TransferNftRecipient from './pages/home/nft-details/transfer-nft-recipient';
-import TransferNftReview from './pages/home/nft-details/transfer-nft-review';
 
 const HIDDEN_MENU_PATHS = ['/nft-details', '/receipt'];
 

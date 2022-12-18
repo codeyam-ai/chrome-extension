@@ -6,7 +6,6 @@ import { getObjectId, hasPublicTransfer } from '@mysten/sui.js';
 import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
-import TransferNFTCard from './transfer-nft-recipient';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import Loading from '_components/loading';
@@ -203,7 +202,7 @@ function NFTDetailsPage() {
                 }).toString()}`
             );
         }
-    }, []);
+    }, [navigate, objectId]);
 
     if (!objectId || (!loadingBalance && !selectedNFT)) {
         return <Navigate to="/nfts" replace={true} />;

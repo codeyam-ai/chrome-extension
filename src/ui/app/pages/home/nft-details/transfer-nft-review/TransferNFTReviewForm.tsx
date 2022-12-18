@@ -1,13 +1,12 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { memo, useRef, useCallback } from 'react';
+import { memo, useCallback } from 'react';
 
 import { Content } from '_app/shared/bottom-menu-layout';
-import { DEFAULT_NFT_TRANSFER_GAS_FEE } from '_redux/slices/sui-objects/Coin';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
-import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
+import { useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 import { AssetCard } from '_src/ui/app/shared/nfts/AssetCard';
@@ -16,11 +15,16 @@ import Header from '_src/ui/app/shared/typography/Header';
 
 // import type { EnhancedSuiObject } from '../../../dapp-preapproval/index';
 import type { SuiObject } from '@mysten/sui.js';
+
 import 'react-toastify/dist/ReactToastify.css';
-import { transferNFT } from '_src/ui/app/redux/slices/sui-objects';
 
 export type TransferNFTFormProps = {
-    formData: any;
+    formData: {
+        from: string;
+        to: string;
+        nftId: string;
+        gasFee: string | undefined;
+    };
     nftobj: SuiObject;
     transferNft: () => void;
 };
@@ -54,7 +58,7 @@ function TransferNftReviewForm({
 
     const onSubmit = useCallback(() => {
         transferNft();
-    }, [transferNFT]);
+    }, [transferNft]);
 
     return (
         <div>
