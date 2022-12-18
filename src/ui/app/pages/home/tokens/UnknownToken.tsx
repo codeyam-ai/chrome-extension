@@ -20,15 +20,9 @@ const UnknownToken = ({
                 width="40"
                 height="40"
                 rx="20"
-                fill="#2775CA"
+                fill="#3D5FF2"
             />
-            <rect
-                x="10.5"
-                y="10.937"
-                width="20"
-                height="20"
-                fill="url(#pattern0)"
-            />
+            <rect x="10.5" y="10.937" width="20" height="20" fill="#3D5FF2" />
             <defs>
                 <pattern
                     id="pattern0"
