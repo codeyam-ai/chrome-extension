@@ -1,15 +1,14 @@
 import {
-    ArrowUpIcon,
-    ArrowDownIcon,
-    SparklesIcon,
-} from '@heroicons/react/24/solid';
-
-import {
     CodeBracketSquareIcon,
     FireIcon,
     PencilSquareIcon,
     ArrowsRightLeftIcon,
 } from '@heroicons/react/24/outline';
+import {
+    ArrowUpIcon,
+    ArrowDownIcon,
+    SparklesIcon,
+} from '@heroicons/react/24/solid';
 
 import SuiIcon from '../../svg/SuiIcon';
 import { ActivityRow } from './ActivityRow';
