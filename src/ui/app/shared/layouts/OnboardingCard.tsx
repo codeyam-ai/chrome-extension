@@ -114,7 +114,7 @@ const OnboardingCard = ({
 
     return (
         <>
-            <span className="h-[48px] w-[112px] mb-8 -mt-[300px]">
+            <span className="h-[48px] w-[112px] mb-4 tall:mb-8 -mt-[80px]">
                 <EthosLogoGrayscaleWithText />
             </span>
 
@@ -179,7 +179,7 @@ const OnboardingCard = ({
             </div>
 
             {progressCompleted && progressTotal && (
-                <div className="absolute bottom-0 flex gap-6 w-[448px] px-6 pb-12">
+                <div className="absolute bottom-0 flex gap-6 w-[448px] px-6 pb-4 tall:pb-12">
                     {[...Array(progressTotal)].map((_, index) => {
                         return (
                             <div
