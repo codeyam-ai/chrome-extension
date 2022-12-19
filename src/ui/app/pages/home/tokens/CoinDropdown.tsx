@@ -16,14 +16,17 @@ export const CoinSelect = ({ type }: { type?: string | null }) => {
     const [, symbol, , name, icon] = useFormatCoin(balances[type || ''], type);
 
     const iconImage = useMemo(() => {
-        const dim = 24;
-        if (icon)
-            return <img src={icon} width={dim} height={dim} alt="coin-icon" />;
-        switch (name) {
-            case 'SUI':
-                return <SuiIcon width={dim} height={dim} />;
-            default:
-                return <UnknownToken width={dim} height={dim} />;
+        if (name) {
+            if (icon)
+                return (
+                    <img src={icon} width={24} height={24} alt="coin-icon" />
+                );
+            switch (name) {
+                case 'Sui':
+                    return <SuiIcon width={16} height={16} />;
+                default:
+                    return <UnknownToken width={24} height={24} />;
+            }
         }
     }, [name, icon]);
 
@@ -37,7 +40,7 @@ export const CoinSelect = ({ type }: { type?: string | null }) => {
         setOpen(false);
     }, []);
 
-    if (!type || !name) return <></>;
+    if (!Object.keys(balances).length || !type || !name) return <></>;
 
     return (
         <>
