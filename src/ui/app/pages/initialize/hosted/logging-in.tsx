@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Authentication from '_src/background/Authentication';
 import { IFRAME_URL } from '_src/shared/constants';
@@ -13,6 +14,8 @@ import {
 
 const LoggingInPage = () => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
     useEffect(() => {
         const listenForSuccessfulLogin = async () => {
             const accessToken = await iframe.listenForAccessToken();
@@ -22,13 +25,14 @@ const LoggingInPage = () => {
                 await dispatch(saveAccountInfos(accountInfos));
                 await dispatch(setAddress(accountInfos[0]?.address));
                 dispatch(saveAuthentication(accessToken));
+                navigate('/');
             } else {
                 Authentication.set(null);
                 dispatch(saveAuthentication(null));
             }
         };
         listenForSuccessfulLogin();
-    }, [dispatch]);
+    }, [dispatch, navigate]);
 
     useEffect(() => {
         iframe.listenForReady();

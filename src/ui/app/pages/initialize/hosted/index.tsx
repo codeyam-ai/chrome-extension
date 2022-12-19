@@ -6,12 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import LoadingIndicator from '../../../components/loading/LoadingIndicator';
 import { iframe } from '../../../helpers';
 import { AppState } from '../../../hooks/useInitializedGuard';
-import {
-    saveAccountInfos,
-    saveAuthentication,
-    saveEmail,
-    setAddress,
-} from '../../../redux/slices/account';
+import { saveAuthentication, saveEmail } from '../../../redux/slices/account';
 import EmailForm from '../../../shared/forms/EmailForm';
 import OnboardingCard from '../../../shared/layouts/OnboardingCard';
 import Body from '../../../shared/typography/Body';
@@ -19,7 +14,6 @@ import ContentBlock from '../../../shared/typography/ContentBlock';
 import EthosLink from '../../../shared/typography/EthosLink';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
-import Authentication from '_src/background/Authentication';
 import { LinkType } from '_src/enums/LinkType';
 import { IFRAME_URL, MAILTO_SUPPORT_URL } from '_src/shared/constants';
 
@@ -51,23 +45,6 @@ const HostedPage = () => {
         },
         [emailSent, dispatch]
     );
-
-    useEffect(() => {
-        const listenForSuccessfulLogin = async () => {
-            const accessToken = await iframe.listenForAccessToken();
-            Authentication.set(accessToken);
-            const accountInfos = await Authentication.getAccountInfos();
-            if (accountInfos && accountInfos.length > 0) {
-                await dispatch(saveAccountInfos(accountInfos));
-                await dispatch(setAddress(accountInfos[0]?.address));
-                dispatch(saveAuthentication(accessToken));
-            } else {
-                Authentication.set(null);
-                dispatch(saveAuthentication(null));
-            }
-        };
-        listenForSuccessfulLogin();
-    }, [loading, dispatch]);
 
     useEffect(() => {
         iframe.listenForReady();
