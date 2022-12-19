@@ -17,7 +17,10 @@ export type CoinProps = {
 };
 
 function CoinBalance({ type, balance }: CoinProps) {
-    const [balanceFormatted, symbol, usdAmount] = useFormatCoin(balance, type);
+    const [balanceFormatted, symbol, usdAmount, name, icon] = useFormatCoin(
+        balance,
+        type
+    );
 
     const sendUrl = useMemo(
         () => `/send/recipient?${new URLSearchParams({ type }).toString()}`,
@@ -29,11 +32,22 @@ function CoinBalance({ type, balance }: CoinProps) {
             <div className="flex items-align justify-between">
                 <div className="flex gap-4 items-align">
                     <div className="flex items-center">
-                        {symbol === 'SUI' ? <Sui /> : <UnknownToken />}
+                        {icon ? (
+                            <img
+                                src={icon}
+                                alt={`coin-${symbol}`}
+                                height={39}
+                                width={39}
+                            />
+                        ) : symbol === 'SUI' ? (
+                            <Sui />
+                        ) : (
+                            <UnknownToken />
+                        )}
                     </div>
                     <div className="flex flex-col items-start">
                         <div className="font-light text-base">
-                            {truncateString(symbol, 10)}
+                            {truncateString(name, 18)} ({symbol})
                         </div>
                         <div className="font-light text-sm text-slate-500 dark:text-slate-400">
                             {balanceFormatted}

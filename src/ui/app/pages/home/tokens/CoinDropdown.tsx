@@ -1,7 +1,7 @@
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import { useCallback, useMemo, useState } from 'react';
 
-import truncateString from '../../../helpers/truncate-string';
+import { useFormatCoin } from '../../../hooks/useFormatCoin';
 import SuiIcon from '../../../shared/svg/SuiIcon';
 import BodyLarge from '../../../shared/typography/BodyLarge';
 import CoinPickerList from './CoinPickerList';
@@ -13,22 +13,19 @@ export const CoinSelect = ({ type }: { type?: string | null }) => {
     const [open, setOpen] = useState(false);
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const multiCoins = Object.keys(balances).length > 1;
+    const [, symbol, , name, icon] = useFormatCoin(balances[type || ''], type);
 
-    const name = useMemo(() => {
-        if (!type) return null;
-        return type.split('::')[2];
-    }, [type]);
-
-    const icon = useMemo(() => {
-        if (!name) return null;
-        const dim = 16;
+    const iconImage = useMemo(() => {
+        const dim = 24;
+        if (icon)
+            return <img src={icon} width={dim} height={dim} alt="coin-icon" />;
         switch (name) {
             case 'SUI':
                 return <SuiIcon width={dim} height={dim} />;
             default:
                 return <UnknownToken width={dim} height={dim} />;
         }
-    }, [name]);
+    }, [name, icon]);
 
     const openCoinPicker = useCallback(() => {
         if (multiCoins) {
@@ -55,9 +52,9 @@ export const CoinSelect = ({ type }: { type?: string | null }) => {
                         'rounded-full w-6 h-6 flex justify-center items-center bg-[#3D5FF2]'
                     }
                 >
-                    {icon}
+                    {iconImage}
                 </div>
-                <BodyLarge>{truncateString(name, 14)}</BodyLarge>
+                <BodyLarge>{symbol}</BodyLarge>
                 {multiCoins && <ChevronDownIcon width={14} />}
             </div>
             <div

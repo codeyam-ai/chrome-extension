@@ -12,7 +12,9 @@ import { api } from '../redux/store/thunk-extras';
 type FormattedCoin = [
     formattedBalance: string,
     coinSymbol: string,
-    formattedDollars: string,
+    dollars: string,
+    coinName: string,
+    coinIcon: string | null,
     queryResult: UseQueryResult
 ];
 
@@ -70,7 +72,11 @@ export function useCoinDecimals(coinType?: string | null) {
         }
     );
 
-    return [queryResult.data?.decimals || 0, queryResult] as const;
+    return [
+        queryResult.data?.decimals || 0,
+        queryResult.data,
+        queryResult,
+    ] as const;
 }
 
 // TODO: This handles undefined values to make it easier to integrate with the reset of the app as it is
@@ -85,7 +91,7 @@ export function useFormatCoin(
         [coinType]
     );
 
-    const [decimals, queryResult] = useCoinDecimals(coinType);
+    const [decimals, coinMetadata, queryResult] = useCoinDecimals(coinType);
     const { isFetched, isError } = queryResult;
 
     const formatted = useMemo(() => {
@@ -113,5 +119,12 @@ export function useFormatCoin(
         return dollarFormatter.format(parseFloat(formatBalance(balance, 7)));
     }, [balance]);
 
-    return [formatted, symbol, dollars, queryResult];
+    return [
+        formatted,
+        coinMetadata?.symbol || symbol,
+        dollars,
+        coinMetadata?.name || symbol,
+        coinMetadata?.iconUrl || null,
+        queryResult,
+    ];
 }
