@@ -1,10 +1,10 @@
 import {
     CodeBracketSquareIcon,
-    FireIcon,
     PencilSquareIcon,
     ArrowsRightLeftIcon,
 } from '@heroicons/react/24/outline';
 import {
+    FireIcon,
     ArrowUpIcon,
     ArrowDownIcon,
     SparklesIcon,
