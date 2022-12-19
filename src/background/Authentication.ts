@@ -1,3 +1,5 @@
+import { Base64DataBuffer } from '@mysten/sui.js';
+
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import simpleApiCall from '_src/shared/utils/simpleApiCall';
 
@@ -103,7 +105,7 @@ class Authentication {
 
         return {
             signatureScheme: 'ED25519',
-            signature: signedTransaction.signature,
+            signature: new Base64DataBuffer(signedTransaction.signature),
             pubKey: signedTransaction.pubKey,
         };
     }

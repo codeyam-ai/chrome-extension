@@ -1,10 +1,13 @@
-import { SignerWithProvider } from '@mysten/sui.js';
+import {
+    Base64DataBuffer,
+    Ed25519PublicKey,
+    SignerWithProvider,
+} from '@mysten/sui.js';
 
 import { deleteEncrypted } from '../storagex/store';
 import simpleApiCall from '_src/shared/utils/simpleApiCall';
 
 import type {
-    Base64DataBuffer,
     SignaturePubkeyPair,
     SuiAddress,
     Provider,
@@ -54,8 +57,8 @@ export class EthosSigner extends SignerWithProvider {
 
         return {
             signatureScheme: 'ED25519',
-            signature: signedTransaction.signature,
-            pubKey: signedTransaction.pubKey,
+            signature: new Base64DataBuffer(signedTransaction.signature),
+            pubKey: new Ed25519PublicKey(signedTransaction.pubKey),
         };
     }
 
