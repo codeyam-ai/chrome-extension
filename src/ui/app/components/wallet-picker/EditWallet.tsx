@@ -1,8 +1,7 @@
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
 import { useCallback, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import getNextWalletColor from '../../helpers/getNextWalletColor';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import {
     saveAccountInfos,
@@ -15,15 +14,13 @@ import Button from '../../shared/buttons/Button';
 import BasicSectionHeader from '../../shared/headers/section-headers/BasicSectionHeader';
 import Input from '../../shared/inputs/Input';
 import ColorPickerMenu from '../../shared/inputs/colors/ColorPickerMenu';
+import EmojiPickerMenu from '../../shared/inputs/emojis/EmojiPickerMenu';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Loading from '../loading';
 import Authentication from '_src/background/Authentication';
 
 import type { AccountInfo } from '../../KeypairVault';
-
-type EmojiPickerResult = {
-    shortcodes: string;
-};
+import type { EmojiPickerResult } from '../../shared/inputs/emojis/EmojiPickerMenu';
 
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -54,7 +51,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     );
 
     const [draftColor, setDraftColor] = useState<string>(
-        currentAccountInfo.color || '#7E23CA'
+        currentAccountInfo.color || getNextWalletColor(0)
     );
 
     const [draftEmoji, setDraftEmoji] = useState<string | undefined>(
@@ -68,13 +65,21 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    const toggleIsColorPickerMenuOpen = useCallback(() => {
-        setIsColorPickerMenuOpen(!isColorPickerMenuOpen);
-    }, [isColorPickerMenuOpen]);
+    const openColorPickerMenu = useCallback(() => {
+        setIsColorPickerMenuOpen(true);
+    }, []);
 
-    const toggleIsEmojiPickerMenuOpen = useCallback(() => {
-        setIsEmojiPickerMenuOpen(!isEmojiPickerMenuOpen);
-    }, [isEmojiPickerMenuOpen]);
+    const closeColorPickerMenu = useCallback(() => {
+        setIsColorPickerMenuOpen(false);
+    }, []);
+
+    const openEmojiPickerMenu = useCallback(() => {
+        setIsEmojiPickerMenuOpen(true);
+    }, []);
+
+    const closeEmojiPickerMenu = useCallback(() => {
+        setIsEmojiPickerMenuOpen(false);
+    }, []);
 
     const getAccountInfos = useCallback(async () => {
         if (authentication) return;
@@ -183,57 +188,37 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                             data-testid="color-picker"
                             className="w-12 h-12 rounded-sm cursor-pointer"
                             style={{ backgroundColor: draftColor }}
-                            onClick={toggleIsColorPickerMenuOpen}
+                            onClick={openColorPickerMenu}
                         />
                     </div>
                 </div>
-                <div className="relative mx-6">
-                    {isColorPickerMenuOpen && (
-                        <>
-                            {/* Backdrop */}
-                            <div
-                                data-testid="emoji-picker"
-                                className="absolute -top-[223px] -left-[24px] w-[360px] h-[564px]"
-                                onClick={toggleIsColorPickerMenuOpen}
-                            />
-
-                            <div className="absolute">
-                                <ColorPickerMenu
-                                    selectedColor={draftColor}
-                                    setSelectedColor={_handleColorChange}
-                                />
-                            </div>
-                        </>
-                    )}
+                <div className="relative -mt-4 mx-6">
+                    <ColorPickerMenu
+                        isOpen={isColorPickerMenuOpen}
+                        selectedColor={draftColor}
+                        setSelectedColor={_handleColorChange}
+                        closeColorPickerMenu={closeColorPickerMenu}
+                    />
                 </div>
                 <div className="flex justify-between items-center px-6 pb-6">
                     <BodyLarge isSemibold>Choose an Emoji</BodyLarge>
                     <div
                         data-testid="emoji-picker"
                         className="p-1 rounded-md cursor-pointer border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke"
-                        onClick={toggleIsEmojiPickerMenuOpen}
+                        onClick={openEmojiPickerMenu}
                     >
                         <div className="flex w-12 h-12 rounded-sm place-content-center items-center">
                             <EmojiDisplay emoji={draftEmoji} sizeInPx={48} />
                         </div>
                     </div>
                 </div>
-                {isEmojiPickerMenuOpen && (
-                    <>
-                        {/* Backdrop */}
-                        <div
-                            className="absolute w-full h-full top-0"
-                            onClick={toggleIsEmojiPickerMenuOpen}
-                        />
-
-                        <div className="absolute left-1">
-                            <Picker
-                                data={data}
-                                onEmojiSelect={_handleEmojiChange}
-                            />
-                        </div>
-                    </>
-                )}
+                <div className="absolute left-1">
+                    <EmojiPickerMenu
+                        isOpen={isEmojiPickerMenuOpen}
+                        setSelectedEmoji={_handleEmojiChange}
+                        closeEmojiPickerMenu={closeEmojiPickerMenu}
+                    />
+                </div>
                 <div className="relative mx-6"></div>
                 <Button buttonStyle="primary" onClick={_saveAccountInfos}>
                     <Loading loading={loading}>Done</Loading>

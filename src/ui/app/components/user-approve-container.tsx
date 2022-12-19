@@ -4,7 +4,7 @@
 import { memo, useCallback, useState } from 'react';
 
 import InlineButtonGroup from '../shared/buttons/InlineButtonGroup';
-import HeaderWithIconRow from '../shared/headers/page-headers/HeaderWithIconRow';
+import UserApproveHeaderWithSiteIcon from '../shared/headers/page-headers/UserApproveHeaderWithSiteIcon';
 import ApproveContainerNavBar from '../shared/navigation/nav-bar/ApproveContainerNavBar';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 
@@ -49,7 +49,7 @@ function UserApproveContainer({
     return (
         <div className="no-scrollbar w-full text-ethos-light-text-default dark:text-ethos-dark-text-default bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
             <ApproveContainerNavBar reject={reject} />
-            <HeaderWithIconRow
+            <UserApproveHeaderWithSiteIcon
                 iconSrc={originFavIcon}
                 iconAlt={`${originTitle} icon`}
                 title={title}

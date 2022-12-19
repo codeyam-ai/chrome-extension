@@ -14,6 +14,7 @@ type InlineButtonGroupProps = {
     buttonSecondaryType?: 'button' | 'submit' | 'reset' | undefined;
     buttonSecondaryChildren?: React.ReactNode;
     isButtonSecondaryDisabled?: boolean;
+    isDanger?: boolean;
 };
 
 const InlineButtonGroup = ({
@@ -28,9 +29,10 @@ const InlineButtonGroup = ({
     buttonSecondaryType,
     buttonSecondaryChildren,
     isButtonSecondaryDisabled,
+    isDanger,
 }: InlineButtonGroupProps) => {
     return (
-        <div className={`${className || ''} grid grid-cols-2 gap-2 px-6`}>
+        <div className={`${className || ''} grid grid-cols-2 gap-3 px-6`}>
             <Button
                 buttonStyle="secondary"
                 onClick={onClickButtonSecondary}
@@ -38,6 +40,7 @@ const InlineButtonGroup = ({
                 type={buttonSecondaryType}
                 isInline={true}
                 disabled={isButtonSecondaryDisabled}
+                isDanger={isDanger}
             >
                 {buttonSecondaryChildren}
             </Button>
@@ -48,6 +51,7 @@ const InlineButtonGroup = ({
                 type={buttonPrimaryType}
                 isInline={true}
                 disabled={isButtonPrimaryDisabled}
+                isDanger={isDanger}
             >
                 {buttonPrimaryChildren}
             </Button>

@@ -10,6 +10,7 @@ import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import Alert from '../../shared/feedback/Alert';
 import Body from '../../shared/typography/Body';
 import EthosLink from '../../shared/typography/EthosLink';
+import { Dot } from './CostValue';
 import SectionElement from './SectionElement';
 import TabElement from './TabElement';
 import Loading from '_components/loading';
@@ -47,6 +48,8 @@ export type TabSections = {
     [key in TxApprovalTab]?: Section[];
 };
 
+const coinName = (coin: string) => coin.split('::')[2];
+
 const cleanObjectId = (objectId: string) => {
     return objectId.replace('0x0', '').replace('0x', '');
 };
@@ -56,6 +59,8 @@ const formatAddress = (address?: string) => {
 };
 
 export function DappTxApprovalPage() {
+    const suiName = useMemo(() => coinName(GAS_TYPE_ARG), []);
+
     const [tab, setTab] = useState(TxApprovalTab.SUMMARY);
 
     const { txID } = useParams();
@@ -125,12 +130,15 @@ export function DappTxApprovalPage() {
         const newEvents = effects.events.filter(
             (event) =>
                 'newObject' in event &&
+                event.newObject &&
                 typeof event.newObject.recipient !== 'string' &&
                 'AddressOwner' in event.newObject.recipient &&
                 event.newObject.recipient.AddressOwner === address
         );
+
         const creating = newEvents.map((event) => {
-            if (!('newObject' in event)) return { name: '' };
+            if (!('newObject' in event)) return {};
+
             const objectTypeParts = event.newObject.objectType.split('::');
             return {
                 address: objectTypeParts[0],
@@ -166,7 +174,7 @@ export function DappTxApprovalPage() {
                 );
             })
             .map((event) => {
-                if (!('mutateObject' in event)) return { name: '' };
+                if (!('mutateObject' in event)) return {};
 
                 const objectTypeParts =
                     event.mutateObject.objectType.split('::');
@@ -187,12 +195,13 @@ export function DappTxApprovalPage() {
             .filter(
                 (event) =>
                     'transferObject' in event &&
+                    event.transferObject &&
                     typeof event.transferObject.recipient !== 'string' &&
                     'AddressOwner' in event.transferObject.recipient &&
                     event.transferObject.recipient.AddressOwner
             )
             .map((event) => {
-                if (!('transferObject' in event)) return { name: '' };
+                if (!('transferObject' in event)) return {};
 
                 const objectTypeParts =
                     event.transferObject.objectType.split('::');
@@ -212,8 +221,7 @@ export function DappTxApprovalPage() {
         const deleting = effects.events
             .filter((event) => 'deleteObject' in event)
             .map((event) => {
-                if (!('deleteObject' in event)) return { name: '' };
-
+                if (!('deleteObject' in event)) return {};
                 return {
                     name: event.deleteObject.objectId,
                 };
@@ -222,24 +230,30 @@ export function DappTxApprovalPage() {
         return deleting;
     }, [effects]);
 
-    const suiSpent = useMemo(() => {
-        if (!effects?.events) return 0;
+    const coinChanges = useMemo(() => {
+        const zero: Record<string, number> = {};
+
+        if (!effects?.events) return zero;
 
         const coinBalanceChangeEvents = effects.events.filter(
-            (e) =>
-                'coinBalanceChange' in e &&
-                e.coinBalanceChange.coinType === '0x2::sui::SUI'
+            (e) => 'coinBalanceChange' in e
         );
 
-        return (
-            coinBalanceChangeEvents.reduce((total, e) => {
-                if (!('coinBalanceChange' in e)) return total;
-                return total + e.coinBalanceChange.amount;
-            }, 0) * -1
-        );
+        return coinBalanceChangeEvents.reduce((totals, e) => {
+            if (!('coinBalanceChange' in e)) return totals;
+
+            const { coinType, amount } = e.coinBalanceChange;
+            const name = coinName(coinType);
+            if (!totals[name]) totals[name] = 0;
+            totals[name] += amount * -1;
+            return totals;
+        }, zero);
     }, [effects]);
 
-    const charges = useMemo(() => suiSpent - (gas || 0), [suiSpent, gas]);
+    const charges = useMemo(
+        () => coinChanges[suiName] - (gas || 0),
+        [coinChanges, suiName, gas]
+    );
     const [formattedCharges, chargesSymbol, chargeDollars] = useFormatCoin(
         charges,
         GAS_TYPE_ARG
@@ -249,7 +263,7 @@ export function DappTxApprovalPage() {
         GAS_TYPE_ARG
     );
     const [formattedTotal, totalSymbol, totalDollars] = useFormatCoin(
-        suiSpent,
+        coinChanges[suiName],
         GAS_TYPE_ARG
     );
 
@@ -527,7 +541,8 @@ export function DappTxApprovalPage() {
                     creating.length > 0 ||
                     mutating.length > 0 ||
                     transferring.length > 0 ||
-                    deleting.length > 0
+                    deleting.length > 0 ||
+                    Object.keys(coinChanges).length > 1
                 ) {
                     const effects = {
                         title: 'Effects',
@@ -542,7 +557,9 @@ export function DappTxApprovalPage() {
                             content: creating.map(
                                 (creating) =>
                                     ({
-                                        label: creating.name.toString(),
+                                        label: (
+                                            creating?.name || ''
+                                        ).toString(),
                                         count: 1,
                                     } as NumberedDetail)
                             ),
@@ -555,7 +572,9 @@ export function DappTxApprovalPage() {
                             content: mutating.map(
                                 (mutating) =>
                                     ({
-                                        label: mutating.name.toString(),
+                                        label: (
+                                            mutating?.name ?? ''
+                                        ).toString(),
                                         count: 1,
                                     } as NumberedDetail)
                             ),
@@ -568,7 +587,9 @@ export function DappTxApprovalPage() {
                             content: transferring.map(
                                 (transferring) =>
                                     ({
-                                        label: transferring.name.toString(),
+                                        label: (
+                                            transferring?.name || ''
+                                        ).toString(),
                                         count: 1,
                                     } as NumberedDetail)
                             ),
@@ -585,6 +606,27 @@ export function DappTxApprovalPage() {
                                         count: 1,
                                     } as NumberedDetail)
                             ),
+                        });
+                    }
+
+                    if (Object.keys(coinChanges).length > 1) {
+                        effects.details.push({
+                            label: 'Coins',
+                            content: Object.keys(coinChanges)
+                                .filter(
+                                    (name) => name !== coinName(GAS_TYPE_ARG)
+                                )
+                                .map(
+                                    (coinName) =>
+                                        ({
+                                            label: coinName,
+                                            count: `${
+                                                coinChanges[coinName] > 0
+                                                    ? ''
+                                                    : '+'
+                                            }${coinChanges[coinName] * -1}`,
+                                        } as NumberedDetail)
+                                ),
                         });
                     }
 
@@ -631,13 +673,15 @@ export function DappTxApprovalPage() {
                     reading.length > 0 ||
                     mutating.length > 0 ||
                     transferring.length > 0 ||
-                    deleting.length > 0;
+                    deleting.length > 0 ||
+                    Object.keys(coinChanges).length > 0;
 
                 const anyAssetEffects =
                     creating.length > 0 ||
                     mutating.length > 0 ||
                     transferring.length > 0 ||
-                    deleting.length > 0;
+                    deleting.length > 0 ||
+                    Object.keys(coinChanges).length > 0;
 
                 const assets = [
                     {
@@ -682,6 +726,22 @@ export function DappTxApprovalPage() {
                                       content: `${deleting.length} Assets`,
                                       detail: deleting.map((d) =>
                                           truncateMiddle(d?.name)
+                                      ),
+                                  },
+                                  {
+                                      label: 'Coins',
+                                      content: `${
+                                          Object.keys(coinChanges).length
+                                      } Coins`,
+                                      detail: Object.keys(coinChanges).map(
+                                          (c, index) => (
+                                              <div
+                                                  key={`coin-detail-${index}`}
+                                                  className="text-xs"
+                                              >
+                                                  <div>{c}</div>
+                                              </div>
+                                          )
                                       ),
                                   },
                               ]
@@ -733,6 +793,29 @@ export function DappTxApprovalPage() {
                                       content: `${deleting.length} Assets`,
                                       detail: deleting.map((d) =>
                                           truncateMiddle(d?.name)
+                                      ),
+                                  },
+                                  {
+                                      label: 'Balances',
+                                      content: `${
+                                          Object.keys(coinChanges).length
+                                      } Coins`,
+                                      detail: Object.keys(coinChanges).map(
+                                          (c, index) => (
+                                              <div
+                                                  key={`coin-detail-${index}`}
+                                                  className="text-xs flex gap-1 justify-end items-center"
+                                              >
+                                                  <div>{c}</div>
+                                                  <Dot />
+                                                  <div className="text-slate-500">
+                                                      {coinChanges[c] > 0
+                                                          ? ''
+                                                          : '+'}
+                                                      {coinChanges[c] * -1}
+                                                  </div>
+                                              </div>
+                                          )
                                       ),
                                   },
                               ]
@@ -905,6 +988,7 @@ export function DappTxApprovalPage() {
         transferring,
         gas,
         gasUsed,
+        coinChanges,
     ]);
 
     return (
@@ -929,7 +1013,7 @@ export function DappTxApprovalPage() {
                                     />
                                 </div>
                             ) : (
-                                <div className="px-6 pb-6">
+                                <div className="px-6 pb-6 flex flex-col gap-6">
                                     <Alert
                                         title="Dry run error"
                                         subtitle={
@@ -946,6 +1030,10 @@ export function DappTxApprovalPage() {
                                                 .
                                             </Body>
                                         }
+                                    />
+                                    <Alert
+                                        title="Error details"
+                                        subtitle={<Body>{dryRunError}</Body>}
                                     />
                                 </div>
                             )}

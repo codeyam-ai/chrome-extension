@@ -3,22 +3,16 @@
 
 import { Outlet } from 'react-router-dom';
 
-import { AppState } from '../../hooks/useInitializedGuard';
-import GetStartedCard from '../../shared/layouts/GetStartedCard';
-import Loading from '_components/loading';
-import { useInitializedGuard } from '_hooks';
-import PageLayout from '_src/ui/app/pages/PageLayout';
+import OnboardingLayout from '../../shared/layouts/OnboardingLayout';
 
 const InitializePage = () => {
-    const checkingInitialized = useInitializedGuard(AppState.UNINITIALIZED);
+    // const checkingInitialized = useInitializedGuard(AppState.UNINITIALIZED);
     return (
-        <PageLayout forceFullscreen={true}>
-            <Loading loading={checkingInitialized} big={true}>
-                <GetStartedCard showBack={true}>
-                    <Outlet />
-                </GetStartedCard>
-            </Loading>
-        </PageLayout>
+        <OnboardingLayout>
+            {/* <Loading loading={checkingInitialized} big={true}> */}
+            <Outlet />
+            {/* </Loading> */}
+        </OnboardingLayout>
     );
 };
 

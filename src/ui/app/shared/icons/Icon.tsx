@@ -31,7 +31,7 @@ export const Icon = ({
     const clonedIcon = React.cloneElement(displayIcon, {
         color: displayIcon.props.color || styles.iconColor,
         width: displayIcon.props.width || '26px',
-        height: displayIcon.props.height || '',
+        height: displayIcon.props.height || null,
     });
 
     return (

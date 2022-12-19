@@ -44,7 +44,7 @@ export const LOCKED = 'locked';
 
 export const loadAccountInformationFromStorage = createAsyncThunk(
     'account/loadAccountInformation',
-    async (): Promise<InitialAccountInfo> => {
+    async (_args, { getState }): Promise<InitialAccountInfo> => {
         let activeAccountIndex = 0;
 
         let authentication = await getEncrypted('authentication');
@@ -118,6 +118,14 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
 
         if (activeAccountIndex >= (accountInfos?.length || 0)) {
             activeAccountIndex = (accountInfos?.length || 1) - 1;
+        }
+
+        const {
+            account: { locked: alreadyLocked },
+        } = getState() as RootState;
+
+        if (alreadyLocked) {
+            await deleteEncrypted(LOCKED, passphrase);
         }
 
         const locked = await getEncrypted(LOCKED, passphrase);
@@ -371,7 +379,6 @@ export const logout = createAsyncThunk(
         const {
             account: { authentication, passphrase },
         } = getState() as RootState;
-
         if (authentication) {
             await deleteEncrypted('authentication');
         } else if (passphrase) {
@@ -404,7 +411,6 @@ export const unlock: AsyncThunk<boolean, string | null, AppThunkConfig> =
         'account/unlock',
         async (passphrase): Promise<boolean> => {
             if (passphrase && (await isPasswordCorrect(passphrase))) {
-                await deleteEncrypted('locked');
                 await setEncrypted(
                     LOCKED,
                     `${LOCKED}${passphrase}`,
@@ -526,6 +532,9 @@ const accountSlice = createSlice({
             })
             .addCase(saveEmail.fulfilled, (state, action) => {
                 state.email = action.payload;
+            })
+            .addCase(unlock.fulfilled, (state) => {
+                state.locked = false;
             })
             .addCase(logout.fulfilled, (state) => {
                 if (state.authentication) {

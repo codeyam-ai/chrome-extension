@@ -1,9 +1,15 @@
 export type NumberedDetail = {
     label: string;
-    count: number;
+    count: number | string;
 };
 
-const NumberedValue = ({ label, count }: { label: string; count: number }) => {
+const NumberedValue = ({
+    label,
+    count,
+}: {
+    label: string;
+    count: number | string;
+}) => {
     return (
         <div
             className={`flex flex-row items-center gap-1 ${
@@ -11,11 +17,16 @@ const NumberedValue = ({ label, count }: { label: string; count: number }) => {
             }`}
         >
             <div>{label}</div>
-            {count > 0 && (
-                <div className="w-5 h-5 flex justify-center items-center font-normal bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-400 rounded-full">
-                    {count}
-                </div>
-            )}
+            {count > 0 &&
+                (count > 10 ? (
+                    <div className="text-xs text-slate-500 ml-1 font-normal">
+                        {count}
+                    </div>
+                ) : (
+                    <div className="w-5 h-5 flex justify-center items-center font-normal bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-400 rounded-full">
+                        {count}
+                    </div>
+                ))}
         </div>
     );
 };

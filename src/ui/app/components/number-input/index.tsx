@@ -15,12 +15,14 @@ export interface NumberInputProps<Values> extends FieldProps<string, Values> {
     placeholder?: string;
     disabled?: boolean;
     decimals?: boolean;
+    autoFocus?: boolean;
 }
 
 function NumberInput<FormValues>({
     allowNegative,
     className,
     placeholder,
+    autoFocus,
     disabled: forcedDisabled,
     decimals = false,
     field: { onBlur, name, value },
@@ -38,9 +40,11 @@ function NumberInput<FormValues>({
     return (
         <NumberFormat
             type="text"
+            onKeyDown={onBlur}
             {...{
                 className,
                 placeholder,
+                autoFocus,
                 disabled,
                 value,
                 name,

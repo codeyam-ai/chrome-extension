@@ -27,6 +27,8 @@ const CustomFormikForm = ({ loading }: { loading: boolean }) => {
                 type="email"
                 required={true}
                 errorText={meta.touched && meta.error ? meta.error : undefined}
+                className="!px-10 !pb-[128px]"
+                forceLightTheme
             />
 
             {loading ? (
@@ -34,13 +36,16 @@ const CustomFormikForm = ({ loading }: { loading: boolean }) => {
                     <LoadingIndicator />
                 </div>
             ) : (
-                <Button
-                    buttonStyle="primary"
-                    type="submit"
-                    disabled={!meta.value || meta.error ? true : false}
-                >
-                    Sign in
-                </Button>
+                <div className="px-10 pb-10">
+                    <Button
+                        buttonStyle="primary"
+                        type="submit"
+                        disabled={!meta.value || meta.error ? true : false}
+                        removeContainerPadding
+                    >
+                        Sign in
+                    </Button>
+                </div>
             )}
         </>
     );
@@ -62,7 +67,7 @@ const EmailForm = ({ onSubmit, loading }: EmailFormProps) => {
                 validationSchema={Yup.object({
                     email: Yup.string()
                         .email('Invalid email address')
-                        .required('Required'),
+                        .required('Please enter your email address'),
                 })}
                 onSubmit={_onSubmit}
             >

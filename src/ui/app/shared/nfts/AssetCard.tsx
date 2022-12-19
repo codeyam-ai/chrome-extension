@@ -1,3 +1,4 @@
+import UnknownToken from '../../pages/home/tokens/UnknownToken';
 import TxSui from '../svg/TxSui';
 
 export const AssetCard = ({
@@ -6,12 +7,14 @@ export const AssetCard = ({
     imgUrl,
     name,
     icon,
+    coinType,
 }: {
     theme?: string;
     isNft: boolean;
     imgUrl?: string;
     name: string;
     icon?: JSX.Element;
+    coinType?: string;
 }) => (
     <div className={'w-full'}>
         <div className={'flex flex-row justify-center items-center mb-4'}>
@@ -23,9 +26,15 @@ export const AssetCard = ({
                 />
             ) : (
                 <div className={'relative'} style={{ zIndex: 1 }}>
-                    <TxSui
-                        borderColor={theme === 'light' ? 'white' : '#111111'}
-                    />
+                    {coinType !== 'SUI' ? (
+                        <UnknownToken width={56} height={56} />
+                    ) : (
+                        <TxSui
+                            borderColor={
+                                theme === 'light' ? 'white' : '#111111'
+                            }
+                        />
+                    )}
                 </div>
             )}
             {icon && icon}

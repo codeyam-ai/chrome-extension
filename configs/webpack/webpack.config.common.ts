@@ -172,7 +172,7 @@ const commonConfig: () => Promise<Configuration> = async () => {
                 expand: true,
             }),
             new DefinePlugin({
-                'typeof window': JSON.stringify(typeof {}),
+                // 'typeof window': JSON.stringify(typeof {}),
                 'process.env.NODE_DEBUG': false,
             }),
             new ProvidePlugin({

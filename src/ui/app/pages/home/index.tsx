@@ -59,4 +59,3 @@ export { default as ReceiptPage } from './receipt';
 export { default as TokensPage } from './tokens';
 export { default as TransactionDetailsPage } from './transaction-details';
 export { default as TransactionsPage } from './transactions';
-export { default as TransferCoinPage } from './transfer-coin';

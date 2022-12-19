@@ -5,6 +5,7 @@ import { combineReducers } from '@reduxjs/toolkit';
 
 import account from './slices/account';
 import app from './slices/app';
+import forms from './slices/forms';
 import permissions from './slices/permissions';
 import preapprovalRequests from './slices/preapproval-requests';
 import signMessageRequests from './slices/sign-message-requests';
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
     transactions,
     txresults,
     permissions,
+    forms,
     transactionRequests,
     preapprovalRequests,
     signMessageRequests,

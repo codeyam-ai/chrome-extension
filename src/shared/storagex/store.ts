@@ -5,7 +5,7 @@ import { decrypt, encrypt } from '../encryption/password';
 const MASTER_PASSPHRASE = process.env.MASTER_PASSPHRASE || 'Ethos';
 const MASTER_SALT = Uint8Array.from([1]);
 
-export async function get(key: string): Promise<string> {
+export async function get(key: string): Promise<string | number> {
     const response = await Browser.storage.local.get(key);
     return response[key];
 }
@@ -36,7 +36,7 @@ export async function getEncrypted(
     const encryptedValue = await get(encryptedKey);
 
     if (!encryptedValue) return null;
-    return decrypt(encryptedValue, passphrase);
+    return decrypt(encryptedValue as string, passphrase);
 }
 
 export async function deleteEncrypted(

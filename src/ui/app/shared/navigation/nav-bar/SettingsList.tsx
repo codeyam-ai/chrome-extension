@@ -2,7 +2,7 @@ import { type ReactNode } from 'react';
 import Browser from 'webextension-polyfill';
 
 import SettingsListItem from './SettingsListItem';
-import EthosLogoGrayscale from '_src/ui/app/components/EthosLogoGrayscale';
+import EthosLogoGrayscale from '_src/ui/app/components/logos/EthosLogoGrayscale';
 
 export interface SettingsListSectionItem {
     text: string;

@@ -20,16 +20,18 @@ const CustomFormikForm = () => {
         <>
             <Input
                 {...field}
-                label="Password"
+                placeholder="Enter your password"
                 id="password"
                 name="password"
                 type="password"
                 required={true}
                 errorText={meta.touched && meta.error ? meta.error : undefined}
+                className="!px-10"
+                forceLightTheme
             />
             <Input
                 {...confirmField}
-                label="Confirm password"
+                placeholder="Re-enter your password"
                 id="confirmPassword"
                 name="confirmPassword"
                 type="password"
@@ -39,20 +41,25 @@ const CustomFormikForm = () => {
                         ? confirmMeta.error
                         : undefined
                 }
+                className="!px-10 !pb-[128px]"
+                forceLightTheme
             />
 
-            <Button
-                buttonStyle="primary"
-                type="submit"
-                disabled={
-                    !meta.value ||
-                    !!meta.error ||
-                    !confirmMeta.value ||
-                    !!confirmMeta.error
-                }
-            >
-                Save
-            </Button>
+            <div className="px-10 pb-10">
+                <Button
+                    buttonStyle="primary"
+                    type="submit"
+                    disabled={
+                        !meta.value ||
+                        !!meta.error ||
+                        !confirmMeta.value ||
+                        !!confirmMeta.error
+                    }
+                    removeContainerPadding
+                >
+                    Continue
+                </Button>
+            </div>
         </>
     );
 };

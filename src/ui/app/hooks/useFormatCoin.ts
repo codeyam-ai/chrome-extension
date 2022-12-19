@@ -55,6 +55,7 @@ export function useCoinDecimals(coinType?: string | null) {
                     'Fetching coin denomination should be disabled when coin type is disabled.'
                 );
             }
+
             return api.instance.fullNode.getCoinMetadata(coinType);
         },
         {

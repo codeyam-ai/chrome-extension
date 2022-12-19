@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { AppState } from '../hooks/useInitializedGuard';
 import {
@@ -10,7 +10,7 @@ import {
     unlock,
 } from '../redux/slices/account';
 import UnlockWalletForm from '../shared/forms/UnlockWalletForm';
-import HeaderWithIconRow from '../shared/headers/page-headers/HeaderWithIconRow';
+import HeaderWithLargeEthosIcon from '../shared/headers/page-headers/HeaderWithLargeEthosIcon';
 import BaseLayout from '../shared/layouts/BaseLayout';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
@@ -43,7 +43,7 @@ const LockedPage = () => {
         <PageLayout>
             <Loading loading={checkingInitialized} resize={true}>
                 <BaseLayout className="!min-h-0">
-                    <HeaderWithIconRow
+                    <HeaderWithLargeEthosIcon
                         title="Ethos"
                         description="Unlock Wallet"
                     />
