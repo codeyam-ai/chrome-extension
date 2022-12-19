@@ -22,10 +22,10 @@ const CreatePasswordPage = () => {
     const _save = useCallback(
         async (passphrase: string) => {
             await dispatch(savePassphrase(passphrase));
-            await dispatch(createMnemonic());
             if (mnemonic) {
                 navigate('/initialize/complete');
             } else {
+                await dispatch(createMnemonic());
                 navigate('/initialize/save-phrase');
             }
         },

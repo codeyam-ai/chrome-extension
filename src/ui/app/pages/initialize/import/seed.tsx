@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { validateMnemonics } from '_src/shared/cryptography/mnemonics';
+import {
+    normalizeMnemonics,
+    validateMnemonics,
+} from '_src/shared/cryptography/mnemonics';
 import { useAppDispatch } from '_src/ui/app/hooks';
 import { createMnemonic, setMnemonic } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
@@ -75,7 +78,7 @@ const ImportSeedPage = () => {
             for (const word of words) {
                 mnemonic = mnemonic + word + ' ';
             }
-            const formattedMnemonic = mnemonic.trim();
+            const formattedMnemonic = normalizeMnemonics(mnemonic.trim());
             if (!validateMnemonics(formattedMnemonic)) {
                 setError(true);
                 return;
