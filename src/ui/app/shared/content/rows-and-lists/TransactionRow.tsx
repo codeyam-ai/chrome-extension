@@ -2,14 +2,18 @@ import {
     ArrowUpIcon,
     ArrowDownIcon,
     SparklesIcon,
-    CodeSquareIcon,
-    ArrowsUpDownIcon,
 } from '@heroicons/react/24/solid';
+
+import {
+    CodeBracketSquareIcon,
+    FireIcon,
+    PencilSquareIcon,
+    ArrowsRightLeftIcon,
+} from '@heroicons/react/24/outline';
 
 import SuiIcon from '../../svg/SuiIcon';
 import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
-import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useMiddleEllipsis } from '_src/ui/app/hooks';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
 
@@ -113,7 +117,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
 
     const FunctionIcon = ({ ...props }) => (
         <IconContainer>
-            <CodeSquareIcon width={15} height={15} fill={'white'} {...props} />
+            <CodeBracketSquareIcon width={20} height={20} color={'white'} />
         </IconContainer>
     );
 
@@ -145,10 +149,9 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         coin: {
             [key: string]: RowDataTypes;
         };
-        object: {
+        function: {
             [key: string]: RowDataTypes;
         };
-        function: RowDataTypes;
     } = {
         nft: {
             Send: {
@@ -216,22 +219,31 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 header: 'Coin',
             },
         },
-        object: {
+        function: {
+            modify: {
+                ...shared,
+                typeIcon: <PencilSquareIcon {...iconProps} />,
+                icon: <FunctionIcon {...iconProps} />,
+                header: txn?.name || 'Sui Action',
+            },
+            burn: {
+                ...shared,
+                typeIcon: <FireIcon {...iconProps} />,
+                icon: <FunctionIcon {...iconProps} />,
+                header: txn?.name || 'Sui Action',
+            },
             transfer: {
                 ...shared,
-                typeIcon: <ArrowsUpDownIcon {...iconProps} />,
+                typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
                 icon: <FunctionIcon {...iconProps} />,
-                header:
-                    txn?.name ||
-                    (txn.description && truncateString(txn.description, 10)) ||
-                    'Transfer Object',
+                header: txn?.name || 'Sui Action',
             },
-        },
-        function: {
-            ...shared,
-            typeIcon: <SuiIcon width={18} height={18} color={'#9Ca3af'} />,
-            icon: <FunctionIcon {...iconProps} />,
-            header: txn?.name || 'Sui Action',
+            default: {
+                ...shared,
+                typeIcon: <SuiIcon {...iconProps} />,
+                icon: <FunctionIcon {...iconProps} />,
+                header: txn?.name || 'Sui Action',
+            },
         },
     };
 
@@ -244,7 +256,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
     } else if (getIsSui()) {
         rowData = dataMap.sui[type];
     } else if (getIsFunc()) {
-        rowData = dataMap.function;
+        rowData = dataMap.function[txn?.callFunctionName || 'default'];
     } else {
         rowData = dataMap.coin[type];
     }
