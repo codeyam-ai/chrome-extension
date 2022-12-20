@@ -131,6 +131,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
 
     const [searchParams] = useSearchParams();
     const symbol = searchParams.get('symbol');
+    const isFunc = searchParams.get('isFunc');
 
     const theme = getTheme();
 
@@ -247,6 +248,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                 <AssetCard
                     theme={theme}
                     isNft={isNft}
+                    isFunc={isFunc === 'yes'}
                     coinType={coinType}
                     imgUrl={imgUrl ? imgUrl : ''}
                     name={txDigest?.name || 'NFT'}
