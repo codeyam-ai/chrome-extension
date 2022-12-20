@@ -80,9 +80,7 @@ function TransferCoinRecipientForm({
         [accountInfos, activeAccountIndex, dispatch]
     );
 
-    const recentWallets = [...new Set(recentTxs)];
-
-    console.log('recent wallets', recentWallets, recentWallets.length > 1);
+    const recentWallets = [...new Set(recentTxs)].splice(0, 3);
 
     return (
         <Loading loading={loading} big={true}>
