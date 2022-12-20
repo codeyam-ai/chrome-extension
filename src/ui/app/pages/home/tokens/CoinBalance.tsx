@@ -27,6 +27,8 @@ function CoinBalance({ type, balance }: CoinProps) {
         [type]
     );
 
+    if (symbol !== 'SUI' && !icon) return <></>;
+
     return (
         <Link to={sendUrl}>
             <div className="flex items-align justify-between">
