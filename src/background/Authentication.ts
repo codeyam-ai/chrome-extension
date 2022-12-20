@@ -1,4 +1,4 @@
-import { Base64DataBuffer } from '@mysten/sui.js';
+import { Base64DataBuffer, Ed25519PublicKey } from '@mysten/sui.js';
 
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import simpleApiCall from '_src/shared/utils/simpleApiCall';
@@ -80,7 +80,7 @@ class Authentication {
         );
     }
 
-    public async sign(address: string, txBytes: Uint8Array) {
+    public async sign(address: string, dataToSign: Base64DataBuffer) {
         if (!this._accessToken) return;
 
         const { json, status } = await simpleApiCall(
@@ -90,9 +90,9 @@ class Authentication {
             JSON.stringify({
                 network: 'sui',
                 walletAddress: address,
-                populatedTransaction: {
+                txOrMessage: {
                     id: 0,
-                    transaction: txBytes.toString(),
+                    transaction: dataToSign.toString(),
                 },
             })
         );
@@ -106,7 +106,7 @@ class Authentication {
         return {
             signatureScheme: 'ED25519',
             signature: new Base64DataBuffer(signedTransaction.signature),
-            pubKey: signedTransaction.pubKey,
+            pubKey: new Ed25519PublicKey(signedTransaction.pubKey),
         };
     }
 }

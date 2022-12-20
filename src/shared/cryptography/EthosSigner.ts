@@ -41,7 +41,7 @@ export class EthosSigner extends SignerWithProvider {
             JSON.stringify({
                 network: 'sui',
                 walletAddress: this.address,
-                populatedTransaction: {
+                txOrMessage: {
                     id: 0,
                     transaction: data.toString(),
                 },
