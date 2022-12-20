@@ -38,7 +38,7 @@ interface WordPickerProps {
 
 const WordPicker = ({ wordList, handleWordClicked }: WordPickerProps) => {
     return (
-        <div className="grid grid-cols-4 grid-rows-3 px-6 pb-6 gap-2">
+        <div className="grid grid-cols-3 grid-rows-4 sm:grid-cols-4 sm:grid-rows-3 px-6 sm:px-10 pb-6 sm:pb-10 gap-2">
             {wordList.map((word, key) => {
                 return (
                     <WordButton

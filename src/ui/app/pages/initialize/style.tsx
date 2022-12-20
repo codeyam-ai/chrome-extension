@@ -153,7 +153,7 @@ const StylePage = () => {
             }
         >
             <div className="relative flex gap-6 px-10 pb-[144px]">
-                <div className="flex flex-col w-full place-items-center place-content-center gap-3 py-6 px-3 bg-ethos-light-background-secondary rounded-2xl">
+                <div className="flex flex-col w-full text-center place-items-center place-content-center gap-3 py-6 px-3 bg-ethos-light-background-secondary rounded-2xl">
                     <div
                         data-testid="emoji-picker"
                         className="flex w-12 h-12 rounded-sm place-content-center items-center cursor-pointer"
@@ -170,7 +170,7 @@ const StylePage = () => {
                         />
                     </div>
                 </div>
-                <div className="flex flex-col w-full place-items-center place-content-center gap-3 py-6 px-3 bg-ethos-light-background-secondary rounded-2xl">
+                <div className="flex flex-col w-full text-center place-items-center place-content-center gap-3 py-6 px-3 bg-ethos-light-background-secondary rounded-2xl">
                     <div
                         className="w-12 h-12 rounded-md cursor-pointer"
                         style={{ backgroundColor: draftColor }}
@@ -186,7 +186,7 @@ const StylePage = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col text-center gap-4 px-10 pb-10">
+            <div className="flex flex-col text-center gap-4 px-6 sm:px-10 pb-6 sm:pb-10">
                 <Button onClick={_saveAccountInfos} removeContainerPadding>
                     Continue
                 </Button>

@@ -4,6 +4,7 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import useIsMobile from '../../hooks/useIsMobile';
 import Button from '../../shared/buttons/Button';
 import RecoveryPhraseDisplay from '../../shared/content/RecoveryPhraseDisplay';
 import OnboardingCard from '../../shared/layouts/OnboardingCard';
@@ -15,6 +16,7 @@ const SavePhrasePage = () => {
     const [copied, setCopied] = useState(false);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const isMobile = useIsMobile();
 
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
@@ -44,15 +46,14 @@ const SavePhrasePage = () => {
             <div className="flex flex-col gap-[76px]">
                 <RecoveryPhraseDisplay
                     mnemonic={mnemonic || ''}
-                    horizontalMarginInPx={40}
+                    horizontalMarginInPx={isMobile ? 24 : 40}
                     onCopy={setCopiedTrue}
                     forceLightTheme
                 />
-                <div className="px-10 pb-10">
+                <div className="px-6 sm:px-10 pb-6 sm:pb-10">
                     <Button
                         onClick={finishOnboarding}
                         disabled={!copied}
-                        className="!mb-10"
                         removeContainerPadding
                     >
                         Create Wallet
