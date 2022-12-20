@@ -50,27 +50,30 @@ interface RowDataTypes extends SharedTypes {
 const TransactionRow = ({ txn }: TransactionRowProps) => {
     const [header, setHeader] = useState('');
 
-    useMemo(() => {
-        const getSymbolHeader = async () => {
-            if (txn?.txId) {
-                const txTest = await provider.getTransactionWithEffects(
-                    txn.txId
-                );
+    useMemo(async () => {
+        if (txn?.txId) {
+            const txTest = await provider.getTransactionWithEffects(txn.txId);
 
-                const objId = txTest?.effects?.created[0].reference.objectId;
-                const obj = await provider.getObject(objId);
+            const objId = txTest?.effects?.created?.[0]?.reference.objectId;
+            if (!objId) return;
 
-                const SymbolObjName = await Coin.getCoinSymbol(
-                    obj.details.data.type
-                ).replace(/[<>]/g, '');
+            const obj = await provider.getObject(objId);
+            if (
+                !obj ||
+                typeof obj.details === 'string' ||
+                !('data' in obj.details) ||
+                !('type' in obj.details.data)
+            )
+                return;
 
-                if (SymbolObjName) {
-                    setHeader(SymbolObjName);
-                }
+            const SymbolObjName = await Coin.getCoinSymbol(
+                obj.details.data.type
+            ).replace(/[<>]/g, '');
+
+            if (SymbolObjName) {
+                setHeader(SymbolObjName);
             }
-        };
-
-        getSymbolHeader();
+        }
     }, [txn.txId]);
 
     const getIsNft = () => {
