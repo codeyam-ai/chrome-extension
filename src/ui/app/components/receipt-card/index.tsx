@@ -307,7 +307,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     keyNamesAndValues={[
                         {
                             keyName: 'Transaction Fee',
-                            value: `${gas} ${gasSymbol}`,
+                            value: `${gas} SUI`,
                         },
                         {
                             keyName: 'Signature',
