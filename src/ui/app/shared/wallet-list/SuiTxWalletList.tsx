@@ -69,8 +69,6 @@ const TxSelector = ({ tx, setFieldValue }: TxSelectorProps) => {
         9
     )}${tx.substring(10, 12)}`;
 
-    console.log(walletColor);
-
     if (!tx) {
         return <></>;
     } else {
