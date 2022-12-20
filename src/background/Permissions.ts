@@ -163,6 +163,27 @@ class Permissions {
         this.storePermission(revokedPermission);
     }
 
+    public async grantEthosDashboardBasicPermissionsForAccount(
+        account: string
+    ): Promise<void> {
+        const permission: Permission = {
+            accounts: [account],
+            allowed: true,
+            createdDate: Date.now().toString(),
+            favIcon: 'https://ethoswallet.xyz/favicon.ico',
+            id: uuidV4(),
+            origin: 'https://ethoswallet.xyz',
+            permissions: [
+                'viewAccount',
+                'suggestTransactions',
+                'suggestSignMessages',
+            ],
+            responseDate: Date.now().toString(),
+            title: 'Ethos Wallet Dashboard',
+        };
+        await this.storePermission(permission);
+    }
+
     public async hasPendingPermissionRequest(
         origin: string,
         permission?: Permission | null

@@ -1,13 +1,14 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import useIsMobile from '../../hooks/useIsMobile';
 import Button from '../../shared/buttons/Button';
 import RecoveryPhraseDisplay from '../../shared/content/RecoveryPhraseDisplay';
 import OnboardingCard from '../../shared/layouts/OnboardingCard';
+import Permissions from '_src/background/Permissions';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { loadAccountInformationFromStorage } from '_src/ui/app/redux/slices/account';
 
@@ -21,6 +22,7 @@ const SavePhrasePage = () => {
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
     );
+    const address = useAppSelector(({ account }) => account.address);
 
     const setCopiedTrue = useCallback(() => {
         setCopied(true);
@@ -33,6 +35,12 @@ const SavePhrasePage = () => {
         await dispatch(loadAccountInformationFromStorage());
         navigate('/initialize/verify-phrase');
     }, [copied, dispatch, navigate]);
+
+    useEffect(() => {
+        if (address) {
+            Permissions.grantEthosDashboardBasicPermissionsForAccount(address);
+        }
+    }, [address]);
 
     return (
         <OnboardingCard

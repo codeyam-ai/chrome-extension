@@ -12,6 +12,7 @@ import {
 import { clearForNetworkOrWalletSwitch } from '../../redux/slices/sui-objects';
 import { thunkExtras } from '../../redux/store/thunk-extras';
 import Authentication from '_src/background/Authentication';
+import Permissions from '_src/background/Permissions';
 
 import type { Dispatch, SetStateAction } from 'react';
 
@@ -127,6 +128,10 @@ const CreateWalletProvider = ({
 
                 draftAccountInfos.current = newAccountInfos;
             }
+
+            await Permissions.grantEthosDashboardBasicPermissionsForAccount(
+                newAccountInfos[nextAccountIndex].address
+            );
 
             setAccountInfos(newAccountInfos);
         };
