@@ -80,7 +80,7 @@ const RecoveryPhraseDisplay = ({
                                     : 'dark:text-ethos-dark-text-medium'
                             }`}
                         />
-                        <Body>Copy recovery phrase above</Body>
+                        <Body>Click above to copy recovery phrase</Body>
                     </>
                 ) : (
                     <>

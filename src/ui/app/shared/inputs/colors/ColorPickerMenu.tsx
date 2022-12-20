@@ -23,7 +23,7 @@ const ColorPickerMenu = ({
                     onClick={closeColorPickerMenu}
                 />
 
-                <div className="absolute flex flex-col gap-3 w-[312px] p-6 rounded-[20px] shadow-ethos-hovering-element-box-shadow bg-ethos-light-background-default dark:bg-ethos-dark-background-default border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
+                <div className="absolute left-0 sm:left-60 flex flex-col gap-3 w-[312px] p-6 rounded-[20px] shadow-ethos-hovering-element-box-shadow bg-ethos-light-background-default dark:bg-ethos-dark-background-default border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
                     <ColorRow
                         selectedColor={selectedColor}
                         setSelectedColor={setSelectedColor}

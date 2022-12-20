@@ -162,7 +162,7 @@ const StylePage = () => {
                         <EmojiDisplay emoji={draftEmoji} sizeInPx={46} />
                     </div>
                     <BodyLarge isSemibold>Choose Emoji</BodyLarge>
-                    <div className="absolute -top-[10px] left-[55px]">
+                    <div className="absolute -top-[30px] left-0 sm:-top-[10px] sm:left-[55px]">
                         <EmojiPickerMenu
                             isOpen={isEmojiPickerMenuOpen}
                             setSelectedEmoji={_handleEmojiChange}
