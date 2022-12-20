@@ -1,12 +1,13 @@
 import {
     ClockIcon,
+    TicketIcon,
     CurrencyDollarIcon,
-    GlobeAltIcon,
     Squares2X2Icon,
 } from '@heroicons/react/24/solid';
 import { type ReactNode, useCallback, useMemo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
+import ExploreButton from '../../svg/ExploreButton';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import ExternalLink from '_src/ui/app/components/external-link';
 import { useExplorerPermission } from '_src/ui/app/hooks';
@@ -24,14 +25,19 @@ const navItems: NavItem[] = [
         icon: <Squares2X2Icon className={iconClasses} />,
     },
     {
-        title: 'Explore',
-        to: DASHBOARD_LINK,
-        icon: <GlobeAltIcon className={iconClasses} />,
+        title: 'Tickets',
+        to: './tivkets',
+        icon: <TicketIcon className={iconClasses} />,
     },
     {
         title: 'History',
         to: './transactions',
         icon: <ClockIcon className={iconClasses} />,
+    },
+    {
+        title: 'Explore',
+        to: DASHBOARD_LINK,
+        icon: <ExploreButton />,
     },
 ];
 
