@@ -180,7 +180,7 @@ const VerifyPhrasePage = () => {
                 wordList={wordOptions}
                 handleWordClicked={handleWordOptionClicked}
             />
-            <div className="px-6 pb-11">
+            <div className="px-6 sm:px-10 pb-11">
                 <PhraseInput
                     chosenWords={chosenWords}
                     nextWordSlotToChoose={nextWordSlotToChoose}
@@ -188,7 +188,7 @@ const VerifyPhrasePage = () => {
                     error={error}
                 />
             </div>
-            <div className="px-10 pb-10">
+            <div className="px-6 sm:px-10 pb-6 sm:pb-10">
                 <Button
                     onClick={onClickContinue}
                     disabled={!areAllWordsChosen}

@@ -120,7 +120,7 @@ const OnboardingCard = ({
 
             <div className="flex mx-6 lg:w-[928px]">
                 <div className="md:basis-1/2 flex-col rounded-2xl md:rounded-l-2xl md:rounded-r-none bg-ethos-light-background-default">
-                    <div className="flex flex-col gap-2 p-10">
+                    <div className="flex flex-col gap-2 p-6 sm:p-10">
                         {!hideBackButton && <BackButton forceLightMode />}
                         <div className="flex-col">
                             {icon === 'sui' && (
@@ -179,7 +179,7 @@ const OnboardingCard = ({
             </div>
 
             {progressCompleted && progressTotal && (
-                <div className="absolute bottom-0 flex gap-6 w-[448px] px-6 pb-4 tall:pb-12">
+                <div className="absolute bottom-0 flex gap-6 w-full sm:w-[448px] px-6 pb-4 tall:pb-12">
                     {[...Array(progressTotal)].map((_, index) => {
                         return (
                             <div

@@ -124,11 +124,9 @@ export function useEditWalletUrl(walletIndex: number) {
     const [searchParams] = useSearchParams();
     const { pathname } = useLocation();
     return useMemo(() => {
-        searchParams.set(
-            WALLET_PICKER_PARAM,
-            `/edit?index=${walletIndex.toString()}`
-        );
+        searchParams.set(WALLET_PICKER_PARAM, '/edit');
+        searchParams.set('index', walletIndex.toString());
         const search = searchParams.toString();
-        return `${pathname}tokens${search ? '?' : ''}${search}`;
+        return `${pathname}${search ? '?' : ''}${search}`;
     }, [searchParams, pathname, walletIndex]);
 }

@@ -142,7 +142,7 @@ const OnboardingThemePage = () => {
                     );
                 })}
             </div>
-            <div className="px-10 pb-10">
+            <div className="px-6 sm:px-10 pb-6 sm:pb-10">
                 <Button to="/initialize/pin" removeContainerPadding>
                     Continue
                 </Button>

@@ -166,7 +166,7 @@ const CompletePage = () => {
             <div className="fixed top-[200px] left-1/2">
                 <ConfettiPop />
             </div>
-            <div className="flex flex-col gap-3 px-10 pb-6">
+            <div className="flex flex-col gap-3 px-6 sm:px-10 pb-6">
                 {error && (
                     <div className="pb-4">
                         <Alert

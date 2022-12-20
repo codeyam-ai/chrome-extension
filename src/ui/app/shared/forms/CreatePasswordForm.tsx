@@ -26,7 +26,7 @@ const CustomFormikForm = () => {
                 type="password"
                 required={true}
                 errorText={meta.touched && meta.error ? meta.error : undefined}
-                className="!px-10"
+                className="!px-6 sm:!px-10"
                 forceLightTheme
             />
             <Input
@@ -41,11 +41,11 @@ const CustomFormikForm = () => {
                         ? confirmMeta.error
                         : undefined
                 }
-                className="!px-10 !pb-[128px]"
+                className="!px-6 sm:!px-10 !pb-[128px]"
                 forceLightTheme
             />
 
-            <div className="px-10 pb-10">
+            <div className="px-6 sm:px-10 pb-6 sm:pb-10">
                 <Button
                     buttonStyle="primary"
                     type="submit"
