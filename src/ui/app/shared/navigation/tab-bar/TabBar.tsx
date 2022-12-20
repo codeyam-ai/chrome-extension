@@ -26,7 +26,7 @@ const navItems: NavItem[] = [
     },
     {
         title: 'Tickets',
-        to: './tivkets',
+        to: './tickets',
         icon: <TicketIcon className={iconClasses} />,
     },
     {
@@ -75,13 +75,13 @@ const TabBar = () => {
     const setExplorerPermission = useExplorerPermission();
 
     return (
-        <nav className="flex flex-row h-16 w-full sm:rounded-b-2xl items-center border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
+        <nav className="px-3 flex flex-row justify-between h-16 w-full sm:rounded-b-2xl items-center border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
             <>
                 {navItems.map((item, key) => {
                     //
                     return (
                         <div
-                            className="w-full flex flex-row items-center"
+                            className="w-full flex flex-row justify-center items-center"
                             key={key}
                             onMouseOver={
                                 item.to.startsWith('http')
@@ -89,7 +89,7 @@ const TabBar = () => {
                                     : undefined
                             }
                         >
-                            <span className="mx-auto">
+                            <div>
                                 {item.to.startsWith('http') ? (
                                     <ExternalLink
                                         href={item.to}
@@ -106,7 +106,7 @@ const TabBar = () => {
                                         icon={item.icon}
                                     />
                                 )}
-                            </span>
+                            </div>
                         </div>
                     );
                 })}

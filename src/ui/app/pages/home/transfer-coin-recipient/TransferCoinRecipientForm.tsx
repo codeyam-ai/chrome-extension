@@ -82,8 +82,6 @@ function TransferCoinRecipientForm({
 
     const recentWallets = [...new Set(recentTxs)];
 
-    console.log('recent wallets', recentWallets, recentWallets.length > 1);
-
     return (
         <Loading loading={loading} big={true}>
             <Form autoComplete="off" noValidate={true}>

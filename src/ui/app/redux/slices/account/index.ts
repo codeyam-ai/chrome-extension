@@ -618,3 +618,10 @@ export const accountNftsSelector = createSelector(
         return allSuiObjects.filter((anObj) => !Coin.isCoin(anObj));
     }
 );
+
+export const ticketsNftsSelector = createSelector(
+    ownedObjects,
+    (allSuiObjects) => {
+        return allSuiObjects.filter((anObj) => !Coin.isCoin(anObj) && anObj);
+    }
+);

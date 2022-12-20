@@ -10,6 +10,7 @@ import BuyPage from './pages/home/buy';
 import TransferNftRecipient from './pages/home/nft-details/transfer-nft-recipient';
 import TransferNftReview from './pages/home/nft-details/transfer-nft-review';
 import ReceivePage from './pages/home/receive';
+import TicketsPage from './pages/home/tickets';
 import TransferCoinAmountPage from './pages/home/transfer-coin-amount';
 import TransferCoinRecipientPage from './pages/home/transfer-coin-recipient';
 import TransferCoinReviewPage from './pages/home/transfer-coin-review';
@@ -83,6 +84,7 @@ const App = () => {
                         />
                         <Route path="tokens" element={<TokensPage />} />
                         <Route path="nfts" element={<NftsPage />} />
+                        <Route path="tickets" element={<TicketsPage />} />
                         <Route path="nft">
                             <Route
                                 path="details"
