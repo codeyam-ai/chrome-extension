@@ -242,6 +242,15 @@ class Transactions {
         } = json;
 
         const txBytesBuffer = new Base64DataBuffer(txBytes);
+        const INTENT_BYTES = [0, 0, 0];
+        const intentMessage = new Uint8Array(
+            INTENT_BYTES.length + txBytesBuffer.getLength()
+        );
+        intentMessage.set(INTENT_BYTES);
+        intentMessage.set(txBytesBuffer.getData(), INTENT_BYTES.length);
+
+        const dataToSign = new Base64DataBuffer(intentMessage);
+
         let signature;
         let publicKey;
         if (activeAccount.seed) {
@@ -253,15 +262,6 @@ class Transactions {
                 nacl.sign.keyPair.fromSeed(new Uint8Array(seed))
             );
 
-            const INTENT_BYTES = [0, 0, 0];
-            const intentMessage = new Uint8Array(
-                INTENT_BYTES.length + txBytesBuffer.getLength()
-            );
-            intentMessage.set(INTENT_BYTES);
-            intentMessage.set(txBytesBuffer.getData(), INTENT_BYTES.length);
-
-            const dataToSign = new Base64DataBuffer(intentMessage);
-
             const signer = new RawSigner(keypair);
 
             const signed = await signer.signData(dataToSign);
@@ -270,13 +270,13 @@ class Transactions {
         } else {
             const signed = await Authentication.sign(
                 activeAccount.address,
-                txBytes
+                dataToSign
             );
             publicKey = signed?.pubKey;
             signature = signed?.signature;
         }
 
-        if (!signature) return;
+        if (!signature || !publicKey) return;
 
         const serializedSig = new Uint8Array(
             1 + signature.getLength() + publicKey.toBytes().length
