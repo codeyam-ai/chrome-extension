@@ -9,7 +9,10 @@ import {
     ArrowDownIcon,
     SparklesIcon,
 } from '@heroicons/react/24/solid';
+import { JsonRpcProvider, Network } from '@mysten/sui.js';
+import { useMemo, useState } from 'react';
 
+import { Coin } from '../../../redux/slices/sui-objects/Coin';
 import SuiIcon from '../../svg/SuiIcon';
 import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
@@ -17,6 +20,8 @@ import { useMiddleEllipsis } from '_src/ui/app/hooks';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
+
+const provider = new JsonRpcProvider(Network.DEVNET);
 
 interface TransactionRowProps {
     txn: TxResultState;
@@ -43,6 +48,31 @@ interface RowDataTypes extends SharedTypes {
 }
 
 const TransactionRow = ({ txn }: TransactionRowProps) => {
+    const [header, setHeader] = useState('');
+
+    useMemo(() => {
+        const getSymbolHeader = async () => {
+            if (txn?.txId) {
+                const txTest = await provider.getTransactionWithEffects(
+                    txn.txId
+                );
+
+                const objId = txTest?.effects?.created[0].reference.objectId;
+                const obj = await provider.getObject(objId);
+
+                const SymbolObjName = await Coin.getCoinSymbol(
+                    obj.details.data.type
+                ).replace(/[<>]/g, '');
+
+                if (SymbolObjName) {
+                    setHeader(SymbolObjName);
+                }
+            }
+        };
+
+        getSymbolHeader();
+    }, [txn.txId]);
+
     const getIsNft = () => {
         return txn?.objectId;
     };
@@ -77,6 +107,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
 
     const drilldownLink = `/receipt?${new URLSearchParams({
         txdigest: txn?.txId,
+        symbol: header,
     }).toString()}`;
 
     const toAddrStr = useMiddleEllipsis(
@@ -159,7 +190,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 icon: (
                     <NftImg src={txn.url || ''} alt={txn.description || ''} />
                 ),
-                header: txn.name,
+                header: txn?.name,
             },
             Receive: {
                 ...shared,
@@ -167,7 +198,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 icon: (
                     <NftImg src={txn.url || ''} alt={txn.description || ''} />
                 ),
-                header: txn.name,
+                header: txn?.name,
             },
             Mint: {
                 ...shared,
@@ -175,7 +206,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 icon: (
                     <NftImg src={txn.url || ''} alt={txn.description || ''} />
                 ),
-                header: txn.name,
+                header: txn?.name,
             },
         },
         sui: {
@@ -183,19 +214,19 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: 'SUI',
+                header: header,
             },
             Receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: 'SUI',
+                header: header,
             },
             Mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: 'Coin',
+                header: header,
             },
         },
         coin: {
@@ -203,19 +234,19 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: 'Coin',
+                header: header,
             },
             Receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: 'Coin',
+                header: header,
             },
             Mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: 'Coin',
+                header: header,
             },
         },
         function: {
@@ -223,25 +254,25 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ...shared,
                 typeIcon: <PencilSquareIcon {...iconProps} />,
                 icon: <FunctionIcon {...iconProps} />,
-                header: txn?.name || 'Sui Action',
+                header: header || 'Sui Action',
             },
             burn: {
                 ...shared,
                 typeIcon: <FireIcon {...iconProps} />,
                 icon: <FunctionIcon {...iconProps} />,
-                header: txn?.name || 'Sui Action',
+                header: header || 'Sui Action',
             },
             transfer: {
                 ...shared,
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
                 icon: <FunctionIcon {...iconProps} />,
-                header: txn?.name || 'Sui Action',
+                header: header || 'Sui Action',
             },
             default: {
                 ...shared,
                 typeIcon: <SuiIcon {...iconProps} />,
                 icon: <FunctionIcon {...iconProps} />,
-                header: txn?.name || 'Sui Action',
+                header: header || 'Sui Action',
             },
         },
     };
@@ -260,7 +291,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         rowData = dataMap.coin[type];
     }
 
-    if (!rowData) return <></>;
+    if (!rowData || !header) return <></>;
 
     return (
         <ActivityRow

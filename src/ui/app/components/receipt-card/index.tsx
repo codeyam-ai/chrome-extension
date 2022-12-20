@@ -10,6 +10,7 @@ import {
     SparklesIcon,
     XMarkIcon,
 } from '@heroicons/react/24/solid';
+import { useSearchParams } from 'react-router-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
 import { getTheme } from '../../helpers/getTheme';
@@ -128,6 +129,9 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             )
     );
 
+    const [searchParams] = useSearchParams();
+    const symbol = searchParams.get('symbol');
+
     const theme = getTheme();
 
     const toAddrStr = useMiddleEllipsis(
@@ -185,7 +189,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             ? 'Sent'
             : 'Received';
 
-    const header = isNft ? truncatedNftName : coinType;
+    const header = isNft ? truncatedNftName : symbol;
     const isMinted = txDigest?.callFunctionName === 'mint';
 
     const transferMeta = {
