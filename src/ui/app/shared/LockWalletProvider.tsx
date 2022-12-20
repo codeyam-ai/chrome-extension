@@ -1,4 +1,5 @@
-import { useCallback, useEffect, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, type ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import Browser from 'webextension-polyfill';
 
 import {
@@ -10,6 +11,7 @@ import { logout } from '../redux/slices/account';
 
 const LockWalletProvider = ({ children }: { children: ReactNode }) => {
     const dispatch = useAppDispatch();
+    const { pathname } = useLocation();
 
     const lockWallet = useCallback(async () => {
         await dispatch(logout());
@@ -25,6 +27,10 @@ const LockWalletProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [lockWallet]);
 
+    const isOnboarding = useMemo(() => {
+        return pathname.includes('welcome') || pathname.includes('initialize');
+    }, [pathname]);
+
     useEffect(() => {
         setInterval(async () => {
             // Check if should log out every 5 seconds
@@ -34,7 +40,9 @@ const LockWalletProvider = ({ children }: { children: ReactNode }) => {
             resetWalletLockTimer();
         };
         const onBlur = () => {
-            startWalletLockTimer();
+            if (!isOnboarding) {
+                startWalletLockTimer();
+            }
         };
         lockWalletIfTimeIsExpired().then(() => onFocus());
         window.addEventListener('focus', onFocus);
@@ -44,7 +52,7 @@ const LockWalletProvider = ({ children }: { children: ReactNode }) => {
             window.removeEventListener('focus', onFocus);
             window.removeEventListener('blur', onBlur);
         };
-    }, [lockWalletIfTimeIsExpired]);
+    }, [lockWalletIfTimeIsExpired, isOnboarding]);
 
     return <>{children}</>;
 };
