@@ -1,9 +1,8 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import Browser from 'webextension-polyfill';
 
 import useSizeWindow from './hooks/useSizeWindow';
 import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
@@ -28,6 +27,7 @@ import VerifyPhrasePage from './pages/initialize/verify-phrase';
 import LockedPage from './pages/locked';
 import PasswordPage from './pages/password';
 import { AppType } from './redux/slices/app/AppType';
+import LockWalletProvider from './shared/LockWalletProvider';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { DappTxApprovalPage } from '_pages/dapp-tx-approval';
 import HomePage, {
@@ -36,12 +36,11 @@ import HomePage, {
     ReceiptPage,
     TokensPage,
     TransactionDetailsPage,
-    TransactionsPage,
+    TransactionsPage
 } from '_pages/home';
 import InitializePage from '_pages/initialize';
 import {
-    loadAccountInformationFromStorage,
-    logout,
+    loadAccountInformationFromStorage
 } from '_redux/slices/account';
 import { setNavVisibility } from '_redux/slices/app';
 import { ThemeProvider } from '_src/shared/utils/themeContext';
@@ -56,22 +55,6 @@ const HIDDEN_MENU_PATHS = ['/nft-details', '/receipt'];
 const App = () => {
     const dispatch = useAppDispatch();
     useSizeWindow();
-
-    const lockWallet = useCallback(async () => {
-        await dispatch(logout());
-    }, [dispatch]);
-
-    const lockWalletIfTimeIsExpired = useCallback(async () => {
-        const { lockWalletOnTimestamp } = await Browser.storage.local.get(
-            'lockWalletOnTimestamp'
-        );
-        if (lockWalletOnTimestamp > 0 && lockWalletOnTimestamp < Date.now()) {
-            await lockWallet();
-            Browser.storage.local.set({
-                lockWalletOnTimestamp: -1,
-            });
-        }
-    }, [lockWallet]);
 
     useEffect(() => {
         dispatch(loadAccountInformationFromStorage());
@@ -91,126 +74,120 @@ const App = () => {
         dispatch(setNavVisibility(menuVisible));
     }, [location, dispatch]);
 
-    useEffect(() => {
-        const lockTimeoutInMs = 15 * 60000;
-        setInterval(async () => {
-            // Check if should log out every 5 seconds
-            await lockWalletIfTimeIsExpired();
-        }, 5000);
-        const onFocus = () => {
-            Browser.storage.local.set({
-                lockWalletOnTimestamp: -1,
-            });
-        };
-        const onBlur = () => {
-            Browser.storage.local.set({
-                lockWalletOnTimestamp: Date.now() + lockTimeoutInMs,
-            });
-        };
-        lockWalletIfTimeIsExpired().then(() => onFocus());
-        window.addEventListener('focus', onFocus);
-        window.addEventListener('blur', onBlur);
-
-        return function cleanup() {
-            window.removeEventListener('focus', onFocus);
-            window.removeEventListener('blur', onBlur);
-        };
-    }, [lockWalletIfTimeIsExpired]);
-
     return (
         <ThemeProvider initialTheme={undefined}>
-            <Routes>
-                <Route path="/*" element={<HomePage />}>
+            <LockWalletProvider>
+                <Routes>
+                    <Route path="/*" element={<HomePage />}>
+                        <Route
+                            index
+                            element={<Navigate to="/tokens" replace={true} />}
+                        />
+                        <Route path="tokens" element={<TokensPage />} />
+                        <Route path="nfts" element={<NftsPage />} />
+                        <Route path="nft">
+                            <Route
+                                path="details"
+                                element={<NFTDetailsPage />}
+                            />
+                            <Route
+                                path="transfer/recipient"
+                                element={<TransferNftRecipient />}
+                            />
+                            <Route
+                                path="transfer/review"
+                                element={<TransferNftReview />}
+                            />
+                        </Route>
+                        <Route
+                            path="transactions"
+                            element={<TransactionsPage />}
+                        />
+                        <Route path="send">
+                            <Route
+                                path="recipient"
+                                element={<TransferCoinRecipientPage />}
+                            />
+                            <Route
+                                path="amount"
+                                element={<TransferCoinAmountPage />}
+                            />
+                            <Route
+                                path="review"
+                                element={<TransferCoinReviewPage />}
+                            />
+                        </Route>
+                        <Route path="receive" element={<ReceivePage />} />
+                        <Route path="buy" element={<BuyPage />} />
+                        <Route
+                            path="tx/:txDigest"
+                            element={<TransactionDetailsPage />}
+                        />
+                        <Route path="receipt" element={<ReceiptPage />} />
+                    </Route>
+                    <Route path="welcome" element={<WelcomePage />} />
+                    <Route path="initialize" element={<InitializePage />}>
+                        <Route path="hosted">
+                            <Route path="" element={<HostedPage />} />
+                            <Route
+                                path="logging-in"
+                                element={<LoggingInPage />}
+                            />
+                        </Route>
+                        <Route path="import">
+                            <Route path="" element={<ImportPage />} />
+                            <Route
+                                path="key"
+                                element={<ImportPrivateKeyPage />}
+                            />
+                            <Route path="seed" element={<ImportSeedPage />} />
+                            <Route
+                                path="confirm"
+                                element={<ConfirmImportPage />}
+                            />
+                        </Route>
+                        <Route
+                            path="create-password"
+                            element={<CreatePasswordPage />}
+                        />
+                        <Route
+                            path="save-phrase"
+                            element={<SavePhrasePage />}
+                        />
+                        <Route
+                            path="verify-phrase"
+                            element={<VerifyPhrasePage />}
+                        />
+                        <Route path="style" element={<StylePage />} />
+                        <Route path="theme" element={<OnboardingThemePage />} />
+                        <Route path="pin" element={<PinPage />} />
+                        <Route path="complete" element={<CompletePage />} />
+                    </Route>
+                    <Route path="password" element={<PasswordPage />} />
+                    <Route path="locked" element={<LockedPage />} />
+                    <Route path="locked/*" element={<LockedPage />} />
                     <Route
-                        index
+                        path="/connect/:requestID"
+                        element={<SiteConnectPage />}
+                    />
+                    <Route
+                        path="/tx-approval/:txID"
+                        element={<DappTxApprovalPage />}
+                    />
+                    <Route
+                        path="/sign-message-approval/:signMessageRequestID"
+                        element={<DappSignMessageApprovalPage />}
+                    />
+                    <Route
+                        path="/preapproval/:preapprovalRequestID"
+                        element={<DappPreapprovalPage />}
+                    />
+                    <Route
+                        path="*"
                         element={<Navigate to="/tokens" replace={true} />}
                     />
-                    <Route path="tokens" element={<TokensPage />} />
-                    <Route path="nfts" element={<NftsPage />} />
-                    <Route path="nft">
-                        <Route path="details" element={<NFTDetailsPage />} />
-                        <Route
-                            path="transfer/recipient"
-                            element={<TransferNftRecipient />}
-                        />
-                        <Route
-                            path="transfer/review"
-                            element={<TransferNftReview />}
-                        />
-                    </Route>
-                    <Route path="transactions" element={<TransactionsPage />} />
-                    <Route path="send">
-                        <Route
-                            path="recipient"
-                            element={<TransferCoinRecipientPage />}
-                        />
-                        <Route
-                            path="amount"
-                            element={<TransferCoinAmountPage />}
-                        />
-                        <Route
-                            path="review"
-                            element={<TransferCoinReviewPage />}
-                        />
-                    </Route>
-                    <Route path="receive" element={<ReceivePage />} />
-                    <Route path="buy" element={<BuyPage />} />
-                    <Route
-                        path="tx/:txDigest"
-                        element={<TransactionDetailsPage />}
-                    />
-                    <Route path="receipt" element={<ReceiptPage />} />
-                </Route>
-                <Route path="welcome" element={<WelcomePage />} />
-                <Route path="initialize" element={<InitializePage />}>
-                    <Route path="hosted">
-                        <Route path="" element={<HostedPage />} />
-                        <Route path="logging-in" element={<LoggingInPage />} />
-                    </Route>
-                    <Route path="import">
-                        <Route path="" element={<ImportPage />} />
-                        <Route path="key" element={<ImportPrivateKeyPage />} />
-                        <Route path="seed" element={<ImportSeedPage />} />
-                        <Route path="confirm" element={<ConfirmImportPage />} />
-                    </Route>
-                    <Route
-                        path="create-password"
-                        element={<CreatePasswordPage />}
-                    />
-                    <Route path="save-phrase" element={<SavePhrasePage />} />
-                    <Route
-                        path="verify-phrase"
-                        element={<VerifyPhrasePage />}
-                    />
-                    <Route path="style" element={<StylePage />} />
-                    <Route path="theme" element={<OnboardingThemePage />} />
-                    <Route path="pin" element={<PinPage />} />
-                    <Route path="complete" element={<CompletePage />} />
-                </Route>
-                <Route path="password" element={<PasswordPage />} />
-                <Route path="locked" element={<LockedPage />} />
-                <Route path="locked/*" element={<LockedPage />} />
-                <Route
-                    path="/connect/:requestID"
-                    element={<SiteConnectPage />}
-                />
-                <Route
-                    path="/tx-approval/:txID"
-                    element={<DappTxApprovalPage />}
-                />
-                <Route
-                    path="/sign-message-approval/:signMessageRequestID"
-                    element={<DappSignMessageApprovalPage />}
-                />
-                <Route
-                    path="/preapproval/:preapprovalRequestID"
-                    element={<DappPreapprovalPage />}
-                />
-                <Route
-                    path="*"
-                    element={<Navigate to="/tokens" replace={true} />}
-                />
-            </Routes>
+                </Routes>
+            </LockWalletProvider>
         </ThemeProvider>
     );
 };
