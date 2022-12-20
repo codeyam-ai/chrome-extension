@@ -36,12 +36,10 @@ import HomePage, {
     ReceiptPage,
     TokensPage,
     TransactionDetailsPage,
-    TransactionsPage
+    TransactionsPage,
 } from '_pages/home';
 import InitializePage from '_pages/initialize';
-import {
-    loadAccountInformationFromStorage
-} from '_redux/slices/account';
+import { loadAccountInformationFromStorage } from '_redux/slices/account';
 import { setNavVisibility } from '_redux/slices/app';
 import { ThemeProvider } from '_src/shared/utils/themeContext';
 import { DappPreapprovalPage } from '_src/ui/app/pages/dapp-preapproval';
