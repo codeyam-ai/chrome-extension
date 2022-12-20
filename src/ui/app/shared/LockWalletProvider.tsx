@@ -1,6 +1,10 @@
 import { useCallback, useEffect, type ReactNode } from 'react';
 import Browser from 'webextension-polyfill';
 
+import {
+    resetWalletLockTimer,
+    startWalletLockTimer,
+} from '../helpers/lock-wallet';
 import { useAppDispatch } from '../hooks';
 import { logout } from '../redux/slices/account';
 
@@ -17,27 +21,20 @@ const LockWalletProvider = ({ children }: { children: ReactNode }) => {
         );
         if (lockWalletOnTimestamp > 0 && lockWalletOnTimestamp < Date.now()) {
             await lockWallet();
-            Browser.storage.local.set({
-                lockWalletOnTimestamp: -1,
-            });
+            resetWalletLockTimer();
         }
     }, [lockWallet]);
 
     useEffect(() => {
-        const lockTimeoutInMs = 15 * 60000;
         setInterval(async () => {
             // Check if should log out every 5 seconds
             await lockWalletIfTimeIsExpired();
         }, 5000);
         const onFocus = () => {
-            Browser.storage.local.set({
-                lockWalletOnTimestamp: -1,
-            });
+            resetWalletLockTimer();
         };
         const onBlur = () => {
-            Browser.storage.local.set({
-                lockWalletOnTimestamp: Date.now() + lockTimeoutInMs,
-            });
+            startWalletLockTimer();
         };
         lockWalletIfTimeIsExpired().then(() => onFocus());
         window.addEventListener('focus', onFocus);

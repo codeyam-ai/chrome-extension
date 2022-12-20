@@ -14,3 +14,5 @@ export const MAILTO_SUPPORT_URL = 'mailto:support@ethoswallet.xyz';
 export const TWITTER_URL = 'https://twitter.com/EthosWalletXYZ';
 
 export const MIST_PER_SUI = 1000000000;
+
+export const WALLET_LOCK_TIMEOUT_MS = 15 * 60000;
