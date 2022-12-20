@@ -82,6 +82,8 @@ function TransferCoinRecipientForm({
 
     const recentWallets = [...new Set(recentTxs)];
 
+    console.log('recent wallets', recentWallets, recentWallets.length > 1);
+
     return (
         <Loading loading={loading} big={true}>
             <Form autoComplete="off" noValidate={true}>
@@ -116,7 +118,7 @@ function TransferCoinRecipientForm({
                     </div>
                 </div>
                 <div className={'pb-[80px] pt-[202px]'}>
-                    {recentWallets.length > 1 && (
+                    {recentWallets.length > 0 && (
                         <SuiTxWalletList
                             header={'Recent Wallets'}
                             transactions={recentWallets}
