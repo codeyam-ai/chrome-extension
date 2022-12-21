@@ -112,12 +112,6 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
 
     const type = getTransactionType();
 
-    console.log('txn: ', txn);
-    console.log('type: ', type);
-    console.log('is nft: ', getIsNft());
-    console.log('is Sui: ', getIsSui());
-    console.log('is Func: ', getIsFunc());
-
     const drilldownLink = `/receipt?${new URLSearchParams({
         txdigest: txn?.txId,
         symbol: header,
@@ -222,6 +216,22 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ),
                 header: txn?.name,
             },
+            register: {
+                ...shared,
+                typeIcon: <SparklesIcon {...iconProps} />,
+                icon: (
+                    <NftImg
+                        src={
+                            txn?.url?.replace(
+                                /^ipfs:\/\//,
+                                'https://ipfs.io/ipfs/'
+                            ) || ''
+                        }
+                        alt={txn.description || ''}
+                    />
+                ),
+                header: header || 'Sui Action',
+            },
         },
         sui: {
             Send: {
@@ -300,7 +310,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
     } else if (getIsSui()) {
         rowData = dataMap.sui[type];
     } else if (getIsFunc()) {
-        rowData = dataMap.function[txn?.callFunctionName || 'default'];
+        rowData = dataMap.function[type || 'default'];
     } else {
         rowData = dataMap.coin[type];
     }
