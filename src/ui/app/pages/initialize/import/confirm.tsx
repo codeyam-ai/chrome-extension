@@ -32,7 +32,11 @@ const ConfirmImportPage = () => {
                 />
             </div>
             <div className="px-10 pb-10">
-                <Button to="/initialize/create-password" removeContainerPadding>
+                <Button
+                    to="/initialize/create-password"
+                    data-testid="continue"
+                    removeContainerPadding
+                >
                     Continue
                 </Button>
             </div>

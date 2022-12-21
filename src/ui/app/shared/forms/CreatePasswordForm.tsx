@@ -22,6 +22,7 @@ const CustomFormikForm = () => {
                 {...field}
                 placeholder="Enter your password"
                 id="password"
+                data-testid="password"
                 name="password"
                 type="password"
                 required={true}
@@ -33,6 +34,7 @@ const CustomFormikForm = () => {
                 {...confirmField}
                 placeholder="Re-enter your password"
                 id="confirmPassword"
+                data-testid="confirmPassword"
                 name="confirmPassword"
                 type="password"
                 required={true}

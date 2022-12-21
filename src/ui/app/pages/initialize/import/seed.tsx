@@ -51,6 +51,7 @@ const WordInput = ({
             <input
                 type=""
                 id={idPrefix + index}
+                data-testid={idPrefix + index}
                 className="w-full bg-ethos-light-background-secondary"
                 autoComplete="off"
                 defaultValue={defaultValue}
@@ -165,6 +166,7 @@ const ImportSeedPage = () => {
                     <Button
                         id="continue"
                         type="submit"
+                        data-testid="submit"
                         disabled={!areAllWordsChosen}
                         removeContainerPadding
                     >
