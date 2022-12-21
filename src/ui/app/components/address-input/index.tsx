@@ -36,7 +36,7 @@ function AddressInput<FormValues>({
         if (!showAddress) {
             setDisplayedValue(value);
         }
-    }, [value]);
+    }, [value, showAddress]);
 
     const handleOnChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
         (e) => {
