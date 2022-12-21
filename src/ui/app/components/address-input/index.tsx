@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
 import Input from '../../shared/inputs/Input';
 import lookup from './lookup';
@@ -31,6 +31,12 @@ function AddressInput<FormValues>({
     const [showAddress, setShowAddress] = useState<boolean>(false);
     const disabled =
         forcedDisabled !== undefined ? forcedDisabled : isSubmitting;
+
+    useEffect(() => {
+        if (!showAddress) {
+            setDisplayedValue(value);
+        }
+    }, [value]);
 
     const handleOnChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
         (e) => {
@@ -69,13 +75,11 @@ function AddressInput<FormValues>({
                 type="hidden"
                 {...{
                     disabled,
-                    value: displayedValue,
+                    value: formattedValue,
                     name,
                 }}
             />
-            {showAddress && (
-                <div className={'w-full text-center'}>{formattedValue}</div>
-            )}
+            {showAddress && <div>{formattedValue}</div>}
         </div>
     );
 }
