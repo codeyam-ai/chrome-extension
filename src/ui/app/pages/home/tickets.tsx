@@ -7,7 +7,7 @@ import { Icon } from '../../shared/icons/Icon';
 import { useAppSelector } from '_hooks';
 import { ticketsNftsSelector } from '_redux/slices/account';
 import { NFT_EXPERIMENT_LINK } from '_src/shared/constants';
-import NftGrid from '_src/ui/app/shared/content/rows-and-lists/NftGrid';
+import TicketList from '_src/ui/app/shared/content/rows-and-lists/TicketList';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
@@ -26,8 +26,8 @@ function TicketsPage() {
                 />
             ) : (
                 <>
-                    <TextPageTitle title="Tickets" count={tickets.length} />
-                    <NftGrid nfts={tickets} />
+                    <TextPageTitle title="My Tickets" count={tickets.length} />
+                    <TicketList tickets={tickets} />
                 </>
             )}
         </div>

@@ -13,6 +13,7 @@ export { default as useOnClickOutside } from './useOnClickOutside';
 export { default as useOnKeyboardEvent } from './useOnKeyboardEvent';
 export { default as useFileExtentionType } from './useFileExtentionType';
 export { default as useNFTBasicData } from './useNFTBasicData';
+export { default as useTicketBasicData } from './useTicketBasicData';
 export { useObjectsState } from './useObjectsState';
 export { default as useExplorerPermission } from './useExplorerPermission';
 export { useFormatCoin } from './useFormatCoin';
