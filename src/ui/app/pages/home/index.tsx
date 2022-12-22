@@ -55,6 +55,8 @@ const HomePage = () => {
 export default HomePage;
 export { default as NFTDetailsPage } from './nft-details';
 export { default as NftsPage } from './nfts';
+export { default as TicketsPage } from './tickets';
+export { default as TicketDetailsPage } from './ticket-details';
 export { default as ReceiptPage } from './receipt';
 export { default as TokensPage } from './tokens';
 export { default as TransactionDetailsPage } from './transaction-details';
