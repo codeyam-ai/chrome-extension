@@ -13,10 +13,7 @@ export const CoinSelect = ({ type }: { type?: string | null }) => {
     const [open, setOpen] = useState(false);
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const multiCoins = Object.keys(balances).length > 1;
-    const [, symbol, , name, icon] = useFormatCoin(
-        balances[type || 'SUI'],
-        type
-    );
+    const [, symbol, , name] = useFormatCoin(balances[type || 'SUI'], type);
 
     const iconImage = useMemo(() => {
         if (name) {
@@ -29,7 +26,7 @@ export const CoinSelect = ({ type }: { type?: string | null }) => {
                     return <UnknownToken width={24} height={24} />;
             }
         }
-    }, [name, icon]);
+    }, [name]);
 
     const openCoinPicker = useCallback(() => {
         if (multiCoins) {
