@@ -158,7 +158,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         TRUNCATE_PREFIX_LENGTH
     );
 
-    const [gas, gasSymbol] = useFormatCoin(txDigest.txGas, GAS_TYPE_ARG);
+    const [gas] = useFormatCoin(txDigest.txGas, GAS_TYPE_ARG);
 
     const [total, totalSymbol, dollars] = useFormatCoin(
         txDigest.amount ? txDigest.amount : null,
@@ -307,7 +307,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     keyNamesAndValues={[
                         {
                             keyName: 'Transaction Fee',
-                            value: `${gas} ${gasSymbol}`,
+                            value: `${gas} SUI`,
                         },
                         {
                             keyName: 'Signature',
