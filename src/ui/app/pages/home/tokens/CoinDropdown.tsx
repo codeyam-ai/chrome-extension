@@ -13,16 +13,17 @@ export const CoinSelect = ({ type }: { type?: string | null }) => {
     const [open, setOpen] = useState(false);
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const multiCoins = Object.keys(balances).length > 1;
-    const [, symbol, , name, icon] = useFormatCoin(balances[type || ''], type);
+    const [, symbol, , name, icon] = useFormatCoin(
+        balances[type || 'SUI'],
+        type
+    );
 
     const iconImage = useMemo(() => {
         if (name) {
-            if (icon)
-                return (
-                    <img src={icon} width={24} height={24} alt="coin-icon" />
-                );
             switch (name) {
                 case 'Sui':
+                    return <SuiIcon width={16} height={16} />;
+                case 'SUI':
                     return <SuiIcon width={16} height={16} />;
                 default:
                     return <UnknownToken width={24} height={24} />;

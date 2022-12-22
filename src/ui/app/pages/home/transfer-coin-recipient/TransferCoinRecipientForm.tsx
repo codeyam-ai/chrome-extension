@@ -84,6 +84,8 @@ function TransferCoinRecipientForm({
 
     const recentWallets = [...new Set(recentTxs)].splice(0, 3);
 
+    if (!coinType) return <></>;
+
     return (
         <Loading loading={loading} big={true}>
             <Form autoComplete="off" noValidate={true}>
