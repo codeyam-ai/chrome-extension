@@ -10,10 +10,10 @@ interface TicketItemProps {
 }
 
 const TicketItem = ({ ticket }: TicketItemProps) => {
-    const { nftFields, filePath, fileExtentionType } =
+    const { ticketObjectID, ticketFields, filePath, fileExtentionType } =
         useTicketBasicData(ticket);
     const drilldownLink = `/ticket/details?${new URLSearchParams({
-        objectId: ticket.reference.objectId,
+        objectId: ticketObjectID,
     }).toString()}`;
 
     return (
@@ -27,11 +27,22 @@ const TicketItem = ({ ticket }: TicketItemProps) => {
                     />
                 )}
                 <div className="flex flex-col gap-1 text-left">
-                    {nftFields?.name && (
-                        <div className="text-base">{nftFields?.name}</div>
-                    )}
-                    {nftFields?.description && (
-                        <div>{truncateString(nftFields?.description, 75)}</div>
+                    <div className="flex justify-between items-center">
+                        {ticketFields?.name && (
+                            <div className="text-base">
+                                {ticketFields?.name}
+                            </div>
+                        )}
+                        {ticketFields?.count && (
+                            <div className="text-xs text-slate-600">
+                                {ticketFields?.count} remaining
+                            </div>
+                        )}
+                    </div>
+                    {ticketFields?.description && (
+                        <div>
+                            {truncateString(ticketFields?.description, 75)}
+                        </div>
                     )}
                 </div>
             </div>
