@@ -13,7 +13,7 @@ const ExploreButton = () => {
                 WebkitBackgroundClip: 'text',
             }}
         >
-            <GlobeAltIcon className="h-6 w-6 text-transparent" />
+            <GlobeAltIcon className="h-6 w-6 text-opacity-0" />
             <Body className="text-transparent">Explore</Body>
         </div>
     );
