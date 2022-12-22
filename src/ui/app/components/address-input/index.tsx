@@ -1,6 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
 import Input from '../../shared/inputs/Input';
@@ -33,10 +34,10 @@ function AddressInput<FormValues>({
         forcedDisabled !== undefined ? forcedDisabled : isSubmitting;
 
     useEffect(() => {
-        if (!showAddress) {
+        if (!showAddress && displayedValue !== value) {
             setDisplayedValue(value);
         }
-    }, [value, showAddress]);
+    }, [value, showAddress, displayedValue]);
 
     const handleOnChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
         (e) => {
@@ -69,6 +70,7 @@ function AddressInput<FormValues>({
                 onBlur={onBlur}
                 value={displayedValue}
                 onChange={handleOnChange}
+                spellCheck={false}
                 name={name}
             />
             <input
@@ -79,7 +81,16 @@ function AddressInput<FormValues>({
                     name,
                 }}
             />
-            {showAddress && <div>{formattedValue}</div>}
+            {showAddress && (
+                <CheckCircleIcon
+                    className={'absolute right-6 bottom-11'}
+                    width={20}
+                    height={20}
+                    color={
+                        'ethos-dark-fullscreen-backdrop dark:ethos-light-background-default'
+                    }
+                />
+            )}
         </div>
     );
 }
