@@ -2,7 +2,7 @@ import {
     ClockIcon,
     TicketIcon,
     CurrencyDollarIcon,
-    Squares2X2Icon,
+    SparklesIcon,
 } from '@heroicons/react/24/solid';
 import { type ReactNode, useCallback, useMemo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
@@ -22,7 +22,7 @@ const navItems: NavItem[] = [
     {
         title: 'NFTs',
         to: './nfts',
-        icon: <Squares2X2Icon className={iconClasses} />,
+        icon: <SparklesIcon className={iconClasses} />,
     },
     {
         title: 'Tickets',

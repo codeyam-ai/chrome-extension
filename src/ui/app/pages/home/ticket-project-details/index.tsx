@@ -3,7 +3,7 @@ import { Navigate, useSearchParams } from 'react-router-dom';
 
 import Loading from '_components/loading';
 import { useAppSelector } from '_hooks';
-import { accountTicketsSelector } from '_redux/slices/account/index';
+import { accountNftsSelector } from '_redux/slices/account/index';
 import ExternalLink from '_src/ui/app/components/external-link';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
@@ -19,7 +19,7 @@ const TicketProjectDetailsContent = ({
 }: {
     ticketProject: TicketProjectProps;
 }) => {
-    const nfts = useAppSelector(accountTicketsSelector) || [];
+    const nfts = useAppSelector(accountNftsSelector) || [];
 
     let tokenName;
     let hasToken = false;
@@ -128,6 +128,7 @@ const TicketProjectDetails = () => {
             const { fields } = data;
             const ticketProject = {
                 objectId: details.reference.objectId,
+                type: data.type.split('::')[0],
                 name: fields.name,
                 description: fields.description,
                 url: fields.url,

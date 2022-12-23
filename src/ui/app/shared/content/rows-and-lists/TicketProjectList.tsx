@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { accountTicketsSelector } from '../../../redux/slices/account/index';
+import Body from '../../typography/Body';
+import Loading from '_src/ui/app/components/loading';
 import { growthbook } from '_src/ui/app/experimentation/feature-gating';
+import { useAppSelector } from '_src/ui/app/hooks';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Button from '_src/ui/app/shared/buttons/Button';
 
 export interface TicketProjectProps {
     objectId: string;
+    type: string;
     name: string;
     description: string;
     coverImage: string;
@@ -49,12 +54,20 @@ const TicketProject = ({
 };
 
 const TicketProjectList = () => {
+    const loadingTickets = useAppSelector(
+        ({ suiObjects }) => suiObjects.loading && !suiObjects.lastSync
+    );
+    const [loading, setLoading] = useState(true);
+
+    const tickets = useAppSelector(accountTicketsSelector);
     const [ticketProjects, setTicketProjects] = useState<TicketProjectProps[]>(
         []
     );
 
     useEffect(() => {
         const getTicketProjects = async () => {
+            if (loadingTickets) return;
+
             const ticketProjectIds = await growthbook.getFeatureValue(
                 'ticket-projects',
                 []
@@ -76,6 +89,7 @@ const TicketProjectList = () => {
                     const { fields } = data;
                     return {
                         objectId: details.reference.objectId,
+                        type: data.type.split('::')[0],
                         name: fields.name,
                         description: fields.description,
                         url: fields.url,
@@ -85,24 +99,42 @@ const TicketProjectList = () => {
                     };
                 })
                 .filter(
-                    (ticketProject) => !!ticketProject
+                    (ticketProject) =>
+                        !!ticketProject &&
+                        !tickets.find(
+                            (ticket) =>
+                                'type' in ticket.data &&
+                                'fields' in ticket.data &&
+                                (ticket.data.fields.count || 0) > 0 &&
+                                ticket.data.type.split('::')[0] ===
+                                    ticketProject.type
+                        )
                 ) as TicketProjectProps[];
 
+            setLoading(false);
             setTicketProjects(ticketProjects);
         };
 
         getTicketProjects();
-    }, []);
+    }, [loadingTickets, tickets]);
 
     return (
-        <div className="p-3 flex flex-col gap-3">
-            {ticketProjects.map((ticketProject, index) => (
-                <TicketProject
-                    key={`ticket-project-${index}`}
-                    ticketProject={ticketProject}
-                />
-            ))}
-        </div>
+        <Loading loading={loading}>
+            <div className="p-3 flex flex-col gap-3">
+                {ticketProjects.map((ticketProject, index) => (
+                    <TicketProject
+                        key={`ticket-project-${index}`}
+                        ticketProject={ticketProject}
+                    />
+                ))}
+                {ticketProjects.length === 0 && (
+                    <Body>
+                        There are no active ticket projects for you to discover.
+                        Please check back later.
+                    </Body>
+                )}
+            </div>
+        </Loading>
     );
 };
 
