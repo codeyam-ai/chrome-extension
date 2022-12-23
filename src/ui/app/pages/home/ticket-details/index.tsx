@@ -51,7 +51,7 @@ const TIcketDetailsContent = ({ ticket }: { ticket: SuiObject }) => {
                                 className={'inline-block mb-0'}
                                 to={ticketFields.url}
                             >
-                                Send
+                                Redeem Ticket
                             </Button>
                         )}
                     </div>
@@ -81,17 +81,17 @@ const TicketDetails = () => {
         return selectedTicket;
     }, [tickets, objectId]);
 
-    const loadingBalance = useAppSelector(
+    const loading = useAppSelector(
         ({ suiObjects }) => suiObjects.loading && !suiObjects.lastSync
     );
 
-    if (!objectId || (!loadingBalance && !selectedTicket)) {
+    if (!objectId || (!loading && !selectedTicket)) {
         return <Navigate to="/tickets" replace={true} />;
     }
 
     return (
         <div className="">
-            <Loading loading={loadingBalance} big={true}>
+            <Loading loading={loading} big={true}>
                 <TIcketDetailsContent ticket={activeTicket} />
             </Loading>
         </div>

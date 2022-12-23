@@ -36,6 +36,7 @@ import HomePage, {
     ReceiptPage,
     TicketsPage,
     TicketDetailsPage,
+    TicketProjectDetailsPage,
     TokensPage,
     TransactionDetailsPage,
     TransactionsPage,
@@ -97,6 +98,10 @@ const App = () => {
                                 element={<TicketDetailsPage />}
                             />
                         </Route>
+                        <Route
+                            path="ticket-project"
+                            element={<TicketProjectDetailsPage />}
+                        />
                         <Route
                             path="transactions"
                             element={<TransactionsPage />}
