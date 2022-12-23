@@ -4,6 +4,7 @@ import { Navigate, useSearchParams } from 'react-router-dom';
 import Loading from '_components/loading';
 import { useAppSelector } from '_hooks';
 import { accountTicketsSelector } from '_redux/slices/account/index';
+import ExternalLink from '_src/ui/app/components/external-link';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Button from '_src/ui/app/shared/buttons/Button';
@@ -20,10 +21,13 @@ const TicketProjectDetailsContent = ({
 }) => {
     const nfts = useAppSelector(accountTicketsSelector) || [];
 
+    let tokenName;
     let hasToken = false;
     if (!ticketProject.token) {
         hasToken = true;
     } else {
+        tokenName = ticketProject.token.split('::')[2];
+
         for (const nft of nfts) {
             if ('type' in nft.data && nft.data.type === ticketProject.token) {
                 hasToken = true;
@@ -52,11 +56,32 @@ const TicketProjectDetailsContent = ({
                         >
                             {ticketProject.description}
                         </BodyLarge>
+                        {tokenName && (
+                            <BodyLarge
+                                className={
+                                    'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal mb-6'
+                                }
+                            >
+                                In order to mint this ticket you&apos;ll need to
+                                mint a {tokenName}. You can get one here:
+                            </BodyLarge>
+                        )}
 
                         {hasToken === undefined && <LoadingIndicator />}
-                        {!hasToken && hasToken !== undefined && (
-                            <Button buttonStyle="primary">Get Token</Button>
-                        )}
+                        {!hasToken &&
+                            hasToken !== undefined &&
+                            ticketProject.tokenUrl && (
+                                <ExternalLink
+                                    href={ticketProject.tokenUrl}
+                                    title={ticketProject.name}
+                                    showIcon={false}
+                                    className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
+                                >
+                                    <Button buttonStyle="primary">
+                                        Get {tokenName}
+                                    </Button>
+                                </ExternalLink>
+                            )}
                         {hasToken && (
                             <Button buttonStyle="primary">Mint Ticket</Button>
                         )}
@@ -118,7 +143,6 @@ const TicketProjectDetails = () => {
         getTicketProject();
     }, [objectId]);
 
-    console.log('X', objectId, loading, ticketProject);
     if (!objectId || (!loading && !ticketProject)) {
         return <Navigate to="/tickets" replace={true} />;
     }
