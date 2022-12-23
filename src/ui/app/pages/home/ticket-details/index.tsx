@@ -4,7 +4,7 @@ import { Navigate, useSearchParams } from 'react-router-dom';
 
 import Loading from '_components/loading';
 import { useAppSelector, useTicketBasicData } from '_hooks';
-import { ticketsNftsSelector } from '_redux/slices/account/index';
+import { accountTicketsSelector } from '_redux/slices/account/index';
 import Button from '_src/ui/app/shared/buttons/Button';
 import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
 import Body from '_src/ui/app/shared/typography/Body';
@@ -71,7 +71,7 @@ const TicketDetails = () => {
         [searchParams]
     );
 
-    const tickets = useAppSelector(ticketsNftsSelector);
+    const tickets = useAppSelector(accountTicketsSelector);
 
     const activeTicket = useMemo(() => {
         const selectedTicket = tickets.filter(

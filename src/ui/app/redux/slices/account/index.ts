@@ -623,7 +623,7 @@ export const accountNftsSelector = createSelector(
     }
 );
 
-export const ticketsNftsSelector = createSelector(
+export const accountTicketsSelector = createSelector(
     ownedObjects,
     (allSuiObjects) => {
         return allSuiObjects.filter(
