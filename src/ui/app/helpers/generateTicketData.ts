@@ -25,7 +25,7 @@ const generateTicketData = async (
         };
     }
 
-    return json;
+    return { data: json };
 };
 
 const generators: Record<

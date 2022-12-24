@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Navigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 
 import Loading from '_components/loading';
-import { useAppSelector } from '_hooks';
+import { useAppDispatch, useAppSelector } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account/index';
 import { executeMoveCall } from '_redux/slices/transactions/index';
 import ExternalLink from '_src/ui/app/components/external-link';
@@ -14,6 +14,7 @@ import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 
+import type { SuiObject } from '@mysten/sui.js';
 import type { TicketProjectProps } from '_src/ui/app/shared/content/rows-and-lists/TicketProjectList';
 
 const TicketProjectDetailsContent = ({
@@ -21,6 +22,8 @@ const TicketProjectDetailsContent = ({
 }: {
     ticketProject: TicketProjectProps;
 }) => {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const loadingNFTs = useAppSelector(
         ({ suiObjects }) => suiObjects.loading && !suiObjects.lastSync
     );
@@ -28,7 +31,7 @@ const TicketProjectDetailsContent = ({
     const nfts = useAppSelector(accountNftsSelector) || [];
 
     let tokenName;
-    let tokenNFT;
+    let tokenNFT: SuiObject | null = null;
     if (ticketProject.token) {
         tokenName = ticketProject.token.split('::')[2];
 
@@ -41,6 +44,7 @@ const TicketProjectDetailsContent = ({
 
     const handleClick = useCallback(async () => {
         if (!address) return;
+        if (ticketProject.token && !tokenNFT) return;
 
         const { data, error } = await generateTicketData(
             ticketProject.name,
@@ -59,16 +63,24 @@ const TicketProjectDetailsContent = ({
 
         const { ticketData, signature } = data;
 
-        const response = await executeMoveCall({
-            packageObjectId: ticketProject.packageObjectId,
-            module: ticketProject.module,
-            function: 'create_ticket',
-            typeArguments: ticketProject.token ? [ticketProject.token] : [],
-            arguments: [ticketData, signature, ticketProject.agentObjectId],
-            gasBudget: 10000,
-        });
-        console.log('response', response);
-    }, [ticketProject, address]);
+        const typeArguments = ticketProject.token ? [ticketProject.token] : [];
+        const args = [ticketData, signature, ticketProject.agentObjectId];
+        if (ticketProject.token && tokenNFT) {
+            args.unshift(tokenNFT.reference.objectId);
+        }
+        const response = await dispatch(
+            executeMoveCall({
+                packageObjectId: ticketProject.packageObjectId,
+                module: ticketProject.module,
+                function: 'create_ticket',
+                typeArguments,
+                arguments: args,
+                gasBudget: 10000,
+            })
+        ).unwrap();
+
+        navigate('/tickets');
+    }, [ticketProject, address, tokenNFT, dispatch, navigate]);
 
     return (
         <>
