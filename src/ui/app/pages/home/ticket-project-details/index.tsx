@@ -105,7 +105,7 @@ const TicketProjectDetailsContent = ({
                         {loadingNFTs && <LoadingIndicator />}
                         {!loadingNFTs &&
                             ticketProject.token &&
-                            tokenNFT !== undefined &&
+                            tokenNFT === undefined &&
                             ticketProject.tokenUrl && (
                                 <ExternalLink
                                     href={ticketProject.tokenUrl}
