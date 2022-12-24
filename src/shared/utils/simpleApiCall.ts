@@ -14,7 +14,7 @@ const simpleApiCall = async (
     relativePath: string,
     method = 'GET',
     accessToken: string,
-    body?: string
+    body?: Record<string, string | number | object>
 ) => {
     const data: FetchData = {
         method: method,
@@ -25,7 +25,7 @@ const simpleApiCall = async (
     };
 
     if (body) {
-        data.body = body;
+        data.body = JSON.stringify(body);
     }
 
     const response = await fetch(`${BASE_URL}/api/${relativePath}`, data);

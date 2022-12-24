@@ -11,7 +11,9 @@ import Button from '_src/ui/app/shared/buttons/Button';
 
 export interface TicketProjectProps {
     objectId: string;
-    type: string;
+    packageObjectId: string;
+    agentObjectId: string;
+    module: string;
     name: string;
     description: string;
     coverImage: string;
@@ -89,7 +91,9 @@ const TicketProjectList = () => {
                     const { fields } = data;
                     return {
                         objectId: details.reference.objectId,
-                        type: data.type.split('::')[0],
+                        packageObjectId: data.type.split('::')[0],
+                        agentObjectId: details.reference.objectId,
+                        module: data.type.split('::')[1],
                         name: fields.name,
                         description: fields.description,
                         url: fields.url,
@@ -107,7 +111,7 @@ const TicketProjectList = () => {
                                 'fields' in ticket.data &&
                                 (ticket.data.fields.count || 0) > 0 &&
                                 ticket.data.type.split('::')[0] ===
-                                    ticketProject.type
+                                    ticketProject.packageObjectId
                         )
                 ) as TicketProjectProps[];
 

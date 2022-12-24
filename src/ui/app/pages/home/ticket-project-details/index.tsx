@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
 import Loading from '_components/loading';
 import { useAppSelector } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account/index';
+import { executeMoveCall } from '_redux/slices/transactions/index';
 import ExternalLink from '_src/ui/app/components/external-link';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
+import generateTicketData from '_src/ui/app/helpers/generateTicketData';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Button from '_src/ui/app/shared/buttons/Button';
 import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
@@ -19,21 +21,54 @@ const TicketProjectDetailsContent = ({
 }: {
     ticketProject: TicketProjectProps;
 }) => {
+    const loadingNFTs = useAppSelector(
+        ({ suiObjects }) => suiObjects.loading && !suiObjects.lastSync
+    );
+    const address = useAppSelector(({ account: { address } }) => address);
     const nfts = useAppSelector(accountNftsSelector) || [];
 
     let tokenName;
-    let hasToken = false;
-    if (!ticketProject.token) {
-        hasToken = true;
-    } else {
+    let tokenNFT;
+    if (ticketProject.token) {
         tokenName = ticketProject.token.split('::')[2];
 
         for (const nft of nfts) {
             if ('type' in nft.data && nft.data.type === ticketProject.token) {
-                hasToken = true;
+                tokenNFT = nft;
             }
         }
     }
+
+    const handleClick = useCallback(async () => {
+        if (!address) return;
+
+        const { data, error } = await generateTicketData(
+            ticketProject.name,
+            address
+        );
+
+        if (error) {
+            console.log('ERROR', error);
+            return;
+        }
+
+        if (!data) {
+            console.log('NO DATA');
+            return;
+        }
+
+        const { ticketData, signature } = data;
+
+        const response = await executeMoveCall({
+            packageObjectId: ticketProject.packageObjectId,
+            module: ticketProject.module,
+            function: 'create_ticket',
+            typeArguments: ticketProject.token ? [ticketProject.token] : [],
+            arguments: [ticketData, signature, ticketProject.agentObjectId],
+            gasBudget: 10000,
+        });
+        console.log('response', response);
+    }, [ticketProject, address]);
 
     return (
         <>
@@ -67,9 +102,10 @@ const TicketProjectDetailsContent = ({
                             </BodyLarge>
                         )}
 
-                        {hasToken === undefined && <LoadingIndicator />}
-                        {!hasToken &&
-                            hasToken !== undefined &&
+                        {loadingNFTs && <LoadingIndicator />}
+                        {!loadingNFTs &&
+                            ticketProject.token &&
+                            tokenNFT !== undefined &&
                             ticketProject.tokenUrl && (
                                 <ExternalLink
                                     href={ticketProject.tokenUrl}
@@ -82,8 +118,10 @@ const TicketProjectDetailsContent = ({
                                     </Button>
                                 </ExternalLink>
                             )}
-                        {hasToken && (
-                            <Button buttonStyle="primary">Mint Ticket</Button>
+                        {!loadingNFTs && tokenNFT && (
+                            <Button buttonStyle="primary" onClick={handleClick}>
+                                Mint Ticket
+                            </Button>
                         )}
                     </div>
                 </div>
@@ -128,7 +166,9 @@ const TicketProjectDetails = () => {
             const { fields } = data;
             const ticketProject = {
                 objectId: details.reference.objectId,
-                type: data.type.split('::')[0],
+                packageObjectId: data.type.split('::')[0],
+                agentObjectId: objectId,
+                module: data.type.split('::')[1],
                 name: fields.name,
                 description: fields.description,
                 url: fields.url,
