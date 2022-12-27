@@ -71,7 +71,7 @@ describe('Email Authentication', () => {
         // This timeout is here because simulateIframeSendingAccessCode was getting called
         // before the useEffect in logging-in.tsx was running, resulting in the iframe never
         // receiving the message.
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         simulateIframeSendingAccessCode(fakeAccessToken);
 
         await screen.findByText('Get started with Sui');

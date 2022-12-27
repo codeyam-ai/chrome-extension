@@ -39,7 +39,7 @@ const WalletButton = ({
         if (isWalletEditing) return;
         await dispatch(clearForNetworkOrWalletSwitch());
         await dispatch(saveActiveAccountIndex(wallet.index));
-        navigate('/');
+        navigate(closeWalletPickerUrl);
     }, [
         wallet.index,
         isWalletEditing,
@@ -69,8 +69,7 @@ const WalletButton = ({
                 <div className="flex flex-col text-left" title={wallet.address}>
                     <BodyLarge>
                         {wallet.name ||
-                            `Wallet${
-                                wallet.index > 0 ? ' ' + wallet.index + 1 : ''
+                            `Wallet${wallet.index > 0 ? ' ' + wallet.index + 1 : ''
                             }`}
                     </BodyLarge>
                     <Body isTextColorMedium>{shortenedAddress}</Body>

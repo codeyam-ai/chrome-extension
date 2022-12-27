@@ -41,9 +41,14 @@ const WalletPickerNavBar = ({
         setIsWalletEditing(!isWalletEditing);
     }, [isWalletEditing, setIsWalletEditing]);
 
-    const onCloseWalletPicker = useCallback(() => {
+    const setIsWalletEditingToFalse = useCallback(() => {
         setIsWalletEditing(false);
     }, [setIsWalletEditing]);
+
+    const onCloseWalletPicker = useCallback(() => {
+        setIsWalletEditing(false)
+        goBack();
+    }, [setIsWalletEditing, goBack]);
 
     return (
         <>
@@ -60,7 +65,7 @@ const WalletPickerNavBar = ({
             ) : (
                 <div className="relative flex flex-row items-center justify-between px-6 py-4 rounded-t-[20px] border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
                     <div className="flex flex-row gap-4 items-center">
-                        <button onClick={goBack}>
+                        <button onClick={onCloseWalletPicker}>
                             <XMarkIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
                         </button>
                         <BodyLarge isSemibold>
@@ -72,7 +77,7 @@ const WalletPickerNavBar = ({
                             </EthosLink>
                         </BodyLarge>
                     </div>
-                    <WalletProfile onClick={onCloseWalletPicker} />
+                    <WalletProfile onClick={setIsWalletEditingToFalse} />
                 </div>
             )}
             <WalletPickerPage
