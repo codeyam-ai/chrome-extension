@@ -9,6 +9,7 @@ const generateTicketData = async (
     error?: string;
     data?: Record<string, SuiJsonValue>;
 }> => {
+    console.log('NAME', name);
     const generator = generators[name];
 
     if (!generator) {
@@ -35,7 +36,7 @@ const generators: Record<
         json?: Record<string, SuiJsonValue>;
     }>
 > = {
-    'AI Capy': async (address: string) => {
+    'Capy.AI': async (address: string) => {
         const response = await simpleApiCall('tickets/create', 'POST', '', {
             address,
         });

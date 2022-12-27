@@ -103,32 +103,31 @@ const TicketProjectDetailsContent = ({
                         >
                             {ticketProject.description}
                         </BodyLarge>
-                        {tokenName && (
-                            <BodyLarge
-                                className={
-                                    'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal mb-6'
-                                }
-                            >
-                                In order to mint this ticket you&apos;ll need to
-                                mint a {tokenName}. You can get one here:
-                            </BodyLarge>
-                        )}
-
                         {loadingNFTs && <LoadingIndicator />}
                         {!loadingNFTs &&
-                            ticketProject.token &&
-                            tokenNFT === undefined &&
+                            tokenNFT === null &&
                             ticketProject.tokenUrl && (
-                                <ExternalLink
-                                    href={ticketProject.tokenUrl}
-                                    title={ticketProject.name}
-                                    showIcon={false}
-                                    className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
-                                >
-                                    <Button buttonStyle="primary">
-                                        Get {tokenName}
-                                    </Button>
-                                </ExternalLink>
+                                <div className="flex flex-col gap-6">
+                                    <BodyLarge
+                                        className={
+                                            'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal mb-6'
+                                        }
+                                    >
+                                        In order to mint this ticket you&apos;ll
+                                        need to mint a {tokenName}. You can get
+                                        one here:
+                                    </BodyLarge>
+                                    <ExternalLink
+                                        href={ticketProject.tokenUrl}
+                                        title={ticketProject.name}
+                                        showIcon={false}
+                                        className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
+                                    >
+                                        <Button buttonStyle="primary">
+                                            Get {tokenName}
+                                        </Button>
+                                    </ExternalLink>
+                                </div>
                             )}
                         {!loadingNFTs && tokenNFT && (
                             <Button buttonStyle="primary" onClick={handleClick}>
