@@ -46,7 +46,7 @@ const WalletPickerNavBar = ({
     }, [setIsWalletEditing]);
 
     const onCloseWalletPicker = useCallback(() => {
-        setIsWalletEditing(false)
+        setIsWalletEditing(false);
         goBack();
     }, [setIsWalletEditing, goBack]);
 
