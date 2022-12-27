@@ -6,6 +6,7 @@ import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
 import {
     useNextWalletPickerUrl,
+    useWalletEditorIsOpen,
     useWalletPickerIsOpen,
     useWalletPickerUrl,
 } from '_src/ui/app/components/settings-menu/hooks';
@@ -25,11 +26,22 @@ function WalletPickerPage({
     const walletPickerUrl = useWalletPickerUrl();
     const walletPickerHomeUrl = useNextWalletPickerUrl(true, '/');
     const closeWalletPickerUrl = useNextWalletPickerUrl(false);
+    const isWalletEditorIsOpen = useWalletEditorIsOpen();
     const navigate = useNavigate();
     const handleOnCloseMenu = useCallback(() => {
         setIsWalletEditing(false);
-        navigate(closeWalletPickerUrl);
-    }, [navigate, setIsWalletEditing, closeWalletPickerUrl]);
+        if (isWalletEditorIsOpen) {
+            navigate(-2);
+            return;
+        }
+        navigate(-1);
+    }, [
+        isWalletEditorIsOpen,
+        navigate,
+        isWalletEditing,
+        setIsWalletEditing,
+        closeWalletPickerUrl,
+    ]);
 
     if (!isWalletPickerOpen) {
         return null;

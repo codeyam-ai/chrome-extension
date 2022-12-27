@@ -29,25 +29,17 @@ const WalletButton = ({
     const navigate = useNavigate();
     const shortenedAddress = useMiddleEllipsis(wallet.address, 24, 12);
     const editWalletUrl = useEditWalletUrl(wallet.index);
-    const closeWalletPickerUrl = useNextWalletPickerUrl(false);
 
     const switchToThisWallet = useCallback(async () => {
         if (isActive) {
-            navigate(closeWalletPickerUrl);
+            navigate(-1);
             return;
         }
         if (isWalletEditing) return;
         await dispatch(clearForNetworkOrWalletSwitch());
         await dispatch(saveActiveAccountIndex(wallet.index));
-        navigate(closeWalletPickerUrl);
-    }, [
-        wallet.index,
-        isWalletEditing,
-        isActive,
-        closeWalletPickerUrl,
-        dispatch,
-        navigate,
-    ]);
+        navigate(-1);
+    }, [wallet.index, isWalletEditing, isActive, dispatch, navigate]);
 
     const editThisWallet = useCallback(() => {
         navigate(editWalletUrl);

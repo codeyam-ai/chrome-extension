@@ -41,10 +41,6 @@ const WalletPickerNavBar = ({
         setIsWalletEditing(!isWalletEditing);
     }, [isWalletEditing, setIsWalletEditing]);
 
-    const setIsWalletEditingToFalse = useCallback(() => {
-        setIsWalletEditing(false);
-    }, [setIsWalletEditing]);
-
     const onCloseWalletPicker = useCallback(() => {
         setIsWalletEditing(false);
         goBack();
@@ -77,7 +73,7 @@ const WalletPickerNavBar = ({
                             </EthosLink>
                         </BodyLarge>
                     </div>
-                    <WalletProfile onClick={setIsWalletEditingToFalse} />
+                    <WalletProfile onClick={onCloseWalletPicker} />
                 </div>
             )}
             <WalletPickerPage
@@ -88,33 +84,58 @@ const WalletPickerNavBar = ({
     );
 };
 
-const SettingsNavBar = ({ goBack }: { goBack: () => void }) => {
+interface SettingsNavBarProps extends WalletPickerNavBarProps {
+    isWalletPickerOpen: boolean;
+}
+
+const SettingsNavBar = ({
+    goBack,
+    isWalletEditing,
+    setIsWalletEditing,
+    isWalletPickerOpen,
+}: SettingsNavBarProps) => {
     const settingsIsOpenOnSubPage = useSettingsIsOpenOnSubPage();
 
     return (
         <>
-            {!settingsIsOpenOnSubPage ? (
-                <div className="flex justify-between px-6 py-4 text-left border-b border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
-                    <Header>Settings</Header>
-                    <button onClick={goBack}>
-                        <XMarkIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
-                    </button>
-                </div>
+            {isWalletPickerOpen ? (
+                <WalletPickerNavBar
+                    goBack={goBack}
+                    isWalletEditing={isWalletEditing}
+                    setIsWalletEditing={setIsWalletEditing}
+                />
             ) : (
-                <div className="flex flex-row items-center justify-between px-6 py-4 border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
-                    <div className="flex flex-row gap-4 items-center">
-                        <button
-                            onClick={goBack}
-                            className="inline-flex flex-row gap-2 items-center text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
-                        >
-                            <ArrowLeftIcon className="h-5 w-5" />
-                            <BodyLarge>Back</BodyLarge>
-                        </button>
-                    </div>
-                    <WalletProfile />
-                </div>
+                <>
+                    {!settingsIsOpenOnSubPage ? (
+                        <div className="flex justify-between px-6 py-4 text-left border-b border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
+                            <Header>Settings</Header>
+                            <button onClick={goBack}>
+                                <XMarkIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="flex flex-row items-center justify-between px-6 py-4 border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
+                            <div className="flex flex-row gap-4 items-center">
+                                <button
+                                    onClick={goBack}
+                                    className="inline-flex flex-row gap-2 items-center text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
+                                >
+                                    <ArrowLeftIcon className="h-5 w-5" />
+                                    <BodyLarge>Back</BodyLarge>
+                                </button>
+                            </div>
+                            <WalletProfile />
+                        </div>
+                    )}
+                </>
             )}
             <SettingsRouterPage />
+            {isWalletPickerOpen && (
+                <WalletPickerPage
+                    isWalletEditing={isWalletEditing}
+                    setIsWalletEditing={setIsWalletEditing}
+                />
+            )}
         </>
     );
 };
@@ -168,7 +189,14 @@ const NavBar = () => {
     );
 
     if (isSettingsOpen) {
-        return <SettingsNavBar goBack={goBack} />;
+        return (
+            <SettingsNavBar
+                goBack={goBack}
+                isWalletEditing={isWalletEditing}
+                setIsWalletEditing={setIsWalletEditing}
+                isWalletPickerOpen={isWalletPickerOpen}
+            />
+        );
     }
     if (isWalletPickerOpen) {
         return (
