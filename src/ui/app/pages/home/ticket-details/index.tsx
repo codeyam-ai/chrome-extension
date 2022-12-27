@@ -5,6 +5,7 @@ import { Navigate, useSearchParams } from 'react-router-dom';
 import Loading from '_components/loading';
 import { useAppSelector, useTicketBasicData } from '_hooks';
 import { accountTicketsSelector } from '_redux/slices/account/index';
+import ExternalLink from '_src/ui/app/components/external-link';
 import Button from '_src/ui/app/shared/buttons/Button';
 import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
 import Body from '_src/ui/app/shared/typography/Body';
@@ -39,20 +40,26 @@ const TIcketDetailsContent = ({ ticket }: { ticket: SuiObject }) => {
                             {ticketFields?.description}
                         </BodyLarge>
                         {ticketFields?.count && (
-                            <Body className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium text-sm">
-                                {ticketFields?.count} Remaining
+                            <Body className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium text-sm mb-3">
+                                {ticketFields?.count} Uses Remaining
                             </Body>
                         )}
 
                         {ticketFields?.url && (
-                            <Button
-                                isInline
-                                buttonStyle="primary"
-                                className={'inline-block mb-0'}
-                                to={ticketFields.url}
+                            <ExternalLink
+                                href={ticketFields.url}
+                                title={ticketFields.name}
+                                className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
+                                showIcon={false}
                             >
-                                Redeem Ticket
-                            </Button>
+                                <Button
+                                    isInline
+                                    buttonStyle="primary"
+                                    className={'inline-block mb-0'}
+                                >
+                                    Redeem Ticket
+                                </Button>
+                            </ExternalLink>
                         )}
                     </div>
                 </div>
