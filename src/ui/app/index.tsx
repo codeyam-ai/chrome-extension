@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import useSizeWindow from './hooks/useSizeWindow';
 import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
@@ -40,15 +40,12 @@ import HomePage, {
 } from '_pages/home';
 import InitializePage from '_pages/initialize';
 import { loadAccountInformationFromStorage } from '_redux/slices/account';
-import { setNavVisibility } from '_redux/slices/app';
 import { ThemeProvider } from '_src/shared/utils/themeContext';
 import { DappPreapprovalPage } from '_src/ui/app/pages/dapp-preapproval';
 import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
 import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
-
-const HIDDEN_MENU_PATHS = ['/nft-details', '/receipt'];
 
 const App = () => {
     const dispatch = useAppDispatch();
@@ -65,12 +62,6 @@ const App = () => {
     useEffect(() => {
         document.body.classList[isPopup ? 'add' : 'remove']('is-popup');
     }, [isPopup]);
-    const location = useLocation();
-
-    useEffect(() => {
-        const menuVisible = !HIDDEN_MENU_PATHS.includes(location.pathname);
-        dispatch(setNavVisibility(menuVisible));
-    }, [location, dispatch]);
 
     return (
         <ThemeProvider initialTheme={undefined}>

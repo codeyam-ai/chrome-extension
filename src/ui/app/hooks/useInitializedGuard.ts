@@ -6,6 +6,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { AUTHENTICATION_REQUESTED } from '../pages/initialize/hosted';
 import useAppSelector from './useAppSelector';
+import { openInNewTab } from '_src/shared/utils';
 
 export enum AppState {
     UNINITIALIZED = 'uninitialized',
@@ -16,7 +17,10 @@ export enum AppState {
     LOCKED = 'locked',
 }
 
-export default function useInitializedGuard(state: AppState | AppState[]) {
+export default function useInitializedGuard(
+    state: AppState | AppState[],
+    shouldOpenNewTabIfUninitialized?: boolean
+) {
     const navigate = useNavigate();
     const { pathname } = useLocation();
     const params = useParams();
@@ -71,6 +75,12 @@ export default function useInitializedGuard(state: AppState | AppState[]) {
 
         if (guardAct) {
             if (currentState === AppState.LOADING) return;
+            if (
+                currentState === AppState.UNINITIALIZED &&
+                shouldOpenNewTabIfUninitialized
+            ) {
+                openInNewTab().finally(() => window.close());
+            }
 
             let destination;
             switch (currentState) {
@@ -98,6 +108,7 @@ export default function useInitializedGuard(state: AppState | AppState[]) {
         }
     }, [
         authentication,
+        shouldOpenNewTabIfUninitialized,
         guardAct,
         currentState,
         mnemonicReady,
