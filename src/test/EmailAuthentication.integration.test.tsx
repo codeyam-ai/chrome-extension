@@ -1,8 +1,6 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import * as React from 'react';
-import { act } from 'react-dom/test-utils';
 
 import mockSuiObjects from './utils/mockchain';
 import App from '_app/index';
@@ -70,9 +68,11 @@ describe('Email Authentication', () => {
 
         await screen.findByTestId('loading');
 
-        act(() => {
-            simulateIframeSendingAccessCode(fakeAccessToken);
-        });
+        // This timeout is here because simulateIframeSendingAccessCode was getting called
+        // before the useEffect in logging-in.tsx was running, resulting in the iframe never
+        // receiving the message.
+        await new Promise(r => setTimeout(r, 1));
+        simulateIframeSendingAccessCode(fakeAccessToken);
 
         await screen.findByText('Get started with Sui');
     });
