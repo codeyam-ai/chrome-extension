@@ -18,14 +18,10 @@ const LoggingInPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log('👹👹👹👹👹👹IN UEF');
-
         const listenForSuccessfulLogin = async () => {
             const accessToken = await iframe.listenForAccessToken();
-            console.log('🔮🔮🔮🔮🔮accessToken :>> ', accessToken);
             Authentication.set(accessToken);
             const accountInfos = await Authentication.getAccountInfos();
-            console.log('🍋🍋🍋🍋🍋accountInfos :>> ', accountInfos);
             if (accountInfos && accountInfos.length > 0) {
                 await dispatch(saveAccountInfos(accountInfos));
                 await dispatch(setAddress(accountInfos[0]?.address));

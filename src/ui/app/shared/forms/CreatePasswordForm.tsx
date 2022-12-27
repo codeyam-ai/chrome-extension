@@ -51,6 +51,7 @@ const CustomFormikForm = () => {
                 <Button
                     buttonStyle="primary"
                     type="submit"
+                    data-testid="submit"
                     disabled={
                         !meta.value ||
                         !!meta.error ||

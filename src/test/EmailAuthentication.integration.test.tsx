@@ -2,14 +2,12 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import * as React from 'react';
+import { act } from 'react-dom/test-utils';
 
 import mockSuiObjects from './utils/mockchain';
 import App from '_app/index';
 import { BASE_URL } from '_src/shared/constants';
 import { renderWithProviders } from '_src/test/utils/react-rendering';
-import { act } from 'react-dom/test-utils';
-
-jest.setTimeout(100000000);
 
 describe('Email Authentication', () => {
     test('User can enter email and is prompted to wait for the magic login link', async () => {

@@ -5,8 +5,6 @@ import App from '_app/index';
 import mockSuiObjects from '_src/test/utils/mockchain';
 import { renderWithProviders } from '_src/test/utils/react-rendering';
 
-jest.setTimeout(100000000);
-
 describe('Authenticating by importing an account with a seed phrase', () => {
     test('Entire flow works', async () => {
         mockSuiObjects();
@@ -20,13 +18,10 @@ describe('Authenticating by importing an account with a seed phrase', () => {
         await screen.findByText('Welcome to Ethos');
         await userEvent.click(screen.getByText('Import', { exact: false }));
         await screen.findByText('Paste Recovery Phrase');
-        const firstWordInput = await screen.findByTestId('word-0');
         for (let i = 0; i < 12; i++) {
             const wordInput = await screen.findByTestId('word-' + i);
-            userEvent.type(wordInput, seedPhraseList[i]);
+            await userEvent.type(wordInput, seedPhraseList[i]);
         }
-        // firstWordInput.focus();
-        // await userEvent.paste(validSeedPhrase);
 
         await userEvent.click(screen.getByTestId('submit'));
 
@@ -44,7 +39,7 @@ describe('Authenticating by importing an account with a seed phrase', () => {
             screen.getByTestId('confirmPassword'),
             'This is a Password'
         );
-        await userEvent.click(screen.getByText('Save'));
-        await screen.findByText('Get started with Sui');
+        await userEvent.click(screen.getByTestId('submit'));
+        await screen.findByText('Wallet Set Up');
     });
 });
