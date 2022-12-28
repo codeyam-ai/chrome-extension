@@ -109,6 +109,7 @@ export function useNextWalletPickerUrl(
             searchParams.set(WALLET_PICKER_PARAM, nextMenuLocation);
         } else {
             searchParams.delete(WALLET_PICKER_PARAM);
+            searchParams.delete('index');
         }
         const search = searchParams.toString();
         return `${pathname}${search ? '?' : ''}${search}`;
