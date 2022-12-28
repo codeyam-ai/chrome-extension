@@ -34,11 +34,7 @@ function WalletPickerPage({
             return;
         }
         navigate(-1);
-    }, [
-        isWalletEditorIsOpen,
-        navigate,
-        setIsWalletEditing,
-    ]);
+    }, [isWalletEditorIsOpen, navigate, setIsWalletEditing]);
 
     if (!isWalletPickerOpen) {
         return null;
