@@ -9,7 +9,6 @@ const generateTicketData = async (
     error?: string;
     data?: Record<string, SuiJsonValue>;
 }> => {
-    console.log('NAME', name);
     const generator = generators[name];
 
     if (!generator) {

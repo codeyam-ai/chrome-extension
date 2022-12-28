@@ -29,6 +29,8 @@ const TicketProjectDetailsContent = ({
     );
     const address = useAppSelector(({ account: { address } }) => address);
     const nfts = useAppSelector(accountNftsSelector) || [];
+    const [minting, setMinting] = useState(false);
+    const [error, setError] = useState<string | undefined>();
 
     let tokenName;
     let tokenNFT: SuiObject | null = null;
@@ -46,18 +48,22 @@ const TicketProjectDetailsContent = ({
         if (!address) return;
         if (ticketProject.token && !tokenNFT) return;
 
+        setMinting(true);
+
         const { data, error } = await generateTicketData(
             ticketProject.name,
             address
         );
 
         if (error) {
-            console.log('ERROR', error);
+            setMinting(false);
+            setError(error);
             return;
         }
 
         if (!data) {
-            console.log('NO DATA');
+            setMinting(false);
+            setError('There was an error. Please try again in a moment.');
             return;
         }
 
@@ -68,7 +74,8 @@ const TicketProjectDetailsContent = ({
         if (ticketProject.token && tokenNFT) {
             args.unshift(tokenNFT.reference.objectId);
         }
-        const response = await dispatch(
+
+        await dispatch(
             executeMoveCall({
                 packageObjectId: ticketProject.packageObjectId,
                 module: ticketProject.module,
@@ -79,6 +86,7 @@ const TicketProjectDetailsContent = ({
             })
         ).unwrap();
 
+        setMinting(false);
         navigate('/tickets');
     }, [ticketProject, address, tokenNFT, dispatch, navigate]);
 
@@ -129,9 +137,18 @@ const TicketProjectDetailsContent = ({
                                     </ExternalLink>
                                 </div>
                             )}
+                        {error && (
+                            <div className="text-ethos-light-red dark:text-ethos-dark-red mb-3">
+                                {error}
+                            </div>
+                        )}
                         {!loadingNFTs && tokenNFT && (
                             <Button buttonStyle="primary" onClick={handleClick}>
-                                Mint Ticket
+                                {minting ? (
+                                    <LoadingIndicator />
+                                ) : (
+                                    <>Mint Ticket</>
+                                )}
                             </Button>
                         )}
                     </div>
