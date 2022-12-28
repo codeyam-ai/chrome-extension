@@ -64,6 +64,11 @@ const TxSelector = ({ tx, setFieldValue }: TxSelectorProps) => {
         setFieldValue('to', tx);
     }, [setFieldValue, tx]);
 
+    const walletColor = `#${tx.substring(3, 5)}${tx.substring(
+        7,
+        9
+    )}${tx.substring(10, 12)}`;
+
     if (!tx) {
         return <></>;
     } else {
@@ -75,8 +80,9 @@ const TxSelector = ({ tx, setFieldValue }: TxSelectorProps) => {
             >
                 <div className="flex gap-3">
                     <WalletColorAndEmojiCircle
-                        color={'#6D28D9'}
+                        color={walletColor}
                         emoji={undefined}
+                        hideEmoji={true}
                         circleSizeClasses="h-10 w-10"
                         emojiSizeInPx={22}
                     />

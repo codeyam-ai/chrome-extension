@@ -77,15 +77,19 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
     }, [txn.txId]);
 
     const getIsNft = () => {
-        return txn?.objectId;
+        return txn?.callFunctionName === 'transfer' || txn?.objectId?.length
+            ? true
+            : false;
     };
 
     const getIsSui = () => {
-        return !getIsNft() && txn?.kind === 'PaySui';
+        return !getIsNft() && txn?.kind === 'PaySui' ? true : false;
     };
 
     const getIsFunc = () => {
-        return txn?.callFunctionName && txn?.callFunctionName !== 'mint';
+        return txn?.callFunctionName && txn?.callFunctionName !== 'mint'
+            ? true
+            : false;
     };
 
     const getTransactionType = () => {
@@ -111,6 +115,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
     const drilldownLink = `/receipt?${new URLSearchParams({
         txdigest: txn?.txId,
         symbol: header,
+        isFunc: getIsFunc() ? 'yes' : 'no',
     }).toString()}`;
 
     const toAddrStr = useMiddleEllipsis(
@@ -148,7 +153,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         </div>
     );
 
-    const FunctionIcon = ({ ...props }) => (
+    const FunctionIcon = () => (
         <IconContainer>
             <CodeBracketSquareIcon width={20} height={20} color={'white'} />
         </IconContainer>
@@ -211,6 +216,22 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ),
                 header: txn?.name,
             },
+            register: {
+                ...shared,
+                typeIcon: <SparklesIcon {...iconProps} />,
+                icon: (
+                    <NftImg
+                        src={
+                            txn?.url?.replace(
+                                /^ipfs:\/\//,
+                                'https://ipfs.io/ipfs/'
+                            ) || ''
+                        }
+                        alt={txn.description || ''}
+                    />
+                ),
+                header: header || 'Sui Action',
+            },
         },
         sui: {
             Send: {
@@ -256,25 +277,25 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
             modify: {
                 ...shared,
                 typeIcon: <PencilSquareIcon {...iconProps} />,
-                icon: <FunctionIcon {...iconProps} />,
+                icon: <FunctionIcon />,
                 header: header || 'Sui Action',
             },
             burn: {
                 ...shared,
                 typeIcon: <FireIcon {...iconProps} />,
-                icon: <FunctionIcon {...iconProps} />,
+                icon: <FunctionIcon />,
                 header: header || 'Sui Action',
             },
             transfer: {
                 ...shared,
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
-                icon: <FunctionIcon {...iconProps} />,
+                icon: <FunctionIcon />,
                 header: header || 'Sui Action',
             },
             default: {
                 ...shared,
                 typeIcon: <SuiIcon {...iconProps} />,
-                icon: <FunctionIcon {...iconProps} />,
+                icon: <FunctionIcon />,
                 header: header || 'Sui Action',
             },
         },
@@ -289,12 +310,12 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
     } else if (getIsSui()) {
         rowData = dataMap.sui[type];
     } else if (getIsFunc()) {
-        rowData = dataMap.function[txn?.callFunctionName || 'default'];
+        rowData = dataMap.function[type || 'default'];
     } else {
         rowData = dataMap.coin[type];
     }
 
-    if (!rowData || !header) return <></>;
+    if (!rowData) return <></>;
 
     return (
         <ActivityRow

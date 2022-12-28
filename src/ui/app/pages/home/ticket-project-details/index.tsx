@@ -75,7 +75,7 @@ const TicketProjectDetailsContent = ({
             args.unshift(tokenNFT.reference.objectId);
         }
 
-        await dispatch(
+        const response = await dispatch(
             executeMoveCall({
                 packageObjectId: ticketProject.packageObjectId,
                 module: ticketProject.module,
@@ -87,7 +87,21 @@ const TicketProjectDetailsContent = ({
         ).unwrap();
 
         setMinting(false);
-        navigate('/tickets');
+
+        if (
+            'EffectsCert' in response &&
+            'effects' in response.EffectsCert &&
+            'effects' in response.EffectsCert.effects &&
+            'status' in response.EffectsCert.effects.effects &&
+            'status' in response.EffectsCert.effects.effects.status &&
+            response.EffectsCert.effects.effects.status.status === 'success'
+        ) {
+            navigate('/tickets');
+        } else {
+            setError(
+                'There was an error minting your ticket. Please wait a moment a try again.'
+            );
+        }
     }, [ticketProject, address, tokenNFT, dispatch, navigate]);
 
     return (

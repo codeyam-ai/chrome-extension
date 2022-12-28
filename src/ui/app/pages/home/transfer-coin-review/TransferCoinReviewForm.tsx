@@ -80,6 +80,7 @@ function TransferCoinForm({ onClearSubmitError }: TransferCoinFormProps) {
                         <AssetCard
                             theme={theme}
                             isNft={false}
+                            isFunc={false}
                             coinType={coinSymbol}
                             name={coinSymbol}
                         />

@@ -6,6 +6,7 @@ interface WalletColorAndEmojiCircleProps {
     emoji?: string;
     circleSizeClasses?: string;
     emojiSizeInPx?: number;
+    hideEmoji?: boolean;
 }
 
 const WalletColorAndEmojiCircle = ({
@@ -13,6 +14,7 @@ const WalletColorAndEmojiCircle = ({
     emoji,
     circleSizeClasses,
     emojiSizeInPx,
+    hideEmoji,
 }: WalletColorAndEmojiCircleProps) => {
     const backgroundColor = color || defaultColors[0];
     return (
@@ -23,7 +25,9 @@ const WalletColorAndEmojiCircle = ({
             }`}
             style={{ backgroundColor }}
         >
-            <EmojiDisplay emoji={emoji} sizeInPx={emojiSizeInPx} />
+            {!hideEmoji && (
+                <EmojiDisplay emoji={emoji} sizeInPx={emojiSizeInPx} />
+            )}
         </div>
     );
 };
