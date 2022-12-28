@@ -135,7 +135,7 @@ const OnboardingCard = ({
                     {children}
                 </div>
                 <div
-                    className={`hidden md:flex md:basis-1/2 flex-col place-content-center place-items-center rounded-r-2xl ${
+                    className={`relative hidden md:flex md:basis-1/2 flex-col place-content-center place-items-center rounded-r-2xl ${
                         icon === 'emoji-and-color' ? 'pt-16 pl-16' : 'px-10'
                     }`}
                     style={{

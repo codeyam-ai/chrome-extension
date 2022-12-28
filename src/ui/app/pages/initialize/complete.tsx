@@ -167,11 +167,13 @@ const CompletePage = () => {
                 <ConfettiPop />
             </div>
             <div className="flex flex-col gap-3 px-6 sm:px-10 pb-6">
-                {error && (
+                {true && (
                     <div className="pb-4">
                         <Alert
                             title="The faucet isn't working"
                             subtitle="There could be an issue with Sui DevNet or the Sui faucet. Please try again later."
+                            borderRadius={16}
+                            forceLightMode
                         />
                     </div>
                 )}

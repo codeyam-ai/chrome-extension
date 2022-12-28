@@ -9,12 +9,14 @@ interface EmojiPickerMenuProps {
     isOpen: boolean;
     setSelectedEmoji: (emojiPickerResult: EmojiPickerResult) => void;
     closeEmojiPickerMenu: () => void;
+    forceLightMode?: boolean;
 }
 
 const EmojiPickerMenu = ({
     isOpen,
     setSelectedEmoji,
     closeEmojiPickerMenu,
+    forceLightMode,
 }: EmojiPickerMenuProps) => {
     if (isOpen) {
         return (
@@ -27,7 +29,11 @@ const EmojiPickerMenu = ({
                 />
 
                 <div className="absolute">
-                    <Picker data={data} onEmojiSelect={setSelectedEmoji} />
+                    <Picker
+                        data={data}
+                        onEmojiSelect={setSelectedEmoji}
+                        theme={forceLightMode ? 'light' : 'auto'}
+                    />
                 </div>
             </>
         );

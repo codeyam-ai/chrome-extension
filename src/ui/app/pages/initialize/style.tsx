@@ -162,11 +162,12 @@ const StylePage = () => {
                         <EmojiDisplay emoji={draftEmoji} sizeInPx={46} />
                     </div>
                     <BodyLarge isSemibold>Choose Emoji</BodyLarge>
-                    <div className="absolute -top-[30px] left-0 sm:-top-[10px] sm:left-[55px]">
+                    <div className="absolute -top-[30px] left-0 sm:top-[120px] sm:left-[55px]">
                         <EmojiPickerMenu
                             isOpen={isEmojiPickerMenuOpen}
                             setSelectedEmoji={_handleEmojiChange}
                             closeEmojiPickerMenu={closeEmojiPickerMenu}
+                            forceLightMode
                         />
                     </div>
                 </div>
@@ -177,12 +178,15 @@ const StylePage = () => {
                         onClick={openColorPickerMenu}
                     />
                     <BodyLarge isSemibold>Choose Color</BodyLarge>
-                    <ColorPickerMenu
-                        isOpen={isColorPickerMenuOpen}
-                        selectedColor={draftColor}
-                        setSelectedColor={_handleColorChange}
-                        closeColorPickerMenu={closeColorPickerMenu}
-                    />
+                    <div className="absolute top-[110px] -left-[60px]">
+                        <ColorPickerMenu
+                            isOpen={isColorPickerMenuOpen}
+                            selectedColor={draftColor}
+                            setSelectedColor={_handleColorChange}
+                            closeColorPickerMenu={closeColorPickerMenu}
+                            forceLightMode
+                        />
+                    </div>
                 </div>
             </div>
 
