@@ -3,10 +3,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
-import {
-    useEditWalletUrl,
-    useNextWalletPickerUrl,
-} from '../../components/settings-menu/hooks';
+import { useEditWalletUrl } from '../../components/settings-menu/hooks';
 import { useAppDispatch, useMiddleEllipsis } from '../../hooks';
 import { saveActiveAccountIndex } from '../../redux/slices/account';
 import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';

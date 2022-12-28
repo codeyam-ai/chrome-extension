@@ -25,7 +25,6 @@ function WalletPickerPage({
     const isWalletPickerOpen = useWalletPickerIsOpen();
     const walletPickerUrl = useWalletPickerUrl();
     const walletPickerHomeUrl = useNextWalletPickerUrl(true, '/');
-    const closeWalletPickerUrl = useNextWalletPickerUrl(false);
     const isWalletEditorIsOpen = useWalletEditorIsOpen();
     const navigate = useNavigate();
     const handleOnCloseMenu = useCallback(() => {
@@ -38,9 +37,7 @@ function WalletPickerPage({
     }, [
         isWalletEditorIsOpen,
         navigate,
-        isWalletEditing,
         setIsWalletEditing,
-        closeWalletPickerUrl,
     ]);
 
     if (!isWalletPickerOpen) {
