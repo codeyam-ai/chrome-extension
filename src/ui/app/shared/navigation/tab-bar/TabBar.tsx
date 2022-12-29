@@ -1,16 +1,13 @@
 import {
     ClockIcon,
-    TicketIcon,
     CurrencyDollarIcon,
     SparklesIcon,
+    TicketIcon,
 } from '@heroicons/react/24/solid';
-import { type ReactNode, useCallback, useMemo } from 'react';
+import { useCallback, useMemo, type ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
-import ExploreButton from '../../svg/ExploreButton';
-import { DASHBOARD_LINK } from '_src/shared/constants';
-import ExternalLink from '_src/ui/app/components/external-link';
-import { useExplorerPermission } from '_src/ui/app/hooks';
+import ExploreButton from './ExploreButton';
 
 const iconClasses = 'w-6 h-6';
 const navItems: NavItem[] = [
@@ -33,11 +30,6 @@ const navItems: NavItem[] = [
         title: 'History',
         to: './transactions',
         icon: <ClockIcon className={iconClasses} />,
-    },
-    {
-        title: 'Explore',
-        to: DASHBOARD_LINK,
-        icon: <ExploreButton />,
     },
 ];
 
@@ -72,45 +64,19 @@ const NavItemElement = ({ to, title, icon }: NavItem) => {
 };
 
 const TabBar = () => {
-    const setExplorerPermission = useExplorerPermission();
-
     return (
-        <nav className="px-3 flex flex-row justify-between h-16 w-full sm:rounded-b-2xl items-center border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
-            <>
-                {navItems.map((item, key) => {
-                    //
-                    return (
-                        <div
-                            className="w-full flex flex-row justify-center items-center"
-                            key={key}
-                            onMouseOver={
-                                item.to.startsWith('http')
-                                    ? setExplorerPermission
-                                    : undefined
-                            }
-                        >
-                            <div>
-                                {item.to.startsWith('http') ? (
-                                    <ExternalLink
-                                        href={item.to}
-                                        title={item.title}
-                                        showIcon={false}
-                                        className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
-                                    >
-                                        {item.icon}
-                                    </ExternalLink>
-                                ) : (
-                                    <NavItemElement
-                                        title={item.title}
-                                        to={item.to}
-                                        icon={item.icon}
-                                    />
-                                )}
-                            </div>
-                        </div>
-                    );
-                })}
-            </>
+        <nav className="px-6 flex flex-row justify-between h-16 sm:rounded-b-2xl items-center border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
+            {navItems.map((item, key) => {
+                return (
+                    <NavItemElement
+                        title={item.title}
+                        to={item.to}
+                        icon={item.icon}
+                        key={key}
+                    />
+                );
+            })}
+            <ExploreButton />
         </nav>
     );
 };
