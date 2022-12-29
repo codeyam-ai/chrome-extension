@@ -26,7 +26,7 @@ const ColorPickerMenu = ({
                 />
 
                 <div
-                    className={`absolute left-0 sm:left-60 flex flex-col gap-3 w-[312px] p-6 rounded-[20px] shadow-ethos-hovering-element-box-shadow bg-ethos-light-background-default border border-ethos-light-text-stroke ${
+                    className={`absolute left-0 sm:left-60 z-10 flex flex-col gap-3 w-[312px] p-6 rounded-[20px] shadow-ethos-hovering-element-box-shadow bg-ethos-light-background-default border border-ethos-light-text-stroke ${
                         forceLightMode
                             ? ''
                             : 'dark:bg-ethos-dark-background-default dark:border-ethos-dark-text-stroke'

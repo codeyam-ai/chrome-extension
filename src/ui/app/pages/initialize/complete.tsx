@@ -45,7 +45,7 @@ interface SocialLinkProps {
 const SocialLink = ({ title, iconWithNoClasses, to }: SocialLinkProps) => {
     return (
         <a href={to} target="_blank" rel="noreferrer" className="flex gap-2">
-            <span className="h-6 w-6 text-ethos-light-text-medium dark:text-ethos-dark-text-medium">
+            <span className="h-6 w-6 text-ethos-light-text-medium">
                 {iconWithNoClasses}
             </span>
             <BodyLarge isTextColorMedium isSemibold>
@@ -167,7 +167,7 @@ const CompletePage = () => {
                 <ConfettiPop />
             </div>
             <div className="flex flex-col gap-3 px-6 sm:px-10 pb-6">
-                {true && (
+                {error && (
                     <div className="pb-4">
                         <Alert
                             title="The faucet isn't working"

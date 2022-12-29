@@ -195,7 +195,7 @@ const StylePage = () => {
                     Continue
                 </Button>
                 <Link to={'/initialize/complete'}>
-                    <BodyLarge isSemibold isTextColorMedium>
+                    <BodyLarge isSemibold isTextColorMedium forceLightMode>
                         Skip
                     </BodyLarge>
                 </Link>

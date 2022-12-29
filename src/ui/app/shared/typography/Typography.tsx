@@ -4,6 +4,7 @@ export type TypographyProps = {
     as?: React.ElementType;
     isTextColorMedium?: boolean;
     className?: string;
+    forceLightMode?: boolean;
     children: ReactNode;
 };
 
@@ -11,13 +12,16 @@ const Typography = ({
     as: ComponentType = 'div',
     isTextColorMedium,
     className,
+    forceLightMode,
     children,
 }: TypographyProps) => {
     let textColorClasses = '';
     if (isTextColorMedium) {
         textColorClasses =
             ' ' +
-            'text-ethos-light-text-medium dark:text-ethos-dark-text-medium';
+            `text-ethos-light-text-medium ${
+                forceLightMode ? '' : 'dark:text-ethos-dark-text-medium'
+            }`;
     }
     return (
         <ComponentType

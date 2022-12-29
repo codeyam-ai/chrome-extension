@@ -124,13 +124,15 @@ const OnboardingCard = ({
                         {!hideBackButton && <BackButton forceLightMode />}
                         <div className="flex-col">
                             {icon === 'sui' && (
-                                <JumboTitle isTextColorMedium>
+                                <JumboTitle isTextColorMedium forceLightMode>
                                     Wallet Set Up
                                 </JumboTitle>
                             )}
                             <JumboTitle>{title}</JumboTitle>
                         </div>
-                        <Subheader isTextColorMedium>{subtitle}</Subheader>
+                        <Subheader isTextColorMedium forceLightMode>
+                            {subtitle}
+                        </Subheader>
                     </div>
                     {children}
                 </div>

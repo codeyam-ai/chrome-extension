@@ -5,9 +5,8 @@ const Subheader = (props: TypographyProps) => {
         'font-weight-ethos-header text-size-ethos-subheader leading-line-height-ethos-subheader tracking-letter-spacing-ethos-subheader';
     return (
         <Typography
+            {...props}
             className={props.className + ' ' + subheaderClasses}
-            as={props.as}
-            isTextColorMedium={props.isTextColorMedium}
         >
             {props.children}
         </Typography>
