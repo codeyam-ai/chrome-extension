@@ -129,7 +129,11 @@ const PinPage = () => {
             </div>
             <div className="px-10 pb-10 text-center">
                 <BodyLarge>
-                    <EthosLink to="/initialize/complete" type="internal">
+                    <EthosLink
+                        to="/initialize/complete"
+                        type="internal"
+                        forceLightMode
+                    >
                         Continue Without Pinning
                     </EthosLink>
                 </BodyLarge>

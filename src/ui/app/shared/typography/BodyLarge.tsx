@@ -18,11 +18,7 @@ const BodyLarge = ({ isSemibold, ...props }: BodyLargeProps) => {
         : bodyLargeClasses;
 
     return (
-        <Typography
-            className={displayClasses}
-            as={props.as}
-            isTextColorMedium={props.isTextColorMedium}
-        >
+        <Typography {...props} className={displayClasses}>
             {props.children}
         </Typography>
     );

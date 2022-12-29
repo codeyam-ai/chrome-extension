@@ -45,7 +45,7 @@ interface SocialLinkProps {
 const SocialLink = ({ title, iconWithNoClasses, to }: SocialLinkProps) => {
     return (
         <a href={to} target="_blank" rel="noreferrer" className="flex gap-2">
-            <span className="h-6 w-6 text-ethos-light-text-medium dark:text-ethos-dark-text-medium">
+            <span className="h-6 w-6 text-ethos-light-text-medium">
                 {iconWithNoClasses}
             </span>
             <BodyLarge isTextColorMedium isSemibold>
@@ -172,6 +172,8 @@ const CompletePage = () => {
                         <Alert
                             title="The faucet isn't working"
                             subtitle="There could be an issue with Sui DevNet or the Sui faucet. Please try again later."
+                            borderRadius={16}
+                            forceLightMode
                         />
                     </div>
                 )}

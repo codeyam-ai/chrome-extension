@@ -10,12 +10,20 @@ export interface EthosLinkProps {
     type: 'external' | 'internal' | 'none';
     to?: string;
     onClick?: () => void;
+    forceLightMode?: boolean;
     children: ReactNode;
 }
 
-const EthosLink = ({ to, type, onClick, children }: EthosLinkProps) => {
-    const linkClasses =
-        'font-weight-ethos-semibold-body text-ethos-light-primary-light dark:text-ethos-dark-primary-dark cursor-pointer';
+const EthosLink = ({
+    to,
+    type,
+    onClick,
+    forceLightMode,
+    children,
+}: EthosLinkProps) => {
+    const linkClasses = `font-weight-ethos-semibold-body text-ethos-light-primary-light cursor-pointer ${
+        forceLightMode ? '' : 'dark:text-ethos-dark-primary-dark'
+    }`;
     if (type === 'internal' && to) {
         return (
             <Link to={to} onClick={onClick} className={linkClasses}>

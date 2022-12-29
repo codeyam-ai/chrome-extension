@@ -1,4 +1,4 @@
-import { ExclaimationTriangleIcon } from '@heroicons/react/24/outline';
+import { ExclaimationTriangleIcon } from '@heroicons/react/24/solid';
 
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
@@ -8,16 +8,41 @@ import type { ReactNode } from 'react';
 interface AlertProps {
     title: string;
     subtitle?: string | ReactNode;
+    borderRadius?: number;
+    forceLightMode?: boolean;
 }
 
-const Alert = ({ title, subtitle }: AlertProps) => {
+const Alert = ({
+    title,
+    subtitle,
+    borderRadius,
+    forceLightMode,
+}: AlertProps) => {
     return (
-        <div className="flex flex-row gap-2 py-4 px-4 rounded-lg bg-ethos-light-primary-light-translucent">
+        <div
+            className={`flex flex-row gap-2 py-4 px-4 bg-ethos-light-background-secondary ${
+                forceLightMode ? '' : 'dark:bg-ethos-dark-background-secondary'
+            }`}
+            style={{ borderRadius: borderRadius ? borderRadius : 8 }}
+        >
             <span>
-                <ExclaimationTriangleIcon className="h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
+                <ExclaimationTriangleIcon
+                    className={`h-6 w-6 text-ethos-light-primary-light ${
+                        forceLightMode
+                            ? ''
+                            : 'dark:text-ethos-dark-primary-dark'
+                    }`}
+                />
             </span>
             <span className="flex flex-col gap-1 text-left">
-                <BodyLarge className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark">
+                <BodyLarge
+                    isSemibold
+                    className={`text-ethos-light-primary-light ${
+                        forceLightMode
+                            ? ''
+                            : 'dark:text-ethos-dark-primary-dark'
+                    }`}
+                >
                     {title}
                 </BodyLarge>
                 {subtitle && typeof subtitle === 'string' ? (

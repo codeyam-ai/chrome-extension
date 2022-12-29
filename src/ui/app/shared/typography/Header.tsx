@@ -5,9 +5,8 @@ const Header = (props: TypographyProps) => {
         'font-weight-ethos-header text-size-ethos-header leading-line-height-ethos-header tracking-letter-spacing-ethos-header';
     return (
         <Typography
+            {...props}
             className={props.className + ' ' + headerClasses}
-            as={props.as}
-            isTextColorMedium={props.isTextColorMedium}
         >
             {props.children}
         </Typography>

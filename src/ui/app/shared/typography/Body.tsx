@@ -14,9 +14,8 @@ const Body = ({ isSemibold, ...props }: BodyProps) => {
         'text-size-ethos-body leading-line-height-ethos-body tracking-letter-spacing-ethos-body';
     return (
         <Typography
+            {...props}
             className={`${props.className || ''} ${bodyClasses}`}
-            as={props.as}
-            isTextColorMedium={props.isTextColorMedium}
         >
             {props.children}
         </Typography>

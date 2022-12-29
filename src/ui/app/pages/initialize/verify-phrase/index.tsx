@@ -96,12 +96,31 @@ const VerifyPhrasePage = () => {
     }, [wordOptions]);
 
     const setWordOptionUsed = useCallback(
-        (word: string, used = true) => {
+        (word: WordInfo) => {
             const updatedWordList = wordOptions.map((w) => {
-                if (w.text === word) {
+                if (w === word) {
                     return {
                         ...w,
-                        used,
+                        used: true,
+                    };
+                }
+                return w;
+            });
+
+            setWordOptions(updatedWordList);
+        },
+        [wordOptions]
+    );
+
+    const setWordOptionUnused = useCallback(
+        (word: string) => {
+            let isWordUpdated = false;
+            const updatedWordList = wordOptions.map((w) => {
+                if (!isWordUpdated && w.text === word && w.used) {
+                    isWordUpdated = true;
+                    return {
+                        ...w,
+                        used: false,
                     };
                 }
                 return w;
@@ -123,7 +142,7 @@ const VerifyPhrasePage = () => {
 
     const handleWordOptionClicked = useCallback(
         (word: WordInfo) => {
-            setWordOptionUsed(word.text);
+            setWordOptionUsed(word);
             setChosenWordForSlot(nextWordSlotToChoose, word.text);
         },
         [nextWordSlotToChoose, setChosenWordForSlot, setWordOptionUsed]
@@ -131,10 +150,10 @@ const VerifyPhrasePage = () => {
 
     const undoWord = useCallback(
         (word: string, slot: number) => {
-            setWordOptionUsed(word, false);
+            setWordOptionUnused(word);
             setChosenWordForSlot(slot, '');
         },
-        [setChosenWordForSlot, setWordOptionUsed]
+        [setChosenWordForSlot, setWordOptionUnused]
     );
 
     const onClickContinue = useCallback(() => {
