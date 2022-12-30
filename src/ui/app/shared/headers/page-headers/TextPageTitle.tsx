@@ -3,11 +3,23 @@ import Header from '../../typography/Header';
 interface TextPageTitleProps {
     title: string;
     count?: number;
+    padding?: boolean;
+    onClick?: () => void;
 }
 
-const TextPageTitle = ({ title, count }: TextPageTitleProps) => {
+const TextPageTitle = ({
+    title,
+    count,
+    padding = true,
+    onClick,
+}: TextPageTitleProps) => {
     return (
-        <div className="p-6 text-left">
+        <div
+            className={`${padding ? 'p-6' : ''} text-left ${
+                onClick ? 'cursor-pointer' : ''
+            }`}
+            onClick={onClick}
+        >
             <Header>
                 {title}
                 {count && (
