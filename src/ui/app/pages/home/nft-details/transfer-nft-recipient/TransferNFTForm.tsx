@@ -16,6 +16,12 @@ import type { SuiObject } from '@mysten/sui.js';
 
 import st from './TransferNFTForm.module.scss';
 import 'react-toastify/dist/ReactToastify.css';
+import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
+import {
+    getTransactionsByAddress,
+    TxResultState,
+} from '_src/ui/app/redux/slices/txresults';
+import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
 
 export type TransferNFTFormProps = {
     submitError: string | null;
@@ -30,10 +36,34 @@ function TransferNFTForm({
     nftobj,
     onClearSubmitError,
 }: TransferNFTFormProps) {
+    const accountInfos = useAppSelector(({ account }) => account.accountInfos);
+
+    const activeAccountIndex = useAppSelector(
+        ({ account: { activeAccountIndex } }) => activeAccountIndex
+    );
+
+    const txByAddress: TxResultState[] = useAppSelector(({ txresults }) =>
+        txresults.latestTx.filter((tx) => tx.isSender)
+    );
+
+    const recentTxs: string[] = [];
+    txByAddress.forEach((tx) => {
+        if (tx.to) {
+            return recentTxs.push(tx.to);
+        }
+    });
+
+    const loading = useAppSelector(({ txresults }) => txresults.loading);
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(getTransactionsByAddress()).unwrap();
+    }, [dispatch]);
     const {
         isSubmitting,
         isValid,
         values: { to, amount },
+        setFieldValue,
     } = useFormikContext<FormValues>();
 
     const onClearRef = useRef(onClearSubmitError);
@@ -43,6 +73,8 @@ function TransferNFTForm({
         onClearRef.current();
     }, [to, amount]);
 
+    const recentWallets = [...new Set(recentTxs)].splice(0, 3);
+
     return (
         <div>
             <Content>
@@ -51,56 +83,78 @@ function TransferNFTForm({
                     autoComplete="off"
                     noValidate={true}
                 >
-                    <div className={'p-6'}>
-                        <div className={'mb-6'}>
-                            <BodyLarge isTextColorMedium className={'mb-4'}>
-                                Sending
-                            </BodyLarge>
-                            {nftobj && (
-                                <NFTDisplayCard
-                                    nftobj={nftobj}
-                                    wideview={true}
+                    <div>
+                        <div className="pt-6 px-6 text-left flex flex-col absolute w-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
+                            <div className={'mb-6'}>
+                                <BodyLarge isTextColorMedium className={'mb-4'}>
+                                    Sending
+                                </BodyLarge>
+                                {nftobj && (
+                                    <NFTDisplayCard
+                                        nftobj={nftobj}
+                                        wideview={true}
+                                    />
+                                )}
+                            </div>
+                            <div className={'relative'}>
+                                <Field
+                                    className={
+                                        'flex flex-col gap-2 text-left pl-0 pr-0'
+                                    }
+                                    component={AddressInput}
+                                    name="to"
+                                    label={'Recipient'}
+                                />{' '}
+                                <div
+                                    className={`absolute top-0 right-0 mt-1 text-red-500 dark:text-red-400 ${
+                                        isValid && 'hidden'
+                                    }`}
+                                >
+                                    {!isValid && to !== ''
+                                        ? 'Please use a valid address'
+                                        : ' '}
+                                </div>
+                            </div>
+                            <ErrorMessage
+                                className="mt-1 text-red-500 dark:text-red-400"
+                                name="to"
+                                component="div"
+                            />
+                            {BigInt(gasBalance) <
+                                DEFAULT_NFT_TRANSFER_GAS_FEE && (
+                                <div className="mt-1 text-red-500 dark:text-red-400">
+                                    * Insufficient balance to cover transfer
+                                    cost
+                                </div>
+                            )}
+                            <div
+                                className={
+                                    'mt-1 text-red-500 dark:text-red-400' &&
+                                    submitError
+                                        ? 'block'
+                                        : 'hidden'
+                                }
+                            >
+                                {submitError ? submitError : ' '}
+                            </div>
+                        </div>
+                        <div className={'pb-[80px] pt-[240px]'}>
+                            {recentWallets.length > 0 && (
+                                <SuiTxWalletList
+                                    header={'Recent Wallets'}
+                                    transactions={recentWallets}
+                                    activeAccountIndex={activeAccountIndex}
+                                    setFieldValue={setFieldValue}
                                 />
                             )}
-                        </div>
-                        <div className={'relative'}>
-                            <Field
-                                className={
-                                    'flex flex-col gap-2 text-left pl-0 pr-0'
-                                }
-                                component={AddressInput}
-                                name="to"
-                                label={'Recipient'}
-                            />{' '}
-                            <div
-                                className={`absolute top-0 right-0 mt-1 text-red-500 dark:text-red-400 ${
-                                    isValid && 'hidden'
-                                }`}
-                            >
-                                {!isValid && to !== ''
-                                    ? 'Please use a valid address'
-                                    : ' '}
-                            </div>
-                        </div>
-                        <ErrorMessage
-                            className="mt-1 text-red-500 dark:text-red-400"
-                            name="to"
-                            component="div"
-                        />
-                        {BigInt(gasBalance) < DEFAULT_NFT_TRANSFER_GAS_FEE && (
-                            <div className="mt-1 text-red-500 dark:text-red-400">
-                                * Insufficient balance to cover transfer cost
-                            </div>
-                        )}
-                        <div
-                            className={
-                                'mt-1 text-red-500 dark:text-red-400' &&
-                                submitError
-                                    ? 'block'
-                                    : 'hidden'
-                            }
-                        >
-                            {submitError ? submitError : ' '}
+                            {accountInfos.length > 1 && (
+                                <SuiTxWalletList
+                                    header={'Transfer Between My Wallets'}
+                                    wallets={accountInfos}
+                                    activeAccountIndex={activeAccountIndex}
+                                    setFieldValue={setFieldValue}
+                                />
+                            )}
                         </div>
                         <div
                             className={
