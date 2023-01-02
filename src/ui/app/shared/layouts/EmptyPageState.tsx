@@ -28,7 +28,7 @@ const EmptyPageState = ({
             <Subheader as="h3">{title}</Subheader>
             <Body isTextColorMedium>{subtitle}</Body>
             <Body>
-                <EthosLink to={linkUrl} type={LinkType.External}>
+                <EthosLink to={linkUrl} type={LinkType.Internal}>
                     {linkText}
                 </EthosLink>
             </Body>

@@ -41,8 +41,8 @@ function TransactionsPage() {
                         }
                         title="No transactions yet"
                         subtitle="Set up DevNet SUI tokens to send coins."
-                        linkText="Learn more"
-                        linkUrl="https://docs.sui.io/build/devnet"
+                        linkText="Get SUI"
+                        linkUrl="/tokens"
                     />
                 )}
             </Loading>
