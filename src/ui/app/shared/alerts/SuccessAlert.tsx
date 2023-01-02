@@ -16,7 +16,7 @@ export const SuccessAlert = ({
     <div className={'flex flex-row justify-between'}>
         <div className={'flex flex-row gap-2'}>
             <ToastCheck />
-            <div>{text}</div>
+            <div className={'font-medium'}>{text}</div>
         </div>
         {linkText && linkUrl && (
             <Link className={'font-semibold'} to={linkUrl}>
