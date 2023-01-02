@@ -49,7 +49,7 @@ const RecoveryPhraseDisplay = ({
             >
                 {mnemonic.split(' ').map((word, index) => {
                     return (
-                        <div className="grid grid-cols-3 gap-1" key={index}>
+                        <div className="grid grid-cols-3 gap-2" key={index}>
                             <BodyLarge
                                 isTextColorMedium
                                 className="text-right col-span-1"
@@ -91,7 +91,7 @@ const RecoveryPhraseDisplay = ({
                                     : 'dark:text-ethos-dark-text-medium'
                             }`}
                         />
-                        <Body>Copy recovery phrase copied</Body>
+                        <Body>Recovery phrase copied</Body>
                     </>
                 )}
             </div>

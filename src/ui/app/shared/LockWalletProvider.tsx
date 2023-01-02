@@ -1,11 +1,17 @@
-import { useCallback, useEffect, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, type ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import Browser from 'webextension-polyfill';
 
+import {
+    resetWalletLockTimer,
+    startWalletLockTimer,
+} from '../helpers/lock-wallet';
 import { useAppDispatch } from '../hooks';
 import { logout } from '../redux/slices/account';
 
 const LockWalletProvider = ({ children }: { children: ReactNode }) => {
     const dispatch = useAppDispatch();
+    const { pathname } = useLocation();
 
     const lockWallet = useCallback(async () => {
         await dispatch(logout());
@@ -17,27 +23,26 @@ const LockWalletProvider = ({ children }: { children: ReactNode }) => {
         );
         if (lockWalletOnTimestamp > 0 && lockWalletOnTimestamp < Date.now()) {
             await lockWallet();
-            Browser.storage.local.set({
-                lockWalletOnTimestamp: -1,
-            });
+            resetWalletLockTimer();
         }
     }, [lockWallet]);
 
+    const isOnboarding = useMemo(() => {
+        return pathname.includes('welcome') || pathname.includes('initialize');
+    }, [pathname]);
+
     useEffect(() => {
-        const lockTimeoutInMs = 15 * 60000;
         setInterval(async () => {
             // Check if should log out every 5 seconds
             await lockWalletIfTimeIsExpired();
         }, 5000);
         const onFocus = () => {
-            Browser.storage.local.set({
-                lockWalletOnTimestamp: -1,
-            });
+            resetWalletLockTimer();
         };
         const onBlur = () => {
-            Browser.storage.local.set({
-                lockWalletOnTimestamp: Date.now() + lockTimeoutInMs,
-            });
+            if (!isOnboarding) {
+                startWalletLockTimer();
+            }
         };
         lockWalletIfTimeIsExpired().then(() => onFocus());
         window.addEventListener('focus', onFocus);
@@ -47,7 +52,7 @@ const LockWalletProvider = ({ children }: { children: ReactNode }) => {
             window.removeEventListener('focus', onFocus);
             window.removeEventListener('blur', onBlur);
         };
-    }, [lockWalletIfTimeIsExpired]);
+    }, [lockWalletIfTimeIsExpired, isOnboarding]);
 
     return <>{children}</>;
 };

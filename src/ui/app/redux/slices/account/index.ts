@@ -410,13 +410,16 @@ export const unlock: AsyncThunk<boolean, string | null, AppThunkConfig> =
     createAsyncThunk<boolean, string | null, AppThunkConfig>(
         'account/unlock',
         async (passphrase): Promise<boolean> => {
-            if (passphrase && (await isPasswordCorrect(passphrase))) {
-                await setEncrypted(
-                    LOCKED,
-                    `${LOCKED}${passphrase}`,
-                    passphrase
-                );
-                return true;
+            if (passphrase) {
+                const isCorrect = await isPasswordCorrect(passphrase);
+                if (isCorrect) {
+                    await setEncrypted(
+                        LOCKED,
+                        `${LOCKED}${passphrase}`,
+                        passphrase
+                    );
+                    return true;
+                }
             }
             return false;
         }
@@ -533,8 +536,8 @@ const accountSlice = createSlice({
             .addCase(saveEmail.fulfilled, (state, action) => {
                 state.email = action.payload;
             })
-            .addCase(unlock.fulfilled, (state) => {
-                state.locked = false;
+            .addCase(unlock.fulfilled, (state, action) => {
+                state.locked = !action.payload;
             })
             .addCase(logout.fulfilled, (state) => {
                 if (state.authentication) {

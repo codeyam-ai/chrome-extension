@@ -3,10 +3,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
-import {
-    useEditWalletUrl,
-    useNextWalletPickerUrl,
-} from '../../components/settings-menu/hooks';
+import { useEditWalletUrl } from '../../components/settings-menu/hooks';
 import { useAppDispatch, useMiddleEllipsis } from '../../hooks';
 import { saveActiveAccountIndex } from '../../redux/slices/account';
 import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
@@ -29,25 +26,17 @@ const WalletButton = ({
     const navigate = useNavigate();
     const shortenedAddress = useMiddleEllipsis(wallet.address, 24, 12);
     const editWalletUrl = useEditWalletUrl(wallet.index);
-    const closeWalletPickerUrl = useNextWalletPickerUrl(false);
 
     const switchToThisWallet = useCallback(async () => {
         if (isActive) {
-            navigate(closeWalletPickerUrl);
+            navigate(-1);
             return;
         }
         if (isWalletEditing) return;
         await dispatch(clearForNetworkOrWalletSwitch());
         await dispatch(saveActiveAccountIndex(wallet.index));
-        navigate('/');
-    }, [
-        wallet.index,
-        isWalletEditing,
-        isActive,
-        closeWalletPickerUrl,
-        dispatch,
-        navigate,
-    ]);
+        navigate(-1);
+    }, [wallet.index, isWalletEditing, isActive, dispatch, navigate]);
 
     const editThisWallet = useCallback(() => {
         navigate(editWalletUrl);

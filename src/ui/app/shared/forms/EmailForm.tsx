@@ -42,6 +42,7 @@ const CustomFormikForm = ({ loading }: { loading: boolean }) => {
                         type="submit"
                         disabled={!meta.value || meta.error ? true : false}
                         removeContainerPadding
+                        data-testid="submit"
                     >
                         Sign in
                     </Button>

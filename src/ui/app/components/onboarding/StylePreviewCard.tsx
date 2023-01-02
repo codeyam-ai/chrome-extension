@@ -23,7 +23,7 @@ const StylePreviewCard = ({
 
     return (
         <div
-            className={`flex flex-col w-[400px] h-[500px] rounded-tl-[20px] rounded-br-2xl shadow-ethos-box-shadow overflow-hidden bg-ethos-light-background-default ${
+            className={`absolute bottom-0 flex flex-col w-[400px] h-[500px] rounded-tl-[20px] rounded-br-2xl shadow-ethos-box-shadow overflow-hidden bg-ethos-light-background-default ${
                 forceLightMode
                     ? ''
                     : 'dark:bg-ethos-dark-background-default dark:text-ethos-dark-text-default'

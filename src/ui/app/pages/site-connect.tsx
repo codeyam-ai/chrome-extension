@@ -44,10 +44,10 @@ const permissionTypeToTxt: Record<PermissionType, PermissionInfo> = {
 
 function SiteConnectPage() {
     const { requestID } = useParams();
-    const guardLoading = useInitializedGuard([
-        AppState.MNEMONIC,
-        AppState.HOSTED,
-    ]);
+    const guardLoading = useInitializedGuard(
+        [AppState.MNEMONIC, AppState.HOSTED],
+        true
+    );
     const permissionsInitialized = useAppSelector(
         ({ permissions }) => permissions.initialized
     );
@@ -93,6 +93,13 @@ function SiteConnectPage() {
         },
         [dispatch, requestID, activeAccount]
     );
+
+    // useEffect(() => {
+    //     console.log('accountInfos :>> ', accountInfos);
+    //     window.open('http://google.com', '_newtab');
+    //     // window.close();
+    // }, [accountInfos]);
+
     useEffect(() => {
         if (
             !loading &&

@@ -1,3 +1,6 @@
+import { useEffect } from 'react';
+
+import Permissions from '_src/background/Permissions';
 import { useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Well from '_src/ui/app/shared/content/Well';
@@ -5,6 +8,12 @@ import OnboardingCard from '_src/ui/app/shared/layouts/OnboardingCard';
 
 const ConfirmImportPage = () => {
     const address = useAppSelector(({ account }) => account.address);
+
+    useEffect(() => {
+        if (address) {
+            Permissions.grantEthosDashboardBasicPermissionsForAccount(address);
+        }
+    }, [address]);
 
     return (
         <OnboardingCard
@@ -23,7 +32,11 @@ const ConfirmImportPage = () => {
                 />
             </div>
             <div className="px-10 pb-10">
-                <Button to="/initialize/create-password" removeContainerPadding>
+                <Button
+                    to="/initialize/create-password"
+                    data-testid="continue"
+                    removeContainerPadding
+                >
                     Continue
                 </Button>
             </div>

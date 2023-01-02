@@ -1,6 +1,6 @@
 {
     "name": "ethos-wallet-extension-beta",
-    "version": "0.0.0.49",
+    "version": "0.0.0.53",
     "description": "Ethos is your Sui wallet and home base for the best dApps, experiences, and NFTs.",
     "main": "./dist/ui.js",
     "scripts": {
@@ -18,6 +18,7 @@
         "lint:fix": "npm run eslint:fix && npm run prettier:fix && npm run stylelint:fix",
         "start": "concurrently --restart-tries 10 --raw \"npm:build:dev -- --watch\" \"npm:prettier:fix:watch\"",
         "test": "jest",
+        "test:print-all": "DEBUG_PRINT_LIMIT=100000000 npm test",
         "make-font-icons": "svgtofont -s ./font-icons/svgs/ -o ./font-icons/output/",
         "get-version": "echo $npm_package_version"
     },

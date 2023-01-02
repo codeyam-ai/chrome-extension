@@ -1,20 +1,19 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import Browser from 'webextension-polyfill';
 
 import { AppType } from './AppType';
 import {
-    DEFAULT_API_ENV,
     API_ENV,
+    DEFAULT_API_ENV,
     generateActiveNetworkList,
 } from '_app/ApiProvider';
 import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
 import { getTransactionsByAddress } from '_redux/slices/txresults';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
 type AppState = {
@@ -113,12 +112,6 @@ const slice = createSlice({
         setCustomRPCURL: (state, { payload }: PayloadAction<string>) => {
             state.customRPC = payload;
         },
-        setNavVisibility: (
-            state,
-            { payload: isVisible }: PayloadAction<boolean>
-        ) => {
-            state.navVisible = isVisible;
-        },
         setActiveOrigin: (
             state,
             {
@@ -132,13 +125,7 @@ const slice = createSlice({
     initialState,
 });
 
-export const {
-    initAppType,
-    setApiEnv,
-    setNavVisibility,
-    setActiveOrigin,
-    setCustomRPCURL,
-} = slice.actions;
-export const getNavIsVisible = ({ app }: RootState) => app.navVisible;
+export const { initAppType, setApiEnv, setActiveOrigin, setCustomRPCURL } =
+    slice.actions;
 
 export default slice.reducer;

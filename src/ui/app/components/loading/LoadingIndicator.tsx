@@ -15,6 +15,7 @@ const LoadingIndicator = ({
     return (
         <span
             className={cl(st.spinner, className)}
+            data-testid="loading"
             style={
                 big ? { width: '3em', height: '3em', marginTop: '24px' } : {}
             }

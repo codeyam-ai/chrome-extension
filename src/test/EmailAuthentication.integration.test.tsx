@@ -1,7 +1,6 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import * as React from 'react';
 
 import mockSuiObjects from './utils/mockchain';
 import App from '_app/index';
@@ -27,13 +26,13 @@ describe('Email Authentication', () => {
             });
 
         renderWithProviders(<App />);
-        await screen.findByText('The new web awaits');
+        await screen.findByText('Welcome to Ethos');
         await userEvent.click(screen.getByText('Sign in with Email'));
         await userEvent.type(
             screen.getByRole('textbox', { name: 'Email address' }),
             'sam@example.com'
         );
-        await userEvent.click(screen.getByRole('button'));
+        await userEvent.click(screen.getByTestId('submit'));
 
         // simulate the iframe sending a message back to the extension that the magic email link has been sent
         window.dispatchEvent(
@@ -44,12 +43,7 @@ describe('Email Authentication', () => {
             })
         );
 
-        await screen.findByText('Email sent');
-
-        // TODO(mike/tommy): remove this code when this page is no longer responsible for both submitting the email
-        // and receiving the access code.
-        simulateIframeSendingAccessCode('12345');
-        await screen.findByText('Get started with Sui');
+        await screen.findByText('We sent you an email!');
     });
 
     test('User can see tokens page after logged in via the iframe', async () => {
@@ -72,9 +66,14 @@ describe('Email Authentication', () => {
             initialRoute: '/initialize/hosted/logging-in',
         });
 
-        await screen.findByText(/The new web awaits/i);
+        await screen.findByTestId('loading');
 
+        // This timeout is here because simulateIframeSendingAccessCode was getting called
+        // before the useEffect in logging-in.tsx was running, resulting in the iframe never
+        // receiving the message.
+        await new Promise((r) => setTimeout(r, 1));
         simulateIframeSendingAccessCode(fakeAccessToken);
+
         await screen.findByText('Get started with Sui');
     });
 
