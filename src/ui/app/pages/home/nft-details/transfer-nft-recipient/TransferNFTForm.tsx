@@ -8,20 +8,18 @@ import { Content } from '_app/shared/bottom-menu-layout';
 import AddressInput from '_components/address-input';
 import NFTDisplayCard from '_components/nft-display';
 import { DEFAULT_NFT_TRANSFER_GAS_FEE } from '_redux/slices/sui-objects/Coin';
+import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
+import { getTransactionsByAddress } from '_src/ui/app/redux/slices/txresults';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
 
 import type { FormValues } from '.';
 import type { SuiObject } from '@mysten/sui.js';
+import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
 import st from './TransferNFTForm.module.scss';
 import 'react-toastify/dist/ReactToastify.css';
-import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
-import {
-    getTransactionsByAddress,
-    TxResultState,
-} from '_src/ui/app/redux/slices/txresults';
-import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
 
 export type TransferNFTFormProps = {
     submitError: string | null;
@@ -53,7 +51,6 @@ function TransferNFTForm({
         }
     });
 
-    const loading = useAppSelector(({ txresults }) => txresults.loading);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
