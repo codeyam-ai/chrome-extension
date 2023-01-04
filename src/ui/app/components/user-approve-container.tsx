@@ -8,6 +8,7 @@ import InlineButtonGroup from '../shared/buttons/InlineButtonGroup';
 import UserApproveHeaderWithSiteIcon from '../shared/headers/page-headers/UserApproveHeaderWithSiteIcon';
 import ApproveContainerNavBar from '../shared/navigation/nav-bar/ApproveContainerNavBar';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
+import { BASE_URL } from '_src/shared/constants';
 
 import type { ReactNode } from 'react';
 
@@ -55,6 +56,7 @@ function UserApproveContainer({
             <UserApproveHeaderWithSiteIcon
                 iconSrc={originFavIcon}
                 iconAlt={`${originTitle} icon`}
+                isConnectingToEthosDashboard={origin === BASE_URL}
                 title={title}
                 description={description}
             />

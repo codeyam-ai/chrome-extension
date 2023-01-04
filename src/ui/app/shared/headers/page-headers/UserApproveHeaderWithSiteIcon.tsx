@@ -8,6 +8,7 @@ import type { SyntheticEvent } from 'react';
 interface UserApproveHeaderWithSiteIconProps {
     iconSrc?: string;
     iconAlt?: string;
+    isConnectingToEthosDashboard?: boolean;
     title: string;
     description?: string;
 }
@@ -15,6 +16,7 @@ interface UserApproveHeaderWithSiteIconProps {
 const UserApproveHeaderWithSiteIcon = ({
     iconSrc,
     iconAlt,
+    isConnectingToEthosDashboard,
     title,
     description,
 }: UserApproveHeaderWithSiteIconProps) => {
@@ -37,15 +39,19 @@ const UserApproveHeaderWithSiteIcon = ({
     return (
         <HeaderWithIcons
             firstIcon={
-                <img
-                    src={iconSrc}
-                    className="rounded-full hidden"
-                    alt={iconAlt}
-                    onError={hideIcon}
-                    onLoad={showIcon}
-                />
+                isConnectingToEthosDashboard ? (
+                    <EthosLogo />
+                ) : (
+                    <img
+                        src={iconSrc}
+                        className="rounded-full hidden"
+                        alt={iconAlt}
+                        onError={hideIcon}
+                        onLoad={showIcon}
+                    />
+                )
             }
-            secondIcon={<EthosLogo />}
+            secondIcon={isConnectingToEthosDashboard ? null : <EthosLogo />}
             title={title}
             description={description}
         />

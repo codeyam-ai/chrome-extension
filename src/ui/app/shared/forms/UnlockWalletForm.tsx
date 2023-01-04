@@ -26,6 +26,7 @@ const CustomFormikForm = ({
                 {...field}
                 label="Password"
                 id="password"
+                data-testid="password"
                 name="password"
                 type="password"
                 required={true}
@@ -40,6 +41,7 @@ const CustomFormikForm = ({
 
             <Button
                 buttonStyle="primary"
+                data-testid="submit"
                 type="submit"
                 disabled={!meta.value || !!meta.error}
             >
