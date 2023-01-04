@@ -26,6 +26,7 @@ const CustomFormikForm = ({
                 {...field}
                 label="Password"
                 id="password"
+                data-testid="password"
                 name="password"
                 type="password"
                 required={true}
@@ -33,13 +34,14 @@ const CustomFormikForm = ({
                     isPasswordIncorrect
                         ? 'Password is incorrect'
                         : meta.touched && meta.error
-                        ? meta.error
-                        : undefined
+                            ? meta.error
+                            : undefined
                 }
             />
 
             <Button
                 buttonStyle="primary"
+                data-testid="submit"
                 type="submit"
                 disabled={!meta.value || !!meta.error}
             >
