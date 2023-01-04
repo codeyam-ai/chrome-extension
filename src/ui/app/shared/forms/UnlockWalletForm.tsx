@@ -34,8 +34,8 @@ const CustomFormikForm = ({
                     isPasswordIncorrect
                         ? 'Password is incorrect'
                         : meta.touched && meta.error
-                            ? meta.error
-                            : undefined
+                        ? meta.error
+                        : undefined
                 }
             />
 
