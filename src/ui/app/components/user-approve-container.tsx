@@ -58,21 +58,23 @@ function UserApproveContainer({
                 title={title}
                 description={description}
             />
-            <div className="w-full">{children}</div>
-            {!hasError && (
-                <InlineButtonGroup
-                    onClickButtonPrimary={approve}
-                    buttonPrimaryType="button"
-                    buttonPrimaryChildren={
-                        submitting ? <LoadingIndicator /> : approveTitle
-                    }
-                    isButtonPrimaryDisabled={submitting}
-                    onClickButtonSecondary={reject}
-                    buttonSecondaryType="button"
-                    buttonSecondaryChildren={rejectTitle}
-                    isButtonSecondaryDisabled={submitting}
-                />
-            )}
+            <div className={'max-w-lg m-auto'}>
+                <div className="w-full">{children}</div>
+                {!hasError && (
+                    <InlineButtonGroup
+                        onClickButtonPrimary={approve}
+                        buttonPrimaryType="button"
+                        buttonPrimaryChildren={
+                            submitting ? <LoadingIndicator /> : approveTitle
+                        }
+                        isButtonPrimaryDisabled={submitting}
+                        onClickButtonSecondary={reject}
+                        buttonSecondaryType="button"
+                        buttonSecondaryChildren={rejectTitle}
+                        isButtonSecondaryDisabled={submitting}
+                    />
+                )}
+            </div>
         </div>
     );
 }
