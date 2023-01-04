@@ -7,7 +7,7 @@ import {
     simulateAuthenticatedUser,
     simulateLogout,
 } from '_src/test/utils/fake-local-storage';
-import mockSuiObjects from '_src/test/utils/mockchain';
+import {mockCommonCalls, mockSuiObjects} from '_src/test/utils/mockchain';
 import { renderWithProviders } from '_src/test/utils/react-rendering';
 
 describe('Unlocking the wallet', () => {
@@ -34,6 +34,7 @@ describe('Unlocking the wallet', () => {
 const createLockedWallet = async () => {
     await simulateAuthenticatedUser();
     await simulateLogout();
+    mockCommonCalls();
     mockSuiObjects();
     renderWithProviders(<App />);
     await screen.findAllByText('Unlock Wallet');
