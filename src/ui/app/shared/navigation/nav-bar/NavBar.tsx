@@ -49,7 +49,7 @@ const WalletPickerNavBar = ({
     return (
         <>
             {isEditorOpen ? (
-                <div className="flex justify-between py-6 px-6 items-center">
+                <div className="flex justify-between py-5 px-6 items-center border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
                     <button
                         onClick={goBack}
                         className="flex gap-2 items-center"
