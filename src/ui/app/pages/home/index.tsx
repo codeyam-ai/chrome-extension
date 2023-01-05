@@ -3,9 +3,12 @@
 
 import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { defer, filter, from, of, repeat, switchMap } from 'rxjs';
 
+import { growthbook } from '../../experimentation/feature-gating';
 import { AppState } from '../../hooks/useInitializedGuard';
+import { WarningAlert } from '../../shared/alerts/WarningAlert';
 import Alert from '../../shared/feedback/Alert';
 import BaseLayout from '../../shared/layouts/BaseLayout';
 import NavBar from '../../shared/navigation/nav-bar/NavBar';
@@ -14,9 +17,6 @@ import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard, useObjectsState } from '_hooks';
 import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
 import PageLayout from '_src/ui/app/pages/PageLayout';
-import { WarningAlert } from '../../shared/alerts/WarningAlert';
-import { toast } from 'react-toastify';
-import { growthbook } from '../../experimentation/feature-gating';
 
 const POLL_SUI_OBJECTS_INTERVAL = 4000;
 
