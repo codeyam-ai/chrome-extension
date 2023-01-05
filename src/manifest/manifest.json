@@ -18,8 +18,8 @@
     ],
     "icons": {
         "16": "manifest/icons/ethos-icon-16.png",
-        "32": "manifest/icons/ethos-icon-32.png",
-        "150": "manifest/icons/ethos-icon-150.png"
+        "48": "manifest/icons/ethos-icon-48.png",
+        "128": "manifest/icons/ethos-icon-128.png"
     },
     "content_scripts": [
         {
