@@ -100,8 +100,12 @@ export default function useInitializedGuard(
                     destination = '/welcome';
             }
 
-            if (params?.requestID || params?.txID) {
-                destination += pathname;
+            if (
+                params?.requestID ||
+                params?.txID ||
+                params?.signMessageRequestID
+            ) {
+                destination = destination + pathname;
             }
 
             navigate(destination, { replace: true });

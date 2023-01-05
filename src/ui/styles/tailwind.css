@@ -16,12 +16,15 @@
 .Toastify__toast-container {
     position: absolute;
     top: 40px;
-    width: 312px;
+    width: 100%;
+    padding-left: 24px;
+    padding-right: 24px;
 }
 
 .Toastify__toast {
     border-radius: 40px;
     min-height: 44px;
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
     background-color: #1a1c26;

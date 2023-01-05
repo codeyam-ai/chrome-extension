@@ -33,7 +33,7 @@ function NumberInput<FormValues>({
     const { groupDelimiter, decimalDelimiter } = useNumberDelimiters();
     const handleOnValueChange = useCallback(
         (values: NumberFormatValues) => {
-            setFieldValue(name, values.value);
+            setFieldValue(name, values.floatValue);
         },
         [name, setFieldValue]
     );

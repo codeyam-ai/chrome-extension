@@ -21,7 +21,7 @@ function NftsPage() {
                     iconWithNoClasses={<Icon displayIcon={<PhotoIcon />} />}
                     title="No NFTs here yet"
                     subtitle="This is where your created or purchased NFTs will appear..."
-                    linkText="Explore NFTs on Ethos"
+                    linkText="Mint an NFT"
                     linkUrl={NFT_EXPERIMENT_LINK}
                 />
             ) : (

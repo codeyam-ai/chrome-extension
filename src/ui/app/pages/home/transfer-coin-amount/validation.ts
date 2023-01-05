@@ -25,6 +25,11 @@ export function createTokenValidation(
                 return !!value;
             })
             .test(
+                'max',
+                `You have no ${coinSymbol}. Please use the faucet to get more.`,
+                () => coinBalance >= 0
+            )
+            .test(
                 'valid',
                 'The value provided is not valid.',
                 (value?: BigNumber) => {
@@ -36,19 +41,20 @@ export function createTokenValidation(
             )
             .test(
                 'min',
-                `\${path} must be greater than 0 ${coinSymbol}`,
+                `Amount must be greater than 0 ${coinSymbol}`,
                 (amount?: BigNumber) => (amount ? amount.gt(0) : false)
             )
             .test(
                 'max',
-                `\${path} must be less than ${formatBalance(
+                `Amount must be less than ${formatBalance(
                     coinBalance,
                     decimals
                 )} ${coinSymbol}`,
-                (amount?: BigNumber) =>
-                    amount
+                (amount?: BigNumber) => {
+                    return amount && coinBalance >= 0
                         ? amount.shiftedBy(decimals).lte(coinBalance.toString())
-                        : false
+                        : false;
+                }
             )
             .test(
                 'max-decimals',

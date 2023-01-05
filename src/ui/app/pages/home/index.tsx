@@ -3,9 +3,12 @@
 
 import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { defer, filter, from, of, repeat, switchMap } from 'rxjs';
 
+import { growthbook } from '../../experimentation/feature-gating';
 import { AppState } from '../../hooks/useInitializedGuard';
+import { WarningAlert } from '../../shared/alerts/WarningAlert';
 import Alert from '../../shared/feedback/Alert';
 import BaseLayout from '../../shared/layouts/BaseLayout';
 import NavBar from '../../shared/navigation/nav-bar/NavBar';
@@ -38,6 +41,20 @@ const HomePage = () => {
             .subscribe();
         return () => sub.unsubscribe();
     }, [guardChecking, dispatch]);
+
+    useEffect(() => {
+        if (growthbook.isOn('devnet-issues')) {
+            toast(
+                <WarningAlert
+                    text={'Sui Devnet is having technical issues.'}
+                />,
+                {
+                    autoClose: false,
+                    closeOnClick: true,
+                }
+            );
+        }
+    }, []);
 
     return (
         <PageLayout>

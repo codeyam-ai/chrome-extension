@@ -1,6 +1,6 @@
 import {
     ClockIcon,
-    CurrencyDollarIcon,
+    HomeIcon,
     GlobeAltIcon,
     Squares2X2Icon,
 } from '@heroicons/react/24/solid';
@@ -16,7 +16,7 @@ const navItems: NavItem[] = [
     {
         title: 'Tokens',
         to: './tokens',
-        icon: <CurrencyDollarIcon className={iconClasses} />,
+        icon: <HomeIcon className={iconClasses} />,
     },
     {
         title: 'NFTs',

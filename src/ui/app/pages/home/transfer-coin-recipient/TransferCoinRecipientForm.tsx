@@ -48,7 +48,9 @@ function TransferCoinRecipientForm({
 
     const recentTxs: string[] = [];
     txByAddress.forEach((tx) => {
-        return recentTxs.push(tx.to || '');
+        if (tx.to) {
+            return recentTxs.push(tx.to);
+        }
     });
 
     const loading = useAppSelector(({ txresults }) => txresults.loading);
@@ -68,7 +70,7 @@ function TransferCoinRecipientForm({
     const onClearRef = useRef(onClearSubmitError);
     onClearRef.current = onClearSubmitError;
 
-    const handleOnChange = useCallback(
+    const handleOnblur = useCallback(
         (e: { target: { name: string } }) => {
             dispatch(
                 setSuiRecipient({
@@ -80,7 +82,9 @@ function TransferCoinRecipientForm({
         [accountInfos, activeAccountIndex, dispatch]
     );
 
-    const recentWallets = [...new Set(recentTxs)];
+    const recentWallets = [...new Set(recentTxs)].splice(0, 3);
+
+    if (!coinType) return <></>;
 
     return (
         <Loading loading={loading} big={true}>
@@ -102,7 +106,7 @@ function TransferCoinRecipientForm({
                             name="to"
                             id="to"
                             label={'Recipient'}
-                            onChange={handleOnChange}
+                            onBlur={handleOnblur}
                         />
                         <div
                             className={`absolute top-0 right-0 mt-1 text-red-500 dark:text-red-400 ${

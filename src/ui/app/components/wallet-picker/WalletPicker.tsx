@@ -30,7 +30,7 @@ const WalletPicker = ({ isWalletEditing }: WalletPickerProps) => {
                 activeAccountIndex={activeAccountIndex}
                 isWalletEditing={isWalletEditing}
             />
-            <div className="border-t border-t-ethos-light-text-stroke dark:border-t-ethos-dark-text-stroke">
+            <div>
                 {!isWalletEditing ? (
                     <div className="pt-6">
                         <CreateWalletProvider

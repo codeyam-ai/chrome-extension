@@ -4,6 +4,7 @@ import TxSui from '../svg/TxSui';
 export const AssetCard = ({
     theme,
     isNft,
+    isFunc,
     imgUrl,
     name,
     icon,
@@ -11,6 +12,7 @@ export const AssetCard = ({
 }: {
     theme?: string;
     isNft: boolean;
+    isFunc: boolean;
     imgUrl?: string;
     name: string;
     icon?: JSX.Element;
@@ -25,17 +27,19 @@ export const AssetCard = ({
                     alt={name}
                 />
             ) : (
-                <div className={'relative'} style={{ zIndex: 1 }}>
-                    {coinType !== 'SUI' ? (
-                        <UnknownToken width={56} height={56} />
-                    ) : (
-                        <TxSui
-                            borderColor={
-                                theme === 'light' ? 'white' : '#111111'
-                            }
-                        />
-                    )}
-                </div>
+                !isFunc && (
+                    <div className={'relative'} style={{ zIndex: 1 }}>
+                        {coinType !== 'SUI' ? (
+                            <UnknownToken width={56} height={56} />
+                        ) : (
+                            <TxSui
+                                borderColor={
+                                    theme === 'light' ? 'white' : '#111111'
+                                }
+                            />
+                        )}
+                    </div>
+                )
             )}
             {icon && icon}
         </div>
