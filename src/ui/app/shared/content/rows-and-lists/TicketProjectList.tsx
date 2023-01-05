@@ -7,7 +7,6 @@ import Loading from '_src/ui/app/components/loading';
 import { growthbook } from '_src/ui/app/experimentation/feature-gating';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
-import Button from '_src/ui/app/shared/buttons/Button';
 
 export interface TicketProjectProps {
     objectId: string;
@@ -33,22 +32,15 @@ const TicketProject = ({
 
     return (
         <Link to={drilldownLink}>
-            <div
-                className="rounded-xl border border-slate-200 dark:boarder-slate-600 p-3 text-slate-800 text-left cursor-pointer flex flex-col gap-3"
-                style={{
-                    backgroundImage: `linear-gradient(to bottom, rgba(255, 255, 255, 1) 25%, rgba(255, 255, 255, 0)), url(${ticketProject.coverImage})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                }}
-            >
-                <div className="text-lg font-semibold">
-                    {ticketProject.name}
-                </div>
-                <div className="text-base">{ticketProject.description}</div>
-                <div className="px-6">
-                    <Button buttonStyle="primary" removeContainerPadding={true}>
-                        Learn More
-                    </Button>
+            <div className="flex flex-col gap-3 items-center w-11/12 mx-auto">
+                <img
+                    src={ticketProject.coverImage}
+                    alt={`${ticketProject.name} Ticket`}
+                    className="rounded-xl"
+                />
+                <div className="text-left">
+                    <span className="font-semibold">{ticketProject.name}</span>{' '}
+                    | {ticketProject.description}
                 </div>
             </div>
         </Link>

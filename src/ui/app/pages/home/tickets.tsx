@@ -28,12 +28,14 @@ function TicketsPage() {
                     title="Discover"
                     onClick={showProjectSection}
                     padding={false}
+                    selected={!showTickets}
                 />
                 <TextPageTitle
                     title="My Tickets"
                     count={tickets.length}
                     onClick={showTicketSection}
                     padding={false}
+                    selected={showTickets}
                 />
             </div>
             {showTickets ? (

@@ -10,7 +10,6 @@ import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import generateTicketData from '_src/ui/app/helpers/generateTicketData';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Button from '_src/ui/app/shared/buttons/Button';
-import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 
@@ -107,65 +106,56 @@ const TicketProjectDetailsContent = ({
     return (
         <>
             <div>
-                <div className="text-center w-full mb-6">
-                    <div className={'px-6 pt-6'}>
-                        <BlurredImage
-                            imgSrc={ticketProject.coverImage || ''}
-                            fileExt={'NFT'}
-                        />
-                    </div>
-                    <div className="p-6">
-                        <Title className={'text-left mb-2'}>
-                            {ticketProject.name}
-                        </Title>
-                        <BodyLarge
-                            className={
-                                'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal mb-6'
-                            }
-                        >
-                            {ticketProject.description}
-                        </BodyLarge>
-                        {loadingNFTs && <LoadingIndicator />}
-                        {!loadingNFTs &&
-                            tokenNFT === null &&
-                            ticketProject.tokenUrl && (
-                                <div className="flex flex-col gap-6">
-                                    <BodyLarge
-                                        className={
-                                            'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal mb-6'
-                                        }
-                                    >
-                                        In order to mint this ticket you&apos;ll
-                                        need to mint a {tokenName}. You can get
-                                        one here:
-                                    </BodyLarge>
-                                    <ExternalLink
-                                        href={ticketProject.tokenUrl}
-                                        title={ticketProject.name}
-                                        showIcon={false}
-                                        className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
-                                    >
-                                        <Button buttonStyle="primary">
-                                            Get {tokenName}
-                                        </Button>
-                                    </ExternalLink>
-                                </div>
-                            )}
-                        {error && (
-                            <div className="text-ethos-light-red dark:text-ethos-dark-red mb-3">
-                                {error}
+                <div className="text-center w-11/12 mx-auto flex flex-col gap-6 py-6">
+                    <img
+                        src={ticketProject.coverImage}
+                        alt={`${ticketProject.name} Ticket`}
+                        className="rounded-xl"
+                    />
+                    <Title className={'text-left'}>{ticketProject.name}</Title>
+                    <BodyLarge
+                        className={
+                            'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal'
+                        }
+                    >
+                        {ticketProject.description}
+                    </BodyLarge>
+                    {loadingNFTs && <LoadingIndicator />}
+                    {!loadingNFTs &&
+                        tokenNFT === null &&
+                        ticketProject.tokenUrl && (
+                            <div className="flex flex-col gap-6">
+                                <BodyLarge
+                                    className={
+                                        'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal'
+                                    }
+                                >
+                                    In order to mint this ticket you&apos;ll
+                                    need to mint a {tokenName}. You can get one
+                                    here:
+                                </BodyLarge>
+                                <ExternalLink
+                                    href={ticketProject.tokenUrl}
+                                    title={ticketProject.name}
+                                    showIcon={false}
+                                    className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
+                                >
+                                    <Button buttonStyle="primary">
+                                        Get {tokenName}
+                                    </Button>
+                                </ExternalLink>
                             </div>
                         )}
-                        {!loadingNFTs && tokenNFT && (
-                            <Button buttonStyle="primary" onClick={handleClick}>
-                                {minting ? (
-                                    <LoadingIndicator />
-                                ) : (
-                                    <>Mint Ticket</>
-                                )}
-                            </Button>
-                        )}
-                    </div>
+                    {error && (
+                        <div className="text-ethos-light-red dark:text-ethos-dark-red">
+                            {error}
+                        </div>
+                    )}
+                    {!loadingNFTs && tokenNFT && (
+                        <Button buttonStyle="primary" onClick={handleClick}>
+                            {minting ? <LoadingIndicator /> : <>Mint Ticket</>}
+                        </Button>
+                    )}
                 </div>
             </div>
         </>

@@ -4,6 +4,7 @@ interface TextPageTitleProps {
     title: string;
     count?: number;
     padding?: boolean;
+    selected?: boolean;
     onClick?: () => void;
 }
 
@@ -11,6 +12,7 @@ const TextPageTitle = ({
     title,
     count,
     padding = true,
+    selected = true,
     onClick,
 }: TextPageTitleProps) => {
     return (
@@ -20,14 +22,16 @@ const TextPageTitle = ({
             }`}
             onClick={onClick}
         >
-            <Header className="flex gap-2 items-center">
+            <Header
+                className={`flex gap-2 items-center ${
+                    selected
+                        ? ''
+                        : 'font-light text-ethos-light-text-default dark:text-ethos-dark-text-default'
+                }`}
+            >
                 <div>{title}</div>
-                {count && (
-                    <div
-                        className={
-                            'text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
-                        }
-                    >
+                {count !== undefined && (
+                    <div className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium">
                         {count}
                     </div>
                 )}
