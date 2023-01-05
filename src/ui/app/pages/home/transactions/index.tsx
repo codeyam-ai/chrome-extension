@@ -43,6 +43,7 @@ function TransactionsPage() {
                         subtitle="Set up DevNet SUI tokens to send coins."
                         linkText="Get SUI"
                         linkUrl="/tokens"
+                        internal={true}
                     />
                 )}
             </Loading>

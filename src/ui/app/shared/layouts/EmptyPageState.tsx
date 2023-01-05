@@ -11,6 +11,7 @@ interface EmptyPageStateProps {
     subtitle: string;
     linkText: string;
     linkUrl: string;
+    internal?: boolean;
 }
 
 const EmptyPageState = ({
@@ -19,6 +20,7 @@ const EmptyPageState = ({
     subtitle,
     linkText,
     linkUrl,
+    internal,
 }: EmptyPageStateProps) => {
     return (
         <div className="flex flex-col gap-2 pt-8 px-6">
@@ -28,7 +30,10 @@ const EmptyPageState = ({
             <Subheader as="h3">{title}</Subheader>
             <Body isTextColorMedium>{subtitle}</Body>
             <Body>
-                <EthosLink to={linkUrl} type={LinkType.External}>
+                <EthosLink
+                    to={linkUrl}
+                    type={internal ? LinkType.Internal : LinkType.External}
+                >
                     {linkText}
                 </EthosLink>
             </Body>
