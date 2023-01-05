@@ -14,6 +14,9 @@ import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard, useObjectsState } from '_hooks';
 import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
 import PageLayout from '_src/ui/app/pages/PageLayout';
+import { WarningAlert } from '../../shared/alerts/WarningAlert';
+import { toast } from 'react-toastify';
+import { growthbook } from '../../experimentation/feature-gating';
 
 const POLL_SUI_OBJECTS_INTERVAL = 4000;
 
@@ -38,6 +41,20 @@ const HomePage = () => {
             .subscribe();
         return () => sub.unsubscribe();
     }, [guardChecking, dispatch]);
+
+    useEffect(() => {
+        if (growthbook.isOn('devnet-issues')) {
+            toast(
+                <WarningAlert
+                    text={'Sui Devnet is having technical issues.'}
+                />,
+                {
+                    autoClose: false,
+                    closeOnClick: true,
+                }
+            );
+        }
+    }, []);
 
     return (
         <PageLayout>
