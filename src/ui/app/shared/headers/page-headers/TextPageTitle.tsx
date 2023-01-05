@@ -20,16 +20,16 @@ const TextPageTitle = ({
             }`}
             onClick={onClick}
         >
-            <Header>
-                {title}
+            <Header className="flex gap-2 items-center">
+                <div>{title}</div>
                 {count && (
-                    <span
+                    <div
                         className={
-                            'pl-2 text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
+                            'text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
                         }
                     >
                         {count}
-                    </span>
+                    </div>
                 )}
             </Header>
         </div>

@@ -12,13 +12,13 @@ const suiCoinTemplate = readFileSync(
     'utf-8'
 );
 
-export const mockCommonCalls = function() {
+export const mockCommonCalls = function () {
     nock('http://dev-net-fullnode.example.com')
         .persist()
         .post('/', /rpc.discover/)
         .reply(200, {
             jsonrpc: '2.0',
-            result: {"info": {"version": "0.17.0"}},
+            result: { info: { version: '0.17.0' } },
             id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
         })
         .post('/', /sui_getCoinMetadata/)
@@ -34,7 +34,7 @@ export const mockCommonCalls = function() {
             },
             id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
         });
-}
+};
 
 export const mockSuiObjects = function (options: { suiBalance?: number } = {}) {
     const suiObjectResults = [];
@@ -55,10 +55,9 @@ export const mockSuiObjects = function (options: { suiBalance?: number } = {}) {
             id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
         })
         .post('/', /sui_getObject/)
-        .reply(200, renderedTemplate)
+        .reply(200, renderedTemplate);
 };
 
 beforeEach(() => {
     nock.cleanAll();
 });
-
