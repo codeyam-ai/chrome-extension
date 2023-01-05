@@ -44,7 +44,7 @@ const UserApproveHeaderWithSiteIcon = ({
                 ) : (
                     <img
                         src={iconSrc}
-                        className="rounded-full hidden"
+                        className="rounded-full w-full hidden relative"
                         alt={iconAlt}
                         onError={hideIcon}
                         onLoad={showIcon}

@@ -163,7 +163,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         <>
             {getIsSui() ? (
                 <IconContainer>
-                    <SuiIcon width={15} height={15} color={'white'} />
+                    <SuiIcon width={14} height={20} color={'white'} />
                 </IconContainer>
             ) : (
                 <UnknownToken width={40} height={40} />

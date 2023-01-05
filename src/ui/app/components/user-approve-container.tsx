@@ -51,7 +51,7 @@ function UserApproveContainer({
     }, [onSubmit]);
 
     return (
-        <div className="no-scrollbar w-full text-ethos-light-text-default dark:text-ethos-dark-text-default bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
+        <div className="pb-10 no-scrollbar w-full text-ethos-light-text-default dark:text-ethos-dark-text-default bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
             <ApproveContainerNavBar reject={reject} />
             <UserApproveHeaderWithSiteIcon
                 iconSrc={originFavIcon}
@@ -60,21 +60,23 @@ function UserApproveContainer({
                 title={title}
                 description={description}
             />
-            <div className="w-full">{children}</div>
-            {!hasError && (
-                <InlineButtonGroup
-                    onClickButtonPrimary={approve}
-                    buttonPrimaryType="button"
-                    buttonPrimaryChildren={
-                        submitting ? <LoadingIndicator /> : approveTitle
-                    }
-                    isButtonPrimaryDisabled={submitting}
-                    onClickButtonSecondary={reject}
-                    buttonSecondaryType="button"
-                    buttonSecondaryChildren={rejectTitle}
-                    isButtonSecondaryDisabled={submitting}
-                />
-            )}
+            <div className={'max-w-lg m-auto'}>
+                <div className="w-full">{children}</div>
+                {!hasError && (
+                    <InlineButtonGroup
+                        onClickButtonPrimary={approve}
+                        buttonPrimaryType="button"
+                        buttonPrimaryChildren={
+                            submitting ? <LoadingIndicator /> : approveTitle
+                        }
+                        isButtonPrimaryDisabled={submitting}
+                        onClickButtonSecondary={reject}
+                        buttonSecondaryType="button"
+                        buttonSecondaryChildren={rejectTitle}
+                        isButtonSecondaryDisabled={submitting}
+                    />
+                )}
+            </div>
         </div>
     );
 }
