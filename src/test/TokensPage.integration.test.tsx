@@ -17,10 +17,9 @@ describe('Rendering the Tokens page', () => {
         await screen.findByText('Get started with Sui');
     });
 
-    // Not yet working
-    xtest('rendering the Tokens page when the wallet has some coins', async () => {
+    test('rendering the Tokens page when the wallet has some coins', async () => {
         mockSuiObjects({ suiBalance: 400000000 });
         renderWithProviders(<App />);
-        await screen.findByText('0.4 SUI');
+        await screen.findByText('$40');
     });
 });
