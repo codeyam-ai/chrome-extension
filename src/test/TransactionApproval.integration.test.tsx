@@ -7,7 +7,7 @@ import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
 import { renderWithProviders } from '_src/test/utils/react-rendering';
 
 import type { TransactionRequest } from '_payloads/transactions';
-import {mockCommonCalls} from "_src/test/utils/mockchain";
+import { mockCommonCalls } from '_src/test/utils/mockchain';
 
 describe('The Transaction Approval popup', () => {
     beforeEach(async () => {

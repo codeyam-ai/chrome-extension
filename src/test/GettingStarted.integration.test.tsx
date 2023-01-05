@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import App from '_app/index';
 import { renderWithProviders } from '_src/test/utils/react-rendering';
-import {mockCommonCalls} from "_src/test/utils/mockchain";
+import { mockCommonCalls } from '_src/test/utils/mockchain';
 
 describe('Authenticating by importing an account with a seed phrase', () => {
     test('Entire flow works', async () => {
