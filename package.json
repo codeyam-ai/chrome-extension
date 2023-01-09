@@ -81,7 +81,7 @@
         "svgtofont": "^3.22.0",
         "tailwindcss": "^3.1.8",
         "ts-jest": "^28.0.7",
-        "ts-loader": "^9.3.1",
+        "ts-loader": "^9.4.2",
         "ts-node": "^10.9.1",
         "tsconfig-paths": "^4.0.0",
         "typescript": "^4.7.4",
