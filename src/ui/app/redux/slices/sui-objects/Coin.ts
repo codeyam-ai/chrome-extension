@@ -1,14 +1,14 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { isSuiMoveObject, Coin as CoinAPI, SUI_TYPE_ARG } from '@mysten/sui.js';
+import { Coin as CoinAPI, SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import type {
     ObjectId,
     SuiObject,
-    SuiMoveObject,
     RawSigner,
     SuiAddress,
+    SuiMoveObject,
     JsonRpcProvider,
     SuiExecuteTransactionResponse,
 } from '@mysten/sui.js';
@@ -17,7 +17,7 @@ import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 const COIN_TYPE = '0x2::coin::Coin';
 const COIN_TYPE_ARG_REGEX = /^0x2::coin::Coin<(.+)>$/;
 
-export const DEFAULT_GAS_BUDGET_FOR_PAY = 150;
+export const DEFAULT_GAS_BUDGET_FOR_PAY = 1000;
 export const DEFAULT_GAS_BUDGET_FOR_STAKE = 10000;
 export const GAS_TYPE_ARG = '0x2::sui::SUI';
 export const GAS_SYMBOL = 'SUI';
@@ -28,7 +28,10 @@ export const SUI_SYSTEM_STATE_OBJECT_ID =
 // TODO use sdk
 export class Coin {
     public static isCoin(obj: SuiObject) {
-        return isSuiMoveObject(obj.data) && obj.data.type.startsWith(COIN_TYPE);
+        return (
+            obj.data.dataType === 'moveObject' &&
+            obj.data.type.startsWith(COIN_TYPE)
+        );
     }
 
     public static getCoinTypeArg(obj: SuiMoveObject) {
@@ -118,13 +121,14 @@ export class Coin {
             return coinWithExactAmount;
         }
         // use transferSui API to get a coin with the exact amount
-        await CoinAPI.transfer(
-            signer,
-            coins,
-            SUI_TYPE_ARG,
-            amount,
-            await signer.getAddress(),
-            Coin.computeGasBudgetForPay(coins, amount)
+        await signer.signAndExecuteTransaction(
+            await CoinAPI.newPayTransaction(
+                coins,
+                SUI_TYPE_ARG,
+                amount,
+                await signer.getAddress(),
+                Coin.computeGasBudgetForPay(coins, amount)
+            )
         );
 
         const coinWithExactAmount2 = await Coin.selectSuiCoinWithExactAmount(

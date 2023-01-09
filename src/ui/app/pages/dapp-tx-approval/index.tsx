@@ -310,7 +310,17 @@ export function DappTxApprovalPage() {
                 );
 
                 if (transactionEffects.status.status === 'failure') {
-                    setDryRunError(transactionEffects.status.error);
+                    if (
+                        transactionEffects?.status?.error?.includes(
+                            'quorum of validators'
+                        )
+                    ) {
+                        setDryRunError(
+                            'Sui Devnet is having technical issues. Please checkback later when these issues are resolved.'
+                        );
+                    } else {
+                        setDryRunError(transactionEffects.status.error);
+                    }
                 } else {
                     setEffects(transactionEffects);
                 }
