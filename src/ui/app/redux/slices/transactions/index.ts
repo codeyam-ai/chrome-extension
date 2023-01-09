@@ -1,17 +1,14 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-    getTransactionDigest,
-    isSuiMoveObject,
-    Coin as CoinAPI,
-} from '@mysten/sui.js';
+import { getTransactionDigest, Coin as CoinAPI } from '@mysten/sui.js';
 import {
     createAsyncThunk,
     createEntityAdapter,
     createSlice,
 } from '@reduxjs/toolkit';
 
+import { DEFAULT_GAS_BUDGET_FOR_PAY } from '../sui-objects/Coin';
 import { accountCoinsSelector } from '_redux/slices/account';
 import {
     fetchAllOwnedAndRequiredObjects,
@@ -59,17 +56,13 @@ export const sendTokens = createAsyncThunk<
         }
 
         const coins: SuiMoveObject[] = accountCoinsSelector(state);
-        const response = await CoinAPI.transfer(
-            signer,
-            coins,
-            tokenTypeArg,
-            amount,
-            recipientAddress,
-            Coin.computeGasBudgetForPay(
-                coins.filter(
-                    (aCoin) => Coin.getCoinTypeArg(aCoin) === tokenTypeArg
-                ),
-                amount
+        const response = await signer.signAndExecuteTransaction(
+            await CoinAPI.newPayTransaction(
+                coins,
+                tokenTypeArg,
+                amount,
+                recipientAddress,
+                DEFAULT_GAS_BUDGET_FOR_PAY
             )
         );
 
@@ -113,7 +106,8 @@ export const StakeTokens = createAsyncThunk<
             .selectAll(state)
             .filter(
                 (anObj) =>
-                    isSuiMoveObject(anObj.data) && anObj.data.type === coinType
+                    anObj.data.dataType === 'moveObject' &&
+                    anObj.data.type.startsWith(coinType)
             )
             .map(({ data }) => data as SuiMoveObject);
 
