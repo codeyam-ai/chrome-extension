@@ -47,7 +47,7 @@
         "@types/node": "^18.0.6",
         "@types/react": "^18.0.15",
         "@types/react-dom": "^18.0.10",
-        "@types/uuid": "^8.3.4",
+        "@types/uuid": "^9.0.0",
         "@types/webextension-polyfill": "^0.9.0",
         "@types/webpack": "^5.28.0",
         "concurrently": "^7.3.0",
@@ -130,7 +130,7 @@
         "rxjs": "^7.8.0",
         "stream-browserify": "^3.0.0",
         "tweetnacl": "^1.0.3",
-        "uuid": "^8.3.2",
+        "uuid": "^9.0.0",
         "webextension-polyfill": "^0.9.0",
         "yup": "^0.32.11"
     }
