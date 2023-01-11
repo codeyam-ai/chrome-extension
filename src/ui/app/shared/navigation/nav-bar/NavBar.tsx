@@ -4,23 +4,26 @@ import {
     XMarkIcon,
 } from '@heroicons/react/24/solid';
 import { useCallback, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import {
+    Link,
+    useLocation,
+    useNavigate,
+    useSearchParams,
+} from 'react-router-dom';
 
 import WalletProfile from '../../content/rows-and-lists/WalletProfile';
 import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
 import EthosLink from '../../typography/EthosLink';
 import Header from '../../typography/Header';
-import SettingsRouterPage from '_src/ui/app/components/settings-menu/SettingsRouterPage';
 import {
-    useNextSettingsUrl,
-    useSettingsIsOpen,
-    useSettingsIsOpenOnSubPage,
     useWalletEditorIsOpen,
     useWalletPickerIsOpen,
 } from '_src/ui/app/components/settings-menu/hooks';
 import WalletPickerPage from '_src/ui/app/components/wallet-picker-menu/WalletPickerPage';
 import { useOnKeyboardEvent } from '_src/ui/app/hooks';
+
+import { SubpageUrls } from '_src/ui/app/components/settings-menu/SettingsHomePage';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
@@ -36,9 +39,21 @@ const WalletPickerNavBar = ({
     setIsWalletEditing,
 }: WalletPickerNavBarProps) => {
     const isEditorOpen = useWalletEditorIsOpen();
+    const navigate = useNavigate();
+    const [params] = useSearchParams();
+    const walletOpen = params.get('wallet-picker') === 'edit';
+
+    if (walletOpen) {
+        setIsWalletEditing(true);
+    }
 
     const toggleIsWalletEditing = useCallback(() => {
-        setIsWalletEditing(!isWalletEditing);
+        if (walletOpen && isWalletEditing) {
+            setIsWalletEditing(!isWalletEditing);
+            navigate(-1);
+        } else {
+            setIsWalletEditing(!isWalletEditing);
+        }
     }, [isWalletEditing, setIsWalletEditing]);
 
     const onCloseWalletPicker = useCallback(() => {
@@ -64,14 +79,16 @@ const WalletPickerNavBar = ({
                         <button onClick={onCloseWalletPicker}>
                             <XMarkIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
                         </button>
-                        <BodyLarge isSemibold>
-                            <EthosLink
-                                type="internal"
-                                onClick={toggleIsWalletEditing}
-                            >
-                                {isWalletEditing ? 'Done' : 'Edit'}
-                            </EthosLink>
-                        </BodyLarge>
+                        {!walletOpen && (
+                            <BodyLarge isSemibold>
+                                <EthosLink
+                                    type="internal"
+                                    onClick={toggleIsWalletEditing}
+                                >
+                                    {isWalletEditing ? 'Done' : 'Edit'}
+                                </EthosLink>
+                            </BodyLarge>
+                        )}
                     </div>
                     <WalletProfile onClick={onCloseWalletPicker} />
                 </div>
@@ -94,7 +111,9 @@ const SettingsNavBar = ({
     setIsWalletEditing,
     isWalletPickerOpen,
 }: SettingsNavBarProps) => {
-    const settingsIsOpenOnSubPage = useSettingsIsOpenOnSubPage();
+    const { pathname } = useLocation();
+    const settingsIsOpenOnSubPage =
+        Object.values(SubpageUrls).includes(pathname);
 
     return (
         <>
@@ -129,7 +148,6 @@ const SettingsNavBar = ({
                     )}
                 </>
             )}
-            <SettingsRouterPage />
             {isWalletPickerOpen && (
                 <WalletPickerPage
                     isWalletEditing={isWalletEditing}
@@ -142,9 +160,10 @@ const SettingsNavBar = ({
 
 const NavBar = () => {
     const [isWalletEditing, setIsWalletEditing] = useState(false);
-    const settingsUrl = useNextSettingsUrl(true);
-    const isSettingsOpen = useSettingsIsOpen();
-    const isSettingsOpenOnSubpage = useSettingsIsOpenOnSubPage();
+    const { pathname } = useLocation();
+    const isSettingsOpen = pathname.includes('settings');
+    const isSettingsOpenOnSubpage =
+        Object.values(SubpageUrls).includes(pathname);
     const isWalletPickerOpen = useWalletPickerIsOpen();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -198,6 +217,7 @@ const NavBar = () => {
             />
         );
     }
+
     if (isWalletPickerOpen) {
         return (
             <WalletPickerNavBar
@@ -219,7 +239,7 @@ const NavBar = () => {
                     <Body isTextColorMedium>Back</Body>
                 </button>
             ) : (
-                <Link to={settingsUrl}>
+                <Link to={'/settings/main'}>
                     <Cog6ToothIcon className="h-6 w-6 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
                 </Link>
             )}

@@ -20,29 +20,23 @@ import {
     ToS_LINK,
 } from '_src/shared/constants';
 import { ThemeContext } from '_src/shared/utils/themeContext';
-import { useNextSettingsUrl } from '_src/ui/app/components/settings-menu/hooks';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { reset } from '_src/ui/app/redux/slices/account';
-// Temporary import - bug with hero icons where it doesn't show PaintBrushIcon to be exported
+
+export const SubpageUrls = {
+    network: '/settings/network',
+    theme: '/settings/theme',
+    security: '/settings/security/home',
+    permissions: '/settings/permissions',
+    lock: '/settings/lock',
+};
 
 const SettingsHomePage = () => {
     const orange = '#EE950F';
     const purple = '#9040F5';
-    // const blue = '#328EFA';
     const green = '#01C57E';
-    // const pink = '#E81CA5';
 
-    // const [loading, setLoading] = useState(false);
-    // const [createWallet, setCreateWallet] = useState<() => void>(
-    //     () => () => null
-    // );
     const dispatch = useAppDispatch();
-    const networkUrl = useNextSettingsUrl(true, '/network');
-    const themeUrl = useNextSettingsUrl(true, '/theme');
-    const securityUrl = useNextSettingsUrl(true, '/security');
-    const permissionsUrl = useNextSettingsUrl(true, '/permissions');
-    const lockUrl = useNextSettingsUrl(true, '/lock');
-    // const importWalletUrl = useNextSettingsUrl(true, '/import-wallet');
     const { theme } = useContext(ThemeContext);
     const themeDisplay = useMemo(() => {
         return theme.charAt(0).toUpperCase() + theme.slice(1);
@@ -50,24 +44,6 @@ const SettingsHomePage = () => {
 
     const apiEnv = useAppSelector((state) => state.app.apiEnv);
     const networkName = API_ENV_TO_INFO[apiEnv].name;
-
-    // const handleCreateWallet = useCallback(() => {
-    //     createWallet();
-    //     navigate('/tokens');
-    // }, [createWallet, navigate]);
-
-    // const resetWallet = useCallback(async () => {
-    //     setLoading(true);
-    //     // iframe.listenForLogout();
-    //     const email = await dispatch(getEmail());
-    //     if (email) {
-    //         iframe.onReady(
-    //             async () => await iframe.logOut(email.payload as string)
-    //         );
-    //     } else {
-    //         dispatch(reset);
-    //     }
-    // }, [dispatch]);
 
     useEffect(() => {
         const listenForLogOut = async () => {
@@ -87,7 +63,6 @@ const SettingsHomePage = () => {
 
     return (
         <div>
-            {/* <CreateWalletProvider setCreateWallet={setCreateWallet}> */}
             <SettingsList
                 listSections={[
                     {
@@ -113,49 +88,32 @@ const SettingsHomePage = () => {
                             {
                                 text: 'Network',
                                 iconWithNoClasses: <SignalIcon />,
-                                to: networkUrl,
+                                to: SubpageUrls.network,
                                 detailText: networkName,
                             },
                             {
                                 text: 'Theme',
                                 iconWithNoClasses: <PaintBrushIcon />,
-                                to: themeUrl,
+                                to: SubpageUrls.theme,
                                 detailText: themeDisplay,
                             },
                             {
                                 text: 'Security',
                                 iconWithNoClasses: <ShieldExclamationIcon />,
-                                to: securityUrl,
+                                to: SubpageUrls.security,
                             },
                             {
                                 text: 'Permissions',
                                 iconWithNoClasses: <DocumentCheckIcon />,
-                                to: permissionsUrl,
+                                to: SubpageUrls.permissions,
                             },
                             {
                                 text: 'Lock Ethos',
                                 iconWithNoClasses: <LockClosedIcon />,
-                                to: lockUrl,
+                                to: SubpageUrls.lock,
                             },
                         ],
                     },
-                    // {
-                    //     color: blue,
-                    //     items: [
-                    //         {
-                    //             text: 'Create Wallet',
-                    //             iconWithNoClasses: <PlusCircleIcon />,
-                    //             onClick: handleCreateWallet,
-                    //         },
-                    //         {
-                    //             text: 'Import Wallet',
-                    //             iconWithNoClasses: (
-                    //                 <ArrowDownOnSquareIcon />
-                    //             ),
-                    //             to: importWalletUrl,
-                    //         },
-                    //     ],
-                    // },
                     {
                         color: green,
                         items: [
@@ -173,26 +131,14 @@ const SettingsHomePage = () => {
                             },
                         ],
                     },
-                    // {
-                    //     color: pink,
-                    //     items: [
-                    //         {
-                    //             text: 'Reset Ethos',
-                    //             iconWithNoClasses: <FireIcon />,
-                    //             onClick: resetWallet,
-                    //         },
-                    //     ],
-                    // },
                 ]}
             />
-            {/* </CreateWalletProvider> */}
             <iframe
                 id="wallet-iframe"
                 src={IFRAME_URL}
                 height="1px"
                 width="1px"
                 title="wallet"
-                // Hide the iframe pixel, as it is visible in dark mode
                 className="-top-[1000px] absolute"
             />
         </div>
