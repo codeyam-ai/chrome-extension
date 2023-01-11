@@ -95,7 +95,7 @@ const TicketProjectDetailsContent = ({
             'status' in response.EffectsCert.effects.effects.status &&
             response.EffectsCert.effects.effects.status.status === 'success'
         ) {
-            navigate('/tickets');
+            navigate('/my_tickets');
         } else {
             setError(
                 'There was an error minting your ticket. Please wait a moment a try again.'

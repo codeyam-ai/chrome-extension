@@ -7,7 +7,6 @@ import { useAppSelector, useTicketBasicData } from '_hooks';
 import { accountTicketsSelector } from '_redux/slices/account/index';
 import ExternalLink from '_src/ui/app/components/external-link';
 import Button from '_src/ui/app/shared/buttons/Button';
-import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
@@ -15,17 +14,17 @@ import Title from '_src/ui/app/shared/typography/Title';
 import type { SuiObject } from '@mysten/sui.js';
 
 const TIcketDetailsContent = ({ ticket }: { ticket: SuiObject }) => {
-    const { filePath, ticketFields, fileExtentionType } =
-        useTicketBasicData(ticket);
+    const { filePath, ticketFields } = useTicketBasicData(ticket);
 
     return (
         <>
             <div>
                 <div className="text-center w-full mb-6">
                     <div className={'px-6 pt-6'}>
-                        <BlurredImage
-                            imgSrc={filePath || ''}
-                            fileExt={fileExtentionType?.name || 'NFT'}
+                        <img
+                            src={filePath || ''}
+                            alt={`${ticketFields?.name} Ticket Cover`}
+                            className="rounded-xl"
                         />
                     </div>
                     <div className="p-6">
@@ -45,9 +44,9 @@ const TIcketDetailsContent = ({ ticket }: { ticket: SuiObject }) => {
                             </Body>
                         )}
 
-                        {ticketFields?.url && (
+                        {ticketFields?.redeem_url && (
                             <ExternalLink
-                                href={ticketFields.url}
+                                href={ticketFields.redeem_url}
                                 title={ticketFields.name}
                                 className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
                                 showIcon={false}

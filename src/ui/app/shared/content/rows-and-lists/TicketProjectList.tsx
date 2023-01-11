@@ -102,8 +102,8 @@ const TicketProjectList = () => {
                                 'type' in ticket.data &&
                                 'fields' in ticket.data &&
                                 (ticket.data.fields.count || 0) > 0 &&
-                                ticket.data.type.split('::')[0] ===
-                                    ticketProject.packageObjectId
+                                ticket.data.fields.ticket_agent_id ===
+                                    ticketProject.agentObjectId
                         )
                 ) as TicketProjectProps[];
 
