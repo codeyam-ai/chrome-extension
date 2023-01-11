@@ -40,22 +40,22 @@ import HomePage, {
 } from '_pages/home';
 import InitializePage from '_pages/initialize';
 import { loadAccountInformationFromStorage } from '_redux/slices/account';
-import { ThemeProvider } from '_src/shared/utils/themeContext';
-import { DappPreapprovalPage } from '_src/ui/app/pages/dapp-preapproval';
-import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
-import HostedPage from '_src/ui/app/pages/initialize/hosted';
-import SiteConnectPage from '_src/ui/app/pages/site-connect';
-import WelcomePage from '_src/ui/app/pages/welcome';
 import { getEncrypted } from '_src/shared/storagex/store';
+import { ThemeProvider } from '_src/shared/utils/themeContext';
+import SettingsHomePage from '_src/ui/app/components/settings-menu/SettingsHomePage';
 import LockPage from '_src/ui/app/components/settings-menu/subpages/LockPage';
 import ThemePage from '_src/ui/app/components/settings-menu/subpages/ThemePage';
-import ChangePasswordPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/change-password/ChangePasswordPage';
-import SettingsHomePage from '_src/ui/app/components/settings-menu/SettingsHomePage';
 import NetworkPage from '_src/ui/app/components/settings-menu/subpages/network/NetworkPage';
 import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/permissions/PermissionsPage';
 import SecurityHomePage from '_src/ui/app/components/settings-menu/subpages/security/SecurityHomePage';
 import ViewPrivateKeyPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewPrivateKeyPage';
 import ViewSeedPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewSeedPage';
+import ChangePasswordPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/change-password/ChangePasswordPage';
+import { DappPreapprovalPage } from '_src/ui/app/pages/dapp-preapproval';
+import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
+import HostedPage from '_src/ui/app/pages/initialize/hosted';
+import SiteConnectPage from '_src/ui/app/pages/site-connect';
+import WelcomePage from '_src/ui/app/pages/welcome';
 import { SettingsContainer } from '_src/ui/app/shared/navigation/nav-bar/SettingsContainer';
 
 const App = () => {

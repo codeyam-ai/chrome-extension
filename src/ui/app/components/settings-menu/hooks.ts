@@ -4,8 +4,6 @@
 import { useMemo } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
-const SETTINGS_PARAM = 'menu';
-const SECURITY_PARAM = 'security';
 export const WALLET_PICKER_PARAM = 'wallet-picker';
 const WALLET_EDITOR_PARAM = 'edit';
 

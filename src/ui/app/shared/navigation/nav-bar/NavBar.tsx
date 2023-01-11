@@ -16,14 +16,13 @@ import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
 import EthosLink from '../../typography/EthosLink';
 import Header from '../../typography/Header';
+import { SubpageUrls } from '_src/ui/app/components/settings-menu/SettingsHomePage';
 import {
     useWalletEditorIsOpen,
     useWalletPickerIsOpen,
 } from '_src/ui/app/components/settings-menu/hooks';
 import WalletPickerPage from '_src/ui/app/components/wallet-picker-menu/WalletPickerPage';
 import { useOnKeyboardEvent } from '_src/ui/app/hooks';
-
-import { SubpageUrls } from '_src/ui/app/components/settings-menu/SettingsHomePage';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
@@ -54,7 +53,7 @@ const WalletPickerNavBar = ({
         } else {
             setIsWalletEditing(!isWalletEditing);
         }
-    }, [isWalletEditing, setIsWalletEditing]);
+    }, [isWalletEditing, setIsWalletEditing, navigate, walletOpen]);
 
     const onCloseWalletPicker = useCallback(() => {
         setIsWalletEditing(false);
