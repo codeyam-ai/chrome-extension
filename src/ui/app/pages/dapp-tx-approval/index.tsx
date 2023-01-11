@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import truncateMiddle from '../../helpers/truncate-middle';
@@ -25,6 +25,7 @@ import {
     txRequestsSelectors,
 } from '_redux/slices/transaction-requests';
 import { thunkExtras } from '_redux/store/thunk-extras';
+import { WindowContext } from '_shared/utils/windowContext';
 import { MAILTO_SUPPORT_URL } from '_src/shared/constants';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
@@ -60,7 +61,6 @@ const formatAddress = (address?: string) => {
 
 export function DappTxApprovalPage() {
     const suiName = useMemo(() => coinName(GAS_TYPE_ARG), []);
-
     const [tab, setTab] = useState(TxApprovalTab.SUMMARY);
 
     const { txID } = useParams();
@@ -380,14 +380,15 @@ export function DappTxApprovalPage() {
         [dispatch, txRequest]
     );
 
+    const theWindow = useContext(WindowContext);
+
     useEffect(() => {
-        if (
-            !loading &&
-            (!txRequest || (txRequest && txRequest.approved !== null))
-        ) {
-            window.close();
+        const finished =
+            !txRequest || (txRequest && txRequest.approved !== null);
+        if (!loading && finished) {
+            theWindow.close();
         }
-    }, [loading, txRequest]);
+    }, [loading, txRequest, theWindow]);
 
     const content: TabSections = useMemo(() => {
         switch (txRequest?.tx.type) {
