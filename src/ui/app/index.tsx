@@ -78,6 +78,10 @@ const App = () => {
                         <Route path="tokens" element={<TokensPage />} />
                         <Route path="nfts" element={<NftsPage />} />
                         <Route path="tickets" element={<TicketsPage />} />
+                        <Route
+                            path="tickets/my_tickets"
+                            element={<TicketsPage />}
+                        />
                         <Route path="nft">
                             <Route
                                 path="details"

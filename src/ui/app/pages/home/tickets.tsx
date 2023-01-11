@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { useAppSelector } from '_hooks';
 import { accountTicketsSelector } from '_redux/slices/account';
@@ -10,8 +11,11 @@ import TicketProjectList from '_src/ui/app/shared/content/rows-and-lists/TicketP
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 
 function TicketsPage() {
+    const params = useParams();
     const tickets = useAppSelector(accountTicketsSelector) || [];
-    const [showTickets, setShowTickets] = useState(false);
+    const [showTickets, setShowTickets] = useState(
+        (params['*'] || '').indexOf('my_tickets') > -1
+    );
 
     const showTicketSection = useCallback(() => {
         setShowTickets(true);
