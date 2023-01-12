@@ -16,7 +16,6 @@ import {
 } from '_src/ui/app/components/settings-menu/hooks';
 import EditWallet from '_src/ui/app/components/wallet-picker/EditWallet';
 import WalletPicker from '_src/ui/app/components/wallet-picker/WalletPicker';
-import { SubpageUrls } from '../settings-menu/SettingsHomePage';
 
 interface WalletPickerPageProps {
     isWalletEditing: boolean;
