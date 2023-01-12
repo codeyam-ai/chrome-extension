@@ -40,12 +40,32 @@ describe('The Transaction Approval popup', () => {
         });
 
         await screen.findByText('1500000');
-        await screen.findByText('Approve');
+        const approveButton = await screen.findByText('Approve');
 
-        await userEvent.click(screen.getByText('Approve'));
+        await userEvent.click(approveButton);
         await waitFor(() => expect(testWindow.document).toBeUndefined());
 
         expect(executeScope.isDone()).toBeTruthy();
+    });
+
+    test('the user can reject the transaction', async () => {
+        const { txRequestId } = simulateReduxStateWithTransaction();
+        const { executeScope } = mockBlockchainTransactionExecution();
+
+        const testWindow = new JSDOM().window as unknown as Window;
+        renderWithProviders(<App />, {
+            store: store,
+            initialRoute: `/tx-approval/${txRequestId}`,
+            testWindow: testWindow,
+        });
+
+        await screen.findByText('1500000');
+        const rejectButton = await screen.findByText('Reject');
+
+        await userEvent.click(rejectButton);
+        await waitFor(() => expect(testWindow.document).toBeUndefined());
+
+        expect(executeScope.isDone()).toBeFalsy();
     });
 
     function simulateReduxStateWithTransaction() {
