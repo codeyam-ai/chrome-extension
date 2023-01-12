@@ -2,11 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback } from 'react';
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import {
+    Navigate,
+    useLocation,
+    useNavigate,
+    useSearchParams,
+} from 'react-router-dom';
 
 import {
     useNextWalletPickerUrl,
-    useWalletEditorIsOpen,
     useWalletPickerIsOpen,
 } from '_src/ui/app/components/settings-menu/hooks';
 import EditWallet from '_src/ui/app/components/wallet-picker/EditWallet';
@@ -23,18 +27,14 @@ function WalletPickerPage({
 }: WalletPickerPageProps) {
     const isWalletPickerOpen = useWalletPickerIsOpen();
     const walletPickerHomeUrl = useNextWalletPickerUrl(true, 'open');
-    const isWalletEditorIsOpen = useWalletEditorIsOpen();
+    const { pathname } = useLocation();
     const [params] = useSearchParams();
 
     const navigate = useNavigate();
     const handleOnCloseMenu = useCallback(() => {
         setIsWalletEditing(false);
-        if (isWalletEditorIsOpen) {
-            navigate(-2);
-            return;
-        }
-        navigate(-1);
-    }, [isWalletEditorIsOpen, navigate, setIsWalletEditing]);
+        navigate(pathname);
+    }, [navigate, setIsWalletEditing]);
 
     if (!isWalletPickerOpen) {
         return null;
