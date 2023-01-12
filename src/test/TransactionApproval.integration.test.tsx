@@ -17,6 +17,7 @@ import { thunkExtras } from '_store/thunk-extras';
 
 import type { TransactionRequest } from '_payloads/transactions';
 import type { AppStore } from '_store';
+import KeypairVault from '_app/KeypairVault';
 
 describe('The Transaction Approval popup', () => {
     let store: AppStore;
@@ -24,8 +25,12 @@ describe('The Transaction Approval popup', () => {
         mockCommonCalls();
         simulateAuthenticatedUser();
         store = createStore({});
+
+        // TODO: consider moving this code to a common place. these objects hold state and every test should start
+        //  with a clean slate
         thunkExtras.background = new BackgroundClient();
         thunkExtras.background.init(store.dispatch);
+        thunkExtras.keypairVault = new KeypairVault();
     });
 
     test('shows the transaction and allows user to approve it', async () => {
