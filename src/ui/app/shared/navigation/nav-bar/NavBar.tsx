@@ -39,22 +39,10 @@ const WalletPickerNavBar = ({
     setIsWalletEditing,
 }: WalletPickerNavBarProps) => {
     const isEditorOpen = useWalletEditorIsOpen();
-    const navigate = useNavigate();
-    const [params] = useSearchParams();
-    const walletOpen = params.get('wallet-picker') === 'edit';
-
-    if (walletOpen) {
-        setIsWalletEditing(true);
-    }
 
     const toggleIsWalletEditing = useCallback(() => {
-        if (walletOpen && isWalletEditing) {
-            setIsWalletEditing(!isWalletEditing);
-            navigate(-1);
-        } else {
-            setIsWalletEditing(!isWalletEditing);
-        }
-    }, [isWalletEditing, setIsWalletEditing, navigate, walletOpen]);
+        setIsWalletEditing(!isWalletEditing);
+    }, [isWalletEditing, setIsWalletEditing]);
 
     const onCloseWalletPicker = useCallback(() => {
         setIsWalletEditing(false);
@@ -79,16 +67,14 @@ const WalletPickerNavBar = ({
                         <button onClick={onCloseWalletPicker}>
                             <XMarkIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
                         </button>
-                        {!walletOpen && (
-                            <BodyLarge isSemibold>
-                                <EthosLink
-                                    type="internal"
-                                    onClick={toggleIsWalletEditing}
-                                >
-                                    {isWalletEditing ? 'Done' : 'Edit'}
-                                </EthosLink>
-                            </BodyLarge>
-                        )}
+                        <BodyLarge isSemibold>
+                            <EthosLink
+                                type="internal"
+                                onClick={toggleIsWalletEditing}
+                            >
+                                {isWalletEditing ? 'Done' : 'Edit'}
+                            </EthosLink>
+                        </BodyLarge>
                     </div>
                     <WalletProfile onClick={onCloseWalletPicker} />
                 </div>

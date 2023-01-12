@@ -17,14 +17,12 @@ export function useWalletPickerUrl() {
 
 export function useWalletPickerIsOpen() {
     const [searchParams] = useSearchParams();
-
     return searchParams.has(WALLET_PICKER_PARAM);
 }
 
 export function useWalletEditorIsOpen() {
     const [searchParams] = useSearchParams();
-
-    return searchParams.get(WALLET_PICKER_PARAM) === '/' + WALLET_EDITOR_PARAM;
+    return searchParams.get(WALLET_PICKER_PARAM) === WALLET_EDITOR_PARAM;
 }
 
 /**
@@ -61,7 +59,7 @@ export function useEditWalletUrl(walletIndex: number) {
     const { pathname } = useLocation();
 
     return useMemo(() => {
-        searchParams.set(WALLET_PICKER_PARAM, 'edit');
+        searchParams.set(WALLET_PICKER_PARAM, WALLET_EDITOR_PARAM);
         searchParams.set('index', walletIndex.toString());
         const search = searchParams.toString();
         return `${pathname}${search ? '?' : ''}${search}`;

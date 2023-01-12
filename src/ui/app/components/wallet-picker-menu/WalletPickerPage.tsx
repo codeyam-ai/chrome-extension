@@ -11,10 +11,12 @@ import {
 
 import {
     useNextWalletPickerUrl,
+    useWalletEditorIsOpen,
     useWalletPickerIsOpen,
 } from '_src/ui/app/components/settings-menu/hooks';
 import EditWallet from '_src/ui/app/components/wallet-picker/EditWallet';
 import WalletPicker from '_src/ui/app/components/wallet-picker/WalletPicker';
+import { SubpageUrls } from '../settings-menu/SettingsHomePage';
 
 interface WalletPickerPageProps {
     isWalletEditing: boolean;
@@ -25,16 +27,31 @@ function WalletPickerPage({
     isWalletEditing,
     setIsWalletEditing,
 }: WalletPickerPageProps) {
+    const isWalletEditorIsOpen = useWalletEditorIsOpen();
     const isWalletPickerOpen = useWalletPickerIsOpen();
     const walletPickerHomeUrl = useNextWalletPickerUrl(true, 'open');
     const { pathname } = useLocation();
+    const isSettingsOpen = pathname.includes('settings');
     const [params] = useSearchParams();
 
     const navigate = useNavigate();
     const handleOnCloseMenu = useCallback(() => {
-        setIsWalletEditing(false);
-        navigate(pathname);
-    }, [navigate, setIsWalletEditing, pathname]);
+        if (isWalletEditorIsOpen) {
+            setIsWalletEditing(false);
+            navigate(-2);
+            return;
+        } else if (!isSettingsOpen) {
+            navigate(pathname);
+        } else {
+            navigate(-1);
+        }
+    }, [
+        navigate,
+        setIsWalletEditing,
+        pathname,
+        isSettingsOpen,
+        isWalletEditorIsOpen,
+    ]);
 
     if (!isWalletPickerOpen) {
         return null;
