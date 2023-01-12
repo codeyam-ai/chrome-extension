@@ -23,6 +23,7 @@ import {
 } from '_src/ui/app/components/settings-menu/hooks';
 import WalletPickerPage from '_src/ui/app/components/wallet-picker-menu/WalletPickerPage';
 import { useOnKeyboardEvent } from '_src/ui/app/hooks';
+import SettingsRouterPage from '_src/ui/app/components/settings-menu/SettingsRouterPage';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
@@ -147,6 +148,7 @@ const SettingsNavBar = ({
                     )}
                 </>
             )}
+            <SettingsRouterPage />
             {isWalletPickerOpen && (
                 <WalletPickerPage
                     isWalletEditing={isWalletEditing}

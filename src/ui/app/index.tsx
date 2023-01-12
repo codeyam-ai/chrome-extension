@@ -42,21 +42,11 @@ import InitializePage from '_pages/initialize';
 import { loadAccountInformationFromStorage } from '_redux/slices/account';
 import { getEncrypted } from '_src/shared/storagex/store';
 import { ThemeProvider } from '_src/shared/utils/themeContext';
-import SettingsHomePage from '_src/ui/app/components/settings-menu/SettingsHomePage';
-import LockPage from '_src/ui/app/components/settings-menu/subpages/LockPage';
-import ThemePage from '_src/ui/app/components/settings-menu/subpages/ThemePage';
-import NetworkPage from '_src/ui/app/components/settings-menu/subpages/network/NetworkPage';
-import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/permissions/PermissionsPage';
-import SecurityHomePage from '_src/ui/app/components/settings-menu/subpages/security/SecurityHomePage';
-import ViewPrivateKeyPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewPrivateKeyPage';
-import ViewSeedPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewSeedPage';
-import ChangePasswordPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/change-password/ChangePasswordPage';
 import { DappPreapprovalPage } from '_src/ui/app/pages/dapp-preapproval';
 import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
 import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
-import { SettingsContainer } from '_src/ui/app/shared/navigation/nav-bar/SettingsContainer';
 
 const App = () => {
     const [isHostedWallet, setIsHostedWallet] = useState(false);
@@ -89,41 +79,6 @@ const App = () => {
             <LockWalletProvider>
                 <Routes>
                     <Route path="/*" element={<HomePage />}>
-                        <Route
-                            path={`settings`}
-                            element={<SettingsContainer />}
-                        >
-                            <Route path="main" element={<SettingsHomePage />} />
-                            <Route path="network" element={<NetworkPage />} />
-                            <Route path="theme" element={<ThemePage />} />
-                            <Route path="security">
-                                <Route
-                                    path={'home'}
-                                    element={
-                                        <SecurityHomePage
-                                            isHostedWallet={isHostedWallet}
-                                        />
-                                    }
-                                />
-                                <Route
-                                    path="change-password"
-                                    element={<ChangePasswordPage />}
-                                />
-                                <Route
-                                    path="view-seed"
-                                    element={<ViewSeedPage />}
-                                />
-                                <Route
-                                    path="view-private-key"
-                                    element={<ViewPrivateKeyPage />}
-                                />
-                            </Route>
-                            <Route
-                                path="permissions"
-                                element={<PermissionsPage />}
-                            />
-                            <Route path="lock" element={<LockPage />} />
-                        </Route>
                         <Route
                             index
                             element={<Navigate to="/tokens" replace={true} />}
