@@ -27,6 +27,9 @@ export const SubpageUrls = {
     network: '/settings/network',
     theme: '/settings/theme',
     security: '/settings/security/home',
+    password: '/settings/security/change-password',
+    seed: '/settings/security/view-seed',
+    key: '/settings/security/view-private-key',
     permissions: '/settings/permissions',
     lock: '/settings/lock',
 };
