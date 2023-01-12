@@ -34,7 +34,7 @@ function WalletPickerPage({
     const handleOnCloseMenu = useCallback(() => {
         setIsWalletEditing(false);
         navigate(pathname);
-    }, [navigate, setIsWalletEditing]);
+    }, [navigate, setIsWalletEditing, pathname]);
 
     if (!isWalletPickerOpen) {
         return null;

@@ -17,13 +17,13 @@ import BodyLarge from '../../typography/BodyLarge';
 import EthosLink from '../../typography/EthosLink';
 import Header from '../../typography/Header';
 import { SubpageUrls } from '_src/ui/app/components/settings-menu/SettingsHomePage';
+import SettingsRouterPage from '_src/ui/app/components/settings-menu/SettingsRouterPage';
 import {
     useWalletEditorIsOpen,
     useWalletPickerIsOpen,
 } from '_src/ui/app/components/settings-menu/hooks';
 import WalletPickerPage from '_src/ui/app/components/wallet-picker-menu/WalletPickerPage';
 import { useOnKeyboardEvent } from '_src/ui/app/hooks';
-import SettingsRouterPage from '_src/ui/app/components/settings-menu/SettingsRouterPage';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 

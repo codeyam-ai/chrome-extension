@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import useSizeWindow from './hooks/useSizeWindow';
@@ -40,7 +40,6 @@ import HomePage, {
 } from '_pages/home';
 import InitializePage from '_pages/initialize';
 import { loadAccountInformationFromStorage } from '_redux/slices/account';
-import { getEncrypted } from '_src/shared/storagex/store';
 import { ThemeProvider } from '_src/shared/utils/themeContext';
 import { DappPreapprovalPage } from '_src/ui/app/pages/dapp-preapproval';
 import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
@@ -49,16 +48,6 @@ import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
 
 const App = () => {
-    const [isHostedWallet, setIsHostedWallet] = useState(false);
-
-    useEffect(() => {
-        const _setIsHosted = async () => {
-            const authentication = await getEncrypted('authentication');
-            setIsHostedWallet(authentication !== null);
-        };
-        _setIsHosted();
-    }, []);
-
     const dispatch = useAppDispatch();
     useSizeWindow();
 
