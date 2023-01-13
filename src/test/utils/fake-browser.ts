@@ -1,6 +1,10 @@
 // This module provides fake implementations of the webextension-polyfill Browser object
 // NOTE: this is incomplete and provides just enough implementation for tests to pass
 
+import { Events } from 'webextension-polyfill/namespaces/events';
+import { Runtime } from 'webextension-polyfill';
+import Port = Runtime.Port;
+
 let records: Record<string, unknown> = {};
 
 function fakeLocalStorageGet(
@@ -26,8 +30,28 @@ async function fakeLocalStorageSet(
     });
 }
 
+function fakeEvent() {
+    return {
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+        hasListener: jest.fn(),
+        hasListeners: () => false,
+    };
+}
+function fakePort() {
+    return {
+        name: 'whatever',
+        disconnect: jest.fn(),
+        onDisconnect: fakeEvent(),
+        onMessage: fakeEvent(),
+        postMessage: jest.fn(),
+    };
+}
 export const fakeBrowser = {
-    runtime: { id: 'chrome-runtime-id' },
+    runtime: {
+        id: 'chrome-runtime-id',
+        connect: () => fakePort(),
+    },
     storage: {
         local: {
             get: fakeLocalStorageGet,

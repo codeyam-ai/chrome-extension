@@ -4,18 +4,21 @@ import {
     XMarkIcon,
 } from '@heroicons/react/24/solid';
 import { useCallback, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import {
+    Link,
+    useLocation,
+    useNavigate,
+    useSearchParams,
+} from 'react-router-dom';
 
 import WalletProfile from '../../content/rows-and-lists/WalletProfile';
 import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
 import EthosLink from '../../typography/EthosLink';
 import Header from '../../typography/Header';
+import { SubpageUrls } from '_src/ui/app/components/settings-menu/SettingsHomePage';
 import SettingsRouterPage from '_src/ui/app/components/settings-menu/SettingsRouterPage';
 import {
-    useNextSettingsUrl,
-    useSettingsIsOpen,
-    useSettingsIsOpenOnSubPage,
     useWalletEditorIsOpen,
     useWalletPickerIsOpen,
 } from '_src/ui/app/components/settings-menu/hooks';
@@ -94,7 +97,9 @@ const SettingsNavBar = ({
     setIsWalletEditing,
     isWalletPickerOpen,
 }: SettingsNavBarProps) => {
-    const settingsIsOpenOnSubPage = useSettingsIsOpenOnSubPage();
+    const { pathname } = useLocation();
+    const settingsIsOpenOnSubPage =
+        Object.values(SubpageUrls).includes(pathname);
 
     return (
         <>
@@ -142,9 +147,10 @@ const SettingsNavBar = ({
 
 const NavBar = () => {
     const [isWalletEditing, setIsWalletEditing] = useState(false);
-    const settingsUrl = useNextSettingsUrl(true);
-    const isSettingsOpen = useSettingsIsOpen();
-    const isSettingsOpenOnSubpage = useSettingsIsOpenOnSubPage();
+    const { pathname } = useLocation();
+    const isSettingsOpen = pathname.includes('settings');
+    const isSettingsOpenOnSubpage =
+        Object.values(SubpageUrls).includes(pathname);
     const isWalletPickerOpen = useWalletPickerIsOpen();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -198,6 +204,7 @@ const NavBar = () => {
             />
         );
     }
+
     if (isWalletPickerOpen) {
         return (
             <WalletPickerNavBar
@@ -219,7 +226,7 @@ const NavBar = () => {
                     <Body isTextColorMedium>Back</Body>
                 </button>
             ) : (
-                <Link to={settingsUrl}>
+                <Link to={'/settings/main'}>
                     <Cog6ToothIcon className="h-6 w-6 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
                 </Link>
             )}
