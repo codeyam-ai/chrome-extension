@@ -79,40 +79,44 @@ const TicketProjectDetailsContent = ({
             args.unshift(tokenNFT.reference.objectId);
         }
 
-        const response = await dispatch(
-            executeMoveCall({
-                packageObjectId: ticketProject.packageObjectId,
-                module: ticketProject.module,
-                function: 'create_ticket',
-                typeArguments,
-                arguments: args,
-                gasBudget: 10000,
-            })
-        ).unwrap();
+        try {
+            const response = await dispatch(
+                executeMoveCall({
+                    packageObjectId: ticketProject.packageObjectId,
+                    module: ticketProject.module,
+                    function: 'create_ticket',
+                    typeArguments,
+                    arguments: args,
+                    gasBudget: 10000,
+                })
+            ).unwrap();
+
+            if (
+                'EffectsCert' in response &&
+                'effects' in response.EffectsCert &&
+                'effects' in response.EffectsCert.effects &&
+                'status' in response.EffectsCert.effects.effects
+            ) {
+                const { status } = response.EffectsCert.effects.effects;
+                if (status.status === 'success') {
+                    navigate('/my_tickets');
+                } else {
+                    const eUsed =
+                        'name: Identifier("token_gated_ticket") }, function: 4, instruction: 55 }, 1)';
+                    if (status.error && status.error.indexOf(eUsed) > -1) {
+                        setError('You already minted a ticket today.');
+                    }
+                }
+            } else {
+                setError(
+                    'There was an error minting your ticket. Please wait a moment a try again.'
+                );
+            }
+        } catch (e) {
+            setError(`${e}`);
+        }
 
         setMinting(false);
-
-        if (
-            'EffectsCert' in response &&
-            'effects' in response.EffectsCert &&
-            'effects' in response.EffectsCert.effects &&
-            'status' in response.EffectsCert.effects.effects
-        ) {
-            const { status } = response.EffectsCert.effects.effects;
-            if (status.status === 'success') {
-                navigate('/my_tickets');
-            } else {
-                const eUsed =
-                    'name: Identifier("token_gated_ticket") }, function: 4, instruction: 55 }, 1)';
-                if (status.error && status.error.indexOf(eUsed) > -1) {
-                    setError('You already minted a ticket today.');
-                }
-            }
-        } else {
-            setError(
-                'There was an error minting your ticket. Please wait a moment a try again.'
-            );
-        }
     }, [minting, ticketProject, address, tokenNFT, dispatch, navigate]);
 
     return (
