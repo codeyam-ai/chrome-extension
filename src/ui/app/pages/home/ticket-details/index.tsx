@@ -17,53 +17,48 @@ const TIcketDetailsContent = ({ ticket }: { ticket: SuiObject }) => {
     const { filePath, ticketFields } = useTicketBasicData(ticket);
 
     return (
-        <>
-            <div>
-                <div className="text-center w-full mb-6">
-                    <div className={'px-6 pt-6'}>
-                        <img
-                            src={filePath || ''}
-                            alt={`${ticketFields?.name} Ticket Cover`}
-                            className="rounded-xl"
-                        />
-                    </div>
-                    <div className="p-6">
-                        <Title className={'text-left mb-2'}>
-                            {ticketFields?.name}
-                        </Title>
-                        <BodyLarge
-                            className={
-                                'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal mb-6'
-                            }
-                        >
-                            {ticketFields?.description}
-                        </BodyLarge>
-                        {ticketFields?.count && (
-                            <Body className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium text-sm mb-3">
-                                {ticketFields?.count} Uses Remaining
-                            </Body>
-                        )}
-
-                        {ticketFields?.redeem_url && (
-                            <ExternalLink
-                                href={ticketFields.redeem_url}
-                                title={ticketFields.name}
-                                className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
-                                showIcon={false}
-                            >
-                                <Button
-                                    isInline
-                                    buttonStyle="primary"
-                                    className={'inline-block mb-0'}
-                                >
-                                    Redeem Ticket
-                                </Button>
-                            </ExternalLink>
-                        )}
-                    </div>
-                </div>
+        <div className="text-center w-full p-6 flex flex-col justify-start gap-6 items-center">
+            <div className="flex flex-col gap-3">
+                <img
+                    src={filePath || ''}
+                    alt={`${ticketFields?.name} Ticket Cover`}
+                    className="rounded-xl"
+                />
+                {ticketFields?.count && (
+                    <Body className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium text-sm mb-3">
+                        {ticketFields?.count} Use
+                        {ticketFields?.count === 1 ? '' : 's'} Remaining
+                    </Body>
+                )}
             </div>
-        </>
+            {ticketFields?.redeem_url && (
+                <ExternalLink
+                    href={ticketFields.redeem_url}
+                    title={ticketFields.name}
+                    className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
+                    showIcon={false}
+                >
+                    <Button
+                        isInline
+                        buttonStyle="primary"
+                        className={'inline-block mb-0'}
+                        removeContainerPadding={true}
+                    >
+                        Redeem Ticket
+                    </Button>
+                </ExternalLink>
+            )}
+            <div>
+                <Title className={'text-left mb-2'}>{ticketFields?.name}</Title>
+                <BodyLarge
+                    className={
+                        'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal mb-6'
+                    }
+                >
+                    {ticketFields?.description}
+                </BodyLarge>
+            </div>
+        </div>
     );
 };
 
