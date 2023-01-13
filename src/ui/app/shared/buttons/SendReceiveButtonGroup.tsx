@@ -72,7 +72,7 @@ const SendReceiveButtonGroup = ({
         }, 15000);
 
         faucet();
-    }, [address]);
+    }, [address, setIsFaucetInProgress, isFaucetInProgress]);
 
     useEffect(() => {
         if (
@@ -81,7 +81,7 @@ const SendReceiveButtonGroup = ({
         ) {
             setIsFaucetInProgress(false);
         }
-    }, [suiBalance]);
+    }, [suiBalance, setIsFaucetInProgress, isFaucetInProgress, balance]);
 
     const iconClasses = 'h-4 w-4';
 
