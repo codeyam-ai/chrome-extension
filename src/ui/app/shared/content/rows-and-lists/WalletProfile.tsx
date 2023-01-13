@@ -29,7 +29,7 @@ const WalletProfile = ({ onClick, hideWalletPicker }: WalletProfileProps) => {
             )
     );
     const isWalletPickerOpen = useWalletPickerIsOpen();
-    const walletPickerUrl = useNextWalletPickerUrl(true, '/');
+    const walletPickerUrl = useNextWalletPickerUrl(true, 'open');
     const closeWalletPickerUrl = useNextWalletPickerUrl(false);
     const shortenedName = truncateString(accountInfo?.name || 'Wallet', 8);
 

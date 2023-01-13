@@ -1,10 +1,10 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { JSDOM } from 'jsdom';
 import _ from 'lodash';
 import nock from 'nock';
 import * as React from 'react';
 
+import KeypairVault from '_app/KeypairVault';
 import { BackgroundClient } from '_app/background-client';
 import App from '_app/index';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
@@ -24,26 +24,32 @@ describe('The Transaction Approval popup', () => {
         mockCommonCalls();
         simulateAuthenticatedUser();
         store = createStore({});
+
+        // TODO: consider moving this code to a common place. these objects hold state and every test should start
+        //  with a clean slate
         thunkExtras.background = new BackgroundClient();
         thunkExtras.background.init(store.dispatch);
+        thunkExtras.keypairVault = new KeypairVault();
     });
 
     test('shows the transaction and allows user to approve it', async () => {
         const { txRequestId } = simulateReduxStateWithTransaction();
         const { executeScope } = mockBlockchainTransactionExecution();
 
-        const testWindow = new JSDOM().window as unknown as Window;
+        const mockWindowCloser = jest.fn();
         renderWithProviders(<App />, {
             store: store,
             initialRoute: `/tx-approval/${txRequestId}`,
-            testWindow: testWindow,
+            dependencies: { closeWindow: mockWindowCloser },
         });
 
         await screen.findByText('1500000');
         const approveButton = await screen.findByText('Approve');
 
         await userEvent.click(approveButton);
-        await waitFor(() => expect(testWindow.document).toBeUndefined());
+        await waitFor(() => {
+            expect(mockWindowCloser.mock.calls.length).toEqual(1);
+        });
 
         expect(executeScope.isDone()).toBeTruthy();
     });
@@ -52,18 +58,20 @@ describe('The Transaction Approval popup', () => {
         const { txRequestId } = simulateReduxStateWithTransaction();
         const { executeScope } = mockBlockchainTransactionExecution();
 
-        const testWindow = new JSDOM().window as unknown as Window;
+        const mockWindowCloser = jest.fn();
         renderWithProviders(<App />, {
             store: store,
             initialRoute: `/tx-approval/${txRequestId}`,
-            testWindow: testWindow,
+            dependencies: { closeWindow: mockWindowCloser },
         });
 
         await screen.findByText('1500000');
         const rejectButton = await screen.findByText('Reject');
 
         await userEvent.click(rejectButton);
-        await waitFor(() => expect(testWindow.document).toBeUndefined());
+        await waitFor(() =>
+            expect(mockWindowCloser.mock.calls.length).toEqual(1)
+        );
 
         expect(executeScope.isDone()).toBeFalsy();
     });
@@ -100,7 +108,7 @@ describe('The Transaction Approval popup', () => {
 
     function mockBlockchainTransactionExecution() {
         const payScope = nock('http://dev-net-fullnode.example.com')
-            .persist()
+            .persist() // this gets called twice in the case where the transaction is approved
             .post('/', /sui_pay/)
             .reply(200, {
                 jsonrpc: '2.0',
@@ -110,10 +118,10 @@ describe('The Transaction Approval popup', () => {
                 id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
             });
 
+        // note: this is only expected to be called once
         const dryRunTransactionScope = nock(
             'http://dev-net-fullnode.example.com'
         )
-            .persist()
             .post(
                 '/',
                 _.matches({
@@ -127,7 +135,6 @@ describe('The Transaction Approval popup', () => {
                 id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
             });
         const executeScope = nock('http://dev-net-fullnode.example.com')
-            .persist()
             .post(
                 '/',
                 _.matches({
