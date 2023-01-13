@@ -286,10 +286,11 @@ export function DappTxApprovalPage() {
         );
     };
 
+    const transaction = txRequest?.tx;
     useEffect(() => {
         const getEffects = async () => {
             try {
-                if (!txRequest || txRequest.tx.type === 'move-call') {
+                if (!transaction || transaction.type === 'move-call') {
                     setEffects(null);
                     return;
                 }
@@ -306,7 +307,7 @@ export function DappTxApprovalPage() {
                     );
                 }
                 const transactionEffects = await signer.dryRunTransaction(
-                    txRequest.tx.data
+                    transaction.data
                 );
 
                 if (transactionEffects.status.status === 'failure') {
@@ -327,7 +328,9 @@ export function DappTxApprovalPage() {
             } catch (e) {
                 const errorMessage = (e as Error).message;
                 if (errorMessage === 'Account mnemonic is not set') {
-                    setTimeout(getEffects, 100);
+                    // this is expected; it happens the first time we render because the redux state is not in good
+                    // shape yet. we basically ingore it and expect the next re-render to work.
+                    // TODO: this seems weird - it would be good to find a better way.
                 } else {
                     if (isErrorCausedByUserNotHavingEnoughSui(errorMessage)) {
                         setUserHasNoSuiError(true);
@@ -339,7 +342,7 @@ export function DappTxApprovalPage() {
         };
 
         getEffects();
-    }, [txRequest, activeAccountIndex, address, authentication]);
+    }, [transaction, activeAccountIndex, address, authentication]);
 
     useEffect(() => {
         const getNormalizedFunction = async () => {
