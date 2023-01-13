@@ -37,6 +37,9 @@ describe('The Transaction Approval popup', () => {
         const { txRequestId } = simulateReduxStateWithTransaction();
         const { executeScope } = mockBlockchainTransactionExecution();
 
+        // TODO: rethink passing in this Window. This means there are two Windows available in the code under test,
+        // which may cause massive confusion down the line. Might be better to pass in a bespoke object ("WindowCloser")
+        // rather than a full Window.
         const testWindow = new JSDOM().window as unknown as Window;
         renderWithProviders(<App />, {
             store: store,
@@ -105,7 +108,7 @@ describe('The Transaction Approval popup', () => {
 
     function mockBlockchainTransactionExecution() {
         const payScope = nock('http://dev-net-fullnode.example.com')
-            .persist()
+            .persist() // this gets called twice in the case where the transaction is approved
             .post('/', /sui_pay/)
             .reply(200, {
                 jsonrpc: '2.0',
@@ -115,10 +118,10 @@ describe('The Transaction Approval popup', () => {
                 id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
             });
 
+        // note: this is only expected to be called once
         const dryRunTransactionScope = nock(
             'http://dev-net-fullnode.example.com'
         )
-            .persist()
             .post(
                 '/',
                 _.matches({
@@ -132,7 +135,6 @@ describe('The Transaction Approval popup', () => {
                 id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
             });
         const executeScope = nock('http://dev-net-fullnode.example.com')
-            .persist()
             .post(
                 '/',
                 _.matches({
