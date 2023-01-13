@@ -14,11 +14,14 @@ import type { RootState } from '_redux/RootReducer';
 import type { AppStore } from '_store';
 import type React from 'react';
 import type { PropsWithChildren } from 'react';
+import { WindowContext } from '_src/shared/utils/windowContext';
+import { JSDOM } from 'jsdom';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: PreloadedState<RootState>;
     store?: AppStore;
     initialRoute?: string;
+    testWindow?: Window;
 }
 
 export function renderWithProviders(
@@ -28,6 +31,7 @@ export function renderWithProviders(
         // Automatically create a store instance if no store was passed in
         store = createStore({ app: { appType: AppType.fullscreen } }),
         initialRoute,
+        testWindow = new JSDOM().window as unknown as Window,
         ...renderOptions
     }: ExtendedRenderOptions = {}
 ) {
@@ -39,7 +43,9 @@ export function renderWithProviders(
                 <Provider store={store}>
                     <IntlProvider locale={'pt'}>
                         <QueryClientProvider client={queryClient}>
-                            {children}
+                            <WindowContext.Provider value={testWindow}>
+                                {children}
+                            </WindowContext.Provider>
                         </QueryClientProvider>
                     </IntlProvider>
                 </Provider>

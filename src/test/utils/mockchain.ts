@@ -19,7 +19,7 @@ export const mockCommonCalls = function () {
         .post('/', /rpc.discover/)
         .reply(200, {
             jsonrpc: '2.0',
-            result: { info: { version: '0.17.0' } },
+            result: { info: { version: '0.20.1' } },
             id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
         })
         .post('/', /sui_getCoinMetadata/)
