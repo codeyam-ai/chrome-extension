@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
+import { Navigate, useSearchParams, useNavigate, Link } from 'react-router-dom';
 
+import { accountAggregateBalancesSelector } from '../../../redux/slices/account/index';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account/index';
@@ -8,6 +9,7 @@ import { executeMoveCall } from '_redux/slices/transactions/index';
 import ExternalLink from '_src/ui/app/components/external-link';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import generateTicketData from '_src/ui/app/helpers/generateTicketData';
+import { GAS_TYPE_ARG } from '_src/ui/app/redux/slices/sui-objects/Coin';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
@@ -26,6 +28,8 @@ const TicketProjectDetailsContent = ({
     const loadingNFTs = useAppSelector(
         ({ suiObjects }) => suiObjects.loading && !suiObjects.lastSync
     );
+    const balances = useAppSelector(accountAggregateBalancesSelector);
+    const sufficientBalance = (balances[GAS_TYPE_ARG] || 0) > 1000;
     const address = useAppSelector(({ account: { address } }) => address);
     const nfts = useAppSelector(accountNftsSelector) || [];
     const [minting, setMinting] = useState(false);
@@ -127,6 +131,11 @@ const TicketProjectDetailsContent = ({
                     >
                         {ticketProject.description}
                     </BodyLarge>
+                    {error && (
+                        <div className="text-ethos-light-red dark:text-ethos-dark-red">
+                            {error}
+                        </div>
+                    )}
                     {loadingNFTs && <LoadingIndicator />}
                     {!loadingNFTs &&
                         tokenNFT === null &&
@@ -153,12 +162,24 @@ const TicketProjectDetailsContent = ({
                                 </ExternalLink>
                             </div>
                         )}
-                    {error && (
-                        <div className="text-ethos-light-red dark:text-ethos-dark-red">
-                            {error}
+                    {!loadingNFTs && tokenNFT && !sufficientBalance && (
+                        <div className="flex flex-col gap-6">
+                            <BodyLarge
+                                className={
+                                    'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal'
+                                }
+                            >
+                                You need Sui to mint a ticket. You can use the
+                                Sui Faucet on the Home Page to get more Sui.
+                            </BodyLarge>
+                            <Link to="/">
+                                <Button buttonStyle="primary">
+                                    Use Sui Faucet
+                                </Button>
+                            </Link>
                         </div>
                     )}
-                    {!loadingNFTs && tokenNFT && (
+                    {!loadingNFTs && tokenNFT && sufficientBalance && (
                         <Button buttonStyle="primary" onClick={handleClick}>
                             {minting ? <LoadingIndicator /> : <>Mint Ticket</>}
                         </Button>

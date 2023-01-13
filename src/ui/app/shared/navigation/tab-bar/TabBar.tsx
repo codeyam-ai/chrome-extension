@@ -22,16 +22,17 @@ const navItems: NavItem[] = [
         icon: <SparklesIcon className={iconClasses} />,
     },
     {
-        title: 'Tickets',
-        to: './tickets',
-        icon: <TicketIcon className={iconClasses} />,
-    },
-    {
         title: 'History',
         to: './transactions',
         icon: <ClockIcon className={iconClasses} />,
     },
 ];
+
+navItems.splice(2, 0, {
+    title: 'Tickets',
+    to: './tickets',
+    icon: <TicketIcon className={iconClasses} />,
+});
 
 type NavItem = {
     to: string;
