@@ -48,6 +48,7 @@ const TicketProjectDetailsContent = ({
     }
 
     const handleClick = useCallback(async () => {
+        if (minting) return;
         if (!address) return;
         if (ticketProject.token && !tokenNFT) return;
 
@@ -112,7 +113,7 @@ const TicketProjectDetailsContent = ({
                 'There was an error minting your ticket. Please wait a moment a try again.'
             );
         }
-    }, [ticketProject, address, tokenNFT, dispatch, navigate]);
+    }, [minting, ticketProject, address, tokenNFT, dispatch, navigate]);
 
     return (
         <>
@@ -180,7 +181,11 @@ const TicketProjectDetailsContent = ({
                         </div>
                     )}
                     {!loadingNFTs && tokenNFT && sufficientBalance && (
-                        <Button buttonStyle="primary" onClick={handleClick}>
+                        <Button
+                            buttonStyle="primary"
+                            onClick={handleClick}
+                            disabled={minting}
+                        >
                             {minting ? <LoadingIndicator /> : <>Mint Ticket</>}
                         </Button>
                     )}
