@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import truncateMiddle from '../../helpers/truncate-middle';
@@ -25,7 +25,7 @@ import {
     txRequestsSelectors,
 } from '_redux/slices/transaction-requests';
 import { thunkExtras } from '_redux/store/thunk-extras';
-import { WindowContext } from '_shared/utils/windowContext';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 import { MAILTO_SUPPORT_URL } from '_src/shared/constants';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
@@ -383,15 +383,15 @@ export function DappTxApprovalPage() {
         [dispatch, txRequest]
     );
 
-    const theWindow = useContext(WindowContext);
+    const closeWindow = useDependencies().closeWindow;
 
     useEffect(() => {
         const finished =
             !txRequest || (txRequest && txRequest.approved !== null);
         if (!loading && finished) {
-            theWindow.close();
+            closeWindow();
         }
-    }, [loading, txRequest, theWindow]);
+    }, [loading, txRequest, closeWindow]);
 
     const content: TabSections = useMemo(() => {
         switch (txRequest?.tx.type) {

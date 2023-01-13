@@ -1,10 +1,10 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { JSDOM } from 'jsdom';
 import _ from 'lodash';
 import nock from 'nock';
 import * as React from 'react';
 
+import KeypairVault from '_app/KeypairVault';
 import { BackgroundClient } from '_app/background-client';
 import App from '_app/index';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
@@ -17,7 +17,6 @@ import { thunkExtras } from '_store/thunk-extras';
 
 import type { TransactionRequest } from '_payloads/transactions';
 import type { AppStore } from '_store';
-import KeypairVault from '_app/KeypairVault';
 
 describe('The Transaction Approval popup', () => {
     let store: AppStore;
@@ -37,21 +36,20 @@ describe('The Transaction Approval popup', () => {
         const { txRequestId } = simulateReduxStateWithTransaction();
         const { executeScope } = mockBlockchainTransactionExecution();
 
-        // TODO: rethink passing in this Window. This means there are two Windows available in the code under test,
-        // which may cause massive confusion down the line. Might be better to pass in a bespoke object ("WindowCloser")
-        // rather than a full Window.
-        const testWindow = new JSDOM().window as unknown as Window;
+        const mockWindowCloser = jest.fn();
         renderWithProviders(<App />, {
             store: store,
             initialRoute: `/tx-approval/${txRequestId}`,
-            testWindow: testWindow,
+            dependencies: { closeWindow: mockWindowCloser },
         });
 
         await screen.findByText('1500000');
         const approveButton = await screen.findByText('Approve');
 
         await userEvent.click(approveButton);
-        await waitFor(() => expect(testWindow.document).toBeUndefined());
+        await waitFor(() => {
+            expect(mockWindowCloser.mock.calls.length).toEqual(1);
+        });
 
         expect(executeScope.isDone()).toBeTruthy();
     });
@@ -60,18 +58,20 @@ describe('The Transaction Approval popup', () => {
         const { txRequestId } = simulateReduxStateWithTransaction();
         const { executeScope } = mockBlockchainTransactionExecution();
 
-        const testWindow = new JSDOM().window as unknown as Window;
+        const mockWindowCloser = jest.fn();
         renderWithProviders(<App />, {
             store: store,
             initialRoute: `/tx-approval/${txRequestId}`,
-            testWindow: testWindow,
+            dependencies: { closeWindow: mockWindowCloser },
         });
 
         await screen.findByText('1500000');
         const rejectButton = await screen.findByText('Reject');
 
         await userEvent.click(rejectButton);
-        await waitFor(() => expect(testWindow.document).toBeUndefined());
+        await waitFor(() =>
+            expect(mockWindowCloser.mock.calls.length).toEqual(1)
+        );
 
         expect(executeScope.isDone()).toBeFalsy();
     });
