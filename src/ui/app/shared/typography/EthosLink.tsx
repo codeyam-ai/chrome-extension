@@ -10,6 +10,7 @@ export interface EthosLinkProps {
     type: 'external' | 'internal' | 'none';
     to?: string;
     onClick?: () => void;
+    onMouseOver?: () => void;
     forceLightMode?: boolean;
     children: ReactNode;
 }
@@ -18,6 +19,7 @@ const EthosLink = ({
     to,
     type,
     onClick,
+    onMouseOver,
     forceLightMode,
     children,
 }: EthosLinkProps) => {
@@ -26,7 +28,12 @@ const EthosLink = ({
     }`;
     if (type === 'internal' && to) {
         return (
-            <Link to={to} onClick={onClick} className={linkClasses}>
+            <Link
+                to={to}
+                onClick={onClick}
+                onMouseOver={onMouseOver}
+                className={linkClasses}
+            >
                 {children}
             </Link>
         );
