@@ -36,10 +36,11 @@ const SendReceiveButtonGroup = ({
     const address = useAppSelector(({ account }) => account.address);
     const suiBalance = useAppSelector(accountAggregateBalancesSelector);
 
-    if (!balance) {
-        const b = suiBalance['0x2::sui::SUI'].toString();
-        setBalance(b);
-    }
+    const sui = suiBalance['0x2::sui::SUI'];
+    useEffect(() => {
+        if (!sui) return;
+        setBalance(sui.toString());
+    }, [sui]);
 
     const _faucet = useCallback(() => {
         setIsFaucetInProgress(true);
