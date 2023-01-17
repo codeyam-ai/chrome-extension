@@ -223,7 +223,7 @@ const NavBar = () => {
                     className={'flex flex-row gap-3 items-center'}
                 >
                     <ArrowLeftIcon className="h-6 w-6 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />{' '}
-                    <Body isTextColorMedium>Back</Body>
+                    <BodyLarge isTextColorMedium>Back</BodyLarge>
                 </button>
             ) : (
                 <Link to={'/settings/main'}>
