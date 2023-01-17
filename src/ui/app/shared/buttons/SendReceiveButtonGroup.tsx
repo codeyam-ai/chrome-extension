@@ -76,13 +76,10 @@ const SendReceiveButtonGroup = ({
     }, [address, setIsFaucetInProgress, isFaucetInProgress]);
 
     useEffect(() => {
-        if (
-            isFaucetInProgress &&
-            suiBalance['0x2::sui::SUI'].toString() !== balance
-        ) {
+        if (isFaucetInProgress && sui && sui.toString() !== balance) {
             setIsFaucetInProgress(false);
         }
-    }, [suiBalance, setIsFaucetInProgress, isFaucetInProgress, balance]);
+    }, [suiBalance, setIsFaucetInProgress, isFaucetInProgress, sui, balance]);
 
     const iconClasses = 'h-4 w-4';
 

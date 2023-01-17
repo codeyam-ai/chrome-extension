@@ -1,6 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -21,6 +21,7 @@ const initialValues = {
 export type FormValues = typeof initialValues;
 
 function TransferNFTReview() {
+    const [formSubmitted, submitForm] = useState(false);
     const formState = useAppSelector(
         ({ forms: { transferNft } }) => transferNft
     );
@@ -43,6 +44,8 @@ function TransferNFTReview() {
             return;
         }
 
+        submitForm(true);
+
         try {
             const resp = await dispatch(
                 transferNFT({
@@ -60,7 +63,7 @@ function TransferNFTReview() {
                 // Redirect to nft page
                 navigate('/nfts');
 
-                const navLink = `/receipt?${new URLSearchParams({
+                const navLink = `/transactions/receipt?${new URLSearchParams({
                     txdigest: resp.txId,
                 }).toString()}`;
 
@@ -88,6 +91,7 @@ function TransferNFTReview() {
         <div className={st.container}>
             <div className={'text-left'}>
                 <TransferNFTReviewForm
+                    submitted={formSubmitted}
                     formData={formState}
                     nftobj={selectedNFTObj}
                     transferNft={submitNftTransfer}

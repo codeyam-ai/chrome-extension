@@ -46,7 +46,7 @@ const NavItemElement = ({ to, title, icon }: NavItem) => {
     const isActive = useCallback(
         (to: string) => {
             // to starts with "./", location.pathname starts with just a "/"
-            return to === '.' + location.pathname;
+            return location.pathname.includes(to.replace(/[^\w\s]/gi, ''));
         },
         [location]
     );

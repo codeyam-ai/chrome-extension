@@ -9,6 +9,7 @@ export interface OnboardingButtonProps {
     to?: string;
     linkType: 'external' | 'internal' | 'none';
     onClick?: () => void;
+    onMouseOver?: () => void;
     iconWithNoClasses: ReactNode;
     iconBackgroundColor: string;
     buttonGradientColor: string;
@@ -20,6 +21,7 @@ const OnboardingButton = ({
     to,
     linkType,
     onClick,
+    onMouseOver,
     iconWithNoClasses,
     iconBackgroundColor,
     buttonGradientColor,
@@ -69,6 +71,7 @@ const OnboardingButton = ({
                     target="_blank"
                     rel="noreferrer"
                     onClick={onClick}
+                    onMouseOver={onMouseOver}
                     className={buttonClasses}
                     style={buttonStyle}
                 >

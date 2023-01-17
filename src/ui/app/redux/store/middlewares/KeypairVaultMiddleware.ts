@@ -12,6 +12,7 @@ import { thunkExtras } from '_store/thunk-extras';
 
 import type { Middleware } from '@reduxjs/toolkit';
 
+const keypairVault = thunkExtras.keypairVault;
 const matchUpdateMnemonic = isAnyOf(
     loadAccountInformationFromStorage.fulfilled,
     setMnemonic
@@ -28,8 +29,8 @@ export const KeypairVaultMiddleware: Middleware =
                         ? action.payload
                         : action.payload.mnemonic;
                 if (mnemonic) {
-                    thunkExtras.keypairVault.mnemonic = mnemonic;
-                    dispatch(setAddress(thunkExtras.keypairVault.getAddress()));
+                    keypairVault.mnemonic = mnemonic;
+                    dispatch(setAddress(keypairVault.getAddress()));
                 }
             }
         }
