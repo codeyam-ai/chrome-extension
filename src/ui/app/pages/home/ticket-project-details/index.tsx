@@ -154,7 +154,10 @@ const TicketProjectDetailsContent = ({
                                     showIcon={false}
                                     className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
                                 >
-                                    <Button buttonStyle="primary">
+                                    <Button
+                                        buttonStyle="primary"
+                                        removeContainerPadding={true}
+                                    >
                                         Get {tokenName}
                                     </Button>
                                 </ExternalLink>
@@ -171,7 +174,10 @@ const TicketProjectDetailsContent = ({
                                 Sui Faucet on the Home Page to get more Sui.
                             </BodyLarge>
                             <Link to="/">
-                                <Button buttonStyle="primary">
+                                <Button
+                                    buttonStyle="primary"
+                                    removeContainerPadding={true}
+                                >
                                     Use Sui Faucet
                                 </Button>
                             </Link>
@@ -182,6 +188,7 @@ const TicketProjectDetailsContent = ({
                             buttonStyle="primary"
                             onClick={handleClick}
                             disabled={minting}
+                            removeContainerPadding={true}
                         >
                             {minting ? <LoadingIndicator /> : <>Mint Ticket</>}
                         </Button>
