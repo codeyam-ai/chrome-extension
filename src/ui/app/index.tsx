@@ -1,6 +1,8 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+// replaces global fetch with something that works in Node (i.e. tests)
+import 'isomorphic-fetch';
 import { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
