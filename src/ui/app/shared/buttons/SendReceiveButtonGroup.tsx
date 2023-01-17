@@ -36,10 +36,11 @@ const SendReceiveButtonGroup = ({
     const address = useAppSelector(({ account }) => account.address);
     const suiBalance = useAppSelector(accountAggregateBalancesSelector);
 
-    if (!balance) {
-        const b = suiBalance['0x2::sui::SUI'].toString();
-        setBalance(b);
-    }
+    const sui = suiBalance['0x2::sui::SUI'];
+    useEffect(() => {
+        if (!sui) return;
+        setBalance(sui.toString());
+    }, [sui]);
 
     const _faucet = useCallback(() => {
         setIsFaucetInProgress(true);
@@ -75,13 +76,10 @@ const SendReceiveButtonGroup = ({
     }, [address, setIsFaucetInProgress, isFaucetInProgress]);
 
     useEffect(() => {
-        if (
-            isFaucetInProgress &&
-            suiBalance['0x2::sui::SUI'].toString() !== balance
-        ) {
+        if (isFaucetInProgress && sui && sui.toString() !== balance) {
             setIsFaucetInProgress(false);
         }
-    }, [suiBalance, setIsFaucetInProgress, isFaucetInProgress, balance]);
+    }, [suiBalance, setIsFaucetInProgress, isFaucetInProgress, sui, balance]);
 
     const iconClasses = 'h-4 w-4';
 

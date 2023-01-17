@@ -2,6 +2,8 @@ import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 
 import BodyLarge from '../../../shared/typography/BodyLarge';
+import { DASHBOARD_LINK } from '_src/shared/constants';
+import { useExplorerPermission } from '_src/ui/app/hooks';
 
 import type { SettingsListSectionItem } from './SettingsList';
 
@@ -11,6 +13,8 @@ interface SettingsListItemProps {
 }
 
 const SettingsListItem = ({ item, color }: SettingsListItemProps) => {
+    const setExplorerPermission = useExplorerPermission();
+
     const itemContent = (
         <div className="flex p-2 items-center justify-between">
             <div className="flex gap-3 items-center">
@@ -37,7 +41,16 @@ const SettingsListItem = ({ item, color }: SettingsListItemProps) => {
 
     if (item.isExternalLink && item.to) {
         return (
-            <a href={item.to} target="_blank" rel="noreferrer">
+            <a
+                href={item.to}
+                target="_blank"
+                rel="noreferrer"
+                onMouseOver={
+                    item.to === DASHBOARD_LINK
+                        ? setExplorerPermission
+                        : undefined
+                }
+            >
                 {itemContent}
             </a>
         );

@@ -13,11 +13,8 @@ import { growthbook, loadFeatures } from './app/experimentation/feature-gating';
 import { queryClient } from './app/helpers/queryClient';
 import { initAppType, initNetworkFromStorage } from '_redux/slices/app';
 import { getFromLocationSearch } from '_redux/slices/app/AppType';
-import { DependenciesContext } from '_shared/utils/dependenciesContext';
 import store from '_store';
 import { thunkExtras } from '_store/thunk-extras';
-
-import type { Dependencies } from '_shared/utils/dependenciesContext';
 
 import './styles/global.scss';
 import './styles/tailwind.css';
@@ -40,27 +37,18 @@ function renderApp() {
         throw new Error('Root element not found');
     }
     const root = createRoot(rootDom);
-
-    const appDependencies: Dependencies = {
-        closeWindow: () => {
-            window.close();
-        },
-    };
-
     root.render(
-        <DependenciesContext.Provider value={appDependencies}>
-            <GrowthBookProvider growthbook={growthbook}>
-                <HashRouter>
-                    <Provider store={store}>
-                        <IntlProvider locale={navigator.language}>
-                            <QueryClientProvider client={queryClient}>
-                                <App />
-                            </QueryClientProvider>
-                        </IntlProvider>
-                    </Provider>
-                </HashRouter>
-            </GrowthBookProvider>
-        </DependenciesContext.Provider>
+        <GrowthBookProvider growthbook={growthbook}>
+            <HashRouter>
+                <Provider store={store}>
+                    <IntlProvider locale={navigator.language}>
+                        <QueryClientProvider client={queryClient}>
+                            <App />
+                        </QueryClientProvider>
+                    </IntlProvider>
+                </Provider>
+            </HashRouter>
+        </GrowthBookProvider>
     );
 }
 

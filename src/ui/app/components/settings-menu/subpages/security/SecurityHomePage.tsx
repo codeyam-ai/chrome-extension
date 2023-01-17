@@ -1,3 +1,4 @@
+import { useNextSettingsUrl } from '../../hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
@@ -11,18 +12,18 @@ interface SecurityItem {
     title: string;
     description: string;
     buttonText: string;
-    path: string;
+    buttonTo: string;
 }
 
 const SecurityItemDisplay = ({ item }: { item: SecurityItem }) => {
-    const { title, description, buttonText, path } = item;
+    const { title, description, buttonText, buttonTo } = item;
     return (
         <div className="flex flex-col pt-6">
             <ContentBlock className="!px-0 !pb-4">
                 <Header>{title}</Header>
                 <BodyLarge isTextColorMedium>{description}</BodyLarge>
             </ContentBlock>
-            <Button buttonStyle="secondary" to={path} isInline>
+            <Button buttonStyle="secondary" to={buttonTo} isInline>
                 {buttonText}
             </Button>
         </div>
@@ -30,27 +31,36 @@ const SecurityItemDisplay = ({ item }: { item: SecurityItem }) => {
 };
 
 const SecurityHomePage = ({ isHostedWallet }: SecurityHomePageProps) => {
+    const changePasswordUrl = useNextSettingsUrl(
+        true,
+        '/security/change-password'
+    );
+    const viewSeedUrl = useNextSettingsUrl(true, '/security/view-seed');
+    const viewPrivateKeyUrl = useNextSettingsUrl(
+        true,
+        '/security/view-private-key'
+    );
     const securityItems: SecurityItem[] = [
         {
             title: 'Passwords',
             description:
                 'Your password is required to unlock Ethos after 15 minutes of inactivity.',
             buttonText: 'Update Password',
-            path: '/settings/security/change-password',
+            buttonTo: changePasswordUrl,
         },
         {
             title: 'Recovery Phrase',
             description:
                 'Recovery phrases give you access to all wallets that are associated with it. Here, you can manage your recovery phrases.',
             buttonText: 'View Recovery Phrase',
-            path: '/settings/security/view-seed',
+            buttonTo: viewSeedUrl,
         },
         {
             title: 'Private Key',
             description:
                 'Your private key grants access to the wallet that you are currently in.',
             buttonText: 'View Private Key',
-            path: '/settings/security/view-private-key',
+            buttonTo: viewPrivateKeyUrl,
         },
     ];
 
