@@ -1,9 +1,10 @@
 import { CreditCardIcon } from '@heroicons/react/24/outline';
 import { ArrowUpCircleIcon } from '@heroicons/react/24/solid';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import LoadingIndicator from '../../components/loading/LoadingIndicator';
 import { useAppSelector } from '../../hooks';
+import { accountAggregateBalancesSelector } from '../../redux/slices/account';
 import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import Alert from '../feedback/Alert';
 import SuiIcon from '../svg/SuiIcon';
@@ -31,15 +32,18 @@ const SendReceiveButtonGroup = ({
     );
 
     const [isFaucetInProgress, setIsFaucetInProgress] = useState(false);
+    const [balance, setBalance] = useState('');
     const address = useAppSelector(({ account }) => account.address);
+    const suiBalance = useAppSelector(accountAggregateBalancesSelector);
+
+    if (!balance) {
+        const b = suiBalance['0x2::sui::SUI'].toString();
+        setBalance(b);
+    }
 
     const _faucet = useCallback(() => {
         setIsFaucetInProgress(true);
         const faucet = async () => {
-            setTimeout(() => {
-                setIsFaucetInProgress(false);
-            }, 2500);
-
             const result = await fetch('https://faucet.devnet.sui.io:443/gas', {
                 method: 'POST',
                 headers: {
@@ -59,9 +63,28 @@ const SendReceiveButtonGroup = ({
             }
         };
 
+        setTimeout(() => {
+            // Sets the error if the faucet does not work after 15s
+            if (isFaucetInProgress) {
+                setIsFaucetInProgress(false);
+                setError(true);
+            }
+        }, 15000);
+
         faucet();
-    }, [address]);
+    }, [address, setIsFaucetInProgress, isFaucetInProgress]);
+
+    useEffect(() => {
+        if (
+            isFaucetInProgress &&
+            suiBalance['0x2::sui::SUI'].toString() !== balance
+        ) {
+            setIsFaucetInProgress(false);
+        }
+    }, [suiBalance, setIsFaucetInProgress, isFaucetInProgress, balance]);
+
     const iconClasses = 'h-4 w-4';
+
     return (
         <>
             {error ? (
