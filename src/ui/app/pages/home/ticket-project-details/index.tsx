@@ -129,13 +129,6 @@ const TicketProjectDetailsContent = ({
                         className="rounded-xl"
                     />
                     <Title className={'text-left'}>{ticketProject.name}</Title>
-                    <BodyLarge
-                        className={
-                            'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal'
-                        }
-                    >
-                        {ticketProject.description}
-                    </BodyLarge>
                     {error && (
                         <div className="text-ethos-light-red dark:text-ethos-dark-red">
                             {error}
@@ -193,6 +186,13 @@ const TicketProjectDetailsContent = ({
                             {minting ? <LoadingIndicator /> : <>Mint Ticket</>}
                         </Button>
                     )}
+                    <BodyLarge
+                        className={
+                            'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal'
+                        }
+                    >
+                        {ticketProject.description}
+                    </BodyLarge>
                 </div>
             </div>
         </>
