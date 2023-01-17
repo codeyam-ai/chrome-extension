@@ -23,11 +23,15 @@ import Subheader from '_src/ui/app/shared/typography/Subheader';
 import type { FormValues } from '.';
 
 export type TransferCoinFormProps = {
+    submitted: boolean;
     submitError: string | null;
     onClearSubmitError: () => void;
 };
 
-function TransferCoinForm({ onClearSubmitError }: TransferCoinFormProps) {
+function TransferCoinForm({
+    onClearSubmitError,
+    submitted,
+}: TransferCoinFormProps) {
     const {
         isSubmitting,
         values: { amount, to },
@@ -113,6 +117,7 @@ function TransferCoinForm({ onClearSubmitError }: TransferCoinFormProps) {
                 />
                 <div className="flex flex-col mb-2 absolute w-full bottom-[-10px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4 rounded-b-2xl">
                     <Button
+                        disabled={submitted}
                         buttonStyle="primary"
                         type="submit"
                         className="mt-2"

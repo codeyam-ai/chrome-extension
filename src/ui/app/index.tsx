@@ -73,8 +73,8 @@ const App = () => {
                             element={<Navigate to="/tokens" replace={true} />}
                         />
                         <Route path="tokens" element={<TokensPage />} />
-                        <Route path="nfts" element={<NftsPage />} />
-                        <Route path="nft">
+                        <Route path="nfts">
+                            <Route path={'*'} element={<NftsPage />} />
                             <Route
                                 path="details"
                                 element={<NFTDetailsPage />}
@@ -88,10 +88,10 @@ const App = () => {
                                 element={<TransferNftReview />}
                             />
                         </Route>
-                        <Route
-                            path="transactions"
-                            element={<TransactionsPage />}
-                        />
+                        <Route path="transactions">
+                            <Route path="*" element={<TransactionsPage />} />
+                            <Route path="receipt" element={<ReceiptPage />} />
+                        </Route>
                         <Route path="send">
                             <Route
                                 path="recipient"
@@ -112,7 +112,6 @@ const App = () => {
                             path="tx/:txDigest"
                             element={<TransactionDetailsPage />}
                         />
-                        <Route path="receipt" element={<ReceiptPage />} />
                     </Route>
                     <Route path="welcome" element={<WelcomePage />} />
                     <Route path="initialize" element={<InitializePage />}>

@@ -1,18 +1,18 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
+import { JSDOM } from 'jsdom';
 import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 
 import { queryClient } from '_app/helpers/queryClient';
 import { AppType } from '_redux/slices/app/AppType';
-import { DependenciesContext } from '_shared/utils/dependenciesContext';
+import { WindowContext } from '_src/shared/utils/windowContext';
 import { createStore } from '_store';
 
 import type { PreloadedState } from '@reduxjs/toolkit';
 import type { RenderOptions } from '@testing-library/react';
 import type { RootState } from '_redux/RootReducer';
-import type { Dependencies } from '_shared/utils/dependenciesContext';
 import type { AppStore } from '_store';
 import type React from 'react';
 import type { PropsWithChildren } from 'react';
@@ -21,7 +21,7 @@ interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: PreloadedState<RootState>;
     store?: AppStore;
     initialRoute?: string;
-    dependencies?: Dependencies;
+    testWindow?: Window;
 }
 
 export function renderWithProviders(
@@ -31,9 +31,7 @@ export function renderWithProviders(
         // Automatically create a store instance if no store was passed in
         store = createStore({ app: { appType: AppType.fullscreen } }),
         initialRoute,
-        dependencies = {
-            closeWindow: jest.fn(),
-        },
+        testWindow = new JSDOM().window as unknown as Window,
         ...renderOptions
     }: ExtendedRenderOptions = {}
 ) {
@@ -45,9 +43,9 @@ export function renderWithProviders(
                 <Provider store={store}>
                     <IntlProvider locale={'pt'}>
                         <QueryClientProvider client={queryClient}>
-                            <DependenciesContext.Provider value={dependencies}>
+                            <WindowContext.Provider value={testWindow}>
                                 {children}
-                            </DependenciesContext.Provider>
+                            </WindowContext.Provider>
                         </QueryClientProvider>
                     </IntlProvider>
                 </Provider>
