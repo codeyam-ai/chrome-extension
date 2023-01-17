@@ -30,6 +30,7 @@ export type FormValues = typeof initialValues;
 // TODO: show out of sync when sui objects locally might be outdated
 function TransferCoinReviewPage() {
     const [searchParams] = useSearchParams();
+    const [formSubmitted, setFormSubmitted] = useState(false);
     const coinType = searchParams.get('type');
     const [sendError, setSendError] = useState<string | null>(null);
     const [coinDecimals] = useCoinDecimals(coinType);
@@ -48,6 +49,7 @@ function TransferCoinReviewPage() {
                 return;
             }
             setSendError(null);
+            setFormSubmitted(true);
             try {
                 const bigIntAmount = BigInt(
                     new BigNumber(amount)
@@ -119,6 +121,7 @@ function TransferCoinReviewPage() {
                     onSubmit={onHandleSubmit}
                 >
                     <TransferCoinReviewForm
+                        submitted={formSubmitted}
                         submitError={sendError}
                         onClearSubmitError={handleOnClearSubmitError}
                     />
