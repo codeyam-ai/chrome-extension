@@ -112,7 +112,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
 
     const type = getTransactionType();
 
-    const drilldownLink = `/receipt?${new URLSearchParams({
+    const drilldownLink = `/transactions/receipt?${new URLSearchParams({
         txdigest: txn?.txId,
         symbol: header,
         isFunc: getIsFunc() ? 'yes' : 'no',
