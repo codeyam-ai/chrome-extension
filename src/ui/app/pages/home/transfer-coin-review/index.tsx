@@ -71,9 +71,11 @@ function TransferCoinReviewPage() {
                     const txDigest =
                         tx.EffectsCert.certificate.transactionDigest;
 
-                    const navLink = `/receipt?${new URLSearchParams({
-                        txdigest: txDigest,
-                    }).toString()}`;
+                    const navLink = `/transactions/receipt?${new URLSearchParams(
+                        {
+                            txdigest: txDigest,
+                        }
+                    ).toString()}`;
 
                     toast(
                         <SuccessAlert

@@ -63,7 +63,7 @@ function TransferNFTReview() {
                 // Redirect to nft page
                 navigate('/nfts');
 
-                const navLink = `/receipt?${new URLSearchParams({
+                const navLink = `/transactions/receipt?${new URLSearchParams({
                     txdigest: resp.txId,
                 }).toString()}`;
 
