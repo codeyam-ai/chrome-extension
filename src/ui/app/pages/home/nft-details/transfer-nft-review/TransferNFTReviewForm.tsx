@@ -27,12 +27,14 @@ export type TransferNFTFormProps = {
     };
     nftobj: SuiObject;
     transferNft: () => void;
+    submitted: boolean;
 };
 
 function TransferNftReviewForm({
     formData,
     nftobj,
     transferNft,
+    submitted,
 }: TransferNFTFormProps) {
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex } }) =>
@@ -114,6 +116,7 @@ function TransferNftReviewForm({
                         }
                     >
                         <Button
+                            disabled={submitted}
                             isInline
                             removeContainerPadding
                             buttonStyle="primary"
