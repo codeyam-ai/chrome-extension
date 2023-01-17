@@ -1,11 +1,6 @@
 // This module provides fake implementations of the webextension-polyfill Browser object
 // NOTE: this is incomplete and provides just enough implementation for tests to pass
 
-import { Runtime } from 'webextension-polyfill';
-import { Events } from 'webextension-polyfill/namespaces/events';
-
-import Port = Runtime.Port;
-
 let records: Record<string, unknown> = {};
 
 function fakeLocalStorageGet(

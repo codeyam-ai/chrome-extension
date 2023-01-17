@@ -94,6 +94,12 @@ function SiteConnectPage() {
         [dispatch, requestID, activeAccount]
     );
 
+    // useEffect(() => {
+    //     console.log('accountInfos :>> ', accountInfos);
+    //     window.open('http://google.com', '_newtab');
+    //     // window.close();
+    // }, [accountInfos]);
+
     useEffect(() => {
         if (
             !loading &&
