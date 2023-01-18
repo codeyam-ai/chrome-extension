@@ -10,4 +10,5 @@ export enum FEATURES {
     USE_LOCAL_TXN_SERIALIZER = 'use-local-txn-serializer',
     USE_CUSTOM_RPC_URL = 'custom-rpc-url',
     USE_TEST_NET_ENDPOINT = 'testnet-selection',
+    USE_TICKETS = 'use-tickets',
 }

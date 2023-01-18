@@ -8,6 +8,8 @@ import { useCallback, useMemo, type ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
 import ExploreButton from './ExploreButton';
+import { growthbook } from '_src/ui/app/experimentation/feature-gating';
+import { FEATURES } from '_src/ui/app/experimentation/features';
 
 const iconClasses = 'w-6 h-6';
 const navItems: NavItem[] = [
@@ -28,11 +30,13 @@ const navItems: NavItem[] = [
     },
 ];
 
-navItems.splice(2, 0, {
-    title: 'Tickets',
-    to: './tickets',
-    icon: <TicketIcon className={iconClasses} />,
-});
+if (growthbook.isOn(FEATURES.USE_TICKETS)) {
+    navItems.splice(2, 0, {
+        title: 'Tickets',
+        to: './tickets',
+        icon: <TicketIcon className={iconClasses} />,
+    });
+}
 
 type NavItem = {
     to: string;
