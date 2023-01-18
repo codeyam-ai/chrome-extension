@@ -1,3 +1,4 @@
+import { toHEX } from '@mysten/bcs';
 import { Base64DataBuffer } from '@mysten/sui.js';
 import { useCallback, useState } from 'react';
 
@@ -26,7 +27,7 @@ export default function ViewPrivateKeyPage() {
             mnenonic,
             account.activeAccountIndex
         );
-        return new Base64DataBuffer(keypair.secretKey).toString();
+        return keypair.secretKey;
     });
 
     const viewPrivateKey = useCallback(async () => {
@@ -35,16 +36,41 @@ export default function ViewPrivateKeyPage() {
 
     return (
         <>
-            {showPrivateKey ? (
-                <div className="p-6">
-                    <textarea
-                        rows={4}
-                        value={privateKey || ''}
-                        id="privateKey"
-                        className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
-                        name="privateKey"
-                        disabled={true}
-                    />
+            {privateKey && showPrivateKey ? (
+                <div className="flex flex-col gap-6 py-6">
+                    <div>
+                        <div className="text-lg">Hex</div>
+                        <textarea
+                            rows={4}
+                            value={toHEX(privateKey)}
+                            id="hexPrivateKey"
+                            className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
+                            name="hexPrivateKey"
+                            disabled={true}
+                        />
+                    </div>
+                    <div>
+                        <div className="text-lg">Base-64</div>
+                        <textarea
+                            rows={4}
+                            value={new Base64DataBuffer(privateKey).toString()}
+                            id="hexPrivateKey"
+                            className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
+                            name="hexPrivateKey"
+                            disabled={true}
+                        />
+                    </div>
+                    <div>
+                        <div className="text-lg">UInt8Array</div>
+                        <textarea
+                            rows={4}
+                            value={privateKey.toString()}
+                            id="hexPrivateKey"
+                            className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
+                            name="hexPrivateKey"
+                            disabled={true}
+                        />
+                    </div>
                 </div>
             ) : (
                 <>

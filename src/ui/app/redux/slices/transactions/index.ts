@@ -20,6 +20,7 @@ import type {
     SuiAddress,
     SuiMoveObject,
     SuiExecuteTransactionResponse,
+    MoveCallTransaction,
 } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
@@ -29,6 +30,7 @@ type SendTokensTXArgs = {
     amount: bigint;
     recipientAddress: SuiAddress;
 };
+
 type TransactionResult = SuiExecuteTransactionResponse;
 
 export const sendTokens = createAsyncThunk<
@@ -68,6 +70,39 @@ export const sendTokens = createAsyncThunk<
 
         // TODO: better way to sync latest objects
         dispatch(fetchAllOwnedAndRequiredObjects());
+        return response;
+    }
+);
+
+export const executeMoveCall = createAsyncThunk<
+    TransactionResult,
+    MoveCallTransaction,
+    AppThunkConfig
+>(
+    'sui-objects/send-tokens',
+    async (
+        moveCall,
+        { getState, extra: { api, keypairVault }, dispatch }
+    ): Promise<TransactionResult> => {
+        const state = getState();
+        const {
+            account: { authentication, address, activeAccountIndex },
+        } = state;
+
+        let signer;
+        if (authentication) {
+            signer = api.getEthosSignerInstance(address || '', authentication);
+        } else {
+            signer = api.getSignerInstance(
+                keypairVault.getKeyPair(activeAccountIndex)
+            );
+        }
+
+        const response = await signer.signAndExecuteTransaction({
+            kind: 'moveCall',
+            data: moveCall,
+        });
+
         return response;
     }
 );

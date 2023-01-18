@@ -190,7 +190,7 @@ function NFTDetailsPage() {
         return selectedNFT;
     }, [nftCollections, objectId]);
 
-    const loadingBalance = useAppSelector(
+    const loading = useAppSelector(
         ({ suiObjects }) => suiObjects.loading && !suiObjects.lastSync
     );
 
@@ -204,13 +204,13 @@ function NFTDetailsPage() {
         }
     }, [navigate, objectId]);
 
-    if (!objectId || (!loadingBalance && !selectedNFT)) {
+    if (!objectId || (!loading && !selectedNFT)) {
         return <Navigate to="/nfts" replace={true} />;
     }
 
     return (
         <div className="">
-            <Loading loading={loadingBalance} big={true}>
+            <Loading loading={loading} big={true}>
                 <NFTdetailsContent nft={activeNFT} onClick={transferNft} />
             </Loading>
         </div>

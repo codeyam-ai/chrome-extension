@@ -7,6 +7,8 @@ import {
     createSlice,
 } from '@reduxjs/toolkit';
 
+import { NFT } from '../sui-objects/NFT';
+import { Ticket } from '../sui-objects/Ticket';
 import {
     clearForNetworkOrWalletSwitch,
     suiObjectsAdapterSelectors,
@@ -623,6 +625,17 @@ export const accountItemizedBalancesSelector = createSelector(
 export const accountNftsSelector = createSelector(
     ownedObjects,
     (allSuiObjects) => {
-        return allSuiObjects.filter((anObj) => !Coin.isCoin(anObj));
+        return allSuiObjects.filter(
+            (anObj) => !Coin.isCoin(anObj) && NFT.isNFT(anObj)
+        );
+    }
+);
+
+export const accountTicketsSelector = createSelector(
+    ownedObjects,
+    (allSuiObjects) => {
+        return allSuiObjects.filter(
+            (anObj) => !Coin.isCoin(anObj) && Ticket.isTicket(anObj) && anObj
+        );
     }
 );

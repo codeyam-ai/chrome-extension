@@ -36,6 +36,9 @@ import HomePage, {
     NFTDetailsPage,
     NftsPage,
     ReceiptPage,
+    TicketsPage,
+    TicketDetailsPage,
+    TicketProjectDetailsPage,
     TokensPage,
     TransactionDetailsPage,
     TransactionsPage,
@@ -90,6 +93,18 @@ const App = () => {
                                 element={<TransferNftReview />}
                             />
                         </Route>
+                        <Route path="tickets" element={<TicketsPage />} />
+                        <Route path="my_tickets" element={<TicketsPage />} />
+                        <Route path="ticket">
+                            <Route
+                                path="details"
+                                element={<TicketDetailsPage />}
+                            />
+                        </Route>
+                        <Route
+                            path="ticket-project"
+                            element={<TicketProjectDetailsPage />}
+                        />
                         <Route path="transactions">
                             <Route path="*" element={<TransactionsPage />} />
                             <Route path="receipt" element={<ReceiptPage />} />

@@ -38,14 +38,14 @@ export class EthosSigner extends SignerWithProvider {
             'transaction/sign',
             'POST',
             this.accessToken || '',
-            JSON.stringify({
+            {
                 network: 'sui',
                 walletAddress: this.address,
                 txOrMessage: {
                     id: 0,
                     transaction: data.toString(),
                 },
-            })
+            }
         );
 
         if (status !== 200) {

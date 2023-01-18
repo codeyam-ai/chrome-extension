@@ -31,7 +31,7 @@ class Authentication {
                 'wallet/accounts',
                 'POST',
                 this._accessToken || '',
-                JSON.stringify({ network: 'sui', chain: 'sui' })
+                { network: 'sui', chain: 'sui' }
             );
 
             if (status !== 200) {
@@ -59,7 +59,7 @@ class Authentication {
             'accounts/create',
             'POST',
             this._accessToken || '',
-            JSON.stringify({ index, chain })
+            { index, chain }
         );
 
         if (status !== 200) {
@@ -76,7 +76,7 @@ class Authentication {
             'accounts/update',
             'POST',
             this._accessToken || '',
-            JSON.stringify({ accountInfos })
+            { accountInfos }
         );
     }
 
@@ -87,14 +87,14 @@ class Authentication {
             'transaction/sign',
             'POST',
             this._accessToken || '',
-            JSON.stringify({
+            {
                 network: 'sui',
                 walletAddress: address,
                 txOrMessage: {
                     id: 0,
                     transaction: dataToSign.toString(),
                 },
-            })
+            }
         );
 
         if (status !== 200) {
