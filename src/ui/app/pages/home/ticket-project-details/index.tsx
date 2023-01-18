@@ -102,9 +102,11 @@ const TicketProjectDetailsContent = ({
                     navigate('/my_tickets');
                 } else {
                     const eUsed =
-                        'name: Identifier("token_gated_ticket") }, function: 4, instruction: 55 }, 1)';
+                        'name: Identifier("token_gated_ticket") }, function: 6, instruction: 55 }, 1)';
                     if (status.error && status.error.indexOf(eUsed) > -1) {
                         setError('You already minted a ticket today.');
+                    } else {
+                        setError(status.error);
                     }
                 }
             } else {
