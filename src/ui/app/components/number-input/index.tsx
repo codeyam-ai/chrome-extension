@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { memo, useCallback } from 'react';
-import NumberFormat from 'react-number-format';
+import { NumericFormat } from 'react-number-format';
 
 import { useNumberDelimiters } from '_hooks';
 
@@ -38,7 +38,7 @@ function NumberInput<FormValues>({
         [name, setFieldValue]
     );
     return (
-        <NumberFormat
+        <NumericFormat
             type="text"
             onKeyDown={onBlur}
             {...{
