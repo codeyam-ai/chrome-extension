@@ -89,7 +89,7 @@ function TransferNFTRecipient() {
                 );
 
                 navigate(
-                    `/nft/transfer/review?${new URLSearchParams({
+                    `/nfts/transfer/review?${new URLSearchParams({
                         objectId: objectId,
                     }).toString()}`
                 );

@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useNextSettingsUrl } from '../../../../hooks';
 import ChangePasswordForm from './ChangePasswordForm';
 import { useAppDispatch } from '_src/ui/app/hooks';
 import {
@@ -15,6 +16,7 @@ import Header from '_src/ui/app/shared/typography/Header';
 const ChangePasswordPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const settingsHomeUrl = useNextSettingsUrl(true);
     const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false);
 
     const onPasswordChanged = useCallback(
@@ -31,9 +33,9 @@ const ChangePasswordPage = () => {
 
             await dispatch(changePassword({ currentPassword, newPassword }));
             await dispatch(loadAccountInformationFromStorage());
-            navigate('/settings/main');
+            navigate(settingsHomeUrl);
         },
-        [dispatch, navigate]
+        [dispatch, navigate, settingsHomeUrl]
     );
 
     return (

@@ -112,6 +112,11 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     seed: (keypairVault.getSeed(0) || '').toString(),
                 },
             ];
+            await setEncrypted(
+                'accountInfos',
+                JSON.stringify(accountInfos),
+                passphrase
+            );
         }
 
         activeAccountIndex = parseInt(

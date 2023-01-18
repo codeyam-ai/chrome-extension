@@ -1,6 +1,8 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+// replaces global fetch with something that works in Node (i.e. tests)
+import 'isomorphic-fetch';
 import { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
@@ -76,10 +78,8 @@ const App = () => {
                             element={<Navigate to="/tokens" replace={true} />}
                         />
                         <Route path="tokens" element={<TokensPage />} />
-                        <Route path="nfts" element={<NftsPage />} />
-                        <Route path="tickets" element={<TicketsPage />} />
-                        <Route path="my_tickets" element={<TicketsPage />} />
-                        <Route path="nft">
+                        <Route path="nfts">
+                            <Route path={'*'} element={<NftsPage />} />
                             <Route
                                 path="details"
                                 element={<NFTDetailsPage />}
@@ -93,6 +93,8 @@ const App = () => {
                                 element={<TransferNftReview />}
                             />
                         </Route>
+                        <Route path="tickets" element={<TicketsPage />} />
+                        <Route path="my_tickets" element={<TicketsPage />} />
                         <Route path="ticket">
                             <Route
                                 path="details"
@@ -103,10 +105,10 @@ const App = () => {
                             path="ticket-project"
                             element={<TicketProjectDetailsPage />}
                         />
-                        <Route
-                            path="transactions"
-                            element={<TransactionsPage />}
-                        />
+                        <Route path="transactions">
+                            <Route path="*" element={<TransactionsPage />} />
+                            <Route path="receipt" element={<ReceiptPage />} />
+                        </Route>
                         <Route path="send">
                             <Route
                                 path="recipient"
@@ -127,7 +129,6 @@ const App = () => {
                             path="tx/:txDigest"
                             element={<TransactionDetailsPage />}
                         />
-                        <Route path="receipt" element={<ReceiptPage />} />
                     </Route>
                     <Route path="welcome" element={<WelcomePage />} />
                     <Route path="initialize" element={<InitializePage />}>

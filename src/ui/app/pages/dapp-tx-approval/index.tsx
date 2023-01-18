@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import truncateMiddle from '../../helpers/truncate-middle';
@@ -25,7 +25,7 @@ import {
     txRequestsSelectors,
 } from '_redux/slices/transaction-requests';
 import { thunkExtras } from '_redux/store/thunk-extras';
-import { useDependencies } from '_shared/utils/dependenciesContext';
+import { WindowContext } from '_shared/utils/windowContext';
 import { MAILTO_SUPPORT_URL } from '_src/shared/constants';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
@@ -286,11 +286,10 @@ export function DappTxApprovalPage() {
         );
     };
 
-    const transaction = txRequest?.tx;
     useEffect(() => {
         const getEffects = async () => {
             try {
-                if (!transaction || transaction.type === 'move-call') {
+                if (!txRequest || txRequest.tx.type === 'move-call') {
                     setEffects(null);
                     return;
                 }
@@ -307,7 +306,7 @@ export function DappTxApprovalPage() {
                     );
                 }
                 const transactionEffects = await signer.dryRunTransaction(
-                    transaction.data
+                    txRequest.tx.data
                 );
 
                 if (transactionEffects.status.status === 'failure') {
@@ -328,9 +327,7 @@ export function DappTxApprovalPage() {
             } catch (e) {
                 const errorMessage = (e as Error).message;
                 if (errorMessage === 'Account mnemonic is not set') {
-                    // this is expected; it happens the first time we render because the redux state is not in good
-                    // shape yet. we basically ingore it and expect the next re-render to work.
-                    // TODO: this seems weird - it would be good to find a better way.
+                    setTimeout(getEffects, 100);
                 } else {
                     if (isErrorCausedByUserNotHavingEnoughSui(errorMessage)) {
                         setUserHasNoSuiError(true);
@@ -342,7 +339,7 @@ export function DappTxApprovalPage() {
         };
 
         getEffects();
-    }, [transaction, activeAccountIndex, address, authentication]);
+    }, [txRequest, activeAccountIndex, address, authentication]);
 
     useEffect(() => {
         const getNormalizedFunction = async () => {
@@ -383,15 +380,15 @@ export function DappTxApprovalPage() {
         [dispatch, txRequest]
     );
 
-    const closeWindow = useDependencies().closeWindow;
+    const theWindow = useContext(WindowContext);
 
     useEffect(() => {
         const finished =
             !txRequest || (txRequest && txRequest.approved !== null);
         if (!loading && finished) {
-            closeWindow();
+            theWindow.close();
         }
-    }, [loading, txRequest, closeWindow]);
+    }, [loading, txRequest, theWindow]);
 
     const content: TabSections = useMemo(() => {
         switch (txRequest?.tx.type) {

@@ -197,7 +197,7 @@ function NFTDetailsPage() {
     const transferNft = useCallback(() => {
         if (objectId) {
             navigate(
-                `/nft/transfer/recipient?${new URLSearchParams({
+                `/nfts/transfer/recipient?${new URLSearchParams({
                     objectId: objectId,
                 }).toString()}`
             );
