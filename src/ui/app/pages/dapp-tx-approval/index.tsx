@@ -391,596 +391,531 @@ export function DappTxApprovalPage() {
     }, [loading, txRequest, theWindow]);
 
     const content: TabSections = useMemo(() => {
-        switch (txRequest?.tx.type) {
-            case 'v2': {
-                const txInfo = txRequest.tx.data;
+        const txInfo = txRequest?.tx.data;
 
-                const permissions = [];
-                if (reading.length > 0) {
-                    permissions.push({
-                        label: 'Reading',
-                        count: reading.length,
-                    });
-                }
+        const permissions = [];
+        if (reading.length > 0) {
+            permissions.push({
+                label: 'Reading',
+                count: reading.length,
+            });
+        }
 
-                if (mutating.length > 0) {
-                    permissions.push({
-                        label: 'Modifying',
-                        count: mutating.length,
-                    });
-                }
+        if (mutating.length > 0) {
+            permissions.push({
+                label: 'Modifying',
+                count: mutating.length,
+            });
+        }
 
-                if (transferring.length > 0) {
-                    permissions.push({
-                        label: 'Transferring',
-                        count: transferring.length,
-                    });
-                }
+        if (transferring.length > 0) {
+            permissions.push({
+                label: 'Transferring',
+                count: transferring.length,
+            });
+        }
 
-                if (deleting.length > 0) {
-                    permissions.push({
-                        label: 'Full Access',
-                        count: deleting.length,
-                    });
-                }
+        if (deleting.length > 0) {
+            permissions.push({
+                label: 'Full Access',
+                count: deleting.length,
+            });
+        }
 
-                if (permissions.length === 0) {
-                    permissions.push({
-                        label: 'None Requested',
-                        count: 0,
-                    });
-                }
+        if (permissions.length === 0) {
+            permissions.push({
+                label: 'None Requested',
+                count: 0,
+            });
+        }
 
-                let summary: Section[] = [];
+        let summary: Section[] = [];
 
-                if (txInfo.kind === 'moveCall') {
-                    summary = [
-                        {
-                            title: 'Requesting Permission To Call',
-                            details: [
-                                {
-                                    label: 'Contract',
-                                    content: txInfo.data.module,
-                                },
-                                {
-                                    label: 'Function',
-                                    content: txInfo.data.function,
-                                },
-                                {
-                                    label: 'Permissions',
-                                    content: permissions,
-                                },
-                            ],
-                        } as Section,
-                    ];
-                } else if (txInfo.kind === 'transferObject') {
-                    summary = [
-                        {
-                            title: 'Transfer Asset',
-                            details: [
-                                {
-                                    label: 'Asset',
-                                    content: transferring[0]?.name,
-                                },
-                                {
-                                    label: 'Recipient',
-                                    content: txInfo.data.recipient,
-                                },
-                            ],
-                        },
-                    ];
-                } else if (txInfo.kind === 'transferSui') {
-                    summary = [
-                        {
-                            title: 'Transfer Asset',
-                            details: [
-                                {
-                                    label: 'Amount',
-                                    content: txInfo.data.amount || '---',
-                                },
-                                {
-                                    label: 'Recipient',
-                                    content: txInfo.data.recipient,
-                                },
-                            ],
-                        },
-                    ];
-                } else if (txInfo.kind === 'pay') {
-                    summary = [
-                        {
-                            title: 'Transfer Asset',
-                            details: [
-                                {
-                                    label: 'Amount',
-                                    content: txInfo.data.amounts,
-                                },
-                                {
-                                    label: 'Recipient',
-                                    content: txInfo.data.recipients,
-                                },
-                            ],
-                        },
-                    ];
-                } else if (txInfo.kind === 'paySui') {
-                    summary = [
-                        {
-                            title: 'Transfer Asset',
-                            details: [
-                                {
-                                    label: 'Amount',
-                                    content: txInfo.data.amounts,
-                                },
-                                {
-                                    label: 'Recipient',
-                                    content: txInfo.data.recipients,
-                                },
-                            ],
-                        },
-                    ];
-                } else if (txInfo.kind === 'payAllSui') {
-                    summary = [
-                        {
-                            title: 'Transfer Asset',
-                            details: [
-                                {
-                                    label: 'Amount',
-                                    content: `${txInfo.data.inputCoins.length} Coins`,
-                                },
-                                {
-                                    label: 'Recipient',
-                                    content: txInfo.data.recipient,
-                                },
-                            ],
-                        },
-                    ];
-                }
-
-                if (summary.length === 0) {
-                    summary = [
-                        {
-                            title: 'Transaction Summary',
-                            details: [
-                                {
-                                    label: 'No summary available for this transaction yet.',
-                                },
-                            ],
-                        },
-                    ];
-                }
-
-                if (
-                    creating.length > 0 ||
-                    mutating.length > 0 ||
-                    transferring.length > 0 ||
-                    deleting.length > 0 ||
-                    Object.keys(coinChanges).length > 1
-                ) {
-                    const effects = {
-                        title: 'Effects',
-                        tooltip:
-                            'This transaction will have the following effects on the assets in your wallet.',
-                        details: [] as Detail[],
-                    } as Section;
-
-                    if (creating.length > 0) {
-                        effects.details.push({
-                            label: 'Creating',
-                            content: creating.map(
-                                (creating) =>
-                                    ({
-                                        label: (
-                                            creating?.name || ''
-                                        ).toString(),
-                                        count: 1,
-                                    } as NumberedDetail)
-                            ),
-                        });
-                    }
-
-                    if (mutating.length > 0) {
-                        effects.details.push({
-                            label: 'Modifying',
-                            content: mutating.map(
-                                (mutating) =>
-                                    ({
-                                        label: (
-                                            mutating?.name ?? ''
-                                        ).toString(),
-                                        count: 1,
-                                    } as NumberedDetail)
-                            ),
-                        });
-                    }
-
-                    if (transferring.length > 0) {
-                        effects.details.push({
-                            label: 'Transferring',
-                            content: transferring.map(
-                                (transferring) =>
-                                    ({
-                                        label: (
-                                            transferring?.name || ''
-                                        ).toString(),
-                                        count: 1,
-                                    } as NumberedDetail)
-                            ),
-                        });
-                    }
-
-                    if (deleting.length > 0) {
-                        effects.details.push({
-                            label: 'Deleting',
-                            content: deleting.map(
-                                (deleting) =>
-                                    ({
-                                        label: truncateMiddle(deleting.name),
-                                        count: 1,
-                                    } as NumberedDetail)
-                            ),
-                        });
-                    }
-
-                    if (Object.keys(coinChanges).length > 1) {
-                        effects.details.push({
-                            label: 'Coins',
-                            content: Object.keys(coinChanges)
-                                .filter(
-                                    (name) => name !== coinName(GAS_TYPE_ARG)
-                                )
-                                .map(
-                                    (coinName) =>
-                                        ({
-                                            label: coinName,
-                                            count: `${
-                                                coinChanges[coinName] > 0
-                                                    ? ''
-                                                    : '+'
-                                            }${coinChanges[coinName] * -1}`,
-                                        } as NumberedDetail)
-                                ),
-                        });
-                    }
-
-                    summary.push(effects);
-                }
-
-                const costs = {
-                    title: 'Costs',
-                    details: [
-                        {
-                            label: 'Charges',
-                            content: {
-                                value: formattedCharges,
-                                symbol: chargesSymbol,
-                                dollars: chargeDollars,
-                            },
-                        },
-                        {
-                            label: 'Gas',
-                            content: {
-                                value: formattedGas,
-                                symbol: gasSymbol,
-                                dollars: gasDollars,
-                            },
-                        },
-                        {
-                            break: true,
-                        },
-                        {
-                            label: 'Total',
-                            content: {
-                                value: formattedTotal,
-                                symbol: totalSymbol,
-                                dollars: totalDollars,
-                                total: true,
-                            },
-                        },
-                    ],
-                };
-
-                summary.push(costs);
-
-                const anyPermissionsRequested =
-                    reading.length > 0 ||
-                    mutating.length > 0 ||
-                    transferring.length > 0 ||
-                    deleting.length > 0 ||
-                    Object.keys(coinChanges).length > 0;
-
-                const anyAssetEffects =
-                    creating.length > 0 ||
-                    mutating.length > 0 ||
-                    transferring.length > 0 ||
-                    deleting.length > 0 ||
-                    Object.keys(coinChanges).length > 0;
-
-                const assets = [
+        if (txInfo && typeof txInfo !== 'string' && 'kind' in txInfo) {
+            if (txInfo.kind === 'moveCall') {
+                summary = [
                     {
-                        title: 'Permissions Requested',
-                        subtitle: anyPermissionsRequested
-                            ? 'This transaction has requested access to your assets:'
-                            : null,
-                        details: anyPermissionsRequested
-                            ? [
-                                  {
-                                      label: 'Reading',
-                                      content: `${reading.length} Assets`,
-                                      detail: reading.map(
-                                          (r) =>
-                                              `${formatAddress(r?.address)}::${
-                                                  r?.module
-                                              }::${r?.name}`
-                                      ),
-                                  },
-                                  {
-                                      label: 'Modifying',
-                                      content: `${mutating.length} Assets`,
-                                      detail: mutating.map(
-                                          (m) =>
-                                              `${formatAddress(m?.address)}::${
-                                                  m?.module
-                                              }::${m?.name}`
-                                      ),
-                                  },
-                                  {
-                                      label: 'Transferring',
-                                      content: `${transferring.length} Assets`,
-                                      detail: transferring.map(
-                                          (t) =>
-                                              `${formatAddress(t?.address)}::${
-                                                  t?.module
-                                              }::${t?.name}`
-                                      ),
-                                  },
-                                  {
-                                      label: 'Full Access',
-                                      content: `${deleting.length} Assets`,
-                                      detail: deleting.map((d) =>
-                                          truncateMiddle(d?.name)
-                                      ),
-                                  },
-                                  {
-                                      label: 'Coins',
-                                      content: `${
-                                          Object.keys(coinChanges).length
-                                      } Coins`,
-                                      detail: Object.keys(coinChanges).map(
-                                          (c, index) => (
-                                              <div
-                                                  key={`coin-detail-${index}`}
-                                                  className="text-xs"
-                                              >
-                                                  <div>{c}</div>
-                                              </div>
-                                          )
-                                      ),
-                                  },
-                              ]
-                            : [
-                                  {
-                                      label: 'No access requested.',
-                                  },
-                              ],
-                    } as Section,
-                    {
-                        title: 'Asset Effects',
-                        subtitle: anyAssetEffects
-                            ? 'This transaction have the following effects on your assets (including creating new assets):'
-                            : null,
-                        details: anyAssetEffects
-                            ? [
-                                  {
-                                      label: 'Creating',
-                                      content: `${creating.length} Assets`,
-                                      detail: creating.map(
-                                          (c) =>
-                                              `${formatAddress(c?.address)}::${
-                                                  c?.module
-                                              }::${c?.name}`
-                                      ),
-                                  },
-                                  {
-                                      label: 'Modifying',
-                                      content: `${mutating.length} Assets`,
-                                      detail: mutating.map(
-                                          (m) =>
-                                              `${formatAddress(m?.address)}::${
-                                                  m?.module
-                                              }::${m?.name}`
-                                      ),
-                                  },
-                                  {
-                                      label: 'Transferring',
-                                      content: `${transferring.length} Assets`,
-                                      detail: transferring.map(
-                                          (t) =>
-                                              `${formatAddress(t?.address)}::${
-                                                  t?.module
-                                              }::${t?.name}`
-                                      ),
-                                  },
-                                  {
-                                      label: 'Deleting',
-                                      content: `${deleting.length} Assets`,
-                                      detail: deleting.map((d) =>
-                                          truncateMiddle(d?.name)
-                                      ),
-                                  },
-                                  {
-                                      label: 'Balances',
-                                      content: `${
-                                          Object.keys(coinChanges).length
-                                      } Coins`,
-                                      detail: Object.keys(coinChanges).map(
-                                          (c, index) => (
-                                              <div
-                                                  key={`coin-detail-${index}`}
-                                                  className="text-xs flex gap-1 justify-end items-center"
-                                              >
-                                                  <div>{c}</div>
-                                                  <Dot />
-                                                  <div className="text-slate-500">
-                                                      {coinChanges[c] > 0
-                                                          ? ''
-                                                          : '+'}
-                                                      {coinChanges[c] * -1}
-                                                  </div>
-                                              </div>
-                                          )
-                                      ),
-                                  },
-                              ]
-                            : [
-                                  {
-                                      label: 'No effects on any of your assets.',
-                                  },
-                              ],
-                    } as Section,
-                ];
-
-                const transactionDetails = {
-                    title: 'Transaction',
-                    details: [] as Detail[],
-                };
-
-                const details = [];
-
-                if (txInfo.kind === 'bytes') {
-                    details.push({
-                        title: 'Transaction',
+                        title: 'Requesting Permission To Call',
                         details: [
                             {
-                                label: 'Bytes',
-                                content: {
-                                    type: 'small',
-                                    content: txInfo.data.toLocaleString(),
-                                } as SmallDetail,
+                                label: 'Contract',
+                                content: txInfo.data.module,
+                            },
+                            {
+                                label: 'Function',
+                                content: txInfo.data.function,
+                            },
+                            {
+                                label: 'Permissions',
+                                content: permissions,
                             },
                         ],
-                    } as Section);
-                } else {
-                    for (const attribute of [
-                        'packageObjectId',
-                        'module',
-                        'function',
-                        'arguments',
-                        'gasBudget',
-                        'gasPayment',
-                    ]) {
-                        if (attribute in txInfo.data) {
-                            transactionDetails.details.push({
-                                label: attribute,
-                                content: {
-                                    type: 'small',
-                                    content: JSON.parse(
-                                        JSON.stringify(txInfo.data)
-                                    )[attribute],
-                                } as SmallDetail,
-                            });
-                        }
-                    }
-                }
+                    } as Section,
+                ];
+            } else if (txInfo.kind === 'transferObject') {
+                summary = [
+                    {
+                        title: 'Transfer Asset',
+                        details: [
+                            {
+                                label: 'Asset',
+                                content: transferring[0]?.name,
+                            },
+                            {
+                                label: 'Recipient',
+                                content: txInfo.data.recipient,
+                            },
+                        ],
+                    },
+                ];
+            } else if (txInfo.kind === 'transferSui') {
+                summary = [
+                    {
+                        title: 'Transfer Asset',
+                        details: [
+                            {
+                                label: 'Amount',
+                                content: txInfo.data.amount || '---',
+                            },
+                            {
+                                label: 'Recipient',
+                                content: txInfo.data.recipient,
+                            },
+                        ],
+                    },
+                ];
+            } else if (txInfo.kind === 'pay') {
+                summary = [
+                    {
+                        title: 'Transfer Asset',
+                        details: [
+                            {
+                                label: 'Amount',
+                                content: txInfo.data.amounts,
+                            },
+                            {
+                                label: 'Recipient',
+                                content: txInfo.data.recipients,
+                            },
+                        ],
+                    },
+                ];
+            } else if (txInfo.kind === 'paySui') {
+                summary = [
+                    {
+                        title: 'Transfer Asset',
+                        details: [
+                            {
+                                label: 'Amount',
+                                content: txInfo.data.amounts,
+                            },
+                            {
+                                label: 'Recipient',
+                                content: txInfo.data.recipients,
+                            },
+                        ],
+                    },
+                ];
+            } else if (txInfo.kind === 'payAllSui') {
+                summary = [
+                    {
+                        title: 'Transfer Asset',
+                        details: [
+                            {
+                                label: 'Amount',
+                                content: `${txInfo.data.inputCoins.length} Coins`,
+                            },
+                            {
+                                label: 'Recipient',
+                                content: txInfo.data.recipient,
+                            },
+                        ],
+                    },
+                ];
+            }
+        }
 
-                details.push(transactionDetails);
-
-                details.push({
-                    title: 'Gas',
-                    subtitle: 'All gas fees displayed in MIST',
+        if (summary.length === 0) {
+            summary = [
+                {
+                    title: 'Transaction Summary',
                     details: [
                         {
-                            label: 'Computation',
-                            content: {
-                                type: 'small',
-                                content: gasUsed?.computationCost || '---',
-                            } as SmallDetail,
-                        },
-                        {
-                            label: 'Storage Cost',
-                            content: {
-                                type: 'small',
-                                content: gasUsed?.storageCost || '---',
-                            } as SmallDetail,
-                        },
-                        {
-                            label: 'Storage Rebate',
-                            content: {
-                                type: 'small',
-                                content: gasUsed?.storageRebate || '---',
-                            } as SmallDetail,
-                        },
-                        {
-                            break: true,
-                        },
-                        {
-                            label: 'Total',
-                            content: {
-                                type: 'small',
-                                content: gas,
-                            } as SmallDetail,
+                            label: 'No summary available for this transaction yet.',
                         },
                     ],
-                });
-
-                return {
-                    [TxApprovalTab.SUMMARY]: summary,
-                    [TxApprovalTab.ASSETS]: assets,
-                    [TxApprovalTab.DETAILS]: details,
-                };
-            }
-            case 'move-call':
-                return {
-                    [TxApprovalTab.SUMMARY]: [
-                        {
-                            title: 'Transaction',
-                            details: [
-                                {
-                                    label: 'Transaction Type',
-                                    content: 'MoveCall',
-                                },
-                                {
-                                    label: 'Function',
-                                    content: txRequest.tx.data.function,
-                                },
-                                {
-                                    label: 'Gas Fees',
-                                    content: txRequest.tx.data.gasBudget,
-                                },
-                            ],
-                        },
-                    ],
-                };
-            case 'serialized-move-call':
-                return {
-                    [TxApprovalTab.SUMMARY]: [
-                        {
-                            title: 'Transaction',
-                            details: [
-                                {
-                                    label: 'Transaction Type',
-                                    content: 'SerializedMoveCall',
-                                },
-                                {
-                                    label: 'Contents',
-                                    content: txRequest?.tx?.data,
-                                },
-                            ],
-                        },
-                    ],
-                };
-            default:
-                return {
-                    [TxApprovalTab.DETAILS]: [
-                        {
-                            title: 'Transaction Information',
-                            details: [
-                                {
-                                    label: 'No transaction information available',
-                                },
-                            ],
-                        },
-                    ],
-                };
+                },
+            ];
         }
+
+        if (
+            creating.length > 0 ||
+            mutating.length > 0 ||
+            transferring.length > 0 ||
+            deleting.length > 0 ||
+            Object.keys(coinChanges).length > 1
+        ) {
+            const effects = {
+                title: 'Effects',
+                tooltip:
+                    'This transaction will have the following effects on the assets in your wallet.',
+                details: [] as Detail[],
+            } as Section;
+
+            if (creating.length > 0) {
+                effects.details.push({
+                    label: 'Creating',
+                    content: creating.map(
+                        (creating) =>
+                            ({
+                                label: (creating?.name || '').toString(),
+                                count: 1,
+                            } as NumberedDetail)
+                    ),
+                });
+            }
+
+            if (mutating.length > 0) {
+                effects.details.push({
+                    label: 'Modifying',
+                    content: mutating.map(
+                        (mutating) =>
+                            ({
+                                label: (mutating?.name ?? '').toString(),
+                                count: 1,
+                            } as NumberedDetail)
+                    ),
+                });
+            }
+
+            if (transferring.length > 0) {
+                effects.details.push({
+                    label: 'Transferring',
+                    content: transferring.map(
+                        (transferring) =>
+                            ({
+                                label: (transferring?.name || '').toString(),
+                                count: 1,
+                            } as NumberedDetail)
+                    ),
+                });
+            }
+
+            if (deleting.length > 0) {
+                effects.details.push({
+                    label: 'Deleting',
+                    content: deleting.map(
+                        (deleting) =>
+                            ({
+                                label: truncateMiddle(deleting.name),
+                                count: 1,
+                            } as NumberedDetail)
+                    ),
+                });
+            }
+
+            if (Object.keys(coinChanges).length > 1) {
+                effects.details.push({
+                    label: 'Coins',
+                    content: Object.keys(coinChanges)
+                        .filter((name) => name !== coinName(GAS_TYPE_ARG))
+                        .map(
+                            (coinName) =>
+                                ({
+                                    label: coinName,
+                                    count: `${
+                                        coinChanges[coinName] > 0 ? '' : '+'
+                                    }${coinChanges[coinName] * -1}`,
+                                } as NumberedDetail)
+                        ),
+                });
+            }
+
+            summary.push(effects);
+        }
+
+        const costs = {
+            title: 'Costs',
+            details: [
+                {
+                    label: 'Charges',
+                    content: {
+                        value: formattedCharges,
+                        symbol: chargesSymbol,
+                        dollars: chargeDollars,
+                    },
+                },
+                {
+                    label: 'Gas',
+                    content: {
+                        value: formattedGas,
+                        symbol: gasSymbol,
+                        dollars: gasDollars,
+                    },
+                },
+                {
+                    break: true,
+                },
+                {
+                    label: 'Total',
+                    content: {
+                        value: formattedTotal,
+                        symbol: totalSymbol,
+                        dollars: totalDollars,
+                        total: true,
+                    },
+                },
+            ],
+        };
+
+        summary.push(costs);
+
+        const anyPermissionsRequested =
+            reading.length > 0 ||
+            mutating.length > 0 ||
+            transferring.length > 0 ||
+            deleting.length > 0 ||
+            Object.keys(coinChanges).length > 0;
+
+        const anyAssetEffects =
+            creating.length > 0 ||
+            mutating.length > 0 ||
+            transferring.length > 0 ||
+            deleting.length > 0 ||
+            Object.keys(coinChanges).length > 0;
+
+        const assets = [
+            {
+                title: 'Permissions Requested',
+                subtitle: anyPermissionsRequested
+                    ? 'This transaction has requested access to your assets:'
+                    : null,
+                details: anyPermissionsRequested
+                    ? [
+                          {
+                              label: 'Reading',
+                              content: `${reading.length} Assets`,
+                              detail: reading.map(
+                                  (r) =>
+                                      `${formatAddress(r?.address)}::${
+                                          r?.module
+                                      }::${r?.name}`
+                              ),
+                          },
+                          {
+                              label: 'Modifying',
+                              content: `${mutating.length} Assets`,
+                              detail: mutating.map(
+                                  (m) =>
+                                      `${formatAddress(m?.address)}::${
+                                          m?.module
+                                      }::${m?.name}`
+                              ),
+                          },
+                          {
+                              label: 'Transferring',
+                              content: `${transferring.length} Assets`,
+                              detail: transferring.map(
+                                  (t) =>
+                                      `${formatAddress(t?.address)}::${
+                                          t?.module
+                                      }::${t?.name}`
+                              ),
+                          },
+                          {
+                              label: 'Full Access',
+                              content: `${deleting.length} Assets`,
+                              detail: deleting.map((d) =>
+                                  truncateMiddle(d?.name)
+                              ),
+                          },
+                          {
+                              label: 'Coins',
+                              content: `${
+                                  Object.keys(coinChanges).length
+                              } Coins`,
+                              detail: Object.keys(coinChanges).map(
+                                  (c, index) => (
+                                      <div
+                                          key={`coin-detail-${index}`}
+                                          className="text-xs"
+                                      >
+                                          <div>{c}</div>
+                                      </div>
+                                  )
+                              ),
+                          },
+                      ]
+                    : [
+                          {
+                              label: 'No access requested.',
+                          },
+                      ],
+            } as Section,
+            {
+                title: 'Asset Effects',
+                subtitle: anyAssetEffects
+                    ? 'This transaction have the following effects on your assets (including creating new assets):'
+                    : null,
+                details: anyAssetEffects
+                    ? [
+                          {
+                              label: 'Creating',
+                              content: `${creating.length} Assets`,
+                              detail: creating.map(
+                                  (c) =>
+                                      `${formatAddress(c?.address)}::${
+                                          c?.module
+                                      }::${c?.name}`
+                              ),
+                          },
+                          {
+                              label: 'Modifying',
+                              content: `${mutating.length} Assets`,
+                              detail: mutating.map(
+                                  (m) =>
+                                      `${formatAddress(m?.address)}::${
+                                          m?.module
+                                      }::${m?.name}`
+                              ),
+                          },
+                          {
+                              label: 'Transferring',
+                              content: `${transferring.length} Assets`,
+                              detail: transferring.map(
+                                  (t) =>
+                                      `${formatAddress(t?.address)}::${
+                                          t?.module
+                                      }::${t?.name}`
+                              ),
+                          },
+                          {
+                              label: 'Deleting',
+                              content: `${deleting.length} Assets`,
+                              detail: deleting.map((d) =>
+                                  truncateMiddle(d?.name)
+                              ),
+                          },
+                          {
+                              label: 'Balances',
+                              content: `${
+                                  Object.keys(coinChanges).length
+                              } Coins`,
+                              detail: Object.keys(coinChanges).map(
+                                  (c, index) => (
+                                      <div
+                                          key={`coin-detail-${index}`}
+                                          className="text-xs flex gap-1 justify-end items-center"
+                                      >
+                                          <div>{c}</div>
+                                          <Dot />
+                                          <div className="text-slate-500">
+                                              {coinChanges[c] > 0 ? '' : '+'}
+                                              {coinChanges[c] * -1}
+                                          </div>
+                                      </div>
+                                  )
+                              ),
+                          },
+                      ]
+                    : [
+                          {
+                              label: 'No effects on any of your assets.',
+                          },
+                      ],
+            } as Section,
+        ];
+
+        const transactionDetails = {
+            title: 'Transaction',
+            details: [] as Detail[],
+        };
+
+        const details = [];
+
+        if (txInfo && typeof txInfo !== 'string' && 'kind' in txInfo) {
+            if (txInfo.kind === 'bytes') {
+                details.push({
+                    title: 'Transaction',
+                    details: [
+                        {
+                            label: 'Bytes',
+                            content: {
+                                type: 'small',
+                                content: txInfo.data.toLocaleString(),
+                            } as SmallDetail,
+                        },
+                    ],
+                } as Section);
+            } else {
+                for (const attribute of [
+                    'packageObjectId',
+                    'module',
+                    'function',
+                    'arguments',
+                    'gasBudget',
+                    'gasPayment',
+                ]) {
+                    if (attribute in txInfo.data) {
+                        transactionDetails.details.push({
+                            label: attribute,
+                            content: {
+                                type: 'small',
+                                content: JSON.parse(
+                                    JSON.stringify(txInfo.data)
+                                )[attribute],
+                            } as SmallDetail,
+                        });
+                    }
+                }
+            }
+        }
+
+        details.push(transactionDetails);
+
+        details.push({
+            title: 'Gas',
+            subtitle: 'All gas fees displayed in MIST',
+            details: [
+                {
+                    label: 'Computation',
+                    content: {
+                        type: 'small',
+                        content: gasUsed?.computationCost || '---',
+                    } as SmallDetail,
+                },
+                {
+                    label: 'Storage Cost',
+                    content: {
+                        type: 'small',
+                        content: gasUsed?.storageCost || '---',
+                    } as SmallDetail,
+                },
+                {
+                    label: 'Storage Rebate',
+                    content: {
+                        type: 'small',
+                        content: gasUsed?.storageRebate || '---',
+                    } as SmallDetail,
+                },
+                {
+                    break: true,
+                },
+                {
+                    label: 'Total',
+                    content: {
+                        type: 'small',
+                        content: gas,
+                    } as SmallDetail,
+                },
+            ],
+        });
+
+        return {
+            [TxApprovalTab.SUMMARY]: summary,
+            [TxApprovalTab.ASSETS]: assets,
+            [TxApprovalTab.DETAILS]: details,
+        };
     }, [
         txRequest?.tx,
         formattedCharges,
