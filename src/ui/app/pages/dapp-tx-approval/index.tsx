@@ -1065,7 +1065,11 @@ export function DappTxApprovalPage() {
                     approveTitle="Approve"
                     rejectTitle="Reject"
                     onSubmit={handleOnSubmit}
-                    hasError={!!dryRunError || !!userHasNoSuiError}
+                    hasError={
+                        !!dryRunError ||
+                        !!userHasNoSuiError ||
+                        !!incorrectSigner
+                    }
                 >
                     {errorElement ? (
                         errorElement
