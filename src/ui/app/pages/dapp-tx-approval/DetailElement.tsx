@@ -1,5 +1,6 @@
 import truncateMiddle from '../../helpers/truncate-middle';
 import Body from '../../shared/typography/Body';
+import CopyBody from '../../shared/typography/CopyBody';
 import CostValue from './CostValue';
 import NumberedValue from './NumberedValue';
 import SmallValue from './SmallValue';
@@ -50,7 +51,10 @@ const DetailElement = ({ detail }: { detail: Detail }) => {
             | Cost
     ) => {
         if (!content) return <></>;
-        if (typeof content === 'string') return truncateMiddle(content, 8);
+        if (typeof content === 'string')
+            return (
+                <CopyBody txt={content}>{truncateMiddle(content, 8)}</CopyBody>
+            );
         if (typeof content === 'number') return content;
         if (typeof content === 'boolean') return content;
         if ('value' in content) return <CostValue {...content} />;

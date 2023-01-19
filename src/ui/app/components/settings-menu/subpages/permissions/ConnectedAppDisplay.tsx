@@ -115,7 +115,8 @@ const ConnectedAppDisplay = ({
                     },
                     {
                         keyName: 'Package',
-                        value: truncateMiddle(p.packageObjectId, 6),
+                        value: p.packageObjectId,
+                        shortValue: truncateMiddle(p.packageObjectId, 6),
                     },
                 ];
                 return (

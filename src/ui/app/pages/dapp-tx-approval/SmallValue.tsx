@@ -1,6 +1,7 @@
 import truncateMiddle from '../../helpers/truncate-middle';
 import { useFormatCoin } from '../../hooks';
 import Body from '../../shared/typography/Body';
+import CopyBody from '../../shared/typography/CopyBody';
 
 import type { SuiJsonValue } from '@mysten/sui.js';
 
@@ -31,7 +32,7 @@ const SmallValue = ({ content, type, coinType }: SmallDetail) => {
     };
 
     const Item = ({ item }: { item: string }) => {
-        return <Body>{truncateMiddle(item, 5)}</Body>;
+        return <CopyBody txt={item}>{truncateMiddle(item, 5)}</CopyBody>;
     };
 
     return (

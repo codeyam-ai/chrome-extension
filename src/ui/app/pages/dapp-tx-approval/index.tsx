@@ -14,6 +14,7 @@ import Button from '../../shared/buttons/Button';
 import Alert from '../../shared/feedback/Alert';
 import Body from '../../shared/typography/Body';
 import EthosLink from '../../shared/typography/EthosLink';
+import CopyAsset from './CopyAsset';
 import FormattedCoin from './FormattedCoin';
 import SectionElement from './SectionElement';
 import TabElement from './TabElement';
@@ -57,10 +58,6 @@ export type TabSections = {
 
 const cleanObjectId = (objectId: string) => {
     return objectId.replace('0x0', '').replace('0x', '');
-};
-
-const formatAddress = (address?: string) => {
-    return truncateMiddle(address, 5);
 };
 
 export function DappTxApprovalPage() {
@@ -725,32 +722,23 @@ export function DappTxApprovalPage() {
                           {
                               label: 'Reading',
                               content: `${reading.length} Assets`,
-                              detail: reading.map(
-                                  (r) =>
-                                      `${formatAddress(r?.address)}::${
-                                          r?.module
-                                      }::${r?.name}`
-                              ),
+                              detail: reading.map((r, i) => (
+                                  <CopyAsset key={`reading-${i}`} {...r} />
+                              )),
                           },
                           {
                               label: 'Modifying',
                               content: `${mutating.length} Assets`,
-                              detail: mutating.map(
-                                  (m) =>
-                                      `${formatAddress(m?.address)}::${
-                                          m?.module
-                                      }::${m?.name}`
-                              ),
+                              detail: mutating.map((m, i) => (
+                                  <CopyAsset key={`modifying-${i}`} {...m} />
+                              )),
                           },
                           {
                               label: 'Transferring',
                               content: `${transferring.length} Assets`,
-                              detail: transferring.map(
-                                  (t) =>
-                                      `${formatAddress(t?.address)}::${
-                                          t?.module
-                                      }::${t?.name}`
-                              ),
+                              detail: transferring.map((t, i) => (
+                                  <CopyAsset key={`transferring-${i}`} {...t} />
+                              )),
                           },
                           {
                               label: 'Full Access',
@@ -792,32 +780,32 @@ export function DappTxApprovalPage() {
                           {
                               label: 'Creating',
                               content: `${creating.length} Assets`,
-                              detail: creating.map(
-                                  (c) =>
-                                      `${formatAddress(c?.address)}::${
-                                          c?.module
-                                      }::${c?.name}`
-                              ),
+                              detail: creating.map((c, i) => (
+                                  <CopyAsset
+                                      key={`asset-creating-${i}`}
+                                      {...c}
+                                  />
+                              )),
                           },
                           {
                               label: 'Modifying',
                               content: `${mutating.length} Assets`,
-                              detail: mutating.map(
-                                  (m) =>
-                                      `${formatAddress(m?.address)}::${
-                                          m?.module
-                                      }::${m?.name}`
-                              ),
+                              detail: mutating.map((m, i) => (
+                                  <CopyAsset
+                                      key={`asset-modifying-${i}`}
+                                      {...m}
+                                  />
+                              )),
                           },
                           {
                               label: 'Transferring',
                               content: `${transferring.length} Assets`,
-                              detail: transferring.map(
-                                  (t) =>
-                                      `${formatAddress(t?.address)}::${
-                                          t?.module
-                                      }::${t?.name}`
-                              ),
+                              detail: transferring.map((t, i) => (
+                                  <CopyAsset
+                                      key={`asset-transferring-${i}`}
+                                      {...t}
+                                  />
+                              )),
                           },
                           {
                               label: 'Deleting',

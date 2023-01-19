@@ -1,9 +1,11 @@
 import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
+import CopyBody from '../../typography/CopyBody';
 
 export type KeyNameAndValue = {
     keyName: string;
     value: string;
+    shortValue?: string;
 };
 
 interface KeyValueListProps {
@@ -26,7 +28,13 @@ const KeyValueList = ({ header, keyNamesAndValues }: KeyValueListProps) => {
                         key={key}
                     >
                         <Body isTextColorMedium>{item.keyName}</Body>
-                        <Body isSemibold>{item.value}</Body>
+                        {item.shortValue ? (
+                            <CopyBody txt={item.value} isSemibold>
+                                {item.shortValue}
+                            </CopyBody>
+                        ) : (
+                            <Body isSemibold>{item.value}</Body>
+                        )}
                     </div>
                 );
             })}

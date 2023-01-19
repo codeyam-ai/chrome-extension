@@ -9,14 +9,14 @@ import type { ReactNode, MouseEventHandler } from 'react';
 
 const COPY_CHECKMARK_MILLIS = 2000;
 
-export type CopyToClipboardProps = {
+export interface CopyToClipboardProps {
     txt: string;
     children: ReactNode;
     copyOnlyOnIconClick?: boolean;
     className?: string;
     mode?: 'normal' | 'highlighted';
     direction?: TooltipDirection;
-};
+}
 
 function CopyToClipboard({
     txt,

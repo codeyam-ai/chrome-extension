@@ -1,6 +1,6 @@
 import Typography, { type TypographyProps } from './Typography';
 
-interface BodyProps extends TypographyProps {
+export interface BodyProps extends TypographyProps {
     isSemibold?: boolean;
 }
 
