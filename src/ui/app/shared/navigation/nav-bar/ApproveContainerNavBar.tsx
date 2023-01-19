@@ -21,10 +21,6 @@ const ApproveContainerNavBar = ({ reject }: ApproveContainerNavBarProps) => {
 
     useEffect(() => {
         setShowWalletPicker(false);
-        // thunkExtras.api.getSignerInstance(
-        //     thunkExtras.keypairVault.getKeyPair(activeAccountIndex),
-        //     true
-        // );
     }, [activeAccountIndex]);
 
     return (
