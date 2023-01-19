@@ -16,11 +16,11 @@ import { useAppSelector } from '_src/ui/app/hooks';
 
 interface WalletProfileProps {
     onClick?: () => void;
-    hideWalletPicker?: boolean;
+    inlineWalletPicker?: boolean;
 }
 
 // This component contains the wallet icon, name, and address
-const WalletProfile = ({ onClick, hideWalletPicker }: WalletProfileProps) => {
+const WalletProfile = ({ onClick, inlineWalletPicker }: WalletProfileProps) => {
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex } }) =>
             accountInfos.find(
@@ -34,7 +34,7 @@ const WalletProfile = ({ onClick, hideWalletPicker }: WalletProfileProps) => {
     const shortenedName = truncateString(accountInfo?.name || 'Wallet', 8);
 
     const WalletPicker = () => (
-        <div className="flex flex-row gap-2 items-center">
+        <div className="flex flex-row gap-2 items-center cursor-pointer">
             <WalletColorAndEmojiCircle
                 color={accountInfo?.color}
                 emoji={accountInfo?.emoji}
@@ -43,17 +43,17 @@ const WalletProfile = ({ onClick, hideWalletPicker }: WalletProfileProps) => {
             />
             <BodyLarge isSemibold>{shortenedName}</BodyLarge>
 
-            {!hideWalletPicker && (
-                <ChevronDownIcon className="h-4 w-4 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
-            )}
+            <ChevronDownIcon className="h-4 w-4 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
         </div>
     );
 
     return (
         <div className="flex flex-row gap-2 items-center">
             <div className="flex flex-row gap-2 items-center py-1">
-                {hideWalletPicker ? (
-                    <WalletPicker />
+                {inlineWalletPicker ? (
+                    <div onClick={onClick}>
+                        <WalletPicker />
+                    </div>
                 ) : (
                     <Link
                         to={

@@ -9,10 +9,14 @@ import LoadingIndicator from '../loading/LoadingIndicator';
 import CreateWalletProvider from './CreateWalletProvider';
 
 interface WalletPickerProps {
-    isWalletEditing: boolean;
+    selectOnly?: boolean;
+    isWalletEditing?: boolean;
 }
 
-const WalletPicker = ({ isWalletEditing }: WalletPickerProps) => {
+const WalletPicker = ({
+    selectOnly = false,
+    isWalletEditing = false,
+}: WalletPickerProps) => {
     const [createWallet, setCreateWallet] = useState<() => void>(
         () => () => null
     );
@@ -30,35 +34,37 @@ const WalletPicker = ({ isWalletEditing }: WalletPickerProps) => {
                 activeAccountIndex={activeAccountIndex}
                 isWalletEditing={isWalletEditing}
             />
-            <div>
-                {!isWalletEditing ? (
-                    <div className="pt-6">
-                        <CreateWalletProvider
-                            setCreateWallet={setCreateWallet}
-                            setLoading={setLoading}
-                        >
-                            <Button
-                                buttonStyle="primary"
-                                onClick={createWallet}
-                                disabled={loading}
+            {!selectOnly && (
+                <div>
+                    {!isWalletEditing ? (
+                        <div className="pt-6">
+                            <CreateWalletProvider
+                                setCreateWallet={setCreateWallet}
+                                setLoading={setLoading}
                             >
-                                {loading ? (
-                                    <LoadingIndicator />
-                                ) : (
-                                    'Create Wallet'
-                                )}
-                            </Button>
-                        </CreateWalletProvider>
-                    </div>
-                ) : (
-                    <div className="flex gap-2 py-4 px-5 place-content-center">
-                        <ArrowLongUpIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
-                        <Body isTextColorMedium>
-                            Select the wallet you&apos;d like to edit
-                        </Body>
-                    </div>
-                )}
-            </div>
+                                <Button
+                                    buttonStyle="primary"
+                                    onClick={createWallet}
+                                    disabled={loading}
+                                >
+                                    {loading ? (
+                                        <LoadingIndicator />
+                                    ) : (
+                                        'Create Wallet'
+                                    )}
+                                </Button>
+                            </CreateWalletProvider>
+                        </div>
+                    ) : (
+                        <div className="flex gap-2 py-4 px-5 place-content-center">
+                            <ArrowLongUpIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                            <Body isTextColorMedium>
+                                Select the wallet you&apos;d like to edit
+                            </Body>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 };
