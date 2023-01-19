@@ -1,22 +1,28 @@
+import truncateMiddle from '../../helpers/truncate-middle';
+import CopyBody from '../../shared/typography/CopyBody';
+
 export type NumberedDetail = {
     label: string;
+    truncate?: boolean;
     count: number | string;
 };
 
-const NumberedValue = ({
-    label,
-    count,
-}: {
-    label: string;
-    count: number | string;
-}) => {
+const NumberedValue = ({ label, truncate, count }: NumberedDetail) => {
     return (
         <div
             className={`flex flex-row items-center gap-1 ${
                 count === 0 ? 'opacity-30' : ''
             }`}
         >
-            <div>{label}</div>
+            <div>
+                {truncate ? (
+                    <CopyBody isSemibold txt={label}>
+                        {truncateMiddle(label)}
+                    </CopyBody>
+                ) : (
+                    label
+                )}
+            </div>
             {count > 0 &&
                 (count > 10 ? (
                     <div className="text-xs text-slate-500 ml-1 font-normal">

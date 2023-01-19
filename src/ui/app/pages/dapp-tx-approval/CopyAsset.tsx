@@ -14,7 +14,10 @@ const CopyAsset = ({
     module?: string;
     name?: string;
 }) => (
-    <CopyBody txt={`${address}::${module}::${name}`}>
+    <CopyBody
+        txt={`${address}::${module}::${name}`}
+        className="flex justify-end"
+    >
         {formatAddress(address)}::{module}::{name}
     </CopyBody>
 );

@@ -52,8 +52,12 @@ const DetailElement = ({ detail }: { detail: Detail }) => {
     ) => {
         if (!content) return <></>;
         if (typeof content === 'string')
-            return (
-                <CopyBody txt={content}>{truncateMiddle(content, 8)}</CopyBody>
+            return content.length > 12 ? (
+                <CopyBody isSemibold txt={content}>
+                    {truncateMiddle(content, 8)}
+                </CopyBody>
+            ) : (
+                content
             );
         if (typeof content === 'number') return content;
         if (typeof content === 'boolean') return content;
@@ -85,12 +89,13 @@ const DetailElement = ({ detail }: { detail: Detail }) => {
                 </div>
             </div>
             {detailDetailArray && (
-                <div className="text-right">
+                <div>
                     {detailDetailArray.map(
                         (detailDetail: string, index: number) => (
                             <Body
                                 isSemibold
                                 key={`detail-detail-${detailDetail}-${index}`}
+                                className="flex justify-end"
                             >
                                 {detailDetail}
                             </Body>

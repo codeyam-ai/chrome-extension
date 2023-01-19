@@ -13,6 +13,7 @@ import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import Button from '../../shared/buttons/Button';
 import Alert from '../../shared/feedback/Alert';
 import Body from '../../shared/typography/Body';
+import CopyBody from '../../shared/typography/CopyBody';
 import EthosLink from '../../shared/typography/EthosLink';
 import CopyAsset from './CopyAsset';
 import FormattedCoin from './FormattedCoin';
@@ -634,7 +635,8 @@ export function DappTxApprovalPage() {
                     content: deleting.map(
                         (deleting) =>
                             ({
-                                label: truncateMiddle(deleting.name),
+                                label: deleting.name,
+                                truncate: true,
                                 count: 1,
                             } as NumberedDetail)
                     ),
@@ -743,9 +745,14 @@ export function DappTxApprovalPage() {
                           {
                               label: 'Full Access',
                               content: `${deleting.length} Assets`,
-                              detail: deleting.map((d) =>
-                                  truncateMiddle(d?.name)
-                              ),
+                              detail: deleting.map((d, i) => (
+                                  <CopyBody
+                                      key={`deleting-${i}`}
+                                      txt={d?.name || ''}
+                                  >
+                                      {truncateMiddle(d?.name)}
+                                  </CopyBody>
+                              )),
                           },
                           {
                               label: 'Coins',
@@ -810,9 +817,14 @@ export function DappTxApprovalPage() {
                           {
                               label: 'Deleting',
                               content: `${deleting.length} Assets`,
-                              detail: deleting.map((d) =>
-                                  truncateMiddle(d?.name)
-                              ),
+                              detail: deleting.map((d, i) => (
+                                  <CopyBody
+                                      key={`asset-deleting-${i}`}
+                                      txt={d?.name || ''}
+                                  >
+                                      {truncateMiddle(d?.name)}
+                                  </CopyBody>
+                              )),
                           },
                           {
                               label: 'Balances',
