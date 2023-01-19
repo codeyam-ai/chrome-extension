@@ -4,9 +4,13 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AccountAddress from '../../components/account-address';
+import { AddressMode } from '../../components/account-address/index';
 import truncateMiddle from '../../helpers/truncate-middle';
 import { AppState } from '../../hooks/useInitializedGuard';
+import { saveActiveAccountIndex } from '../../redux/slices/account/index';
 import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
+import Button from '../../shared/buttons/Button';
 import Alert from '../../shared/feedback/Alert';
 import Body from '../../shared/typography/Body';
 import EthosLink from '../../shared/typography/EthosLink';
@@ -28,7 +32,9 @@ import { thunkExtras } from '_redux/store/thunk-extras';
 import { WindowContext } from '_shared/utils/windowContext';
 import { MAILTO_SUPPORT_URL } from '_src/shared/constants';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
+import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
 
+import type { AccountInfo } from '../../KeypairVault';
 import type { Detail } from './DetailElement';
 import type { NumberedDetail } from './NumberedValue';
 import type { Section } from './SectionElement';
@@ -60,6 +66,8 @@ const formatAddress = (address?: string) => {
 };
 
 export function DappTxApprovalPage() {
+    const accountInfos = useAppSelector(({ account }) => account.accountInfos);
+
     const suiName = useMemo(() => coinName(GAS_TYPE_ARG), []);
     const [tab, setTab] = useState(TxApprovalTab.SUMMARY);
 
@@ -90,7 +98,9 @@ export function DappTxApprovalPage() {
     >();
     const [dryRunError, setDryRunError] = useState<string | undefined>();
     const [userHasNoSuiError, setUserHasNoSuiError] = useState(false);
-    const [incorrectSigner, setIncorrectSigner] = useState(false);
+    const [incorrectSigner, setIncorrectSigner] = useState<
+        AccountInfo | undefined
+    >();
 
     const loading =
         guardLoading ||
@@ -291,6 +301,8 @@ export function DappTxApprovalPage() {
     };
 
     useEffect(() => {
+        if (!accountInfos || accountInfos.length === 0) return;
+
         const getEffects = async () => {
             try {
                 if (!txRequest || txRequest.tx.type === 'move-call') {
@@ -306,7 +318,8 @@ export function DappTxApprovalPage() {
                     );
                 } else {
                     signer = thunkExtras.api.getSignerInstance(
-                        thunkExtras.keypairVault.getKeyPair(activeAccountIndex)
+                        thunkExtras.keypairVault.getKeyPair(activeAccountIndex),
+                        true
                     );
                 }
 
@@ -335,7 +348,13 @@ export function DappTxApprovalPage() {
                 if (errorMessage === 'Account mnemonic is not set') {
                     setTimeout(getEffects, 100);
                 } else if (errorMessage.indexOf('IncorrectSigner') > -1) {
-                    setIncorrectSigner(true);
+                    const address = errorMessage.match(
+                        /is owned by account address (.*), but signer address is/
+                    )?.[1];
+                    const accountInfo = accountInfos.find(
+                        (account) => account.address === address
+                    );
+                    setIncorrectSigner(accountInfo);
                 } else {
                     if (isErrorCausedByUserNotHavingEnoughSui(errorMessage)) {
                         setUserHasNoSuiError(true);
@@ -347,7 +366,7 @@ export function DappTxApprovalPage() {
         };
 
         getEffects();
-    }, [txRequest, activeAccountIndex, address, authentication]);
+    }, [txRequest, activeAccountIndex, address, authentication, accountInfos]);
 
     useEffect(() => {
         const getNormalizedFunction = async () => {
@@ -945,6 +964,14 @@ export function DappTxApprovalPage() {
         coinChanges,
     ]);
 
+    const switchSigner = useCallback(async () => {
+        setIncorrectSigner(undefined);
+        const index = accountInfos.findIndex(
+            (accountInfo) => accountInfo === incorrectSigner
+        );
+        await dispatch(saveActiveAccountIndex(index));
+    }, [dispatch, accountInfos, incorrectSigner]);
+
     const errorElement = useMemo(() => {
         if (userHasNoSuiError)
             return (
@@ -958,12 +985,43 @@ export function DappTxApprovalPage() {
 
         if (incorrectSigner)
             return (
-                <div className="px-6 pb-6 flex flex-col gap-6">
+                <div className="px-6 pb-6 flex flex-col gap-6 items-start justify-start">
                     <Alert
                         title="Wrong Wallet Address"
                         subtitle={
-                            <Body>
-                                This transaction request needs to be signed with
+                            <Body as="div" className="flex flex-col gap-3">
+                                <div>
+                                    This transaction request needs to be signed
+                                    with the wallet address:
+                                </div>
+                                <div className="flex gap-2 items-center">
+                                    {incorrectSigner.color && (
+                                        <WalletColorAndEmojiCircle
+                                            {...incorrectSigner}
+                                            circleSizeClasses="h-6 w-6 "
+                                            emojiSizeInPx={12}
+                                        />
+                                    )}
+                                    {incorrectSigner.name && (
+                                        <div>{incorrectSigner.name}</div>
+                                    )}
+                                    <AccountAddress
+                                        showName={false}
+                                        showLink={false}
+                                        mode={AddressMode.FADED}
+                                    />
+                                </div>
+                                <div>
+                                    Would you like to switch to this wallet
+                                    address?
+                                </div>
+                                <Button
+                                    buttonStyle="primary"
+                                    onClick={switchSigner}
+                                    removeContainerPadding={true}
+                                >
+                                    Switch
+                                </Button>
                             </Body>
                         }
                     />
@@ -995,7 +1053,7 @@ export function DappTxApprovalPage() {
                     />
                 </div>
             );
-    }, [incorrectSigner, userHasNoSuiError, dryRunError]);
+    }, [incorrectSigner, userHasNoSuiError, dryRunError, switchSigner]);
 
     return (
         <Loading loading={loading} big={true} resize={true}>

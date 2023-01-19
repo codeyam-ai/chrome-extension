@@ -120,11 +120,11 @@ export default class ApiProvider {
         };
     }
 
-    public getSignerInstance(keypair: Keypair): RawSigner {
+    public getSignerInstance(keypair: Keypair, force?: boolean): RawSigner {
         if (!this._apiFullNodeProvider) {
             this.setNewJsonRpcProvider();
         }
-        if (!this._signer) {
+        if (!this._signer || force) {
             this._signer = new RawSigner(
                 keypair,
                 this._apiFullNodeProvider,
