@@ -90,11 +90,15 @@ export function DappTxApprovalPage() {
     >();
     const [dryRunError, setDryRunError] = useState<string | undefined>();
     const [userHasNoSuiError, setUserHasNoSuiError] = useState(false);
+    const [incorrectSigner, setIncorrectSigner] = useState(false);
 
     const loading =
         guardLoading ||
         txRequestsLoading ||
-        (effects === undefined && !dryRunError && !userHasNoSuiError);
+        (effects === undefined &&
+            !dryRunError &&
+            !userHasNoSuiError &&
+            !incorrectSigner);
 
     const gasUsed = effects?.gasUsed;
     const gas = gasUsed
@@ -305,6 +309,7 @@ export function DappTxApprovalPage() {
                         thunkExtras.keypairVault.getKeyPair(activeAccountIndex)
                     );
                 }
+
                 const transactionEffects = await signer.dryRunTransaction(
                     txRequest.tx.data
                 );
@@ -326,8 +331,11 @@ export function DappTxApprovalPage() {
                 }
             } catch (e) {
                 const errorMessage = (e as Error).message;
+
                 if (errorMessage === 'Account mnemonic is not set') {
                     setTimeout(getEffects, 100);
+                } else if (errorMessage.indexOf('IncorrectSigner') > -1) {
+                    setIncorrectSigner(true);
                 } else {
                     if (isErrorCausedByUserNotHavingEnoughSui(errorMessage)) {
                         setUserHasNoSuiError(true);
@@ -937,6 +945,58 @@ export function DappTxApprovalPage() {
         coinChanges,
     ]);
 
+    const errorElement = useMemo(() => {
+        if (userHasNoSuiError)
+            return (
+                <div className="px-6 pb-6">
+                    <Alert
+                        title="You don't have enough SUI"
+                        subtitle="It looks like your wallet doesn't have enough SUI to pay for the gas for this transaction."
+                    />
+                </div>
+            );
+
+        if (incorrectSigner)
+            return (
+                <div className="px-6 pb-6 flex flex-col gap-6">
+                    <Alert
+                        title="Wrong Wallet Address"
+                        subtitle={
+                            <Body>
+                                This transaction request needs to be signed with
+                            </Body>
+                        }
+                    />
+                </div>
+            );
+
+        if (dryRunError)
+            return (
+                <div className="px-6 pb-6 flex flex-col gap-6">
+                    <Alert
+                        title="Dry run error"
+                        subtitle={
+                            <Body>
+                                Your transaction couldn&apos;t be estimated.
+                                Please try again later. If this issue persists,{' '}
+                                <EthosLink
+                                    type="external"
+                                    to={MAILTO_SUPPORT_URL}
+                                >
+                                    contact Ethos
+                                </EthosLink>
+                                .
+                            </Body>
+                        }
+                    />
+                    <Alert
+                        title="Error details"
+                        subtitle={<Body>{dryRunError}</Body>}
+                    />
+                </div>
+            );
+    }, [incorrectSigner, userHasNoSuiError, dryRunError]);
+
     return (
         <Loading loading={loading} big={true} resize={true}>
             {txRequest ? (
@@ -949,41 +1009,8 @@ export function DappTxApprovalPage() {
                     onSubmit={handleOnSubmit}
                     hasError={!!dryRunError || !!userHasNoSuiError}
                 >
-                    {dryRunError || userHasNoSuiError ? (
-                        <>
-                            {userHasNoSuiError ? (
-                                <div className="px-6 pb-6">
-                                    <Alert
-                                        title="You don't have enough SUI"
-                                        subtitle="It looks like your wallet doesn't have enough SUI to pay for the gas for this transaction."
-                                    />
-                                </div>
-                            ) : (
-                                <div className="px-6 pb-6 flex flex-col gap-6">
-                                    <Alert
-                                        title="Dry run error"
-                                        subtitle={
-                                            <Body>
-                                                Your transaction couldn&apos;t
-                                                be estimated. Please try again
-                                                later. If this issue persists,{' '}
-                                                <EthosLink
-                                                    type="external"
-                                                    to={MAILTO_SUPPORT_URL}
-                                                >
-                                                    contact Ethos
-                                                </EthosLink>
-                                                .
-                                            </Body>
-                                        }
-                                    />
-                                    <Alert
-                                        title="Error details"
-                                        subtitle={<Body>{dryRunError}</Body>}
-                                    />
-                                </div>
-                            )}
-                        </>
+                    {errorElement ? (
+                        errorElement
                     ) : (
                         <div className="flex flex-col gap-6 pb-6">
                             <div className="flex flex-row gap-2 justify-between items-baseline px-6">
