@@ -14,7 +14,7 @@ import Button from '../../shared/buttons/Button';
 import Alert from '../../shared/feedback/Alert';
 import Body from '../../shared/typography/Body';
 import EthosLink from '../../shared/typography/EthosLink';
-import { Dot } from './CostValue';
+import FormattedCoin from './FormattedCoin';
 import SectionElement from './SectionElement';
 import TabElement from './TabElement';
 import Loading from '_components/loading';
@@ -55,8 +55,6 @@ export type TabSections = {
     [key in TxApprovalTab]?: Section[];
 };
 
-const coinName = (coin: string) => coin.split('::')[2];
-
 const cleanObjectId = (objectId: string) => {
     return objectId.replace('0x0', '').replace('0x', '');
 };
@@ -68,7 +66,6 @@ const formatAddress = (address?: string) => {
 export function DappTxApprovalPage() {
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
 
-    const suiName = useMemo(() => coinName(GAS_TYPE_ARG), []);
     const [tab, setTab] = useState(TxApprovalTab.SUMMARY);
 
     const { txID } = useParams();
@@ -250,23 +247,26 @@ export function DappTxApprovalPage() {
         if (!effects?.events) return zero;
 
         const coinBalanceChangeEvents = effects.events.filter(
-            (e) => 'coinBalanceChange' in e
+            (e) =>
+                'coinBalanceChange' in e &&
+                typeof e.coinBalanceChange.owner !== 'string' &&
+                'AddressOwner' in e.coinBalanceChange.owner &&
+                e.coinBalanceChange.owner.AddressOwner === address
         );
 
         return coinBalanceChangeEvents.reduce((totals, e) => {
             if (!('coinBalanceChange' in e)) return totals;
 
             const { coinType, amount } = e.coinBalanceChange;
-            const name = coinName(coinType);
-            if (!totals[name]) totals[name] = 0;
-            totals[name] += amount * -1;
+            if (!totals[coinType]) totals[coinType] = 0;
+            totals[coinType] += amount * -1;
             return totals;
         }, zero);
-    }, [effects]);
+    }, [effects, address]);
 
     const charges = useMemo(
-        () => coinChanges[suiName] - (gas || 0),
-        [coinChanges, suiName, gas]
+        () => coinChanges[GAS_TYPE_ARG] - (gas || 0),
+        [coinChanges, gas]
     );
     const [formattedCharges, chargesSymbol, chargeDollars] = useFormatCoin(
         charges,
@@ -277,7 +277,7 @@ export function DappTxApprovalPage() {
         GAS_TYPE_ARG
     );
     const [formattedTotal, totalSymbol, totalDollars] = useFormatCoin(
-        coinChanges[suiName],
+        coinChanges[GAS_TYPE_ARG],
         GAS_TYPE_ARG
     );
 
@@ -648,7 +648,7 @@ export function DappTxApprovalPage() {
                 effects.details.push({
                     label: 'Coins',
                     content: Object.keys(coinChanges)
-                        .filter((name) => name !== coinName(GAS_TYPE_ARG))
+                        .filter((name) => name !== GAS_TYPE_ARG)
                         .map(
                             (coinName) =>
                                 ({
@@ -833,17 +833,11 @@ export function DappTxApprovalPage() {
                               } Coins`,
                               detail: Object.keys(coinChanges).map(
                                   (c, index) => (
-                                      <div
+                                      <FormattedCoin
                                           key={`coin-detail-${index}`}
-                                          className="text-xs flex gap-1 justify-end items-center"
-                                      >
-                                          <div>{c}</div>
-                                          <Dot />
-                                          <div className="text-slate-500">
-                                              {coinChanges[c] > 0 ? '' : '+'}
-                                              {coinChanges[c] * -1}
-                                          </div>
-                                      </div>
+                                          type={c}
+                                          amount={coinChanges[c] * -1}
+                                      />
                                   )
                               ),
                           },
@@ -878,6 +872,7 @@ export function DappTxApprovalPage() {
                     ],
                 } as Section);
             } else {
+                const parsedData = JSON.parse(JSON.stringify(txInfo.data));
                 for (const attribute of [
                     'packageObjectId',
                     'module',
@@ -891,9 +886,7 @@ export function DappTxApprovalPage() {
                             label: attribute,
                             content: {
                                 type: 'small',
-                                content: JSON.parse(
-                                    JSON.stringify(txInfo.data)
-                                )[attribute],
+                                content: parsedData[attribute],
                             } as SmallDetail,
                         });
                     }
