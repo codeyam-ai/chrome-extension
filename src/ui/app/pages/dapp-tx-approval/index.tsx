@@ -323,6 +323,9 @@ export function DappTxApprovalPage() {
                     );
                 }
 
+                setDryRunError(undefined);
+                setUserHasNoSuiError(false);
+                setIncorrectSigner(undefined);
                 const transactionEffects = await signer.dryRunTransaction(
                     txRequest.tx.data
                 );
