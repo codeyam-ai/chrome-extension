@@ -88,13 +88,19 @@ function TransferNftReviewForm({
                                     keyNamesAndValues={[
                                         {
                                             keyName: 'From',
+                                            shortValue: accountInfo?.name
+                                                ? undefined
+                                                : truncateMiddle(address || ''),
                                             value: accountInfo?.name
                                                 ? accountInfo?.name
-                                                : truncateMiddle(address || ''),
+                                                : address || '',
                                         },
                                         {
                                             keyName: 'To',
-                                            value: truncateMiddle(formData.to),
+                                            shortValue: truncateMiddle(
+                                                formData.to
+                                            ),
+                                            value: formData.to,
                                         },
                                         {
                                             keyName: 'NFT',

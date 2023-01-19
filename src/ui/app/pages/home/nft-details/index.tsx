@@ -86,11 +86,12 @@ function NFTdetailsContent({
                                 </BodyLarge>
                                 <NFTTransactionRows />*/}
                         <KeyValueList
-                            header={'Creator'}
+                            header="Creator"
                             keyNamesAndValues={[
                                 {
                                     keyName: 'Wallet Address',
-                                    value: truncateMiddle(address || ''),
+                                    shortValue: truncateMiddle(address || ''),
+                                    value: address || '',
                                 },
                             ]}
                         />
@@ -103,13 +104,17 @@ function NFTdetailsContent({
                                 },
                                 {
                                     keyName: 'Object ID',
-                                    value: truncateMiddle(
+                                    value: nft.reference.objectId,
+                                    shortValue: truncateMiddle(
                                         nft.reference.objectId
                                     ),
                                 },
                                 {
                                     keyName: 'Digest',
-                                    value: truncateMiddle(nft.reference.digest),
+                                    value: nft.reference.digest,
+                                    shortValue: truncateMiddle(
+                                        nft.reference.digest
+                                    ),
                                 },
                             ]}
                         />

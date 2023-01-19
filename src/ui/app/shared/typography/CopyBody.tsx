@@ -3,8 +3,11 @@ import CopyToClipboard, {
     type CopyToClipboardProps,
 } from '../../components/copy-to-clipboard';
 import Body, { type BodyProps } from './Body';
+import BodyLarge from './BodyLarge';
 
-interface CopyBodyProps extends BodyProps, CopyToClipboardProps {}
+interface CopyBodyProps extends BodyProps, CopyToClipboardProps {
+    large?: boolean;
+}
 
 const CopyBody = (props: CopyBodyProps) => {
     const defaultProps = {
@@ -16,7 +19,11 @@ const CopyBody = (props: CopyBodyProps) => {
 
     return (
         <CopyToClipboard {...defaultProps}>
-            <Body {...defaultProps}></Body>
+            {defaultProps.large ? (
+                <BodyLarge {...defaultProps}></BodyLarge>
+            ) : (
+                <Body {...defaultProps}></Body>
+            )}
         </CopyToClipboard>
     );
 };

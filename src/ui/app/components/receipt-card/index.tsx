@@ -14,6 +14,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
 import { getTheme } from '../../helpers/getTheme';
+import truncateMiddle from '../../helpers/truncate-middle';
 import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
 import { Icon } from '../../shared/icons/Icon';
@@ -26,6 +27,7 @@ import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { formatDate } from '_helpers';
 import { useAppSelector, useFormatCoin, useMiddleEllipsis } from '_hooks';
 import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
+import CopyBody from '_src/ui/app/shared/typography/CopyBody';
 
 import type { TxResultState } from '_redux/slices/txresults';
 
@@ -65,12 +67,27 @@ const AvatarItem = ({
             emoji={emoji}
         />
         <div className={'flex flex-col items-left'}>
-            <BodyLarge isSemibold className={'text-left'}>
-                {header}
-            </BodyLarge>
-            <Body className={'text-ethos-light-text-medium text-left'}>
-                {subheader}
-            </Body>
+            {(header || '').length > 15 ? (
+                <CopyBody
+                    txt={header || ''}
+                    large
+                    isSemibold
+                    className={'text-left'}
+                >
+                    {truncateMiddle(header)}
+                </CopyBody>
+            ) : (
+                <BodyLarge isSemibold className={'text-left'}>
+                    {header}
+                </BodyLarge>
+            )}
+
+            <CopyBody
+                txt={subheader || ''}
+                className={'text-ethos-light-text-medium text-left'}
+            >
+                {truncateMiddle(subheader)}
+            </CopyBody>
         </div>
     </div>
 );
@@ -151,12 +168,6 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         txDigest?.name || '',
         TRUNCATE_MAX_CHAR,
         TRUNCATE_MAX_CHAR - 1
-    );
-
-    const walletAddrStr = useMiddleEllipsis(
-        accountInfo?.address || '',
-        TRUNCATE_MAX_LENGTH,
-        TRUNCATE_PREFIX_LENGTH
     );
 
     const [gas] = useFormatCoin(txDigest.txGas, GAS_TYPE_ARG);
@@ -286,8 +297,8 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                                     : '#6D28D9',
                                 header: fromWallet
                                     ? accountInfo?.name
-                                    : fromAddrStr,
-                                subheader: fromWallet ? walletAddrStr : '',
+                                    : txDigest.from,
+                                subheader: fromWallet ? txDigest.from : '',
                             },
                             to: {
                                 emoji: fromWallet ? '' : accountInfo?.emoji,
@@ -295,9 +306,9 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                                     ? '#6D28D9'
                                     : accountInfo?.color,
                                 header: fromWallet
-                                    ? toAddrStr
+                                    ? txDigest.to
                                     : accountInfo?.name,
-                                subheader: fromWallet ? '' : walletAddrStr,
+                                subheader: fromWallet ? '' : txDigest.from,
                             },
                         }}
                     />
@@ -313,7 +324,8 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                         },
                         {
                             keyName: 'Signature',
-                            value: fromAddrStr,
+                            value: txDigest.from,
+                            shortValue: fromAddrStr,
                         },
                     ]}
                 />

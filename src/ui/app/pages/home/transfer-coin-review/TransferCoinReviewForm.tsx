@@ -103,11 +103,13 @@ function TransferCoinForm({
                         },
                         {
                             keyName: 'To',
-                            value: truncateMiddle(formData.to),
+                            shortValue: truncateMiddle(formData.to),
+                            value: formData.to,
                         },
                         {
                             keyName: 'Token',
-                            value: truncateString(coinSymbol, 12),
+                            shortValue: truncateString(coinSymbol, 12),
+                            value: coinSymbol,
                         },
                         {
                             keyName: 'Transaction Fee',

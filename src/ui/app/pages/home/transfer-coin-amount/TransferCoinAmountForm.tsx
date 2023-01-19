@@ -13,9 +13,9 @@ import { CoinSelect } from '_src/ui/app/pages/home/tokens/CoinDropdown';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Alert from '_src/ui/app/shared/feedback/Alert';
-import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
+import CopyBody from '_src/ui/app/shared/typography/CopyBody';
 
 import type { FormValues } from '.';
 
@@ -125,9 +125,10 @@ function TransferCoinForm({
                     <BodyLarge isTextColorMedium>Sending</BodyLarge>
                     <CoinSelect type={coinType} />
                 </div>
-                <Body isTextColorMedium>{`To: ${truncateMiddle(
-                    formState.to
-                )}`}</Body>
+                <CopyBody
+                    txt={formState.to}
+                    isTextColorMedium
+                >{`To: ${truncateMiddle(formState.to)}`}</CopyBody>
             </div>
             <div className="flex flex-col mb-8 px-6 text-left">
                 <div className={'mb-3'}>
