@@ -265,7 +265,7 @@ export function DappTxApprovalPage() {
     }, [effects, address]);
 
     const charges = useMemo(
-        () => coinChanges[GAS_TYPE_ARG] - (gas || 0),
+        () => (coinChanges[GAS_TYPE_ARG] || 0) - (gas || 0),
         [coinChanges, gas]
     );
     const [formattedCharges, chargesSymbol, chargeDollars] = useFormatCoin(
