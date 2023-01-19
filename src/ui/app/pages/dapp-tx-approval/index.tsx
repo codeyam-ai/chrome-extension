@@ -46,6 +46,7 @@ import type {
     TransactionEffects,
 } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
+import type { ReactNode } from 'react';
 
 export enum TxApprovalTab {
     SUMMARY = 'Summary',
@@ -62,6 +63,7 @@ const cleanObjectId = (objectId: string) => {
 };
 
 export function DappTxApprovalPage() {
+    const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
 
     const [tab, setTab] = useState(TxApprovalTab.SUMMARY);
@@ -92,7 +94,7 @@ export function DappTxApprovalPage() {
         TransactionEffects | undefined | null
     >();
     const [dryRunError, setDryRunError] = useState<string | undefined>();
-    const [userHasNoSuiError, setUserHasNoSuiError] = useState(false);
+    const [explicitError, setExplicitError] = useState<ReactNode | undefined>();
     const [incorrectSigner, setIncorrectSigner] = useState<
         AccountInfo | undefined
     >();
@@ -102,7 +104,7 @@ export function DappTxApprovalPage() {
         txRequestsLoading ||
         (effects === undefined &&
             !dryRunError &&
-            !userHasNoSuiError &&
+            !explicitError &&
             !incorrectSigner);
 
     const gasUsed = effects?.gasUsed;
@@ -298,6 +300,19 @@ export function DappTxApprovalPage() {
         );
     };
 
+    const isErrorCausedByIncorrectSigner = (errorMessage: string) => {
+        return (
+            errorMessage.includes('IncorrectSigner') &&
+            errorMessage.includes('but signer address is')
+        );
+    };
+
+    const isErrorCausedByMissingObject = (errorMessage: string) => {
+        return errorMessage.includes(
+            'Error: RPC Error: Could not find the referenced object'
+        );
+    };
+
     useEffect(() => {
         if (!accountInfos || accountInfos.length === 0) return;
 
@@ -322,7 +337,7 @@ export function DappTxApprovalPage() {
                 }
 
                 setDryRunError(undefined);
-                setUserHasNoSuiError(false);
+                setExplicitError(undefined);
                 setIncorrectSigner(undefined);
                 const transactionEffects = await signer.dryRunTransaction(
                     txRequest.tx.data
@@ -348,17 +363,31 @@ export function DappTxApprovalPage() {
 
                 if (errorMessage === 'Account mnemonic is not set') {
                     setTimeout(getEffects, 100);
-                } else if (errorMessage.indexOf('IncorrectSigner') > -1) {
-                    const address = errorMessage.match(
-                        /is owned by account address (.*), but signer address is/
-                    )?.[1];
-                    const accountInfo = accountInfos.find(
-                        (account) => account.address === address
-                    );
-                    setIncorrectSigner(accountInfo);
                 } else {
-                    if (isErrorCausedByUserNotHavingEnoughSui(errorMessage)) {
-                        setUserHasNoSuiError(true);
+                    if (isErrorCausedByIncorrectSigner(errorMessage)) {
+                        const address = errorMessage.match(
+                            /is owned by account address (.*), but signer address is/
+                        )?.[1];
+                        const accountInfo = accountInfos.find(
+                            (account) => account.address === address
+                        );
+                        setIncorrectSigner(accountInfo);
+                    } else if (isErrorCausedByMissingObject(errorMessage)) {
+                        setExplicitError(
+                            <Alert
+                                title="Missing Contract"
+                                subtitle={`The contract this transaction references does not exist on ${selectedApiEnv}. Please ensure you are on the correct network or contact the creator of this app to report this error.`}
+                            />
+                        );
+                    } else if (
+                        isErrorCausedByUserNotHavingEnoughSui(errorMessage)
+                    ) {
+                        setExplicitError(
+                            <Alert
+                                title="You don't have enough SUI"
+                                subtitle="It looks like your wallet doesn't have enough SUI to pay for the gas for this transaction."
+                            />
+                        );
                     } else {
                         setDryRunError(errorMessage);
                     }
@@ -367,7 +396,14 @@ export function DappTxApprovalPage() {
         };
 
         getEffects();
-    }, [txRequest, activeAccountIndex, address, authentication, accountInfos]);
+    }, [
+        txRequest,
+        activeAccountIndex,
+        address,
+        authentication,
+        accountInfos,
+        selectedApiEnv,
+    ]);
 
     useEffect(() => {
         const getNormalizedFunction = async () => {
@@ -977,15 +1013,8 @@ export function DappTxApprovalPage() {
     }, [dispatch, accountInfos, incorrectSigner]);
 
     const errorElement = useMemo(() => {
-        if (userHasNoSuiError)
-            return (
-                <div className="px-6 pb-6">
-                    <Alert
-                        title="You don't have enough SUI"
-                        subtitle="It looks like your wallet doesn't have enough SUI to pay for the gas for this transaction."
-                    />
-                </div>
-            );
+        if (explicitError)
+            return <div className="px-6 pb-6">{explicitError}</div>;
 
         if (incorrectSigner)
             return (
@@ -1057,7 +1086,7 @@ export function DappTxApprovalPage() {
                     />
                 </div>
             );
-    }, [incorrectSigner, userHasNoSuiError, dryRunError, switchSigner]);
+    }, [incorrectSigner, explicitError, dryRunError, switchSigner]);
 
     return (
         <Loading loading={loading} big={true} resize={true}>
@@ -1070,9 +1099,7 @@ export function DappTxApprovalPage() {
                     rejectTitle="Reject"
                     onSubmit={handleOnSubmit}
                     hasError={
-                        !!dryRunError ||
-                        !!userHasNoSuiError ||
-                        !!incorrectSigner
+                        !!dryRunError || !!explicitError || !!incorrectSigner
                     }
                 >
                     {errorElement ? (
