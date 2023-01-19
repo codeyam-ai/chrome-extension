@@ -887,6 +887,11 @@ export function DappTxApprovalPage() {
                             content: {
                                 type: 'small',
                                 content: parsedData[attribute],
+                                coinType: ['gasBudget', 'gasPayment'].includes(
+                                    attribute
+                                )
+                                    ? GAS_TYPE_ARG
+                                    : null,
                             } as SmallDetail,
                         });
                     }
@@ -898,13 +903,13 @@ export function DappTxApprovalPage() {
 
         details.push({
             title: 'Gas',
-            subtitle: 'All gas fees displayed in MIST',
             details: [
                 {
                     label: 'Computation',
                     content: {
                         type: 'small',
                         content: gasUsed?.computationCost || '---',
+                        coinType: GAS_TYPE_ARG,
                     } as SmallDetail,
                 },
                 {
@@ -912,6 +917,7 @@ export function DappTxApprovalPage() {
                     content: {
                         type: 'small',
                         content: gasUsed?.storageCost || '---',
+                        coinType: GAS_TYPE_ARG,
                     } as SmallDetail,
                 },
                 {
@@ -919,6 +925,7 @@ export function DappTxApprovalPage() {
                     content: {
                         type: 'small',
                         content: gasUsed?.storageRebate || '---',
+                        coinType: GAS_TYPE_ARG,
                     } as SmallDetail,
                 },
                 {
@@ -929,6 +936,7 @@ export function DappTxApprovalPage() {
                     content: {
                         type: 'small',
                         content: gas,
+                        coinType: GAS_TYPE_ARG,
                     } as SmallDetail,
                 },
             ],
