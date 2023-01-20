@@ -26,6 +26,7 @@ import {
     isErrorCausedByMissingObject,
     isErrorCausedByUserNotHavingEnoughSui,
 } from './lib';
+import { standard } from './summary';
 import Loading from '_components/loading';
 import {
     useAppDispatch,
@@ -45,10 +46,9 @@ import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCir
 
 import type { AccountInfo } from '../../KeypairVault';
 import type { Detail } from './DetailElement';
-import type { NumberedDetail } from './NumberedValue';
 import type { Section } from './SectionElement';
 import type { SmallDetail } from './SmallValue';
-import type { TransactionEffects } from '@mysten/sui.js';
+import type { SuiMoveNormalizedType, TransactionEffects } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { ReactNode } from 'react';
 
@@ -57,6 +57,18 @@ export enum TxApprovalTab {
     ASSETS = 'Assets',
     DETAILS = 'Details',
 }
+
+export type Permission = {
+    label: string;
+    count: number;
+};
+
+export type DistilledEffect = {
+    address?: string;
+    module?: string;
+    name?: string;
+    type_arguments?: SuiMoveNormalizedType[];
+};
 
 export type TabSections = {
     [key in TxApprovalTab]?: Section[];
@@ -145,13 +157,10 @@ export function DappTxApprovalPage() {
     }, []);
 
     useEffect(() => {
-        console.log('HI');
         if (!accountInfos || accountInfos.length === 0) return;
 
-        console.log('HI1');
         const getEffects = async () => {
             try {
-                console.log('HI2');
                 if (!txRequest || txRequest.tx.type === 'move-call') {
                     setEffects(null);
                     return;
@@ -173,11 +182,9 @@ export function DappTxApprovalPage() {
                 setDryRunError(undefined);
                 setExplicitError(undefined);
                 setIncorrectSigner(undefined);
-                console.log('HI3', signer, txRequest.tx.data);
                 const transactionEffects = await signer.dryRunTransaction(
                     txRequest.tx.data
                 );
-                console.log('HI4');
 
                 if (transactionEffects.status.status === 'failure') {
                     if (
@@ -268,284 +275,24 @@ export function DappTxApprovalPage() {
     const content: TabSections = useMemo(() => {
         const txInfo = txRequest?.tx.data;
 
-        const permissions = [];
-        if (reading.length > 0) {
-            permissions.push({
-                label: 'Reading',
-                count: reading.length,
-            });
-        }
-
-        if (mutating.length > 0) {
-            permissions.push({
-                label: 'Modifying',
-                count: mutating.length,
-            });
-        }
-
-        if (transferring.length > 0) {
-            permissions.push({
-                label: 'Transferring',
-                count: transferring.length,
-            });
-        }
-
-        if (deleting.length > 0) {
-            permissions.push({
-                label: 'Full Access',
-                count: deleting.length,
-            });
-        }
-
-        if (permissions.length === 0) {
-            permissions.push({
-                label: 'None Requested',
-                count: 0,
-            });
-        }
-
-        let summary: Section[] = [];
-
-        if (txInfo && typeof txInfo !== 'string' && 'kind' in txInfo) {
-            if (txInfo.kind === 'moveCall') {
-                summary = [
-                    {
-                        title: 'Requesting Permission To Call',
-                        details: [
-                            {
-                                label: 'Contract',
-                                content: txInfo.data.module,
-                            },
-                            {
-                                label: 'Function',
-                                content: txInfo.data.function,
-                            },
-                            {
-                                label: 'Permissions',
-                                content: permissions,
-                            },
-                        ],
-                    } as Section,
-                ];
-            } else if (txInfo.kind === 'transferObject') {
-                summary = [
-                    {
-                        title: 'Transfer Asset',
-                        details: [
-                            {
-                                label: 'Asset',
-                                content: transferring[0]?.name,
-                            },
-                            {
-                                label: 'Recipient',
-                                content: txInfo.data.recipient,
-                            },
-                        ],
-                    },
-                ];
-            } else if (txInfo.kind === 'transferSui') {
-                summary = [
-                    {
-                        title: 'Transfer Asset',
-                        details: [
-                            {
-                                label: 'Amount',
-                                content: txInfo.data.amount || '---',
-                            },
-                            {
-                                label: 'Recipient',
-                                content: txInfo.data.recipient,
-                            },
-                        ],
-                    },
-                ];
-            } else if (txInfo.kind === 'pay') {
-                summary = [
-                    {
-                        title: 'Transfer Asset',
-                        details: [
-                            {
-                                label: 'Amount',
-                                content: txInfo.data.amounts,
-                            },
-                            {
-                                label: 'Recipient',
-                                content: txInfo.data.recipients,
-                            },
-                        ],
-                    },
-                ];
-            } else if (txInfo.kind === 'paySui') {
-                summary = [
-                    {
-                        title: 'Transfer Asset',
-                        details: [
-                            {
-                                label: 'Amount',
-                                content: txInfo.data.amounts,
-                            },
-                            {
-                                label: 'Recipient',
-                                content: txInfo.data.recipients,
-                            },
-                        ],
-                    },
-                ];
-            } else if (txInfo.kind === 'payAllSui') {
-                summary = [
-                    {
-                        title: 'Transfer Asset',
-                        details: [
-                            {
-                                label: 'Amount',
-                                content: `${txInfo.data.inputCoins.length} Coins`,
-                            },
-                            {
-                                label: 'Recipient',
-                                content: txInfo.data.recipient,
-                            },
-                        ],
-                    },
-                ];
-            }
-        }
-
-        if (summary.length === 0) {
-            summary = [
-                {
-                    title: 'Transaction Summary',
-                    details: [
-                        {
-                            label: 'No summary available for this transaction yet.',
-                        },
-                    ],
-                },
-            ];
-        }
-
-        if (
-            creating.length > 0 ||
-            mutating.length > 0 ||
-            transferring.length > 0 ||
-            deleting.length > 0 ||
-            Object.keys(coinChanges).length > 1
-        ) {
-            const effects = {
-                title: 'Effects',
-                tooltip:
-                    'This transaction will have the following effects on the assets in your wallet.',
-                details: [] as Detail[],
-            } as Section;
-
-            if (creating.length > 0) {
-                effects.details.push({
-                    label: 'Creating',
-                    content: creating.map(
-                        (creating) =>
-                            ({
-                                label: (creating?.name || '').toString(),
-                                count: 1,
-                            } as NumberedDetail)
-                    ),
-                });
-            }
-
-            if (mutating.length > 0) {
-                effects.details.push({
-                    label: 'Modifying',
-                    content: mutating.map(
-                        (mutating) =>
-                            ({
-                                label: (mutating?.name ?? '').toString(),
-                                count: 1,
-                            } as NumberedDetail)
-                    ),
-                });
-            }
-
-            if (transferring.length > 0) {
-                effects.details.push({
-                    label: 'Transferring',
-                    content: transferring.map(
-                        (transferring) =>
-                            ({
-                                label: (transferring?.name || '').toString(),
-                                count: 1,
-                            } as NumberedDetail)
-                    ),
-                });
-            }
-
-            if (deleting.length > 0) {
-                effects.details.push({
-                    label: 'Deleting',
-                    content: deleting.map(
-                        (deleting) =>
-                            ({
-                                label: deleting.name,
-                                truncate: true,
-                                count: 1,
-                            } as NumberedDetail)
-                    ),
-                });
-            }
-
-            if (Object.keys(coinChanges).length > 1) {
-                effects.details.push({
-                    label: 'Coins',
-                    content: Object.keys(coinChanges)
-                        .filter((name) => name !== GAS_TYPE_ARG)
-                        .map(
-                            (coinName) =>
-                                ({
-                                    label: coinName,
-                                    count: `${
-                                        coinChanges[coinName] > 0 ? '' : '+'
-                                    }${coinChanges[coinName] * -1}`,
-                                    truncate: true,
-                                } as NumberedDetail)
-                        ),
-                });
-            }
-
-            summary.push(effects);
-        }
-
-        const costs = {
-            title: 'Costs',
-            details: [
-                {
-                    label: 'Charges',
-                    content: {
-                        value: formattedCharges,
-                        symbol: chargesSymbol,
-                        dollars: chargeDollars,
-                    },
-                },
-                {
-                    label: 'Gas',
-                    content: {
-                        value: formattedGas,
-                        symbol: gasSymbol,
-                        dollars: gasDollars,
-                    },
-                },
-                {
-                    break: true,
-                },
-                {
-                    label: 'Total',
-                    content: {
-                        value: formattedTotal,
-                        symbol: totalSymbol,
-                        dollars: totalDollars,
-                        total: true,
-                    },
-                },
-            ],
-        };
-
-        summary.push(costs);
+        const summary = standard({
+            txInfo,
+            reading,
+            mutating,
+            creating,
+            transferring,
+            deleting,
+            coinChanges,
+            formattedCharges,
+            chargesSymbol,
+            chargeDollars,
+            formattedGas,
+            gasSymbol,
+            gasDollars,
+            formattedTotal,
+            totalSymbol,
+            totalDollars,
+        });
 
         const anyPermissionsRequested =
             reading.length > 0 ||
