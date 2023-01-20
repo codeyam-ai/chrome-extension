@@ -1,8 +1,8 @@
 import { JsonRpcProvider, Network } from '@mysten/sui.js';
 import get from 'lodash/get';
 
-const PACKAGE_ADDRESS = '0xc0ce82cb6210799e42d4a26bc7b6f5cebca0a010';
-const REGISTRY_ADDRESS = '0x3ffb7841348e62000081a2c98a2455eb4eb346f3';
+import { growthbook } from '../../experimentation/feature-gating';
+
 const SENDER = '0xd4c4c0f3c6eae1bec838442a49bacc358fdc3c5b';
 const DEV_INSPECT_RESULT_PATH_0 = 'results.Ok[0][1].returnValues[0][0]';
 const DEV_INSPECT_RESULT_PATH_1 = 'results.Ok[0][1].returnValues[1][0]';
@@ -27,16 +27,26 @@ const trimAddress = (address: string) =>
 const toFullAddress = (trimmedAddress: string) =>
     trimmedAddress ? `0x${trimmedAddress.padStart(40, '0')}` : '';
 
+const getNameserviceValues = async () => {
+    return growthbook.getFeatureValue('nameservice', {
+        packageAddress: '',
+        registryAddress: '',
+    });
+};
+
 export const getSuiName = async (address: string, sender: string = SENDER) => {
     try {
+        const { packageAddress, registryAddress } =
+            await getNameserviceValues();
+
         const resolverBytes = get(
             await suiProvider.devInspectMoveCall(sender, {
-                packageObjectId: PACKAGE_ADDRESS,
+                packageObjectId: packageAddress,
                 module: 'base_registry',
                 function: 'get_record_by_key',
                 typeArguments: [],
                 arguments: [
-                    REGISTRY_ADDRESS,
+                    registryAddress,
                     `${trimAddress(address)}.addr.reverse`,
                 ],
             }),
@@ -46,7 +56,7 @@ export const getSuiName = async (address: string, sender: string = SENDER) => {
 
         const resolver = toFullAddress(toHexString(resolverBytes));
         const resolverResponse = await suiProvider.devInspectMoveCall(sender, {
-            packageObjectId: PACKAGE_ADDRESS,
+            packageObjectId: packageAddress,
             module: 'resolver',
             function: 'name',
             typeArguments: [],
@@ -69,13 +79,15 @@ export const getSuiAddress = async (
     domain: string,
     sender: string = SENDER
 ) => {
+    const { packageAddress, registryAddress } = await getNameserviceValues();
+
     try {
         const resolverResponse = await suiProvider.devInspectMoveCall(sender, {
-            packageObjectId: PACKAGE_ADDRESS,
+            packageObjectId: packageAddress,
             module: 'base_registry',
             function: 'get_record_by_key',
             typeArguments: [],
-            arguments: [REGISTRY_ADDRESS, domain],
+            arguments: [registryAddress, domain],
         });
 
         const resolverBytes = get(resolverResponse, DEV_INSPECT_RESULT_PATH_1);
@@ -83,7 +95,7 @@ export const getSuiAddress = async (
 
         const resolver = toFullAddress(toHexString(resolverBytes));
         const resolverResponse2 = await suiProvider.devInspectMoveCall(sender, {
-            packageObjectId: PACKAGE_ADDRESS,
+            packageObjectId: packageAddress,
             module: 'resolver',
             function: 'addr',
             typeArguments: [],
