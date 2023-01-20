@@ -3,6 +3,7 @@ import Body from '../../shared/typography/Body';
 import DetailElement from './DetailElement';
 
 import type { Detail } from './DetailElement';
+import type { ReactElement } from 'react';
 
 export type Section = {
     title: string;
@@ -11,7 +12,11 @@ export type Section = {
     details: Detail[];
 };
 
-const SectionElement = ({ section }: { section: Section }) => {
+const SectionElement = ({ section }: { section: Section | ReactElement }) => {
+    if (!section || typeof section !== 'object' || !('title' in section)) {
+        return section;
+    }
+
     return (
         <div className="flex flex-col gap-2">
             <div>

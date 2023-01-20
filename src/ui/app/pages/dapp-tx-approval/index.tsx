@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 
 import AccountAddress from '../../components/account-address';
 import { AddressMode } from '../../components/account-address/index';
+import { growthbook } from '../../experimentation/feature-gating';
 import truncateMiddle from '../../helpers/truncate-middle';
 import { AppState } from '../../hooks/useInitializedGuard';
 import { saveActiveAccountIndex } from '../../redux/slices/account/index';
@@ -26,7 +27,7 @@ import {
     isErrorCausedByMissingObject,
     isErrorCausedByUserNotHavingEnoughSui,
 } from './lib';
-import { standard } from './summary';
+import * as summaries from './summaries';
 import Loading from '_components/loading';
 import {
     useAppDispatch,
@@ -50,7 +51,7 @@ import type { Section } from './SectionElement';
 import type { SmallDetail } from './SmallValue';
 import type { SuiMoveNormalizedType, TransactionEffects } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
-import type { ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 export enum TxApprovalTab {
     SUMMARY = 'Summary',
@@ -71,7 +72,7 @@ export type DistilledEffect = {
 };
 
 export type TabSections = {
-    [key in TxApprovalTab]?: Section[];
+    [key in TxApprovalTab]?: (Section | ReactElement)[];
 };
 
 export function DappTxApprovalPage() {
@@ -274,8 +275,34 @@ export function DappTxApprovalPage() {
 
     const content: TabSections = useMemo(() => {
         const txInfo = txRequest?.tx.data;
+        const customSummaries = growthbook.getFeatureValue(
+            'custom-summaries',
+            {} as Record<string, string>
+        );
 
-        const summary = standard({
+        const summaryKey =
+            txInfo &&
+            typeof txInfo !== 'string' &&
+            'data' in txInfo &&
+            'packageObjectId' in txInfo.data &&
+            customSummaries[
+                `${txInfo.data.packageObjectId}::${txInfo.data.module}::${txInfo.data.function}`
+            ]
+                ? customSummaries[
+                      `${txInfo.data.packageObjectId}::${txInfo.data.module}::${txInfo.data.function}`
+                  ]
+                : 'standard';
+
+        let summaryGenerator;
+        switch (summaryKey) {
+            case 'ticket':
+                summaryGenerator = summaries.ticket;
+                break;
+            default:
+                summaryGenerator = summaries.standard;
+        }
+
+        const summary = summaryGenerator({
             txInfo,
             reading,
             mutating,

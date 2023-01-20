@@ -6,7 +6,7 @@ import type { NumberedDetail } from '../NumberedValue';
 import type { Section } from '../SectionElement';
 import type { MoveCallTransaction, SignableTransaction } from '@mysten/sui.js';
 
-export type SummaryArgs = {
+export type SummaryGeneratorArgs = {
     txInfo?: string | SignableTransaction | MoveCallTransaction;
     reading: (DistilledEffect | null)[];
     mutating: DistilledEffect[];
@@ -42,7 +42,7 @@ const standard = ({
     formattedTotal,
     totalSymbol,
     totalDollars,
-}: SummaryArgs) => {
+}: SummaryGeneratorArgs) => {
     const permissions: Permission[] = [];
 
     if (reading.length > 0) {
