@@ -19,7 +19,15 @@ export function createTokenValidation(
     return Yup.object().shape({
         amount: Yup.mixed()
             .transform((_, original) => {
-                return new BigNumber(original);
+                let v;
+
+                if (original.includes(',')) {
+                    v = original.replace(',', '.');
+                } else {
+                    v = original;
+                }
+
+                return new BigNumber(parseFloat(v));
             })
             .test('required', `\${path} is a required field`, (value) => {
                 return !!value;
