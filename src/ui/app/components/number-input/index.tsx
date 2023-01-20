@@ -31,9 +31,10 @@ function NumberInput<FormValues>({
     const disabled =
         forcedDisabled !== undefined ? forcedDisabled : isSubmitting;
     const { groupDelimiter, decimalDelimiter } = useNumberDelimiters();
+
     const handleOnValueChange = useCallback(
         (values: NumberFormatValues) => {
-            setFieldValue(name, values.floatValue);
+            setFieldValue(name, values.formattedValue);
         },
         [name, setFieldValue]
     );
