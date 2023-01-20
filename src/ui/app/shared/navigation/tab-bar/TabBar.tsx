@@ -4,12 +4,14 @@ import {
     SparklesIcon,
     TicketIcon,
 } from '@heroicons/react/24/solid';
-import { useCallback, useMemo, type ReactNode } from 'react';
+import { useCallback, useMemo, type ReactNode, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
 import ExploreButton from './ExploreButton';
 import { growthbook } from '_src/ui/app/experimentation/feature-gating';
 import { FEATURES } from '_src/ui/app/experimentation/features';
+import { useAppSelector } from '_src/ui/app/hooks';
+import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 const iconClasses = 'w-6 h-6';
 const navItems: NavItem[] = [
@@ -29,14 +31,6 @@ const navItems: NavItem[] = [
         icon: <ClockIcon className={iconClasses} />,
     },
 ];
-
-if (growthbook.isOn(FEATURES.USE_TICKETS)) {
-    navItems.splice(2, 0, {
-        title: 'Tickets',
-        to: './tickets',
-        icon: <TicketIcon className={iconClasses} />,
-    });
-}
 
 type NavItem = {
     to: string;
@@ -69,6 +63,49 @@ const NavItemElement = ({ to, title, icon }: NavItem) => {
 };
 
 const TabBar = () => {
+    const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+
+    useEffect(() => {
+        if (!growthbook.isOn(FEATURES.USE_TICKETS)) return;
+
+        const checkTickets = async () => {
+            const ticketIndex = navItems.findIndex(
+                (navItem) => navItem.title === 'Tickets'
+            );
+
+            try {
+                const ticketProjectIds = await growthbook.getFeatureValue(
+                    'ticket-projects',
+                    []
+                );
+
+                const ticketProjectObjects =
+                    await api.instance.fullNode.getObjectBatch(
+                        ticketProjectIds
+                    );
+
+                if (ticketIndex === -1 && ticketProjectObjects.length > 0) {
+                    navItems.splice(2, 0, {
+                        title: 'Tickets',
+                        to: './tickets',
+                        icon: <TicketIcon className={iconClasses} />,
+                    });
+                } else if (
+                    ticketIndex > -1 &&
+                    ticketProjectObjects.length === 0
+                ) {
+                    navItems.splice(ticketIndex, 1);
+                }
+            } catch (e) {
+                if (ticketIndex > -1) {
+                    navItems.splice(ticketIndex, 1);
+                }
+            }
+        };
+
+        checkTickets();
+    }, [selectedApiEnv]);
+
     return (
         <nav className="px-6 flex flex-row justify-between h-16 sm:rounded-b-2xl items-center border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
             {navItems.map((item, key) => {
