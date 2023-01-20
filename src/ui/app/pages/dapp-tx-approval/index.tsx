@@ -19,7 +19,13 @@ import CopyAsset from './CopyAsset';
 import FormattedCoin from './FormattedCoin';
 import SectionElement from './SectionElement';
 import TabElement from './TabElement';
-import { useNormalizedFunction, useCategorizedEffects } from './lib';
+import {
+    useNormalizedFunction,
+    useCategorizedEffects,
+    isErrorCausedByIncorrectSigner,
+    isErrorCausedByMissingObject,
+    isErrorCausedByUserNotHavingEnoughSui,
+} from './lib';
 import Loading from '_components/loading';
 import {
     useAppDispatch,
@@ -42,12 +48,9 @@ import type { Detail } from './DetailElement';
 import type { NumberedDetail } from './NumberedValue';
 import type { Section } from './SectionElement';
 import type { SmallDetail } from './SmallValue';
-import type {
-    TransactionEffects,
-} from '@mysten/sui.js';
+import type { TransactionEffects } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { ReactNode } from 'react';
-
 
 export enum TxApprovalTab {
     SUMMARY = 'Summary',
@@ -109,14 +112,8 @@ export function DappTxApprovalPage() {
           (gasUsed.storageCost - gasUsed.storageRebate)
         : null;
 
-    const {
-        reading,
-        mutating,
-        creating,
-        deleting,
-        transferring,
-        coinChanges
-    } = useCategorizedEffects({ normalizedFunction, effects, address })
+    const { reading, mutating, creating, deleting, transferring, coinChanges } =
+        useCategorizedEffects({ normalizedFunction, effects, address });
 
     const charges = useMemo(
         () => (coinChanges[GAS_TYPE_ARG] || 0) - (gas || 0),
@@ -147,31 +144,14 @@ export function DappTxApprovalPage() {
         };
     }, []);
 
-    const isErrorCausedByUserNotHavingEnoughSui = (errorMessage: string) => {
-        return (
-            errorMessage.includes('Cannot find gas coin for signer address') &&
-            errorMessage.includes('with amount sufficient for the budget')
-        );
-    };
-
-    const isErrorCausedByIncorrectSigner = (errorMessage: string) => {
-        return (
-            errorMessage.includes('IncorrectSigner') &&
-            errorMessage.includes('but signer address is')
-        );
-    };
-
-    const isErrorCausedByMissingObject = (errorMessage: string) => {
-        return errorMessage.includes(
-            'Error: RPC Error: Could not find the referenced object'
-        );
-    };
-
     useEffect(() => {
+        console.log('HI');
         if (!accountInfos || accountInfos.length === 0) return;
 
+        console.log('HI1');
         const getEffects = async () => {
             try {
+                console.log('HI2');
                 if (!txRequest || txRequest.tx.type === 'move-call') {
                     setEffects(null);
                     return;
@@ -193,9 +173,11 @@ export function DappTxApprovalPage() {
                 setDryRunError(undefined);
                 setExplicitError(undefined);
                 setIncorrectSigner(undefined);
+                console.log('HI3', signer, txRequest.tx.data);
                 const transactionEffects = await signer.dryRunTransaction(
                     txRequest.tx.data
                 );
+                console.log('HI4');
 
                 if (transactionEffects.status.status === 'failure') {
                     if (

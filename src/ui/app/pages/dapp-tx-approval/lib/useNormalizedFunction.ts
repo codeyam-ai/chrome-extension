@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 
-import { thunkExtras } from "_src/ui/app/redux/store/thunk-extras";
+import { thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
 
 import type { SuiMoveNormalizedFunction } from '@mysten/sui.js';
-import type { TransactionRequest } from "_src/shared/messaging/messages/payloads/transactions";
+import type { TransactionRequest } from '_src/shared/messaging/messages/payloads/transactions';
 
 const useNormalizedFunction = (txRequest: TransactionRequest | null) => {
-    const [normalizedFunction, setNormalizedFunction] = useState<SuiMoveNormalizedFunction | undefined>()
+    const [normalizedFunction, setNormalizedFunction] = useState<
+        SuiMoveNormalizedFunction | undefined
+    >();
 
     useEffect(() => {
         const getNormalizedFunction = async () => {
@@ -34,6 +36,6 @@ const useNormalizedFunction = (txRequest: TransactionRequest | null) => {
     }, [txRequest]);
 
     return normalizedFunction;
-}
+};
 
 export default useNormalizedFunction;

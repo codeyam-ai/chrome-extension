@@ -2,15 +2,22 @@ import { useMemo } from 'react';
 
 import { cleanObjectId } from '.';
 
-import type { SuiMoveNormalizedFunction, TransactionEffects } from "@mysten/sui.js";
+import type {
+    SuiMoveNormalizedFunction,
+    TransactionEffects,
+} from '@mysten/sui.js';
 
 export type useCategorizedEffectsArgs = {
-    normalizedFunction?: SuiMoveNormalizedFunction,
-    effects?: TransactionEffects | null,
-    address?: string | null
-}
+    normalizedFunction?: SuiMoveNormalizedFunction;
+    effects?: TransactionEffects | null;
+    address?: string | null;
+};
 
-const useCategorizedEffects = ({ normalizedFunction, effects, address }: useCategorizedEffectsArgs) => {
+const useCategorizedEffects = ({
+    normalizedFunction,
+    effects,
+    address,
+}: useCategorizedEffectsArgs) => {
     const reading = useMemo(() => {
         if (!normalizedFunction) return [];
 
@@ -168,8 +175,8 @@ const useCategorizedEffects = ({ normalizedFunction, effects, address }: useCate
         creating,
         deleting,
         transferring,
-        coinChanges
-    }
-}
+        coinChanges,
+    };
+};
 
 export default useCategorizedEffects;
