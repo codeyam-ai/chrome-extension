@@ -35,7 +35,7 @@ const generators: Record<
         json?: Record<string, SuiJsonValue>;
     }>
 > = {
-    'Capy.AI': async (address: string) => {
+    'Capy.AI Ticket': async (address: string) => {
         const response = await simpleApiCall('tickets/create', 'POST', '', {
             address,
         });

@@ -74,8 +74,8 @@ export function DappSignMessageApprovalPage() {
                     originFavIcon={signMessageRequest.originFavIcon}
                     onSubmit={handleOnSubmit}
                 >
-                    <div className="flex flex-col gap-6 dark:text-slate-300">
-                        <div className="flex gap-3 justify-center items-center">
+                    <div className="flex flex-col justify-center items-center gap-6 dark:text-slate-300 pb-6">
+                        <div className="px-6 flex gap-3 justify-center items-center">
                             <img
                                 src={signMessageRequest.originFavIcon}
                                 className="h-12"
@@ -88,7 +88,7 @@ export function DappSignMessageApprovalPage() {
                                 <div>has requested you sign a message</div>
                             </div>
                         </div>
-                        <div className="flex flex-col gap-1 p-6">
+                        <div className="flex flex-col gap-1 px-6 w-full">
                             <div className="text-sm px-1">Message To Sign</div>
                             <div className="bg-gray-200 text-slate-800 rounded-lg p-3">
                                 <div>
