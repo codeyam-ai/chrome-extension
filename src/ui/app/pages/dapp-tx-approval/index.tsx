@@ -691,6 +691,7 @@ export function DappTxApprovalPage() {
                                     count: `${
                                         coinChanges[coinName] > 0 ? '' : '+'
                                     }${coinChanges[coinName] * -1}`,
+                                    truncate: true,
                                 } as NumberedDetail)
                         ),
                 });
@@ -801,7 +802,12 @@ export function DappTxApprovalPage() {
                                           key={`coin-detail-${index}`}
                                           className="text-xs"
                                       >
-                                          <div>{c}</div>
+                                          <CopyBody
+                                              key={`coins-${index}`}
+                                              txt={c}
+                                          >
+                                              {truncateMiddle(c, 15)}
+                                          </CopyBody>
                                       </div>
                                   )
                               ),

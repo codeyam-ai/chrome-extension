@@ -17,7 +17,7 @@ const NumberedValue = ({ label, truncate, count }: NumberedDetail) => {
             <div>
                 {truncate ? (
                     <CopyBody isSemibold txt={label}>
-                        {truncateMiddle(label)}
+                        {truncateMiddle(label, 9)}
                     </CopyBody>
                 ) : (
                     label

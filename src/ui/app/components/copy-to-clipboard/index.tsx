@@ -59,6 +59,7 @@ function CopyToClipboard({
             direction={direction}
         >
             <span
+                title={txt}
                 className="cursor-pointer flex items-center"
                 onClick={!copyOnlyOnIconClick ? copyToClipboard : undefined}
             >
