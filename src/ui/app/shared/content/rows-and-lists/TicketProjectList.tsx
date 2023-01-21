@@ -33,11 +33,12 @@ const TicketProject = ({
     return (
         <Link to={drilldownLink}>
             <div className="flex flex-col gap-3 items-center w-11/12 mx-auto">
-                <img
-                    src={ticketProject.coverImage}
-                    alt={`${ticketProject.name} Ticket`}
-                    className="rounded-xl"
-                />
+                <div className="bg-[#F2F2F2] dark:bg-[#717377] p-4 rounded-xl">
+                    <img
+                        src={ticketProject.coverImage}
+                        alt={`${ticketProject.name} Ticket`}
+                    />
+                </div>
                 <div className="text-left">
                     <span className="font-semibold">{ticketProject.name}</span>{' '}
                     | {ticketProject.description}

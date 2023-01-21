@@ -23,6 +23,7 @@ type UserApproveContainerProps = {
     approveTitle: string;
     onSubmit: (approved: boolean) => void;
     hasError?: boolean;
+    hideHeader?: boolean;
 };
 
 function UserApproveContainer({
@@ -36,6 +37,7 @@ function UserApproveContainer({
     approveTitle,
     onSubmit,
     hasError,
+    hideHeader,
 }: UserApproveContainerProps) {
     const [submitting, setSubmitting] = useState(false);
 
@@ -53,13 +55,17 @@ function UserApproveContainer({
     return (
         <div className="pb-10 no-scrollbar w-full text-ethos-light-text-default dark:text-ethos-dark-text-default bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
             <ApproveContainerNavBar reject={reject} />
-            <UserApproveHeaderWithSiteIcon
-                iconSrc={originFavIcon}
-                iconAlt={`${originTitle} icon`}
-                isConnectingToEthosDashboard={origin === BASE_URL}
-                title={title}
-                description={description}
-            />
+            {hideHeader ? (
+                <div className="h-6">&nbsp;</div>
+            ) : (
+                <UserApproveHeaderWithSiteIcon
+                    iconSrc={originFavIcon}
+                    iconAlt={`${originTitle} icon`}
+                    isConnectingToEthosDashboard={origin === BASE_URL}
+                    title={title}
+                    description={description}
+                />
+            )}
             <div className={'max-w-lg m-auto'}>
                 <div className="w-full">{children}</div>
                 {!hasError && (

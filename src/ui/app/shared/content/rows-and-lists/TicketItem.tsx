@@ -19,10 +19,13 @@ const TicketItem = ({ ticket }: TicketItemProps) => {
         <Link to={drilldownLink}>
             <div className="border border-slate-200 dark:border-slate-500 rounded-2xl flex flex-col gap-3 overflow-hidden">
                 {filePath && (
-                    <img
-                        src={filePath}
-                        alt={fileExtentionType?.name || 'Ticket'}
-                    />
+                    <div className="bg-[#F2F2F2] dark:bg-[#717377] p-4 rounded-xl">
+                        <img
+                            src={filePath}
+                            alt={fileExtentionType?.name || 'Ticket'}
+                            className="w-full"
+                        />
+                    </div>
                 )}
                 <div className="flex flex-col p-3 gap-1 text-left bg-black bg-opacity-5">
                     <div className="flex justify-between items-center">
