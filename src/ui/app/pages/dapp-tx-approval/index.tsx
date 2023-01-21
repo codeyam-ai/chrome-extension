@@ -6,7 +6,6 @@ import { useParams } from 'react-router-dom';
 
 import AccountAddress from '../../components/account-address';
 import { AddressMode } from '../../components/account-address/index';
-import { growthbook } from '../../experimentation/feature-gating';
 import truncateMiddle from '../../helpers/truncate-middle';
 import { AppState } from '../../hooks/useInitializedGuard';
 import { saveActiveAccountIndex } from '../../redux/slices/account/index';
@@ -26,6 +25,7 @@ import {
     isErrorCausedByIncorrectSigner,
     isErrorCausedByMissingObject,
     isErrorCausedByUserNotHavingEnoughSui,
+    useCustomSummary,
 } from './lib';
 import * as summaries from './summaries';
 import Loading from '_components/loading';
@@ -119,28 +119,7 @@ export function DappTxApprovalPage() {
             !explicitError &&
             !incorrectSigner);
 
-    const summaryKey = useMemo(() => {
-        const txInfo = txRequest?.tx.data;
-        const customSummaries = growthbook.getFeatureValue(
-            'custom-summaries',
-            {} as Record<string, string>
-        );
-
-        const summaryKey =
-            txInfo &&
-            typeof txInfo !== 'string' &&
-            'data' in txInfo &&
-            'packageObjectId' in txInfo.data &&
-            customSummaries[
-                `${txInfo.data.packageObjectId}::${txInfo.data.module}::${txInfo.data.function}`
-            ]
-                ? customSummaries[
-                      `${txInfo.data.packageObjectId}::${txInfo.data.module}::${txInfo.data.function}`
-                  ]
-                : 'standard';
-
-        return summaryKey;
-    }, [txRequest]);
+    const summaryKey = useCustomSummary(txRequest);
 
     const gasUsed = effects?.gasUsed;
     const gas = gasUsed
@@ -327,6 +306,14 @@ export function DappTxApprovalPage() {
             case 'capy-vote':
                 summary = [
                     <summaries.CapyVote key="capy-vote-summary" {...data} />,
+                ];
+                break;
+            case 'capy-nominate':
+                summary = [
+                    <summaries.CapyNominate
+                        key="capy-nominate-summary"
+                        {...data}
+                    />,
                 ];
                 break;
             default:
