@@ -87,7 +87,7 @@ const TicketProjectDetailsContent = ({
                     function: 'create_ticket',
                     typeArguments,
                     arguments: args,
-                    gasBudget: 10000,
+                    gasBudget: 50000,
                 })
             ).unwrap();
 
