@@ -46,8 +46,10 @@ const CapyVote = ({
                 )}
             </div>
 
-            <Body isSemibold>Cost</Body>
             <div className="flex flex-col gap-3 text-sm">
+                <Body isSemibold className="text-lg">
+                    Cost
+                </Body>
                 <div className="flex justify-between items-center border-b pb-3 border-black">
                     <div>Gas Fee</div>
                     <div className="flex justify-end gap-3 items-center">

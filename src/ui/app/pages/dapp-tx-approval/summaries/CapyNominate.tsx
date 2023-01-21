@@ -49,7 +49,7 @@ const CapyNominate = ({
     return (
         <div className="bg-[#F3F9FF] p-6 flex flex-col gap-6 rounded-2xl text-black">
             <div>
-                <div className="text-2xl font-semibold">Nominate</div>
+                <div className="text-2xl font-semibold">Submit</div>
                 <div className="text-lg">{name}</div>
             </div>
             <div className="w-full aspect-square">
@@ -62,8 +62,10 @@ const CapyNominate = ({
                 )}
             </div>
 
-            <Body isSemibold>Cost</Body>
             <div className="flex flex-col gap-3 text-sm">
+                <Body isSemibold className="text-lg">
+                    Cost
+                </Body>
                 <div className="flex justify-between items-center">
                     <div>Entry Fee</div>
                     <div className="flex justify-end gap-3 items-center">

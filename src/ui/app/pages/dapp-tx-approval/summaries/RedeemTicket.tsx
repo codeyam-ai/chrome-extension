@@ -47,10 +47,10 @@ const RedeemTicket = ({
             <div className="flex flex-col gap-3">
                 <div className="text-2xl font-semibold">Use your ticket?</div>
                 <div className="text-base">
-                    You will have {count} remaining uses.
+                    You will have {count ? count - 1 : ''} remaining uses.
                 </div>
             </div>
-            <div className="w-full aspect-square flex justify-center items-center">
+            <div className="w-full aspect-[5/3] flex justify-center items-center">
                 {coverImage && coverImage.length > 0 && (
                     <img
                         src={coverImage}
@@ -60,8 +60,10 @@ const RedeemTicket = ({
                 )}
             </div>
 
-            <Body isSemibold>Cost</Body>
             <div className="flex flex-col gap-3 text-sm">
+                <Body isSemibold className="text-lg">
+                    Cost
+                </Body>
                 <div className="flex justify-between items-center border-b pb-3 border-black">
                     <div>Gas Fee</div>
                     <div className="flex justify-end gap-3 items-center">
