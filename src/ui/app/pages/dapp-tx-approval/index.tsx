@@ -119,6 +119,29 @@ export function DappTxApprovalPage() {
             !explicitError &&
             !incorrectSigner);
 
+    const summaryKey = useMemo(() => {
+        const txInfo = txRequest?.tx.data;
+        const customSummaries = growthbook.getFeatureValue(
+            'custom-summaries',
+            {} as Record<string, string>
+        );
+
+        const summaryKey =
+            txInfo &&
+            typeof txInfo !== 'string' &&
+            'data' in txInfo &&
+            'packageObjectId' in txInfo.data &&
+            customSummaries[
+                `${txInfo.data.packageObjectId}::${txInfo.data.module}::${txInfo.data.function}`
+            ]
+                ? customSummaries[
+                      `${txInfo.data.packageObjectId}::${txInfo.data.module}::${txInfo.data.function}`
+                  ]
+                : 'standard';
+
+        return summaryKey;
+    }, [txRequest]);
+
     const gasUsed = effects?.gasUsed;
     const gas = gasUsed
         ? gasUsed.computationCost +
@@ -275,23 +298,6 @@ export function DappTxApprovalPage() {
 
     const content: TabSections = useMemo(() => {
         const txInfo = txRequest?.tx.data;
-        const customSummaries = growthbook.getFeatureValue(
-            'custom-summaries',
-            {} as Record<string, string>
-        );
-
-        const summaryKey =
-            txInfo &&
-            typeof txInfo !== 'string' &&
-            'data' in txInfo &&
-            'packageObjectId' in txInfo.data &&
-            customSummaries[
-                `${txInfo.data.packageObjectId}::${txInfo.data.module}::${txInfo.data.function}`
-            ]
-                ? customSummaries[
-                      `${txInfo.data.packageObjectId}::${txInfo.data.module}::${txInfo.data.function}`
-                  ]
-                : 'standard';
 
         const data = {
             address,
@@ -600,6 +606,7 @@ export function DappTxApprovalPage() {
         gasUsed,
         coinChanges,
         address,
+        summaryKey,
     ]);
 
     const switchSigner = useCallback(async () => {
@@ -699,6 +706,7 @@ export function DappTxApprovalPage() {
                     hasError={
                         !!dryRunError || !!explicitError || !!incorrectSigner
                     }
+                    hideHeader={summaryKey !== 'standard'}
                 >
                     {errorElement ? (
                         errorElement
