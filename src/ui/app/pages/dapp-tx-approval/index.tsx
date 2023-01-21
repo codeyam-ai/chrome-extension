@@ -293,16 +293,8 @@ export function DappTxApprovalPage() {
                   ]
                 : 'standard';
 
-        let summaryGenerator;
-        switch (summaryKey) {
-            case 'ticket':
-                summaryGenerator = summaries.ticket;
-                break;
-            default:
-                summaryGenerator = summaries.standard;
-        }
-
-        const summary = summaryGenerator({
+        const data = {
+            address,
             txInfo,
             reading,
             mutating,
@@ -319,7 +311,21 @@ export function DappTxApprovalPage() {
             formattedTotal,
             totalSymbol,
             totalDollars,
-        });
+        };
+
+        let summary;
+        switch (summaryKey) {
+            case 'ticket':
+                summary = [<summaries.Ticket key="ticket-summary" {...data} />];
+                break;
+            case 'capy-vote':
+                summary = [
+                    <summaries.CapyVote key="capy-vote-summary" {...data} />,
+                ];
+                break;
+            default:
+                summary = summaries.standard(data);
+        }
 
         const anyPermissionsRequested =
             reading.length > 0 ||
@@ -593,6 +599,7 @@ export function DappTxApprovalPage() {
         gas,
         gasUsed,
         coinChanges,
+        address,
     ]);
 
     const switchSigner = useCallback(async () => {

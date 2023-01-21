@@ -7,6 +7,7 @@ import type { Section } from '../SectionElement';
 import type { MoveCallTransaction, SignableTransaction } from '@mysten/sui.js';
 
 export type SummaryGeneratorArgs = {
+    address?: string | null;
     txInfo?: string | SignableTransaction | MoveCallTransaction;
     reading: (DistilledEffect | null)[];
     mutating: DistilledEffect[];
