@@ -7,7 +7,6 @@ import Body from '_src/ui/app/shared/typography/Body';
 import type { SummaryGeneratorArgs } from './standard';
 
 const CapyNominate = ({
-    address,
     txInfo,
     formattedGas,
     gasSymbol,

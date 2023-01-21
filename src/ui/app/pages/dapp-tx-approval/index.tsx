@@ -300,8 +300,13 @@ export function DappTxApprovalPage() {
 
         let summary;
         switch (summaryKey) {
-            case 'ticket':
-                summary = [<summaries.Ticket key="ticket-summary" {...data} />];
+            case 'redeem-ticket':
+                summary = [
+                    <summaries.RedeemTicket
+                        key="redeem-ticket-summary"
+                        {...data}
+                    />,
+                ];
                 break;
             case 'capy-vote':
                 summary = [

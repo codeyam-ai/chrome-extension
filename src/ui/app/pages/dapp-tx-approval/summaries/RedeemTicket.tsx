@@ -1,11 +1,13 @@
-import { useMemo } from 'react';
+import { get } from 'lodash';
+import { useEffect, useState } from 'react';
 
 import { Dot } from '../CostValue';
+import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { SummaryGeneratorArgs } from './standard';
 
-const CapyVote = ({
+const RedeemTicket = ({
     txInfo,
     formattedGas,
     gasSymbol,
@@ -14,34 +16,46 @@ const CapyVote = ({
     totalSymbol,
     totalDollars,
 }: SummaryGeneratorArgs) => {
-    const { uuid, name } = useMemo(() => {
-        if (
-            typeof txInfo === 'object' &&
-            'data' in txInfo &&
-            'packageObjectId' in txInfo.data &&
-            typeof txInfo.data.arguments[0] === 'string'
-        ) {
-            const [uuid, name] = txInfo.data.arguments[0]
-                .replace(/\+/g, ' ')
-                .split('--');
-            return { uuid, name };
-        }
+    const [count, setCount] = useState<number | undefined>();
+    const [coverImage, setCoverImage] = useState<string | undefined>();
 
-        return { uuid: '', name: '' };
+    useEffect(() => {
+        const getTicket = async () => {
+            if (
+                typeof txInfo === 'object' &&
+                'data' in txInfo &&
+                'packageObjectId' in txInfo.data &&
+                typeof txInfo.data.arguments[1] === 'string'
+            ) {
+                const ticket = await api.instance.fullNode.getObject(
+                    txInfo.data.arguments[1]
+                );
+                const { count, cover_image: coverImage } = get(
+                    ticket,
+                    'details.data.fields'
+                );
+                setCount(parseInt(count));
+                setCoverImage(coverImage);
+            }
+        };
+
+        getTicket();
     }, [txInfo]);
 
     return (
         <div className="bg-[#F3F9FF] p-6 flex flex-col gap-6 rounded-2xl text-black">
-            <div>
-                <div className="text-2xl font-semibold">Vote for</div>
-                <div className="text-lg">{name}</div>
+            <div className="flex flex-col gap-3">
+                <div className="text-2xl font-semibold">Use your ticket?</div>
+                <div className="text-base">
+                    You will have {count} remaining uses.
+                </div>
             </div>
-            <div className="w-full aspect-square">
-                {uuid && uuid.length > 0 && (
+            <div className="w-full aspect-square flex justify-center items-center">
+                {coverImage && coverImage.length > 0 && (
                     <img
-                        src={`https://ai-capy.s3.amazonaws.com/${uuid}`}
-                        alt="Capy"
-                        className="w-full aspect-square rounded-xl"
+                        src={coverImage}
+                        alt="Ticket"
+                        className="w-full -rotate-12"
                     />
                 )}
             </div>
@@ -73,4 +87,4 @@ const CapyVote = ({
     );
 };
 
-export default CapyVote;
+export default RedeemTicket;
