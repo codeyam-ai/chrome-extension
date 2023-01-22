@@ -16,7 +16,6 @@ import {
 } from '_payloads/transactions';
 import Permissions from '_src/background/Permissions';
 import Transactions from '_src/background/Transactions';
-import { BASE_URL } from '_src/shared/constants';
 import { isGetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
 import { isGetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
 import { isDisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
@@ -91,23 +90,18 @@ export class ContentScriptConnection extends Connection {
                 )
             );
         } else if (isGetAccountCustomizations(payload)) {
-            // Currently only the Ethos Explorer can get account customizations.
-            if (this.origin !== BASE_URL) {
-                this.sendNotAllowedError(msg.id);
-            } else {
-                const accountInfos = await this.getAccountInfos();
-                const accountCustomizations: AccountCustomization[] = [];
-                for (const accountInfo of accountInfos) {
-                    accountCustomizations.push({
-                        address: accountInfo.address,
-                        nickname: accountInfo.name || '',
-                        color: accountInfo.color || '',
-                        emoji: accountInfo.emoji || '',
-                    });
-                }
-
-                this.sendAccountCustomizations(accountCustomizations, msg.id);
+            const accountInfos = await this.getAccountInfos();
+            const accountCustomizations: AccountCustomization[] = [];
+            for (const accountInfo of accountInfos) {
+                accountCustomizations.push({
+                    address: accountInfo.address,
+                    nickname: accountInfo.name || '',
+                    color: accountInfo.color || '',
+                    emoji: accountInfo.emoji || '',
+                });
             }
+
+            this.sendAccountCustomizations(accountCustomizations, msg.id);
         } else if (isGetNetwork(payload)) {
             const network = await get('sui_Env');
             this.sendNetwork(network, msg.id);
