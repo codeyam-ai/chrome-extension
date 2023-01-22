@@ -11,6 +11,8 @@ export type PayloadType =
     | 'get-account-response'
     | 'get-account-customizations'
     | 'get-account-customizations-response'
+    | 'get-network'
+    | 'get-network-response'
     | 'open-wallet'
     | 'open-wallet-response'
     | 'disconnect-request'

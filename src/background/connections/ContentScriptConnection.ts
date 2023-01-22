@@ -18,10 +18,11 @@ import Permissions from '_src/background/Permissions';
 import Transactions from '_src/background/Transactions';
 import { BASE_URL } from '_src/shared/constants';
 import { isGetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
+import { isGetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
 import { isDisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import { isExecuteSignMessageRequest } from '_src/shared/messaging/messages/payloads/messages/ExecuteSignMessageRequest';
 import { isGetUrl } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
-import { getEncrypted } from '_src/shared/storagex/store';
+import { get, getEncrypted } from '_src/shared/storagex/store';
 import { openInNewTab } from '_src/shared/utils';
 
 import type { SuiAddress } from '@mysten/sui.js';
@@ -38,6 +39,7 @@ import type {
     PreapprovalResponse,
 } from '_payloads/transactions';
 import type { GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
+import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { ExecuteSignMessageResponse } from '_src/shared/messaging/messages/payloads/messages/ExecuteSignMessageResponse';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
@@ -106,6 +108,9 @@ export class ContentScriptConnection extends Connection {
 
                 this.sendAccountCustomizations(accountCustomizations, msg.id);
             }
+        } else if (isGetNetwork(payload)) {
+            const network = await get('sui_Env');
+            this.sendNetwork(network, msg.id);
         } else if (isHasPermissionRequest(payload)) {
             this.send(
                 createMessage<HasPermissionsResponse>(
@@ -330,6 +335,18 @@ export class ContentScriptConnection extends Connection {
                 {
                     type: 'get-account-customizations-response',
                     accountCustomizations,
+                },
+                responseForID
+            )
+        );
+    }
+
+    private sendNetwork(network: string | number, responseForID?: string) {
+        this.send(
+            createMessage<GetNetworkResponse>(
+                {
+                    type: 'get-network-response',
+                    network,
                 },
                 responseForID
             )

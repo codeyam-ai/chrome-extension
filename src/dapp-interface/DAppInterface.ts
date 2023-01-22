@@ -35,6 +35,8 @@ import type {
 } from '_payloads/transactions';
 import type { GetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
 import type { GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
+import type { GetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
+import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
 import type { DisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
@@ -104,6 +106,15 @@ export class DAppInterface {
                 type: 'get-account',
             }),
             (response) => response.accounts
+        );
+    }
+
+    public getNetwork(): Promise<string | number> {
+        return mapToPromise(
+            this.send<GetNetwork, GetNetworkResponse>({
+                type: 'get-network',
+            }),
+            (response) => response.network
         );
     }
 
