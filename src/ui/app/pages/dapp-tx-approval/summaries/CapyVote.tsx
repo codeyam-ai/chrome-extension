@@ -31,7 +31,7 @@ const CapyVote = ({
     }, [txInfo]);
 
     return (
-        <div className="bg-[#F3F9FF] p-6 flex flex-col gap-6 rounded-2xl text-black">
+        <div className="bg-[#F3F9FF] dark:bg-[#1A1C26] p-6 flex flex-col gap-6 rounded-2xl text-black dark:text-white">
             <div>
                 <div className="text-2xl font-semibold">Vote for</div>
                 <div className="text-lg">{name}</div>
