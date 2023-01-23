@@ -170,6 +170,10 @@ const commonConfig: () => Promise<Configuration> = async () => {
                 path: resolve(CONFIGS_ROOT, 'environment', '.env'),
                 defaults: resolve(CONFIGS_ROOT, 'environment', '.env.defaults'),
                 expand: true,
+
+                // this ensures that on CI we get secrets from the unix environment vars, since .env is not
+                // checked in.
+                systemvars: true,
             }),
             new DefinePlugin({
                 // 'typeof window': JSON.stringify(typeof {}),
