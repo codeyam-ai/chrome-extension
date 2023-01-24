@@ -9,7 +9,6 @@ import {
     ArrowDownIcon,
     SparklesIcon,
 } from '@heroicons/react/24/solid';
-import { JsonRpcProvider, Network } from '@mysten/sui.js';
 import { useMemo, useState } from 'react';
 
 import { Coin } from '../../../redux/slices/sui-objects/Coin';
@@ -18,10 +17,9 @@ import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
 import { useMiddleEllipsis } from '_src/ui/app/hooks';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
+import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
-
-const provider = new JsonRpcProvider(Network.DEVNET);
 
 interface TransactionRowProps {
     txn: TxResultState;
@@ -52,6 +50,8 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
 
     useMemo(async () => {
         if (txn?.txId) {
+            const provider = api.instance.fullNode;
+
             const txTest = await provider.getTransactionWithEffects(txn.txId);
 
             const objId = txTest?.effects?.created?.[0]?.reference.objectId;
