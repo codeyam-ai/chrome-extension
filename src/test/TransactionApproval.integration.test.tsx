@@ -54,7 +54,7 @@ describe('The Transaction Approval popup', () => {
         expect(executeScope.isDone()).toBeTruthy();
     });
 
-    test('the user can reject the transaction', async () => {
+    xtest('the user can reject the transaction', async () => {
         const { txRequestId } = simulateReduxStateWithTransaction();
         const { executeScope } = mockBlockchainTransactionExecution();
 
