@@ -1,4 +1,4 @@
-name: Build
+name: Build & Test
 on: push
 jobs:
     build:
@@ -42,6 +42,15 @@ jobs:
               with:
                   name: ethos-wallet-extension
                   path: dist
+
+            - name: Notify if broken
+              uses: sarisia/actions-status-discord@v1
+              if: failure() && github.ref == 'refs/heads/main'
+              with:
+                username: Eye in the Sky
+                title: "NPM Build"
+                webhook: ${{ secrets.DISCORD_WEBHOOK }}
+
     test:
         runs-on: ubuntu-latest
         steps:
@@ -72,3 +81,11 @@ jobs:
             # Finally, build the chrome extension
             - name: Build Chrome Extension
               run: npm test
+
+            - name: Notify if broken
+              uses: sarisia/actions-status-discord@v1
+              if: failure() && github.ref == 'refs/heads/main'
+              with:
+                username: Eye in the Sky
+                title: "Jest Tests"
+                webhook: ${{ secrets.DISCORD_WEBHOOK }}
