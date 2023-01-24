@@ -30,7 +30,6 @@ const CustomFormikForm = ({
                 name="password"
                 type="password"
                 required={true}
-                autoFocus
                 errorText={
                     isPasswordIncorrect
                         ? 'Password is incorrect'

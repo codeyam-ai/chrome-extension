@@ -6,7 +6,6 @@ import { v4 as uuidV4 } from 'uuid';
 import Browser from 'webextension-polyfill';
 
 import { Window } from './Window';
-import { BASE_URL } from '_src/shared/constants';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 
 import type { ContentScriptConnection } from './connections/ContentScriptConnection';
@@ -171,9 +170,9 @@ class Permissions {
             accounts: [account],
             allowed: true,
             createdDate: Date.now().toString(),
-            favIcon: BASE_URL + '/favicon.ico',
+            favIcon: 'https://ethoswallet.xyz/favicon.ico',
             id: uuidV4(),
-            origin: BASE_URL,
+            origin: 'https://ethoswallet.xyz',
             permissions: [
                 'viewAccount',
                 'suggestTransactions',

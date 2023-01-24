@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AccountAddress from '../../components/account-address';
@@ -40,7 +40,7 @@ import {
     txRequestsSelectors,
 } from '_redux/slices/transaction-requests';
 import { thunkExtras } from '_redux/store/thunk-extras';
-import { WindowContext } from '_shared/utils/windowContext';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 import { MAILTO_SUPPORT_URL } from '_src/shared/constants';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
@@ -159,12 +159,13 @@ export function DappTxApprovalPage() {
         };
     }, []);
 
+    const transaction = txRequest?.tx;
     useEffect(() => {
         if (!accountInfos || accountInfos.length === 0) return;
 
         const getEffects = async () => {
             try {
-                if (!txRequest || txRequest.tx.type === 'move-call') {
+                if (!transaction || transaction.type === 'move-call') {
                     setEffects(null);
                     return;
                 }
@@ -186,7 +187,7 @@ export function DappTxApprovalPage() {
                 setExplicitError(undefined);
                 setIncorrectSigner(undefined);
                 const transactionEffects = await signer.dryRunTransaction(
-                    txRequest.tx.data
+                    transaction.data
                 );
 
                 if (transactionEffects.status.status === 'failure') {
@@ -208,7 +209,9 @@ export function DappTxApprovalPage() {
                 const errorMessage = (e as Error).message;
 
                 if (errorMessage === 'Account mnemonic is not set') {
-                    setTimeout(getEffects, 100);
+                    // this is expected; it happens the first time we render because the redux state is not in good
+                    // shape yet. we basically ingore it and expect the next re-render to work.
+                    // TODO: this seems weird - it would be good to find a better way.
                 } else {
                     if (isErrorCausedByIncorrectSigner(errorMessage)) {
                         const address = errorMessage.match(
@@ -243,6 +246,7 @@ export function DappTxApprovalPage() {
 
         getEffects();
     }, [
+        transaction,
         txRequest,
         activeAccountIndex,
         address,
@@ -265,15 +269,15 @@ export function DappTxApprovalPage() {
         [dispatch, txRequest]
     );
 
-    const theWindow = useContext(WindowContext);
+    const closeWindow = useDependencies().closeWindow;
 
     useEffect(() => {
         const finished =
             !txRequest || (txRequest && txRequest.approved !== null);
         if (!loading && finished) {
-            theWindow.close();
+            closeWindow();
         }
-    }, [loading, txRequest, theWindow]);
+    }, [loading, txRequest, closeWindow]);
 
     const content: TabSections = useMemo(() => {
         const txInfo = txRequest?.tx.data;
