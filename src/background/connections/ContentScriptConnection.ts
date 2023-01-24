@@ -11,18 +11,22 @@ import {
     isHasPermissionRequest,
 } from '_payloads/permissions';
 import {
-    isExecuteTransactionRequest,
     isPreapprovalRequest,
+    isExecuteTransactionRequest,
 } from '_payloads/transactions';
 import Permissions from '_src/background/Permissions';
 import Transactions from '_src/background/Transactions';
+import { BASE_URL } from '_src/shared/constants';
 import { isGetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
+import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
 import { isGetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
 import { isDisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import { isExecuteSignMessageRequest } from '_src/shared/messaging/messages/payloads/messages/ExecuteSignMessageRequest';
 import { isGetUrl } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
 import { get, getEncrypted } from '_src/shared/storagex/store';
 import { openInNewTab } from '_src/shared/utils';
+import { type AccountCustomization } from '_src/types/AccountCustomization';
+import { type AccountInfo } from '_src/ui/app/KeypairVault';
 
 import type { SuiAddress } from '@mysten/sui.js';
 import type { Message } from '_messages';
@@ -30,20 +34,17 @@ import type { PortChannelName } from '_messaging/PortChannelName';
 import type { ErrorPayload } from '_payloads';
 import type { GetAccountResponse } from '_payloads/account/GetAccountResponse';
 import type {
-    AcquirePermissionsResponse,
     HasPermissionsResponse,
+    AcquirePermissionsResponse,
 } from '_payloads/permissions';
 import type {
-    ExecuteTransactionResponse,
     PreapprovalResponse,
+    ExecuteTransactionResponse,
 } from '_payloads/transactions';
-import type { GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
 import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { ExecuteSignMessageResponse } from '_src/shared/messaging/messages/payloads/messages/ExecuteSignMessageResponse';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
-import type { AccountCustomization } from '_src/types/AccountCustomization';
-import type { AccountInfo } from '_src/ui/app/KeypairVault';
 import type { Runtime } from 'webextension-polyfill';
 
 export class ContentScriptConnection extends Connection {
@@ -90,18 +91,23 @@ export class ContentScriptConnection extends Connection {
                 )
             );
         } else if (isGetAccountCustomizations(payload)) {
-            const accountInfos = await this.getAccountInfos();
-            const accountCustomizations: AccountCustomization[] = [];
-            for (const accountInfo of accountInfos) {
-                accountCustomizations.push({
-                    address: accountInfo.address,
-                    nickname: accountInfo.name || '',
-                    color: accountInfo.color || '',
-                    emoji: accountInfo.emoji || '',
-                });
-            }
+            // Currently only the Ethos Explorer can get account customizations.
+            if (this.origin !== BASE_URL) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                const accountInfos = await this.getAccountInfos();
+                const accountCustomizations: AccountCustomization[] = [];
+                for (const accountInfo of accountInfos) {
+                    accountCustomizations.push({
+                        address: accountInfo.address,
+                        nickname: accountInfo.name || '',
+                        color: accountInfo.color || '',
+                        emoji: accountInfo.emoji || '',
+                    });
+                }
 
-            this.sendAccountCustomizations(accountCustomizations, msg.id);
+                this.sendAccountCustomizations(accountCustomizations, msg.id);
+            }
         } else if (isGetNetwork(payload)) {
             const network = await get('sui_Env');
             this.sendNetwork(network, msg.id);
@@ -255,6 +261,18 @@ export class ContentScriptConnection extends Connection {
         }
     }
 
+    private getOrigin(port: Runtime.Port) {
+        if (port.sender?.origin) {
+            return port.sender.origin;
+        }
+        if (port.sender?.url) {
+            return new URL(port.sender.url).origin;
+        }
+        throw new Error(
+            "[ContentScriptConnection] port doesn't include an origin"
+        );
+    }
+
     private async getAccountInfos(): Promise<AccountInfo[]> {
         const locked = await getEncrypted('locked');
         if (locked) {
@@ -275,18 +293,6 @@ export class ContentScriptConnection extends Connection {
         }
 
         return accountInfos;
-    }
-
-    private getOrigin(port: Runtime.Port) {
-        if (port.sender?.origin) {
-            return port.sender.origin;
-        }
-        if (port.sender?.url) {
-            return new URL(port.sender.url).origin;
-        }
-        throw new Error(
-            "[ContentScriptConnection] port doesn't include an origin"
-        );
     }
 
     private sendError<Error extends ErrorPayload>(
