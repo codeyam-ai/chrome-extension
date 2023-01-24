@@ -12,7 +12,6 @@ import {
 } from 'react-router-dom';
 
 import WalletProfile from '../../content/rows-and-lists/WalletProfile';
-import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
 import EthosLink from '../../typography/EthosLink';
 import Header from '../../typography/Header';

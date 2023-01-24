@@ -19,7 +19,7 @@ import { isGetNetwork } from '_src/shared/messaging/messages/payloads/account/Ge
 import { isDisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import { isExecuteSignMessageRequest } from '_src/shared/messaging/messages/payloads/messages/ExecuteSignMessageRequest';
 import { isGetUrl } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
-import { get, getEncrypted } from '_src/shared/storagex/store';
+import { get } from '_src/shared/storagex/store';
 import { openInNewTab } from '_src/shared/utils';
 
 import type { SuiAddress } from '@mysten/sui.js';
