@@ -211,13 +211,21 @@ export function DappTxApprovalPage() {
                     setTimeout(getEffects, 100);
                 } else {
                     if (isErrorCausedByIncorrectSigner(errorMessage)) {
-                        const address = errorMessage.match(
-                            /is owned by account address (.*), but signer address is/
-                        )?.[1];
+                        const address = errorMessage
+                            .match(
+                                /is owned by account address (.*), but signer address is/
+                            )?.[1]
+                            .split(',')[0];
                         const accountInfo = accountInfos.find(
                             (account) => account.address === address
                         );
-                        setIncorrectSigner(accountInfo);
+                        if (accountInfo) {
+                            setIncorrectSigner(accountInfo);
+                        } else {
+                            setDryRunError(
+                                'You are trying to sign this transaction with the wrong wallet address.'
+                            );
+                        }
                     } else if (isErrorCausedByMissingObject(errorMessage)) {
                         setExplicitError(
                             <Alert
@@ -619,7 +627,7 @@ export function DappTxApprovalPage() {
                     <Alert
                         title="Wrong Wallet Address"
                         subtitle={
-                            <Body as="div" className="flex flex-col gap-3">
+                            <Body as="div" className="flex flex-col gap-6 py-6">
                                 <div>
                                     This transaction request needs to be signed
                                     with the wallet address:
