@@ -8,7 +8,10 @@ import { mapToPromise } from './utils';
 import { createMessage } from '_messages';
 import { WindowMessageStream } from '_messaging/WindowMessageStream';
 import { ALL_PERMISSION_TYPES } from '_payloads/permissions';
+import { type GetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
+import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
 import { deserializeSignaturePubkeyPair } from '_src/shared/signature-serialization';
+import { type AccountCustomization } from '_src/types/AccountCustomization';
 
 import type {
     SuiAddress,
@@ -91,6 +94,18 @@ export class DAppInterface {
                 type: 'get-account',
             }),
             (response) => response.accounts
+        );
+    }
+
+    public getAccountCustomizations(): Promise<AccountCustomization[]> {
+        return mapToPromise(
+            this.send<
+                GetAccountCustomizations,
+                GetAccountCustomizationsResponse
+            >({
+                type: 'get-account-customizations',
+            }),
+            (response) => response.accountCustomizations
         );
     }
 

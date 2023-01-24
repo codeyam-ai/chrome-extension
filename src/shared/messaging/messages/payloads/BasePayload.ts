@@ -9,6 +9,8 @@ export type PayloadType =
     | 'get-permission-requests'
     | 'get-account'
     | 'get-account-response'
+    | 'get-account-customizations'
+    | 'get-account-customizations-response'
     | 'get-network'
     | 'get-network-response'
     | 'open-wallet'
