@@ -85,7 +85,7 @@ const CompletePage = () => {
             }
         }, 5000);
 
-        const result = await fetch('https://faucet.devnet.sui.io:443/gas', {
+        const result = await fetch('https://faucet.devnet.sui.io/gas', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

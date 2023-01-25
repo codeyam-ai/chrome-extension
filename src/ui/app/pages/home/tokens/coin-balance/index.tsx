@@ -33,7 +33,7 @@ function CoinBalance({ type, balance }: CoinProps) {
         if (!faucetAvailable) return;
         setUsingFaucet(true);
         const faucet = async () => {
-            await fetch('https://faucet.devnet.sui.io:443/gas', {
+            await fetch('https://faucet.devnet.sui.io/gas', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',

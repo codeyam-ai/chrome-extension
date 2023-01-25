@@ -47,9 +47,9 @@ jobs:
               uses: sarisia/actions-status-discord@v1
               if: failure() && github.ref == 'refs/heads/main'
               with:
-                username: Eye in the Sky
-                title: "NPM Build"
-                webhook: ${{ secrets.DISCORD_WEBHOOK }}
+                  username: Eye in the Sky
+                  title: 'NPM Build'
+                  webhook: ${{ secrets.DISCORD_WEBHOOK }}
 
     test:
         runs-on: ubuntu-latest
@@ -86,6 +86,6 @@ jobs:
               uses: sarisia/actions-status-discord@v1
               if: failure() && github.ref == 'refs/heads/main'
               with:
-                username: Eye in the Sky
-                title: "Jest Tests"
-                webhook: ${{ secrets.DISCORD_WEBHOOK }}
+                  username: Eye in the Sky
+                  title: 'Jest Tests'
+                  webhook: ${{ secrets.DISCORD_WEBHOOK }}

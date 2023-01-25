@@ -45,7 +45,7 @@ const SendReceiveButtonGroup = ({
     const _faucet = useCallback(() => {
         setIsFaucetInProgress(true);
         const faucet = async () => {
-            const result = await fetch('https://faucet.devnet.sui.io:443/gas', {
+            const result = await fetch('https://faucet.devnet.sui.io/gas', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
