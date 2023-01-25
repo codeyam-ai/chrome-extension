@@ -172,9 +172,9 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
 
     const [gas] = useFormatCoin(txDigest.txGas, GAS_TYPE_ARG);
 
-    const [total, totalSymbol, dollars] = useFormatCoin(
+    const [total, totalSymbol, dollars, , icon] = useFormatCoin(
         txDigest.amount ? txDigest.amount : null,
-        GAS_TYPE_ARG
+        txDigest.coinType
     );
 
     const imgUrl = txDigest?.url
@@ -261,7 +261,9 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     isNft={isNft}
                     isFunc={isFunc === 'yes'}
                     coinType={coinType}
-                    imgUrl={imgUrl ? imgUrl : ''}
+                    imgUrl={
+                        coinType === 'Coin' ? icon || '' : imgUrl ? imgUrl : ''
+                    }
                     name={txDigest?.name || 'NFT'}
                     icon={
                         txDigest.status === 'success' ? (

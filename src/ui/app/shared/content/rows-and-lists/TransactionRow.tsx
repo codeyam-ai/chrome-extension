@@ -1,12 +1,12 @@
 import {
+    ArrowsRightLeftIcon,
     CodeBracketSquareIcon,
     PencilSquareIcon,
-    ArrowsRightLeftIcon,
 } from '@heroicons/react/24/outline';
 import {
-    FireIcon,
-    ArrowUpIcon,
     ArrowDownIcon,
+    ArrowUpIcon,
+    FireIcon,
     SparklesIcon,
 } from '@heroicons/react/24/solid';
 import { useMemo, useState } from 'react';
@@ -15,7 +15,7 @@ import { Coin } from '../../../redux/slices/sui-objects/Coin';
 import SuiIcon from '../../svg/SuiIcon';
 import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
-import { useMiddleEllipsis } from '_src/ui/app/hooks';
+import { useFormatCoin, useMiddleEllipsis } from '_src/ui/app/hooks';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
@@ -47,6 +47,10 @@ interface RowDataTypes extends SharedTypes {
 
 const TransactionRow = ({ txn }: TransactionRowProps) => {
     const [header, setHeader] = useState('');
+    const [formattedAmount, symbol, dollars, name, icon] = useFormatCoin(
+        txn.amount,
+        txn.coinType
+    );
 
     useMemo(async () => {
         if (txn?.txId) {
@@ -165,6 +169,8 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 <IconContainer>
                     <SuiIcon width={14} height={20} color={'white'} />
                 </IconContainer>
+            ) : icon ? (
+                <img src={icon} alt={name} className="w-10 h-10" />
             ) : (
                 <UnknownToken width={40} height={40} />
             )}
@@ -327,8 +333,9 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
             link={rowData.link}
             header={rowData.header}
             subheader={rowData.txDirText}
-            txAmount={rowData.amount}
-            coinType={rowData.coinType}
+            formattedAmount={formattedAmount}
+            symbol={symbol}
+            dollars={dollars}
         />
     );
 };

@@ -30,7 +30,15 @@ export const AssetCard = ({
                 !isFunc && (
                     <div className={'relative'} style={{ zIndex: 1 }}>
                         {coinType !== 'SUI' ? (
-                            <UnknownToken width={56} height={56} />
+                            imgUrl ? (
+                                <img
+                                    src={imgUrl}
+                                    alt={name}
+                                    className="w-[56px] h-[56px]"
+                                />
+                            ) : (
+                                <UnknownToken width={56} height={56} />
+                            )
                         ) : (
                             <TxSui
                                 borderColor={
