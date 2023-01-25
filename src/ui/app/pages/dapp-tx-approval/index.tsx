@@ -255,7 +255,6 @@ export function DappTxApprovalPage() {
         getEffects();
     }, [
         transaction,
-        txRequest,
         activeAccountIndex,
         address,
         authentication,
