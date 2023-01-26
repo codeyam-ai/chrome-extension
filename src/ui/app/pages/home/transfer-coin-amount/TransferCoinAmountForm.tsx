@@ -123,7 +123,7 @@ function TransferCoinForm({
                     className={'mb-5 relative flex flex-row items-center gap-6'}
                 >
                     <BodyLarge isTextColorMedium>Sending</BodyLarge>
-                    <CoinSelect type={coinType} />
+                    <CoinSelect selectedCoinType={coinType} />
                 </div>
                 <CopyBody
                     txt={formState.to}
