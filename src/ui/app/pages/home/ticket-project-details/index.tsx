@@ -18,6 +18,10 @@ import Title from '_src/ui/app/shared/typography/Title';
 import type { SuiObject } from '@mysten/sui.js';
 import type { TicketProjectProps } from '_src/ui/app/shared/content/rows-and-lists/TicketProjectList';
 
+type RPCError = {
+    message: string;
+};
+
 const TicketProjectDetailsContent = ({
     ticketProject,
 }: {
@@ -115,7 +119,14 @@ const TicketProjectDetailsContent = ({
                 );
             }
         } catch (e) {
-            setError(`${e}`);
+            const { message } = e as RPCError;
+            if (message.indexOf('finality') > -1) {
+                setError(
+                    'Transaction timed out before reaching finality. Please wait a moment a try again.'
+                );
+            } else {
+                setError((e as RPCError).message);
+            }
         }
 
         setMinting(false);

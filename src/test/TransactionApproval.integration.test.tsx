@@ -125,7 +125,7 @@ describe('The Transaction Approval popup', () => {
             .post(
                 '/',
                 _.matches({
-                    method: 'sui_dryRunTransaction',
+                    method: 'sui_',
                     params: ['ZmFrZSBkYXRh'],
                 })
             )

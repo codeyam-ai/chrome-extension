@@ -186,9 +186,8 @@ export function DappTxApprovalPage() {
                 setDryRunError(undefined);
                 setExplicitError(undefined);
                 setIncorrectSigner(undefined);
-                const transactionEffects = await signer.dryRunTransaction(
-                    transaction.data
-                );
+                const { effects: transactionEffects } =
+                    await signer.devInspectTransaction(transaction.data);
 
                 if (transactionEffects.status.status === 'failure') {
                     if (
