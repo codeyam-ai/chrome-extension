@@ -43,6 +43,9 @@ export class NFT {
         const id = get(obj, 'reference.objectId');
         const bagId = get(obj, 'data.fields.bag.fields.id.id');
         const owner = get(obj, 'data.fields.logical_owner');
+
+        if (!bagId) return obj;
+
         const bagObjects = await provider.getObjectsOwnedByObject(bagId);
         const objectIds = bagObjects.map((bagObject) => bagObject.objectId);
         const objects = await provider.getObjectBatch(objectIds);

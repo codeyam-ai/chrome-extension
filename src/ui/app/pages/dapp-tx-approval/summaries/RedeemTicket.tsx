@@ -30,10 +30,11 @@ const RedeemTicket = ({
                 const ticket = await api.instance.fullNode.getObject(
                     txInfo.data.arguments[1]
                 );
-                const { count, cover_image: coverImage } = get(
-                    ticket,
-                    'details.data.fields'
-                );
+
+                const fields = get(ticket, 'details.data.fields');
+                if (!fields) return;
+
+                const { count, cover_image: coverImage } = fields;
                 setCount(parseInt(count));
                 setCoverImage(coverImage);
             }
