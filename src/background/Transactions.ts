@@ -15,6 +15,7 @@ import Browser from 'webextension-polyfill';
 import Authentication from './Authentication';
 import { Window } from './Window';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
+import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 import type { MoveCallTransaction } from '@mysten/sui.js';
 import type { TransactionDataType } from '_messages/payloads/transactions/ExecuteTransactionRequest';
@@ -211,8 +212,8 @@ class Transactions {
         tx: MoveCallTransaction;
     }) {
         const activeAccount = await this.getActiveAccount();
-
-        const endpoint = process.env.API_ENDPOINT_DEV_NET_FULLNODE || '';
+        const { sui_Env } = await Browser.storage.local.get('sui_Env');
+        const endpoint = api.getEndPoints(sui_Env).fullNode;
 
         const callData = {
             method: 'POST',
