@@ -97,17 +97,23 @@ export const generateActiveNetworkList = (): NetworkTypes[] => {
 export default class ApiProvider {
     private _apiFullNodeProvider?: JsonRpcProvider;
     private _signer: RawSigner | null = null;
+    private _apiEnv: API_ENV = DEFAULT_API_ENV;
 
     public setNewJsonRpcProvider(
         apiEnv: API_ENV = DEFAULT_API_ENV,
         customRPC?: string | null
     ) {
+        this._apiEnv = apiEnv;
         // We also clear the query client whenever set set a new API provider:
         queryClient.clear();
         this._apiFullNodeProvider = new JsonRpcProvider(
-            customRPC ?? getDefaultAPI(apiEnv).fullNode
+            customRPC ?? getDefaultAPI(this._apiEnv).fullNode
         );
         this._signer = null;
+    }
+
+    public getEndPoints(apiEnv?: API_ENV) {
+        return getDefaultAPI(apiEnv || this._apiEnv || DEFAULT_API_ENV);
     }
 
     public get instance() {
