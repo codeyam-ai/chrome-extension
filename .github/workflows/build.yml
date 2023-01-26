@@ -32,7 +32,6 @@ jobs:
             - name: Build Chrome Extension
               env:
                   MASTER_PASSPHRASE: ${{ secrets.MASTER_PASSPHRASE }}
-                  ETHOS_BASE_URL: ${{ secrets.ETHOS_BASE_URL }}
                   GROWTHBOOK_API_KEY: ${{ secrets.GROWTHBOOK_API_KEY }}
               run: npm run build:prod
 
