@@ -97,7 +97,7 @@ function TransferCoinRecipientForm({
                         }
                     >
                         <BodyLarge isTextColorMedium>Sending</BodyLarge>
-                        <CoinSelect type={coinType} />
+                        <CoinSelect selectedCoinType={coinType} />
                     </div>
                     <div className={'relative'}>
                         <Field
