@@ -125,13 +125,13 @@ describe('The Transaction Approval popup', () => {
             .post(
                 '/',
                 _.matches({
-                    method: 'sui_',
+                    method: 'sui_devInspectTransaction',
                     params: ['ZmFrZSBkYXRh'],
                 })
             )
             .reply(200, {
                 jsonrpc: '2.0',
-                result: renderTemplate('dryRunTransaction', {}),
+                result: renderTemplate('devInspectTransaction', {}),
                 id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
             });
         const executeScope = nock('http://dev-net-fullnode.example.com')
