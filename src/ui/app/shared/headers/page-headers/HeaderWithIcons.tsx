@@ -29,7 +29,12 @@ const HeaderWithIcons = ({
                 <span className="h-14 w-14">{firstIcon}</span>
             )}
 
-            <Title as="h1">{title}</Title>
+            <Title
+                as="h1"
+                className="text-ethos-light-text-default dark:text-ethos-dark-text-default"
+            >
+                {title}
+            </Title>
             <BodyLarge isTextColorMedium>{description}</BodyLarge>
         </div>
     );
