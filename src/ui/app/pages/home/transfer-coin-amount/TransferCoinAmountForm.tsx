@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, memo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import Sui from '../tokens/Sui';
+import UnknownToken from '../tokens/UnknownToken';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import NumberInput from '_components/number-input';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
@@ -35,15 +36,15 @@ const AvailableBalance = ({
     filterType?: string | null;
 }) => {
     const FormatCoin = (balance: bigint, type: string) => {
-        const [balanceFormatted, symbol, usdAmount] = useFormatCoin(
+        const [balanceFormatted, symbol, usdAmount, , icon] = useFormatCoin(
             balance,
             type
         );
 
-        return [balanceFormatted, symbol, usdAmount];
+        return [balanceFormatted, symbol, usdAmount, icon];
     };
 
-    const filterdTypes = useMemo(() => {
+    const filteredTypes = useMemo(() => {
         const types = Object.keys(balances);
         if (!filterType) return types;
 
@@ -52,9 +53,9 @@ const AvailableBalance = ({
 
     return (
         <div className="text-left">
-            {filterdTypes.map((type: string, idx: number) => {
+            {filteredTypes.map((type: string, idx: number) => {
                 const balance = balances[type];
-                const [balanceFormatted, symbol, usdAmount] = FormatCoin(
+                const [balanceFormatted, symbol, usdAmount, icon] = FormatCoin(
                     balance,
                     type
                 );
@@ -62,7 +63,18 @@ const AvailableBalance = ({
                     <div className="flex items-align justify-between" key={idx}>
                         <div className="flex gap-4 items-align">
                             <div className="flex items-center">
-                                <Sui />
+                                {icon ? (
+                                    <img
+                                        src={icon}
+                                        alt={`coin-${symbol}`}
+                                        height={39}
+                                        width={39}
+                                    />
+                                ) : symbol === 'SUI' ? (
+                                    <Sui />
+                                ) : (
+                                    <UnknownToken />
+                                )}
                             </div>
                             <div className="flex flex-col items-start">
                                 <div className="font-light text-base">
