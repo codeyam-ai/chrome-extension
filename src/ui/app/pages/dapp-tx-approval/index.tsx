@@ -189,7 +189,8 @@ export function DappTxApprovalPage() {
                 // const { effects: transactionEffects } =
                 //     await signer.devInspectTransaction(transaction.data);
 
-                const { effects: transactionEffects } = await signer.devInspectTransaction(transaction.data);
+                const { effects: transactionEffects } =
+                    await signer.devInspectTransaction(transaction.data);
 
                 if (transactionEffects.status.status === 'failure') {
                     if (

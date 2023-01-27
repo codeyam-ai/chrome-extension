@@ -74,7 +74,13 @@ export const CoinSelect = ({
                         };
                         return (
                             <>
-                                <Popover.Button className="pr-3 flex relative flex-row gap-2 p-2 rounded-full items-center bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
+                                <Popover.Button
+                                    disabled={
+                                        !coinOptions ||
+                                        Object.keys(coinOptions).length === 0
+                                    }
+                                    className="pr-3 flex relative flex-row gap-2 p-2 rounded-full items-center bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary"
+                                >
                                     <div
                                         className={
                                             'rounded-full w-6 h-6 flex justify-center items-center bg-[#3D5FF2]'
@@ -112,6 +118,7 @@ export const CoinSelect = ({
                                                         <CoinBalance
                                                             type={coinType}
                                                             balance={balance}
+                                                            replaceUrl
                                                         />
                                                     </div>
                                                 )
