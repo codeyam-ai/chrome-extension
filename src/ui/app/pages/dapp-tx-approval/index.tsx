@@ -239,12 +239,13 @@ export function DappTxApprovalPage() {
                     } else if (
                         isErrorCausedByUserNotHavingEnoughSui(errorMessage)
                     ) {
-                        setExplicitError(
-                            <Alert
-                                title="You don't have enough SUI"
-                                subtitle="It looks like your wallet doesn't have enough SUI to pay for the gas for this transaction."
-                            />
-                        );
+                        setEffects(null);
+                        // setExplicitError(
+                        //     <Alert
+                        //         title="You don't have enough SUI"
+                        //         subtitle="It looks like your wallet doesn't have enough SUI to pay for the gas for this transaction."
+                        //     />
+                        // );
                     } else {
                         setDryRunError(errorMessage);
                     }

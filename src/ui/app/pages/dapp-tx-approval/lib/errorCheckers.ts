@@ -1,7 +1,7 @@
 export const isErrorCausedByUserNotHavingEnoughSui = (errorMessage: string) => {
     return (
-        errorMessage.includes('Cannot find gas coin for signer address') &&
-        errorMessage.includes('with amount sufficient for the budget')
+        errorMessage.includes('Balance of gas object') &&
+        errorMessage.includes('is lower than gas budget')
     );
 };
 
