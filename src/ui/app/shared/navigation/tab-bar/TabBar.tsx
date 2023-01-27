@@ -72,41 +72,39 @@ const TabBar = () => {
             const ticketIndex = navItems.findIndex(
                 (navItem) => navItem.title === 'Tickets'
             );
-
-            try {
-                const ticketProjectIds = await growthbook.getFeatureValue(
-                    'ticket-projects',
-                    []
-                );
-
-                const ticketProjectObjects =
-                    await api.instance.fullNode.getObjectBatch(
-                        ticketProjectIds
-                    );
-                const existingTicketProjectObjects =
-                    ticketProjectObjects.filter(
-                        (ticketProjectObject) =>
-                            ticketProjectObject.status === 'Exists'
+            if (ticketIndex === -1) {
+                try {
+                    const ticketProjectIds = await growthbook.getFeatureValue(
+                        'ticket-projects',
+                        []
                     );
 
-                if (
-                    ticketIndex === -1 &&
-                    existingTicketProjectObjects.length > 0
-                ) {
-                    navItems.splice(2, 0, {
-                        title: 'Tickets',
-                        to: './tickets',
-                        icon: <TicketIcon className={iconClasses} />,
-                    });
-                } else if (
-                    ticketIndex > -1 &&
-                    ticketProjectObjects.length === 0
-                ) {
-                    navItems.splice(ticketIndex, 1);
-                }
-            } catch (e) {
-                if (ticketIndex > -1) {
-                    navItems.splice(ticketIndex, 1);
+                    const ticketProjectObjects =
+                        await api.instance.fullNode.getObjectBatch(
+                            ticketProjectIds
+                        );
+                    const existingTicketProjectObjects =
+                        ticketProjectObjects.filter(
+                            (ticketProjectObject) =>
+                                ticketProjectObject.status === 'Exists'
+                        );
+
+                    if (existingTicketProjectObjects.length > 0) {
+                        navItems.splice(2, 0, {
+                            title: 'Tickets',
+                            to: './tickets',
+                            icon: <TicketIcon className={iconClasses} />,
+                        });
+                    } else if (
+                        ticketIndex > -1 &&
+                        ticketProjectObjects.length === 0
+                    ) {
+                        navItems.splice(ticketIndex, 1);
+                    }
+                } catch (e) {
+                    if (ticketIndex > -1) {
+                        navItems.splice(ticketIndex, 1);
+                    }
                 }
             }
         };
