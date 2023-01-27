@@ -8,7 +8,7 @@ import {
     createSlice,
 } from '@reduxjs/toolkit';
 
-import { DEFAULT_GAS_BUDGET_FOR_PAY } from '../sui-objects/Coin';
+import { DEFAULT_GAS_BUDGET_FOR_PAY, GAS_TYPE_ARG } from '../sui-objects/Coin';
 import { accountCoinsSelector } from '_redux/slices/account';
 import {
     fetchAllOwnedAndRequiredObjects,
@@ -96,6 +96,28 @@ export const executeMoveCall = createAsyncThunk<
             signer = api.getSignerInstance(
                 keypairVault.getKeyPair(activeAccountIndex)
             );
+        }
+
+        if (!moveCall.gasPayment) {
+            const gasPrice = await signer.provider.getReferenceGasPrice();
+            const coins: SuiMoveObject[] = accountCoinsSelector(state);
+            const minimalSetOfCoins =
+                CoinAPI.selectCoinSetWithCombinedBalanceGreaterThanOrEqual(
+                    coins,
+                    BigInt(moveCall.gasBudget * gasPrice)
+                );
+            if (minimalSetOfCoins.length > 1) {
+                await signer.signAndExecuteTransaction(
+                    await CoinAPI.newPayTransaction(
+                        coins,
+                        GAS_TYPE_ARG,
+                        BigInt(moveCall.gasBudget * gasPrice),
+                        address || '',
+                        DEFAULT_GAS_BUDGET_FOR_PAY
+                    )
+                );
+            }
+            moveCall.gasPayment = CoinAPI.getID(minimalSetOfCoins[0]);
         }
 
         const response = await signer.signAndExecuteTransaction({

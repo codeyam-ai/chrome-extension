@@ -83,8 +83,16 @@ const TabBar = () => {
                     await api.instance.fullNode.getObjectBatch(
                         ticketProjectIds
                     );
+                const existingTicketProjectObjects =
+                    ticketProjectObjects.filter(
+                        (ticketProjectObject) =>
+                            ticketProjectObject.status === 'Exists'
+                    );
 
-                if (ticketIndex === -1 && ticketProjectObjects.length > 0) {
+                if (
+                    ticketIndex === -1 &&
+                    existingTicketProjectObjects.length > 0
+                ) {
                     navItems.splice(2, 0, {
                         title: 'Tickets',
                         to: './tickets',

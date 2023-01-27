@@ -29,6 +29,11 @@ import type { ContentScriptConnection } from '_src/background/connections/Conten
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
+type SimpleCoin = {
+    balance: number;
+    coinObjectId: string;
+};
+
 const TX_STORE_KEY = 'transactions';
 const PREAPPROVAL_KEY = 'preapprovals';
 
@@ -134,6 +139,47 @@ class Transactions {
         if (tx.type === 'v2' || tx.type === 'move-call') {
             let moveCall: MoveCallTransaction | undefined;
             if (tx.type === 'v2') {
+                if (
+                    typeof tx.data === 'object' &&
+                    !('buffer' in tx.data.data) &&
+                    'gasBudget' in tx.data.data &&
+                    !('amount' in tx.data.data) &&
+                    !('inputCoins' in tx.data.data) &&
+                    !tx.data.data.gasPayment
+                ) {
+                    try {
+                        const activeAccount = await this.getActiveAccount();
+                        const { sui_Env } = await Browser.storage.local.get(
+                            'sui_Env'
+                        );
+                        const endpoint = api.getEndPoints(sui_Env).fullNode;
+
+                        const callData = {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                jsonrpc: '2.0',
+                                method: 'sui_getAllCoins',
+                                params: [activeAccount.address],
+                                id: 1,
+                            }),
+                        };
+
+                        const response = await fetch(endpoint, callData);
+                        const {
+                            result: { data: coins },
+                        } = await response.json();
+
+                        const largestCoin = (coins as SimpleCoin[]).sort(
+                            (a, b) => b.balance - a.balance
+                        )[0];
+                        tx.data.data.gasPayment = largestCoin.coinObjectId;
+                    } catch (e) {
+                        // eslint-disable-next-line no-console
+                        console.log('Error getting gas objects', e);
+                    }
+                }
+
                 if (tx.data.kind === 'moveCall') {
                     moveCall = tx.data.data;
                 }
