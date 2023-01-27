@@ -34,7 +34,8 @@ const RedeemTicket = ({
                 const fields = get(ticket, 'details.data.fields');
                 if (!fields) return;
 
-                const { count, cover_image: coverImage } = fields;
+                const { count, url: coverImage } = fields;
+
                 setCount(parseInt(count));
                 setCoverImage(coverImage);
             }
