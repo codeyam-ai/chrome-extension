@@ -55,12 +55,12 @@ export const ENV_TO_API: Record<API_ENV, ApiEndpoints> = {
 function getDefaultApiEnv() {
     const apiEnv = growthbook.getFeatureValue(
         'default-api-env',
-        API_ENV.devNet
+        API_ENV.testNet
     );
     if (apiEnv && !Object.keys(API_ENV).includes(apiEnv)) {
         throw new Error(`Unknown environment variable API_ENV, ${apiEnv}`);
     }
-    return apiEnv ? API_ENV[apiEnv as keyof typeof API_ENV] : API_ENV.devNet;
+    return apiEnv ? API_ENV[apiEnv as keyof typeof API_ENV] : API_ENV.testNet;
 }
 
 function getDefaultAPI(env: API_ENV) {

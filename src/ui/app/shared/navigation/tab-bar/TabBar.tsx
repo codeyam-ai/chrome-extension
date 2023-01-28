@@ -89,7 +89,14 @@ const TabBar = () => {
                                 ticketProjectObject.status === 'Exists'
                         );
 
-                    if (existingTicketProjectObjects.length > 0) {
+                    const ticketIndex2 = navItems.findIndex(
+                        (navItem) => navItem.title === 'Tickets'
+                    );
+
+                    if (
+                        ticketIndex2 === -1 &&
+                        existingTicketProjectObjects.length > 0
+                    ) {
                         navItems.splice(2, 0, {
                             title: 'Tickets',
                             to: './tickets',

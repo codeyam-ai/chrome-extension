@@ -192,8 +192,14 @@ class Transactions {
 
                         let totalSui = 0;
                         const coinIds: string[] = [];
+                        const serializedArgs =
+                            'arguments' in tx.data.data
+                                ? JSON.stringify(tx.data.data.arguments)
+                                : '';
                         for (const coin of sortedCoins) {
                             if (coin.coinType !== GAS_TYPE_ARG) continue;
+                            if (serializedArgs.indexOf(coin.coinObjectId) > -1)
+                                continue;
 
                             coinIds.push(coin.coinObjectId);
                             totalSui += coin.balance;
