@@ -14,7 +14,7 @@ const suiCoinTemplate = readTemplate('coinObject');
 const suiNftTemplate = readTemplate('nftObject');
 
 export const mockCommonCalls = function () {
-    nock('http://dev-net-fullnode.example.com')
+    nock('http://testNet-fullnode.example.com')
         .persist()
         .post('/', /rpc.discover/)
         .reply(200, {
@@ -54,7 +54,7 @@ export const mockSuiObjects = function (
         renderedObjects.push(renderedNftResult);
     }
     const finalRenderedTemplate = `[${renderedObjects.join(',')}]`;
-    nock('http://dev-net-fullnode.example.com')
+    nock('http://testNet-fullnode.example.com')
         .post('/', /sui_getObjectsOwnedByAddress/)
         .reply(200, {
             jsonrpc: '2.0',
