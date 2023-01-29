@@ -1,6 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { DEFAULT_API_ENV } from '../../ui/app/ApiProvider';
 import Authentication from '../Authentication';
 import Messages from '../Messages';
 import { Connection } from './Connection';
@@ -103,7 +104,7 @@ export class ContentScriptConnection extends Connection {
 
             this.sendAccountCustomizations(accountCustomizations, msg.id);
         } else if (isGetNetwork(payload)) {
-            const network = await get('sui_Env');
+            const network = (await get('sui_Env')) || DEFAULT_API_ENV;
             this.sendNetwork(network, msg.id);
         } else if (isHasPermissionRequest(payload)) {
             this.send(

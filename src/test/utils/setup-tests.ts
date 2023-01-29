@@ -38,10 +38,12 @@ Object.defineProperty(window, 'matchMedia', {
     })),
 });
 
-process.env.API_ENDPOINT_DEV_NET_FULLNODE = 'http://devNet-fullnode.example.com/';
+process.env.API_ENDPOINT_DEV_NET_FULLNODE =
+    'http://devNet-fullnode.example.com/';
 process.env.API_ENDPOINT_DEV_NET_FAUCET = 'http://devNet-faucet.example.com/';
 
-process.env.API_ENDPOINT_TEST_NET_FULLNODE = 'http://testNet-fullnode.example.com/';
+process.env.API_ENDPOINT_TEST_NET_FULLNODE =
+    'http://testNet-fullnode.example.com/';
 process.env.API_ENDPOINT_TEST_NET_FAUCET = 'http://testNet-faucet.example.com/';
 
 process.env.BASE_URL = 'http://ethos-base-url.example.com/';
