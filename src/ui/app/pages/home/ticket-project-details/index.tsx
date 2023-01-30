@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Navigate, useSearchParams, useNavigate, Link } from 'react-router-dom';
 
-import { accountAggregateBalancesSelector } from '../../../redux/slices/account/index';
+import {
+    accountAggregateBalancesSelector,
+    accountCoinsSelector,
+} from '../../../redux/slices/account/index';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account/index';
@@ -18,7 +21,11 @@ import Title from '_src/ui/app/shared/typography/Title';
 import type { SuiObject } from '@mysten/sui.js';
 import type { TicketProjectProps } from '_src/ui/app/shared/content/rows-and-lists/TicketProjectList';
 
-const TicketProjectDetailsContent = ({
+type RPCError = {
+    message: string;
+};
+
+export const TicketProjectDetailsContent = ({
     ticketProject,
 }: {
     ticketProject: TicketProjectProps;
@@ -28,6 +35,12 @@ const TicketProjectDetailsContent = ({
     const loadingNFTs = useAppSelector(
         ({ suiObjects }) => suiObjects.loading && !suiObjects.lastSync
     );
+    const largestCoin = useAppSelector((state) => {
+        const coins = accountCoinsSelector(state);
+        return coins.sort(
+            (a, b) => parseInt(b.fields.balance) - parseInt(a.fields.balance)
+        )[0];
+    });
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const sufficientBalance = (balances[GAS_TYPE_ARG] || 0) > 1000;
     const address = useAppSelector(({ account: { address } }) => address);
@@ -87,7 +100,8 @@ const TicketProjectDetailsContent = ({
                     function: 'create_ticket',
                     typeArguments,
                     arguments: args,
-                    gasBudget: 10000,
+                    gasBudget: 30000,
+                    gasPayment: largestCoin.fields.id.id,
                 })
             ).unwrap();
 
@@ -115,11 +129,26 @@ const TicketProjectDetailsContent = ({
                 );
             }
         } catch (e) {
-            setError(`${e}`);
+            const { message } = e as RPCError;
+            if (message.indexOf('finality') > -1) {
+                setError(
+                    'Transaction timed out before reaching finality. Please wait a moment a try again.'
+                );
+            } else {
+                setError((e as RPCError).message);
+            }
         }
 
         setMinting(false);
-    }, [minting, ticketProject, address, tokenNFT, dispatch, navigate]);
+    }, [
+        largestCoin,
+        minting,
+        ticketProject,
+        address,
+        tokenNFT,
+        dispatch,
+        navigate,
+    ]);
 
     return (
         <>

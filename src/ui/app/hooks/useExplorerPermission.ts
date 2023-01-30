@@ -4,7 +4,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { useAppSelector } from '../hooks';
 import { activeAccountSelector } from '../redux/slices/account';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
-import { BASE_URL } from '_src/shared/constants';
+import { LINK_URL } from '_src/shared/constants';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 
 const useExplorerPermission = () => {
@@ -17,9 +17,9 @@ const useExplorerPermission = () => {
         const permissions = JSON.parse(permissionsString || '{}');
 
         if (
-            !permissions[BASE_URL] ||
-            permissions[BASE_URL].accounts.indexOf(activeAddress) === -1 ||
-            permissions[BASE_URL].permissions.length === 0
+            !permissions[LINK_URL] ||
+            permissions[LINK_URL].accounts.indexOf(activeAddress) === -1 ||
+            permissions[LINK_URL].permissions.length === 0
         ) {
             const walletExplorerPermission = {
                 id: uuidV4(),
@@ -27,8 +27,8 @@ const useExplorerPermission = () => {
                 accounts: [activeAddress],
                 allowed: true,
                 createdDate: new Date().toISOString(),
-                favIcon: `${BASE_URL}/favicon.ico`,
-                origin: BASE_URL,
+                favIcon: `${LINK_URL}/favicon.ico`,
+                origin: LINK_URL,
                 permissions: [
                     'viewAccount',
                     'suggestTransactions',
@@ -37,7 +37,7 @@ const useExplorerPermission = () => {
                 responseDate: new Date().toISOString(),
             };
 
-            permissions[BASE_URL] = walletExplorerPermission;
+            permissions[LINK_URL] = walletExplorerPermission;
             await setEncrypted(
                 PERMISSIONS_STORAGE_KEY,
                 JSON.stringify(permissions)

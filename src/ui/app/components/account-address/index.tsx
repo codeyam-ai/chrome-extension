@@ -26,6 +26,7 @@ type AccountAddressProps = {
     showLink?: boolean;
     shorten?: boolean;
     mode?: AddressMode;
+    tooltipDirection?: TooltipDirection;
 };
 
 function AccountAddress({
@@ -34,6 +35,7 @@ function AccountAddress({
     showLink = true,
     shorten = true,
     mode = AddressMode.NORMAL,
+    tooltipDirection = TooltipDirection.DOWN,
 }: AccountAddressProps) {
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex } }) =>
@@ -67,7 +69,7 @@ function AccountAddress({
                     <CopyToClipboard
                         txt={address}
                         mode={cpIconMode}
-                        direction={TooltipDirection.DOWN}
+                        direction={tooltipDirection}
                     >
                         <Body isTextColorMedium>
                             {shorten ? shortenAddress : address}

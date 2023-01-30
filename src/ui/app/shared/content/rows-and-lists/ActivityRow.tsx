@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 
 import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
-import { useFormatCoin } from '_src/ui/app/hooks';
-import { GAS_TYPE_ARG } from '_src/ui/app/redux/slices/sui-objects/Coin';
+import truncateString from '_src/ui/app/helpers/truncate-string';
 
 type ActivityRowProps = {
     failed: boolean;
@@ -14,9 +13,10 @@ type ActivityRowProps = {
     link: string;
     header?: string;
     subheader: string;
-    txAmount?: number;
+    formattedAmount?: string;
+    symbol?: string;
+    dollars?: string;
     amountSubtext?: string;
-    coinType?: string;
     date: string;
 };
 
@@ -29,14 +29,11 @@ export const ActivityRow = ({
     link,
     header,
     subheader,
-    txAmount,
-    coinType,
+    formattedAmount,
+    symbol,
+    dollars,
 }: ActivityRowProps) => {
-    const [formattedAmount, symbol, dollars] = useFormatCoin(
-        txAmount,
-        coinType || GAS_TYPE_ARG
-    );
-
+    const displayFormattedAmount = truncateString(formattedAmount || '', 6);
     return (
         <Link to={link} className="flex flex-col">
             <div className={'flex flex-row justify-between mb-4 items-center'}>
@@ -56,12 +53,14 @@ export const ActivityRow = ({
                 <div className={'flex flex-row items-center gap-3'}>
                     <div>{icon}</div>
                     <span className="flex flex-col text-left">
-                        <BodyLarge isSemibold>{header}</BodyLarge>
+                        <BodyLarge isSemibold>
+                            {truncateString(header || '', 16)}
+                        </BodyLarge>
                         <Body isTextColorMedium>{subheader}</Body>
                     </span>
                 </div>
                 <div className="flex flex-row justify-between">
-                    {txAmount && (
+                    {formattedAmount && (
                         <div className={'text-right'}>
                             <BodyLarge
                                 isSemibold
@@ -72,8 +71,8 @@ export const ActivityRow = ({
                                 }
                             >
                                 {type === 'Send'
-                                    ? `-${formattedAmount}`
-                                    : `+${formattedAmount}`}{' '}
+                                    ? `-${displayFormattedAmount}`
+                                    : `+${displayFormattedAmount}`}{' '}
                                 {symbol}
                             </BodyLarge>
                             <Body

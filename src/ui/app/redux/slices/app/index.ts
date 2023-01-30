@@ -34,6 +34,16 @@ const initialState: AppState = {
     activeOriginFavIcon: null,
 };
 
+export const getRPCNetwork = createAsyncThunk<API_ENV, void, AppThunkConfig>(
+    'changeRPCNetwork',
+    (_, { getState }) => {
+        const {
+            app: { apiEnv },
+        } = getState();
+        return apiEnv;
+    }
+);
+
 // On network change, set setNewJsonRpcProvider, fetch all owned objects, and fetch all transactions
 // TODO: add clear Object state because edge cases where use state stays in cache
 export const changeRPCNetwork = createAsyncThunk<void, API_ENV, AppThunkConfig>(

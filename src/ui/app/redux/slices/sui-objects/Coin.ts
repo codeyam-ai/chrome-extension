@@ -17,11 +17,11 @@ import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 const COIN_TYPE = '0x2::coin::Coin';
 const COIN_TYPE_ARG_REGEX = /^0x2::coin::Coin<(.+)>$/;
 
-export const DEFAULT_GAS_BUDGET_FOR_PAY = 1000;
-export const DEFAULT_GAS_BUDGET_FOR_STAKE = 10000;
+export const DEFAULT_GAS_BUDGET_FOR_PAY = 50000;
+export const DEFAULT_GAS_BUDGET_FOR_STAKE = 50000;
 export const GAS_TYPE_ARG = '0x2::sui::SUI';
 export const GAS_SYMBOL = 'SUI';
-export const DEFAULT_NFT_TRANSFER_GAS_FEE = 5000;
+export const DEFAULT_NFT_TRANSFER_GAS_FEE = 50000;
 export const SUI_SYSTEM_STATE_OBJECT_ID =
     '0x0000000000000000000000000000000000000005';
 

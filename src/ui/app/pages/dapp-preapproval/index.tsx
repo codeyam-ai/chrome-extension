@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid';
-import { JsonRpcProvider, Network } from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Tooltip from '../../components/Tooltip';
 import { AppState } from '../../hooks/useInitializedGuard';
+import { api } from '../../redux/store/thunk-extras';
 import Accordion from '../../shared/content/Accordion';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
 import Alert from '../../shared/feedback/Alert';
@@ -190,7 +190,7 @@ export function DappPreapprovalPage() {
         if (!preapproval) return;
 
         const retrieveDetails = async () => {
-            const provider = new JsonRpcProvider(Network.DEVNET);
+            const provider = api.instance.fullNode;
             const functionDetails = await provider.getNormalizedMoveFunction(
                 preapproval.packageObjectId,
                 preapproval.module,

@@ -59,6 +59,7 @@ function TransferNFTForm({
     const {
         isSubmitting,
         isValid,
+        errors,
         values: { to, amount },
         setFieldValue,
     } = useFormikContext<FormValues>();
@@ -107,9 +108,7 @@ function TransferNFTForm({
                                         isValid && 'hidden'
                                     }`}
                                 >
-                                    {!isValid && to !== ''
-                                        ? 'Please use a valid address'
-                                        : ' '}
+                                    {!isValid && to !== '' ? errors.to : ' '}
                                 </div>
                             </div>
                             <ErrorMessage

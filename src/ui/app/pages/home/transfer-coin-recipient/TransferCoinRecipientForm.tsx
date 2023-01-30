@@ -63,6 +63,7 @@ function TransferCoinRecipientForm({
     const {
         isSubmitting,
         isValid,
+        errors,
         values: { to },
         setFieldValue,
     } = useFormikContext<FormValues>();
@@ -98,7 +99,7 @@ function TransferCoinRecipientForm({
                         }
                     >
                         <BodyLarge isTextColorMedium>Sending</BodyLarge>
-                        <CoinSelect type={coinType} />
+                        <CoinSelect selectedCoinType={coinType} />
                     </div>
                     <div className={'relative'}>
                         <Field
@@ -115,9 +116,7 @@ function TransferCoinRecipientForm({
                                 isValid && 'hidden'
                             }`}
                         >
-                            {!isValid && to !== ''
-                                ? 'Please use a valid address'
-                                : ' '}
+                            {!isValid && to !== '' ? errors.to : ' '}
                         </div>
                     </div>
                 </div>

@@ -21,6 +21,7 @@ import {
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 import { notEmpty } from '_helpers';
+import getObjTypeFromObjId from '_src/ui/app/helpers/getObjTypeFromObjId';
 
 import type {
     GetTxnDigestsResponse,
@@ -189,6 +190,7 @@ export const getTransactionsByAddress = createAsyncThunk<
                 txTransferObject?.recipient ||
                 paySui?.recipients[0];
             const moveCallTxn = getMoveCallTransaction(txn);
+            const objId = txEff.effects?.created?.[0]?.reference.objectId;
             const metaDataObjectId = getTxnEffectsEventID(
                 txEff.effects,
                 address
@@ -222,6 +224,7 @@ export const getTransactionsByAddress = createAsyncThunk<
                         ? [txTransferObject?.objectRef?.objectId]
                         : [...metaDataObjectId],
                 }),
+                objId,
             };
         });
 
@@ -236,52 +239,62 @@ export const getTransactionsByAddress = createAsyncThunk<
             ({ status }) => status === 'Exists'
         );
 
-        const txnResp = txResults.map((itm) => {
-            const txnObjects =
-                txObjects && itm?.objectId && Array.isArray(txObjects)
-                    ? txObjects
-                          .filter(({ status }) => status === 'Exists')
-                          .find((obj) =>
-                              itm.objectId?.includes(getObjectId(obj))
-                          )
-                    : null;
+        const txnResp = await Promise.all(
+            txResults.map(async (itm) => {
+                const txnObjects =
+                    txObjects && itm?.objectId && Array.isArray(txObjects)
+                        ? txObjects
+                              .filter(({ status }) => status === 'Exists')
+                              .find((obj) =>
+                                  itm.objectId?.includes(getObjectId(obj))
+                              )
+                        : null;
 
-            const { details } = txnObjects || {};
+                const { details } = txnObjects || {};
 
-            const coinType =
-                txnObjects &&
-                details &&
-                typeof details !== 'string' &&
-                'data' in details &&
-                details.data.dataType === 'moveObject' &&
-                Coin.getCoinTypeArg(txnObjects);
+                /* For some reason the below commented code from Mysten does not work.
+                 * In the meantime we're getting the coinType a different way.
+                 */
+                // const coinType =
+                //   txnObjects &&
+                //   details &&
+                //   typeof details !== 'string' &&
+                //   'data' in details &&
+                //   details.data.dataType === 'moveObject' &&
+                //   Coin.getCoinTypeArg(txnObjects);
+                let coinType = undefined;
+                if (itm?.objId) {
+                    coinType = await getObjTypeFromObjId(itm.objId);
+                }
 
-            const fields =
-                txnObjects &&
-                details &&
-                typeof details !== 'string' &&
-                'data' in details &&
-                details.data.dataType === 'moveObject'
-                    ? getObjectFields(txnObjects)
-                    : null;
+                const fields =
+                    txnObjects &&
+                    details &&
+                    typeof details !== 'string' &&
+                    'data' in details &&
+                    details.data.dataType === 'moveObject'
+                        ? getObjectFields(txnObjects)
+                        : null;
 
-            return {
-                ...itm,
-                coinType,
-                coinSymbol: coinType && Coin.getCoinSymbol(coinType),
-                ...(fields &&
-                    fields.url && {
-                        description:
-                            typeof fields.description === 'string' &&
-                            fields.description,
-                        name: typeof fields.name === 'string' && fields.name,
-                        url: fields.url,
+                return {
+                    ...itm,
+                    coinType,
+                    coinSymbol: coinType && Coin.getCoinSymbol(coinType),
+                    ...(fields &&
+                        fields.url && {
+                            description:
+                                typeof fields.description === 'string' &&
+                                fields.description,
+                            name:
+                                typeof fields.name === 'string' && fields.name,
+                            url: fields.url,
+                        }),
+                    ...(fields && {
+                        balance: fields.balance,
                     }),
-                ...(fields && {
-                    balance: fields.balance,
-                }),
-            };
-        });
+                };
+            })
+        );
 
         return txnResp as TxResultByAddress;
     }

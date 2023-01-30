@@ -8,7 +8,10 @@ import { mapToPromise } from './utils';
 import { createMessage } from '_messages';
 import { WindowMessageStream } from '_messaging/WindowMessageStream';
 import { ALL_PERMISSION_TYPES } from '_payloads/permissions';
+import { type GetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
+import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
 import { deserializeSignaturePubkeyPair } from '_src/shared/signature-serialization';
+import { type AccountCustomization } from '_src/types/AccountCustomization';
 
 import type {
     SuiAddress,
@@ -33,14 +36,13 @@ import type {
     ExecuteTransactionRequest,
     ExecuteTransactionResponse,
 } from '_payloads/transactions';
-import type { GetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
-import type { GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
+import type { GetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
+import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
 import type { DisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { OpenWallet } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
-import type { AccountCustomization } from '_src/types/AccountCustomization';
 import type { Observable } from 'rxjs';
 
 export class DAppInterface {
@@ -86,6 +88,15 @@ export class DAppInterface {
         );
     }
 
+    public getAccounts(): Promise<SuiAddress[]> {
+        return mapToPromise(
+            this.send<GetAccount, GetAccountResponse>({
+                type: 'get-account',
+            }),
+            (response) => response.accounts
+        );
+    }
+
     public getAccountCustomizations(): Promise<AccountCustomization[]> {
         return mapToPromise(
             this.send<
@@ -98,12 +109,12 @@ export class DAppInterface {
         );
     }
 
-    public getAccounts(): Promise<SuiAddress[]> {
+    public getNetwork(): Promise<string | number> {
         return mapToPromise(
-            this.send<GetAccount, GetAccountResponse>({
-                type: 'get-account',
+            this.send<GetNetwork, GetNetworkResponse>({
+                type: 'get-network',
             }),
-            (response) => response.accounts
+            (response) => response.network
         );
     }
 

@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 import { accountTicketsSelector } from '../../../redux/slices/account/index';
 import Body from '../../typography/Body';
 import Loading from '_src/ui/app/components/loading';
 import { growthbook } from '_src/ui/app/experimentation/feature-gating';
 import { useAppSelector } from '_src/ui/app/hooks';
+import { TicketProjectDetailsContent } from '_src/ui/app/pages/home/ticket-project-details';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 export interface TicketProjectProps {
@@ -21,31 +22,32 @@ export interface TicketProjectProps {
     tokenUrl?: string;
 }
 
-const TicketProject = ({
-    ticketProject,
-}: {
-    ticketProject: TicketProjectProps;
-}) => {
-    const drilldownLink = `/ticket-project?${new URLSearchParams({
-        objectId: ticketProject.objectId,
-    }).toString()}`;
+// const TicketProject = ({
+//     ticketProject,
+// }: {
+//     ticketProject: TicketProjectProps;
+// }) => {
+//     const drilldownLink = `/ticket-project?${new URLSearchParams({
+//         objectId: ticketProject.objectId,
+//     }).toString()}`;
 
-    return (
-        <Link to={drilldownLink}>
-            <div className="flex flex-col gap-3 items-center w-11/12 mx-auto">
-                <img
-                    src={ticketProject.coverImage}
-                    alt={`${ticketProject.name} Ticket`}
-                    className="rounded-xl"
-                />
-                <div className="text-left">
-                    <span className="font-semibold">{ticketProject.name}</span>{' '}
-                    | {ticketProject.description}
-                </div>
-            </div>
-        </Link>
-    );
-};
+//     return (
+//         <Link to={drilldownLink}>
+//             <div className="flex flex-col gap-3 items-center w-11/12 mx-auto">
+//                 <div className="bg-[#F2F2F2] dark:bg-[#717377] p-4 rounded-xl">
+//                     <img
+//                         src={ticketProject.coverImage}
+//                         alt={`${ticketProject.name} Ticket`}
+//                     />
+//                 </div>
+//                 <div className="text-left">
+//                     <span className="font-semibold">{ticketProject.name}</span>{' '}
+//                     | {ticketProject.description}
+//                 </div>
+//             </div>
+//         </Link>
+//     );
+// };
 
 const TicketProjectList = () => {
     const loadingTickets = useAppSelector(
@@ -118,7 +120,11 @@ const TicketProjectList = () => {
         <Loading loading={loading}>
             <div className="p-3 flex flex-col gap-3">
                 {ticketProjects.map((ticketProject, index) => (
-                    <TicketProject
+                    // <TicketProject
+                    //     key={`ticket-project-${index}`}
+                    //     ticketProject={ticketProject}
+                    // />
+                    <TicketProjectDetailsContent
                         key={`ticket-project-${index}`}
                         ticketProject={ticketProject}
                     />

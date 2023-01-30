@@ -3,19 +3,17 @@
 
 import { Coin } from '@mysten/sui.js';
 import { Form, useFormikContext } from 'formik';
-import { useEffect, useRef, memo, useMemo } from 'react';
+import { memo, useEffect, useMemo, useRef } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
-import UnknownToken from '../tokens/UnknownToken';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import { getTheme } from '_src/ui/app/helpers/getTheme';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import truncateString from '_src/ui/app/helpers/truncate-string';
-import { useAppSelector } from '_src/ui/app/hooks';
+import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 import { AssetCard } from '_src/ui/app/shared/nfts/AssetCard';
-import TxSui from '_src/ui/app/shared/svg/TxSui';
 import Body from '_src/ui/app/shared/typography/Body';
 import Header from '_src/ui/app/shared/typography/Header';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
@@ -42,14 +40,11 @@ function TransferCoinForm({
     const onClearRef = useRef(onClearSubmitError);
     onClearRef.current = onClearSubmitError;
 
+    const [, , dollars, , icon] = useFormatCoin(null, coinType);
+
     useEffect(() => {
         onClearRef.current();
     }, [amount, to]);
-
-    const dollars = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    }).format(parseFloat(amount) * 100);
 
     const coinSymbol = useMemo(
         () => (coinType && Coin.getCoinSymbol(coinType)) || '',
@@ -58,35 +53,20 @@ function TransferCoinForm({
 
     const theme = getTheme();
 
-    const icon = useMemo(() => {
-        if (!coinSymbol) return null;
-        const dim = 59;
-
-        switch (coinSymbol) {
-            case 'SUI':
-                return (
-                    <TxSui
-                        borderColor={theme === 'light' ? '#ffffff' : '#111111'}
-                    />
-                );
-            default:
-                return <UnknownToken width={dim} height={dim} />;
-        }
-    }, [coinSymbol, theme]);
-
     if (amount === '' || to === '' || !coinSymbol) {
         return <Navigate to={'/tokens'} />;
     } else {
         return (
             <Form autoComplete="off" noValidate={true}>
                 <div className="p-6 flex flex-col">
-                    {icon && (
+                    {coinSymbol && (
                         <AssetCard
                             theme={theme}
                             isNft={false}
                             isFunc={false}
                             coinType={coinSymbol}
                             name={coinSymbol}
+                            imgUrl={icon || ''}
                         />
                     )}
                     <Body isTextColorMedium>Sending</Body>

@@ -12,9 +12,11 @@ import nacl from 'tweetnacl';
 import { v4 as uuidV4 } from 'uuid';
 import Browser from 'webextension-polyfill';
 
+import { GAS_TYPE_ARG } from '../ui/app/redux/slices/sui-objects/Coin';
 import Authentication from './Authentication';
 import { Window } from './Window';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
+import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 import type { MoveCallTransaction } from '@mysten/sui.js';
 import type { TransactionDataType } from '_messages/payloads/transactions/ExecuteTransactionRequest';
@@ -27,6 +29,12 @@ import type { TransactionRequestResponse } from '_payloads/transactions/ui/Trans
 import type { ContentScriptConnection } from '_src/background/connections/ContentScriptConnection';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
+
+type SimpleCoin = {
+    balance: number;
+    coinObjectId: string;
+    coinType: string;
+};
 
 const TX_STORE_KEY = 'transactions';
 const PREAPPROVAL_KEY = 'preapprovals';
@@ -90,9 +98,10 @@ class Transactions {
         preapprovalRequest: PreapprovalRequest
     ) {
         try {
-            const txDirectResult = await this.executeTransactionDirectly({
-                tx,
-            });
+            const txDirectResult =
+                await this.executeMoveCallTransactionDirectly({
+                    tx,
+                });
 
             const { result, error } = txDirectResult;
 
@@ -133,6 +142,111 @@ class Transactions {
         if (tx.type === 'v2' || tx.type === 'move-call') {
             let moveCall: MoveCallTransaction | undefined;
             if (tx.type === 'v2') {
+                if (
+                    typeof tx.data === 'object' &&
+                    !('buffer' in tx.data.data) &&
+                    'gasBudget' in tx.data.data &&
+                    !('amount' in tx.data.data) &&
+                    !('inputCoins' in tx.data.data) &&
+                    !tx.data.data.gasPayment
+                ) {
+                    try {
+                        const activeAccount = await this.getActiveAccount();
+                        const { sui_Env } = await Browser.storage.local.get(
+                            'sui_Env'
+                        );
+                        const endpoint = api.getEndPoints(sui_Env).fullNode;
+
+                        const gasResponse = await fetch(endpoint, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                jsonrpc: '2.0',
+                                method: 'sui_getReferenceGasPrice',
+                                id: 1,
+                            }),
+                        });
+
+                        const gasJson = await gasResponse.json();
+                        const gasPrice = gasJson.result;
+
+                        const callData = {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                jsonrpc: '2.0',
+                                method: 'sui_getAllCoins',
+                                params: [activeAccount.address],
+                                id: 1,
+                            }),
+                        };
+
+                        const response = await fetch(endpoint, callData);
+                        const {
+                            result: { data: coins },
+                        } = await response.json();
+
+                        const sortedCoins = (coins as SimpleCoin[]).sort(
+                            (a, b) => a.balance - b.balance
+                        );
+
+                        let totalSui = 0;
+                        const coinIds: string[] = [];
+                        const serializedArgs =
+                            'arguments' in tx.data.data
+                                ? JSON.stringify(tx.data.data.arguments)
+                                : '';
+                        for (const coin of sortedCoins) {
+                            if (coin.coinType !== GAS_TYPE_ARG) continue;
+                            if (serializedArgs.indexOf(coin.coinObjectId) > -1)
+                                continue;
+
+                            coinIds.push(coin.coinObjectId);
+                            totalSui += coin.balance;
+                            if (totalSui > tx.data.data.gasBudget * gasPrice) {
+                                break;
+                            }
+                        }
+
+                        let gasCoinId = coinIds[0];
+                        if (coinIds.length > 1) {
+                            const callData = {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    jsonrpc: '2.0',
+                                    method: 'sui_payAllSui',
+                                    params: [
+                                        activeAccount.address,
+                                        coinIds,
+                                        activeAccount.address,
+                                        3000,
+                                    ],
+                                    id: 1,
+                                }),
+                            };
+
+                            const payResponse =
+                                await this.executeTransactionDirectly({
+                                    callData,
+                                });
+                            if ('EffectsCert' in payResponse.result) {
+                                const newCoin =
+                                    payResponse.EffectsCert.effects.effects
+                                        .mutated?.[0]?.reference?.objectId;
+                                if (newCoin) {
+                                    gasCoinId = newCoin;
+                                }
+                            }
+                        }
+
+                        tx.data.data.gasPayment = gasCoinId;
+                    } catch (e) {
+                        // eslint-disable-next-line no-console
+                        console.log('Error getting gas objects', e);
+                    }
+                }
+
                 if (tx.data.kind === 'moveCall') {
                     moveCall = tx.data.data;
                 }
@@ -205,14 +319,12 @@ class Transactions {
         );
     }
 
-    private async executeTransactionDirectly({
+    private async executeMoveCallTransactionDirectly({
         tx,
     }: {
         tx: MoveCallTransaction;
     }) {
         const activeAccount = await this.getActiveAccount();
-
-        const endpoint = process.env.API_ENDPOINT_DEV_NET_FULLNODE || '';
 
         const callData = {
             method: 'POST',
@@ -234,8 +346,24 @@ class Transactions {
             }),
         };
 
+        return this.executeTransactionDirectly({ callData });
+    }
+
+    private async executeTransactionDirectly({
+        callData,
+    }: {
+        callData: RequestInit;
+    }) {
+        const activeAccount = await this.getActiveAccount();
+
+        const { sui_Env } = await Browser.storage.local.get('sui_Env');
+        const endpoint = api.getEndPoints(sui_Env).fullNode;
         const response = await fetch(endpoint, callData);
         const json = await response.json();
+
+        if (json.error) {
+            throw new Error(json.error.message);
+        }
 
         const {
             result: { txBytes },

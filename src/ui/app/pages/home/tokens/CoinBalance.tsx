@@ -1,8 +1,8 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { memo, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { memo, useCallback, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Sui from './Sui';
 import UnknownToken from './UnknownToken';
@@ -12,55 +12,69 @@ import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
 export type CoinProps = {
     type: string;
     balance: bigint;
-    hideStake?: boolean;
-    mode?: 'row-item' | 'standalone';
+    replaceUrl?: boolean;
 };
 
-function CoinBalance({ type, balance }: CoinProps) {
+function CoinBalance({ type, balance, replaceUrl }: CoinProps) {
+    const navigate = useNavigate();
+    const location = useLocation();
     const [balanceFormatted, symbol, usdAmount, name, icon] = useFormatCoin(
         balance,
         type
     );
 
-    const sendUrl = useMemo(
-        () => `/send/recipient?${new URLSearchParams({ type }).toString()}`,
-        [type]
+    const isSendAmountPage = useMemo(
+        () => location.pathname === '/send/amount',
+        [location]
     );
+
+    const sendUrl = useMemo(
+        () =>
+            `/send/${
+                isSendAmountPage ? 'amount' : 'recipient'
+            }?${new URLSearchParams({ type }).toString()}`,
+        [isSendAmountPage, type]
+    );
+
+    const updateUrl = useCallback(() => {
+        navigate(sendUrl, { replace: replaceUrl });
+    }, [navigate, sendUrl, replaceUrl]);
 
     if (symbol !== 'SUI' && !icon) return <></>;
 
     return (
-        <Link to={sendUrl}>
-            <div className="flex items-align justify-between">
-                <div className="flex gap-4 items-align">
-                    <div className="flex items-center">
-                        {icon ? (
-                            <img
-                                src={icon}
-                                alt={`coin-${symbol}`}
-                                height={39}
-                                width={39}
-                            />
-                        ) : symbol === 'SUI' ? (
-                            <Sui />
-                        ) : (
-                            <UnknownToken />
-                        )}
-                    </div>
-                    <div className="flex flex-col items-start">
-                        <div className="font-light text-base">
-                            {truncateString(name, 18)} ({symbol})
-                        </div>
-                        <div className="font-light text-sm text-slate-500 dark:text-slate-400">
-                            {balanceFormatted}
-                        </div>
-                    </div>
+        <button
+            onClick={updateUrl}
+            className="flex w-full items-align justify-between"
+        >
+            <div className="flex gap-4 items-align">
+                <div className="flex items-center">
+                    {icon ? (
+                        <img
+                            src={icon}
+                            alt={`coin-${symbol}`}
+                            height={39}
+                            width={39}
+                        />
+                    ) : symbol === 'SUI' ? (
+                        <Sui />
+                    ) : (
+                        <UnknownToken />
+                    )}
                 </div>
-                <div className="flex items-center text-base text-slate-800 dark:text-slate-300">
-                    <div>{usdAmount}</div>
+                <div className="flex flex-col items-start">
+                    <div className="font-light text-base">
+                        {truncateString(name, 18)} ({symbol})
+                    </div>
+                    <div className="font-light text-sm text-slate-500 dark:text-slate-400">
+                        {balanceFormatted}
+                    </div>
                 </div>
             </div>
-        </Link>
+            <div className="flex items-center text-base text-slate-800 dark:text-slate-300">
+                <div>{usdAmount}</div>
+            </div>
+        </button>
     );
 }
 

@@ -10,7 +10,10 @@ import type { SuiObject } from '@mysten/sui.js';
 
 export default function useTicketBasicData(ticketObj: SuiObject) {
     const ticketObjectID = getObjectId(ticketObj.reference);
-    const filePath = useMediaUrl(ticketObj.data, 'cover_image');
+    const coverFilePath = useMediaUrl(ticketObj.data, 'cover_image');
+    const urlFilePath = useMediaUrl(ticketObj.data, 'url');
+    const filePath = coverFilePath || urlFilePath;
+
     const ticketFields =
         ticketObj.data.dataType === 'moveObject'
             ? getObjectFields(ticketObj.data)

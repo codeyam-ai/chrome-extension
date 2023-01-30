@@ -36,17 +36,17 @@ export const API_ENV_TO_INFO: Record<API_ENV, EnvInfo> = {
     [API_ENV.testNet]: { name: 'Testnet' },
 };
 
-export const ENV_TO_API: Record<API_ENV, ApiEndpoints> = {
-    [API_ENV.local]: {
+export const ENV_TO_API: Record<string, ApiEndpoints> = {
+    [API_ENV.local.toString()]: {
         fullNode: process.env.API_ENDPOINT_LOCAL_FULLNODE || '',
         faucet: process.env.API_ENDPOINT_LOCAL_FAUCET || '',
     },
-    [API_ENV.devNet]: {
+    [API_ENV.devNet.toString()]: {
         fullNode: process.env.API_ENDPOINT_DEV_NET_FULLNODE || '',
         faucet: process.env.API_ENDPOINT_DEV_NET_FAUCET || '',
     },
-    [API_ENV.customRPC]: null,
-    [API_ENV.testNet]: {
+    [API_ENV.customRPC.toString()]: null,
+    [API_ENV.testNet.toString()]: {
         fullNode: process.env.API_ENDPOINT_TEST_NET_FULLNODE || '',
         faucet: process.env.API_ENDPOINT_TEST_NET_FAUCET || '',
     },
@@ -55,16 +55,32 @@ export const ENV_TO_API: Record<API_ENV, ApiEndpoints> = {
 function getDefaultApiEnv() {
     const apiEnv = growthbook.getFeatureValue(
         'default-api-env',
-        API_ENV.devNet
+        API_ENV.testNet
     );
     if (apiEnv && !Object.keys(API_ENV).includes(apiEnv)) {
         throw new Error(`Unknown environment variable API_ENV, ${apiEnv}`);
     }
-    return apiEnv ? API_ENV[apiEnv as keyof typeof API_ENV] : API_ENV.devNet;
+    return apiEnv ? API_ENV[apiEnv as keyof typeof API_ENV] : API_ENV.testNet;
 }
 
 function getDefaultAPI(env: API_ENV) {
-    const apiEndpoint = ENV_TO_API[env];
+    const dynamicApiEnvs = growthbook.getFeatureValue(
+        'api-endpoints',
+        ENV_TO_API
+    );
+
+    const mergedApiEnvs = ENV_TO_API;
+    for (const env of Object.keys(dynamicApiEnvs)) {
+        mergedApiEnvs[env] = {
+            fullNode: '',
+            faucet: '',
+            ...mergedApiEnvs[env],
+            ...dynamicApiEnvs[env],
+        };
+    }
+
+    const apiEndpoint = mergedApiEnvs[env];
+
     if (
         !apiEndpoint ||
         apiEndpoint.fullNode === '' ||
@@ -97,17 +113,23 @@ export const generateActiveNetworkList = (): NetworkTypes[] => {
 export default class ApiProvider {
     private _apiFullNodeProvider?: JsonRpcProvider;
     private _signer: RawSigner | null = null;
+    private _apiEnv: API_ENV = DEFAULT_API_ENV;
 
     public setNewJsonRpcProvider(
         apiEnv: API_ENV = DEFAULT_API_ENV,
         customRPC?: string | null
     ) {
+        this._apiEnv = apiEnv;
         // We also clear the query client whenever set set a new API provider:
         queryClient.clear();
         this._apiFullNodeProvider = new JsonRpcProvider(
-            customRPC ?? getDefaultAPI(apiEnv).fullNode
+            customRPC ?? getDefaultAPI(this._apiEnv).fullNode
         );
         this._signer = null;
+    }
+
+    public getEndPoints(apiEnv?: API_ENV) {
+        return getDefaultAPI(apiEnv || this._apiEnv || DEFAULT_API_ENV);
     }
 
     public get instance() {

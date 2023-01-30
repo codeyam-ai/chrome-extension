@@ -5,7 +5,7 @@ import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import Input from '../../shared/inputs/Input';
-import lookup from './lookup';
+import { getSuiAddress } from './nameservice';
 import { SUI_ADDRESS_VALIDATION } from './validation';
 
 import type { SuiAddress } from '@mysten/sui.js';
@@ -53,7 +53,7 @@ function AddressInput<FormValues>({
             const _value = e.currentTarget.value;
             setDisplayedValue(_value);
             if (!_value.startsWith('0x')) {
-                lookup(_value).then((address: string) => {
+                getSuiAddress(_value).then((address: string) => {
                     setShowAddress(address !== _value);
                     setFieldValue(name, SUI_ADDRESS_VALIDATION.cast(address));
                 });
