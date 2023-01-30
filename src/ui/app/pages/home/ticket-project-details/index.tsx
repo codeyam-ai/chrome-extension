@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Navigate, useSearchParams, useNavigate, Link } from 'react-router-dom';
 
+import { growthbook } from '../../../experimentation/feature-gating';
 import {
     accountAggregateBalancesSelector,
     accountCoinsSelector,
@@ -150,6 +151,11 @@ export const TicketProjectDetailsContent = ({
         navigate,
     ]);
 
+    const capyUrl = growthbook.getFeatureValue(
+        'capy-url',
+        'https://testnet.capy.art/marketplace/capys?main=D85A58'
+    );
+
     return (
         <>
             <div>
@@ -180,7 +186,12 @@ export const TicketProjectDetailsContent = ({
                                     here:
                                 </BodyLarge>
                                 <ExternalLink
-                                    href={ticketProject.tokenUrl}
+                                    href={
+                                        ticketProject.tokenUrl ===
+                                        'https://testnet.capy.art/collection'
+                                            ? capyUrl
+                                            : ticketProject.tokenUrl
+                                    }
                                     title={ticketProject.name}
                                     showIcon={false}
                                     className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
