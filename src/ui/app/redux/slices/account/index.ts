@@ -592,7 +592,6 @@ export const accountCoinsSelector = createSelector(
 export const accountAggregateBalancesSelector = createSelector(
     accountCoinsSelector,
     (coins) => {
-        console.log('COINS => ', coins);
         return coins.reduce((acc, aCoin) => {
             const coinType = Coin.getCoinTypeArg(aCoin);
             if (coinType) {

@@ -39,8 +39,6 @@ function TransferCoinAmountPage() {
     const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
     const aggregateBalances = useAppSelector(accountAggregateBalancesSelector);
 
-    console.log('agg bal => ', aggregateBalances);
-
     const coinBalance = useMemo(
         () => (coinType && aggregateBalances[coinType]) || BigInt(0),
         [coinType, aggregateBalances]
@@ -65,8 +63,6 @@ function TransferCoinAmountPage() {
     const [coinDecimals] = useCoinDecimals(coinType);
     const [gasDecimals] = useCoinDecimals(GAS_TYPE_ARG);
     const allCoins = useAppSelector(accountCoinsSelector);
-
-    console.log('ALL COINS => ', allCoins);
 
     const allCoinsOfSelectedTypeArg = useMemo(
         () =>

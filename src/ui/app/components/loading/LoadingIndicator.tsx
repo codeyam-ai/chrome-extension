@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import cl from 'classnames';
+
 import st from './LoadingIndicator.module.scss';
 
 const LoadingIndicator = ({
