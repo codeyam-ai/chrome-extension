@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Navigate, useSearchParams, useNavigate, Link } from 'react-router-dom';
 
-import { accountAggregateBalancesSelector } from '../../../redux/slices/account/index';
+import {
+    accountAggregateBalancesSelector,
+    accountCoinsSelector,
+} from '../../../redux/slices/account/index';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account/index';
@@ -22,7 +25,7 @@ type RPCError = {
     message: string;
 };
 
-const TicketProjectDetailsContent = ({
+export const TicketProjectDetailsContent = ({
     ticketProject,
 }: {
     ticketProject: TicketProjectProps;
@@ -32,6 +35,12 @@ const TicketProjectDetailsContent = ({
     const loadingNFTs = useAppSelector(
         ({ suiObjects }) => suiObjects.loading && !suiObjects.lastSync
     );
+    const largestCoin = useAppSelector((state) => {
+        const coins = accountCoinsSelector(state);
+        return coins.sort(
+            (a, b) => parseInt(b.fields.balance) - parseInt(a.fields.balance)
+        )[0];
+    });
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const sufficientBalance = (balances[GAS_TYPE_ARG] || 0) > 1000;
     const address = useAppSelector(({ account: { address } }) => address);
@@ -91,7 +100,8 @@ const TicketProjectDetailsContent = ({
                     function: 'create_ticket',
                     typeArguments,
                     arguments: args,
-                    gasBudget: 50000,
+                    gasBudget: 30000,
+                    gasPayment: largestCoin.fields.id.id,
                 })
             ).unwrap();
 
@@ -130,7 +140,15 @@ const TicketProjectDetailsContent = ({
         }
 
         setMinting(false);
-    }, [minting, ticketProject, address, tokenNFT, dispatch, navigate]);
+    }, [
+        largestCoin,
+        minting,
+        ticketProject,
+        address,
+        tokenNFT,
+        dispatch,
+        navigate,
+    ]);
 
     return (
         <>
