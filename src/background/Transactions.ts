@@ -187,7 +187,7 @@ class Transactions {
                         } = await response.json();
 
                         const sortedCoins = (coins as SimpleCoin[]).sort(
-                            (a, b) => a.balance - b.balance
+                            (a, b) => b.balance - a.balance
                         );
 
                         let totalSui = 0;
@@ -230,7 +230,11 @@ class Transactions {
                                 await this.executeTransactionDirectly({
                                     callData,
                                 });
-                            if ('EffectsCert' in payResponse.result) {
+
+                            if (
+                                payResponse.result &&
+                                'EffectsCert' in payResponse.result
+                            ) {
                                 const newCoin =
                                     payResponse.EffectsCert.effects.effects
                                         .mutated?.[0]?.reference?.objectId;
