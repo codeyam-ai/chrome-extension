@@ -71,4 +71,15 @@ After building the app, the extension needs to be installed to Chrome. Follow th
 npm run test
 ```
 
-``
+## React DevTools
+
+If you open the chrome dev tools on the extension, you will notice that the React dev tools are not there, even if you installed them from the chrome store. For security reasons this doesn't work, but there is a workaround, which is to use the react devtools in standalone mode. Simple run the following from a terminal:
+
+```
+npx react-devtools
+```
+
+...and a window will pop up that allows you to inspect the react component hierarchy and also run the profiler (in the development build of the app only!) 
+
+One shortcoming is that hovering over elements in the extension app won't highlight the corresponding React component in the devtools.
+
