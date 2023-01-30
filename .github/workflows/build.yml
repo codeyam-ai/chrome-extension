@@ -89,5 +89,8 @@ jobs:
               if: failure() && github.ref == 'refs/heads/main'
               with:
                   username: Eye in the Sky
+
+                  # This is the "engineers" Role on discord
+                  content: 'Hey <@&1067854101469204480>'
                   title: 'Jest Tests'
                   webhook: ${{ secrets.DISCORD_WEBHOOK }}
