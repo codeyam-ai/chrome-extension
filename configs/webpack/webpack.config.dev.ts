@@ -3,13 +3,17 @@
 
 import ESLintPlugin from 'eslint-webpack-plugin';
 import StyleLintPlugin from 'stylelint-webpack-plugin';
-import { merge } from 'webpack-merge';
+import {merge} from 'webpack-merge';
 
 import configCommon from './webpack.config.common';
 
-import type { Configuration } from 'webpack';
+import type {Configuration} from 'webpack';
+import util from "util";
 
 const configDev: Configuration = {
+    entry: {
+        ui: ['react-devtools'],
+    },
     mode: 'development',
     devtool: 'cheap-source-map',
     plugins: [
@@ -25,7 +29,9 @@ const configDev: Configuration = {
 };
 
 async function getConfig() {
-    return merge(await configCommon(), configDev);
+    const merged = merge(configDev, await configCommon());
+    console.log(util.inspect(merged.entry, {showHidden: false, depth: null, colors: true}))
+    return merged;
 }
 
 export default getConfig;

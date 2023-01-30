@@ -78,7 +78,7 @@ const commonConfig: () => Promise<Configuration> = async () => {
         context: SRC_ROOT,
         entry: {
             background: './background',
-            ui: './ui',
+            ui: ['./ui'],
             'content-script': './content-script',
             'dapp-interface': './dapp-interface',
         },
