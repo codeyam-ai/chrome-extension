@@ -79,7 +79,6 @@ If you open the chrome dev tools on the extension, you will notice that the Reac
 npx react-devtools
 ```
 
-...and a window will pop up that allows you to inspect the react component hierarchy and also run the profiler (in the development build of the app only!) 
+...and a window will pop up that allows you to inspect the react component hierarchy and also run the profiler (in the development build of the app only!)
 
 One shortcoming is that hovering over elements in the extension app won't highlight the corresponding React component in the devtools.
-
