@@ -34,6 +34,7 @@ const AvailableBalance = ({
     balances: Record<string, bigint>;
     filterType?: string | null;
 }) => {
+    console.log("BALANCES ++++> '", balances);
     const FormatCoin = (balance: bigint, type: string) => {
         const [balanceFormatted, symbol, usdAmount] = useFormatCoin(
             balance,

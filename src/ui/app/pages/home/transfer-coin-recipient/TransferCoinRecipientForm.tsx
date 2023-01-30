@@ -84,6 +84,8 @@ function TransferCoinRecipientForm({
 
     const recentWallets = [...new Set(recentTxs)].splice(0, 3);
 
+    console.log('recent wallets: ', recentWallets);
+
     if (!coinType) return <></>;
 
     return (
