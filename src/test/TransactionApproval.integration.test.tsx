@@ -6,12 +6,11 @@ import * as React from 'react';
 
 import KeypairVault from '_app/KeypairVault';
 import { BackgroundClient } from '_app/background-client';
-import App from '_app/index';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
 import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
 import { renderTemplate } from '_src/test/utils/json-templates';
 import { mockCommonCalls } from '_src/test/utils/mockchain';
-import { renderWithProviders } from '_src/test/utils/react-rendering';
+import { renderApp } from '_src/test/utils/react-rendering';
 import { createStore } from '_store';
 import { thunkExtras } from '_store/thunk-extras';
 
@@ -37,10 +36,10 @@ describe('The Transaction Approval popup', () => {
         const { executeScope } = mockBlockchainTransactionExecution();
 
         const mockWindowCloser = jest.fn();
-        renderWithProviders(<App />, {
+        renderApp({
             store: store,
             initialRoute: `/tx-approval/${txRequestId}`,
-            dependencies: { closeWindow: mockWindowCloser },
+            dependencies: {closeWindow: mockWindowCloser},
         });
 
         await screen.findByText('1500000');
@@ -59,10 +58,10 @@ describe('The Transaction Approval popup', () => {
         const { executeScope } = mockBlockchainTransactionExecution();
 
         const mockWindowCloser = jest.fn();
-        renderWithProviders(<App />, {
+        renderApp({
             store: store,
             initialRoute: `/tx-approval/${txRequestId}`,
-            dependencies: { closeWindow: mockWindowCloser },
+            dependencies: {closeWindow: mockWindowCloser},
         });
 
         await screen.findByText('1500000');
