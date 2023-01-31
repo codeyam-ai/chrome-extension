@@ -1,7 +1,6 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import App from '_app/index';
 import {
     password as correctPassword,
     simulateAuthenticatedUser,

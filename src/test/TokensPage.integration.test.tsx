@@ -1,6 +1,5 @@
 import { screen } from '@testing-library/react';
 
-import App from '_app/index';
 import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
 import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';

@@ -1,7 +1,6 @@
 import { waitFor, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import App from '_app/index';
 import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
 import { mockSuiObjects, mockCommonCalls } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';

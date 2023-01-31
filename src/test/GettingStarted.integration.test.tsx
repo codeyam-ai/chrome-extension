@@ -1,7 +1,6 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import App from '_app/index';
 import { mockCommonCalls } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 

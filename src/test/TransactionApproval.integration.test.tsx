@@ -6,7 +6,6 @@ import * as React from 'react';
 
 import KeypairVault from '_app/KeypairVault';
 import { BackgroundClient } from '_app/background-client';
-import App from '_app/index';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
 import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
 import { renderTemplate } from '_src/test/utils/json-templates';

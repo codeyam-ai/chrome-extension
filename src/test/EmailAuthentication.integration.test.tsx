@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 
 import { mockSuiObjects, mockCommonCalls } from './utils/mockchain';
-import App from '_app/index';
 import { BASE_URL } from '_src/shared/constants';
 import { renderApp } from '_src/test/utils/react-rendering';
 
