@@ -16,6 +16,7 @@ import type { Dependencies } from '_shared/utils/dependenciesContext';
 import type { AppStore } from '_store';
 import type React from 'react';
 import type { PropsWithChildren } from 'react';
+import App from '_app/index';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: PreloadedState<RootState>;
@@ -24,19 +25,16 @@ interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     dependencies?: Dependencies;
 }
 
-export function renderWithProviders(
-    ui: React.ReactElement,
-    {
-        preloadedState = {},
-        // Automatically create a store instance if no store was passed in
-        store = createStore({ app: { appType: AppType.fullscreen } }),
-        initialRoute,
-        dependencies = {
-            closeWindow: jest.fn(),
-        },
-        ...renderOptions
-    }: ExtendedRenderOptions = {}
-) {
+export function renderApp({
+    preloadedState = {},
+    // Automatically create a store instance if no store was passed in
+    store = createStore({ app: { appType: AppType.fullscreen } }),
+    initialRoute,
+    dependencies = {
+        closeWindow: jest.fn(),
+    },
+    ...renderOptions
+}: ExtendedRenderOptions = {}) {
     function Wrapper({ children }: PropsWithChildren<unknown>): JSX.Element {
         return (
             <MemoryRouter
@@ -56,5 +54,5 @@ export function renderWithProviders(
     }
 
     const options = { wrapper: Wrapper, ...renderOptions };
-    return { store, ...render(ui, options) };
+    return { store, ...render(<App />, options) };
 }

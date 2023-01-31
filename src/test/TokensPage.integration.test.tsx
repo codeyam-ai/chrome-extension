@@ -1,9 +1,8 @@
 import { screen } from '@testing-library/react';
 
-import App from '_app/index';
 import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
 import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
-import { renderWithProviders } from '_src/test/utils/react-rendering';
+import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('Rendering the Tokens page', () => {
     beforeEach(async () => {
@@ -13,13 +12,13 @@ describe('Rendering the Tokens page', () => {
 
     test('rendering the Tokens page when wallet has no coins', async () => {
         mockSuiObjects();
-        renderWithProviders(<App />);
+        renderApp();
         await screen.findByText('Get started with Sui');
     });
 
     test('rendering the Tokens page when the wallet has some coins', async () => {
         mockSuiObjects({ suiBalance: 400000000 });
-        renderWithProviders(<App />);
+        renderApp();
         await screen.findByText('$40');
     });
 });
