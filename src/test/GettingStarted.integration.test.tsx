@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import App from '_app/index';
 import { mockCommonCalls } from '_src/test/utils/mockchain';
-import { renderWithProviders } from '_src/test/utils/react-rendering';
+import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('Authenticating by importing an account with a seed phrase', () => {
     test('Entire flow works', async () => {
@@ -13,7 +13,7 @@ describe('Authenticating by importing an account with a seed phrase', () => {
         const seedPhraseList = validSeedPhrase.split(' ');
         const walletAddressFromSeed =
             '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b';
-        renderWithProviders(<App />);
+        renderApp();
 
         await screen.findByText('Welcome to Ethos');
         await userEvent.click(screen.getByText('Import', { exact: false }));

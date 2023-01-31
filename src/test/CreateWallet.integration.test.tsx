@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import App from '_app/index';
 import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
 import { mockSuiObjects, mockCommonCalls } from '_src/test/utils/mockchain';
-import { renderWithProviders } from '_src/test/utils/react-rendering';
+import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('Rendering the Tokens page', () => {
     beforeEach(async () => {
@@ -14,7 +14,7 @@ describe('Rendering the Tokens page', () => {
 
     test('rendering the Tokens page when wallet has no coins', async () => {
         mockSuiObjects();
-        renderWithProviders(<App />);
+        renderApp();
         await screen.findByText('Get started with Sui');
         const wallet = await screen.findByText('Wallet');
         await userEvent.click(wallet);

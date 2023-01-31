@@ -5,7 +5,7 @@ import nock from 'nock';
 import { mockSuiObjects, mockCommonCalls } from './utils/mockchain';
 import App from '_app/index';
 import { BASE_URL } from '_src/shared/constants';
-import { renderWithProviders } from '_src/test/utils/react-rendering';
+import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('Email Authentication', () => {
     beforeEach(() => {
@@ -28,7 +28,7 @@ describe('Email Authentication', () => {
                 ],
             });
 
-        renderWithProviders(<App />);
+        renderApp();
         await screen.findByText('Welcome to Ethos');
         await userEvent.click(screen.getByText('Sign in with Email'));
         await userEvent.type(
@@ -65,7 +65,7 @@ describe('Email Authentication', () => {
                 ],
             });
 
-        renderWithProviders(<App />, {
+        renderApp({
             initialRoute: '/initialize/hosted/logging-in',
         });
         await screen.findByTitle('wallet');
