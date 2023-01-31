@@ -1,8 +1,9 @@
+import { useCallback, useState } from 'react';
+
+import Button from '../../button';
 import TransactionRow from './TransactionRow';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
-import { useCallback, useState } from 'react';
-import Button from '../../button';
 
 interface TransactionRowsProps {
     transactions: TxResultState[];
