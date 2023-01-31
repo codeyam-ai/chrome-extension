@@ -1,7 +1,9 @@
 export const isErrorCausedByUserNotHavingEnoughSui = (errorMessage: string) => {
     return (
-        errorMessage.includes('Balance of gas object') &&
-        errorMessage.includes('is lower than gas budget')
+        (errorMessage.includes('Balance of gas object') &&
+            errorMessage.includes('is lower than gas budget')) ||
+        (errorMessage.includes('Cannot find gas coin for signer address') &&
+            errorMessage.includes('with amount sufficient for the budget'))
     );
 };
 
@@ -13,7 +15,9 @@ export const isErrorCausedByIncorrectSigner = (errorMessage: string) => {
 };
 
 export const isErrorCausedByMissingObject = (errorMessage: string) => {
-    return errorMessage.includes(
-        'Error: RPC Error: Could not find the referenced object'
+    return (
+        errorMessage.includes(
+            'Error: RPC Error: Could not find the referenced object'
+        ) || errorMessage.includes('Error checking transaction input objects')
     );
 };

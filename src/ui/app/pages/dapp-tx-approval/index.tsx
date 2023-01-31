@@ -231,21 +231,32 @@ export function DappTxApprovalPage() {
                         }
                     } else if (isErrorCausedByMissingObject(errorMessage)) {
                         setExplicitError(
-                            <Alert
-                                title="Missing Contract"
-                                subtitle={`The contract this transaction references does not exist on ${selectedApiEnv}. Please ensure you are on the correct network or contact the creator of this app to report this error.`}
-                            />
+                            <div className="flex flex-col gap-6">
+                                <Alert
+                                    title="Missing Object or Contract"
+                                    subtitle={`An object or the contract this transaction references does not exist on ${selectedApiEnv}. Please ensure you are on the correct network or contact the creator of this app to report this error.`}
+                                />
+                                <Alert
+                                    title="Error Details"
+                                    subtitle={errorMessage}
+                                />
+                            </div>
                         );
                     } else if (
                         isErrorCausedByUserNotHavingEnoughSui(errorMessage)
                     ) {
-                        setEffects(null);
-                        // setExplicitError(
-                        //     <Alert
-                        //         title="You don't have enough SUI"
-                        //         subtitle="It looks like your wallet doesn't have enough SUI to pay for the gas for this transaction."
-                        //     />
-                        // );
+                        setExplicitError(
+                            <div className="flex flex-col gap-6">
+                                <Alert
+                                    title="You don't have enough SUI"
+                                    subtitle="It looks like your wallet doesn't have enough SUI to pay for the gas for this transaction."
+                                />
+                                <Alert
+                                    title="Error Details"
+                                    subtitle={errorMessage}
+                                />
+                            </div>
+                        );
                     } else {
                         setDryRunError(errorMessage);
                     }

@@ -186,9 +186,9 @@ class Transactions {
                             result: { data: coins },
                         } = await response.json();
 
-                        const sortedCoins = (coins as SimpleCoin[]).sort(
-                            (a, b) => b.balance - a.balance
-                        );
+                        const sortedCoins = (coins as SimpleCoin[])
+                            .filter((coin) => coin.coinType === GAS_TYPE_ARG)
+                            .sort((a, b) => b.balance - a.balance);
 
                         let totalSui = 0;
                         const coinIds: string[] = [];

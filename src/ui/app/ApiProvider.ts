@@ -6,6 +6,7 @@ import {
     JsonRpcProvider,
     LocalTxnDataSerializer,
 } from '@mysten/sui.js';
+import Browser from 'webextension-polyfill';
 
 import { growthbook } from './experimentation/feature-gating';
 import { FEATURES } from './experimentation/features';
@@ -120,6 +121,7 @@ export default class ApiProvider {
         customRPC?: string | null
     ) {
         this._apiEnv = apiEnv;
+        Browser.storage.local.set({ sui_Env: apiEnv });
         // We also clear the query client whenever set set a new API provider:
         queryClient.clear();
         this._apiFullNodeProvider = new JsonRpcProvider(
