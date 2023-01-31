@@ -3,12 +3,11 @@
 
 import ESLintPlugin from 'eslint-webpack-plugin';
 import StyleLintPlugin from 'stylelint-webpack-plugin';
-import { merge } from 'webpack-merge';
+import {merge} from 'webpack-merge';
 
 import configCommon from './webpack.config.common';
 
-import type { Configuration } from 'webpack';
-import util from 'util';
+import type {Configuration} from 'webpack';
 
 const configDev: Configuration = {
     entry: {
@@ -29,15 +28,7 @@ const configDev: Configuration = {
 };
 
 async function getConfig() {
-    const merged = merge(configDev, await configCommon());
-    console.log(
-        util.inspect(merged.entry, {
-            showHidden: false,
-            depth: null,
-            colors: true,
-        })
-    );
-    return merged;
+    return merge(configDev, await configCommon());
 }
 
 export default getConfig;
