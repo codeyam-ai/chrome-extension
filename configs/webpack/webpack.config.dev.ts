@@ -3,11 +3,11 @@
 
 import ESLintPlugin from 'eslint-webpack-plugin';
 import StyleLintPlugin from 'stylelint-webpack-plugin';
-import {merge} from 'webpack-merge';
+import { merge } from 'webpack-merge';
 
 import configCommon from './webpack.config.common';
 
-import type {Configuration} from 'webpack';
+import type { Configuration } from 'webpack';
 
 const configDev: Configuration = {
     entry: {

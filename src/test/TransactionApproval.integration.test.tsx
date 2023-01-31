@@ -39,7 +39,7 @@ describe('The Transaction Approval popup', () => {
         renderApp({
             store: store,
             initialRoute: `/tx-approval/${txRequestId}`,
-            dependencies: {closeWindow: mockWindowCloser},
+            dependencies: { closeWindow: mockWindowCloser },
         });
 
         await screen.findByText('1500000');
@@ -61,7 +61,7 @@ describe('The Transaction Approval popup', () => {
         renderApp({
             store: store,
             initialRoute: `/tx-approval/${txRequestId}`,
-            dependencies: {closeWindow: mockWindowCloser},
+            dependencies: { closeWindow: mockWindowCloser },
         });
 
         await screen.findByText('1500000');
