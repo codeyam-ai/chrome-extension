@@ -1,3 +1,4 @@
+import { Coin } from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Navigate, useSearchParams, useNavigate, Link } from 'react-router-dom';
 
@@ -38,9 +39,12 @@ export const TicketProjectDetailsContent = ({
     );
     const largestCoin = useAppSelector((state) => {
         const coins = accountCoinsSelector(state);
-        return coins.sort(
-            (a, b) => parseInt(b.fields.balance) - parseInt(a.fields.balance)
-        )[0];
+        return coins
+            .filter((coin) => Coin.isSUI(coin))
+            .sort(
+                (a, b) =>
+                    parseInt(b.fields.balance) - parseInt(a.fields.balance)
+            )[0];
     });
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const sufficientBalance = (balances[GAS_TYPE_ARG] || 0) > 1000;
