@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 // import { Link } from 'react-router-dom';
 
 import { accountTicketsSelector } from '../../../redux/slices/account/index';
+import { Ticket } from '../../../redux/slices/sui-objects/Ticket';
 import Body from '../../typography/Body';
 import Loading from '_src/ui/app/components/loading';
 import { growthbook } from '_src/ui/app/experimentation/feature-gating';
@@ -73,8 +74,8 @@ const TicketProjectList = () => {
             const ticketProjectObjects =
                 await api.instance.fullNode.getObjectBatch(ticketProjectIds);
 
-            const ticketProjects = ticketProjectObjects
-                .map((ticketProjectObject) => {
+            const ticketProjects = ticketProjectObjects.map(
+                (ticketProjectObject) => {
                     const { details } = ticketProjectObject;
                     if (typeof details === 'string' || !('data' in details))
                         return null;
@@ -96,27 +97,42 @@ const TicketProjectList = () => {
                         tokenUrl: fields.token_url,
                         coverImage: fields.cover_image,
                     };
-                })
-            
-            const readyTicketProjects = []
+                }
+            );
+
+            const readyTicketProjects: TicketProjectProps[] = [];
             for (const ticketProject of ticketProjects) {
                 if (!ticketProject) continue;
 
                 for (const ticket of tickets) {
                     if (
                         'type' in ticket.data &&
-                        'fields' in ticket.data &&                        
-                        ticket.data.fields.ticket_agent_id === ticketProject.agentObjectId
+                        'fields' in ticket.data &&
+                        ticket.data.fields.ticket_agent_id ===
+                            ticketProject.agentObjectId
                     ) {
-                        const ticketRecord = await lookupTicketRecord(address, ticket.data.fields.ticket_id);
+                        const typeArguments = [];
+                        if (ticket.data.type.indexOf('<') > -1) {
+                            const type = ticket.data.type.split('<')[1];
+                            if (type) {
+                                typeArguments.push(type.replace('>', ''));
+                            }
+                        }
+                        const ticketRecord = await Ticket.lookupTicketRecord(
+                            await api.instance.fullNode,
+                            ticket.data.type.split('::')[0],
+                            address || '',
+                            ticket.data.fields.ticket_id,
+                            ticketProject.agentObjectId,
+                            typeArguments
+                        );
                         if (
                             ticketRecord.redemption_count > 0 &&
                             ticketRecord.address === address
                         ) {
-                            readyTicketProjects.push(ticketProject)
+                            readyTicketProjects.push(ticketProject);
                             break;
-                        }   
-                        
+                        }
                     }
                 }
             }
