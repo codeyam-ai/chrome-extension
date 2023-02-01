@@ -71,7 +71,7 @@
         "nock": "^13.2.9",
         "onchange": "^7.1.0",
         "postcss-loader": "^7.0.2",
-        "postcss-preset-env": "^7.7.2",
+        "postcss-preset-env": "^8.0.1",
         "prettier": "^2.7.1",
         "react-devtools": "^4.27.1",
         "sass": "^1.53.0",
