@@ -203,7 +203,10 @@ class Transactions {
 
                             coinIds.push(coin.coinObjectId);
                             totalSui += coin.balance;
-                            if (totalSui > tx.data.data.gasBudget * gasPrice) {
+                            if (
+                                totalSui >
+                                (tx.data.data.gasBudget || 0) * gasPrice
+                            ) {
                                 break;
                             }
                         }

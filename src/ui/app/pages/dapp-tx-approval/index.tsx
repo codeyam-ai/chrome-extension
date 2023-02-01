@@ -25,6 +25,7 @@ import {
     isErrorCausedByIncorrectSigner,
     isErrorCausedByMissingObject,
     isErrorCausedByUserNotHavingEnoughSui,
+    isErrorObjectVersionUnavailable,
     useCustomSummary,
 } from './lib';
 import * as summaries from './summaries';
@@ -165,7 +166,12 @@ export function DappTxApprovalPage() {
 
         const getEffects = async () => {
             try {
-                if (!transaction || transaction.type === 'move-call') {
+                if (
+                    !transaction ||
+                    transaction.type === 'move-call' ||
+                    (typeof transaction.data === 'object' &&
+                        transaction.data.kind === 'bytes')
+                ) {
                     setEffects(null);
                     return;
                 }
@@ -250,6 +256,19 @@ export function DappTxApprovalPage() {
                                 <Alert
                                     title="You don't have enough SUI"
                                     subtitle="It looks like your wallet doesn't have enough SUI to pay for the gas for this transaction."
+                                />
+                                <Alert
+                                    title="Error Details"
+                                    subtitle={errorMessage}
+                                />
+                            </div>
+                        );
+                    } else if (isErrorObjectVersionUnavailable(errorMessage)) {
+                        setExplicitError(
+                            <div className="flex flex-col gap-6">
+                                <Alert
+                                    title="Object or Coin In Use"
+                                    subtitle="One of the objects or coins in this transaction is already in use. Please wait a moment and try again.    "
                                 />
                                 <Alert
                                     title="Error Details"
