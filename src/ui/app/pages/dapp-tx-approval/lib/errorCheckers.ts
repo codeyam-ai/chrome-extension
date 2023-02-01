@@ -21,3 +21,7 @@ export const isErrorCausedByMissingObject = (errorMessage: string) => {
         ) || errorMessage.includes('Error checking transaction input objects')
     );
 };
+
+export const isErrorObjectVersionUnavailable = (errorMessage: string) => {
+    return errorMessage.includes('ObjectVersionUnavailableForConsumption');
+};

@@ -55,6 +55,7 @@ const TicketProjectList = () => {
     );
     const [loading, setLoading] = useState(true);
 
+    const address = useAppSelector(({ account }) => account.address);
     const tickets = useAppSelector(accountTicketsSelector);
     const [ticketProjects, setTicketProjects] = useState<TicketProjectProps[]>(
         []
@@ -96,25 +97,36 @@ const TicketProjectList = () => {
                         coverImage: fields.cover_image,
                     };
                 })
-                .filter(
-                    (ticketProject) =>
-                        !!ticketProject &&
-                        !tickets.find(
-                            (ticket) =>
-                                'type' in ticket.data &&
-                                'fields' in ticket.data &&
-                                (ticket.data.fields.count || 0) > 0 &&
-                                ticket.data.fields.ticket_agent_id ===
-                                    ticketProject.agentObjectId
-                        )
-                ) as TicketProjectProps[];
+            
+            const readyTicketProjects = []
+            for (const ticketProject of ticketProjects) {
+                if (!ticketProject) continue;
+
+                for (const ticket of tickets) {
+                    if (
+                        'type' in ticket.data &&
+                        'fields' in ticket.data &&                        
+                        ticket.data.fields.ticket_agent_id === ticketProject.agentObjectId
+                    ) {
+                        const ticketRecord = await lookupTicketRecord(address, ticket.data.fields.ticket_id);
+                        if (
+                            ticketRecord.redemption_count > 0 &&
+                            ticketRecord.address === address
+                        ) {
+                            readyTicketProjects.push(ticketProject)
+                            break;
+                        }   
+                        
+                    }
+                }
+            }
 
             setLoading(false);
-            setTicketProjects(ticketProjects);
+            setTicketProjects(readyTicketProjects);
         };
 
         getTicketProjects();
-    }, [loadingTickets, tickets]);
+    }, [loadingTickets, tickets, address]);
 
     return (
         <Loading loading={loading}>

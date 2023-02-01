@@ -6,4 +6,5 @@ export {
     isErrorCausedByIncorrectSigner,
     isErrorCausedByMissingObject,
     isErrorCausedByUserNotHavingEnoughSui,
+    isErrorObjectVersionUnavailable,
 } from './errorCheckers';
