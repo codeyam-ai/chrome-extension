@@ -104,6 +104,7 @@ const TicketProjectList = () => {
             for (const ticketProject of ticketProjects) {
                 if (!ticketProject) continue;
 
+                let foundValidTicket = false;
                 for (const ticket of tickets) {
                     if (
                         'type' in ticket.data &&
@@ -128,12 +129,16 @@ const TicketProjectList = () => {
                         );
                         if (
                             ticketRecord.redemption_count > 0 &&
-                            ticketRecord.address === address
+                            `0x${ticketRecord.address}` === address
                         ) {
-                            readyTicketProjects.push(ticketProject);
+                            foundValidTicket = true;
                             break;
                         }
                     }
+                }
+
+                if (!foundValidTicket) {
+                    readyTicketProjects.push(ticketProject);
                 }
             }
 
