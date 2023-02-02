@@ -83,7 +83,7 @@ export const createGasCoin = createAsyncThunk<
                 GAS_TYPE_ARG,
                 gasAmount,
                 address || '',
-                500
+                DEFAULT_GAS_BUDGET_FOR_PAY
             );
 
             const response = await signer.signAndExecuteTransaction(
@@ -132,16 +132,13 @@ export const sendTokens = createAsyncThunk<
         }
 
         const coins: SuiMoveObject[] = accountCoinsSelector(state);
-        const gasPrice = await signer.provider.getReferenceGasPrice();
-        const gasAmount = DEFAULT_GAS_BUDGET_FOR_PAY * gasPrice;
-
         const response = await signer.signAndExecuteTransaction(
             await CoinAPI.newPayTransaction(
                 coins,
                 tokenTypeArg,
                 amount,
                 recipientAddress,
-                gasAmount
+                DEFAULT_GAS_BUDGET_FOR_PAY
             )
         );
 
