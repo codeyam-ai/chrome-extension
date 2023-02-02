@@ -20,14 +20,16 @@ import FormattedCoin from './FormattedCoin';
 import SectionElement from './SectionElement';
 import TabElement from './TabElement';
 import {
-    useNormalizedFunction,
-    useCategorizedEffects,
     isErrorCausedByIncorrectSigner,
     isErrorCausedByMissingObject,
     isErrorCausedByUserNotHavingEnoughSui,
     isErrorObjectVersionUnavailable,
+    useCategorizedEffects,
     useCustomSummary,
+    useNormalizedFunction,
 } from './lib';
+import { getGasDataFromError } from './lib/extractGasData';
+import getErrorDisplaySuiForMist from './lib/getErrorDisplaySuiForMist';
 import * as summaries from './summaries';
 import Loading from '_components/loading';
 import {
@@ -246,18 +248,33 @@ export function DappTxApprovalPage() {
                     } else if (
                         isErrorCausedByUserNotHavingEnoughSui(errorMessage)
                     ) {
-                        setExplicitError(
-                            <div className="flex flex-col gap-6">
-                                <Alert
-                                    title="You don't have enough SUI"
-                                    subtitle="It looks like your wallet doesn't have enough SUI to pay for the gas for this transaction."
-                                />
-                                <Alert
-                                    title="Error Details"
-                                    subtitle={errorMessage}
-                                />
-                            </div>
-                        );
+                        const gasData = getGasDataFromError(errorMessage);
+                        if (gasData) {
+                            const subtitle = `It looks like your wallet doesn't have enough SUI to pay for the gas for this transaction. Gas required: ${getErrorDisplaySuiForMist(
+                                gasData.gasBudget
+                            )} SUI`;
+                            setExplicitError(
+                                <div className="flex flex-col gap-6">
+                                    <Alert
+                                        title="You don't have enough SUI"
+                                        subtitle={subtitle}
+                                    />
+                                </div>
+                            );
+                        } else {
+                            setExplicitError(
+                                <div className="flex flex-col gap-6">
+                                    <Alert
+                                        title="You don't have enough SUI"
+                                        subtitle="It looks like your wallet doesn't have enough SUI to pay for the gas for this transaction."
+                                    />
+                                    <Alert
+                                        title="Error Details"
+                                        subtitle={errorMessage}
+                                    />
+                                </div>
+                            );
+                        }
                     } else if (isErrorObjectVersionUnavailable(errorMessage)) {
                         setExplicitError(
                             <div className="flex flex-col gap-6">

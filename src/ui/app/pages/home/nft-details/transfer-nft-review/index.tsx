@@ -4,6 +4,9 @@ import { memo, useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+import { isErrorCausedByUserNotHavingEnoughSui } from '../../../dapp-tx-approval/lib';
+import { getGasDataFromError } from '../../../dapp-tx-approval/lib/extractGasData';
+import getErrorDisplaySuiForMist from '../../../dapp-tx-approval/lib/getErrorDisplaySuiForMist';
 import TransferNFTReviewForm from './TransferNFTReviewForm';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { transferNFT } from '_redux/slices/sui-objects';
@@ -77,7 +80,16 @@ function TransferNFTReview() {
                 );
             }
         } catch (e) {
-            toast(<FailAlert text={'Transaction unsuccessful.'} />, {
+            const error = e as { message: string };
+            const failAlertText = isErrorCausedByUserNotHavingEnoughSui(
+                error.message
+            )
+                ? `You don't have enough SUI to pay the transaction cost of ${getErrorDisplaySuiForMist(
+                      getGasDataFromError(error.message)?.gasBudget
+                  )} SUI.`
+                : 'Transaction unsuccessful.';
+
+            toast(<FailAlert text={failAlertText} />, {
                 delay: 500,
             });
         }

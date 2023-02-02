@@ -2,7 +2,6 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import _ from 'lodash';
 import nock from 'nock';
-import * as React from 'react';
 
 import KeypairVault from '_app/KeypairVault';
 import { BackgroundClient } from '_app/background-client';

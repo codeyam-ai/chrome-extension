@@ -9,7 +9,7 @@ type FailAlertProps = {
 
 export const FailAlert = ({ text, linkText, linkUrl }: FailAlertProps) => (
     <div className={'flex flex-row justify-between'}>
-        <div className={'flex flex-row gap-2'}>
+        <div className={'flex flex-row gap-2 items-center text-left'}>
             <XCircleIcon width={18} height={18} color={'#CE3838'} />
             <div>{text}</div>
         </div>

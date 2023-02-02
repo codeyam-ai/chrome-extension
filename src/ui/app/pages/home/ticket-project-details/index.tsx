@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Navigate, useSearchParams, useNavigate, Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { growthbook } from '../../../experimentation/feature-gating';
 import { accountAggregateBalancesSelector } from '../../../redux/slices/account/index';
+import { isErrorCausedByUserNotHavingEnoughSuiToPayForGas } from '../../dapp-tx-approval/lib/errorCheckers';
+import { getGasDataFromError } from '../../dapp-tx-approval/lib/extractGasData';
+import getErrorDisplaySuiForMist from '../../dapp-tx-approval/lib/getErrorDisplaySuiForMist';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account/index';
@@ -75,7 +78,22 @@ export const TicketProjectDetailsContent = ({
 
         if (error) {
             setMinting(false);
-            setError(error);
+            let displayError = error;
+            if (isErrorCausedByUserNotHavingEnoughSuiToPayForGas(error)) {
+                const gasData = getGasDataFromError(error);
+                if (gasData) {
+                    displayError = `It looks like your wallet doesn't have enough SUI to pay for the gas for this transaction. ${
+                        gasData.gasBalance
+                            ? `Gas you are able to pay: ${getErrorDisplaySuiForMist(
+                                  gasData.gasBalance
+                              )}Sui.`
+                            : ''
+                    }Gas required: ${getErrorDisplaySuiForMist(
+                        gasData.gasBudget
+                    )} SUI.`;
+                }
+            }
+            setError(displayError);
             return;
         }
 
