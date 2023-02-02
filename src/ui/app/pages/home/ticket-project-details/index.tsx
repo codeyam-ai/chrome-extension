@@ -1,16 +1,15 @@
-import { Coin } from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Navigate, useSearchParams, useNavigate, Link } from 'react-router-dom';
 
 import { growthbook } from '../../../experimentation/feature-gating';
-import {
-    accountAggregateBalancesSelector,
-    accountCoinsSelector,
-} from '../../../redux/slices/account/index';
+import { accountAggregateBalancesSelector } from '../../../redux/slices/account/index';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account/index';
-import { executeMoveCall } from '_redux/slices/transactions/index';
+import {
+    createGasCoin,
+    executeMoveCall,
+} from '_redux/slices/transactions/index';
 import ExternalLink from '_src/ui/app/components/external-link';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import generateTicketData from '_src/ui/app/helpers/generateTicketData';
@@ -37,15 +36,6 @@ export const TicketProjectDetailsContent = ({
     const loadingNFTs = useAppSelector(
         ({ suiObjects }) => suiObjects.loading && !suiObjects.lastSync
     );
-    const largestCoin = useAppSelector((state) => {
-        const coins = accountCoinsSelector(state);
-        return coins
-            .filter((coin) => Coin.isSUI(coin))
-            .sort(
-                (a, b) =>
-                    parseInt(b.fields.balance) - parseInt(a.fields.balance)
-            )[0];
-    });
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const sufficientBalance = (balances[GAS_TYPE_ARG] || 0) > 1000;
     const address = useAppSelector(({ account: { address } }) => address);
@@ -71,6 +61,12 @@ export const TicketProjectDetailsContent = ({
         if (ticketProject.token && !tokenNFT) return;
 
         setMinting(true);
+
+        const mintTicketGasBudget = 25000;
+
+        const gasCoinId = await dispatch(
+            createGasCoin(BigInt(mintTicketGasBudget))
+        ).unwrap();
 
         const { data, error } = await generateTicketData(
             ticketProject.name,
@@ -105,8 +101,8 @@ export const TicketProjectDetailsContent = ({
                     function: 'create_ticket',
                     typeArguments,
                     arguments: args,
-                    gasBudget: 30000,
-                    gasPayment: largestCoin.fields.id.id,
+                    gasBudget: mintTicketGasBudget,
+                    gasPayment: gasCoinId,
                 })
             ).unwrap();
 
@@ -145,15 +141,7 @@ export const TicketProjectDetailsContent = ({
         }
 
         setMinting(false);
-    }, [
-        largestCoin,
-        minting,
-        ticketProject,
-        address,
-        tokenNFT,
-        dispatch,
-        navigate,
-    ]);
+    }, [minting, ticketProject, address, tokenNFT, dispatch, navigate]);
 
     const capyUrl = growthbook.getFeatureValue(
         'capy-url',
