@@ -42,7 +42,17 @@ describe('Top Nav Wallet Management', () => {
         const nameInput = await screen.findByDisplayValue('Wallet 1');
         await userEvent.clear(nameInput);
         await userEvent.type(nameInput, 'Wal-1');
+
+        const colorPicker = screen.getByTestId('color-picker');
+        await userEvent.click(colorPicker);
+        const green = await screen.findByTestId('color-picker-#EB154C');
+        await userEvent.click(green);
+
         await userEvent.click(await screen.findByText('Done'));
+
+        await screen.findByText("Select the wallet you'd like to edit");
+        await screen.findAllByText('Wal-1');
+        await screen.findAllByTestId('color-#EB154C');
 
         // check wallet 1 still current wallet (see https://linear.app/ethoswallet/issue/ETHOS-89)
         currentWallet = await screen.findByTestId('current-wallet');
