@@ -3,11 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import getNextWalletColor from '../../helpers/getNextWalletColor';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import {
-    saveAccountInfos,
-    saveActiveAccountIndex,
-    setAccountInfos,
-} from '../../redux/slices/account';
+import { saveAccountInfos, setAccountInfos } from '../../redux/slices/account';
 import { thunkExtras } from '../../redux/store/thunk-extras';
 import EmojiDisplay from '../../shared/EmojiDisplay';
 import Button from '../../shared/buttons/Button';
