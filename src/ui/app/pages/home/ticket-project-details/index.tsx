@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { growthbook } from '../../../experimentation/feature-gating';
+import isValidTicket from '../../../helpers/isValidTicket';
 import { accountAggregateBalancesSelector } from '../../../redux/slices/account/index';
 import { isErrorCausedByUserNotHavingEnoughSuiToPayForGas } from '../../dapp-tx-approval/lib/errorCheckers';
 import { getGasDataFromError } from '../../dapp-tx-approval/lib/extractGasData';
@@ -130,9 +131,38 @@ export const TicketProjectDetailsContent = ({
                 'effects' in response.EffectsCert.effects &&
                 'status' in response.EffectsCert.effects.effects
             ) {
-                const { status } = response.EffectsCert.effects.effects;
-                if (status.status === 'success') {
-                    navigate('/my_tickets');
+                const { status, events } = response.EffectsCert.effects.effects;
+                if (status.status === 'success' && events) {
+                    const event = events.find((event) => 'moveEvent' in event);
+                    if (
+                        event &&
+                        'moveEvent' in event &&
+                        event.moveEvent &&
+                        'fields' in event.moveEvent &&
+                        event.moveEvent.fields &&
+                        typeof event.moveEvent.fields === 'object' &&
+                        'ticket_id' in event.moveEvent.fields
+                    ) {
+                        const ticketId = event.moveEvent.fields
+                            .ticket_id as string;
+                        const isValid = await isValidTicket(
+                            api.instance.fullNode,
+                            {
+                                type: typeArguments[0],
+                                fields: { ticketId },
+                            },
+                            address || '',
+                            ticketProject.agentObjectId
+                        );
+
+                        if (isValid) {
+                            navigate('/my_tickets');
+                        } else {
+                            setError(
+                                'You already minted a ticket today for another wallet address.'
+                            );
+                        }
+                    }
                 } else {
                     const eUsed =
                         'name: Identifier("token_gated_ticket") }, function: 6, instruction: 55 }, 1)';
