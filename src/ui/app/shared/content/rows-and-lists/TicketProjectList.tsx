@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 // import { Link } from 'react-router-dom';
 
+import isValidTicket from '../../../helpers/isValidTicket';
 import { accountTicketsSelector } from '../../../redux/slices/account/index';
-import { Ticket } from '../../../redux/slices/sui-objects/Ticket';
 import Body from '../../typography/Body';
 import Loading from '_src/ui/app/components/loading';
 import { growthbook } from '_src/ui/app/experimentation/feature-gating';
@@ -106,31 +106,14 @@ const TicketProjectList = () => {
 
                 let foundValidTicket = false;
                 for (const ticket of tickets) {
-                    if (
-                        'type' in ticket.data &&
-                        'fields' in ticket.data &&
-                        ticket.data.fields.ticket_agent_id ===
-                            ticketProject.agentObjectId
-                    ) {
-                        const typeArguments = [];
-                        if (ticket.data.type.indexOf('<') > -1) {
-                            const type = ticket.data.type.split('<')[1];
-                            if (type) {
-                                typeArguments.push(type.replace('>', ''));
-                            }
-                        }
-                        const ticketRecord = await Ticket.lookupTicketRecord(
-                            await api.instance.fullNode,
-                            ticket.data.type.split('::')[0],
+                    if ('type' in ticket.data && 'fields' in ticket.data) {
+                        const isValid = await isValidTicket(
+                            api.instance.fullNode,
+                            ticket.data,
                             address || '',
-                            ticket.data.fields.ticket_id,
-                            ticketProject.agentObjectId,
-                            typeArguments
+                            ticketProject.agentObjectId
                         );
-                        if (
-                            ticketRecord.redemption_count > 0 &&
-                            `0x${ticketRecord.address}` === address
-                        ) {
+                        if (isValid) {
                             foundValidTicket = true;
                             break;
                         }
