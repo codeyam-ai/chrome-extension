@@ -38,7 +38,9 @@ export function renderApp({
     function Wrapper({ children }: PropsWithChildren<unknown>): JSX.Element {
         return (
             <MemoryRouter
-                initialEntries={initialRoute ? [initialRoute] : undefined}
+                // we start at '/tokens' because if we use the index route of '/' it will navigate to '/tokens'
+                // at some point after the initial render, which causes havoc in tests.
+                initialEntries={initialRoute ? [initialRoute] : ['/tokens']}
             >
                 <Provider store={store}>
                     <IntlProvider locale={'pt'}>

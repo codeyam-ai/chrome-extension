@@ -15,24 +15,24 @@ describe('Rendering the Tokens page', () => {
         mockSuiObjects();
         renderApp();
         await screen.findByText('Get started with Sui');
-        const wallet = await screen.findByText('Wallet');
+        const wallet = await screen.findByText('Wallet 1');
         await userEvent.click(wallet);
 
         const createWallet = await screen.findByText('Create Wallet');
         await userEvent.click(createWallet);
         await waitFor(
-            async () => (await screen.findAllByText('Wallet 2')).length > 0
+            async () => (await screen.findAllByText('Wallet 3')).length > 0
         );
 
         const edit = screen.getByText('Edit');
         await userEvent.click(edit);
         await screen.findByText("Select the wallet you'd like to edit");
 
-        const wallet2 = screen.getByTestId('wallet2');
-        await userEvent.click(wallet2);
+        const wallet3 = screen.getByTestId('wallet3');
+        await userEvent.click(wallet3);
         await screen.findByText('Edit Wallet');
 
-        const input = screen.getByDisplayValue('Wallet 2');
+        const input = screen.getByDisplayValue('Wallet 3');
         await userEvent.clear(input);
         await userEvent.type(input, 'Gaming');
         await waitFor(

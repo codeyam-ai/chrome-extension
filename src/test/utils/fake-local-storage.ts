@@ -5,8 +5,23 @@ export const password = 'A Bad Password';
 export const simulateAuthenticatedUser = async function () {
     const recoveryPhrase =
         'girl empower human spring circle ceiling wild pact stumble model wheel chuckle';
-    const accountInfosJson =
-        '[{"index":0,"name":"Wallet","color":"#7E23CA","address":"0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b","seed":"138,218,84,37,236,236,197,76,166,86,150,23,223,51,107,198,3,149,112,132,37,250,167,223,74,224,28,199,243,20,181,211"}]';
+    const accountInfos = [
+        {
+            index: 0,
+            name: 'Wallet 1',
+            color: '#7E23CA',
+            address: '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+            seed: '138,218,84,37,236,236,197,76,166,86,150,23,223,51,107,198,3,149,112,132,37,250,167,223,74,224,28,199,243,20,181,211',
+        },
+        {
+            index: 1,
+            name: 'Wallet 2',
+            color: '#2eca23',
+            address: '0x434ffd2c55c39aa97f465eb4402ca949a263b868',
+            seed: '39,152,242,153,62,243,130,133,194,63,255,73,56,234,127,189,45,66,228,56,187,248,98,49,146,17,246,230,110,0,222,26',
+        },
+    ];
+    const accountInfosJson = JSON.stringify(accountInfos);
     await setEncrypted('passphrase', password);
     await setEncrypted('accountInfos', accountInfosJson, password);
     await setEncrypted('mnemonic', recoveryPhrase, password);

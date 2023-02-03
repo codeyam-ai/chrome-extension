@@ -103,9 +103,6 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
             await Authentication.getAccountInfos(true);
         } else {
             await dispatch(saveAccountInfos(draftAccountInfos.current));
-            await dispatch(
-                saveActiveAccountIndex(draftAccountInfos.current.length - 1)
-            );
             getAccountInfos();
         }
 
