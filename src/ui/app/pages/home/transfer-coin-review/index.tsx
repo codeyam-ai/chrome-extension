@@ -8,7 +8,7 @@ import { useCallback, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { isErrorCausedByUserNotHavingEnoughSui } from '../../dapp-tx-approval/lib';
+import { isErrorCausedByUserNotHavingEnoughSuiToPayForGas } from '../../dapp-tx-approval/lib';
 import { getGasDataFromError } from '../../dapp-tx-approval/lib/extractGasData';
 import getErrorDisplaySuiForMist from '../../dapp-tx-approval/lib/getErrorDisplaySuiForMist';
 import TransferCoinReviewForm from './TransferCoinReviewForm';
@@ -96,13 +96,14 @@ function TransferCoinReviewPage() {
                 navigate(receiptUrl);
             } catch (e) {
                 const error = e as { message: string };
-                const failAlertText = isErrorCausedByUserNotHavingEnoughSui(
-                    error.message
-                )
-                    ? `You don't have enough SUI to pay the transaction cost of ${getErrorDisplaySuiForMist(
-                          getGasDataFromError(error.message)?.gasBudget
-                      )} SUI.`
-                    : 'Transaction unsuccessful.';
+                const failAlertText =
+                    isErrorCausedByUserNotHavingEnoughSuiToPayForGas(
+                        error.message
+                    )
+                        ? `You don't have enough SUI to pay the transaction cost of ${getErrorDisplaySuiForMist(
+                              getGasDataFromError(error.message)?.gasBudget
+                          )} SUI.`
+                        : 'Transaction unsuccessful.';
                 const receiptUrl = '/tokens';
                 navigate(receiptUrl);
                 toast(<FailAlert text={failAlertText} />, {

@@ -5,6 +5,6 @@ export { default as cleanObjectId } from './cleanObjectId';
 export {
     isErrorCausedByIncorrectSigner,
     isErrorCausedByMissingObject,
-    isErrorCausedByUserNotHavingEnoughSuiToPayForGas as isErrorCausedByUserNotHavingEnoughSui,
+    isErrorCausedByUserNotHavingEnoughSuiToPayForGas,
     isErrorObjectVersionUnavailable,
 } from './errorCheckers';

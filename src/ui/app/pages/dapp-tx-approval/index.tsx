@@ -22,7 +22,7 @@ import TabElement from './TabElement';
 import {
     isErrorCausedByIncorrectSigner,
     isErrorCausedByMissingObject,
-    isErrorCausedByUserNotHavingEnoughSui,
+    isErrorCausedByUserNotHavingEnoughSuiToPayForGas,
     isErrorObjectVersionUnavailable,
     useCategorizedEffects,
     useCustomSummary,
@@ -246,7 +246,9 @@ export function DappTxApprovalPage() {
                             </div>
                         );
                     } else if (
-                        isErrorCausedByUserNotHavingEnoughSui(errorMessage)
+                        isErrorCausedByUserNotHavingEnoughSuiToPayForGas(
+                            errorMessage
+                        )
                     ) {
                         const gasData = getGasDataFromError(errorMessage);
                         if (gasData) {
@@ -258,6 +260,10 @@ export function DappTxApprovalPage() {
                                     <Alert
                                         title="You don't have enough SUI"
                                         subtitle={subtitle}
+                                    />
+                                    <Alert
+                                        title="Error Details"
+                                        subtitle={errorMessage}
                                     />
                                 </div>
                             );
