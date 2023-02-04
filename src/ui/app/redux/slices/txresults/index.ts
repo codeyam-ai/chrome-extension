@@ -137,24 +137,27 @@ const getTxnEffectsEventID = (
 
 export const getTransactionsByAddress = createAsyncThunk<
     TxResultByAddress,
-    void,
+    string[] | undefined,
     AppThunkConfig
 >(
     'sui-transactions/get-transactions-by-address',
-    async (
-        _,
-        { getState, dispatch, extra: { api } }
-    ): Promise<TxResultByAddress> => {
-        const address = getState().account.address;
+    async (txs, { getState, extra: { api } }): Promise<TxResultByAddress> => {
+        console.log('txs: ', txs);
 
+        let transactions: GetTxnDigestsResponse;
+        const address = getState().account.address;
         if (!address) return [];
 
-        // Get all transactions txId for address
-        const transactions: GetTxnDigestsResponse =
-            await api.instance.fullNode.getTransactionsForAddress(
-                address,
-                true
-            );
+        if (!txs) {
+            // Get all transactions txId for address
+            transactions =
+                await api.instance.fullNode.getTransactionsForAddress(
+                    address,
+                    true
+                );
+        } else {
+            transactions = txs;
+        }
 
         if (!transactions || !transactions.length) {
             return [];
