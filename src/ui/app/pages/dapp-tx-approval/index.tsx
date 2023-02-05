@@ -194,7 +194,9 @@ export function DappTxApprovalPage() {
                 setIncorrectSigner(undefined);
 
                 const { effects: transactionEffects } =
-                    await signer.devInspectTransaction(transaction.data);
+                    await signer.devInspectTransaction(
+                        JSON.parse(JSON.stringify(transaction.data))
+                    );
 
                 if (transactionEffects.status.status === 'failure') {
                     if (
@@ -204,6 +206,23 @@ export function DappTxApprovalPage() {
                     ) {
                         setDryRunError(
                             'Sui Devnet is having technical issues. Please checkback later when these issues are resolved.'
+                        );
+                    } else if (
+                        isErrorObjectVersionUnavailable(
+                            transactionEffects?.status?.error || ''
+                        )
+                    ) {
+                        setExplicitError(
+                            <div className="flex flex-col gap-6">
+                                <Alert
+                                    title="Object or Coin In Use"
+                                    subtitle="One of the objects or coins in this transaction is already in use. Please wait a moment and try again.    "
+                                />
+                                <Alert
+                                    title="Error Details"
+                                    subtitle={transactionEffects?.status?.error}
+                                />
+                            </div>
                         );
                     } else {
                         setDryRunError(transactionEffects.status.error);

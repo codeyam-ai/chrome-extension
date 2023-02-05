@@ -18,7 +18,9 @@ export const isErrorCausedByMissingObject = (errorMessage: string) => {
     return (
         errorMessage.includes(
             'Error: RPC Error: Could not find the referenced object'
-        ) || errorMessage.includes('Error checking transaction input objects')
+        ) ||
+        errorMessage.includes('Error checking transaction input objects') ||
+        errorMessage.includes('Package object does not exist with ID')
     );
 };
 
