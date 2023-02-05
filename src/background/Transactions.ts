@@ -4,6 +4,7 @@
 import {
     Base64DataBuffer,
     Ed25519Keypair,
+    JsonRpcProvider,
     RawSigner,
     SIGNATURE_SCHEME_TO_FLAG,
 } from '@mysten/sui.js';
@@ -397,9 +398,11 @@ class Transactions {
                 nacl.sign.keyPair.fromSeed(new Uint8Array(seed))
             );
 
-            const signer = new RawSigner(keypair);
+            const provider = new JsonRpcProvider(endpoint);
+            const signer = new RawSigner(keypair, provider);
 
             const signed = await signer.signData(dataToSign);
+
             signature = signed.signature;
             publicKey = signed.pubKey;
         } else {
