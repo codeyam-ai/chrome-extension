@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 import { QueueListIcon } from '@heroicons/react/24/solid';
 import { memo, useCallback, useEffect, useState } from 'react';
-
-import { useAppSelector } from '_hooks';
-import { getTransactionsByAddress } from '_redux/slices/txresults';
+import { useAppDispatch, useAppSelector } from '_hooks';
+import {
+    getTransactionsByAddress,
+    TxResultState,
+} from '_redux/slices/txresults';
 import Loading from '_src/ui/app/components/loading';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
@@ -19,82 +21,80 @@ const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
     const [transactions, setTransactions] = useState<string[]>([]);
     const [items, setItems] = useState<FormattedTxResultState[]>([]);
-    const txPerPage = 10;
+    const dispatch = useAppDispatch();
+    const txPerPage = 5;
     const totalNumTxs = transactions.length;
     const [showBtn, setShowBtn] = useState(true);
     const [page, setPage] = useState(1);
-    const [txs, setTxs] = useState(transactions.slice(0, txPerPage));
+    const [txs, setTxs] = useState<string[]>([]);
+    const [nextPage, setNextPage] = useState(1);
 
-    console.log('address: ', address);
+    const txByAddress: TxResultState[] = useAppSelector(
+        ({ txresults }) => txresults.latestTx
+    );
 
-    const getCurrentItems = () => {
-        let nextPage = page;
+    console.log('txByAddress', txByAddress);
 
+    if (items.length !== txByAddress.length) {
         if (items.length > 0) {
-            nextPage = page + 1;
+            setItems([...items, ...txByAddress]);
+        } else {
+            setItems(txByAddress);
+        }
+    }
+
+    const loadItems = useCallback(async () => {
+        if (items.length > 0) {
+            setNextPage(page + 1);
         }
 
         const start = (nextPage - 1) * txPerPage;
         const end = start + txPerPage;
-
-        console.log('transactions: ', transactions);
-
         const newTxs = transactions.slice(start, end);
 
-        setTxs([...txs, ...newTxs]);
-        setPage(nextPage as number);
+        console.log('transactions: ', transactions, start, end);
 
-        console.log('newtxs: ', newTxs);
+        setTxs([...txs, ...newTxs]);
+        setPage(nextPage);
 
         if (newTxs && newTxs.length > 0) {
-            const getCurrentItems = async () => {
-                return await getTransactionsByAddress(newTxs);
-            };
-
-            const getItems = getCurrentItems();
-
-            getItems.then((items) => {
-                console.log('items: ', items);
-            });
+            dispatch(getTransactionsByAddress(newTxs));
         }
 
-        if (nextPage && nextPage * txPerPage >= totalNumTxs) {
+        if (
+            (nextPage && nextPage * txPerPage >= totalNumTxs) ||
+            (showBtn && transactions.length < txPerPage)
+        ) {
             setShowBtn(false);
         }
-    };
+    }, [address, items.length, page, txPerPage, totalNumTxs, txs]);
 
     useEffect(() => {
         const getTxs = async () => {
-            if (address) {
-                let transactions: string[] =
-                    await api.instance.fullNode.getTransactionsForAddress(
-                        address,
-                        true
-                    );
-
-                transactions = transactions.filter(
-                    (value, index, self) => self.indexOf(value) === index
+            console.log('fired.');
+            let transactions: string[] =
+                await api.instance.fullNode.getTransactionsForAddress(
+                    address as string,
+                    true
                 );
 
-                return transactions;
+            transactions = transactions.filter(
+                (value, index, self) => self.indexOf(value) === index
+            );
+
+            setTransactions(transactions);
+
+            if (address) {
+                loadItems();
             }
         };
 
-        getTxs().then((txs) => {
-            setTransactions(txs as string[]);
-            getCurrentItems();
-        });
+        getTxs();
     }, []);
 
     const loadMore = useCallback(() => {
-        getCurrentItems();
-    }, [getCurrentItems]);
-
-    if (showBtn && transactions.length < txPerPage) {
-        setShowBtn(false);
-    }
-
-    console.log('txs: ', txs);
+        loadItems();
+    }, [page, txs, transactions, items, totalNumTxs]);
 
     return (
         <>

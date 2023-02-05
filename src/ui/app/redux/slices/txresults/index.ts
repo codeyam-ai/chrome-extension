@@ -142,8 +142,6 @@ export const getTransactionsByAddress = createAsyncThunk<
 >(
     'sui-transactions/get-transactions-by-address',
     async (txs, { getState, extra: { api } }): Promise<TxResultByAddress> => {
-        console.log('txs: ', txs);
-
         let transactions: GetTxnDigestsResponse;
         const address = getState().account.address;
         if (!address) return [];
