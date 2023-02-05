@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 // import { Link } from 'react-router-dom';
 
+import isValidTicket from '../../../helpers/isValidTicket';
 import { accountTicketsSelector } from '../../../redux/slices/account/index';
 import Body from '../../typography/Body';
 import Loading from '_src/ui/app/components/loading';
@@ -55,6 +56,7 @@ const TicketProjectList = () => {
     );
     const [loading, setLoading] = useState(true);
 
+    const address = useAppSelector(({ account }) => account.address);
     const tickets = useAppSelector(accountTicketsSelector);
     const [ticketProjects, setTicketProjects] = useState<TicketProjectProps[]>(
         []
@@ -72,8 +74,8 @@ const TicketProjectList = () => {
             const ticketProjectObjects =
                 await api.instance.fullNode.getObjectBatch(ticketProjectIds);
 
-            const ticketProjects = ticketProjectObjects
-                .map((ticketProjectObject) => {
+            const ticketProjects = ticketProjectObjects.map(
+                (ticketProjectObject) => {
                     const { details } = ticketProjectObject;
                     if (typeof details === 'string' || !('data' in details))
                         return null;
@@ -95,26 +97,40 @@ const TicketProjectList = () => {
                         tokenUrl: fields.token_url,
                         coverImage: fields.cover_image,
                     };
-                })
-                .filter(
-                    (ticketProject) =>
-                        !!ticketProject &&
-                        !tickets.find(
-                            (ticket) =>
-                                'type' in ticket.data &&
-                                'fields' in ticket.data &&
-                                (ticket.data.fields.count || 0) > 0 &&
-                                ticket.data.fields.ticket_agent_id ===
-                                    ticketProject.agentObjectId
-                        )
-                ) as TicketProjectProps[];
+                }
+            );
+
+            const readyTicketProjects: TicketProjectProps[] = [];
+            for (const ticketProject of ticketProjects) {
+                if (!ticketProject) continue;
+
+                let foundValidTicket = false;
+                for (const ticket of tickets) {
+                    if ('type' in ticket.data && 'fields' in ticket.data) {
+                        const isValid = await isValidTicket(
+                            api.instance.fullNode,
+                            ticket.data,
+                            address || '',
+                            ticketProject.agentObjectId
+                        );
+                        if (isValid) {
+                            foundValidTicket = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!foundValidTicket) {
+                    readyTicketProjects.push(ticketProject);
+                }
+            }
 
             setLoading(false);
-            setTicketProjects(ticketProjects);
+            setTicketProjects(readyTicketProjects);
         };
 
         getTicketProjects();
-    }, [loadingTickets, tickets]);
+    }, [loadingTickets, tickets, address]);
 
     return (
         <Loading loading={loading}>

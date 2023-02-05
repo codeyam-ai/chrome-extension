@@ -72,11 +72,11 @@ const App = () => {
         <ThemeProvider initialTheme={undefined}>
             <LockWalletProvider>
                 <Routes>
+                    <Route
+                        path="/"
+                        element={<Navigate to="/tokens" replace={true} />}
+                    />
                     <Route path="/*" element={<HomePage />}>
-                        <Route
-                            index
-                            element={<Navigate to="/tokens" replace={true} />}
-                        />
                         <Route path="tokens" element={<TokensPage />} />
                         <Route path="nfts">
                             <Route path={'*'} element={<NftsPage />} />

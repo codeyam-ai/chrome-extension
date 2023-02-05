@@ -72,7 +72,10 @@ const WalletButton = ({
                     </button>
                 )}
                 {isActive && !isWalletEditing && (
-                    <CheckCircleIcon className="h-5 w-5 text-ethos-light-primary-light" />
+                    <CheckCircleIcon
+                        data-testid={`check-circle-${wallet.index + 1}`}
+                        className="h-5 w-5 text-ethos-light-primary-light"
+                    />
                 )}
             </div>
         </div>

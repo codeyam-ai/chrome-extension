@@ -12,6 +12,7 @@ import { saveActiveAccountIndex } from '../../redux/slices/account/index';
 import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import Button from '../../shared/buttons/Button';
 import Alert from '../../shared/feedback/Alert';
+import AlertWithErrorExpand from '../../shared/feedback/AlertWithErrorExpand';
 import Body from '../../shared/typography/Body';
 import CopyBody from '../../shared/typography/CopyBody';
 import EthosLink from '../../shared/typography/EthosLink';
@@ -20,14 +21,16 @@ import FormattedCoin from './FormattedCoin';
 import SectionElement from './SectionElement';
 import TabElement from './TabElement';
 import {
-    useNormalizedFunction,
-    useCategorizedEffects,
     isErrorCausedByIncorrectSigner,
     isErrorCausedByMissingObject,
-    isErrorCausedByUserNotHavingEnoughSui,
+    isErrorCausedByUserNotHavingEnoughSuiToPayForGas,
     isErrorObjectVersionUnavailable,
+    useCategorizedEffects,
     useCustomSummary,
+    useNormalizedFunction,
 } from './lib';
+import { getGasDataFromError } from './lib/extractGasData';
+import getErrorDisplaySuiForMist from './lib/getErrorDisplaySuiForMist';
 import * as summaries from './summaries';
 import Loading from '_components/loading';
 import {
@@ -257,41 +260,80 @@ export function DappTxApprovalPage() {
                     } else if (isErrorCausedByMissingObject(errorMessage)) {
                         setExplicitError(
                             <div className="flex flex-col gap-6">
-                                <Alert
+                                <AlertWithErrorExpand
                                     title="Missing Object or Contract"
-                                    subtitle={`An object or the contract this transaction references does not exist on ${selectedApiEnv}. Please ensure you are on the correct network or contact the creator of this app to report this error.`}
-                                />
-                                <Alert
-                                    title="Error Details"
-                                    subtitle={errorMessage}
+                                    body={
+                                        <Body>
+                                            An object or the contract this
+                                            transaction references does not
+                                            exist on {selectedApiEnv}. Please
+                                            ensure you are on the correct
+                                            network or contact the creator of
+                                            this app to report this error.
+                                        </Body>
+                                    }
+                                    fullErrorText={errorMessage}
                                 />
                             </div>
                         );
                     } else if (
-                        isErrorCausedByUserNotHavingEnoughSui(errorMessage)
+                        isErrorCausedByUserNotHavingEnoughSuiToPayForGas(
+                            errorMessage
+                        )
                     ) {
-                        setExplicitError(
-                            <div className="flex flex-col gap-6">
-                                <Alert
-                                    title="You don't have enough SUI"
-                                    subtitle="It looks like your wallet doesn't have enough SUI to pay for the gas for this transaction."
-                                />
-                                <Alert
-                                    title="Error Details"
-                                    subtitle={errorMessage}
-                                />
-                            </div>
-                        );
+                        const gasData = getGasDataFromError(errorMessage);
+                        if (gasData) {
+                            setExplicitError(
+                                <div className="flex flex-col gap-6">
+                                    <AlertWithErrorExpand
+                                        title="You don't have enough SUI"
+                                        body={
+                                            <Body>
+                                                It looks like your wallet
+                                                doesn&apos;t have enough SUI to
+                                                pay for the gas for this
+                                                transaction. Gas required:{' '}
+                                                {getErrorDisplaySuiForMist(
+                                                    gasData.gasBudget
+                                                )}{' '}
+                                                SUI
+                                            </Body>
+                                        }
+                                        fullErrorText={errorMessage}
+                                    />
+                                </div>
+                            );
+                        } else {
+                            setExplicitError(
+                                <div className="flex flex-col gap-6">
+                                    <AlertWithErrorExpand
+                                        title="You don't have enough SUI"
+                                        body={
+                                            <Body>
+                                                It looks like your wallet
+                                                doesn&apos;t have enough SUI to
+                                                pay for the gas for this
+                                                transaction.
+                                            </Body>
+                                        }
+                                        fullErrorText={errorMessage}
+                                    />
+                                </div>
+                            );
+                        }
                     } else if (isErrorObjectVersionUnavailable(errorMessage)) {
                         setExplicitError(
                             <div className="flex flex-col gap-6">
-                                <Alert
+                                <AlertWithErrorExpand
                                     title="Object or Coin In Use"
-                                    subtitle="One of the objects or coins in this transaction is already in use. Please wait a moment and try again.    "
-                                />
-                                <Alert
-                                    title="Error Details"
-                                    subtitle={errorMessage}
+                                    body={
+                                        <Body>
+                                            One of the objects or coins in this
+                                            transaction is already in use.
+                                            Please wait a moment and try again.
+                                        </Body>
+                                    }
+                                    fullErrorText={errorMessage}
                                 />
                             </div>
                         );
@@ -722,9 +764,9 @@ export function DappTxApprovalPage() {
         if (dryRunError)
             return (
                 <div className="px-6 pb-6 flex flex-col gap-6">
-                    <Alert
+                    <AlertWithErrorExpand
                         title="Dry run error"
-                        subtitle={
+                        body={
                             <Body>
                                 Your transaction couldn&apos;t be estimated.
                                 Please try again later. If this issue persists,{' '}
@@ -737,10 +779,7 @@ export function DappTxApprovalPage() {
                                 .
                             </Body>
                         }
-                    />
-                    <Alert
-                        title="Error details"
-                        subtitle={<Body>{dryRunError}</Body>}
+                        fullErrorText={dryRunError}
                     />
                 </div>
             );

@@ -1,16 +1,19 @@
-import { Coin } from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Navigate, useSearchParams, useNavigate, Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { growthbook } from '../../../experimentation/feature-gating';
-import {
-    accountAggregateBalancesSelector,
-    accountCoinsSelector,
-} from '../../../redux/slices/account/index';
+import isValidTicket from '../../../helpers/isValidTicket';
+import { accountAggregateBalancesSelector } from '../../../redux/slices/account/index';
+import { isErrorCausedByUserNotHavingEnoughSuiToPayForGas } from '../../dapp-tx-approval/lib/errorCheckers';
+import { getGasDataFromError } from '../../dapp-tx-approval/lib/extractGasData';
+import getErrorDisplaySuiForMist from '../../dapp-tx-approval/lib/getErrorDisplaySuiForMist';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account/index';
-import { executeMoveCall } from '_redux/slices/transactions/index';
+import {
+    createGasCoin,
+    executeMoveCall,
+} from '_redux/slices/transactions/index';
 import ExternalLink from '_src/ui/app/components/external-link';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import generateTicketData from '_src/ui/app/helpers/generateTicketData';
@@ -37,15 +40,6 @@ export const TicketProjectDetailsContent = ({
     const loadingNFTs = useAppSelector(
         ({ suiObjects }) => suiObjects.loading && !suiObjects.lastSync
     );
-    const largestCoin = useAppSelector((state) => {
-        const coins = accountCoinsSelector(state);
-        return coins
-            .filter((coin) => Coin.isSUI(coin))
-            .sort(
-                (a, b) =>
-                    parseInt(b.fields.balance) - parseInt(a.fields.balance)
-            )[0];
-    });
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const sufficientBalance = (balances[GAS_TYPE_ARG] || 0) > 1000;
     const address = useAppSelector(({ account: { address } }) => address);
@@ -72,6 +66,12 @@ export const TicketProjectDetailsContent = ({
 
         setMinting(true);
 
+        const mintTicketGasBudget = 25000;
+
+        const gasCoinId = await dispatch(
+            createGasCoin(BigInt(mintTicketGasBudget))
+        ).unwrap();
+
         const { data, error } = await generateTicketData(
             ticketProject.name,
             address
@@ -79,7 +79,22 @@ export const TicketProjectDetailsContent = ({
 
         if (error) {
             setMinting(false);
-            setError(error);
+            let displayError = error;
+            if (isErrorCausedByUserNotHavingEnoughSuiToPayForGas(error)) {
+                const gasData = getGasDataFromError(error);
+                if (gasData) {
+                    displayError = `It looks like your wallet doesn't have enough SUI to pay for the gas for this transaction. ${
+                        gasData.gasBalance
+                            ? `Gas you are able to pay: ${getErrorDisplaySuiForMist(
+                                  gasData.gasBalance
+                              )}Sui.`
+                            : ''
+                    }Gas required: ${getErrorDisplaySuiForMist(
+                        gasData.gasBudget
+                    )} SUI.`;
+                }
+            }
+            setError(displayError);
             return;
         }
 
@@ -105,8 +120,8 @@ export const TicketProjectDetailsContent = ({
                     function: 'create_ticket',
                     typeArguments,
                     arguments: args,
-                    gasBudget: 30000,
-                    gasPayment: largestCoin.fields.id.id,
+                    gasBudget: mintTicketGasBudget,
+                    gasPayment: gasCoinId,
                 })
             ).unwrap();
 
@@ -116,9 +131,38 @@ export const TicketProjectDetailsContent = ({
                 'effects' in response.EffectsCert.effects &&
                 'status' in response.EffectsCert.effects.effects
             ) {
-                const { status } = response.EffectsCert.effects.effects;
-                if (status.status === 'success') {
-                    navigate('/my_tickets');
+                const { status, events } = response.EffectsCert.effects.effects;
+                if (status.status === 'success' && events) {
+                    const event = events.find((event) => 'moveEvent' in event);
+                    if (
+                        event &&
+                        'moveEvent' in event &&
+                        event.moveEvent &&
+                        'fields' in event.moveEvent &&
+                        event.moveEvent.fields &&
+                        typeof event.moveEvent.fields === 'object' &&
+                        'ticket_id' in event.moveEvent.fields
+                    ) {
+                        const ticketId = event.moveEvent.fields
+                            .ticket_id as string;
+                        const isValid = await isValidTicket(
+                            api.instance.fullNode,
+                            {
+                                type: typeArguments[0],
+                                fields: { ticketId },
+                            },
+                            address || '',
+                            ticketProject.agentObjectId
+                        );
+
+                        if (isValid) {
+                            navigate('/my_tickets');
+                        } else {
+                            setError(
+                                'You already minted a ticket today for another wallet address.'
+                            );
+                        }
+                    }
                 } else {
                     const eUsed =
                         'name: Identifier("token_gated_ticket") }, function: 6, instruction: 55 }, 1)';
@@ -145,15 +189,7 @@ export const TicketProjectDetailsContent = ({
         }
 
         setMinting(false);
-    }, [
-        largestCoin,
-        minting,
-        ticketProject,
-        address,
-        tokenNFT,
-        dispatch,
-        navigate,
-    ]);
+    }, [minting, ticketProject, address, tokenNFT, dispatch, navigate]);
 
     const capyUrl = growthbook.getFeatureValue(
         'capy-url',
