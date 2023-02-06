@@ -108,7 +108,7 @@
         "aes-js": "^3.1.2",
         "animate.css": "^4.1.1",
         "asmcrypto.js": "^2.3.2",
-        "bignumber.js": "^9.1.0",
+        "bignumber.js": "^9.1.1",
         "bip39-light": "^1.0.7",
         "bootstrap-icons": "^1.9.1",
         "buffer": "^6.0.3",
