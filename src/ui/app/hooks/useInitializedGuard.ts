@@ -4,8 +4,8 @@
 import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { AUTHENTICATION_REQUESTED } from '../pages/initialize/hosted';
 import useAppSelector from './useAppSelector';
+import { AUTHENTICATION_REQUESTED } from '../pages/initialize/hosted';
 import { openInNewTab } from '_src/shared/utils';
 
 export enum AppState {

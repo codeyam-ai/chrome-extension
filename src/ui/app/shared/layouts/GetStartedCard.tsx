@@ -1,8 +1,8 @@
 import { type ReactNode } from 'react';
 
+import BaseLayout from './BaseLayout';
 import HeaderWithLargeEthosIcon from '../headers/page-headers/HeaderWithLargeEthosIcon';
 import SignInFlowNavBar from '../navigation/nav-bar/SignInFlowNavBar';
-import BaseLayout from './BaseLayout';
 
 type GetStartedCardProps = {
     showBack?: boolean;

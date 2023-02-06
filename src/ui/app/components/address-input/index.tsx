@@ -4,9 +4,9 @@
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import Input from '../../shared/inputs/Input';
 import { getSuiAddress } from './nameservice';
 import { SUI_ADDRESS_VALIDATION } from './validation';
+import Input from '../../shared/inputs/Input';
 
 import type { SuiAddress } from '@mysten/sui.js';
 import type { FieldProps } from 'formik';

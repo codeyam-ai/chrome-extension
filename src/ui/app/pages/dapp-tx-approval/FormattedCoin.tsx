@@ -1,5 +1,5 @@
-import { useFormatCoin } from '../../hooks';
 import { Dot } from './CostValue';
+import { useFormatCoin } from '../../hooks';
 
 const FormattedCoin = ({ type, amount }: { type: string; amount: number }) => {
     const [formattedAmount, symbol] = useFormatCoin(amount, type);

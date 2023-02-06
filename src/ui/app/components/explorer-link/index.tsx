@@ -3,10 +3,10 @@
 
 import { memo, useMemo } from 'react';
 
-import Body from '../../shared/typography/Body';
-import EthosLink from '../../shared/typography/EthosLink';
 import { Explorer } from './Explorer';
 import { ExplorerLinkType } from './ExplorerLinkType';
+import Body from '../../shared/typography/Body';
+import EthosLink from '../../shared/typography/EthosLink';
 import { useAppSelector } from '_hooks';
 import { activeAccountSelector } from '_redux/slices/account';
 import { LinkType } from '_src/enums/LinkType';

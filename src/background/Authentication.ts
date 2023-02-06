@@ -111,4 +111,6 @@ class Authentication {
     }
 }
 
-export default new Authentication();
+const authentication = new Authentication();
+
+export default authentication;

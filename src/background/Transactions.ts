@@ -13,9 +13,9 @@ import nacl from 'tweetnacl';
 import { v4 as uuidV4 } from 'uuid';
 import Browser from 'webextension-polyfill';
 
-import { GAS_TYPE_ARG } from '../ui/app/redux/slices/sui-objects/Coin';
 import Authentication from './Authentication';
 import { Window } from './Window';
+import { GAS_TYPE_ARG } from '../ui/app/redux/slices/sui-objects/Coin';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
@@ -657,4 +657,6 @@ class Transactions {
     }
 }
 
-export default new Transactions();
+const transactions = new Transactions();
+
+export default transactions;

@@ -11,9 +11,9 @@ import {
 } from '@heroicons/react/24/solid';
 import { useMemo, useState } from 'react';
 
+import { ActivityRow } from './ActivityRow';
 import { Coin } from '../../../redux/slices/sui-objects/Coin';
 import SuiIcon from '../../svg/SuiIcon';
-import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
 import { useFormatCoin, useMiddleEllipsis } from '_src/ui/app/hooks';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';

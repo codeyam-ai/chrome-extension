@@ -2,11 +2,11 @@ import { Popover, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import { Fragment, useMemo, useState } from 'react';
 
+import CoinBalance from './CoinBalance';
+import UnknownToken from './UnknownToken';
 import { useFormatCoin } from '../../../hooks/useFormatCoin';
 import SuiIcon from '../../../shared/svg/SuiIcon';
 import BodyLarge from '../../../shared/typography/BodyLarge';
-import CoinBalance from './CoinBalance';
-import UnknownToken from './UnknownToken';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
 

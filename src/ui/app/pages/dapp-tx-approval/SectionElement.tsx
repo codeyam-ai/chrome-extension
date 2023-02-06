@@ -1,6 +1,6 @@
+import DetailElement from './DetailElement';
 import Tooltip from '../../components/Tooltip';
 import Body from '../../shared/typography/Body';
-import DetailElement from './DetailElement';
 
 import type { Detail } from './DetailElement';
 import type { ReactElement } from 'react';

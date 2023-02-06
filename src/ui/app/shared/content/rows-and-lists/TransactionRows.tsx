@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 
-import Button from '../../button';
 import TransactionRow from './TransactionRow';
+import Button from '../../button';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 

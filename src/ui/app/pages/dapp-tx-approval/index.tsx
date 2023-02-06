@@ -4,18 +4,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import AccountAddress from '../../components/account-address';
-import { AddressMode } from '../../components/account-address/index';
-import truncateMiddle from '../../helpers/truncate-middle';
-import { AppState } from '../../hooks/useInitializedGuard';
-import { saveActiveAccountIndex } from '../../redux/slices/account/index';
-import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
-import Button from '../../shared/buttons/Button';
-import Alert from '../../shared/feedback/Alert';
-import AlertWithErrorExpand from '../../shared/feedback/AlertWithErrorExpand';
-import Body from '../../shared/typography/Body';
-import CopyBody from '../../shared/typography/CopyBody';
-import EthosLink from '../../shared/typography/EthosLink';
 import CopyAsset from './CopyAsset';
 import FormattedCoin from './FormattedCoin';
 import SectionElement from './SectionElement';
@@ -32,6 +20,18 @@ import {
 import { getGasDataFromError } from './lib/extractGasData';
 import getErrorDisplaySuiForMist from './lib/getErrorDisplaySuiForMist';
 import * as summaries from './summaries';
+import AccountAddress from '../../components/account-address';
+import { AddressMode } from '../../components/account-address/index';
+import truncateMiddle from '../../helpers/truncate-middle';
+import { AppState } from '../../hooks/useInitializedGuard';
+import { saveActiveAccountIndex } from '../../redux/slices/account/index';
+import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
+import Button from '../../shared/buttons/Button';
+import Alert from '../../shared/feedback/Alert';
+import AlertWithErrorExpand from '../../shared/feedback/AlertWithErrorExpand';
+import Body from '../../shared/typography/Body';
+import CopyBody from '../../shared/typography/CopyBody';
+import EthosLink from '../../shared/typography/EthosLink';
 import Loading from '_components/loading';
 import {
     useAppDispatch,
@@ -49,10 +49,10 @@ import { MAILTO_SUPPORT_URL } from '_src/shared/constants';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
 
-import type { AccountInfo } from '../../KeypairVault';
 import type { Detail } from './DetailElement';
 import type { Section } from './SectionElement';
 import type { SmallDetail } from './SmallValue';
+import type { AccountInfo } from '../../KeypairVault';
 import type { SuiMoveNormalizedType, TransactionEffects } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { ReactElement, ReactNode } from 'react';

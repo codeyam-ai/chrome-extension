@@ -1,9 +1,9 @@
+import Body, { type BodyProps } from './Body';
+import BodyLarge from './BodyLarge';
 import { TooltipDirection } from '../../components/Tooltip';
 import CopyToClipboard, {
     type CopyToClipboardProps,
 } from '../../components/copy-to-clipboard';
-import Body, { type BodyProps } from './Body';
-import BodyLarge from './BodyLarge';
 
 interface CopyBodyProps extends BodyProps, CopyToClipboardProps {
     large?: boolean;

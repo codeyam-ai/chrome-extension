@@ -8,10 +8,10 @@ import { useCallback, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+import TransferCoinReviewForm from './TransferCoinReviewForm';
 import { isErrorCausedByUserNotHavingEnoughSuiToPayForGas } from '../../dapp-tx-approval/lib';
 import { getGasDataFromError } from '../../dapp-tx-approval/lib/extractGasData';
 import getErrorDisplaySuiForMist from '../../dapp-tx-approval/lib/getErrorDisplaySuiForMist';
-import TransferCoinReviewForm from './TransferCoinReviewForm';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { resetSendSuiForm } from '_redux/slices/forms';

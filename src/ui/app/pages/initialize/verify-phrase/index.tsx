@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import PhraseInput from './PhraseInput';
+import WordPicker from './WordPicker';
 import shuffleArray from '../../../helpers/shuffle-array';
 import { useAppSelector, useOnKeyboardEvent } from '../../../hooks';
 import OnboardingCard from '../../../shared/layouts/OnboardingCard';
-import PhraseInput from './PhraseInput';
-import WordPicker from './WordPicker';
 import Button from '_src/ui/app/shared/buttons/Button';
 
 import type { WordInfo } from './WordPicker';

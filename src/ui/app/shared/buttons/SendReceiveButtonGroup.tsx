@@ -2,6 +2,7 @@ import { CreditCardIcon } from '@heroicons/react/24/outline';
 import { ArrowUpCircleIcon } from '@heroicons/react/24/solid';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import InlineButtonGroup from './InlineButtonGroup';
 import { API_ENV } from '../../ApiProvider';
 import LoadingIndicator from '../../components/loading/LoadingIndicator';
 import { useAppSelector } from '../../hooks';
@@ -10,7 +11,6 @@ import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import TestnetFaucetModal from '../alerts/TestnetFaucetModal';
 import Alert from '../feedback/Alert';
 import SuiIcon from '../svg/SuiIcon';
-import InlineButtonGroup from './InlineButtonGroup';
 
 interface SendReceiveButtonGroupProps {
     mistBalance: number | bigint;
