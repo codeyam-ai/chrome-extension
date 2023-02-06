@@ -20,6 +20,7 @@ import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 import type { MoveCallTransaction } from '@mysten/sui.js';
+import type { SuiSignAndExecuteTransactionOptions } from '@mysten/wallet-standard';
 import type { TransactionDataType } from '_messages/payloads/transactions/ExecuteTransactionRequest';
 import type {
     PreapprovalRequest,
@@ -96,12 +97,14 @@ class Transactions {
 
     private async tryDirectExecution(
         tx: MoveCallTransaction,
-        preapprovalRequest: PreapprovalRequest
+        preapprovalRequest: PreapprovalRequest,
+        options?: SuiSignAndExecuteTransactionOptions
     ) {
         try {
             const txDirectResult =
                 await this.executeMoveCallTransactionDirectly({
                     tx,
+                    options,
                 });
 
             const { result, error } = txDirectResult;
@@ -268,9 +271,14 @@ class Transactions {
                 });
 
                 if (permissionRequest) {
+                    let options;
+                    if ('options' in tx) {
+                        options = tx.options;
+                    }
                     const { effects, error } = await this.tryDirectExecution(
                         moveCall,
-                        permissionRequest
+                        permissionRequest,
+                        options
                     );
                     if (effects) {
                         return effects;
@@ -329,8 +337,10 @@ class Transactions {
 
     private async executeMoveCallTransactionDirectly({
         tx,
+        options,
     }: {
         tx: MoveCallTransaction;
+        options?: SuiSignAndExecuteTransactionOptions;
     }) {
         const activeAccount = await this.getActiveAccount();
 
@@ -354,13 +364,15 @@ class Transactions {
             }),
         };
 
-        return this.executeTransactionDirectly({ callData });
+        return this.executeTransactionDirectly({ callData, options });
     }
 
     private async executeTransactionDirectly({
         callData,
+        options,
     }: {
         callData: RequestInit;
+        options?: SuiSignAndExecuteTransactionOptions;
     }) {
         const activeAccount = await this.getActiveAccount();
 
@@ -432,7 +444,7 @@ class Transactions {
                 params: [
                     txBytesBuffer.toString(),
                     new Base64DataBuffer(serializedSig).toString(),
-                    'WaitForLocalExecution',
+                    options?.requestType || 'WaitForLocalExecution',
                 ],
                 id: 1,
             }),

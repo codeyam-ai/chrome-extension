@@ -241,6 +241,11 @@ export function DappTxApprovalPage() {
                     // shape yet. we basically ingore it and expect the next re-render to work.
                     // TODO: this seems weird - it would be good to find a better way.
                 } else {
+                    if (errorMessage.includes('Error: Unknown call arg type')) {
+                        setEffects(null);
+                        return;
+                    }
+
                     if (isErrorCausedByIncorrectSigner(errorMessage)) {
                         const address = errorMessage
                             .match(
