@@ -111,7 +111,7 @@ const TransactionsPage = () => {
                             >
                                 <Button
                                     mode={'secondary'}
-                                    className={'mt-4'}
+                                    className={'mb-6'}
                                     onClick={loadMore}
                                 >
                                     {loading ? (
