@@ -1,7 +1,7 @@
 import {
     ChevronDownIcon,
     ChevronUpIcon,
-    ExclaimationTriangleIcon,
+    ExclamationTriangleIcon,
 } from '@heroicons/react/24/solid';
 import { type ReactNode, useCallback, useState } from 'react';
 
@@ -29,7 +29,7 @@ const AlertWithErrorExpand = ({
     return (
         <div className="flex flex-row gap-2 py-4 px-4 rounded-lg bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
             <span>
-                <ExclaimationTriangleIcon className="h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
+                <ExclamationTriangleIcon className="h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
             </span>
             <span className="flex flex-col gap-1 text-left">
                 <BodyLarge
