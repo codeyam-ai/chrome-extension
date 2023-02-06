@@ -38,12 +38,13 @@ export const mockCommonCalls = function () {
 };
 
 export const mockSuiObjects = function (
-    options: { suiBalance?: number; nftDetails?: { name: string } } = {}
+    options: { coinId?: string, suiBalance?: number; nftDetails?: { name: string } } = {}
 ) {
     const renderedObjects = [];
     if (options.suiBalance) {
         const renderedCoinResult = Mustache.render(suiCoinTemplate, {
             balance: options.suiBalance,
+            id: options.coinId
         });
         renderedObjects.push(renderedCoinResult);
     }

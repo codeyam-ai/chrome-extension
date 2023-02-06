@@ -132,6 +132,24 @@ describe('The Transaction Approval popup', () => {
                 result: renderTemplate('devInspectTransaction', {}),
                 id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
             });
+            const getObjectForDryRunScope = nock(
+                'http://testNet-fullnode.example.com'
+            )
+                .post(
+                    '/',
+                    _.matches({
+                        method: 'sui_getObject',
+                        params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
+                    })
+                )
+                .reply(200, {
+                    jsonrpc: '2.0',
+                    result: renderTemplate('coinObject', { 
+                        balance: 40000000,
+                        id: '0x395c50c614cc22156c9de8db24163f48e4ff66ae' 
+                    }),
+                    id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
+                });
         const executeScope = nock('http://testNet-fullnode.example.com')
             .post(
                 '/',
@@ -145,6 +163,6 @@ describe('The Transaction Approval popup', () => {
                 result: renderTemplate('executeTransaction', {}),
                 id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
             });
-        return { executeScope, dryRunTransactionScope, payScope };
+        return { executeScope, dryRunTransactionScope, getObjectForDryRunScope, payScope };
     }
 });
