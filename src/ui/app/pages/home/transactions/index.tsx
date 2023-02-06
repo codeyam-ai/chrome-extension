@@ -16,6 +16,7 @@ import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 import Button from '_src/ui/app/shared/button';
 import { type FormattedTxResultState } from './FormattedTxResultState';
+import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
@@ -95,8 +96,6 @@ const TransactionsPage = () => {
         setInitLoad(false);
     }
 
-    console.log('items: ', items);
-
     return (
         <>
             <Loading loading={!items.length} big={true}>
@@ -115,7 +114,11 @@ const TransactionsPage = () => {
                                     className={'mt-4'}
                                     onClick={loadMore}
                                 >
-                                    Load More
+                                    {loading ? (
+                                        <LoadingIndicator />
+                                    ) : (
+                                        'Load More'
+                                    )}
                                 </Button>
                             </div>
                         )}
