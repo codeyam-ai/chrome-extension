@@ -114,7 +114,7 @@ const OnboardingCard = ({
 
     return (
         <>
-            <span className="h-[48px] w-[112px] mb-4 tall:mb-8 -mt-[80px]">
+            <span className="h-[48px] w-[112px] mb-4 tall:mb-8">
                 <EthosLogoGrayscaleWithText />
             </span>
 
