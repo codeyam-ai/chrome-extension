@@ -18,7 +18,7 @@ const NftGridItem = ({ nft }: NftGridItemProps) => {
         <Link to={drilldownLink}>
             {filePath && (
                 <img
-                    className="h-36 w-36 shadow-sm rounded-2xl"
+                    className="object-cover h-36 w-36 shadow-sm rounded-2xl"
                     src={filePath}
                     alt={fileExtentionType?.name || 'NFT'}
                 />
