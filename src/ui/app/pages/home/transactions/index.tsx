@@ -1,22 +1,19 @@
-// Copyright (c) 2022, Mysten Labs, Inc.
-// SPDX-License-Identifier: Apache-2.0
 import { QueueListIcon } from '@heroicons/react/24/solid';
-import { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
+
+import { type FormattedTxResultState } from './FormattedTxResultState';
 import { useAppDispatch, useAppSelector } from '_hooks';
-import {
-    getTransactionsByAddress,
-    TxResultState,
-} from '_redux/slices/txresults';
+import { getTransactionsByAddress } from '_redux/slices/txresults';
 import Loading from '_src/ui/app/components/loading';
+import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
+import { api } from '_src/ui/app/redux/store/thunk-extras';
+import Button from '_src/ui/app/shared/button';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
-import { api } from '_src/ui/app/redux/store/thunk-extras';
 
-import Button from '_src/ui/app/shared/button';
-import { type FormattedTxResultState } from './FormattedTxResultState';
-import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
+import type { TxResultState } from '_redux/slices/txresults';
 
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
@@ -26,24 +23,16 @@ const TransactionsPage = () => {
     const dispatch = useAppDispatch();
     const txPerPage = 5;
     const totalNumTxs = transactions.length;
-    const [showBtn, setShowBtn] = useState(true);
-    const [page, setPage] = useState(1);
     const [nextPage, setNextPage] = useState(1);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const txByAddress: TxResultState[] = useAppSelector(
         ({ txresults }) => txresults.latestTx
     );
 
-    if (txByAddress.length > 0 && items.length == 0) {
-        setItems(txByAddress);
-        setLoading(false);
-    } else if (loading && txByAddress.length > 0) {
-        setItems([...items, ...txByAddress]);
-        setLoading(false);
-    }
-
     useEffect(() => {
+        setItems([]);
+
         const getTxs = async () => {
             let allTxs: string[] =
                 await api.instance.fullNode.getTransactionsForAddress(
@@ -58,14 +47,18 @@ const TransactionsPage = () => {
             if (address && allTxs.length > 0) {
                 setTransactions(allTxs);
             }
+
+            if (allTxs.length === 0) {
+                setInitLoad(false);
+            }
         };
 
-        if (transactions.length == 0) {
+        if (transactions.length === 0) {
             getTxs();
         }
     }, [address, transactions]);
 
-    const loadItems = () => {
+    const loadItems = useCallback(() => {
         setLoading(true);
         setNextPage(nextPage + 1);
 
@@ -73,37 +66,38 @@ const TransactionsPage = () => {
         const end = start + txPerPage;
         const newTxs = transactions.slice(start, end);
 
-        setPage(nextPage);
-
         if (newTxs && newTxs.length > 0) {
             dispatch(getTransactionsByAddress(newTxs));
         }
-
-        if (
-            (nextPage && nextPage * txPerPage >= totalNumTxs) ||
-            (showBtn && transactions.length < txPerPage)
-        ) {
-            setShowBtn(false);
-        }
-    };
+    }, [dispatch, nextPage, transactions]);
 
     const loadMore = useCallback(() => {
         loadItems();
-    }, [transactions, page, nextPage, items]);
+    }, [loadItems]);
 
     if (initLoad && transactions.length > 0) {
         loadItems();
         setInitLoad(false);
     }
 
+    if (txByAddress.length > 0 && items.length === 0) {
+        setItems(txByAddress);
+        setLoading(false);
+    } else if (loading && txByAddress.length > 0) {
+        setItems([...items, ...txByAddress]);
+        setLoading(false);
+    } else if (loading && transactions.length === 0) {
+        setLoading(false);
+    }
+
     return (
-        <>
-            <Loading loading={!items.length} big={true}>
-                {items && items.length ? (
+        <React.Fragment>
+            <Loading loading={initLoad} big={true}>
+                {items && items.length > 0 && (
                     <div className={'flex flex-col h-full'}>
                         <TextPageTitle title="Activity" />
                         <TransactionRows transactions={items} />
-                        {showBtn && (
+                        {items.length !== totalNumTxs && (
                             <div
                                 className={
                                     'w-full flex flex-row items-center justify-center'
@@ -123,7 +117,9 @@ const TransactionsPage = () => {
                             </div>
                         )}
                     </div>
-                ) : (
+                )}
+
+                {!loading && items.length === 0 && (
                     <EmptyPageState
                         iconWithNoClasses={
                             <Icon displayIcon={<QueueListIcon />} />
@@ -136,7 +132,7 @@ const TransactionsPage = () => {
                     />
                 )}
             </Loading>
-        </>
+        </React.Fragment>
     );
 };
 

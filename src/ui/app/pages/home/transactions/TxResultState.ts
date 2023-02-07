@@ -1,4 +1,4 @@
-import { ExecutionStatusType, TransactionKindName } from '@mysten/sui.js';
+import type { ExecutionStatusType, TransactionKindName } from '@mysten/sui.js';
 
 export interface TxResultState {
     to?: string;
