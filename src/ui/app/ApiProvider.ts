@@ -161,6 +161,10 @@ export default class ApiProvider {
         return this._signer;
     }
 
+    public resetSignerInstance(): void {
+        this._signer = null;
+    }
+
     public getEthosSignerInstance(
         address: SuiAddress,
         accessToken: string
