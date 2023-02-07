@@ -30,6 +30,19 @@ const TransactionsPage = () => {
         ({ txresults }) => txresults.latestTx
     );
 
+    const loadItems = useCallback(() => {
+        setLoading(true);
+        setNextPage(nextPage + 1);
+
+        const start = (nextPage - 1) * txPerPage;
+        const end = start + txPerPage;
+        const newTxs = transactions.slice(start, end);
+
+        if (newTxs && newTxs.length > 0) {
+            dispatch(getTransactionsByAddress(newTxs));
+        }
+    }, [dispatch, nextPage, transactions]);
+
     useEffect(() => {
         setItems([]);
 
@@ -61,20 +74,7 @@ const TransactionsPage = () => {
             loadItems();
             setInitLoad(false);
         }
-    }, [address, transactions]);
-
-    const loadItems = useCallback(() => {
-        setLoading(true);
-        setNextPage(nextPage + 1);
-
-        const start = (nextPage - 1) * txPerPage;
-        const end = start + txPerPage;
-        const newTxs = transactions.slice(start, end);
-
-        if (newTxs && newTxs.length > 0) {
-            dispatch(getTransactionsByAddress(newTxs));
-        }
-    }, [dispatch, nextPage, transactions]);
+    }, [address, transactions, initLoad, loadItems]);
 
     const loadMore = useCallback(() => {
         loadItems();
