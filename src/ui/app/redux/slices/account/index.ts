@@ -7,6 +7,7 @@ import {
     createSlice,
 } from '@reduxjs/toolkit';
 
+import { api, type AppThunkConfig } from '../../store/thunk-extras';
 import { NFT } from '../sui-objects/NFT';
 import { Ticket } from '../sui-objects/Ticket';
 import {
@@ -27,7 +28,6 @@ import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
 import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 import { AUTHENTICATION_REQUESTED } from '_src/ui/app/pages/initialize/hosted';
 
-import type { AppThunkConfig } from '../../store/thunk-extras';
 import type { SuiAddress, SuiMoveObject } from '@mysten/sui.js';
 import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
@@ -230,6 +230,7 @@ export const saveActiveAccountIndex = createAsyncThunk(
             passphrase || authentication || undefined
         );
         await clearForNetworkOrWalletSwitch();
+        api.resetSignerInstance();
         return activeAccountIndex;
     }
 );

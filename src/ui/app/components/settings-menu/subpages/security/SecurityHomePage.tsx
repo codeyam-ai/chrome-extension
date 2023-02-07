@@ -54,9 +54,9 @@ const SecurityHomePage = ({ isHostedWallet }: SecurityHomePageProps) => {
         },
     ];
 
-    // Email users cannot view their seed
+    // Email users cannot view their seed or private key
     if (isHostedWallet) {
-        securityItems.splice(1, 1);
+        securityItems.splice(1, 2);
     }
 
     return (

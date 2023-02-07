@@ -41,7 +41,7 @@ const ConnectedAppDisplay = ({
     );
 
     const showFallbackIcon = useCallback(() => {
-        setShouldShowFallbackIcon(false);
+        setShouldShowFallbackIcon(true);
     }, []);
 
     // With the current implementation in `Permissions.ts`, we

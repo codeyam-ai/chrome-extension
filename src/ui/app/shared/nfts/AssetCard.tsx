@@ -22,7 +22,9 @@ export const AssetCard = ({
         <div className={'flex flex-row justify-center items-center mb-4'}>
             {isNft && imgUrl ? (
                 <img
-                    className={'rounded-2xl w-[56px] h-[56px] auto'}
+                    className={
+                        'object-cover rounded-2xl w-[56px] h-[56px] auto'
+                    }
                     src={imgUrl}
                     alt={name}
                 />
