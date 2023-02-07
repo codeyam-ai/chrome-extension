@@ -16,7 +16,6 @@ import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-import { getKeypairFromMnemonics } from '_src/shared/cryptography/mnemonics';
 
 function TokensPage() {
     const setExplorerPermission = useExplorerPermission();

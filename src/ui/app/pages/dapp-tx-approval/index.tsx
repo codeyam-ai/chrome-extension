@@ -128,7 +128,7 @@ export function DappTxApprovalPage() {
     const gasUsed = effects?.gasUsed;
     const gas = gasUsed
         ? gasUsed.computationCost +
-          (gasUsed.storageCost - gasUsed.storageRebate)
+        (gasUsed.storageCost - gasUsed.storageRebate)
         : null;
 
     const { reading, mutating, creating, deleting, transferring, coinChanges } =
@@ -344,6 +344,8 @@ export function DappTxApprovalPage() {
         authentication,
         accountInfos,
         selectedApiEnv,
+        txID,
+        txRequest?.origin
     ]);
 
     const handleOnSubmit = useCallback(
@@ -442,66 +444,65 @@ export function DappTxApprovalPage() {
                     : null,
                 details: anyPermissionsRequested
                     ? [
-                          {
-                              label: 'Reading',
-                              content: `${reading.length} Assets`,
-                              detail: reading.map((r, i) => (
-                                  <CopyAsset key={`reading-${i}`} {...r} />
-                              )),
-                          },
-                          {
-                              label: 'Modifying',
-                              content: `${mutating.length} Assets`,
-                              detail: mutating.map((m, i) => (
-                                  <CopyAsset key={`modifying-${i}`} {...m} />
-                              )),
-                          },
-                          {
-                              label: 'Transferring',
-                              content: `${transferring.length} Assets`,
-                              detail: transferring.map((t, i) => (
-                                  <CopyAsset key={`transferring-${i}`} {...t} />
-                              )),
-                          },
-                          {
-                              label: 'Full Access',
-                              content: `${deleting.length} Assets`,
-                              detail: deleting.map((d, i) => (
-                                  <CopyBody
-                                      key={`deleting-${i}`}
-                                      txt={d?.name || ''}
-                                  >
-                                      {truncateMiddle(d?.name)}
-                                  </CopyBody>
-                              )),
-                          },
-                          {
-                              label: 'Coins',
-                              content: `${
-                                  Object.keys(coinChanges).length
-                              } Coins`,
-                              detail: Object.keys(coinChanges).map(
-                                  (c, index) => (
-                                      <div
-                                          key={`coin-detail-${index}`}
-                                          className="text-xs"
-                                      >
-                                          <CopyBody
-                                              key={`coins-${index}`}
-                                              txt={c}
-                                          >
-                                              {truncateMiddle(c, 15)}
-                                          </CopyBody>
-                                      </div>
-                                  )
-                              ),
-                          },
-                      ]
+                        {
+                            label: 'Reading',
+                            content: `${reading.length} Assets`,
+                            detail: reading.map((r, i) => (
+                                <CopyAsset key={`reading-${i}`} {...r} />
+                            )),
+                        },
+                        {
+                            label: 'Modifying',
+                            content: `${mutating.length} Assets`,
+                            detail: mutating.map((m, i) => (
+                                <CopyAsset key={`modifying-${i}`} {...m} />
+                            )),
+                        },
+                        {
+                            label: 'Transferring',
+                            content: `${transferring.length} Assets`,
+                            detail: transferring.map((t, i) => (
+                                <CopyAsset key={`transferring-${i}`} {...t} />
+                            )),
+                        },
+                        {
+                            label: 'Full Access',
+                            content: `${deleting.length} Assets`,
+                            detail: deleting.map((d, i) => (
+                                <CopyBody
+                                    key={`deleting-${i}`}
+                                    txt={d?.name || ''}
+                                >
+                                    {truncateMiddle(d?.name)}
+                                </CopyBody>
+                            )),
+                        },
+                        {
+                            label: 'Coins',
+                            content: `${Object.keys(coinChanges).length
+                                } Coins`,
+                            detail: Object.keys(coinChanges).map(
+                                (c, index) => (
+                                    <div
+                                        key={`coin-detail-${index}`}
+                                        className="text-xs"
+                                    >
+                                        <CopyBody
+                                            key={`coins-${index}`}
+                                            txt={c}
+                                        >
+                                            {truncateMiddle(c, 15)}
+                                        </CopyBody>
+                                    </div>
+                                )
+                            ),
+                        },
+                    ]
                     : [
-                          {
-                              label: 'No access requested.',
-                          },
-                      ],
+                        {
+                            label: 'No access requested.',
+                        },
+                    ],
             } as Section,
             {
                 title: 'Asset Effects',
@@ -510,69 +511,68 @@ export function DappTxApprovalPage() {
                     : null,
                 details: anyAssetEffects
                     ? [
-                          {
-                              label: 'Creating',
-                              content: `${creating.length} Assets`,
-                              detail: creating.map((c, i) => (
-                                  <CopyAsset
-                                      key={`asset-creating-${i}`}
-                                      {...c}
-                                  />
-                              )),
-                          },
-                          {
-                              label: 'Modifying',
-                              content: `${mutating.length} Assets`,
-                              detail: mutating.map((m, i) => (
-                                  <CopyAsset
-                                      key={`asset-modifying-${i}`}
-                                      {...m}
-                                  />
-                              )),
-                          },
-                          {
-                              label: 'Transferring',
-                              content: `${transferring.length} Assets`,
-                              detail: transferring.map((t, i) => (
-                                  <CopyAsset
-                                      key={`asset-transferring-${i}`}
-                                      {...t}
-                                  />
-                              )),
-                          },
-                          {
-                              label: 'Deleting',
-                              content: `${deleting.length} Assets`,
-                              detail: deleting.map((d, i) => (
-                                  <CopyBody
-                                      key={`asset-deleting-${i}`}
-                                      txt={d?.name || ''}
-                                  >
-                                      {truncateMiddle(d?.name)}
-                                  </CopyBody>
-                              )),
-                          },
-                          {
-                              label: 'Balances',
-                              content: `${
-                                  Object.keys(coinChanges).length
-                              } Coins`,
-                              detail: Object.keys(coinChanges).map(
-                                  (c, index) => (
-                                      <FormattedCoin
-                                          key={`coin-detail-${index}`}
-                                          type={c}
-                                          amount={coinChanges[c] * -1}
-                                      />
-                                  )
-                              ),
-                          },
-                      ]
+                        {
+                            label: 'Creating',
+                            content: `${creating.length} Assets`,
+                            detail: creating.map((c, i) => (
+                                <CopyAsset
+                                    key={`asset-creating-${i}`}
+                                    {...c}
+                                />
+                            )),
+                        },
+                        {
+                            label: 'Modifying',
+                            content: `${mutating.length} Assets`,
+                            detail: mutating.map((m, i) => (
+                                <CopyAsset
+                                    key={`asset-modifying-${i}`}
+                                    {...m}
+                                />
+                            )),
+                        },
+                        {
+                            label: 'Transferring',
+                            content: `${transferring.length} Assets`,
+                            detail: transferring.map((t, i) => (
+                                <CopyAsset
+                                    key={`asset-transferring-${i}`}
+                                    {...t}
+                                />
+                            )),
+                        },
+                        {
+                            label: 'Deleting',
+                            content: `${deleting.length} Assets`,
+                            detail: deleting.map((d, i) => (
+                                <CopyBody
+                                    key={`asset-deleting-${i}`}
+                                    txt={d?.name || ''}
+                                >
+                                    {truncateMiddle(d?.name)}
+                                </CopyBody>
+                            )),
+                        },
+                        {
+                            label: 'Balances',
+                            content: `${Object.keys(coinChanges).length
+                                } Coins`,
+                            detail: Object.keys(coinChanges).map(
+                                (c, index) => (
+                                    <FormattedCoin
+                                        key={`coin-detail-${index}`}
+                                        type={c}
+                                        amount={coinChanges[c] * -1}
+                                    />
+                                )
+                            ),
+                        },
+                    ]
                     : [
-                          {
-                              label: 'No effects on any of your assets.',
-                          },
-                      ],
+                        {
+                            label: 'No effects on any of your assets.',
+                        },
+                    ],
             } as Section,
         ];
 
@@ -779,7 +779,7 @@ export function DappTxApprovalPage() {
                     />
                 </div>
             );
-    }, [incorrectSigner, explicitError, dryRunError, switchSigner]);
+    }, [incorrectSigner, explicitError, dryRunError, switchSigner, txID, txRequest?.origin]);
 
     return (
         <Loading loading={loading} big={true} resize={true}>

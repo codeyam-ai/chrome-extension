@@ -7,17 +7,16 @@ import {
 } from '@heroicons/react/24/solid';
 import { BCS, fromHEX, getSuiMoveConfig, toHEX } from '@mysten/bcs';
 import { Base64DataBuffer, Ed25519Keypair } from '@mysten/sui.js';
-import { AES } from 'crypto-js';
 import { useCallback, useState, type ReactNode } from 'react';
-import simpleApiCall from '_src/shared/utils/simpleApiCall';
-import { useAppSelector } from '../../hooks';
+
 import { type AccountInfo } from '../../KeypairVault';
+import { useAppSelector } from '../../hooks';
 import Button from '../buttons/Button';
 import TextArea from '../inputs/TextArea';
-
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import EthosLink from '../typography/EthosLink';
+import simpleApiCall from '_src/shared/utils/simpleApiCall';
 
 type TxInfo = {
     dAppUrl: string;
@@ -102,9 +101,6 @@ const AlertWithErrorExpand = ({
             const dataB64 = new Base64DataBuffer(dataBytes);
             const signature = toHEX(keyPair.signData(dataB64).getData());
 
-            console.log('dataHex :>> ', dataHex);
-            console.log('signature :>> ', signature);
-
             const response = await simpleApiCall('error-report', 'POST', '', {
                 serializedData,
                 signature,
@@ -115,7 +111,7 @@ const AlertWithErrorExpand = ({
             }
             // set error!
         },
-        [fullErrorText, accountInfo, comment]
+        [fullErrorText, accountInfo, comment, txInfo.dAppUrl, txInfo.txId]
     );
 
     return (
