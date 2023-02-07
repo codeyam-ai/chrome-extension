@@ -56,6 +56,11 @@ const TransactionsPage = () => {
         if (transactions.length === 0) {
             getTxs();
         }
+
+        if (initLoad && transactions.length > 0) {
+            loadItems();
+            setInitLoad(false);
+        }
     }, [address, transactions]);
 
     const loadItems = useCallback(() => {
@@ -74,11 +79,6 @@ const TransactionsPage = () => {
     const loadMore = useCallback(() => {
         loadItems();
     }, [loadItems]);
-
-    if (initLoad && transactions.length > 0) {
-        loadItems();
-        setInitLoad(false);
-    }
 
     if (txByAddress.length > 0 && items.length === 0) {
         setItems(txByAddress);
