@@ -132,6 +132,7 @@ describe('The Transaction Approval popup', () => {
                 result: renderTemplate('devInspectTransaction', {}),
                 id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
             });
+
         const getObjectForDryRunScope = nock(
             'http://testNet-fullnode.example.com'
         )
@@ -150,23 +151,63 @@ describe('The Transaction Approval popup', () => {
                 }),
                 id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
             });
-        const executeScope = nock('http://testNet-fullnode.example.com')
-            .post(
-                '/',
-                _.matches({
-                    method: 'sui_executeTransactionSerializedSig',
-                    params: ['ZmFrZSBkYXRh'],
-                })
+        
+            const getCoinsForDryRunScope = nock(
+                'http://testNet-fullnode.example.com'
             )
-            .reply(200, {
-                jsonrpc: '2.0',
-                result: renderTemplate('executeTransaction', {}),
-                id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
-            });
+                .post(
+                    '/',
+                    _.matches({
+                        method: 'sui_getCoins',
+                        params: ['1ce5033e82ae9a48ea743b503d96b49b9c57fe0b', "0x2::sui::SUI", null, null],
+                    })
+                )
+                .reply(200, {
+                    jsonrpc: '2.0',
+                    result: renderTemplate('getCoins', {}),
+                    id: '2d26cac8-6480-4f65-b7d2-c83e71b5900a',
+                });
+    
+            const getObjectForDryRunScope2 = nock(
+                'http://testNet-fullnode.example.com'
+            )
+                .post(
+                    '/',
+                    _.matches([{
+                        method: 'sui_getObject',
+                        jsonrpc: "2.0",
+                        params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
+                    }])
+                )
+                .reply(200, {
+                    jsonrpc: '2.0',
+                    result: [renderTemplate('coinObject', {
+                        balance: 40000000,
+                        id: '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690',
+                    })],
+                    id: '74a3abb0-bd8a-48bb-a98a-861d8b37297a',
+                });    
+    
+            const executeScope = nock('http://testNet-fullnode.example.com')
+                .post(
+                    '/',
+                    _.matches({
+                        method: 'sui_executeTransactionSerializedSig',
+                        params: ['ZmFrZSBkYXRh'],
+                    })
+                )
+                .reply(200, {
+                    jsonrpc: '2.0',
+                    result: renderTemplate('executeTransaction', {}),
+                    id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
+                });
+
         return {
             executeScope,
             dryRunTransactionScope,
             getObjectForDryRunScope,
+            getCoinsForDryRunScope,
+            getObjectForDryRunScope2,
             payScope,
         };
     }
