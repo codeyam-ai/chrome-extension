@@ -5,6 +5,7 @@ import cl from 'classnames';
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
 
+import ipfs from '../../helpers/ipfs';
 import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import Divider from '../../shared/Divider';
 import Icon, { SuiIcons } from '_components/icon';
@@ -105,13 +106,7 @@ function TransactionCard({ txn }: { txn: TxResultState }) {
                     )}
                     {txn.url && (
                         <div className={st.txImage}>
-                            <img
-                                src={txn.url.replace(
-                                    /^ipfs:\/\//,
-                                    'https://ipfs.io/ipfs/'
-                                )}
-                                alt="NFT"
-                            />
+                            <img src={ipfs(txn.url)} alt="NFT" />
                         </div>
                     )}
                 </div>

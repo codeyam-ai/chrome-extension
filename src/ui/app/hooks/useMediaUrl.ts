@@ -3,6 +3,8 @@
 
 import { useMemo } from 'react';
 
+import ipfs from '../helpers/ipfs';
+
 import type { SuiData } from '@mysten/sui.js';
 
 export default function useMediaUrl(objData: SuiData, fieldName = 'url') {
@@ -11,7 +13,7 @@ export default function useMediaUrl(objData: SuiData, fieldName = 'url') {
         if (fields) {
             const mediaUrl = fields[fieldName];
             if (typeof mediaUrl === 'string') {
-                return mediaUrl.replace(/^ipfs:\/\//, 'https://ipfs.io/ipfs/');
+                return ipfs(mediaUrl);
             }
         }
         return null;
