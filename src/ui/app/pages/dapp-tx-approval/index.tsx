@@ -249,6 +249,10 @@ export function DappTxApprovalPage() {
                                         </Body>
                                     }
                                     fullErrorText={errorMessage}
+                                    txInfo={{
+                                        dAppUrl: txRequest?.origin || '',
+                                        txId: txID || '',
+                                    }}
                                 />
                             </div>
                         );
@@ -276,6 +280,10 @@ export function DappTxApprovalPage() {
                                             </Body>
                                         }
                                         fullErrorText={errorMessage}
+                                        txInfo={{
+                                            dAppUrl: txRequest?.origin || '',
+                                            txId: txID || '',
+                                        }}
                                     />
                                 </div>
                             );
@@ -293,6 +301,10 @@ export function DappTxApprovalPage() {
                                             </Body>
                                         }
                                         fullErrorText={errorMessage}
+                                        txInfo={{
+                                            dAppUrl: txRequest?.origin || '',
+                                            txId: txID || '',
+                                        }}
                                     />
                                 </div>
                             );
@@ -310,6 +322,10 @@ export function DappTxApprovalPage() {
                                         </Body>
                                     }
                                     fullErrorText={errorMessage}
+                                    txInfo={{
+                                        dAppUrl: txRequest?.origin || '',
+                                        txId: txID || '',
+                                    }}
                                 />
                             </div>
                         );
@@ -756,6 +772,10 @@ export function DappTxApprovalPage() {
                             </Body>
                         }
                         fullErrorText={dryRunError}
+                        txInfo={{
+                            dAppUrl: txRequest?.origin || '',
+                            txId: txID || '',
+                        }}
                     />
                 </div>
             );
