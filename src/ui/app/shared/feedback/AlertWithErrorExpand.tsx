@@ -5,8 +5,10 @@ import {
     ExclaimationTriangleIcon,
     PaperAirplaneIcon,
 } from '@heroicons/react/24/solid';
-import { type ReactNode, useCallback, useState } from 'react';
-import { v4 as uuidV4 } from 'uuid';
+import { BCS, fromHEX, getSuiMoveConfig, toHEX } from '@mysten/bcs';
+import { Base64DataBuffer, Ed25519Keypair } from '@mysten/sui.js';
+import { AES } from 'crypto-js';
+import { useCallback, useState, type ReactNode } from 'react';
 import simpleApiCall from '_src/shared/utils/simpleApiCall';
 import { useAppSelector } from '../../hooks';
 import { type AccountInfo } from '../../KeypairVault';
@@ -42,7 +44,7 @@ const AlertWithErrorExpand = ({
     const [isReportSent, setIsReportSent] = useState(false);
 
     const accountInfo = useAppSelector(
-        ({ account: { accountInfos, activeAccountIndex } }) =>
+        ({ account: { accountInfos, activeAccountIndex, mnemonic } }) =>
             accountInfos.find(
                 (accountInfo: AccountInfo) =>
                     (accountInfo.index || 0) === activeAccountIndex
@@ -68,16 +70,50 @@ const AlertWithErrorExpand = ({
         async (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault();
 
-            const response = await simpleApiCall('error-report', 'POST', '', {
+            const data = {
                 address: accountInfo?.address || '',
                 dAppUrl: txInfo.dAppUrl,
                 txId: txInfo.txId,
                 userComment: comment,
                 errorMessage: fullErrorText,
-            });
-            setReportId(response.json.id);
+            };
 
-            setIsReportSent(true);
+            const bcs = new BCS(getSuiMoveConfig());
+
+            bcs.registerAddressType('SuiAddress', 20, 'hex');
+
+            bcs.registerStructType('ErrorReportData', {
+                address: 'SuiAddress',
+                dAppUrl: 'string',
+                txId: 'string',
+                userComment: 'string',
+                errorMessage: 'string',
+            });
+
+            const serializedData = bcs.ser('ErrorReportData', data);
+
+            const secretKey = fromHEX(
+                process.env.ERROR_REPORT_PRIVATE_KEY || ''
+            );
+            const keyPair = Ed25519Keypair.fromSecretKey(secretKey);
+
+            const dataBytes = serializedData.toBytes();
+            const dataHex = toHEX(dataBytes);
+            const dataB64 = new Base64DataBuffer(dataBytes);
+            const signature = toHEX(keyPair.signData(dataB64).getData());
+
+            console.log('dataHex :>> ', dataHex);
+            console.log('signature :>> ', signature);
+
+            const response = await simpleApiCall('error-report', 'POST', '', {
+                serializedData,
+                signature,
+            });
+            if (response.json.id) {
+                setReportId(response.json.id);
+                setIsReportSent(true);
+            }
+            // set error!
         },
         [fullErrorText, accountInfo, comment]
     );
