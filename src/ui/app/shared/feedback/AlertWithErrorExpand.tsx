@@ -95,14 +95,14 @@ const AlertWithErrorExpand = ({
                 process.env.ERROR_REPORT_PRIVATE_KEY || ''
             );
             const keyPair = Ed25519Keypair.fromSecretKey(secretKey);
+            console.log('public key', toHEX(keyPair.getPublicKey().toBytes()));
 
             const dataBytes = serializedData.toBytes();
-            const dataHex = toHEX(dataBytes);
             const dataB64 = new Base64DataBuffer(dataBytes);
             const signature = toHEX(keyPair.signData(dataB64).getData());
 
             const response = await simpleApiCall('error-report', 'POST', '', {
-                serializedData,
+                serializedData: serializedData.toString('hex'),
                 signature,
             });
             if (response.json.id) {
