@@ -186,16 +186,16 @@ describe('The Transaction Approval popup', () => {
                     },
                 ])
             )
-            .reply(200, {
-                jsonrpc: '2.0',
-                result: [
-                    renderTemplate('coinObject', {
-                        balance: 40000000,
+            .reply(200, [
+                {
+                    jsonrpc: '2.0',
+                    result: renderTemplate('coinObject', {
+                        balance: 50000000,
                         id: '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690',
                     }),
-                ],
-                id: '74a3abb0-bd8a-48bb-a98a-861d8b37297a',
-            });
+                    id: '74a3abb0-bd8a-48bb-a98a-861d8b37297a',
+                },
+            ]);
 
         const executeScope = nock('http://testNet-fullnode.example.com')
             .post(
