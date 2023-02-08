@@ -95,7 +95,7 @@ const AlertWithErrorExpand = ({
                 process.env.ERROR_REPORT_PRIVATE_KEY || ''
             );
             const keyPair = Ed25519Keypair.fromSecretKey(secretKey);
-            console.log('public key', toHEX(keyPair.getPublicKey().toBytes()));
+            // console.log('public key', toHEX(keyPair.getPublicKey().toBytes()));
 
             const dataBytes = serializedData.toBytes();
             const dataB64 = new Base64DataBuffer(dataBytes);
@@ -115,11 +115,11 @@ const AlertWithErrorExpand = ({
     );
 
     return (
-        <div className="flex flex-row gap-2 py-4 px-4 rounded-lg bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
+        <div className="flex flex-row gap-4 py-4 px-4 rounded-lg bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
             {isReportSent ? (
                 <>
-                    <CheckCircleIcon className="h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
-                    <div className="flex flex-col gap-2">
+                    <CheckCircleIcon className="shrink-0 h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
+                    <div className="flex flex-col gap-4">
                         <BodyLarge
                             isSemibold
                             className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark"
@@ -157,10 +157,10 @@ const AlertWithErrorExpand = ({
             ) : isReportFormOpen ? (
                 <form
                     onSubmit={logError}
-                    className="flex flex-row gap-2 w-full"
+                    className="flex flex-row gap-4 w-full"
                 >
                     <PaperAirplaneIcon className="h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
-                    <div className="flex flex-col gap-2 w-full">
+                    <div className="flex flex-col gap-4 w-full">
                         <BodyLarge
                             isSemibold
                             className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark"
@@ -184,7 +184,7 @@ const AlertWithErrorExpand = ({
                     <span>
                         <ExclaimationTriangleIcon className="h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
                     </span>
-                    <span className="flex flex-col gap-2 text-left">
+                    <span className="flex flex-col gap-4 text-left">
                         <BodyLarge
                             isSemibold
                             className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark"
@@ -229,11 +229,7 @@ const AlertWithErrorExpand = ({
                                 />
                             </div>
                         )}
-                        <Button
-                            onClick={showReportForm}
-                            removeContainerPadding
-                            className="mt-4"
-                        >
+                        <Button onClick={showReportForm} removeContainerPadding>
                             Report Issue
                         </Button>
                     </span>
