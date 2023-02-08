@@ -34,6 +34,7 @@ jobs:
                   MASTER_PASSPHRASE: ${{ secrets.MASTER_PASSPHRASE }}
                   GROWTHBOOK_API_KEY: ${{ secrets.GROWTHBOOK_API_KEY }}
                   ERROR_REPORT_PRIVATE_KEY: ${{ secrets.ERROR_REPORT_PRIVATE_KEY }}
+                  API_ENDPOINT_TEST_NET_FULLNODE: ${{ secrets.API_ENDPOINT_TEST_NET_FULLNODE }}
               run: npm run build:prod
 
             # Archive build artifacts
