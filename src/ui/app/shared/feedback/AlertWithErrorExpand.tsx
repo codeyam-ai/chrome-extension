@@ -7,7 +7,8 @@ import {
 } from '@heroicons/react/24/solid';
 import { BCS, fromHEX, getSuiMoveConfig, toHEX } from '@mysten/bcs';
 import { Base64DataBuffer, Ed25519Keypair } from '@mysten/sui.js';
-import { useCallback, useState, type ReactNode } from 'react';
+import { useCallback, useState, type ReactElement } from 'react';
+import ReactDOM from 'react-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
 import { useAppSelector } from '../../hooks';
@@ -18,6 +19,14 @@ import BodyLarge from '../typography/BodyLarge';
 import EthosLink from '../typography/EthosLink';
 import simpleApiCall from '_src/shared/utils/simpleApiCall';
 
+const extractTextFromHTML = (html: ReactElement): string => {
+    const div = document.createElement('div');
+    ReactDOM.render(html, div);
+    const extractedText = div.textContent || '';
+    ReactDOM.unmountComponentAtNode(div);
+    return extractedText;
+};
+
 type TxInfo = {
     dAppUrl: string;
     txId: string;
@@ -25,7 +34,7 @@ type TxInfo = {
 
 interface AlertWithErrorExpandProps {
     title: string;
-    body: ReactNode;
+    body: ReactElement;
     fullErrorText: string;
     txInfo: TxInfo;
 }
@@ -74,6 +83,7 @@ const AlertWithErrorExpand = ({
                 dAppUrl: txInfo.dAppUrl,
                 txId: txInfo.txId,
                 userComment: comment,
+                errorMessageShown: extractTextFromHTML(body),
                 errorMessage: fullErrorText,
             };
 
@@ -86,6 +96,7 @@ const AlertWithErrorExpand = ({
                 dAppUrl: 'string',
                 txId: 'string',
                 userComment: 'string',
+                errorMessageShown: 'string',
                 errorMessage: 'string',
             });
 
@@ -111,7 +122,7 @@ const AlertWithErrorExpand = ({
             }
             // set error!
         },
-        [fullErrorText, accountInfo, comment, txInfo.dAppUrl, txInfo.txId]
+        [fullErrorText, accountInfo, comment, txInfo.dAppUrl, txInfo.txId, body]
     );
 
     return (
