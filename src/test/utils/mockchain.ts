@@ -58,7 +58,12 @@ export const mockSuiObjects = function (
         });
         renderedObjects.push(renderedNftResult);
     }
-    const finalRenderedTemplate = `[${renderedObjects.join(',')}]`;
+
+    const renderedResponses = renderedObjects.map(
+        (value) =>
+            `{"jsonrpc": "2.0", "id": "fbf9bf0c-a3c9-460a-a999-b7e87096dd1c", "result": ${value}}`
+    );
+    const finalRenderedTemplate = `[${renderedResponses.join(',')}]`;
     nock('http://testNet-fullnode.example.com')
         .post('/', /sui_getObjectsOwnedByAddress/)
         .reply(200, {
