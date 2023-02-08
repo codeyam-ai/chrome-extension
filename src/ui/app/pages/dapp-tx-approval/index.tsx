@@ -264,7 +264,8 @@ export function DappTxApprovalPage() {
                         errorMessage.includes('serialization error') ||
                         errorMessage.includes(
                             'RangeError: Offset is outside the bounds of the DataView'
-                        )
+                        ) ||
+                        errorMessage.includes('Expected SuiObjectRef to be an Object, got: undefined')
                     ) {
                         setEffects(null);
                         return;
