@@ -230,6 +230,21 @@ export function DappTxApprovalPage() {
                     } else {
                         setDryRunError(transactionEffects.status.error);
                     }
+                } else if (
+                    typeof transactionEffects.gasObject.owner === 'object' &&
+                    'AddressOwner' in transactionEffects.gasObject.owner &&
+                    transactionEffects.gasObject.owner.AddressOwner !== address
+                ) {
+                    const gasAddress =
+                        transactionEffects.gasObject.owner.AddressOwner;
+                    const accountInfo = accountInfos.find(
+                        (account) => account.address === gasAddress
+                    );
+                    if (accountInfo) {
+                        setIncorrectSigner(accountInfo);
+                    } else {
+                        setEffects(transactionEffects);
+                    }
                 } else {
                     setEffects(transactionEffects);
                 }
@@ -241,7 +256,10 @@ export function DappTxApprovalPage() {
                     // shape yet. we basically ingore it and expect the next re-render to work.
                     // TODO: this seems weird - it would be good to find a better way.
                 } else {
-                    if (errorMessage.includes('Error: Unknown call arg type')) {
+                    if (
+                        errorMessage.includes('Error: Unknown call arg type') ||
+                        errorMessage.includes('remaining input')
+                    ) {
                         setEffects(null);
                         return;
                     }
