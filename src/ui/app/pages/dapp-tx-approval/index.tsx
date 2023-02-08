@@ -296,6 +296,10 @@ export function DappTxApprovalPage() {
                                         </Body>
                                     }
                                     fullErrorText={errorMessage}
+                                    txInfo={{
+                                        dAppUrl: txRequest?.origin || '',
+                                        txId: txID || '',
+                                    }}
                                 />
                             </div>
                         );
@@ -323,6 +327,10 @@ export function DappTxApprovalPage() {
                                             </Body>
                                         }
                                         fullErrorText={errorMessage}
+                                        txInfo={{
+                                            dAppUrl: txRequest?.origin || '',
+                                            txId: txID || '',
+                                        }}
                                     />
                                 </div>
                             );
@@ -340,6 +348,10 @@ export function DappTxApprovalPage() {
                                             </Body>
                                         }
                                         fullErrorText={errorMessage}
+                                        txInfo={{
+                                            dAppUrl: txRequest?.origin || '',
+                                            txId: txID || '',
+                                        }}
                                     />
                                 </div>
                             );
@@ -357,6 +369,10 @@ export function DappTxApprovalPage() {
                                         </Body>
                                     }
                                     fullErrorText={errorMessage}
+                                    txInfo={{
+                                        dAppUrl: txRequest?.origin || '',
+                                        txId: txID || '',
+                                    }}
                                 />
                             </div>
                         );
@@ -375,6 +391,8 @@ export function DappTxApprovalPage() {
         authentication,
         accountInfos,
         selectedApiEnv,
+        txID,
+        txRequest?.origin,
     ]);
 
     const handleOnSubmit = useCallback(
@@ -644,9 +662,7 @@ export function DappTxApprovalPage() {
                             content: {
                                 type: 'small',
                                 content: parsedData[attribute],
-                                coinType: ['gasBudget', 'gasPayment'].includes(
-                                    attribute
-                                )
+                                coinType: ['gasBudget'].includes(attribute)
                                     ? GAS_TYPE_ARG
                                     : null,
                             } as SmallDetail,
@@ -803,10 +819,21 @@ export function DappTxApprovalPage() {
                             </Body>
                         }
                         fullErrorText={dryRunError}
+                        txInfo={{
+                            dAppUrl: txRequest?.origin || '',
+                            txId: txID || '',
+                        }}
                     />
                 </div>
             );
-    }, [incorrectSigner, explicitError, dryRunError, switchSigner]);
+    }, [
+        incorrectSigner,
+        explicitError,
+        dryRunError,
+        switchSigner,
+        txID,
+        txRequest?.origin,
+    ]);
 
     return (
         <Loading loading={loading} big={true} resize={true}>

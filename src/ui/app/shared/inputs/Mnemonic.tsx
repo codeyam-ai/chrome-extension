@@ -20,17 +20,19 @@ const Mnemonic = ({
     errorText,
 }: MnemonicProps) => {
     return (
-        <TextArea
-            label="Recovery phrase"
-            rows={2}
-            value={mnemonic}
-            id="mnemonic"
-            name="mnemonic"
-            onChange={onChange}
-            onBlur={onBlur}
-            disabled={isReadOnly || disabled}
-            errorText={errorText}
-        />
+        <div className="mx-6 mb-6">
+            <TextArea
+                label="Recovery phrase"
+                rows={2}
+                value={mnemonic}
+                id="mnemonic"
+                name="mnemonic"
+                onChange={onChange}
+                onBlur={onBlur}
+                disabled={isReadOnly || disabled}
+                errorText={errorText}
+            />
+        </div>
     );
 };
 

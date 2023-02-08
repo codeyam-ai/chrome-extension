@@ -98,6 +98,7 @@
         "@growthbook/growthbook-react": "^0.10.0",
         "@headlessui/react": "^1.7.7",
         "@heroicons/react": "^2.0.1",
+        "@mysten/bcs": "^0.5.0",
         "@mysten/sui.js": "^0.26.0",
         "@mysten/wallet-standard": "^0.3.0",
         "@reduxjs/toolkit": "^1.8.3",
