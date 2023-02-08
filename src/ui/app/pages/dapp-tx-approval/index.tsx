@@ -250,7 +250,7 @@ export function DappTxApprovalPage() {
                 }
             } catch (e) {
                 const errorMessage = (e as Error).message;
-                
+
                 if (errorMessage === 'Account mnemonic is not set') {
                     // this is expected; it happens the first time we render because the redux state is not in good
                     // shape yet. we basically ingore it and expect the next re-render to work.
@@ -261,7 +261,10 @@ export function DappTxApprovalPage() {
                         errorMessage.includes('remaining input') ||
                         errorMessage.includes('byte deserialization failed') ||
                         errorMessage.includes('expected an byte array') ||
-                        errorMessage.includes('serialization error')
+                        errorMessage.includes('serialization error') ||
+                        errorMessage.includes(
+                            'RangeError: Offset is outside the bounds of the DataView'
+                        )
                     ) {
                         setEffects(null);
                         return;
