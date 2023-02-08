@@ -18,6 +18,7 @@ import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import EthosLink from '../typography/EthosLink';
 import simpleApiCall from '_src/shared/utils/simpleApiCall';
+import { type TransactionRequest } from '_src/shared/messaging/messages/payloads/transactions';
 
 const extractTextFromHTML = (html: ReactElement): string => {
     const div = document.createElement('div');
@@ -30,6 +31,7 @@ const extractTextFromHTML = (html: ReactElement): string => {
 type TxInfo = {
     dAppUrl: string;
     txId: string;
+    txRequest: TransactionRequest | null;
 };
 
 interface AlertWithErrorExpandProps {
@@ -115,6 +117,7 @@ const AlertWithErrorExpand = ({
             const response = await simpleApiCall('error-report', 'POST', '', {
                 serializedData: serializedData.toString('hex'),
                 signature,
+                txRequest: JSON.stringify(txInfo.txRequest),
             });
             if (response.json.id) {
                 setReportId(response.json.id);

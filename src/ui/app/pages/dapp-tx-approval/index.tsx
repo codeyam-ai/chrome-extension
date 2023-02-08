@@ -252,6 +252,7 @@ export function DappTxApprovalPage() {
                                     txInfo={{
                                         dAppUrl: txRequest?.origin || '',
                                         txId: txID || '',
+                                        txRequest,
                                     }}
                                 />
                             </div>
@@ -283,6 +284,7 @@ export function DappTxApprovalPage() {
                                         txInfo={{
                                             dAppUrl: txRequest?.origin || '',
                                             txId: txID || '',
+                                            txRequest,
                                         }}
                                     />
                                 </div>
@@ -304,6 +306,7 @@ export function DappTxApprovalPage() {
                                         txInfo={{
                                             dAppUrl: txRequest?.origin || '',
                                             txId: txID || '',
+                                            txRequest,
                                         }}
                                     />
                                 </div>
@@ -325,6 +328,7 @@ export function DappTxApprovalPage() {
                                     txInfo={{
                                         dAppUrl: txRequest?.origin || '',
                                         txId: txID || '',
+                                        txRequest,
                                     }}
                                 />
                             </div>
@@ -777,6 +781,7 @@ export function DappTxApprovalPage() {
                         txInfo={{
                             dAppUrl: txRequest?.origin || '',
                             txId: txID || '',
+                            txRequest,
                         }}
                     />
                 </div>
