@@ -54,7 +54,9 @@ const PermissionsPage = () => {
 
     const connectedAppsDisplay = useMemo(() => {
         return connectedApps.filter(
-            (connectedApp) => connectedApp.permissions.length > 0
+            (connectedApp) =>
+                connectedApp.permissions.length > 0 &&
+                connectedApp.accounts.length > 0
         );
     }, [connectedApps]);
 
