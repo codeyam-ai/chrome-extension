@@ -7,6 +7,8 @@ import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
+import { Coin as CoinAPI } from '@mysten/sui.js';
+
 import TransferCoinAmountForm from './TransferCoinAmountForm';
 import { createTokenValidation } from './validation';
 import { useAppDispatch, useAppSelector } from '_hooks';
@@ -14,8 +16,13 @@ import {
     accountAggregateBalancesSelector,
     accountCoinsSelector,
 } from '_redux/slices/account';
-import { Coin, GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
+import {
+    Coin,
+    DEFAULT_GAS_BUDGET_FOR_PAY,
+    GAS_TYPE_ARG,
+} from '_redux/slices/sui-objects/Coin';
 import truncateString from '_src/ui/app/helpers/truncate-string';
+import { getSendTokenFee } from '_redux/slices/transactions';
 import {
     formatBalance,
     useCoinDecimals,
@@ -25,6 +32,9 @@ import { setSuiAmount } from '_src/ui/app/redux/slices/forms';
 
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
+import { SuiMoveObject } from '@mysten/sui.js';
+import { api, thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
+import BigNumber from 'bignumber.js';
 
 const initialValues = {
     amount: '',
@@ -37,6 +47,10 @@ function TransferCoinAmountPage() {
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
     const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
+    const state = useAppSelector((state) => state);
+    const activeAccountIndex = useAppSelector(
+        ({ account }) => account.activeAccountIndex
+    );
     const aggregateBalances = useAppSelector(accountAggregateBalancesSelector);
 
     const coinBalance = useMemo(
@@ -118,6 +132,24 @@ function TransferCoinAmountPage() {
             if (coinType === null) {
                 return;
             }
+
+            const bigIntAmount = BigInt(
+                new BigNumber(amount)
+                    .shiftedBy(coinDecimals)
+                    .integerValue()
+                    .toString()
+            );
+
+            const checkForFee = await dispatch(
+                getSendTokenFee({
+                    tokenTypeArg: coinType,
+                    amount: bigIntAmount,
+                    recipientAddress: formState.to,
+                })
+            );
+
+            console.log('check for fee', checkForFee);
+
             dispatch(
                 setSuiAmount({
                     amount: amount,
