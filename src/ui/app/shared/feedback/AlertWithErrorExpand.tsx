@@ -17,8 +17,8 @@ import TextArea from '../inputs/TextArea';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import EthosLink from '../typography/EthosLink';
-import simpleApiCall from '_src/shared/utils/simpleApiCall';
 import { type TransactionRequest } from '_src/shared/messaging/messages/payloads/transactions';
+import simpleApiCall from '_src/shared/utils/simpleApiCall';
 
 const extractTextFromHTML = (html: ReactElement): string => {
     const div = document.createElement('div');
@@ -125,7 +125,15 @@ const AlertWithErrorExpand = ({
             }
             // set error!
         },
-        [fullErrorText, accountInfo, comment, txInfo.dAppUrl, txInfo.txId, body]
+        [
+            accountInfo?.address,
+            txInfo.dAppUrl,
+            txInfo.txId,
+            txInfo.txRequest,
+            comment,
+            body,
+            fullErrorText,
+        ]
     );
 
     return (

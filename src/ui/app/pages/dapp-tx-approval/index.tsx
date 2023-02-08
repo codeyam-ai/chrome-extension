@@ -265,7 +265,9 @@ export function DappTxApprovalPage() {
                         errorMessage.includes(
                             'RangeError: Offset is outside the bounds of the DataView'
                         ) ||
-                        errorMessage.includes('Expected SuiObjectRef to be an Object, got: undefined')
+                        errorMessage.includes(
+                            'Expected SuiObjectRef to be an Object, got: undefined'
+                        )
                     ) {
                         setEffects(null);
                         return;
@@ -404,6 +406,7 @@ export function DappTxApprovalPage() {
         selectedApiEnv,
         txID,
         txRequest?.origin,
+        txRequest,
     ]);
 
     const handleOnSubmit = useCallback(
@@ -839,12 +842,12 @@ export function DappTxApprovalPage() {
                 </div>
             );
     }, [
-        incorrectSigner,
         explicitError,
-        dryRunError,
+        incorrectSigner,
         switchSigner,
+        dryRunError,
+        txRequest,
         txID,
-        txRequest?.origin,
     ]);
 
     return (
