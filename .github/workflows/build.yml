@@ -33,6 +33,7 @@ jobs:
               env:
                   MASTER_PASSPHRASE: ${{ secrets.MASTER_PASSPHRASE }}
                   GROWTHBOOK_API_KEY: ${{ secrets.GROWTHBOOK_API_KEY }}
+                  ERROR_REPORT_PRIVATE_KEY: ${{ secrets.ERROR_REPORT_PRIVATE_KEY }}
               run: npm run build:prod
 
             # Archive build artifacts
