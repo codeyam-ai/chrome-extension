@@ -284,8 +284,23 @@ export function DappTxApprovalPage() {
                         if (accountInfo) {
                             setIncorrectSigner(accountInfo);
                         } else {
-                            setDryRunError(
-                                'You are trying to sign this transaction with the wrong wallet address.'
+                            setExplicitError(
+                                <AlertWithErrorExpand
+                                    title="Wrong Signing Address"
+                                    body={
+                                        <Body>
+                                            It looks like you are trying to sign
+                                            this transaction with the wrong
+                                            wallet address.
+                                        </Body>
+                                    }
+                                    fullErrorText={errorMessage}
+                                    txInfo={{
+                                        dAppUrl: txRequest?.origin || '',
+                                        txId: txID || '',
+                                        txRequest,
+                                    }}
+                                />
                             );
                         }
                     } else if (isErrorCausedByMissingObject(errorMessage)) {
