@@ -120,17 +120,18 @@ describe('The Transaction Approval popup', () => {
         const dryRunTransactionScope = nock(
             'http://testNet-fullnode.example.com'
         )
+            .persist()
             .post(
                 '/',
                 _.matches({
-                    method: 'sui_devInspectTransaction',
+                    method: 'sui_dryRunTransaction',
                     params: ['ZmFrZSBkYXRh'],
                 })
             )
             .reply(200, {
                 jsonrpc: '2.0',
-                result: renderTemplate('devInspectTransaction', {}),
-                id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
+                result: renderTemplate('dryRunTransaction', {}),
+                id: 'd48d0fe2-688d-456c-91b1-45122ebb4812',
             });
 
         const getObjectForDryRunScope = nock(
