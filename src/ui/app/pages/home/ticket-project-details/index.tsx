@@ -7,6 +7,7 @@ import { accountAggregateBalancesSelector } from '../../../redux/slices/account/
 import { isErrorCausedByUserNotHavingEnoughSuiToPayForGas } from '../../dapp-tx-approval/lib/errorCheckers';
 import { getGasDataFromError } from '../../dapp-tx-approval/lib/extractGasData';
 import getErrorDisplaySuiForMist from '../../dapp-tx-approval/lib/getErrorDisplaySuiForMist';
+import mistToSui from '../../dapp-tx-approval/lib/mistToSui';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account/index';
@@ -68,9 +69,23 @@ export const TicketProjectDetailsContent = ({
 
         const mintTicketGasBudget = 25000;
 
-        const gasCoinId = await dispatch(
+        const gasCoinInfo = await dispatch(
             createGasCoin(BigInt(mintTicketGasBudget))
         ).unwrap();
+
+        if (gasCoinInfo.error) {
+            let error = gasCoinInfo.error;
+            if (gasCoinInfo.gasCost) {
+                error += ` The cost of gas is ${mistToSui(
+                    gasCoinInfo.gasCost
+                )} Sui, but you only have ${mistToSui(
+                    balances[GAS_TYPE_ARG]
+                )} Sui`;
+            }
+            setMinting(false);
+            setError(error);
+            return;
+        }
 
         const { data, error } = await generateTicketData(
             ticketProject.name,
@@ -121,7 +136,7 @@ export const TicketProjectDetailsContent = ({
                     typeArguments,
                     arguments: args,
                     gasBudget: mintTicketGasBudget,
-                    gasPayment: gasCoinId,
+                    gasPayment: gasCoinInfo.gasCoinObjectId,
                 })
             ).unwrap();
 
@@ -183,13 +198,31 @@ export const TicketProjectDetailsContent = ({
                 setError(
                     'Transaction timed out before reaching finality. Please wait a moment a try again.'
                 );
+            } else if (
+                isErrorCausedByUserNotHavingEnoughSuiToPayForGas(message)
+            ) {
+                setError(
+                    `This wallet address does not have enough sui to pay for the gas in this transaction.`
+                );
             } else {
                 setError((e as RPCError).message);
             }
         }
 
         setMinting(false);
-    }, [minting, ticketProject, address, tokenNFT, dispatch, navigate]);
+    }, [
+        minting,
+        address,
+        ticketProject.token,
+        ticketProject.name,
+        ticketProject.agentObjectId,
+        ticketProject.packageObjectId,
+        ticketProject.module,
+        tokenNFT,
+        dispatch,
+        balances,
+        navigate,
+    ]);
 
     const capyUrl = growthbook.getFeatureValue(
         'capy-url',

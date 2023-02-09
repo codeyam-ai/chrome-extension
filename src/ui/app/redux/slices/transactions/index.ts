@@ -33,8 +33,15 @@ type SendTokensTXArgs = {
 
 type TransactionResult = SuiExecuteTransactionResponse;
 
+type GasCoinResponse = {
+    gasCoinObjectId?: SuiAddress;
+    error?: string;
+    totalSui?: bigint;
+    gasCost?: bigint;
+};
+
 export const createGasCoin = createAsyncThunk<
-    SuiAddress | undefined,
+    GasCoinResponse,
     bigint,
     AppThunkConfig
 >(
@@ -42,7 +49,7 @@ export const createGasCoin = createAsyncThunk<
     async (
         amount,
         { getState, extra: { api, keypairVault }, dispatch }
-    ): Promise<SuiAddress | undefined> => {
+    ): Promise<GasCoinResponse> => {
         const state = getState();
         const {
             account: { authentication, address, activeAccountIndex },
@@ -58,7 +65,9 @@ export const createGasCoin = createAsyncThunk<
         }
 
         const gasPrice = await signer.provider.getReferenceGasPrice();
-        const gasAmount = amount * BigInt(gasPrice);
+        const gasAmount =
+            amount * BigInt(gasPrice) +
+            BigInt(DEFAULT_GAS_BUDGET_FOR_PAY * gasPrice);
 
         const coins: SuiMoveObject[] = accountCoinsSelector(state);
         const sortedCoins = coins
@@ -68,42 +77,65 @@ export const createGasCoin = createAsyncThunk<
                     parseInt(b.fields.balance) - parseInt(a.fields.balance)
             );
 
-        if (sortedCoins.length === 0) return;
+        if (sortedCoins.length === 0)
+            return {
+                error: "You don't have any Sui",
+                totalSui: BigInt(0),
+                gasCost: gasAmount,
+            };
 
         if (
             sortedCoins.length === 1 ||
             BigInt(sortedCoins[0].fields.balance) >= gasAmount
         ) {
-            return sortedCoins[0].fields.id.id;
+            return {
+                gasCoinObjectId: sortedCoins[0].fields.id.id,
+                totalSui: sortedCoins[0].fields.balance,
+                gasCost: gasAmount,
+            };
         }
 
         try {
             const payTransaction = await CoinAPI.newPayTransaction(
-                coins,
+                sortedCoins,
                 GAS_TYPE_ARG,
                 gasAmount,
                 address || '',
-                DEFAULT_GAS_BUDGET_FOR_PAY
+                DEFAULT_GAS_BUDGET_FOR_PAY + sortedCoins.length * 5
             );
 
             const response = await signer.signAndExecuteTransaction(
                 payTransaction
             );
-
             // TODO: better way to sync latest objects
             dispatch(fetchAllOwnedAndRequiredObjects());
 
             if ('EffectsCert' in response) {
-                return response.EffectsCert.effects.effects.created?.[0]
-                    ?.reference?.objectId;
+                const gasCoinObjectId =
+                    response.EffectsCert.effects.effects.created?.[0]?.reference
+                        ?.objectId;
+                return { gasCoinObjectId };
             }
-        } catch (e) {
+        } catch (error) {
             // eslint-disable-next-line no-console
-            console.log('Error transferring', e);
-            return;
+            console.log('Error transferring', error);
+            const message = (error as { message: string }).message;
+
+            if (message.includes('GasBalanceTooLowToCoverGasBudget')) {
+                return {
+                    error: "You don't have enough Sui to cover the gas for this transaction.",
+                    gasCost: gasAmount,
+                };
+            }
+
+            return {
+                error: message,
+            };
         }
 
-        return;
+        return {
+            error: 'Unable to merge coins for gas payment',
+        };
     }
 );
 

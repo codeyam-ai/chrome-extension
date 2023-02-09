@@ -122,6 +122,7 @@ function TransferCoinRecipientForm({
                     {recentWallets.length > 0 && (
                         <SuiTxWalletList
                             header={'Recent Wallets'}
+                            wallets={accountInfos}
                             transactions={recentWallets}
                             activeAccountIndex={activeAccountIndex}
                             setFieldValue={setFieldValue}

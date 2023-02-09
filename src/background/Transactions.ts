@@ -15,7 +15,10 @@ import Browser from 'webextension-polyfill';
 
 import Authentication from './Authentication';
 import { Window } from './Window';
-import { GAS_TYPE_ARG } from '../ui/app/redux/slices/sui-objects/Coin';
+import {
+    GAS_TYPE_ARG,
+    DEFAULT_GAS_BUDGET_FOR_PAY,
+} from '../ui/app/redux/slices/sui-objects/Coin';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
@@ -173,6 +176,9 @@ class Transactions {
 
                         const gasJson = await gasResponse.json();
                         const gasPrice = gasJson.result;
+                        const suiNeeded =
+                            (tx.data.data.gasBudget || 0) * gasPrice +
+                            DEFAULT_GAS_BUDGET_FOR_PAY * gasPrice;
 
                         const callData = {
                             method: 'POST',
@@ -207,10 +213,7 @@ class Transactions {
 
                             coinIds.push(coin.coinObjectId);
                             totalSui += coin.balance;
-                            if (
-                                totalSui >
-                                (tx.data.data.gasBudget || 0) * gasPrice
-                            ) {
+                            if (totalSui > suiNeeded) {
                                 break;
                             }
                         }
@@ -227,7 +230,7 @@ class Transactions {
                                         activeAccount.address,
                                         coinIds,
                                         activeAccount.address,
-                                        3000,
+                                        DEFAULT_GAS_BUDGET_FOR_PAY,
                                     ],
                                     id: 1,
                                 }),

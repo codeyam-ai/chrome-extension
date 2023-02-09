@@ -131,12 +131,27 @@ const WalletList = ({
             </BodyLarge>
             {transactions
                 ? transactions.map((tx, key) => {
+                      const wallet = (wallets || []).find(
+                          (w) => w.address === tx
+                      );
+
+                      if (wallet && wallet.index === activeAccountIndex) {
+                          return null;
+                      }
+
                       return (
                           <div key={key}>
-                              <TxSelector
-                                  tx={tx}
-                                  setFieldValue={setFieldValue}
-                              />
+                              {wallet ? (
+                                  <WalletSelector
+                                      wallet={wallet}
+                                      setFieldValue={setFieldValue}
+                                  />
+                              ) : (
+                                  <TxSelector
+                                      tx={tx}
+                                      setFieldValue={setFieldValue}
+                                  />
+                              )}
                           </div>
                       );
                   })

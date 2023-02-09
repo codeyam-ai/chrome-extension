@@ -139,6 +139,7 @@ function TransferNFTForm({
                                 <SuiTxWalletList
                                     header={'Recent Wallets'}
                                     transactions={recentWallets}
+                                    wallets={accountInfos}
                                     activeAccountIndex={activeAccountIndex}
                                     setFieldValue={setFieldValue}
                                 />
