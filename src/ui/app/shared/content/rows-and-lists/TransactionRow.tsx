@@ -11,10 +11,11 @@ import {
 } from '@heroicons/react/24/solid';
 import { useMemo, useState } from 'react';
 
+import { ActivityRow } from './ActivityRow';
 import { Coin } from '../../../redux/slices/sui-objects/Coin';
 import SuiIcon from '../../svg/SuiIcon';
-import { ActivityRow } from './ActivityRow';
 import { formatDate } from '_helpers';
+import ipfs from '_src/ui/app/helpers/ipfs';
 import { useFormatCoin, useMiddleEllipsis } from '_src/ui/app/hooks';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
@@ -225,16 +226,10 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
             register: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
-                icon: (
-                    <NftImg
-                        src={
-                            txn?.url?.replace(
-                                /^ipfs:\/\//,
-                                'https://ipfs.io/ipfs/'
-                            ) || ''
-                        }
-                        alt={txn.description || ''}
-                    />
+                icon: txn.url ? (
+                    <NftImg src={ipfs(txn.url)} alt={txn.description || ''} />
+                ) : (
+                    <></>
                 ),
                 header: header || 'Sui Action',
             },

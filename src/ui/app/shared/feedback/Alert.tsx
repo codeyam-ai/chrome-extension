@@ -1,4 +1,4 @@
-import { ExclaimationTriangleIcon } from '@heroicons/react/24/solid';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
@@ -26,7 +26,7 @@ const Alert = ({
             style={{ borderRadius: borderRadius ? borderRadius : 8 }}
         >
             <span>
-                <ExclaimationTriangleIcon
+                <ExclamationTriangleIcon
                     className={`h-6 w-6 text-ethos-light-primary-light ${
                         forceLightMode
                             ? ''

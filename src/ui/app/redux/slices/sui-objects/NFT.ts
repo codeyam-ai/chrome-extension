@@ -1,6 +1,8 @@
 import { SuiObject, is } from '@mysten/sui.js';
 import get from 'lodash/get';
 
+import ipfs from '_src/ui/app/helpers/ipfs';
+
 import type {
     GetObjectDataResponse,
     JsonRpcProvider,
@@ -195,7 +197,10 @@ export const parseDomains = (domains: GetObjectDataResponse[]) => {
         'fields' in urlDomain.details.data
     ) {
         const { data } = urlDomain.details;
-        response.url = (data.fields as UrlDomainRpcResponse).value.fields.url;
+        const url = (data.fields as UrlDomainRpcResponse).value.fields.url;
+        if (url) {
+            response.url = ipfs(url);
+        }
     }
     if (
         displayDomain &&

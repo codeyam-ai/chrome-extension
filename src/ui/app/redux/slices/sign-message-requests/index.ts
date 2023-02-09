@@ -6,7 +6,6 @@ import {
     createAsyncThunk,
     createEntityAdapter,
     createSlice,
-    type EntityState,
 } from '@reduxjs/toolkit';
 
 import {
@@ -14,7 +13,7 @@ import {
     serializeSignaturePubkeyPair,
 } from '_shared/signature-serialization';
 
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { EntityState, PayloadAction } from '@reduxjs/toolkit';
 import type { SignMessageRequest } from '_payloads/messages/SignMessageRequest';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';

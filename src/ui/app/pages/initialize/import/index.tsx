@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import OnboardingCard from '../../../shared/layouts/OnboardingCard';
 import ImportOptionButton from './ImportOptionButton';
+import OnboardingCard from '../../../shared/layouts/OnboardingCard';
 import keyCardSrc from '_assets/images/onboarding-options/key-card.png';
 import keySrc from '_assets/images/onboarding-options/key.png';
 import seedCardSrc from '_assets/images/onboarding-options/seed-card.png';

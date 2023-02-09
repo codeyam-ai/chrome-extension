@@ -125,4 +125,6 @@ class Messages {
     }
 }
 
-export default new Messages();
+const messages = new Messages();
+
+export default messages;

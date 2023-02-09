@@ -2,7 +2,7 @@ import {
     CheckCircleIcon,
     ChevronDownIcon,
     ChevronUpIcon,
-    ExclaimationTriangleIcon,
+    ExclamationTriangleIcon,
     PaperAirplaneIcon,
 } from '@heroicons/react/24/solid';
 import { BCS, fromHEX, getSuiMoveConfig, toHEX } from '@mysten/bcs';
@@ -17,8 +17,8 @@ import TextArea from '../inputs/TextArea';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import EthosLink from '../typography/EthosLink';
-import simpleApiCall from '_src/shared/utils/simpleApiCall';
 import { type TransactionRequest } from '_src/shared/messaging/messages/payloads/transactions';
+import simpleApiCall from '_src/shared/utils/simpleApiCall';
 
 const extractTextFromHTML = (html: ReactElement): string => {
     const div = document.createElement('div');
@@ -125,7 +125,15 @@ const AlertWithErrorExpand = ({
             }
             // set error!
         },
-        [fullErrorText, accountInfo, comment, txInfo.dAppUrl, txInfo.txId, body]
+        [
+            accountInfo?.address,
+            txInfo.dAppUrl,
+            txInfo.txId,
+            txInfo.txRequest,
+            comment,
+            body,
+            fullErrorText,
+        ]
     );
 
     return (
@@ -196,7 +204,7 @@ const AlertWithErrorExpand = ({
             ) : (
                 <>
                     <span>
-                        <ExclaimationTriangleIcon className="h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
+                        <ExclamationTriangleIcon className="h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
                     </span>
                     <span className="flex flex-col gap-4 text-left">
                         <BodyLarge

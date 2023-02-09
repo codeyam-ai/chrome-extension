@@ -153,7 +153,7 @@ export const executeMoveCall = createAsyncThunk<
     MoveCallTransaction,
     AppThunkConfig
 >(
-    'sui-objects/send-tokens',
+    'sui-objects/execute-move-call',
     async (
         moveCall,
         { getState, extra: { api, keypairVault }, dispatch }
@@ -283,6 +283,9 @@ const slice = createSlice({
             // Not sure if turning off this warning is safe.
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
+            return txAdapter.setOne(state, payload);
+        });
+        builder.addCase(executeMoveCall.fulfilled, (state, { payload }) => {
             return txAdapter.setOne(state, payload);
         });
         builder.addCase(StakeTokens.fulfilled, (state, { payload }) => {

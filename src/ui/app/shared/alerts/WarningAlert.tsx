@@ -1,4 +1,4 @@
-import { ExclaimationTriangleIcon } from '@heroicons/react/24/solid';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 
 type WarningAlertProps = {
     text: string;
@@ -7,7 +7,7 @@ type WarningAlertProps = {
 export const WarningAlert = ({ text }: WarningAlertProps) => (
     <div className={'flex flex-row justify-between'}>
         <div className={'flex flex-row gap-2 items-center'}>
-            <ExclaimationTriangleIcon width={20} height={20} color={'yellow'} />
+            <ExclamationTriangleIcon width={20} height={20} color={'yellow'} />
             <div className={'font-medium'}>{text}</div>
         </div>
     </div>

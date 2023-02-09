@@ -39,28 +39,37 @@ export const getSuiName = async (address: string, sender: string = SENDER) => {
             await getNameserviceValues();
 
         const resolverBytes = get(
-            await suiProvider.devInspectMoveCall(sender, {
-                packageObjectId: packageAddress,
-                module: 'base_registry',
-                function: 'get_record_by_key',
-                typeArguments: [],
-                arguments: [
-                    registryAddress,
-                    `${trimAddress(address)}.addr.reverse`,
-                ],
+            await suiProvider.devInspectTransaction(sender, {
+                kind: 'moveCall',
+                data: {
+                    packageObjectId: packageAddress,
+                    module: 'base_registry',
+                    function: 'get_record_by_key',
+                    typeArguments: [],
+                    arguments: [
+                        registryAddress,
+                        `${trimAddress(address)}.addr.reverse`,
+                    ],
+                },
             }),
             DEV_INSPECT_RESULT_PATH_1
         );
         if (!resolverBytes) return address;
 
         const resolver = toFullAddress(toHexString(resolverBytes));
-        const resolverResponse = await suiProvider.devInspectMoveCall(sender, {
-            packageObjectId: packageAddress,
-            module: 'resolver',
-            function: 'name',
-            typeArguments: [],
-            arguments: [resolver, address],
-        });
+        const resolverResponse = await suiProvider.devInspectTransaction(
+            sender,
+            {
+                kind: 'moveCall',
+                data: {
+                    packageObjectId: packageAddress,
+                    module: 'resolver',
+                    function: 'name',
+                    typeArguments: [],
+                    arguments: [resolver, address],
+                },
+            }
+        );
 
         const nameByteArray = get(resolverResponse, DEV_INSPECT_RESULT_PATH_0);
         if (!nameByteArray) return address;
@@ -83,25 +92,37 @@ export const getSuiAddress = async (
     const { packageAddress, registryAddress } = await getNameserviceValues();
 
     try {
-        const resolverResponse = await suiProvider.devInspectMoveCall(sender, {
-            packageObjectId: packageAddress,
-            module: 'base_registry',
-            function: 'get_record_by_key',
-            typeArguments: [],
-            arguments: [registryAddress, domain],
-        });
+        const resolverResponse = await suiProvider.devInspectTransaction(
+            sender,
+            {
+                kind: 'moveCall',
+                data: {
+                    packageObjectId: packageAddress,
+                    module: 'base_registry',
+                    function: 'get_record_by_key',
+                    typeArguments: [],
+                    arguments: [registryAddress, domain],
+                },
+            }
+        );
 
         const resolverBytes = get(resolverResponse, DEV_INSPECT_RESULT_PATH_1);
         if (!resolverBytes) return domain;
 
         const resolver = toFullAddress(toHexString(resolverBytes));
-        const resolverResponse2 = await suiProvider.devInspectMoveCall(sender, {
-            packageObjectId: packageAddress,
-            module: 'resolver',
-            function: 'addr',
-            typeArguments: [],
-            arguments: [resolver, domain],
-        });
+        const resolverResponse2 = await suiProvider.devInspectTransaction(
+            sender,
+            {
+                kind: 'moveCall',
+                data: {
+                    packageObjectId: packageAddress,
+                    module: 'resolver',
+                    function: 'addr',
+                    typeArguments: [],
+                    arguments: [resolver, domain],
+                },
+            }
+        );
         const addr = get(resolverResponse2, DEV_INSPECT_RESULT_PATH_0);
 
         if (!addr) return domain;

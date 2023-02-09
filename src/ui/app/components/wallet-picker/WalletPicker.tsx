@@ -1,12 +1,12 @@
 import { ArrowLongUpIcon } from '@heroicons/react/24/solid';
 import { useState } from 'react';
 
+import CreateWalletProvider from './CreateWalletProvider';
 import { useAppSelector } from '../../hooks';
 import Button from '../../shared/buttons/Button';
 import Body from '../../shared/typography/Body';
 import WalletList from '../../shared/wallet-list/WalletList';
 import LoadingIndicator from '../loading/LoadingIndicator';
-import CreateWalletProvider from './CreateWalletProvider';
 
 interface WalletPickerProps {
     selectOnly?: boolean;

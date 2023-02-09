@@ -4,10 +4,10 @@ import { memo, useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+import TransferNFTReviewForm from './TransferNFTReviewForm';
 import { isErrorCausedByUserNotHavingEnoughSuiToPayForGas } from '../../../dapp-tx-approval/lib';
 import { getGasDataFromError } from '../../../dapp-tx-approval/lib/extractGasData';
 import getErrorDisplaySuiForMist from '../../../dapp-tx-approval/lib/getErrorDisplaySuiForMist';
-import TransferNFTReviewForm from './TransferNFTReviewForm';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { transferNFT } from '_redux/slices/sui-objects';
 import { accountNftsSelector } from '_src/ui/app/redux/slices/account';

@@ -1,6 +1,6 @@
+import WalletButton from './WalletButton';
 import { type AccountInfo } from '../../KeypairVault';
 import BodyLarge from '../typography/BodyLarge';
-import WalletButton from './WalletButton';
 
 export type WalletListProps = {
     header?: string;

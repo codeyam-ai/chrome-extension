@@ -15,12 +15,15 @@ export class Ticket {
         ticketAgentId: string,
         typeArguments: string[] = []
     ) {
-        const ticketResponse = await provider.devInspectMoveCall(address, {
-            packageObjectId: contract,
-            module: 'token_gated_ticket',
-            function: 'get_ticket_record_by_ticket_id',
-            typeArguments,
-            arguments: [ticketAgentId, ticketId],
+        const ticketResponse = await provider.devInspectTransaction(address, {
+            kind: 'moveCall',
+            data: {
+                packageObjectId: contract,
+                module: 'token_gated_ticket',
+                function: 'get_ticket_record_by_ticket_id',
+                typeArguments,
+                arguments: [ticketAgentId, ticketId],
+            },
         });
 
         if ('Ok' in ticketResponse.results) {

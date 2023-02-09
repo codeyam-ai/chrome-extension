@@ -4,10 +4,10 @@
 import { useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-import { SettingsContainer } from '../../shared/navigation/nav-bar/SettingsContainer';
 import LockPage from './subpages/LockPage';
 import ThemePage from './subpages/ThemePage';
 import ChangePasswordPage from './subpages/security/subpages/change-password/ChangePasswordPage';
+import { SettingsContainer } from '../../shared/navigation/nav-bar/SettingsContainer';
 import { getEncrypted } from '_src/shared/storagex/store';
 import SettingsHomePage from '_src/ui/app/components/settings-menu/SettingsHomePage';
 import NetworkPage from '_src/ui/app/components/settings-menu/subpages/network/NetworkPage';

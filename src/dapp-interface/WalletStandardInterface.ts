@@ -98,7 +98,7 @@ export class EthosWallet implements Wallet {
             //     signMessage: this.#signMessage,
             // },
             'sui:signAndExecuteTransaction': {
-                version: '1.0.0',
+                version: '1.1.0',
                 signAndExecuteTransaction: this.#signAndExecuteTransaction,
             },
         };
@@ -190,6 +190,7 @@ export class EthosWallet implements Wallet {
                 transaction: {
                     type: 'v2',
                     data: input.transaction,
+                    options: input.options,
                 },
             }),
             (response) => response.result

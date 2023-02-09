@@ -1,9 +1,9 @@
-import truncateMiddle from '../../helpers/truncate-middle';
-import Body from '../../shared/typography/Body';
-import CopyBody from '../../shared/typography/CopyBody';
 import CostValue from './CostValue';
 import NumberedValue from './NumberedValue';
 import SmallValue from './SmallValue';
+import truncateMiddle from '../../helpers/truncate-middle';
+import Body from '../../shared/typography/Body';
+import CopyBody from '../../shared/typography/CopyBody';
 
 import type { Cost } from './CostValue';
 import type { NumberedDetail } from './NumberedValue';

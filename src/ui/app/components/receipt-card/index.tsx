@@ -14,6 +14,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
 import { getTheme } from '../../helpers/getTheme';
+import ipfs from '../../helpers/ipfs';
 import truncateMiddle from '../../helpers/truncate-middle';
 import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
@@ -177,9 +178,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         txDigest.coinType
     );
 
-    const imgUrl = txDigest?.url
-        ? txDigest?.url.replace(/^ipfs:\/\//, 'https://ipfs.io/ipfs/')
-        : false;
+    const imgUrl = txDigest?.url ? ipfs(txDigest.url) : false;
 
     const date = txDigest?.timestampMs
         ? formatDate(txDigest.timestampMs, [
