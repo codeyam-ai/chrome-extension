@@ -175,7 +175,6 @@ function TransferCoinAmountPage() {
             dispatch,
             navigate,
             coinType,
-
             activeAccountIndex,
             address,
             authentication,
