@@ -2,22 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-    Base64DataBuffer,
-    getCertifiedTransaction,
-    getTransactionEffects,
-} from '@mysten/sui.js';
-import {
     createAsyncThunk,
     createEntityAdapter,
     createSlice,
 } from '@reduxjs/toolkit';
 
-import type {
-    SignableTransaction,
-    SuiExecuteTransactionResponse,
-    SuiMoveNormalizedFunction,
-    SuiTransactionResponse,
-} from '@mysten/sui.js';
+import type { SuiMoveNormalizedFunction } from '@mysten/sui.js';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { TransactionRequest } from '_payloads/transactions';
 import type { RootState } from '_redux/RootReducer';
@@ -62,155 +52,6 @@ export const loadTransactionResponseMetadata = createAsyncThunk<
     }
 );
 
-export const respondToTransactionRequest = createAsyncThunk<
-    {
-        txRequestID: string;
-        approved: boolean;
-        txResponse: SuiTransactionResponse | null;
-    },
-    { txRequestID: string; approved: boolean },
-    AppThunkConfig
->(
-    'respond-to-transaction-request',
-    async (
-        { txRequestID, approved },
-        { extra: { background, api, keypairVault }, getState }
-    ) => {
-        const state = getState();
-        const txRequest = txRequestsSelectors.selectById(state, txRequestID);
-        if (!txRequest) {
-            throw new Error(`TransactionRequest ${txRequestID} not found`);
-        }
-        let txResult: SuiTransactionResponse | undefined = undefined;
-        let tsResultError: string | undefined;
-        if (approved) {
-            const {
-                account: { address, authentication, activeAccountIndex },
-            } = getState();
-
-            let signer;
-            if (authentication) {
-                signer = api.getEthosSignerInstance(
-                    address || '',
-                    authentication
-                );
-            } else {
-                signer = api.getSignerInstance(
-                    keypairVault.getKeyPair(activeAccountIndex)
-                );
-            }
-
-            try {
-                let response: SuiExecuteTransactionResponse;
-                if (
-                    txRequest.tx.type === 'v2' ||
-                    txRequest.tx.type === 'move-call'
-                ) {
-                    const txn: SignableTransaction =
-                        txRequest.tx.type === 'move-call'
-                            ? {
-                                  kind: 'moveCall',
-                                  data: txRequest.tx.data,
-                              }
-                            : txRequest.tx.data;
-
-                    // console.log('HI', txRequest);
-                    // if (
-                    //     typeof txRequest.tx.data === 'object' &&
-                    //     'data' in txRequest.tx.data &&
-                    //     !('buffer' in txRequest.tx.data.data) &&
-                    //     'gasBudget' in txRequest.tx.data.data &&
-                    //     !('amount' in txRequest.tx.data.data) &&
-                    //     !('inputCoins' in txRequest.tx.data.data) &&
-                    //     !txRequest.tx.data.data.gasPayment
-                    // ) {
-                    //     const gasPrice =
-                    //         await signer.provider.getReferenceGasPrice();
-                    //     const { data: coins } =
-                    //         await signer.provider.getAllCoins(
-                    //             address || '',
-                    //             null,
-                    //             null
-                    //         );
-                    //     console.log('coins', coins, gasPrice);
-                    //     let totalSui = 0;
-                    //     const coinIds: string[] = [];
-                    //     const sortedCoins = coins.sort(
-                    //         (a, b) => b.balance - a.balance
-                    //     );
-                    //     console.log('SORTED', sortedCoins);
-                    //     for (const coin of sortedCoins) {
-                    //         if (coin.coinType !== GAS_TYPE_ARG) continue;
-
-                    //         coinIds.push(coin.coinObjectId);
-                    //         totalSui += coin.balance;
-                    //         if (
-                    //             totalSui >
-                    //             txRequest.tx.data.data.gasBudget * gasPrice
-                    //         ) {
-                    //             break;
-                    //         }
-                    //     }
-                    //     console.log(
-                    //         coinIds,
-                    //         totalSui,
-                    //         txRequest.tx.data.data.gasBudget * gasPrice
-                    //     );
-                    //     let gasCoinId = coinIds[0];
-                    //     if (coinIds.length > 1) {
-                    //         const response =
-                    //             await signer.signAndExecuteTransaction({
-                    //                 kind: 'payAllSui',
-                    //                 data: {
-                    //                     inputCoins: coinIds,
-                    //                     recipient: address || '',
-                    //                     gasBudget: 10000,
-                    //                 },
-                    //             });
-                    //         if ('EffectsCert' in response) {
-                    //             const newCoin =
-                    //                 response.EffectsCert.effects.effects
-                    //                     .mutated?.[0]?.reference?.objectId;
-                    //             if (newCoin) {
-                    //                 gasCoinId = newCoin;
-                    //             }
-                    //         }
-                    //     }
-                    //     txRequest.tx.data.data.gasPayment = gasCoinId;
-                    // }
-
-                    response = await signer.signAndExecuteTransaction(txn);
-                } else if (txRequest.tx.type === 'serialized-move-call') {
-                    const txBytes = new Base64DataBuffer(txRequest.tx.data);
-                    response = await signer.signAndExecuteTransaction(txBytes);
-                } else {
-                    throw new Error(
-                        `Either tx or txBytes needs to be defined.`
-                    );
-                }
-
-                txResult = {
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    certificate: getCertifiedTransaction(response)!,
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    effects: getTransactionEffects(response)!,
-                    timestamp_ms: null,
-                    parsed_data: null,
-                };
-            } catch (e) {
-                tsResultError = (e as Error).message;
-            }
-        }
-        background.sendTransactionRequestResponse(
-            txRequestID,
-            approved,
-            txResult,
-            tsResultError
-        );
-        return { txRequestID, approved: approved, txResponse: null };
-    }
-);
-
 const slice = createSlice({
     name: 'transaction-requests',
     initialState: txRequestsAdapter.getInitialState({ initialized: false }),
@@ -234,20 +75,6 @@ const slice = createSlice({
                     id: txRequestID,
                     changes: {
                         metadata,
-                    },
-                });
-            }
-        );
-
-        build.addCase(
-            respondToTransactionRequest.fulfilled,
-            (state, { payload }) => {
-                const { txRequestID, approved: allowed, txResponse } = payload;
-                txRequestsAdapter.updateOne(state, {
-                    id: txRequestID,
-                    changes: {
-                        approved: allowed,
-                        txResult: txResponse || undefined,
                     },
                 });
             }

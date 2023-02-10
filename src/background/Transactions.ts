@@ -316,7 +316,6 @@ class Transactions {
                     if (response) {
                         const { approved, txResult, tsResultError } = response;
                         if (approved) {
-                            txRequest.approved = approved;
                             txRequest.txResult = txResult;
                             txRequest.txResultError = tsResultError;
                             await this.storeTransactionRequest(txRequest);
@@ -593,7 +592,6 @@ class Transactions {
     ): TransactionRequest {
         return {
             id: uuidV4(),
-            approved: null,
             origin,
             originFavIcon,
             createdDate: new Date().toISOString(),
