@@ -19,6 +19,7 @@ import BodyLarge from '../typography/BodyLarge';
 import EthosLink from '../typography/EthosLink';
 import { type TransactionRequest } from '_src/shared/messaging/messages/payloads/transactions';
 import simpleApiCall from '_src/shared/utils/simpleApiCall';
+import Browser from 'webextension-polyfill';
 
 const extractTextFromHTML = (html: ReactElement): string => {
     const div = document.createElement('div');
@@ -81,6 +82,7 @@ const AlertWithErrorExpand = ({
             event.preventDefault();
 
             const data = {
+                extensionVersion: Browser.runtime.getManifest().version,
                 address: accountInfo?.address || '',
                 dAppUrl: txInfo.dAppUrl,
                 txId: txInfo.txId,
@@ -94,6 +96,7 @@ const AlertWithErrorExpand = ({
             bcs.registerAddressType('SuiAddress', 20, 'hex');
 
             bcs.registerStructType('ErrorReportData', {
+                extensionVersion: 'string',
                 address: 'SuiAddress',
                 dAppUrl: 'string',
                 txId: 'string',
