@@ -3,11 +3,11 @@
 
 // import { getTransactionDigest } from '@mysten/sui.js';
 
+import { Coin as CoinAPI } from '@mysten/sui.js';
+import BigNumber from 'bignumber.js';
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
-
-import { Coin as CoinAPI } from '@mysten/sui.js';
 
 import TransferCoinAmountForm from './TransferCoinAmountForm';
 import { createTokenValidation } from './validation';
@@ -21,20 +21,16 @@ import {
     DEFAULT_GAS_BUDGET_FOR_PAY,
     GAS_TYPE_ARG,
 } from '_redux/slices/sui-objects/Coin';
-import truncateString from '_src/ui/app/helpers/truncate-string';
-import { getSendTokenFee } from '_redux/slices/transactions';
+import { getSigner } from '_src/ui/app/helpers/getSigner';
 import {
-    formatBalance,
     useCoinDecimals,
     useFormatCoin,
 } from '_src/ui/app/hooks/useFormatCoin';
 import { setSuiAmount } from '_src/ui/app/redux/slices/forms';
 
+import type { SuiMoveObject } from '@mysten/sui.js';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
-import { SuiMoveObject } from '@mysten/sui.js';
-import { api, thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
-import BigNumber from 'bignumber.js';
 
 const initialValues = {
     amount: '',
@@ -47,10 +43,10 @@ function TransferCoinAmountPage() {
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
     const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
+    const {
+        account: { authentication, address, activeAccountIndex },
+    } = useAppSelector((state) => state);
     const state = useAppSelector((state) => state);
-    const activeAccountIndex = useAppSelector(
-        ({ account }) => account.activeAccountIndex
-    );
     const aggregateBalances = useAppSelector(accountAggregateBalancesSelector);
 
     const coinBalance = useMemo(
@@ -117,11 +113,6 @@ function TransferCoinAmountPage() {
         ]
     );
 
-    const gasFee = `${formatBalance(gasBudget, gasDecimals)} ${truncateString(
-        coinSymbol,
-        8
-    )}`;
-
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const onHandleSubmit = useCallback(
@@ -140,23 +131,36 @@ function TransferCoinAmountPage() {
                     .toString()
             );
 
-            const checkForFee = await dispatch(
-                getSendTokenFee({
-                    tokenTypeArg: coinType,
-                    amount: bigIntAmount,
-                    recipientAddress: formState.to,
-                })
+            const signer = await getSigner(
+                address,
+                authentication,
+                activeAccountIndex
             );
 
-            console.log('check for fee', checkForFee);
+            const coins: SuiMoveObject[] = accountCoinsSelector(state);
+            const tx = await CoinAPI.newPayTransaction(
+                coins,
+                coinType,
+                bigIntAmount,
+                formState.to,
+                DEFAULT_GAS_BUDGET_FOR_PAY
+            );
+
+            const signedTx = await signer.dryRunTransaction(tx);
+
+            const gasFee =
+                signedTx.gasUsed.computationCost +
+                (signedTx.gasUsed.storageCost - signedTx.gasUsed.storageRebate);
 
             dispatch(
                 setSuiAmount({
                     amount: amount,
-                    gasFee: gasFee,
+                    gasFee: `${gasFee} MIST`,
                 })
             );
+
             setSendError(null);
+
             try {
                 resetForm();
                 const reviewUrl = `/send/review?${new URLSearchParams({
@@ -167,7 +171,18 @@ function TransferCoinAmountPage() {
                 setSendError((e as SerializedError).message || null);
             }
         },
-        [dispatch, navigate, coinType, gasFee]
+        [
+            dispatch,
+            navigate,
+            coinType,
+
+            activeAccountIndex,
+            address,
+            authentication,
+            formState.to,
+            coinDecimals,
+            state,
+        ]
     );
     const handleOnClearSubmitError = useCallback(() => {
         setSendError(null);
