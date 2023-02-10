@@ -93,7 +93,10 @@ export const createGasCoin = createAsyncThunk<
             // TODO: better way to sync latest objects
             dispatch(fetchAllOwnedAndRequiredObjects());
 
-            if ('EffectsCert' in response) {
+            if (
+                'EffectsCert' in response &&
+                'effects' in response.EffectsCert
+            ) {
                 return response.EffectsCert.effects.effects.created?.[0]
                     ?.reference?.objectId;
             }
