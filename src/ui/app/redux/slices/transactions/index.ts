@@ -148,53 +148,6 @@ export const sendTokens = createAsyncThunk<
     }
 );
 
-export const getSendTokenFee = createAsyncThunk<
-    TransactionResult,
-    {
-        tokenTypeArg: string;
-        amount: bigint;
-        recipientAddress: SuiAddress;
-    },
-    AppThunkConfig
->(
-    'sui-objects/send-tokens',
-    async (
-        { tokenTypeArg, amount, recipientAddress },
-        { getState, extra: { api, keypairVault }, dispatch }
-    ): Promise<TransactionResult> => {
-        const state = getState();
-        const {
-            account: { authentication, address, activeAccountIndex },
-        } = state;
-
-        let signer;
-        if (authentication) {
-            signer = api.getEthosSignerInstance(address || '', authentication);
-        } else {
-            signer = api.getSignerInstance(
-                keypairVault.getKeyPair(activeAccountIndex)
-            );
-        }
-
-        const coins: SuiMoveObject[] = accountCoinsSelector(state);
-        const tx = await CoinAPI.newPayTransaction(
-            coins,
-            tokenTypeArg,
-            amount,
-            recipientAddress,
-            DEFAULT_GAS_BUDGET_FOR_PAY
-        );
-
-        console.log('tx: ', tx);
-
-        const signedTx = await signer.devInspectTransaction(tx);
-
-        console.log('Signed TX: ', signedTx);
-
-        return signedTx;
-    }
-);
-
 export const executeMoveCall = createAsyncThunk<
     TransactionResult,
     MoveCallTransaction,
