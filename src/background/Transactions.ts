@@ -385,7 +385,9 @@ class Transactions {
         try {
             response = await fetch(endpoint, callData);
         } catch (e) {
-            throw new Error(`FETCH 1 ${endpoint}, ${JSON.stringify(callData)}`)
+            throw new Error(
+                `FETCH 1 ${e} ${endpoint}, ${JSON.stringify(callData)}`
+            );
         }
         const json = await response.json();
 
@@ -461,7 +463,7 @@ class Transactions {
         const executeResponse = await fetch(endpoint, data);
         const txResponse = await executeResponse.json();
 
-        return txResponse;    
+        return txResponse;
     }
 
     public async requestPreapproval(
