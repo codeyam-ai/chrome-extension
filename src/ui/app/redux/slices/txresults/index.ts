@@ -17,6 +17,7 @@ import {
     Coin,
     getPaySuiTransaction,
     getPayTransaction,
+    SuiTransactionResponse,
 } from '@mysten/sui.js';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
@@ -137,41 +138,20 @@ const getTxnEffectsEventID = (
 
 export const getTransactionsByAddress = createAsyncThunk<
     TxResultByAddress,
-    string[] | undefined,
+    SuiTransactionResponse[],
     AppThunkConfig
 >(
     'sui-transactions/get-transactions-by-address',
-    async (txs, { getState, extra: { api } }): Promise<TxResultByAddress> => {
-        let transactions: GetTxnDigestsResponse;
+    async (
+        txEffs,
+        { getState, extra: { api } }
+    ): Promise<TxResultByAddress> => {
         const address = getState().account.address;
-        if (!address) return [];
-
-        if (!txs) {
-            // Get all transactions txId for address
-            transactions =
-                await api.instance.fullNode.getTransactionsForAddress(
-                    address,
-                    true
-                );
-        } else {
-            transactions = txs;
-        }
-
-        if (!transactions || !transactions.length) {
+        if (!address) {
             return [];
         }
 
-        const txEffs =
-            await api.instance.fullNode.getTransactionWithEffectsBatch(
-                deduplicate(transactions)
-            );
-
         const txResults = txEffs.map((txEff) => {
-            const digest = transactions.filter(
-                (transactionId) =>
-                    transactionId === getTransactionDigest(txEff.certificate)
-            )[0];
-
             const txns = getTransactions(txEff.certificate);
 
             // TODO handle batch transactions
@@ -206,10 +186,11 @@ export const getTransactionsByAddress = createAsyncThunk<
                     : Object.values(amountByRecipient || {})[0];
 
             return {
-                txId: digest,
+                txId: txEff.certificate.transactionDigest,
                 status: getExecutionStatusType(txEff),
                 txGas: getTotalGasUsed(txEff),
                 kind: txKind,
+                callModuleName: moveCallTxnName(moveCallTxn?.module),
                 callFunctionName: moveCallTxnName(moveCallTxn?.function),
                 from: sender,
                 isSender: sender === address,
@@ -232,7 +213,7 @@ export const getTransactionsByAddress = createAsyncThunk<
         const objectIds = txResults
             .map((itm) => itm?.objectId)
             .filter(notEmpty);
-        const objectIDs = [...new Set(objectIds.flat())];
+        const objectIDs = Array.from(new Set(objectIds.flat()));
         const getObjectBatch = await api.instance.fullNode.getObjectBatch(
             objectIDs
         );
@@ -240,7 +221,7 @@ export const getTransactionsByAddress = createAsyncThunk<
             ({ status }) => status === 'Exists'
         );
 
-        const txnResp = await Promise.all(
+        const txnResp: TxResultState[] = await Promise.all(
             txResults.map(async (itm) => {
                 const txnObjects =
                     txObjects && itm?.objectId && Array.isArray(txObjects)
@@ -253,19 +234,9 @@ export const getTransactionsByAddress = createAsyncThunk<
 
                 const { details } = txnObjects || {};
 
-                /* For some reason the below commented code from Mysten does not work.
-                 * In the meantime we're getting the coinType a different way.
-                 */
-                // const coinType =
-                //   txnObjects &&
-                //   details &&
-                //   typeof details !== 'string' &&
-                //   'data' in details &&
-                //   details.data.dataType === 'moveObject' &&
-                //   Coin.getCoinTypeArg(txnObjects);
-                let coinType = undefined;
+                let objType = undefined;
                 if (itm?.objId) {
-                    coinType = await getObjTypeFromObjId(itm.objId);
+                    objType = await getObjTypeFromObjId(itm.objId);
                 }
 
                 const fields =
@@ -279,8 +250,8 @@ export const getTransactionsByAddress = createAsyncThunk<
 
                 return {
                     ...itm,
-                    coinType,
-                    coinSymbol: coinType && Coin.getCoinSymbol(coinType),
+                    objType,
+                    objSymbol: objType && Coin.getCoinSymbol(objType),
                     ...(fields &&
                         fields.url && {
                             description:
@@ -297,7 +268,7 @@ export const getTransactionsByAddress = createAsyncThunk<
             })
         );
 
-        return txnResp as TxResultByAddress;
+        return txnResp;
     }
 );
 

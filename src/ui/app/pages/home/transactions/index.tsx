@@ -14,6 +14,13 @@ import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
 import type { TxResultState } from '_redux/slices/txresults';
+import { SuiTransactionResponse } from '@mysten/sui.js';
+
+type LoadTransactionsArgs = {
+    page?: number;
+    itemsPerPage?: number;
+    filteredTxEffs?: SuiTransactionResponse[];
+};
 
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
@@ -25,6 +32,17 @@ const TransactionsPage = () => {
     const totalNumTxs = transactions.length;
     const [nextPage, setNextPage] = useState(1);
     const [loading, setLoading] = useState(true);
+    const [txEffs, setTxEffs] = useState<
+        SuiTransactionResponse[] | undefined
+    >();
+    const [filter, setFilter] = useState<string | undefined>();
+    const [filteredTxEffs, setFilteredTxEffs] = useState<
+        SuiTransactionResponse[] | undefined
+    >();
+    const [activeTransactions, setActiveTransactions] = useState<
+        TxResultState[] | undefined
+    >();
+    const [error, setError] = useState<string | undefined>();
 
     const txByAddress: TxResultState[] = useAppSelector(
         ({ txresults }) => txresults.latestTx
@@ -43,6 +61,11 @@ const TransactionsPage = () => {
             allTxs = allTxs.filter(
                 (value, index, self) => self.indexOf(value) === index
             );
+
+            const _txEffs =
+                await api.instance.fullNode.getTransactionWithEffectsBatch(
+                    deduplicate(transactionIds)
+                );
 
             if (address && allTxs.length > 0) {
                 setTransactions(allTxs);
