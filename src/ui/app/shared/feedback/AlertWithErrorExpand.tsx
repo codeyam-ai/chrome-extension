@@ -9,6 +9,7 @@ import { BCS, fromHEX, getSuiMoveConfig, toHEX } from '@mysten/bcs';
 import { Base64DataBuffer, Ed25519Keypair } from '@mysten/sui.js';
 import { useCallback, useState, type ReactElement } from 'react';
 import ReactDOM from 'react-dom';
+import Browser from 'webextension-polyfill';
 
 import { type AccountInfo } from '../../KeypairVault';
 import { useAppSelector } from '../../hooks';
@@ -19,7 +20,6 @@ import BodyLarge from '../typography/BodyLarge';
 import EthosLink from '../typography/EthosLink';
 import { type TransactionRequest } from '_src/shared/messaging/messages/payloads/transactions';
 import simpleApiCall from '_src/shared/utils/simpleApiCall';
-import Browser from 'webextension-polyfill';
 
 const extractTextFromHTML = (html: ReactElement): string => {
     const div = document.createElement('div');

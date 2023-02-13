@@ -967,9 +967,9 @@ async function finishTransaction(
                 const txn: SignableTransaction =
                     txRequest.tx.type === 'move-call'
                         ? {
-                            kind: 'moveCall',
-                            data: txRequest.tx.data,
-                        }
+                              kind: 'moveCall',
+                              data: txRequest.tx.data,
+                          }
                         : txRequest.tx.data;
 
                 response = await signer.signAndExecuteTransaction(txn);
@@ -1001,4 +1001,3 @@ async function finishTransaction(
         tsResultError
     );
 }
-
