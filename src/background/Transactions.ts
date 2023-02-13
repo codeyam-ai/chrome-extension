@@ -380,15 +380,7 @@ class Transactions {
 
         const { sui_Env } = await Browser.storage.local.get('sui_Env');
         const endpoint = api.getEndPoints(sui_Env).fullNode;
-
-        let response;
-        try {
-            response = await fetch(endpoint, callData);
-        } catch (e) {
-            throw new Error(
-                `FETCH 1 ${e} ${endpoint}, ${JSON.stringify(callData)}`
-            );
-        }
+        const response = await fetch(endpoint, callData);
         const json = await response.json();
 
         if (json.error) {
