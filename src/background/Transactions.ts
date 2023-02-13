@@ -380,7 +380,13 @@ class Transactions {
 
         const { sui_Env } = await Browser.storage.local.get('sui_Env');
         const endpoint = api.getEndPoints(sui_Env).fullNode;
-        const response = await fetch(endpoint, callData);
+
+        let response;
+        try {
+            response = await fetch(endpoint, callData);
+        } catch (e) {
+            throw new Error("FETCH 1")
+        }
         const json = await response.json();
 
         if (json.error) {
@@ -452,10 +458,14 @@ class Transactions {
             }),
         };
 
-        const executeResponse = await fetch(endpoint, data);
-        const txResponse = await executeResponse.json();
-
-        return txResponse;
+        try {
+            const executeResponse = await fetch(endpoint, data);
+            const txResponse = await executeResponse.json();
+    
+            return txResponse;    
+        } catch (e) {
+            throw new Error("FETCH 2")
+        }
     }
 
     public async requestPreapproval(
