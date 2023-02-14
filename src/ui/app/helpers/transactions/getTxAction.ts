@@ -1,4 +1,4 @@
-import { TxResultState } from '../../redux/slices/txresults';
+import { type TxResultState } from '../../redux/slices/txresults';
 
 export type TxAction = 'mint' | 'send' | 'receive' | 'transfer' | undefined;
 

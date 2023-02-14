@@ -1,4 +1,4 @@
-import { TxResultState } from '../../redux/slices/txresults';
+import { type TxResultState } from '../../redux/slices/txresults';
 
 export type TxType = 'nft' | 'sui' | 'func' | 'coin';
 

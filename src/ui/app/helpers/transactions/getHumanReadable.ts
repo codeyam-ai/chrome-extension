@@ -9,7 +9,7 @@ import {
     getTxVerb,
 } from '.';
 
-import { FormattedTxResultState } from '../../pages/home/transactions/FormattedTxResultState';
+import { type FormattedTxResultState } from '../../pages/home/transactions/FormattedTxResultState';
 import convertUnixTimeToLocalTime from '../convertUnixTimeToLocalTime';
 
 const getHumanReadable = (tx: FormattedTxResultState) => {

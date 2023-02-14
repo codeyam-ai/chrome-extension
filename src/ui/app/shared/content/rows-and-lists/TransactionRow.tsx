@@ -22,11 +22,8 @@ import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 import { getHumanReadable } from '_src/ui/app/helpers/transactions';
-import { type FormattedCoin } from '_src/ui/app/pages/home/transactions/FormattedCoin';
-
-interface txnType extends TxResultState {
-    formatted: FormattedCoin;
-}
+import type { FormattedCoin } from '_src/ui/app/pages/home/transactions/FormattedCoin';
+import type { txnType } from '_src/ui/app/pages/home/transactions';
 
 interface TransactionRowProps {
     txn: txnType;
@@ -80,8 +77,6 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         verb
     );
 
-    if (!txn.formatted) return <></>;
-
     return (
         <ActivityRow
             failed={false}
@@ -90,8 +85,8 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
             date={timeDisplay}
             icon={<CodeBracketSquareIcon width={20} height={20} />}
             link={drilldownLink}
-            header={'test'}
-            subheader={'test'}
+            header={txn.formatted.coinSymbol}
+            subheader={txAction === 'send' ? 'Sent' : 'Received'}
             formattedAmount={
                 txn.formatted.formattedBalance
                     ? txn.formatted.formattedBalance

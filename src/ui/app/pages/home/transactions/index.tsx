@@ -12,16 +12,19 @@ import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/Transacti
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
-import formatCoin from '_src/ui/app/helpers/formatCoin';
+import formatCoin, { type FormattedCoin } from '_src/ui/app/helpers/formatCoin';
 
-import type { TxResultState } from '_redux/slices/txresults';
-import { SuiTransactionResponse } from '@mysten/sui.js';
+import { type TxResultState } from '_redux/slices/txresults';
+import { type SuiTransactionResponse } from '@mysten/sui.js';
 import deduplicate from '_src/ui/app/helpers/deduplicate';
 import { getTxType } from '_src/ui/app/helpers/transactions';
 
+export interface txnType extends TxResultState {
+    formatted: FormattedCoin;
+}
+
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
-    const [transactions, setTransactions] = useState<string[]>([]);
     const [items, setItems] = useState<FormattedTxResultState[]>([]);
     const [initLoad, setInitLoad] = useState(true);
     const dispatch = useAppDispatch();
@@ -33,7 +36,7 @@ const TransactionsPage = () => {
     >();
     const totalNumTxs = txEffs?.length;
     const [activeTransactions, setActiveTransactions] = useState<
-        TxResultState[] | undefined
+        txnType[] | undefined
     >();
     const [filter, setFilter] = useState<string | undefined>();
     const [filteredTxEffs, setFilteredTxEffs] = useState<
@@ -51,7 +54,7 @@ const TransactionsPage = () => {
 
         const getTxs = async () => {
             try {
-                let transactionIds: string[] =
+                const transactionIds: string[] =
                     await api.instance.fullNode.getTransactionsForAddress(
                         address as string,
                         true
@@ -70,10 +73,10 @@ const TransactionsPage = () => {
             }
         };
 
-        if (transactions.length === 0) {
+        if (initLoad) {
             getTxs();
         }
-    }, [address, transactions]);
+    }, [address]);
 
     useEffect(() => {
         setFilteredTxEffs(undefined);
@@ -110,39 +113,39 @@ const TransactionsPage = () => {
 
     useEffect(() => {
         const getFormattedTransactions = async () => {
-            const formattedTransactions: FormattedTxResultState[] =
-                await Promise.all(
-                    txByAddress?.map(async (tx: any) => {
-                        // TODO: fix type error for any
-                        const txType = getTxType(tx);
-                        if (txType === 'nft' || txType === 'func') {
-                            return tx;
-                        }
-                        const {
+            const formattedTransactions: txnType[] = await Promise.all(
+                txByAddress?.map(async (tx: any) => {
+                    // TODO: fix type error for any
+                    const txType = getTxType(tx);
+                    if (txType === 'nft' || txType === 'func') {
+                        return tx;
+                    }
+                    const {
+                        formattedBalance,
+                        coinSymbol,
+                        dollars,
+                        coinName,
+                        coinIcon,
+                    } = await formatCoin(
+                        api.instance.fullNode,
+                        tx.amount,
+                        tx.objType
+                    );
+                    return {
+                        ...tx,
+                        formatted: {
                             formattedBalance,
                             coinSymbol,
                             dollars,
                             coinName,
                             coinIcon,
-                        } = await formatCoin(
-                            api.instance.fullNode,
-                            tx.amount,
-                            tx.objType
-                        );
-                        return {
-                            ...tx,
-                            formatted: {
-                                formattedBalance,
-                                coinSymbol,
-                                dollars,
-                                coinName,
-                                coinIcon,
-                            },
-                        };
-                    })
-                );
-
-            setActiveTransactions(formattedTransactions);
+                        },
+                    };
+                })
+            );
+            if (formattedTransactions) {
+                setActiveTransactions(formattedTransactions);
+            }
         };
 
         getFormattedTransactions();
@@ -157,7 +160,7 @@ const TransactionsPage = () => {
             loadItems();
             setInitLoad(false);
         }
-    }, [transactions, initLoad, loadItems, txEffs]);
+    }, [initLoad, loadItems, txEffs]);
 
     return (
         <React.Fragment>

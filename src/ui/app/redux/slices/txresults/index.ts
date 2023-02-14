@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-    getTransactionDigest,
     getTransactions,
     getTransactionKindName,
     getTransferObjectTransaction,
@@ -17,7 +16,6 @@ import {
     Coin,
     getPaySuiTransaction,
     getPayTransaction,
-    SuiTransactionResponse,
 } from '@mysten/sui.js';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
@@ -25,7 +23,7 @@ import { notEmpty } from '_helpers';
 import getObjTypeFromObjId from '_src/ui/app/helpers/getObjTypeFromObjId';
 
 import type {
-    GetTxnDigestsResponse,
+    SuiTransactionResponse,
     TransactionKindName,
     ExecutionStatusType,
     TransactionEffects,
@@ -139,7 +137,7 @@ const getTxnEffectsEventID = (
 
 export const getTransactionsByAddress = createAsyncThunk<
     TxResultByAddress,
-    SuiTransactionResponse[],
+    SuiTransactionResponse[] | undefined,
     AppThunkConfig
 >(
     'sui-transactions/get-transactions-by-address',
@@ -148,7 +146,7 @@ export const getTransactionsByAddress = createAsyncThunk<
         { getState, extra: { api } }
     ): Promise<TxResultByAddress> => {
         const address = getState().account.address;
-        if (!address) {
+        if (!address || !txEffs) {
             return [];
         }
 
