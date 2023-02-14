@@ -22,9 +22,14 @@ import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 import { getHumanReadable } from '_src/ui/app/helpers/transactions';
+import { type FormattedCoin } from '_src/ui/app/pages/home/transactions/FormattedCoin';
+
+interface txnType extends TxResultState {
+    formatted: FormattedCoin;
+}
 
 interface TransactionRowProps {
-    txn: TxResultState;
+    txn: txnType;
 }
 
 const TRUNCATE_MAX_LENGTH = 8;
@@ -41,12 +46,6 @@ interface SharedTypes {
     date: string;
 }
 
-interface RowDataTypes extends SharedTypes {
-    header?: string;
-    typeIcon: JSX.Element;
-    icon: JSX.Element;
-}
-
 const TransactionRow = ({ txn }: TransactionRowProps) => {
     const {
         txType,
@@ -59,6 +58,8 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         timeDisplay,
         verb,
     } = getHumanReadable(txn);
+
+    console.log('txn: ', txn);
 
     const drilldownLink = `/transactions/receipt?${new URLSearchParams({
         txdigest: txn?.txId,
@@ -79,21 +80,25 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         verb
     );
 
-    console.log('txn: ', txn);
+    if (!txn.formatted) return <></>;
 
     return (
         <ActivityRow
             failed={false}
-            typeIcon={<CodeBracketSquareIcon />}
+            typeIcon={<CodeBracketSquareIcon width={20} height={20} />}
             type={txType}
             date={timeDisplay}
-            icon={<SuiIcon width={0} height={0} />}
+            icon={<CodeBracketSquareIcon width={20} height={20} />}
             link={drilldownLink}
             header={'test'}
             subheader={'test'}
-            formattedAmount={'amt'}
-            symbol={'symbol'}
-            dollars={'dollars'}
+            formattedAmount={
+                txn.formatted.formattedBalance
+                    ? txn.formatted.formattedBalance
+                    : '0'
+            }
+            symbol={txn.formatted.coinSymbol ? txn.formatted.coinSymbol : 'SUI'}
+            dollars={txn.formatted.dollars ? txn.formatted.dollars : '0'}
         />
     );
 };

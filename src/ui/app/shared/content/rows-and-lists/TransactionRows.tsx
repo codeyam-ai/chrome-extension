@@ -1,16 +1,22 @@
 import TransactionRow from './TransactionRow';
-import { type FormattedTxResultState } from '_src/ui/app/pages/home/transactions/FormattedTxResultState';
+import { TxResultState } from '_src/ui/app/redux/slices/txresults';
+import { FormattedCoin } from '_src/ui/app/pages/home/transactions/FormattedCoin';
+
+interface txnType extends TxResultState {
+    formatted: FormattedCoin;
+}
 
 interface TransactionRowsProps {
-    transactions: FormattedTxResultState[];
+    transactions: txnType[] | undefined;
 }
 
 const TransactionRows = ({ transactions }: TransactionRowsProps) => {
     return (
         <div className="px-6 pb-6 divide-ethos-light-text-stroke">
-            {transactions.map((txn) => {
-                return <TransactionRow txn={txn} key={txn.txId} />;
-            })}
+            {transactions &&
+                transactions.map((txn) => {
+                    return <TransactionRow txn={txn} key={txn.txId} />;
+                })}
         </div>
     );
 };

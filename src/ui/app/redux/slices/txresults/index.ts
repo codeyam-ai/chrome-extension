@@ -48,6 +48,7 @@ export type TxResultState = {
     objectId?: string;
     description?: string;
     name?: string;
+    objType?: string;
     isSender?: boolean;
     error?: string;
     callFunctionName?: string;
