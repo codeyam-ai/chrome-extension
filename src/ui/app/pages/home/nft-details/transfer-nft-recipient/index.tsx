@@ -1,5 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
+
 import { Formik } from 'formik';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -16,7 +17,7 @@ import {
     DEFAULT_NFT_TRANSFER_GAS_FEE,
     GAS_TYPE_ARG,
 } from '_redux/slices/sui-objects/Coin';
-import { formatBalance } from '_src/ui/app/hooks/useFormatCoin';
+import { getSigner } from '_src/ui/app/helpers/getSigner';
 import { setNftDetails } from '_src/ui/app/redux/slices/forms';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 
@@ -36,6 +37,9 @@ function TransferNFTRecipient() {
     const formData = useAppSelector(
         ({ forms: { transferNft } }) => transferNft
     );
+    const {
+        account: { authentication, activeAccountIndex },
+    } = useAppSelector((state) => state);
     const dispatch = useAppDispatch();
     const [searchParams] = useSearchParams();
     const objectId = searchParams.get('objectId');
@@ -67,14 +71,31 @@ function TransferNFTRecipient() {
         [gasAggregateBalance, address, objectId]
     );
 
-    const gasFee = `${formatBalance(gasAggregateBalance, 16)} SUI`;
-
     const navigate = useNavigate();
     const onHandleSubmit = useCallback(
         async ({ to }: FormValues) => {
             if (objectId === null) {
                 return;
             }
+
+            const signer = await getSigner(
+                address,
+                authentication,
+                activeAccountIndex
+            );
+
+            const signedTx = await signer.dryRunTransaction({
+                kind: 'transferObject',
+                data: {
+                    objectId: objectId,
+                    recipient: to,
+                    gasBudget: DEFAULT_NFT_TRANSFER_GAS_FEE,
+                },
+            });
+
+            const gasFee =
+                signedTx.gasUsed.computationCost +
+                (signedTx.gasUsed.storageCost - signedTx.gasUsed.storageRebate);
 
             setSendError(null);
 
@@ -84,7 +105,7 @@ function TransferNFTRecipient() {
                         from: address || 'Wallet',
                         to: to,
                         nftId: objectId,
-                        gasFee: gasFee,
+                        gasFee: `${gasFee} MIST`,
                     })
                 );
 
@@ -98,7 +119,15 @@ function TransferNFTRecipient() {
                 setSendError((e as SerializedError).message || null);
             }
         },
-        [dispatch, navigate, objectId, address, gasFee]
+        [
+            dispatch,
+            navigate,
+            objectId,
+            address,
+
+            activeAccountIndex,
+            authentication,
+        ]
     );
 
     const handleOnClearSubmitError = useCallback(() => {

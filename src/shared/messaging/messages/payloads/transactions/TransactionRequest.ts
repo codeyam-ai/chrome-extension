@@ -9,7 +9,6 @@ import type { TransactionDataType } from '_messages/payloads/transactions/Execut
 
 export type TransactionRequest = {
     id: string;
-    approved: boolean | null;
     origin: string;
     originFavIcon?: string;
     txResult?: SuiTransactionResponse;

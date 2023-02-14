@@ -9,6 +9,7 @@ import { BCS, fromHEX, getSuiMoveConfig, toHEX } from '@mysten/bcs';
 import { Base64DataBuffer, Ed25519Keypair } from '@mysten/sui.js';
 import { useCallback, useState, type ReactElement } from 'react';
 import ReactDOM from 'react-dom';
+import Browser from 'webextension-polyfill';
 
 import { type AccountInfo } from '../../KeypairVault';
 import { useAppSelector } from '../../hooks';
@@ -81,6 +82,7 @@ const AlertWithErrorExpand = ({
             event.preventDefault();
 
             const data = {
+                extensionVersion: Browser.runtime.getManifest().version,
                 address: accountInfo?.address || '',
                 dAppUrl: txInfo.dAppUrl,
                 txId: txInfo.txId,
@@ -94,6 +96,7 @@ const AlertWithErrorExpand = ({
             bcs.registerAddressType('SuiAddress', 20, 'hex');
 
             bcs.registerStructType('ErrorReportData', {
+                extensionVersion: 'string',
                 address: 'SuiAddress',
                 dAppUrl: 'string',
                 txId: 'string',

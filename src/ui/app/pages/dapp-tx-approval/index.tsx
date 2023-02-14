@@ -1,6 +1,11 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import {
+    Base64DataBuffer,
+    getCertifiedTransaction,
+    getTransactionEffects,
+} from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -39,10 +44,7 @@ import {
     useFormatCoin,
     useInitializedGuard,
 } from '_hooks';
-import {
-    respondToTransactionRequest,
-    txRequestsSelectors,
-} from '_redux/slices/transaction-requests';
+import { txRequestsSelectors } from '_redux/slices/transaction-requests';
 import { thunkExtras } from '_redux/store/thunk-extras';
 import { useDependencies } from '_shared/utils/dependenciesContext';
 import { MAILTO_SUPPORT_URL } from '_src/shared/constants';
@@ -54,6 +56,12 @@ import type { Section } from './SectionElement';
 import type { SmallDetail } from './SmallValue';
 import type { AccountInfo } from '../../KeypairVault';
 import type { SuiMoveNormalizedType, TransactionEffects } from '@mysten/sui.js';
+import type {
+    SignableTransaction,
+    SuiExecuteTransactionResponse,
+    SuiTransactionResponse,
+} from '@mysten/sui.js/src';
+import type { TransactionRequest } from '_payloads/transactions';
 import type { RootState } from '_redux/RootReducer';
 import type { ReactElement, ReactNode } from 'react';
 
@@ -102,6 +110,8 @@ export function DappTxApprovalPage() {
         [txID]
     );
     const txRequest = useAppSelector(txRequestSelector);
+    const [done, setDone] = useState<boolean>(false);
+
     const dispatch = useAppDispatch();
 
     const normalizedFunction = useNormalizedFunction(txRequest);
@@ -425,27 +435,26 @@ export function DappTxApprovalPage() {
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
-            if (txRequest) {
-                await dispatch(
-                    respondToTransactionRequest({
-                        approved,
-                        txRequestID: txRequest.id,
-                    })
-                );
-            }
+            await finishTransaction(
+                txRequest,
+                txID,
+                approved,
+                authentication,
+                address,
+                activeAccountIndex
+            );
+            setDone(true);
         },
-        [dispatch, txRequest]
+        [txRequest, activeAccountIndex, address, authentication, txID]
     );
 
     const closeWindow = useDependencies().closeWindow;
 
     useEffect(() => {
-        const finished =
-            !txRequest || (txRequest && txRequest.approved !== null);
-        if (!loading && finished) {
+        if (done) {
             closeWindow();
         }
-    }, [loading, txRequest, closeWindow]);
+    }, [closeWindow, done]);
 
     const content: TabSections = useMemo(() => {
         const txInfo = txRequest?.tx.data;
@@ -918,5 +927,77 @@ export function DappTxApprovalPage() {
                 </UserApproveContainer>
             ) : null}
         </Loading>
+    );
+}
+
+async function finishTransaction(
+    txRequest: TransactionRequest | null,
+    txID: string | undefined,
+    approved: boolean,
+    authentication: string | null,
+    address: string | null,
+    activeAccountIndex: number
+) {
+    if (!txRequest) {
+        // TODO: delete? doesn't seem like we got have gotten this far without txRequest
+        throw new Error(`TransactionRequest ${txID} not found`);
+    }
+
+    let txResult: SuiTransactionResponse | undefined = undefined;
+    let tsResultError: string | undefined;
+    if (approved) {
+        let signer;
+        if (authentication) {
+            signer = thunkExtras.api.getEthosSignerInstance(
+                address || '',
+                authentication
+            );
+        } else {
+            signer = thunkExtras.api.getSignerInstance(
+                thunkExtras.keypairVault.getKeyPair(activeAccountIndex)
+            );
+        }
+
+        try {
+            let response: SuiExecuteTransactionResponse;
+            if (
+                txRequest.tx.type === 'v2' ||
+                txRequest.tx.type === 'move-call'
+            ) {
+                const txn: SignableTransaction =
+                    txRequest.tx.type === 'move-call'
+                        ? {
+                              kind: 'moveCall',
+                              data: txRequest.tx.data,
+                          }
+                        : txRequest.tx.data;
+
+                response = await signer.signAndExecuteTransaction(txn);
+            } else if (txRequest.tx.type === 'serialized-move-call') {
+                const txBytes = new Base64DataBuffer(txRequest.tx.data);
+                response = await signer.signAndExecuteTransaction(txBytes);
+            } else {
+                throw new Error(`Either tx or txBytes needs to be defined.`);
+            }
+
+            txResult = {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                certificate: getCertifiedTransaction(response)!,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                effects: getTransactionEffects(response)!,
+                timestamp_ms: null,
+                parsed_data: null,
+            };
+        } catch (e) {
+            tsResultError = (e as Error).message;
+        }
+    }
+
+    thunkExtras.background.sendTransactionRequestResponse(
+        // TODO: find a way to ensure txID can't be null. none of this page would work if it was!
+        txID || '',
+        approved,
+        txResult,
+        tsResultError
     );
 }

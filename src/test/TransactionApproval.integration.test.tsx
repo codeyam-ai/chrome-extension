@@ -78,7 +78,6 @@ describe('The Transaction Approval popup', () => {
         const txRequestId = '95ae4a0d-0b7b-478b-ab70-bc3fe291540e';
         const txRequest: TransactionRequest = {
             id: txRequestId,
-            approved: null,
             origin: 'https://ethoswallet.xyz',
             originFavIcon: 'https://ethoswallet.xyz/favicon.ico',
             createdDate: '2022-11-29T23:33:53.084Z',
@@ -120,7 +119,6 @@ describe('The Transaction Approval popup', () => {
         const dryRunTransactionScope = nock(
             'http://testNet-fullnode.example.com'
         )
-            .persist()
             .post(
                 '/',
                 _.matches({
