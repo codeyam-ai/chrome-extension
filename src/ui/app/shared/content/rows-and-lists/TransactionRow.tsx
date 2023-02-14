@@ -99,14 +99,14 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
 
     const CurrencyIcon = () => (
         <>
-            {txn.formatted.coinSymbol.toLowerCase() === 'sui' ? (
+            {txn?.formatted?.coinSymbol.toLowerCase() === 'sui' ? (
                 <IconContainer>
                     <SuiIcon width={14} height={20} color={'white'} />
                 </IconContainer>
-            ) : txn.formatted.coinIcon ? (
+            ) : txn?.formatted?.coinIcon ? (
                 <img
-                    src={txn.formatted.coinIcon}
-                    alt={`Icon for ${txn.formatted.coinSymbol}`}
+                    src={txn?.formatted?.coinIcon}
+                    alt={`Icon for ${txn?.formatted?.coinSymbol}`}
                     className="w-10 h-10"
                 />
             ) : (
@@ -120,8 +120,6 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
     );
 
     const iconProps = { color: '#74777C', width: 18, height: 18 };
-
-    console.log('txn', txn.formatted);
 
     const dataMap: {
         nft: {
@@ -138,7 +136,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         };
     } = {
         nft: {
-            Send: {
+            send: {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: (
@@ -149,7 +147,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ),
                 header: txn?.name,
             },
-            Receive: {
+            receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: (
@@ -160,7 +158,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ),
                 header: txn?.name,
             },
-            Mint: {
+            mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: (
@@ -182,47 +180,47 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ) : (
                     <></>
                 ),
-                header: txn.formatted.coinSymbol || 'Sui Action',
+                header: txn?.formatted?.coinSymbol || 'Sui Action',
             },
         },
         sui: {
-            Send: {
+            send: {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn.formatted.coinSymbol,
+                header: txn?.formatted?.coinSymbol,
             },
-            Receive: {
+            receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn.formatted.coinSymbol,
+                header: txn?.formatted?.coinSymbol,
             },
-            Mint: {
+            mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn.formatted.coinSymbol,
+                header: txn?.formatted?.coinSymbol,
             },
         },
         coin: {
-            Send: {
+            send: {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn.formatted.coinSymbol,
+                header: txn?.formatted?.coinSymbol,
             },
-            Receive: {
+            receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn.formatted.coinSymbol,
+                header: txn?.formatted?.coinSymbol,
             },
-            Mint: {
+            mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn.formatted.coinSymbol,
+                header: txn?.formatted?.coinSymbol,
             },
         },
         function: {
@@ -255,16 +253,16 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
 
     let rowData;
 
-    if (!txType) return <></>;
+    if (!txType || !txAction) return <></>;
 
     if (txType === 'nft') {
-        rowData = dataMap.nft[txType];
-    } else if (txn.formatted.coinSymbol.toLowerCase() === 'sui') {
-        rowData = dataMap.sui[txType];
+        rowData = dataMap.nft[txAction];
+    } else if (txn?.formatted?.coinSymbol.toLowerCase() === 'sui') {
+        rowData = dataMap.sui[txAction];
     } else if (txn.type === 'call') {
-        rowData = dataMap.function[txType || 'default'];
+        rowData = dataMap.function[txAction || 'default'];
     } else {
-        rowData = dataMap.coin[txType];
+        rowData = dataMap.coin[txAction];
     }
 
     if (!rowData || !txn.formatted) return <></>;
@@ -280,7 +278,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
             header={rowData.header}
             subheader={rowData.txDirText}
             formattedAmount={txn.formatted.formattedBalance}
-            symbol={txn.formatted.coinSymbol}
+            symbol={txn?.formatted?.coinSymbol}
             dollars={txn.formatted.dollars}
         />
     );
