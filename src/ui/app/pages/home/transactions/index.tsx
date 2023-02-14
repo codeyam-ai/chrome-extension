@@ -12,15 +12,12 @@ import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/Transacti
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
+import formatCoin from '_src/ui/app/helpers/formatCoin';
 
 import type { TxResultState } from '_redux/slices/txresults';
 import { SuiTransactionResponse } from '@mysten/sui.js';
-
-type LoadTransactionsArgs = {
-    page?: number;
-    itemsPerPage?: number;
-    filteredTxEffs?: SuiTransactionResponse[];
-};
+import deduplicate from '_src/ui/app/helpers/deduplicate';
+import { getTxType } from '_src/ui/app/helpers/transactions';
 
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
@@ -29,19 +26,20 @@ const TransactionsPage = () => {
     const [initLoad, setInitLoad] = useState(true);
     const dispatch = useAppDispatch();
     const txPerPage = 5;
-    const totalNumTxs = transactions.length;
     const [nextPage, setNextPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [txEffs, setTxEffs] = useState<
         SuiTransactionResponse[] | undefined
     >();
+    const totalNumTxs = txEffs?.length;
+    const [activeTransactions, setActiveTransactions] = useState<
+        TxResultState[] | undefined
+    >();
     const [filter, setFilter] = useState<string | undefined>();
     const [filteredTxEffs, setFilteredTxEffs] = useState<
         SuiTransactionResponse[] | undefined
     >();
-    const [activeTransactions, setActiveTransactions] = useState<
-        TxResultState[] | undefined
-    >();
+
     const [error, setError] = useState<string | undefined>();
 
     const txByAddress: TxResultState[] = useAppSelector(
@@ -52,27 +50,23 @@ const TransactionsPage = () => {
         setItems([]);
 
         const getTxs = async () => {
-            let allTxs: string[] =
-                await api.instance.fullNode.getTransactionsForAddress(
-                    address as string,
-                    true
-                );
+            try {
+                let transactionIds: string[] =
+                    await api.instance.fullNode.getTransactionsForAddress(
+                        address as string,
+                        true
+                    );
 
-            allTxs = allTxs.filter(
-                (value, index, self) => self.indexOf(value) === index
-            );
+                const _txEffs =
+                    await api.instance.fullNode.getTransactionWithEffectsBatch(
+                        deduplicate(transactionIds)
+                    );
 
-            const _txEffs =
-                await api.instance.fullNode.getTransactionWithEffectsBatch(
-                    deduplicate(transactionIds)
-                );
-
-            if (address && allTxs.length > 0) {
-                setTransactions(allTxs);
-            }
-
-            if (allTxs.length === 0) {
-                setInitLoad(false);
+                if (address && _txEffs) {
+                    setTxEffs(_txEffs);
+                }
+            } catch (e) {
+                setError(`${e}`);
             }
         };
 
@@ -81,47 +75,97 @@ const TransactionsPage = () => {
         }
     }, [address, transactions]);
 
-    const loadItems = useCallback(() => {
+    useEffect(() => {
+        setFilteredTxEffs(undefined);
+
+        if (!txEffs || !filter) return;
+
+        const filteredTxEffs = txEffs.filter((txEff) => {
+            if (!txEff.effects.events) return false;
+            return !!txEff.effects.events.find(
+                (event) =>
+                    'coinBalanceChange' in event &&
+                    event.coinBalanceChange.changeType !== 'Gas' &&
+                    event.coinBalanceChange.coinType === filter
+            );
+        });
+
+        setFilteredTxEffs(filteredTxEffs);
+    }, [txEffs, filter]);
+
+    const loadItems = useCallback(async () => {
+        const effs = filteredTxEffs || txEffs;
+
+        if (!effs) return;
+
         setLoading(true);
         setNextPage(nextPage + 1);
 
         const start = (nextPage - 1) * txPerPage;
         const end = start + txPerPage;
-        const newTxs = transactions.slice(start, end);
+        const filtEffs = effs.slice(start, end);
 
-        if (newTxs && newTxs.length > 0) {
-            dispatch(getTransactionsByAddress(newTxs));
-        }
-    }, [dispatch, nextPage, transactions]);
+        dispatch(getTransactionsByAddress(filtEffs));
+    }, [dispatch, txEffs]);
+
+    useEffect(() => {
+        const getFormattedTransactions = async () => {
+            const formattedTransactions: FormattedTxResultState[] =
+                await Promise.all(
+                    txByAddress?.map(async (tx: any) => {
+                        // TODO: fix type error for any
+                        const txType = getTxType(tx);
+                        if (txType === 'nft' || txType === 'func') {
+                            return tx;
+                        }
+                        const {
+                            formattedBalance,
+                            coinSymbol,
+                            dollars,
+                            coinName,
+                            coinIcon,
+                        } = await formatCoin(
+                            api.instance.fullNode,
+                            tx.amount,
+                            tx.objType
+                        );
+                        return {
+                            ...tx,
+                            formatted: {
+                                formattedBalance,
+                                coinSymbol,
+                                dollars,
+                                coinName,
+                                coinIcon,
+                            },
+                        };
+                    })
+                );
+
+            setActiveTransactions(formattedTransactions);
+        };
+
+        getFormattedTransactions();
+    }, [txByAddress]);
 
     const loadMore = useCallback(() => {
         loadItems();
     }, [loadItems]);
 
     useEffect(() => {
-        if (initLoad && transactions.length > 0) {
+        if (initLoad && txEffs && txEffs.length > 0) {
             loadItems();
             setInitLoad(false);
         }
-    }, [transactions, initLoad, loadItems]);
-
-    if (txByAddress.length > 0 && items.length === 0) {
-        setItems(txByAddress);
-        setLoading(false);
-    } else if (loading && txByAddress.length > 0) {
-        setItems([...items, ...txByAddress]);
-        setLoading(false);
-    } else if (loading && transactions.length === 0) {
-        setLoading(false);
-    }
+    }, [transactions, initLoad, loadItems, txEffs]);
 
     return (
         <React.Fragment>
             <Loading loading={initLoad} big={true}>
-                {items && items.length > 0 && (
+                {activeTransactions && activeTransactions.length > 0 && (
                     <div className={'flex flex-col h-full'}>
                         <TextPageTitle title="Activity" />
-                        <TransactionRows transactions={items} />
+                        <TransactionRows transactions={activeTransactions} />
                         {items.length !== totalNumTxs && (
                             <div
                                 className={
