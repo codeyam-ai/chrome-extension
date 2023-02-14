@@ -54,6 +54,11 @@ const SecurityHomePage = ({ isHostedWallet }: SecurityHomePageProps) => {
         },
     ];
 
+    // Email users cannot view their seed or private key
+    if (isHostedWallet) {
+        securityItems.splice(1, 2);
+    }
+
     return (
         <div className="flex flex-col px-6 divide-y divide-ethos-light-text-stroke dark:divide-ethos-dark-text-stroke">
             <ContentBlock className="!py-6 !px-0 !pb-4">
