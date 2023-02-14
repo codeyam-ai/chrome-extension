@@ -32,7 +32,7 @@ const SecurityItemDisplay = ({ item }: { item: SecurityItem }) => {
 const SecurityHomePage = ({ isHostedWallet }: SecurityHomePageProps) => {
     const securityItems: SecurityItem[] = [
         {
-            title: 'Passwords',
+            title: 'Password',
             description:
                 'Your password is required to unlock Ethos after 15 minutes of inactivity.',
             buttonText: 'Update Password',
@@ -41,14 +41,14 @@ const SecurityHomePage = ({ isHostedWallet }: SecurityHomePageProps) => {
         {
             title: 'Recovery Phrase',
             description:
-                'Recovery phrases give you access to all wallets that are associated with it. Here, you can manage your recovery phrases.',
+                'Your recovery phrase give you access to all wallet addresses associated with it.',
             buttonText: 'View Recovery Phrase',
             path: '/settings/security/view-seed',
         },
         {
             title: 'Private Key',
             description:
-                'Your private key grants access to the wallet that you are currently in.',
+                'Your private key grants access to the currently active wallet address.',
             buttonText: 'View Private Key',
             path: '/settings/security/view-private-key',
         },
@@ -64,8 +64,8 @@ const SecurityHomePage = ({ isHostedWallet }: SecurityHomePageProps) => {
             <ContentBlock className="!py-6 !px-0 !pb-4">
                 <Header>Security</Header>
                 <BodyLarge isTextColorMedium>
-                    The source of truth for your Connected dApps, Password, and
-                    Recovery Phrases.
+                    Reset your password or export your seedphrase or private
+                    keys.
                 </BodyLarge>
             </ContentBlock>
             {securityItems.map((item, key) => {
