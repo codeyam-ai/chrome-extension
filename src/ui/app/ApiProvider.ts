@@ -61,7 +61,7 @@ function getDefaultApiEnv() {
     if (apiEnv && !Object.keys(API_ENV).includes(apiEnv)) {
         throw new Error(`Unknown environment variable API_ENV, ${apiEnv}`);
     }
-    return apiEnv ? API_ENV[apiEnv as keyof typeof API_ENV] : API_ENV.testNet;
+    return apiEnv ? API_ENV[apiEnv as keyof typeof API_ENV] : API_ENV.devNet;
 }
 
 function getDefaultAPI(env: API_ENV) {
