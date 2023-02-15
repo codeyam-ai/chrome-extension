@@ -36,9 +36,8 @@ const ConnectedAppDisplay = ({
 }: ConnectedAppDisplayProps) => {
     const [shouldShowFallbackIcon, setShouldShowFallbackIcon] = useState(false);
 
-    const formattedTitle = formatPageTitle(
-        connectedApp.title || connectedApp.origin
-    );
+    const formattedUrl = formatUrl(connectedApp.origin);
+    const formattedTitle = formatPageTitle(connectedApp.title || formattedUrl);
 
     const showFallbackIcon = useCallback(() => {
         setShouldShowFallbackIcon(true);
@@ -65,7 +64,12 @@ const ConnectedAppDisplay = ({
                             onError={showFallbackIcon}
                         />
                     )}
-                    <Body isSemibold>{formattedTitle}</Body>
+                    <div className="flex flex-col text-left">
+                        <Body isSemibold>{formattedTitle}</Body>
+                        {formattedTitle !== formattedUrl && (
+                            <Body isTextColorMedium>{formattedUrl}</Body>
+                        )}
+                    </div>
                 </div>
                 <button onClick={_handleRevoke}>
                     <Body
