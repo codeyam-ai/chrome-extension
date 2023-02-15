@@ -7,6 +7,7 @@ import { renderTemplate } from '_src/test/utils/json-templates';
 import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { preventActWarning } from '_src/test/utils/test-helpers';
+import {timeout} from "rxjs";
 
 describe('The Transaction History Page', () => {
     beforeEach(async () => {
@@ -31,15 +32,20 @@ describe('The Transaction History Page', () => {
                 },
             ]);
         renderApp({ initialRoute: '/transactions' });
-        await screen.findByText('No transactions yet');
+
+        // this fails on CI occasionally. 1000ms (the default timeout) seems like it should be plenty, but alas.
+        await screen.findByText('No transactions yet', {}, {timeout: 2000});
     });
 
     test('Shows transactions TO the current wallet', async () => {
         mockSuiObjects();
         mockTransactionHistory();
         renderApp({ initialRoute: '/transactions' });
-        await screen.findByText('$100.00');
+        await screen.findByText('$100.00', {}, {timeout: 2000});
 
+        // this annoying code prevents async code from getting scheduled after the test is over. It would be good to
+        // find a better pattern; see discussion here:
+        // https://discord.com/channels/723559267868737556/723565903228305549/1075109945541926913
         preventActWarning();
         await new Promise((r) => setTimeout(r, 10));
     });
