@@ -3,6 +3,7 @@ import Mustache from 'mustache';
 import nock from 'nock';
 import { join } from 'path';
 
+// TODO: this is duplicated from json-templates, DRY up
 const readTemplate = (templateName: string) => {
     return readFileSync(
         join(__dirname, `mockchain-templates/${templateName}.json.mustache`),
@@ -74,7 +75,3 @@ export const mockSuiObjects = function (
         .post('/', /sui_getObject/)
         .reply(200, finalRenderedTemplate);
 };
-
-beforeEach(() => {
-    nock.cleanAll();
-});

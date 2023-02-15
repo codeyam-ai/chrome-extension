@@ -13,6 +13,7 @@ export default function ViewSeedPage() {
     const [showSeed, setShowSeed] = useState(false);
     const [hostedSeed, setHostedSeed] = useState('Loading...');
     const [providedPassword, setProvidedPassword] = useState('');
+    const [passphraseError, setPassphraseError] = useState(false);
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
     );
@@ -43,7 +44,9 @@ export default function ViewSeedPage() {
     }, [authentication]);
 
     const matchPassword = useCallback(() => {
-        setShowSeed(providedPassword === passphrase);
+        const matches = providedPassword === passphrase;
+        setPassphraseError(!matches);
+        setShowSeed(matches);
     }, [passphrase, providedPassword]);
 
     const onChangeProvidedPassword = useCallback<
@@ -139,6 +142,11 @@ export default function ViewSeedPage() {
             <div className="pb-4 px-6 w-full relative flex items-start text-left">
                 <div className="flex flex-col gap-3 items-stretch w-full">
                     <BodyLarge>Please enter your password:</BodyLarge>
+                    {passphraseError && (
+                        <div className="text-ethos-dark-red">
+                            Password is not correct.
+                        </div>
+                    )}
                     <input
                         id="view-phrase-password"
                         aria-describedby="view-phrase-password-description"

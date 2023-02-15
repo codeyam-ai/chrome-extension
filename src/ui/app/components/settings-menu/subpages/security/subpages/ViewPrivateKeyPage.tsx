@@ -13,6 +13,7 @@ import type { ChangeEventHandler } from 'react';
 export default function ViewPrivateKeyPage() {
     const [showPrivateKey, setShowPrivateKey] = useState(false);
     const [providedPassword, setProvidedPassword] = useState('');
+    const [passphraseError, setPassphraseError] = useState(false);
     const privateKey = useAppSelector(({ account }) => {
         const mnenonic = account.createdMnemonic || account.mnemonic;
         if (!mnenonic) return;
@@ -26,7 +27,9 @@ export default function ViewPrivateKeyPage() {
     const passphrase = useAppSelector(({ account }) => account.passphrase);
 
     const matchPassword = useCallback(() => {
-        setShowPrivateKey(providedPassword === passphrase);
+        const matches = providedPassword === passphrase;
+        setPassphraseError(!matches);
+        setShowPrivateKey(matches);
     }, [passphrase, providedPassword]);
 
     const onChangeProvidedPassword = useCallback<
@@ -91,6 +94,11 @@ export default function ViewPrivateKeyPage() {
             <div className="pb-4 px-6 w-full relative flex items-start text-left">
                 <div className="flex flex-col gap-3 items-stretch w-full">
                     <BodyLarge>Please enter your password:</BodyLarge>
+                    {passphraseError && (
+                        <div className="text-ethos-dark-red">
+                            Password is not correct.
+                        </div>
+                    )}
                     <input
                         id="view-phrase-password"
                         aria-describedby="view-phrase-password-description"
