@@ -44,7 +44,7 @@ const LoggingInPage = () => {
     useEffect(() => {
         setTimeout(() => {
             setAuthenticationSlow(true);
-        }, 5000);
+        }, 10000);
     }, []);
 
     useEffect(() => {
