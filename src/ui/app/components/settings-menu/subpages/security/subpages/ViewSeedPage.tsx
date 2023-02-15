@@ -1,6 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import Button from '../../../../../shared/buttons/Button';
+import simpleApiCall from '_src/shared/utils/simpleApiCall';
 import { useAppSelector } from '_src/ui/app/hooks';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
@@ -10,11 +11,36 @@ import type { ChangeEventHandler } from 'react';
 export default function ViewSeedPage() {
     const [hasConfirmed, setHasConfirmed] = useState(false);
     const [showSeed, setShowSeed] = useState(false);
+    const [hostedSeed, setHostedSeed] = useState('Loading...');
     const [providedPassword, setProvidedPassword] = useState('');
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
     );
-    const passphrase = useAppSelector(({ account }) => account.passphrase);
+    const { passphrase, authentication } = useAppSelector(
+        ({ account }) => account
+    );
+
+    useEffect(() => {
+        const getHostedSeed = async () => {
+            if (!authentication) return;
+
+            const { json, status } = await simpleApiCall(
+                'users/recovery_phrase',
+                'POST',
+                authentication,
+                { chain: 'sui' }
+            );
+
+            if (status !== 200) {
+                throw new Error(`Error retrieving recovery phrase: ${status}`);
+            }
+
+            const { phrase } = json;
+            setHostedSeed(phrase);
+        };
+
+        getHostedSeed();
+    }, [authentication]);
 
     const matchPassword = useCallback(() => {
         setShowSeed(providedPassword === passphrase);
@@ -43,7 +69,7 @@ export default function ViewSeedPage() {
             <div className="p-6 flex flex-col gap-6">
                 <textarea
                     rows={4}
-                    value={mnemonic || ''}
+                    value={mnemonic || hostedSeed || ''}
                     id="mnemonic"
                     className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
                     name="mnemonic"
