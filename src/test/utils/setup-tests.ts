@@ -2,6 +2,8 @@ import * as util from 'util';
 
 import { fakeBrowser, clearLocalStorage } from './fake-browser';
 
+import nock from 'nock';
+
 jest.mock('webextension-polyfill', () => {
     return fakeBrowser;
 });
@@ -47,3 +49,7 @@ process.env.API_ENDPOINT_TEST_NET_FULLNODE =
 process.env.API_ENDPOINT_TEST_NET_FAUCET = 'http://testNet-faucet.example.com/';
 
 process.env.BASE_URL = 'http://ethos-base-url.example.com/';
+
+afterEach(() => {
+    nock.cleanAll();
+});
