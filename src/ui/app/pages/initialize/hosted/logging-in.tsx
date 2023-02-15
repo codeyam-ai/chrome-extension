@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Authentication from '_src/background/Authentication';
@@ -12,10 +12,13 @@ import {
     saveAuthentication,
     setAddress,
 } from '_src/ui/app/redux/slices/account';
+import Button from '_src/ui/app/shared/buttons/Button';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 const LoggingInPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const [authenticationSlow, setAuthenticationSlow] = useState(false);
 
     useEffect(() => {
         const listenForSuccessfulLogin = async () => {
@@ -39,11 +42,36 @@ const LoggingInPage = () => {
     }, [dispatch, navigate]);
 
     useEffect(() => {
+        setTimeout(() => {
+            setAuthenticationSlow(true);
+        }, 5000);
+    }, []);
+
+    useEffect(() => {
         iframe.listenForReady();
     }, [dispatch]);
+
+    const reset = useCallback(async () => {
+        await dispatch(saveAuthentication(null));
+        navigate('/');
+    }, [dispatch, navigate]);
+
     return (
         <>
-            <LoadingIndicator big />
+            <div className="flex flex-col items-center gap-6">
+                <BodyLarge isSemibold>Authenticating</BodyLarge>
+                <LoadingIndicator big />
+                {authenticationSlow && (
+                    <>
+                        <BodyLarge>
+                            Authentication is taking a while.
+                            <br />
+                            You might need to log back in.
+                        </BodyLarge>
+                        <Button onClick={reset}>Log Back In</Button>
+                    </>
+                )}
+            </div>
             <iframe
                 id="wallet-iframe"
                 src={IFRAME_URL}
