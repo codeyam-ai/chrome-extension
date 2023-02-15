@@ -249,7 +249,7 @@ export function DappTxApprovalPage() {
                     const accountInfo = accountInfos.find(
                         (account) => account.address === gasAddress
                     );
-                    if (accountInfo) {
+                    if (accountInfo && accountInfo.address !== address) {
                         setIncorrectSigner(accountInfo);
                     } else {
                         setEffects(transactionEffects);
@@ -283,15 +283,18 @@ export function DappTxApprovalPage() {
                     }
 
                     if (isErrorCausedByIncorrectSigner(errorMessage)) {
-                        const address = errorMessage
+                        const errorAddress = errorMessage
                             .match(
                                 /is owned by account address (.*), but signer address is/
                             )?.[1]
                             .split(',')[0];
                         const accountInfo = accountInfos.find(
-                            (account) => account.address === address
+                            (account) => account.address === errorAddress
                         );
-                        if (accountInfo) {
+                        if (errorAddress === address) {
+                            setEffects(null);
+                            return;
+                        } else if (accountInfo) {
                             setIncorrectSigner(accountInfo);
                         } else {
                             setExplicitError(
