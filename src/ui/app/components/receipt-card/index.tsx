@@ -199,7 +199,11 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             ? 'Sent'
             : 'Received';
 
-    const header = txDigest?.name || truncatedNftName || txDigest.objSymbol;
+    const header =
+        txDigest?.name ||
+        truncatedNftName ||
+        txDigest.objSymbol ||
+        txDigest.callModuleName;
     const isMinted = txDigest?.callFunctionName === 'mint';
 
     const transferMeta = {
@@ -335,7 +339,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                             keyName:
                                 transferType === 'Sent'
                                     ? 'You Sent'
-                                    : header !== 'Coin'
+                                    : transferType === 'Received'
                                     ? 'You Received'
                                     : '',
                             value: `${total} ${
