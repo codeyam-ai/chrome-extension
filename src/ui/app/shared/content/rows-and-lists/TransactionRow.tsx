@@ -183,6 +183,17 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ),
                 header: txn?.name,
             },
+            clone: {
+                ...shared,
+                typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
+                icon: (
+                    <NftImg
+                        src={nftImageUri || ''}
+                        alt={txn.description || ''}
+                    />
+                ),
+                header: txn?.name,
+            },
             register: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,

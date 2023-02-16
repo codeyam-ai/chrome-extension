@@ -6,12 +6,15 @@ export type TxAction =
     | 'receive'
     | 'transfer'
     | 'pool'
+    | 'clone'
     | undefined;
 
 const getTxAction = (txn: TxResultState): TxAction => {
     let type: TxAction;
     if (txn.callFunctionName === 'mint' || txn.type === 'Mint') {
         type = 'mint';
+    } else if (txn.callFunctionName === 'clone' || txn.type === 'clone') {
+        type = 'clone';
     } else if (txn.callModuleName === 'pool') {
         type = 'pool';
     } else if (txn.isSender && !txn.callFunctionName) {
