@@ -118,7 +118,7 @@ class Transactions {
 
             const { preapproval } = preapprovalRequest;
             preapproval.maxTransactionCount -= 1;
-            const { effects } = result.EffectsCert;
+            const { effects } = result.EffectsCert || result;
             const { computationCost, storageCost, storageRebate } =
                 effects.effects.gasUsed;
             const gasUsed = computationCost + (storageCost - storageRebate);
