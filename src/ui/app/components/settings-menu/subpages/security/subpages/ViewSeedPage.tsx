@@ -156,6 +156,7 @@ export default function ViewSeedPage() {
                         type="password"
                         onChange={onChangeProvidedPassword}
                         className="rounded border-gray-300 focus:ring-purple-500 dark:focus:ring-violet-700 dark:border-gray-400 dark:bg-gray-700"
+                        autoFocus
                     />
                 </div>
             </div>

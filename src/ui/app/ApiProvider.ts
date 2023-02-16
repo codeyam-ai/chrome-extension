@@ -43,13 +43,13 @@ export const ENV_TO_API: Record<string, ApiEndpoints> = {
         faucet: process.env.API_ENDPOINT_LOCAL_FAUCET || '',
     },
     [API_ENV.devNet.toString()]: {
-        fullNode: process.env.API_ENDPOINT_DEV_NET_FULLNODE || '',
-        faucet: process.env.API_ENDPOINT_DEV_NET_FAUCET || '',
+        fullNode: process.env.API_ENDPOINT_DEVNET_FULLNODE || '',
+        faucet: process.env.API_ENDPOINT_DEVNET_FAUCET || '',
     },
     [API_ENV.customRPC.toString()]: null,
     [API_ENV.testNet.toString()]: {
-        fullNode: process.env.API_ENDPOINT_TEST_NET_FULLNODE || '',
-        faucet: process.env.API_ENDPOINT_TEST_NET_FAUCET || '',
+        fullNode: process.env.API_ENDPOINT_TESTNET_FULLNODE || '',
+        faucet: process.env.API_ENDPOINT_TESTNET_FAUCET || '',
     },
 };
 
@@ -99,7 +99,7 @@ type NetworkTypes = keyof typeof API_ENV;
 export const generateActiveNetworkList = (): NetworkTypes[] => {
     const excludedNetworks: NetworkTypes[] = [];
 
-    if (!growthbook.isOn(FEATURES.USE_TEST_NET_ENDPOINT)) {
+    if (!growthbook.isOn(FEATURES.USE_TESTNET_ENDPOINT)) {
         excludedNetworks.push(API_ENV.testNet);
     }
 

@@ -69,7 +69,7 @@ function TransferCoinForm({
                             imgUrl={icon || ''}
                         />
                     )}
-                    <Body isTextColorMedium>Sending</Body>
+                    <Body isTextColorMedium>Transfer</Body>
                     <Header className={'font-weight-ethos-subheader'}>
                         {amount} {truncateString(coinSymbol, 8)}
                     </Header>

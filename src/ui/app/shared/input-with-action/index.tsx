@@ -29,6 +29,7 @@ export default function InputWithAction({
                     {...field}
                     {...props}
                     className={cn(st.input, className)}
+                    autoFocus
                 />
                 <div className={st.actionContainer}>{children}</div>
             </div>

@@ -7,8 +7,8 @@ import type { ObjectId, SuiAddress, TransactionDigest } from '@mysten/sui.js';
 
 const API_ENV_TO_EXPLORER_URL: Record<API_ENV, string | undefined> = {
     [API_ENV.local]: process.env.EXPLORER_URL_LOCAL,
-    [API_ENV.devNet]: process.env.EXPLORER_URL_DEV_NET,
-    [API_ENV.testNet]: process.env.EXPLORER_URL_TEST_NET,
+    [API_ENV.devNet]: process.env.EXPLORER_URL_DEVNET,
+    [API_ENV.testNet]: process.env.EXPLORER_URL_TESTNET,
     //No explorer url for Custom PRC
     [API_ENV.customRPC]: '',
 };

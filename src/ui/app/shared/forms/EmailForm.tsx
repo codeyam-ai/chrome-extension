@@ -28,6 +28,7 @@ const CustomFormikForm = ({ loading }: { loading: boolean }) => {
                 required={true}
                 errorText={meta.touched && meta.error ? meta.error : undefined}
                 className="!px-10 !pb-[128px]"
+                autoFocus
                 forceLightTheme
             />
 

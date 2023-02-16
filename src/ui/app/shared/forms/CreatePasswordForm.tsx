@@ -29,6 +29,7 @@ const CustomFormikForm = () => {
                 errorText={meta.touched && meta.error ? meta.error : undefined}
                 className="!px-6 sm:!px-10"
                 forceLightTheme
+                autoFocus
             />
             <Input
                 {...confirmField}

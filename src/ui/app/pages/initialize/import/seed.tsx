@@ -49,10 +49,10 @@ const WordInput = ({
                 <code>{index + 1}</code>
             </Body>
             <input
-                type=""
+                type="password"
                 id={idPrefix + index}
                 data-testid={idPrefix + index}
-                className="w-full bg-ethos-light-background-secondary"
+                className="w-full bg-ethos-light-background-secondary border-none focus:outline-none focus:ring-transparent p-0 m-0"
                 autoComplete="off"
                 defaultValue={defaultValue}
                 onPaste={handlePaste}

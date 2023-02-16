@@ -81,6 +81,7 @@ function AddressInput<FormValues>({
                 onChange={handleOnChange}
                 spellCheck={false}
                 name={name}
+                autoFocus
             />
             <input
                 type="hidden"
