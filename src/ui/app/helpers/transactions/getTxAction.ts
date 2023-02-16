@@ -7,6 +7,8 @@ export type TxAction =
     | 'transfer'
     | 'pool'
     | 'clone'
+    | 'modify'
+    | 'burn'
     | undefined;
 
 const getTxAction = (txn: TxResultState): TxAction => {
@@ -15,6 +17,10 @@ const getTxAction = (txn: TxResultState): TxAction => {
         type = 'mint';
     } else if (txn.callFunctionName === 'clone' || txn.type === 'clone') {
         type = 'clone';
+    } else if (txn.callFunctionName === 'modify' || txn.type === 'modify') {
+        type = 'modify';
+    } else if (txn.callFunctionName === 'burn' || txn.type === 'burn') {
+        type = 'burn';
     } else if (txn.callModuleName === 'pool') {
         type = 'pool';
     } else if (txn.isSender && !txn.callFunctionName) {
