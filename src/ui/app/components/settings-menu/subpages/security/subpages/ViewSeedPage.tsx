@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import Button from '../../../../../shared/buttons/Button';
-import simpleApiCall from '_src/shared/utils/simpleApiCall';
+import { secureApiCall } from '_src/shared/utils/simpleApiCall';
 import { useAppSelector } from '_src/ui/app/hooks';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
@@ -22,10 +22,12 @@ export default function ViewSeedPage() {
     );
 
     useEffect(() => {
+        if (!hasConfirmed) return;
+
         const getHostedSeed = async () => {
             if (!authentication) return;
 
-            const { json, status } = await simpleApiCall(
+            const { json, status } = await secureApiCall(
                 'users/recovery_phrase',
                 'POST',
                 authentication,
@@ -41,7 +43,7 @@ export default function ViewSeedPage() {
         };
 
         getHostedSeed();
-    }, [authentication]);
+    }, [authentication, hasConfirmed]);
 
     const matchPassword = useCallback(() => {
         const matches = providedPassword === passphrase;
@@ -63,7 +65,7 @@ export default function ViewSeedPage() {
         []
     );
 
-    const viewPrivateKey = useCallback(async () => {
+    const viewSeed = useCallback(async () => {
         setShowSeed(true);
     }, []);
 
@@ -120,7 +122,7 @@ export default function ViewSeedPage() {
                 </div>
                 <Button
                     buttonStyle="secondary"
-                    onClick={viewPrivateKey}
+                    onClick={viewSeed}
                     disabled={!hasConfirmed}
                 >
                     View recovery phrase

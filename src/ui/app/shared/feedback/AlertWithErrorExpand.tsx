@@ -19,7 +19,7 @@ import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import EthosLink from '../typography/EthosLink';
 import { type TransactionRequest } from '_src/shared/messaging/messages/payloads/transactions';
-import simpleApiCall from '_src/shared/utils/simpleApiCall';
+import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
 
 const extractTextFromHTML = (html: ReactElement): string => {
     const div = document.createElement('div');

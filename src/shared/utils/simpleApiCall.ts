@@ -1,4 +1,4 @@
-import { BASE_URL } from '../constants';
+import { BASE_URL, SECURE_URL } from '../constants';
 
 type FetchData = {
     method: string;
@@ -6,14 +6,23 @@ type FetchData = {
     body?: string;
 };
 
+type ApiCallArgs = {
+    relativePath: string;
+    method?: string;
+    accessToken: string;
+    body?: Record<string, string | number | object>;
+    secure?: boolean;
+};
+
 // const accessToken = useAppSelector(({ account }) => account.authentication);
 
-const simpleApiCall = async (
-    relativePath: string,
+export const apiCall = async ({
+    relativePath,
     method = 'GET',
-    accessToken: string,
-    body?: Record<string, string | number | object>
-) => {
+    accessToken,
+    body,
+    secure,
+}: ApiCallArgs) => {
     const data: FetchData = {
         method: method,
         headers: {
@@ -26,7 +35,8 @@ const simpleApiCall = async (
         data.body = JSON.stringify(body);
     }
 
-    const response = await fetch(`${BASE_URL}/api/${relativePath}`, data);
+    const baseUrl = secure ? SECURE_URL : BASE_URL;
+    const response = await fetch(`${baseUrl}/api/${relativePath}`, data);
     const { status } = response;
 
     if (status !== 200) return { status };
@@ -35,4 +45,31 @@ const simpleApiCall = async (
     return { json, status };
 };
 
-export default simpleApiCall;
+export const simpleApiCall = async (
+    relativePath: string,
+    method = 'GET',
+    accessToken: string,
+    body?: Record<string, string | number | object>
+) => {
+    return apiCall({
+        relativePath,
+        method,
+        accessToken,
+        body,
+    });
+};
+
+export const secureApiCall = async (
+    relativePath: string,
+    method = 'GET',
+    accessToken: string,
+    body?: Record<string, string | number | object>
+) => {
+    return apiCall({
+        relativePath,
+        method,
+        accessToken,
+        body,
+        secure: true,
+    });
+};

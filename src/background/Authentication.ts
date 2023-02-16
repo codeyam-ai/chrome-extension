@@ -1,7 +1,7 @@
 import { Base64DataBuffer, Ed25519PublicKey } from '@mysten/sui.js';
 
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
-import simpleApiCall from '_src/shared/utils/simpleApiCall';
+import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
