@@ -1,4 +1,4 @@
-import { toHEX } from '@mysten/bcs';
+import { fromHEX, toHEX } from '@mysten/bcs';
 import { Base64DataBuffer } from '@mysten/sui.js';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -16,14 +16,14 @@ export default function ViewPrivateKeyPage() {
     const [showPrivateKey, setShowPrivateKey] = useState(false);
     const [providedPassword, setProvidedPassword] = useState('');
     const [passphraseError, setPassphraseError] = useState(false);
+    const activeAccountIndex = useAppSelector(
+        ({ account }) => account.activeAccountIndex
+    );
     const privateKey = useAppSelector(({ account }) => {
         const mnenonic = account.createdMnemonic || account.mnemonic;
         if (!mnenonic) return;
 
-        const keypair = getKeypairFromMnemonics(
-            mnenonic,
-            account.activeAccountIndex
-        );
+        const keypair = getKeypairFromMnemonics(mnenonic, activeAccountIndex);
         return keypair.secretKey;
     });
     const [hostedPrivateKey, setHostedPrivateKey] = useState('Loading...');
@@ -39,7 +39,7 @@ export default function ViewPrivateKeyPage() {
             if (!authentication) return;
 
             const { json, status } = await secureApiCall(
-                'users/private_key',
+                'users/recovery_phrase',
                 'POST',
                 authentication,
                 { chain: 'sui' }
@@ -49,12 +49,14 @@ export default function ViewPrivateKeyPage() {
                 throw new Error(`Error retrieving private key: ${status}`);
             }
 
-            const { privateKey } = json;
-            setHostedPrivateKey(privateKey);
+            const { phrase } = json;
+
+            const keypair = getKeypairFromMnemonics(phrase, activeAccountIndex);
+            setHostedPrivateKey(toHEX(keypair.secretKey));
         };
 
         getHostedPrivateKey();
-    }, [authentication, hasConfirmed]);
+    }, [activeAccountIndex, authentication, hasConfirmed, privateKey]);
 
     const matchPassword = useCallback(() => {
         const matches = providedPassword === passphrase;
@@ -103,7 +105,9 @@ export default function ViewPrivateKeyPage() {
                         value={
                             privateKey
                                 ? new Base64DataBuffer(privateKey).toString()
-                                : ''
+                                : new Base64DataBuffer(
+                                      fromHEX(hostedPrivateKey)
+                                  ).toString()
                         }
                         id="hexPrivateKey"
                         className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
@@ -115,7 +119,11 @@ export default function ViewPrivateKeyPage() {
                     <div className="text-lg">UInt8Array</div>
                     <textarea
                         rows={3}
-                        value={privateKey ? privateKey.toString() : ''}
+                        value={
+                            privateKey
+                                ? privateKey.toString()
+                                : fromHEX(hostedPrivateKey).toString()
+                        }
                         id="hexPrivateKey"
                         className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
                         name="hexPrivateKey"
