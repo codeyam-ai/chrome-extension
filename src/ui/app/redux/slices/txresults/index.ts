@@ -33,6 +33,7 @@ import type {
 import type { AppThunkConfig } from '_store/thunk-extras';
 
 export type TxResultState = {
+    objSymbol: any;
     to?: string;
     txId: string;
     status: ExecutionStatusType;

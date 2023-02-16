@@ -148,7 +148,6 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     );
 
     const [searchParams] = useSearchParams();
-    const symbol = searchParams.get('symbol');
     const isFunc = searchParams.get('isFunc');
 
     const theme = getTheme();
@@ -175,7 +174,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
 
     const [total, totalSymbol, dollars, , icon] = useFormatCoin(
         txDigest.amount ? txDigest.amount : null,
-        txDigest.coinType
+        txDigest.objType
     );
 
     const imgUrl = txDigest?.url ? ipfs(txDigest.url) : false;
@@ -200,7 +199,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             ? 'Sent'
             : 'Received';
 
-    const header = isNft ? truncatedNftName : symbol;
+    const header = truncatedNftName || txDigest.objSymbol;
     const isMinted = txDigest?.callFunctionName === 'mint';
 
     const transferMeta = {
