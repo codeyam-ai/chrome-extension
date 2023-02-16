@@ -25,7 +25,6 @@ export interface txnType extends TxResultState {
 
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
-    const [items, setItems] = useState<FormattedTxResultState[]>([]);
     const [initLoad, setInitLoad] = useState(true);
     const dispatch = useAppDispatch();
     const txPerPage = 5;
@@ -50,7 +49,7 @@ const TransactionsPage = () => {
     );
 
     useEffect(() => {
-        setItems([]);
+        setActiveTransactions([]);
 
         const getTxs = async () => {
             try {
@@ -106,10 +105,13 @@ const TransactionsPage = () => {
 
         const start = (nextPage - 1) * txPerPage;
         const end = start + txPerPage;
+        console.log('start: ', start, 'end: ', end, 'total: ', effs.length);
         const filtEffs = effs.slice(start, end);
 
+        console.log('filt effs: ', filtEffs);
+
         dispatch(getTransactionsByAddress(filtEffs));
-    }, [dispatch, txEffs]);
+    }, [setNextPage, dispatch, txEffs, nextPage]);
 
     useEffect(() => {
         const getFormattedTransactions = async () => {
@@ -143,9 +145,16 @@ const TransactionsPage = () => {
                     };
                 })
             );
-            if (formattedTransactions) {
-                setActiveTransactions(formattedTransactions);
+
+            if (activeTransactions && formattedTransactions) {
+                const allTxs = [
+                    ...activeTransactions,
+                    ...formattedTransactions,
+                ];
+                setActiveTransactions(allTxs);
             }
+
+            setLoading(false);
         };
 
         getFormattedTransactions();
