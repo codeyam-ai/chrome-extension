@@ -5,7 +5,7 @@ import {
 } from '@mysten/sui.js';
 
 import { deleteEncrypted } from '../storagex/store';
-import simpleApiCall from '_src/shared/utils/simpleApiCall';
+import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
 
 import type {
     SignaturePubkeyPair,

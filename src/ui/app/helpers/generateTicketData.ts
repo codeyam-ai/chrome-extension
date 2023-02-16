@@ -1,4 +1,4 @@
-import simpleApiCall from '_src/shared/utils/simpleApiCall';
+import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
 
 import type { SuiJsonValue } from '@mysten/sui.js';
 
