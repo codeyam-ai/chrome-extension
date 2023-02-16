@@ -63,6 +63,9 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         verb,
     } = getHumanReadable(txn);
 
+    console.log('txn: ', txn);
+    console.log('tx type: ', txType);
+    console.log('tx action: ', txAction);
     /*console.log(
         'CHECK: ", ',
         txType,
@@ -88,7 +91,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         coinType: txn?.coinType || '',
         type: txAction || '',
         txDirText:
-            txAction === 'send'
+            txAction === 'send' && txn.to
                 ? `To ${truncateMiddle(txn.to)}`
                 : `From ${truncateMiddle(txn.from)}` || '',
         link: drilldownLink,
@@ -226,7 +229,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn?.formatted?.coinSymbol,
+                header: txn?.formatted?.coinSymbol || txn?.kind,
             },
             receive: {
                 ...shared,
@@ -252,25 +255,25 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn?.formatted?.coinSymbol,
+                header: txn?.formatted?.coinSymbol || txn.callModuleName,
             },
             receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn?.formatted?.coinSymbol,
+                header: txn?.formatted?.coinSymbol || txn.callModuleName,
             },
             mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn?.formatted?.coinSymbol,
+                header: txn?.formatted?.coinSymbol || txn.callModuleName,
             },
             default: {
                 ...shared,
                 typeIcon: <CodeBracketSquareIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn?.formatted?.coinSymbol || txAction,
+                header: txn?.formatted?.coinSymbol || txn.callModuleName,
             },
         },
         func: {
@@ -278,31 +281,31 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ...shared,
                 typeIcon: <PencilSquareIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: 'Sui Action',
+                header: txn.callModuleName || 'Sui Action',
             },
             burn: {
                 ...shared,
                 typeIcon: <FireIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: 'Sui Action',
+                header: txn.callModuleName || 'Sui Action',
             },
             transfer: {
                 ...shared,
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: 'Sui Action',
+                header: txn.callModuleName || 'Sui Action',
             },
             pool: {
                 ...shared,
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: txn.callFunctionName,
+                header: txn.callFunctionName || 'Sui Action',
             },
             default: {
                 ...shared,
                 typeIcon: <SuiIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: 'Sui Action',
+                header: txn.callModuleName || 'Sui Action',
             },
         },
     };
