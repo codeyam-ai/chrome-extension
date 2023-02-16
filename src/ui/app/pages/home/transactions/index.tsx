@@ -97,21 +97,16 @@ const TransactionsPage = () => {
 
     const loadItems = useCallback(async () => {
         const effs = filteredTxEffs || txEffs;
-
         if (!effs) return;
 
-        setLoading(true);
         setNextPage(nextPage + 1);
 
         const start = (nextPage - 1) * txPerPage;
         const end = start + txPerPage;
-        console.log('start: ', start, 'end: ', end, 'total: ', effs.length);
         const filtEffs = effs.slice(start, end);
 
-        console.log('filt effs: ', filtEffs);
-
         dispatch(getTransactionsByAddress(filtEffs));
-    }, [setNextPage, dispatch, txEffs, nextPage]);
+    }, [setNextPage, dispatch, txEffs, nextPage, setLoading, loading]);
 
     useEffect(() => {
         const getFormattedTransactions = async () => {
@@ -153,13 +148,10 @@ const TransactionsPage = () => {
                 ];
                 setActiveTransactions(allTxs);
             }
-
-            setLoading(false);
         };
 
         getFormattedTransactions();
-        setLoading(false);
-    }, [txByAddress]);
+    }, [txByAddress, setLoading, loading]);
 
     const loadMore = useCallback(() => {
         loadItems();
@@ -174,7 +166,7 @@ const TransactionsPage = () => {
 
     return (
         <React.Fragment>
-            <Loading loading={initLoad} big={true}>
+            <Loading loading={initLoad || !activeTransactions} big={true}>
                 {activeTransactions && activeTransactions.length > 0 && (
                     <div className={'flex flex-col h-full'}>
                         <TextPageTitle title="Activity" />
@@ -190,11 +182,7 @@ const TransactionsPage = () => {
                                     className={'mb-6'}
                                     onClick={loadMore}
                                 >
-                                    {loading ? (
-                                        <LoadingIndicator />
-                                    ) : (
-                                        'Load More'
-                                    )}
+                                    Load More
                                 </Button>
                             </div>
                         )}
