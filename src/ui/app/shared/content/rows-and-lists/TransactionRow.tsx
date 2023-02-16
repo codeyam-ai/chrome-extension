@@ -256,6 +256,12 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 icon: <FunctionIcon />,
                 header: 'Sui Action',
             },
+            pool: {
+                ...shared,
+                typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
+                icon: <FunctionIcon />,
+                header: txn.callFunctionName,
+            },
             default: {
                 ...shared,
                 typeIcon: <SuiIcon {...iconProps} />,

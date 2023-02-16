@@ -1,11 +1,19 @@
 import { type TxResultState } from '../../redux/slices/txresults';
 
-export type TxAction = 'mint' | 'send' | 'receive' | 'transfer' | undefined;
+export type TxAction =
+    | 'mint'
+    | 'send'
+    | 'receive'
+    | 'transfer'
+    | 'pool'
+    | undefined;
 
 const getTxAction = (txn: TxResultState): TxAction => {
     let type: TxAction;
     if (txn.callFunctionName === 'mint' || txn.type === 'Mint') {
         type = 'mint';
+    } else if (txn.callModuleName === 'pool') {
+        type = 'pool';
     } else if (txn.isSender && !txn.callFunctionName) {
         type = 'send';
     } else if (!txn.isSender && !txn.callFunctionName) {

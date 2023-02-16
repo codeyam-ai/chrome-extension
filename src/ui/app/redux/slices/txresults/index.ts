@@ -50,6 +50,7 @@ export type TxResultState = {
     isSender?: boolean;
     error?: string;
     callFunctionName?: string;
+    callModuleName?: string;
     coinSymbol?: string;
     coinType?: string;
     toAddr?: string;
