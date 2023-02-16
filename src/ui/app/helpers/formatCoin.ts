@@ -1,4 +1,5 @@
 import { Coin, type JsonRpcProvider } from '@mysten/sui.js';
+
 import { formatBalance } from '../hooks/useFormatCoin';
 
 export interface FormattedCoin {

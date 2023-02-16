@@ -4,6 +4,7 @@ import {
     ArrowUpRightIcon,
     SparklesIcon,
 } from '@heroicons/react/24/solid';
+
 import type { TxAction } from './getTxAction';
 
 const getIcon = (txType: TxAction) => {

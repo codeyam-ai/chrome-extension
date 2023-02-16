@@ -1,5 +1,3 @@
-import truncateMiddle from '../truncate-middle';
-import ipfs from '../ipfs';
 import {
     getTxAction,
     getTxOtherAddressDisplay,
@@ -8,9 +6,10 @@ import {
     getTxType,
     getTxVerb,
 } from '.';
-
 import { type FormattedTxResultState } from '../../pages/home/transactions/FormattedTxResultState';
 import convertUnixTimeToLocalTime from '../convertUnixTimeToLocalTime';
+import ipfs from '../ipfs';
+import truncateMiddle from '../truncate-middle';
 
 const getHumanReadable = (tx: FormattedTxResultState) => {
     const timeDisplay = convertUnixTimeToLocalTime(tx.timestampMs || 0);

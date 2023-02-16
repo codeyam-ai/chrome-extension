@@ -9,23 +9,15 @@ import {
     FireIcon,
     SparklesIcon,
 } from '@heroicons/react/24/solid';
-import { useMemo, useState } from 'react';
 
 import { ActivityRow } from './ActivityRow';
-import { Coin } from '../../../redux/slices/sui-objects/Coin';
 import SuiIcon from '../../svg/SuiIcon';
-import { formatDate } from '_helpers';
 import ipfs from '_src/ui/app/helpers/ipfs';
-import { useFormatCoin, useMiddleEllipsis } from '_src/ui/app/hooks';
-import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
-import { api } from '_src/ui/app/redux/store/thunk-extras';
-
-import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 import { getHumanReadable } from '_src/ui/app/helpers/transactions';
-import type { FormattedCoin } from '_src/ui/app/pages/home/transactions/FormattedCoin';
-import type { txnType } from '_src/ui/app/pages/home/transactions';
-import { toNamespacedPath } from 'path';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
+import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
+
+import type { txnType } from '_src/ui/app/pages/home/transactions';
 
 interface TransactionRowProps {
     txn: txnType;
@@ -36,9 +28,6 @@ interface RowDataTypes extends SharedTypes {
     typeIcon: JSX.Element;
     icon: JSX.Element;
 }
-
-const TRUNCATE_MAX_LENGTH = 8;
-const TRUNCATE_PREFIX_LENGTH = 4;
 
 interface SharedTypes {
     hasAmount: boolean;
@@ -51,23 +40,16 @@ interface SharedTypes {
 }
 
 const TransactionRow = ({ txn }: TransactionRowProps) => {
-    const {
-        txType,
-        txAction,
-        nftImageUri,
-        otherAddress,
-        otherAddressStr,
-        preposition,
-        subject,
-        timeDisplay,
-        verb,
-    } = getHumanReadable(txn);
+    const { txType, txAction, nftImageUri, timeDisplay } =
+        getHumanReadable(txn);
 
     const drilldownLink = `/transactions/receipt?${new URLSearchParams({
         txdigest: txn?.txId,
-        symbol: 'SUI',
+        symbol: txn?.formatted?.coinSymbol,
         isFunc: txType === 'func' ? 'yes' : 'no',
     }).toString()}`;
+
+    console.log('drilldownLink', drilldownLink);
 
     const shared: SharedTypes = {
         hasAmount: (txn.amount && txn.amount > 0) || false,

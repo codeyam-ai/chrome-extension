@@ -1,23 +1,20 @@
 import { QueueListIcon } from '@heroicons/react/24/solid';
+import { type SuiTransactionResponse } from '@mysten/sui.js';
 import React, { memo, useCallback, useEffect, useState } from 'react';
 
-import { type FormattedTxResultState } from './FormattedTxResultState';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { getTransactionsByAddress } from '_redux/slices/txresults';
+import { type TxResultState } from '_redux/slices/txresults';
 import Loading from '_src/ui/app/components/loading';
-import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
+import deduplicate from '_src/ui/app/helpers/deduplicate';
+import formatCoin, { type FormattedCoin } from '_src/ui/app/helpers/formatCoin';
+import { getTxType } from '_src/ui/app/helpers/transactions';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Button from '_src/ui/app/shared/button';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
-import formatCoin, { type FormattedCoin } from '_src/ui/app/helpers/formatCoin';
-
-import { type TxResultState } from '_redux/slices/txresults';
-import { type SuiTransactionResponse } from '@mysten/sui.js';
-import deduplicate from '_src/ui/app/helpers/deduplicate';
-import { getTxType } from '_src/ui/app/helpers/transactions';
 
 export interface txnType extends TxResultState {
     formatted: FormattedCoin;

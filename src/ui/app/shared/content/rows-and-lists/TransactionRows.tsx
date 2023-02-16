@@ -1,6 +1,7 @@
 import TransactionRow from './TransactionRow';
-import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
+
 import type { FormattedCoin } from '_src/ui/app/pages/home/transactions/FormattedCoin';
+import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
 interface txnType extends TxResultState {
     formatted: FormattedCoin;

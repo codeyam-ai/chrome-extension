@@ -1,4 +1,5 @@
 import truncateString from '../truncate-string';
+
 import type { TxType } from './getTxType';
 
 const getTxSubject = (
