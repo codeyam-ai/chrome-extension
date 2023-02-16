@@ -56,7 +56,7 @@ export const ENV_TO_API: Record<string, ApiEndpoints> = {
 function getDefaultApiEnv() {
     const apiEnv = growthbook.getFeatureValue(
         'default-api-env',
-        API_ENV.testNet
+        API_ENV.devNet
     );
     if (apiEnv && !Object.keys(API_ENV).includes(apiEnv)) {
         throw new Error(`Unknown environment variable API_ENV, ${apiEnv}`);
