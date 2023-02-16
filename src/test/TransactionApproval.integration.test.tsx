@@ -104,7 +104,7 @@ describe('The Transaction Approval popup', () => {
     }
 
     function mockBlockchainTransactionExecution() {
-        const payScope = nock('http://testNet-fullnode.example.com')
+        const payScope = nock('http://devNet-fullnode.example.com')
             .persist() // this gets called twice in the case where the transaction is approved
             .post('/', /sui_pay/)
             .reply(200, {
@@ -117,7 +117,7 @@ describe('The Transaction Approval popup', () => {
 
         // note: this is only expected to be called once
         const dryRunTransactionScope = nock(
-            'http://testNet-fullnode.example.com'
+            'http://devNet-fullnode.example.com'
         )
             .post(
                 '/',
@@ -133,7 +133,7 @@ describe('The Transaction Approval popup', () => {
             });
 
         const getObjectForDryRunScope = nock(
-            'http://testNet-fullnode.example.com'
+            'http://devNet-fullnode.example.com'
         )
             .post(
                 '/',
@@ -152,7 +152,7 @@ describe('The Transaction Approval popup', () => {
             });
 
         const getCoinsForDryRunScope = nock(
-            'http://testNet-fullnode.example.com'
+            'http://devNet-fullnode.example.com'
         )
             .post(
                 '/',
@@ -173,7 +173,7 @@ describe('The Transaction Approval popup', () => {
             });
 
         const getObjectForDryRunScope2 = nock(
-            'http://testNet-fullnode.example.com'
+            'http://devNet-fullnode.example.com'
         )
             .post(
                 '/',
@@ -196,7 +196,7 @@ describe('The Transaction Approval popup', () => {
                 },
             ]);
 
-        const executeScope = nock('http://testNet-fullnode.example.com')
+        const executeScope = nock('http://devNet-fullnode.example.com')
             .post(
                 '/',
                 _.matches({
