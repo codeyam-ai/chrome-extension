@@ -147,11 +147,26 @@ export const getTransactionsByAddress = createAsyncThunk<
         { getState, extra: { api } }
     ): Promise<TxResultByAddress> => {
         const address = getState().account.address;
-        if (!address || !txEffs) {
-            return [];
+        let txs;
+
+        if (!txEffs) {
+            const transactionIds: string[] =
+                await api.instance.fullNode.getTransactionsForAddress(
+                    address as string,
+                    true
+                );
+
+            const _txEffs =
+                await api.instance.fullNode.getTransactionWithEffectsBatch(
+                    deduplicate(transactionIds)
+                );
+
+            txs = _txEffs;
+        } else {
+            txs = txEffs;
         }
 
-        const txResults = txEffs.map((txEff) => {
+        const txResults = txs.map((txEff) => {
             const txns = getTransactions(txEff.certificate);
 
             // TODO handle batch transactions
