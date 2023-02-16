@@ -205,7 +205,20 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ) : (
                     <></>
                 ),
-                header: txn?.formatted?.coinSymbol || 'Sui Action',
+                header: txn?.name || 'Register NFT',
+            },
+            default: {
+                ...shared,
+                typeIcon: <SparklesIcon {...iconProps} />,
+                icon: nftImageUri ? (
+                    <NftImg
+                        src={ipfs(nftImageUri)}
+                        alt={txn.description || ''}
+                    />
+                ) : (
+                    <></>
+                ),
+                header: txType || `NFT ${txAction}` || '',
             },
         },
         sui: {
@@ -227,6 +240,12 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 icon: <CurrencyIcon />,
                 header: txn?.formatted?.coinSymbol,
             },
+            default: {
+                ...shared,
+                typeIcon: <CodeBracketSquareIcon {...iconProps} />,
+                icon: <CurrencyIcon />,
+                header: txAction || 'SUI',
+            },
         },
         coin: {
             send: {
@@ -246,6 +265,12 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
                 header: txn?.formatted?.coinSymbol,
+            },
+            default: {
+                ...shared,
+                typeIcon: <CodeBracketSquareIcon {...iconProps} />,
+                icon: <CurrencyIcon />,
+                header: txn?.formatted?.coinSymbol || txAction,
             },
         },
         func: {
@@ -287,13 +312,13 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
     if (!txType || !txAction) return <></>;
 
     if (txType === 'nft') {
-        rowData = dataMap.nft[txAction];
+        rowData = dataMap.nft[txAction || 'default'];
     } else if (txType === 'sui') {
-        rowData = dataMap.sui[txAction];
+        rowData = dataMap.sui[txAction || 'default'];
     } else if (txType === 'func') {
         rowData = dataMap.func[txAction || 'default'];
     } else {
-        rowData = dataMap.coin[txAction];
+        rowData = dataMap.coin[txAction || 'default'];
     }
 
     if (!rowData) return <></>;
