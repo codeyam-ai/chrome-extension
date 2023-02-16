@@ -309,7 +309,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
 
     let rowData;
 
-    if (!txType || !txAction) return <></>;
+    if (!txType) return <></>;
 
     if (txType === 'nft') {
         rowData = dataMap.nft[txAction || 'default'];
