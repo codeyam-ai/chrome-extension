@@ -149,6 +149,7 @@ const TransactionsPage = () => {
         };
 
         getFormattedTransactions();
+        setLoading(false);
     }, [txByAddress]);
 
     const loadMore = useCallback(() => {
@@ -169,7 +170,7 @@ const TransactionsPage = () => {
                     <div className={'flex flex-col h-full'}>
                         <TextPageTitle title="Activity" />
                         <TransactionRows transactions={activeTransactions} />
-                        {items.length !== totalNumTxs && (
+                        {activeTransactions.length !== totalNumTxs && (
                             <div
                                 className={
                                     'w-full flex flex-row items-center justify-center'
@@ -191,18 +192,20 @@ const TransactionsPage = () => {
                     </div>
                 )}
 
-                {!loading && items.length === 0 && (
-                    <EmptyPageState
-                        iconWithNoClasses={
-                            <Icon displayIcon={<QueueListIcon />} />
-                        }
-                        title="No transactions yet"
-                        subtitle="Set up DevNet SUI tokens to send coins."
-                        linkText="Get SUI"
-                        linkUrl="/tokens"
-                        internal={true}
-                    />
-                )}
+                {!loading &&
+                    activeTransactions &&
+                    activeTransactions.length === 0 && (
+                        <EmptyPageState
+                            iconWithNoClasses={
+                                <Icon displayIcon={<QueueListIcon />} />
+                            }
+                            title="No transactions yet"
+                            subtitle="Set up DevNet SUI tokens to send coins."
+                            linkText="Get SUI"
+                            linkUrl="/tokens"
+                            internal={true}
+                        />
+                    )}
             </Loading>
         </React.Fragment>
     );
