@@ -199,7 +199,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             ? 'Sent'
             : 'Received';
 
-    const header = truncatedNftName || txDigest.objSymbol;
+    const header = txDigest?.name || truncatedNftName || txDigest.objSymbol;
     const isMinted = txDigest?.callFunctionName === 'mint';
 
     const transferMeta = {
@@ -259,9 +259,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     isNft={isNft}
                     isFunc={isFunc === 'yes'}
                     coinType={coinType}
-                    imgUrl={
-                        coinType === 'Coin' ? icon || '' : imgUrl ? imgUrl : ''
-                    }
+                    imgUrl={imgUrl || icon || ''}
                     name={txDigest?.name || 'NFT'}
                     icon={
                         txDigest.status === 'success' ? (
