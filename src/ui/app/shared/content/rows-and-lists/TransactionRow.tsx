@@ -25,6 +25,7 @@ import { getHumanReadable } from '_src/ui/app/helpers/transactions';
 import type { FormattedCoin } from '_src/ui/app/pages/home/transactions/FormattedCoin';
 import type { txnType } from '_src/ui/app/pages/home/transactions';
 import { toNamespacedPath } from 'path';
+import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 
 interface TransactionRowProps {
     txn: txnType;
@@ -62,6 +63,19 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         verb,
     } = getHumanReadable(txn);
 
+    /*console.log(
+        'CHECK: ", ',
+        txType,
+        txAction,
+        nftImageUri,
+        otherAddress,
+        otherAddressStr,
+        preposition,
+        subject,
+        timeDisplay,
+        verb
+    );*/
+
     const drilldownLink = `/transactions/receipt?${new URLSearchParams({
         txdigest: txn?.txId,
         symbol: 'SUI',
@@ -75,8 +89,8 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         type: txAction || '',
         txDirText:
             txAction === 'send'
-                ? `To ${otherAddressStr}`
-                : `From ${otherAddressStr}` || '',
+                ? `To ${truncateMiddle(txn.to)}`
+                : `From ${truncateMiddle(txn.from)}` || '',
         link: drilldownLink,
         date: timeDisplay,
     };
@@ -99,7 +113,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
 
     const CurrencyIcon = () => (
         <>
-            {txn?.formatted?.coinSymbol.toLowerCase() === 'sui' ? (
+            {txType === 'sui' ? (
                 <IconContainer>
                     <SuiIcon width={14} height={20} color={'white'} />
                 </IconContainer>
@@ -131,7 +145,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         coin: {
             [key: string]: RowDataTypes;
         };
-        function: {
+        func: {
             [key: string]: RowDataTypes;
         };
     } = {
@@ -223,7 +237,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 header: txn?.formatted?.coinSymbol,
             },
         },
-        function: {
+        func: {
             modify: {
                 ...shared,
                 typeIcon: <PencilSquareIcon {...iconProps} />,
@@ -257,15 +271,15 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
 
     if (txType === 'nft') {
         rowData = dataMap.nft[txAction];
-    } else if (txn?.formatted?.coinSymbol.toLowerCase() === 'sui') {
+    } else if (txType === 'sui') {
         rowData = dataMap.sui[txAction];
-    } else if (txn.type === 'call') {
-        rowData = dataMap.function[txAction || 'default'];
+    } else if (txType === 'func') {
+        rowData = dataMap.func[txAction || 'default'];
     } else {
         rowData = dataMap.coin[txAction];
     }
 
-    if (!rowData || !txn.formatted) return <></>;
+    if (!rowData) return <></>;
 
     return (
         <ActivityRow
@@ -277,9 +291,9 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
             link={rowData.link}
             header={rowData.header}
             subheader={rowData.txDirText}
-            formattedAmount={txn.formatted.formattedBalance}
+            formattedAmount={txn?.formatted?.formattedBalance}
             symbol={txn?.formatted?.coinSymbol}
-            dollars={txn.formatted.dollars}
+            dollars={txn?.formatted?.dollars}
         />
     );
 };
