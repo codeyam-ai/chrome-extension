@@ -7,7 +7,6 @@ import { renderTemplate } from '_src/test/utils/json-templates';
 import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { preventActWarning } from '_src/test/utils/test-helpers';
-import { timeout } from 'rxjs';
 
 describe('The Transaction History Page', () => {
     beforeEach(async () => {
@@ -17,7 +16,7 @@ describe('The Transaction History Page', () => {
 
     test('Handles a wallet that has no transactions', async () => {
         mockSuiObjects();
-        nock('http://testNet-fullnode.example.com')
+        nock('http://devNet-fullnode.example.com')
             .post('/', /sui_getTransactions/)
             .reply(200, [
                 {
@@ -51,8 +50,8 @@ describe('The Transaction History Page', () => {
     });
 
     function mockTransactionHistory() {
-        const transactionResult = renderTemplate('transaction', {});
-        nock('http://testNet-fullnode.example.com')
+        const view = renderTemplate('transaction', {});
+        nock('http://devNet-fullnode.example.com')
             .post(
                 '/',
                 _.matches([
@@ -111,11 +110,11 @@ describe('The Transaction History Page', () => {
             .reply(200, [
                 {
                     jsonrpc: '2.0',
-                    result: transactionResult,
+                    result: view,
                     id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
                 },
             ]);
-        nock('http://testNet-fullnode.example.com')
+        nock('http://devNet-fullnode.example.com')
             .persist()
             .post(
                 '/',
@@ -132,7 +131,7 @@ describe('The Transaction History Page', () => {
                 }),
                 id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
             });
-        nock('http://testNet-fullnode.example.com')
+        nock('http://devNet-fullnode.example.com')
             .post(
                 '/',
                 _.matches({
@@ -142,7 +141,7 @@ describe('The Transaction History Page', () => {
             )
             .reply(200, {
                 jsonrpc: '2.0',
-                result: transactionResult,
+                result: view,
                 id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
             });
     }
