@@ -63,22 +63,6 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         verb,
     } = getHumanReadable(txn);
 
-    console.log('txn: ', txn);
-    console.log('tx type: ', txType);
-    console.log('tx action: ', txAction);
-    /*console.log(
-        'CHECK: ", ',
-        txType,
-        txAction,
-        nftImageUri,
-        otherAddress,
-        otherAddressStr,
-        preposition,
-        subject,
-        timeDisplay,
-        verb
-    );*/
-
     const drilldownLink = `/transactions/receipt?${new URLSearchParams({
         txdigest: txn?.txId,
         symbol: 'SUI',
