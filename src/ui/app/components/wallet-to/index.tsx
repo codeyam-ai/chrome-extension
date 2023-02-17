@@ -12,7 +12,12 @@ const WalletTo = ({
     walletTo?: AccountInfo;
     noTo?: boolean;
 }) => {
-    if (!walletTo) return <>To: {truncateMiddle(addressTo)}</>;
+    if (!walletTo)
+        return (
+            <>
+                {!noTo ? 'To:' : ''} {truncateMiddle(addressTo)}
+            </>
+        );
 
     return (
         <div className="flex gap-1 items-center">
@@ -24,7 +29,9 @@ const WalletTo = ({
                 emojiSizeInPx={12}
             />
             <div>{walletTo.name || truncateMiddle(walletTo.address)}</div>
-            {!!walletTo.name && <div>({truncateMiddle(walletTo.address)})</div>}
+            {!!walletTo.name && (
+                <div>({truncateMiddle(walletTo.address, 4)})</div>
+            )}
         </div>
     );
 };

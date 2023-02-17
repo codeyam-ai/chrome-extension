@@ -37,6 +37,11 @@ function TransferCoinForm({
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
     const formData = useAppSelector(({ forms: { sendSui } }) => sendSui);
+    const walletFrom = useAppSelector(({ account: { accountInfos } }) =>
+        accountInfos.find(
+            (accountInfo) => accountInfo.address === formData.from
+        )
+    );
     const walletTo = useAppSelector(({ account: { accountInfos } }) =>
         accountInfos.find((accountInfo) => accountInfo.address === formData.to)
     );
@@ -82,6 +87,13 @@ function TransferCoinForm({
                     keyNamesAndValues={[
                         {
                             keyName: 'From',
+                            shortValue: (
+                                <WalletTo
+                                    addressTo={formData.from}
+                                    walletTo={walletFrom}
+                                    noTo={true}
+                                />
+                            ),
                             value: formData.from,
                         },
                         {

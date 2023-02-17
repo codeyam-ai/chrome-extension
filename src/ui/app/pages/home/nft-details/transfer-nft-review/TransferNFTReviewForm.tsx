@@ -5,7 +5,7 @@ import { memo, useCallback } from 'react';
 
 import { Content } from '_app/shared/bottom-menu-layout';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
-import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
+import WalletTo from '_src/ui/app/components/wallet-to';
 import { useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
@@ -36,6 +36,10 @@ function TransferNftReviewForm({
     transferNft,
     submitted,
 }: TransferNFTFormProps) {
+    const walletTo = useAppSelector(({ account: { accountInfos } }) =>
+        accountInfos.find((accountInfo) => accountInfo.address === formData.to)
+    );
+
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex } }) =>
             accountInfos.find(
@@ -75,7 +79,7 @@ function TransferNftReviewForm({
                                     imgUrl={fields?.url ? fields.url : ''}
                                     name={fields?.name}
                                 />
-                                <Body isTextColorMedium>Sending</Body>
+                                <Body isTextColorMedium>Transfer</Body>
                                 <Header
                                     className={'font-weight-ethos-subheader'}
                                 >
@@ -88,17 +92,23 @@ function TransferNftReviewForm({
                                     keyNamesAndValues={[
                                         {
                                             keyName: 'From',
-                                            shortValue: accountInfo?.name
-                                                ? undefined
-                                                : truncateMiddle(address || ''),
-                                            value: accountInfo?.name
-                                                ? accountInfo?.name
-                                                : address || '',
+                                            shortValue: (
+                                                <WalletTo
+                                                    addressTo={address}
+                                                    walletTo={accountInfo}
+                                                    noTo={true}
+                                                />
+                                            ),
+                                            value: address || '',
                                         },
                                         {
                                             keyName: 'To',
-                                            shortValue: truncateMiddle(
-                                                formData.to
+                                            shortValue: (
+                                                <WalletTo
+                                                    addressTo={formData.to}
+                                                    walletTo={walletTo}
+                                                    noTo={true}
+                                                />
                                             ),
                                             value: formData.to,
                                         },

@@ -82,7 +82,7 @@ function TransferNFTForm({
                     noValidate={true}
                 >
                     <div>
-                        <div className="pt-6 px-6 text-left flex flex-col absolute w-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
+                        <div className="pt-6 px-6 text-left flex flex-col w-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
                             <div className={'mb-6'}>
                                 <BodyLarge isTextColorMedium className={'mb-4'}>
                                     Transfer
@@ -134,7 +134,7 @@ function TransferNFTForm({
                                 {submitError ? submitError : ' '}
                             </div>
                         </div>
-                        <div className={'pb-[80px] pt-[240px]'}>
+                        <div className="pb-[80px]">
                             {recentWallets.length > 0 && (
                                 <SuiTxWalletList
                                     header={'Recent Wallets'}
