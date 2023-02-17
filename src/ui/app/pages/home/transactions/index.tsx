@@ -109,12 +109,11 @@ const TransactionsPage = () => {
                 })
             );
 
-            if (activeTransactions && formattedTransactions) {
-                const allTxs = [
-                    ...activeTransactions,
+            if (formattedTransactions) {
+                setActiveTransactions((prev) => [
+                    ...(prev || []),
                     ...formattedTransactions,
-                ];
-                setActiveTransactions(allTxs);
+                ]);
             }
         };
 
