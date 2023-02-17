@@ -20,6 +20,7 @@ import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
     const [initLoad, setInitLoad] = useState(true);
+    const [loading, setLoading] = useState(false);
     const dispatch = useAppDispatch();
     const txPerPage = 5;
     const [nextPage, setNextPage] = useState(1);
@@ -38,6 +39,7 @@ const TransactionsPage = () => {
     );
 
     useEffect(() => {
+        setLoading(true);
         setActiveTransactions([]);
 
         const getTxs = async () => {
@@ -68,6 +70,7 @@ const TransactionsPage = () => {
 
     const loadItems = useCallback(async () => {
         if (!txEffs) return;
+        setLoading(true);
 
         setNextPage(nextPage + 1);
 
@@ -118,6 +121,8 @@ const TransactionsPage = () => {
                 ];
                 setActiveTransactions(allTxs);
             }
+
+            setLoading(false);
         };
 
         getFormattedTransactions();
@@ -171,7 +176,7 @@ const TransactionsPage = () => {
                     </div>
                 )}
 
-                {!initLoad &&
+                {!loading &&
                     activeTransactions &&
                     activeTransactions.length === 0 && (
                         <EmptyPageState
