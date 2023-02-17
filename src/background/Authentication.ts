@@ -80,7 +80,7 @@ class Authentication {
         );
     }
 
-    public async sign(address: string, dataToSign: string) {
+    public async sign(address: string, dataToSign: Uint8Array) {
         if (!this._accessToken) return;
 
         const { json, status } = await simpleApiCall(
