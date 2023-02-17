@@ -53,7 +53,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         hasAmount: (txn.amount && txn.amount > 0) || false,
         amount: txn?.amount || undefined,
         coinType: txn?.coinType || '',
-        type: txAction || '',
+        type: txAction || txn?.callFunctionName || '',
         txDirText:
             txAction === 'send' && txn.to
                 ? `To ${truncateMiddle(txn.to)}`
