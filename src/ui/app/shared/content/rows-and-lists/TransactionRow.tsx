@@ -17,10 +17,10 @@ import { getHumanReadable } from '_src/ui/app/helpers/transactions';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
 
-import type { txnType } from '_src/ui/app/pages/home/transactions';
+import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
 interface TransactionRowProps {
-    txn: txnType;
+    txn: TxResultState;
 }
 
 interface RowDataTypes extends SharedTypes {
@@ -44,12 +44,10 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         getHumanReadable(txn);
 
     const drilldownLink = `/transactions/receipt?${new URLSearchParams({
-        txdigest: txn?.txId,
-        symbol: txn?.formatted?.coinSymbol,
+        txdigest: txn.txId,
+        symbol: txn?.formatted?.coinSymbol || '',
         isFunc: txType === 'func' ? 'yes' : 'no',
     }).toString()}`;
-
-    console.log('drilldownLink', drilldownLink);
 
     const shared: SharedTypes = {
         hasAmount: (txn.amount && txn.amount > 0) || false,

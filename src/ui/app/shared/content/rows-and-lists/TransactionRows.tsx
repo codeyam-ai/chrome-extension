@@ -1,14 +1,9 @@
 import TransactionRow from './TransactionRow';
 
-import type { FormattedCoin } from '_src/ui/app/pages/home/transactions/FormattedCoin';
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
-interface txnType extends TxResultState {
-    formatted: FormattedCoin;
-}
-
 interface TransactionRowsProps {
-    transactions: txnType[] | undefined;
+    transactions: TxResultState[] | undefined;
 }
 
 const TransactionRows = ({ transactions }: TransactionRowsProps) => {

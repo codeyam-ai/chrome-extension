@@ -1,8 +1,8 @@
-import { type TxResultState } from '../../redux/slices/txresults';
+import { type FormattedTxResultState } from '../../pages/home/transactions/FormattedTxResultState';
 
 export type TxType = 'nft' | 'sui' | 'func' | 'coin';
 
-const getTxType = (txn: TxResultState): TxType => {
+const getTxType = (txn: FormattedTxResultState): TxType => {
     if (txn?.callFunctionName === 'transfer' || txn?.objectId?.length) {
         return 'nft';
     } else if (txn?.kind === 'PaySui' || txn?.kind === 'PayAllSui') {

@@ -30,7 +30,7 @@ function ReceiptPage() {
         };
 
         getTxByAddr();
-    }, []);
+    }, [dispatch]);
 
     // get tx results from url params
     const txDigest = searchParams.get('txdigest');

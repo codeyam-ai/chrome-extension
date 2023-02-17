@@ -7,18 +7,15 @@ import { getTransactionsByAddress } from '_redux/slices/txresults';
 import { type TxResultState } from '_redux/slices/txresults';
 import Loading from '_src/ui/app/components/loading';
 import deduplicate from '_src/ui/app/helpers/deduplicate';
-import formatCoin, { type FormattedCoin } from '_src/ui/app/helpers/formatCoin';
+import formatCoin from '_src/ui/app/helpers/formatCoin';
 import { getTxType } from '_src/ui/app/helpers/transactions';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Button from '_src/ui/app/shared/button';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
+import Alert from '_src/ui/app/shared/feedback/Alert';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
-
-export interface txnType extends TxResultState {
-    formatted: FormattedCoin;
-}
 
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
@@ -26,17 +23,12 @@ const TransactionsPage = () => {
     const dispatch = useAppDispatch();
     const txPerPage = 5;
     const [nextPage, setNextPage] = useState(1);
-    const [loading, setLoading] = useState(true);
     const [txEffs, setTxEffs] = useState<
         SuiTransactionResponse[] | undefined
     >();
     const totalNumTxs = txEffs?.length;
     const [activeTransactions, setActiveTransactions] = useState<
-        txnType[] | undefined
-    >();
-    const [filter, setFilter] = useState<string | undefined>();
-    const [filteredTxEffs, setFilteredTxEffs] = useState<
-        SuiTransactionResponse[] | undefined
+        TxResultState[] | undefined
     >();
 
     const [error, setError] = useState<string | undefined>();
@@ -72,43 +64,24 @@ const TransactionsPage = () => {
         if (initLoad) {
             getTxs();
         }
-    }, [address]);
-
-    useEffect(() => {
-        setFilteredTxEffs(undefined);
-
-        if (!txEffs || !filter) return;
-
-        const filteredTxEffs = txEffs.filter((txEff) => {
-            if (!txEff.effects.events) return false;
-            return !!txEff.effects.events.find(
-                (event) =>
-                    'coinBalanceChange' in event &&
-                    event.coinBalanceChange.changeType !== 'Gas' &&
-                    event.coinBalanceChange.coinType === filter
-            );
-        });
-
-        setFilteredTxEffs(filteredTxEffs);
-    }, [txEffs, filter]);
+    }, [address, initLoad]);
 
     const loadItems = useCallback(async () => {
-        const effs = filteredTxEffs || txEffs;
-        if (!effs) return;
+        if (!txEffs) return;
 
         setNextPage(nextPage + 1);
 
         const start = (nextPage - 1) * txPerPage;
         const end = start + txPerPage;
-        const filtEffs = effs.slice(start, end);
+        const filtEffs = txEffs.slice(start, end);
 
         dispatch(getTransactionsByAddress(filtEffs));
-    }, [setNextPage, dispatch, txEffs, nextPage, setLoading, loading]);
+    }, [setNextPage, dispatch, txEffs, nextPage]);
 
     useEffect(() => {
         const getFormattedTransactions = async () => {
-            const formattedTransactions: txnType[] = await Promise.all(
-                txByAddress?.map(async (tx: any) => {
+            const formattedTransactions: TxResultState[] = await Promise.all(
+                txByAddress?.map(async (tx) => {
                     // TODO: fix type error for any
                     const txType = getTxType(tx);
                     if (txType === 'nft' || txType === 'func') {
@@ -148,7 +121,7 @@ const TransactionsPage = () => {
         };
 
         getFormattedTransactions();
-    }, [txByAddress, setLoading, loading]);
+    }, [txByAddress]);
 
     const loadMore = useCallback(() => {
         loadItems();
@@ -160,6 +133,18 @@ const TransactionsPage = () => {
             setInitLoad(false);
         }
     }, [initLoad, loadItems, txEffs]);
+
+    if (error) {
+        return (
+            <div className="pb-4">
+                <Alert
+                    title={'We could not retrieve your transactions'}
+                    subtitle={error}
+                    borderRadius={16}
+                />
+            </div>
+        );
+    }
 
     return (
         <React.Fragment>
@@ -186,7 +171,7 @@ const TransactionsPage = () => {
                     </div>
                 )}
 
-                {!loading &&
+                {!initLoad &&
                     activeTransactions &&
                     activeTransactions.length === 0 && (
                         <EmptyPageState

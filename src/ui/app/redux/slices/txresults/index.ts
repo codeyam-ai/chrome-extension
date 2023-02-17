@@ -1,6 +1,3 @@
-// Copyright (c) Mysten Labs, Inc.
-// SPDX-License-Identifier: Apache-2.0
-
 import {
     getTransactions,
     getTransactionKindName,
@@ -30,10 +27,11 @@ import type {
     SuiEvent,
     SuiTransactionKind,
 } from '@mysten/sui.js';
+import type { FormattedCoin } from '_src/ui/app/helpers/formatCoin';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
 export type TxResultState = {
-    objSymbol: any;
+    objSymbol: string;
     to?: string;
     txId: string;
     status: ExecutionStatusType;
@@ -59,6 +57,7 @@ export type TxResultState = {
     vendor?: string;
     txType?: string;
     type: string;
+    formatted?: FormattedCoin;
 };
 
 interface TransactionManualState {
@@ -149,6 +148,10 @@ export const getTransactionsByAddress = createAsyncThunk<
     ): Promise<TxResultByAddress> => {
         const address = getState().account.address;
         let txs;
+
+        if (!address) {
+            return [];
+        }
 
         if (!txEffs) {
             const transactionIds: string[] =

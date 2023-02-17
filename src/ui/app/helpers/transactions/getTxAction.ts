@@ -1,4 +1,4 @@
-import { type TxResultState } from '../../redux/slices/txresults';
+import { type FormattedTxResultState } from '../../pages/home/transactions/FormattedTxResultState';
 
 export type TxAction =
     | 'mint'
@@ -11,7 +11,7 @@ export type TxAction =
     | 'burn'
     | undefined;
 
-const getTxAction = (txn: TxResultState): TxAction => {
+const getTxAction = (txn: FormattedTxResultState): TxAction => {
     let type: TxAction;
     if (txn.callFunctionName === 'mint' || txn.type === 'Mint') {
         type = 'mint';
