@@ -2,10 +2,12 @@ import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
 import CopyBody from '../../typography/CopyBody';
 
+import type { ReactElement } from 'react';
+
 export type KeyNameAndValue = {
     keyName: string;
-    value: string;
-    shortValue?: string;
+    value: string | ReactElement;
+    shortValue?: string | ReactElement;
 };
 
 interface KeyValueListProps {
@@ -29,7 +31,7 @@ const KeyValueList = ({ header, keyNamesAndValues }: KeyValueListProps) => {
                     >
                         <Body isTextColorMedium>{item.keyName}</Body>
                         {item.shortValue ? (
-                            <CopyBody txt={item.value} isSemibold>
+                            <CopyBody txt={item.value as string} isSemibold>
                                 {item.shortValue}
                             </CopyBody>
                         ) : (

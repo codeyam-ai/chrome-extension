@@ -8,7 +8,7 @@ import Sui from '../tokens/Sui';
 import UnknownToken from '../tokens/UnknownToken';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import NumberInput from '_components/number-input';
-import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
+import WalletTo from '_src/ui/app/components/wallet-to';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { CoinSelect } from '_src/ui/app/pages/home/tokens/CoinDropdown';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
@@ -19,7 +19,6 @@ import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import CopyBody from '_src/ui/app/shared/typography/CopyBody';
 
 import type { FormValues } from '.';
-import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
 
 export type TransferCoinFormProps = {
     submitError: string | null;
@@ -124,26 +123,6 @@ function TransferCoinForm({
         onClearRef.current();
     }, [amount]);
 
-    const WalletTo = () => {
-        if (!walletTo) return <>To: {truncateMiddle(formState.to)}</>;
-
-        return (
-            <div className="flex gap-1 items-center">
-                <div className="mr-1">To:</div>
-                <WalletColorAndEmojiCircle
-                    color={walletTo.color}
-                    emoji={walletTo.emoji}
-                    circleSizeClasses="h-5 w-5"
-                    emojiSizeInPx={12}
-                />
-                <div>{walletTo.name || truncateMiddle(walletTo.address)}</div>
-                {!!walletTo.name && (
-                    <div>({truncateMiddle(walletTo.address)})</div>
-                )}
-            </div>
-        );
-    };
-
     const dollars = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
@@ -162,7 +141,7 @@ function TransferCoinForm({
                     <CoinSelect selectedCoinType={coinType} />
                 </div>
                 <CopyBody txt={formState.to} isTextColorMedium>
-                    <WalletTo />
+                    <WalletTo addressTo={formState.to} walletTo={walletTo} />
                 </CopyBody>
             </div>
             <div className="flex flex-col mb-8 px-6 text-left">

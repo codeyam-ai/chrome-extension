@@ -7,8 +7,8 @@ import { memo, useEffect, useMemo, useRef } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
 import LoadingIndicator from '_components/loading/LoadingIndicator';
+import WalletTo from '_src/ui/app/components/wallet-to';
 import { getTheme } from '_src/ui/app/helpers/getTheme';
-import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
@@ -37,6 +37,9 @@ function TransferCoinForm({
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
     const formData = useAppSelector(({ forms: { sendSui } }) => sendSui);
+    const walletTo = useAppSelector(({ account: { accountInfos } }) =>
+        accountInfos.find((accountInfo) => accountInfo.address === formData.to)
+    );
     const onClearRef = useRef(onClearSubmitError);
     onClearRef.current = onClearSubmitError;
 
@@ -83,7 +86,13 @@ function TransferCoinForm({
                         },
                         {
                             keyName: 'To',
-                            shortValue: truncateMiddle(formData.to),
+                            shortValue: (
+                                <WalletTo
+                                    addressTo={formData.to}
+                                    walletTo={walletTo}
+                                    noTo={true}
+                                />
+                            ),
                             value: formData.to,
                         },
                         {
