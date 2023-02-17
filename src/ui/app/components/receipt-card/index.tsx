@@ -33,6 +33,7 @@ import CopyBody from '_src/ui/app/shared/typography/CopyBody';
 import type { TxResultState } from '_redux/slices/txresults';
 
 import st from './ReceiptCard.module.scss';
+import _ from 'lodash';
 
 type TxResponseProps = {
     txDigest: TxResultState;
@@ -200,10 +201,10 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             : 'Received';
 
     const header =
-        txDigest?.name ||
-        truncatedNftName ||
-        txDigest.objSymbol ||
-        txDigest.callModuleName;
+        _.startCase(txDigest?.name) ||
+        _.startCase(truncatedNftName) ||
+        _.startCase(txDigest.objSymbol) ||
+        _.startCase(txDigest.callModuleName);
     const isMinted = txDigest?.callFunctionName === 'mint';
 
     const transferMeta = {
