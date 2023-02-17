@@ -7,6 +7,7 @@ import {
     ArrowDownIcon,
     ArrowUpIcon,
     FireIcon,
+    PhotoIcon,
     SparklesIcon,
 } from '@heroicons/react/24/solid';
 
@@ -96,9 +97,18 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         </>
     );
 
-    const NftImg = ({ src, alt }: { src: string; alt: string }) => (
-        <img className={'w-[40px] h-[40px] rounded-lg'} src={src} alt={alt} />
-    );
+    const NftImg = ({ src, alt }: { src: string; alt: string }) =>
+        src ? (
+            <img
+                className={'w-[40px] h-[40px] rounded-lg'}
+                src={src}
+                alt={alt}
+            />
+        ) : (
+            <IconContainer>
+                <PhotoIcon width={20} height={20} color={'white'} />
+            </IconContainer>
+        );
 
     const iconProps = { color: '#74777C', width: 18, height: 18 };
 
