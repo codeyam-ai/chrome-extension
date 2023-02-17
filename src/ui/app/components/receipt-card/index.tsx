@@ -11,6 +11,7 @@ import {
     XMarkIcon,
 } from '@heroicons/react/24/solid';
 import _ from 'lodash';
+import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
@@ -140,12 +141,25 @@ const TxTransfer = ({
 );
 
 function ReceiptCard({ txDigest }: TxResponseProps) {
-    const accountInfo = useAppSelector(
-        ({ account: { accountInfos, activeAccountIndex } }) =>
-            accountInfos.find(
-                (accountInfo: AccountInfo) =>
-                    (accountInfo.index || 0) === activeAccountIndex
-            )
+    const { accountInfos } = useAppSelector(({ account }) => account);
+
+    const getAccount = useCallback(
+        (address: string) => {
+            return accountInfos.find(
+                (accountInfo: AccountInfo) => accountInfo.address === address
+            );
+        },
+        [accountInfos]
+    );
+
+    const fromWallet = useMemo(
+        () => (txDigest.from ? getAccount(txDigest.from) : null),
+        [getAccount, txDigest]
+    );
+
+    const toWallet = useMemo(
+        () => (txDigest.to ? getAccount(txDigest.to) : null),
+        [getAccount, txDigest]
     );
 
     const [searchParams] = useSearchParams();
@@ -190,7 +204,6 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
           ])
         : false;
 
-    const fromWallet = accountInfo?.address === txDigest.from;
     const isNft = typeof txDigest?.url !== 'undefined';
     const coinType = txDigest?.kind === 'PaySui' ? 'SUI' : 'Coin';
     const transferType =
@@ -294,24 +307,16 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     <TxTransfer
                         ToFrom={{
                             from: {
-                                emoji: fromWallet ? accountInfo?.emoji : '',
-                                bgColor: fromWallet
-                                    ? accountInfo?.color
-                                    : '#6D28D9',
-                                header: fromWallet
-                                    ? accountInfo?.name
-                                    : txDigest.from,
+                                emoji: fromWallet?.emoji || '',
+                                bgColor: fromWallet?.color || '#6D28D9',
+                                header: fromWallet?.name || txDigest.from,
                                 subheader: fromWallet ? txDigest.from : '',
                             },
                             to: {
-                                emoji: fromWallet ? '' : accountInfo?.emoji,
-                                bgColor: fromWallet
-                                    ? '#6D28D9'
-                                    : accountInfo?.color,
-                                header: fromWallet
-                                    ? txDigest.to
-                                    : accountInfo?.name,
-                                subheader: fromWallet ? '' : txDigest.from,
+                                emoji: toWallet?.emoji || '',
+                                bgColor: toWallet?.color || '#6D28D9',
+                                header: toWallet?.name || txDigest.to,
+                                subheader: toWallet ? txDigest.to : '',
                             },
                         }}
                     />
