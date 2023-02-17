@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-    Base64DataBuffer,
     Ed25519Keypair,
     JsonRpcProvider,
     RawSigner,
     SIGNATURE_SCHEME_TO_FLAG,
+    toB64,
 } from '@mysten/sui.js';
 import { filter, lastValueFrom, map, race, Subject, take } from 'rxjs';
 import nacl from 'tweetnacl';
@@ -15,10 +15,10 @@ import Browser from 'webextension-polyfill';
 
 import Authentication from './Authentication';
 import { Window } from './Window';
-import {
-    GAS_TYPE_ARG,
-    DEFAULT_GAS_BUDGET_FOR_PAY,
-} from '../ui/app/redux/slices/sui-objects/Coin';
+// import {
+//     GAS_TYPE_ARG,
+//     DEFAULT_GAS_BUDGET_FOR_PAY,
+// } from '../ui/app/redux/slices/sui-objects/Coin';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
@@ -35,11 +35,11 @@ import type { ContentScriptConnection } from '_src/background/connections/Conten
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
-type SimpleCoin = {
-    balance: number;
-    coinObjectId: string;
-    coinType: string;
-};
+// type SimpleCoin = {
+//     balance: number;
+//     coinObjectId: string;
+//     coinType: string;
+// };
 
 const TX_STORE_KEY = 'transactions';
 const PREAPPROVAL_KEY = 'preapprovals';
@@ -149,117 +149,117 @@ class Transactions {
         if (tx.type === 'v2' || tx.type === 'move-call') {
             let moveCall: MoveCallTransaction | undefined;
             if (tx.type === 'v2') {
-                if (
-                    typeof tx.data === 'object' &&
-                    !('buffer' in tx.data.data) &&
-                    'gasBudget' in tx.data.data &&
-                    !('amount' in tx.data.data) &&
-                    !('inputCoins' in tx.data.data) &&
-                    !tx.data.data.gasPayment
-                ) {
-                    try {
-                        const activeAccount = await this.getActiveAccount();
-                        const { sui_Env } = await Browser.storage.local.get(
-                            'sui_Env'
-                        );
-                        const endpoint = api.getEndPoints(sui_Env).fullNode;
+                // if (
+                //     typeof tx.data === 'object' &&
+                //     !('buffer' in tx.data.data) &&
+                //     'gasBudget' in tx.data.data &&
+                //     !('amount' in tx.data.data) &&
+                //     !('inputCoins' in tx.data.data) &&
+                //     !tx.data.data.gasPayment
+                // ) {
+                //     try {
+                //         const activeAccount = await this.getActiveAccount();
+                //         const { sui_Env } = await Browser.storage.local.get(
+                //             'sui_Env'
+                //         );
+                //         const endpoint = api.getEndPoints(sui_Env).fullNode;
 
-                        const gasResponse = await fetch(endpoint, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                jsonrpc: '2.0',
-                                method: 'sui_getReferenceGasPrice',
-                                id: 1,
-                            }),
-                        });
+                //         const gasResponse = await fetch(endpoint, {
+                //             method: 'POST',
+                //             headers: { 'Content-Type': 'application/json' },
+                //             body: JSON.stringify({
+                //                 jsonrpc: '2.0',
+                //                 method: 'sui_getReferenceGasPrice',
+                //                 id: 1,
+                //             }),
+                //         });
 
-                        const gasJson = await gasResponse.json();
-                        const gasPrice = gasJson.result;
-                        const suiNeeded =
-                            (tx.data.data.gasBudget || 0) * gasPrice +
-                            DEFAULT_GAS_BUDGET_FOR_PAY * gasPrice;
+                //         const gasJson = await gasResponse.json();
+                //         const gasPrice = gasJson.result;
+                //         const suiNeeded =
+                //             (tx.data.data.gasBudget || 0) * gasPrice +
+                //             DEFAULT_GAS_BUDGET_FOR_PAY * gasPrice;
 
-                        const callData = {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                jsonrpc: '2.0',
-                                method: 'sui_getAllCoins',
-                                params: [activeAccount.address],
-                                id: 1,
-                            }),
-                        };
+                //         const callData = {
+                //             method: 'POST',
+                //             headers: { 'Content-Type': 'application/json' },
+                //             body: JSON.stringify({
+                //                 jsonrpc: '2.0',
+                //                 method: 'sui_getAllCoins',
+                //                 params: [activeAccount.address],
+                //                 id: 1,
+                //             }),
+                //         };
 
-                        const response = await fetch(endpoint, callData);
-                        const {
-                            result: { data: coins },
-                        } = await response.json();
+                //         const response = await fetch(endpoint, callData);
+                //         const {
+                //             result: { data: coins },
+                //         } = await response.json();
 
-                        const sortedCoins = (coins as SimpleCoin[])
-                            .filter((coin) => coin.coinType === GAS_TYPE_ARG)
-                            .sort((a, b) => b.balance - a.balance);
+                //         const sortedCoins = (coins as SimpleCoin[])
+                //             .filter((coin) => coin.coinType === GAS_TYPE_ARG)
+                //             .sort((a, b) => b.balance - a.balance);
 
-                        let totalSui = 0;
-                        const coinIds: string[] = [];
-                        const serializedArgs =
-                            'arguments' in tx.data.data
-                                ? JSON.stringify(tx.data.data.arguments)
-                                : '';
-                        for (const coin of sortedCoins) {
-                            if (coin.coinType !== GAS_TYPE_ARG) continue;
-                            if (serializedArgs.indexOf(coin.coinObjectId) > -1)
-                                continue;
+                //         let totalSui = 0;
+                //         const coinIds: string[] = [];
+                //         const serializedArgs =
+                //             'arguments' in tx.data.data
+                //                 ? JSON.stringify(tx.data.data.arguments)
+                //                 : '';
+                //         for (const coin of sortedCoins) {
+                //             if (coin.coinType !== GAS_TYPE_ARG) continue;
+                //             if (serializedArgs.indexOf(coin.coinObjectId) > -1)
+                //                 continue;
 
-                            coinIds.push(coin.coinObjectId);
-                            totalSui += coin.balance;
-                            if (totalSui > suiNeeded) {
-                                break;
-                            }
-                        }
+                //             coinIds.push(coin.coinObjectId);
+                //             totalSui += coin.balance;
+                //             if (totalSui > suiNeeded) {
+                //                 break;
+                //             }
+                //         }
 
-                        let gasCoinId = coinIds[0];
-                        if (coinIds.length > 1) {
-                            const callData = {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    jsonrpc: '2.0',
-                                    method: 'sui_payAllSui',
-                                    params: [
-                                        activeAccount.address,
-                                        coinIds,
-                                        activeAccount.address,
-                                        DEFAULT_GAS_BUDGET_FOR_PAY,
-                                    ],
-                                    id: 1,
-                                }),
-                            };
+                //         let gasCoinId = coinIds[0];
+                //         if (coinIds.length > 1) {
+                //             const callData = {
+                //                 method: 'POST',
+                //                 headers: { 'Content-Type': 'application/json' },
+                //                 body: JSON.stringify({
+                //                     jsonrpc: '2.0',
+                //                     method: 'sui_payAllSui',
+                //                     params: [
+                //                         activeAccount.address,
+                //                         coinIds,
+                //                         activeAccount.address,
+                //                         DEFAULT_GAS_BUDGET_FOR_PAY,
+                //                     ],
+                //                     id: 1,
+                //                 }),
+                //             };
 
-                            const payResponse =
-                                await this.executeTransactionDirectly({
-                                    callData,
-                                });
+                //             const payResponse =
+                //                 await this.executeTransactionDirectly({
+                //                     callData,
+                //                 });
 
-                            if (
-                                payResponse.result &&
-                                'EffectsCert' in payResponse.result
-                            ) {
-                                const newCoin =
-                                    payResponse.EffectsCert.effects.effects
-                                        .mutated?.[0]?.reference?.objectId;
-                                if (newCoin) {
-                                    gasCoinId = newCoin;
-                                }
-                            }
-                        }
+                //             if (
+                //                 payResponse.result &&
+                //                 'EffectsCert' in payResponse.result
+                //             ) {
+                //                 const newCoin =
+                //                     payResponse.EffectsCert.effects.effects
+                //                         .mutated?.[0]?.reference?.objectId;
+                //                 if (newCoin) {
+                //                     gasCoinId = newCoin;
+                //                 }
+                //             }
+                //         }
 
-                        tx.data.data.gasPayment = gasCoinId;
-                    } catch (e) {
-                        // eslint-disable-next-line no-console
-                        console.log('Error getting gas objects', e);
-                    }
-                }
+                //         tx.data.data.gasPayment = gasCoinId;
+                //     } catch (e) {
+                //         // eslint-disable-next-line no-console
+                //         console.log('Error getting gas objects', e);
+                //     }
+                // }
 
                 if (tx.data.kind === 'moveCall') {
                     moveCall = tx.data.data;
@@ -391,15 +391,16 @@ class Transactions {
             result: { txBytes },
         } = json;
 
-        const txBytesBuffer = new Base64DataBuffer(txBytes);
+        const txBytesBuffer = toB64(txBytes);
+
         const INTENT_BYTES = [0, 0, 0];
         const intentMessage = new Uint8Array(
-            INTENT_BYTES.length + txBytesBuffer.getLength()
+            INTENT_BYTES.length + txBytesBuffer.length
         );
         intentMessage.set(INTENT_BYTES);
-        intentMessage.set(txBytesBuffer.getData(), INTENT_BYTES.length);
+        intentMessage.set(txBytes, INTENT_BYTES.length);
 
-        const dataToSign = new Base64DataBuffer(intentMessage);
+        // const dataToSign = fromB64(intentMessage);
 
         let signature;
         let publicKey;
@@ -415,14 +416,14 @@ class Transactions {
             const provider = new JsonRpcProvider(endpoint);
             const signer = new RawSigner(keypair, provider);
 
-            const signed = await signer.signData(dataToSign);
+            const signed = await signer.signData(intentMessage);
 
             signature = signed.signature;
             publicKey = signed.pubKey;
         } else {
             const signed = await Authentication.sign(
                 activeAccount.address,
-                dataToSign
+                intentMessage
             );
             publicKey = signed?.pubKey;
             signature = signed?.signature;
@@ -445,7 +446,7 @@ class Transactions {
                 method: 'sui_executeTransactionSerializedSig',
                 params: [
                     txBytesBuffer.toString(),
-                    new Base64DataBuffer(serializedSig).toString(),
+                    toB64(serializedSig),
                     options?.requestType || 'WaitForLocalExecution',
                 ],
                 id: 1,

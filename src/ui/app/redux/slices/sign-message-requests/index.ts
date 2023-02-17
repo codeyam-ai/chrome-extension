@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { Base64DataBuffer } from '@mysten/sui.js';
+import { fromB64 } from '@mysten/sui.js';
 import {
     createAsyncThunk,
     createEntityAdapter,
@@ -71,7 +71,7 @@ export const respondToSignMessageRequest = createAsyncThunk<
                 if (signMessageRequest.messageData) {
                     signMessageResult = serializeSignaturePubkeyPair(
                         await signer.signData(
-                            new Base64DataBuffer(signMessageRequest.messageData)
+                            fromB64(signMessageRequest.messageData)
                         )
                     );
                 } else {

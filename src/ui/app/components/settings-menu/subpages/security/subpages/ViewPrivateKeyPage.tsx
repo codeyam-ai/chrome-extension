@@ -1,5 +1,4 @@
-import { fromHEX, toHEX } from '@mysten/bcs';
-import { Base64DataBuffer } from '@mysten/sui.js';
+import { fromHEX, toB64, toHEX } from '@mysten/bcs';
 import { useCallback, useEffect, useState } from 'react';
 
 import { secureApiCall } from '../../../../../../../shared/utils/simpleApiCall';
@@ -104,10 +103,8 @@ export default function ViewPrivateKeyPage() {
                         rows={3}
                         value={
                             privateKey
-                                ? new Base64DataBuffer(privateKey).toString()
-                                : new Base64DataBuffer(
-                                      fromHEX(hostedPrivateKey)
-                                  ).toString()
+                                ? toB64(privateKey)
+                                : toB64(fromHEX(hostedPrivateKey))
                         }
                         id="hexPrivateKey"
                         className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
