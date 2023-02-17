@@ -20,26 +20,24 @@ import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
     const [initLoad, setInitLoad] = useState(true);
-    const [loading, setLoading] = useState(false);
     const dispatch = useAppDispatch();
-    const txPerPage = 5;
     const [nextPage, setNextPage] = useState(1);
     const [txEffs, setTxEffs] = useState<
         SuiTransactionResponse[] | undefined
     >();
-    const totalNumTxs = txEffs?.length;
     const [activeTransactions, setActiveTransactions] = useState<
         TxResultState[] | undefined
     >();
-
-    const [error, setError] = useState<string | undefined>();
-
     const txByAddress: TxResultState[] = useAppSelector(
         ({ txresults }) => txresults.latestTx
     );
 
+    const [error, setError] = useState<string | undefined>();
+
+    const txPerPage = 5;
+    const totalNumTxs = txEffs?.length;
+
     useEffect(() => {
-        setLoading(true);
         setActiveTransactions([]);
 
         const getTxs = async () => {
@@ -69,14 +67,11 @@ const TransactionsPage = () => {
     }, [address, initLoad]);
 
     const loadItems = useCallback(async () => {
-        if (!txEffs) return;
-        setLoading(true);
-
         setNextPage(nextPage + 1);
 
         const start = (nextPage - 1) * txPerPage;
         const end = start + txPerPage;
-        const filtEffs = txEffs.slice(start, end);
+        const filtEffs = txEffs?.slice(start, end);
 
         dispatch(getTransactionsByAddress(filtEffs));
     }, [setNextPage, dispatch, txEffs, nextPage]);
@@ -121,8 +116,6 @@ const TransactionsPage = () => {
                 ];
                 setActiveTransactions(allTxs);
             }
-
-            setLoading(false);
         };
 
         getFormattedTransactions();
@@ -135,6 +128,8 @@ const TransactionsPage = () => {
     useEffect(() => {
         if (initLoad && txEffs && txEffs.length > 0) {
             loadItems();
+            setInitLoad(false);
+        } else if (initLoad && txEffs && txEffs.length === 0) {
             setInitLoad(false);
         }
     }, [initLoad, loadItems, txEffs]);
@@ -153,12 +148,7 @@ const TransactionsPage = () => {
 
     return (
         <React.Fragment>
-            <Loading
-                loading={
-                    initLoad || loading || activeTransactions?.length === 0
-                }
-                big={true}
-            >
+            <Loading loading={initLoad} big={true}>
                 {activeTransactions && activeTransactions.length > 0 && (
                     <div className={'flex flex-col h-full'}>
                         <TextPageTitle title="Activity" />
@@ -181,7 +171,7 @@ const TransactionsPage = () => {
                     </div>
                 )}
 
-                {!loading &&
+                {!initLoad &&
                     activeTransactions &&
                     activeTransactions.length === 0 && (
                         <EmptyPageState
