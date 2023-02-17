@@ -10,6 +10,7 @@ import {
     SparklesIcon,
     XMarkIcon,
 } from '@heroicons/react/24/solid';
+import _ from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
@@ -148,7 +149,6 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     );
 
     const [searchParams] = useSearchParams();
-    const symbol = searchParams.get('symbol');
     const isFunc = searchParams.get('isFunc');
 
     const theme = getTheme();
@@ -175,7 +175,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
 
     const [total, totalSymbol, dollars, , icon] = useFormatCoin(
         txDigest.amount ? txDigest.amount : null,
-        txDigest.coinType
+        txDigest.objType
     );
 
     const imgUrl = txDigest?.url ? ipfs(txDigest.url) : false;
@@ -200,7 +200,11 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             ? 'Sent'
             : 'Received';
 
-    const header = isNft ? truncatedNftName : symbol;
+    const header =
+        _.startCase(txDigest?.name) ||
+        _.startCase(truncatedNftName) ||
+        _.startCase(txDigest.objSymbol) ||
+        _.startCase(txDigest.callModuleName);
     const isMinted = txDigest?.callFunctionName === 'mint';
 
     const transferMeta = {
@@ -260,9 +264,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     isNft={isNft}
                     isFunc={isFunc === 'yes'}
                     coinType={coinType}
-                    imgUrl={
-                        coinType === 'Coin' ? icon || '' : imgUrl ? imgUrl : ''
-                    }
+                    imgUrl={imgUrl || icon || ''}
                     name={txDigest?.name || 'NFT'}
                     icon={
                         txDigest.status === 'success' ? (
@@ -338,7 +340,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                             keyName:
                                 transferType === 'Sent'
                                     ? 'You Sent'
-                                    : header !== 'Coin'
+                                    : transferType === 'Received'
                                     ? 'You Received'
                                     : '',
                             value: `${total} ${

@@ -45,7 +45,7 @@ function ReceiptPage() {
 
     const linkTo = tranferType ? '/nfts' : '/transactions';
 
-    if (!loading && (!txDigest || (txResults && !txnItem))) {
+    if (!loading && (!txDigest || (txResults.length > 0 && !txnItem))) {
         navigate(linkTo);
     }
 

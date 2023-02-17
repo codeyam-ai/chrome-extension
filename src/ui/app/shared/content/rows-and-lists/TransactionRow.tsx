@@ -7,18 +7,17 @@ import {
     ArrowDownIcon,
     ArrowUpIcon,
     FireIcon,
+    PhotoIcon,
     SparklesIcon,
 } from '@heroicons/react/24/solid';
-import { useMemo, useState } from 'react';
+import _ from 'lodash';
 
 import { ActivityRow } from './ActivityRow';
-import { Coin } from '../../../redux/slices/sui-objects/Coin';
 import SuiIcon from '../../svg/SuiIcon';
-import { formatDate } from '_helpers';
 import ipfs from '_src/ui/app/helpers/ipfs';
-import { useFormatCoin, useMiddleEllipsis } from '_src/ui/app/hooks';
+import { getHumanReadable } from '_src/ui/app/helpers/transactions';
+import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
-import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
@@ -26,11 +25,13 @@ interface TransactionRowProps {
     txn: TxResultState;
 }
 
-const TRUNCATE_MAX_LENGTH = 8;
-const TRUNCATE_PREFIX_LENGTH = 4;
+interface RowDataTypes extends SharedTypes {
+    header?: string;
+    typeIcon: JSX.Element;
+    icon: JSX.Element;
+}
 
 interface SharedTypes {
-    txFailed: boolean;
     hasAmount: boolean;
     amount?: number;
     coinType: string;
@@ -40,112 +41,27 @@ interface SharedTypes {
     date: string;
 }
 
-interface RowDataTypes extends SharedTypes {
-    header?: string;
-    typeIcon: JSX.Element;
-    icon: JSX.Element;
-}
-
 const TransactionRow = ({ txn }: TransactionRowProps) => {
-    const [header, setHeader] = useState('');
-    const [formattedAmount, symbol, dollars, name, icon] = useFormatCoin(
-        txn.amount,
-        txn.coinType
-    );
-
-    useMemo(async () => {
-        if (txn?.txId) {
-            const provider = api.instance.fullNode;
-
-            const txTest = await provider.getTransactionWithEffects(txn.txId);
-
-            const objId = txTest?.effects?.created?.[0]?.reference.objectId;
-            if (!objId) return;
-
-            const obj = await provider.getObject(objId);
-            if (
-                !obj ||
-                typeof obj.details === 'string' ||
-                !('data' in obj.details) ||
-                !('type' in obj.details.data)
-            )
-                return;
-
-            const SymbolObjName = await Coin.getCoinSymbol(
-                obj.details.data.type
-            ).replace(/[<>]/g, '');
-
-            if (SymbolObjName) {
-                setHeader(SymbolObjName);
-            }
-        }
-    }, [txn.txId]);
-
-    const getIsNft = () => {
-        return txn?.callFunctionName === 'transfer' || txn?.objectId?.length
-            ? true
-            : false;
-    };
-
-    const getIsSui = () => {
-        return !getIsNft() && txn?.kind === 'PaySui' ? true : false;
-    };
-
-    const getIsFunc = () => {
-        return txn?.callFunctionName && txn?.callFunctionName !== 'mint'
-            ? true
-            : false;
-    };
-
-    const getTransactionType = () => {
-        let type = undefined;
-
-        if (txn?.callFunctionName === 'mint' || txn?.type === 'Mint') {
-            type = 'Mint';
-        } else if (txn?.isSender && !txn?.callFunctionName) {
-            type = 'Send';
-        } else if (!txn?.isSender && !txn?.callFunctionName) {
-            type = 'Receive';
-        } else if (txn?.kind === 'TransferObject') {
-            type = 'Transfer';
-        } else if (txn?.callFunctionName) {
-            type = txn?.callFunctionName;
-        }
-
-        return type;
-    };
-
-    const type = getTransactionType();
+    const { txType, txAction, nftImageUri, timeDisplay } =
+        getHumanReadable(txn);
 
     const drilldownLink = `/transactions/receipt?${new URLSearchParams({
-        txdigest: txn?.txId,
-        symbol: header,
-        isFunc: getIsFunc() ? 'yes' : 'no',
+        txdigest: txn.txId,
+        symbol: txn?.formatted?.coinSymbol || '',
+        isFunc: txType === 'func' ? 'yes' : 'no',
     }).toString()}`;
 
-    const toAddrStr = useMiddleEllipsis(
-        txn?.to || '',
-        TRUNCATE_MAX_LENGTH,
-        TRUNCATE_PREFIX_LENGTH
-    );
-    const fromAddrStr = useMiddleEllipsis(
-        txn?.from || '',
-        TRUNCATE_MAX_LENGTH,
-        TRUNCATE_PREFIX_LENGTH
-    );
-
     const shared: SharedTypes = {
-        txFailed: txn?.status === 'failure',
         hasAmount: (txn.amount && txn.amount > 0) || false,
         amount: txn?.amount || undefined,
         coinType: txn?.coinType || '',
-        type: type || '',
+        type: txAction || txn?.callFunctionName || '',
         txDirText:
-            type === 'send' ? `To ${toAddrStr}` : `From ${fromAddrStr}` || '',
+            txAction === 'send' && txn.to
+                ? `To ${truncateMiddle(txn.to)}`
+                : `From ${truncateMiddle(txn.from)}` || '',
         link: drilldownLink,
-        date: txn?.timestampMs
-            ? formatDate(txn.timestampMs, ['weekday', 'month', 'day'])
-            : '',
+        date: timeDisplay,
     };
 
     const IconContainer = ({ children }: { children: JSX.Element }) => (
@@ -166,21 +82,34 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
 
     const CurrencyIcon = () => (
         <>
-            {getIsSui() ? (
+            {txType === 'sui' ? (
                 <IconContainer>
                     <SuiIcon width={14} height={20} color={'white'} />
                 </IconContainer>
-            ) : icon ? (
-                <img src={icon} alt={name} className="w-10 h-10" />
+            ) : txn?.formatted?.coinIcon ? (
+                <img
+                    src={txn?.formatted?.coinIcon}
+                    alt={`Icon for ${txn?.formatted?.coinSymbol}`}
+                    className="w-10 h-10"
+                />
             ) : (
                 <UnknownToken width={40} height={40} />
             )}
         </>
     );
 
-    const NftImg = ({ src, alt }: { src: string; alt: string }) => (
-        <img className={'w-[40px] h-[40px] rounded-lg'} src={src} alt={alt} />
-    );
+    const NftImg = ({ src, alt }: { src: string; alt: string }) =>
+        src ? (
+            <img
+                className={'w-[40px] h-[40px] rounded-lg'}
+                src={src}
+                alt={alt}
+            />
+        ) : (
+            <IconContainer>
+                <PhotoIcon width={20} height={20} color={'white'} />
+            </IconContainer>
+        );
 
     const iconProps = { color: '#74777C', width: 18, height: 18 };
 
@@ -194,133 +123,197 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         coin: {
             [key: string]: RowDataTypes;
         };
-        function: {
+        func: {
             [key: string]: RowDataTypes;
         };
     } = {
         nft: {
-            Send: {
+            send: {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: (
-                    <NftImg src={txn.url || ''} alt={txn.description || ''} />
+                    <NftImg
+                        src={nftImageUri || ''}
+                        alt={txn.description || ''}
+                    />
                 ),
-                header: txn?.name,
+                header: _.startCase(txn?.name),
             },
-            Receive: {
+            receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: (
-                    <NftImg src={txn.url || ''} alt={txn.description || ''} />
+                    <NftImg
+                        src={nftImageUri || ''}
+                        alt={txn.description || ''}
+                    />
                 ),
-                header: txn?.name,
+                header: _.startCase(txn?.name),
             },
-            Mint: {
+            mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: (
-                    <NftImg src={txn.url || ''} alt={txn.description || ''} />
+                    <NftImg
+                        src={nftImageUri || ''}
+                        alt={txn.description || ''}
+                    />
                 ),
-                header: txn?.name,
+                header: _.startCase(txn?.name),
+            },
+            clone: {
+                ...shared,
+                typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
+                icon: (
+                    <NftImg
+                        src={nftImageUri || ''}
+                        alt={txn.description || ''}
+                    />
+                ),
+                header: _.startCase(txn?.name),
             },
             register: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
-                icon: txn.url ? (
-                    <NftImg src={ipfs(txn.url)} alt={txn.description || ''} />
+                icon: nftImageUri ? (
+                    <NftImg
+                        src={ipfs(nftImageUri)}
+                        alt={txn.description || ''}
+                    />
                 ) : (
                     <></>
                 ),
-                header: header || 'Sui Action',
+                header: _.startCase(txn?.name) || 'Register NFT',
+            },
+            default: {
+                ...shared,
+                typeIcon: <SparklesIcon {...iconProps} />,
+                icon: nftImageUri ? (
+                    <NftImg
+                        src={ipfs(nftImageUri)}
+                        alt={txn.description || ''}
+                    />
+                ) : (
+                    <></>
+                ),
+                header: _.startCase(txType) || `NFT ${txAction}` || '',
             },
         },
         sui: {
-            Send: {
+            send: {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: header,
+                header:
+                    _.startCase(txn?.formatted?.coinSymbol) ||
+                    _.startCase(txn?.kind),
             },
-            Receive: {
+            receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: header,
+                header: _.startCase(txn?.formatted?.coinSymbol),
             },
-            Mint: {
+            mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: header,
+                header: _.startCase(txn?.formatted?.coinSymbol),
+            },
+            default: {
+                ...shared,
+                typeIcon: <CodeBracketSquareIcon {...iconProps} />,
+                icon: <CurrencyIcon />,
+                header: _.startCase(txAction) || 'SUI',
             },
         },
         coin: {
-            Send: {
+            send: {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: header,
+                header:
+                    _.startCase(txn?.formatted?.coinSymbol) ||
+                    _.startCase(txn.callModuleName),
             },
-            Receive: {
+            receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: header,
+                header:
+                    _.startCase(txn?.formatted?.coinSymbol) ||
+                    _.startCase(txn.callModuleName),
             },
-            Mint: {
+            mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: header,
+                header:
+                    _.startCase(txn?.formatted?.coinSymbol) ||
+                    _.startCase(txn.callModuleName),
+            },
+            default: {
+                ...shared,
+                typeIcon: <CodeBracketSquareIcon {...iconProps} />,
+                icon: <CurrencyIcon />,
+                header:
+                    _.startCase(txn?.formatted?.coinSymbol) ||
+                    _.startCase(txn.callModuleName),
             },
         },
-        function: {
+        func: {
             modify: {
                 ...shared,
                 typeIcon: <PencilSquareIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: header || 'Sui Action',
+                header: _.startCase(txn.callModuleName) || 'Sui Action',
             },
             burn: {
                 ...shared,
                 typeIcon: <FireIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: header || 'Sui Action',
+                header: _.startCase(txn.callModuleName) || 'Sui Action',
             },
             transfer: {
                 ...shared,
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: header || 'Sui Action',
+                header: _.startCase(txn.callModuleName) || 'Sui Action',
+            },
+            pool: {
+                ...shared,
+                typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
+                icon: <FunctionIcon />,
+                header: _.startCase(txn.callFunctionName) || 'Sui Action',
             },
             default: {
                 ...shared,
                 typeIcon: <SuiIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: header || 'Sui Action',
+                header: _.startCase(txn.callModuleName) || 'Sui Action',
             },
         },
     };
 
     let rowData;
 
-    if (!type) return <></>;
+    if (!txType) return <></>;
 
-    if (getIsNft()) {
-        rowData = dataMap.nft[type];
-    } else if (getIsSui()) {
-        rowData = dataMap.sui[type];
-    } else if (getIsFunc()) {
-        rowData = dataMap.function[type || 'default'];
+    if (txType === 'nft') {
+        rowData = dataMap.nft[txAction || 'default'];
+    } else if (txType === 'sui') {
+        rowData = dataMap.sui[txAction || 'default'];
+    } else if (txType === 'func') {
+        rowData = dataMap.func[txAction || 'default'];
     } else {
-        rowData = dataMap.coin[type];
+        rowData = dataMap.coin[txAction || 'default'];
     }
 
     if (!rowData) return <></>;
 
     return (
         <ActivityRow
-            failed={rowData.txFailed}
+            failed={txn.status === 'failure'}
             typeIcon={rowData.typeIcon}
             type={rowData.type}
             date={rowData.date}
@@ -328,9 +321,9 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
             link={rowData.link}
             header={rowData.header}
             subheader={rowData.txDirText}
-            formattedAmount={formattedAmount}
-            symbol={symbol}
-            dollars={dollars}
+            formattedAmount={txn?.formatted?.formattedBalance}
+            symbol={txn?.formatted?.coinSymbol}
+            dollars={txn?.formatted?.dollars}
         />
     );
 };

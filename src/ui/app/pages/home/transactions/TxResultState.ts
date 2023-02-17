@@ -16,6 +16,7 @@ export interface TxResultState {
     name?: string;
     isSender?: boolean;
     error?: string;
+    callModuleName?: string;
     callFunctionName?: string;
     objSymbol?: string;
     objType?: string;
