@@ -17,6 +17,7 @@ import ipfs from '_src/ui/app/helpers/ipfs';
 import { getHumanReadable } from '_src/ui/app/helpers/transactions';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
+import _ from 'lodash';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
@@ -136,7 +137,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                         alt={txn.description || ''}
                     />
                 ),
-                header: txn?.name,
+                header: _.startCase(txn?.name),
             },
             receive: {
                 ...shared,
@@ -147,7 +148,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                         alt={txn.description || ''}
                     />
                 ),
-                header: txn?.name,
+                header: _.startCase(txn?.name),
             },
             mint: {
                 ...shared,
@@ -158,7 +159,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                         alt={txn.description || ''}
                     />
                 ),
-                header: txn?.name,
+                header: _.startCase(txn?.name),
             },
             clone: {
                 ...shared,
@@ -169,7 +170,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                         alt={txn.description || ''}
                     />
                 ),
-                header: txn?.name,
+                header: _.startCase(txn?.name),
             },
             register: {
                 ...shared,
@@ -182,7 +183,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ) : (
                     <></>
                 ),
-                header: txn?.name || 'Register NFT',
+                header: _.startCase(txn?.name) || 'Register NFT',
             },
             default: {
                 ...shared,
@@ -195,7 +196,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ) : (
                     <></>
                 ),
-                header: txType || `NFT ${txAction}` || '',
+                header: _.startCase(txType) || `NFT ${txAction}` || '',
             },
         },
         sui: {
@@ -203,25 +204,27 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn?.formatted?.coinSymbol || txn?.kind,
+                header:
+                    _.startCase(txn?.formatted?.coinSymbol) ||
+                    _.startCase(txn?.kind),
             },
             receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn?.formatted?.coinSymbol,
+                header: _.startCase(txn?.formatted?.coinSymbol),
             },
             mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn?.formatted?.coinSymbol,
+                header: _.startCase(txn?.formatted?.coinSymbol),
             },
             default: {
                 ...shared,
                 typeIcon: <CodeBracketSquareIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txAction || 'SUI',
+                header: _.startCase(txAction) || 'SUI',
             },
         },
         coin: {
@@ -229,25 +232,33 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn?.formatted?.coinSymbol || txn.callModuleName,
+                header:
+                    _.startCase(txn?.formatted?.coinSymbol) ||
+                    _.startCase(txn.callModuleName),
             },
             receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn?.formatted?.coinSymbol || txn.callModuleName,
+                header:
+                    _.startCase(txn?.formatted?.coinSymbol) ||
+                    _.startCase(txn.callModuleName),
             },
             mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn?.formatted?.coinSymbol || txn.callModuleName,
+                header:
+                    _.startCase(txn?.formatted?.coinSymbol) ||
+                    _.startCase(txn.callModuleName),
             },
             default: {
                 ...shared,
                 typeIcon: <CodeBracketSquareIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txn?.formatted?.coinSymbol || txn.callModuleName,
+                header:
+                    _.startCase(txn?.formatted?.coinSymbol) ||
+                    _.startCase(txn.callModuleName),
             },
         },
         func: {
@@ -255,31 +266,31 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 ...shared,
                 typeIcon: <PencilSquareIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: txn.callModuleName || 'Sui Action',
+                header: _.startCase(txn.callModuleName) || 'Sui Action',
             },
             burn: {
                 ...shared,
                 typeIcon: <FireIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: txn.callModuleName || 'Sui Action',
+                header: _.startCase(txn.callModuleName) || 'Sui Action',
             },
             transfer: {
                 ...shared,
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: txn.callModuleName || 'Sui Action',
+                header: _.startCase(txn.callModuleName) || 'Sui Action',
             },
             pool: {
                 ...shared,
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: txn.callFunctionName || 'Sui Action',
+                header: _.startCase(txn.callFunctionName) || 'Sui Action',
             },
             default: {
                 ...shared,
                 typeIcon: <SuiIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: txn.callModuleName || 'Sui Action',
+                header: _.startCase(txn.callModuleName) || 'Sui Action',
             },
         },
     };
