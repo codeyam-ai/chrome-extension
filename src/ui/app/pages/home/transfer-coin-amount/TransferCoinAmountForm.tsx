@@ -19,6 +19,7 @@ import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import CopyBody from '_src/ui/app/shared/typography/CopyBody';
 
 import type { FormValues } from '.';
+import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
 
 export type TransferCoinFormProps = {
     submitError: string | null;
@@ -102,6 +103,9 @@ function TransferCoinForm({
     onClearSubmitError,
 }: TransferCoinFormProps) {
     const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
+    const walletTo = useAppSelector(({ account: { accountInfos } }) =>
+        accountInfos.find((accountInfo) => accountInfo.address === formState.to)
+    );
     const balances = useAppSelector(accountAggregateBalancesSelector);
 
     const [searchParams] = useSearchParams();
@@ -120,6 +124,26 @@ function TransferCoinForm({
         onClearRef.current();
     }, [amount]);
 
+    const WalletTo = () => {
+        if (!walletTo) return <>To: {truncateMiddle(formState.to)}</>;
+
+        return (
+            <div className="flex gap-1 items-center">
+                <div className="mr-1">To:</div>
+                <WalletColorAndEmojiCircle
+                    color={walletTo.color}
+                    emoji={walletTo.emoji}
+                    circleSizeClasses="h-5 w-5"
+                    emojiSizeInPx={12}
+                />
+                <div>{walletTo.name || truncateMiddle(walletTo.address)}</div>
+                {!!walletTo.name && (
+                    <div>({truncateMiddle(walletTo.address)})</div>
+                )}
+            </div>
+        );
+    };
+
     const dollars = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
@@ -137,10 +161,9 @@ function TransferCoinForm({
                     <BodyLarge isTextColorMedium>Sending</BodyLarge>
                     <CoinSelect selectedCoinType={coinType} />
                 </div>
-                <CopyBody
-                    txt={formState.to}
-                    isTextColorMedium
-                >{`To: ${truncateMiddle(formState.to)}`}</CopyBody>
+                <CopyBody txt={formState.to} isTextColorMedium>
+                    <WalletTo />
+                </CopyBody>
             </div>
             <div className="flex flex-col mb-8 px-6 text-left">
                 <div className={'mb-3'}>
