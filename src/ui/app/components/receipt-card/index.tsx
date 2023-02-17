@@ -10,6 +10,7 @@ import {
     SparklesIcon,
     XMarkIcon,
 } from '@heroicons/react/24/solid';
+import _ from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
@@ -33,7 +34,6 @@ import CopyBody from '_src/ui/app/shared/typography/CopyBody';
 import type { TxResultState } from '_redux/slices/txresults';
 
 import st from './ReceiptCard.module.scss';
-import _ from 'lodash';
 
 type TxResponseProps = {
     txDigest: TxResultState;

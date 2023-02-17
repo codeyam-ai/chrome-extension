@@ -10,6 +10,7 @@ import {
     PhotoIcon,
     SparklesIcon,
 } from '@heroicons/react/24/solid';
+import _ from 'lodash';
 
 import { ActivityRow } from './ActivityRow';
 import SuiIcon from '../../svg/SuiIcon';
@@ -17,7 +18,6 @@ import ipfs from '_src/ui/app/helpers/ipfs';
 import { getHumanReadable } from '_src/ui/app/helpers/transactions';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
-import _ from 'lodash';
 
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
