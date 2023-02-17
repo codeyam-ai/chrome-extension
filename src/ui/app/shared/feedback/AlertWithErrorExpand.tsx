@@ -6,7 +6,7 @@ import {
     PaperAirplaneIcon,
 } from '@heroicons/react/24/solid';
 import { BCS, fromHEX, getSuiMoveConfig, toHEX } from '@mysten/bcs';
-import { Base64DataBuffer, Ed25519Keypair } from '@mysten/sui.js';
+import { Ed25519Keypair } from '@mysten/sui.js';
 import { useCallback, useState, type ReactElement } from 'react';
 import ReactDOM from 'react-dom';
 import Browser from 'webextension-polyfill';
@@ -114,8 +114,7 @@ const AlertWithErrorExpand = ({
             // console.log('public key', toHEX(keyPair.getPublicKey().toBytes()));
 
             const dataBytes = serializedData.toBytes();
-            const dataB64 = new Base64DataBuffer(dataBytes);
-            const signature = toHEX(keyPair.signData(dataB64).getData());
+            const signature = toHEX(keyPair.signData(dataBytes));
 
             const response = await simpleApiCall('error-report', 'POST', '', {
                 serializedData: serializedData.toString('hex'),

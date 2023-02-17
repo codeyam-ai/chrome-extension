@@ -48,7 +48,7 @@ export class NFT {
 
         if (!bagId) return obj;
 
-        const bagObjects = await provider.getObjectsOwnedByObject(bagId);
+        const { data: bagObjects } = await provider.getDynamicFields(bagId);
         const objectIds = bagObjects.map((bagObject) => bagObject.objectId);
         const objects = await provider.getObjectBatch(objectIds);
         return {

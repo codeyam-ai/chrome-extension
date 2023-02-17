@@ -1,8 +1,4 @@
-import {
-    Base64DataBuffer,
-    Ed25519PublicKey,
-    SignerWithProvider,
-} from '@mysten/sui.js';
+import { Ed25519PublicKey, SignerWithProvider } from '@mysten/sui.js';
 
 import { deleteEncrypted } from '../storagex/store';
 import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
@@ -33,7 +29,7 @@ export class EthosSigner extends SignerWithProvider {
         return this.address;
     }
 
-    async signData(data: Base64DataBuffer): Promise<SignaturePubkeyPair> {
+    async signData(data: Uint8Array): Promise<SignaturePubkeyPair> {
         const { json, status } = await simpleApiCall(
             'transaction/sign',
             'POST',
@@ -57,7 +53,7 @@ export class EthosSigner extends SignerWithProvider {
 
         return {
             signatureScheme: 'ED25519',
-            signature: new Base64DataBuffer(signedTransaction.signature),
+            signature: signedTransaction.signature,
             pubKey: new Ed25519PublicKey(signedTransaction.pubKey),
         };
     }

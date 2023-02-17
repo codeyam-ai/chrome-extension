@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-    Base64DataBuffer,
     Ed25519Keypair,
     JsonRpcProvider,
     RawSigner,
     SIGNATURE_SCHEME_TO_FLAG,
+    toB64,
+    fromB64,
 } from '@mysten/sui.js';
 import { filter, lastValueFrom, map, race, Subject, take } from 'rxjs';
 import nacl from 'tweetnacl';
@@ -391,15 +392,16 @@ class Transactions {
             result: { txBytes },
         } = json;
 
-        const txBytesBuffer = new Base64DataBuffer(txBytes);
+        const txBytesBuffer = toB64(txBytes);
+
         const INTENT_BYTES = [0, 0, 0];
         const intentMessage = new Uint8Array(
-            INTENT_BYTES.length + txBytesBuffer.getLength()
+            INTENT_BYTES.length + txBytesBuffer.length
         );
         intentMessage.set(INTENT_BYTES);
-        intentMessage.set(txBytesBuffer.getData(), INTENT_BYTES.length);
+        intentMessage.set(txBytes, INTENT_BYTES.length);
 
-        const dataToSign = new Base64DataBuffer(intentMessage);
+        const dataToSign = fromB64(intentMessage);
 
         let signature;
         let publicKey;
@@ -445,7 +447,7 @@ class Transactions {
                 method: 'sui_executeTransactionSerializedSig',
                 params: [
                     txBytesBuffer.toString(),
-                    new Base64DataBuffer(serializedSig).toString(),
+                    toB64(serializedSig),
                     options?.requestType || 'WaitForLocalExecution',
                 ],
                 id: 1,

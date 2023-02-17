@@ -35,6 +35,7 @@ const txKindToTxt: Record<TransactionKindName, string> = {
     PaySui: 'PaySui',
     PayAllSui: 'PayAllSui',
     Genesis: 'Genesis',
+    ConsensusCommitPrologue: 'ConsensusCommitPrologue',
 };
 
 function TransactionDetailsPage() {

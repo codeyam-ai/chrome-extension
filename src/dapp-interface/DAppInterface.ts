@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { Base64DataBuffer } from '@mysten/sui.js';
+import { toB64 } from '@mysten/sui.js';
 import { filter, map } from 'rxjs';
 
 import { mapToPromise } from './utils';
@@ -181,7 +181,7 @@ export class DAppInterface {
 
         // convert Uint8Array to base64 string
         if (message instanceof Uint8Array) {
-            messageData = new Base64DataBuffer(message).toString();
+            messageData = toB64(message);
         }
 
         return mapToPromise(

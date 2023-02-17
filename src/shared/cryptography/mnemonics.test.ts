@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { Base64DataBuffer, Ed25519Keypair } from '@mysten/sui.js';
+import { Ed25519Keypair, toB64 } from '@mysten/sui.js';
 
 import {
     generateMnemonicsAndKeypair,
@@ -31,7 +31,7 @@ describe('mnemonics', () => {
 
         const keypair = new Ed25519Keypair(keypairData);
 
-        expect(new Base64DataBuffer(keypairData.secretKey).toString()).toEqual(
+        expect(toB64(keypairData.secretKey)).toEqual(
             'uYSGvJ/dr9US/nRRyChSQ0tBsMemg+Az8WVypeS32lMzEeahmtwcBqUJ5b9GTp1OzHMDnzEayUC7EYlvgvtlMw=='
         );
         expect(keypair.getPublicKey().toBase64()).toEqual(

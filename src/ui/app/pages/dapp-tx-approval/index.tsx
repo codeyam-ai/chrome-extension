@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-    Base64DataBuffer,
+    fromB64,
     getCertifiedTransaction,
     getTransactionEffects,
 } from '@mysten/sui.js';
@@ -977,7 +977,7 @@ async function finishTransaction(
 
                 response = await signer.signAndExecuteTransaction(txn);
             } else if (txRequest.tx.type === 'serialized-move-call') {
-                const txBytes = new Base64DataBuffer(txRequest.tx.data);
+                const txBytes = fromB64(txRequest.tx.data);
                 response = await signer.signAndExecuteTransaction(txBytes);
             } else {
                 throw new Error(`Either tx or txBytes needs to be defined.`);
