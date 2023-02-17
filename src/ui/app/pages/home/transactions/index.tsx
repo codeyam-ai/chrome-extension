@@ -153,7 +153,12 @@ const TransactionsPage = () => {
 
     return (
         <React.Fragment>
-            <Loading loading={initLoad || !activeTransactions} big={true}>
+            <Loading
+                loading={
+                    initLoad || loading || activeTransactions?.length === 0
+                }
+                big={true}
+            >
                 {activeTransactions && activeTransactions.length > 0 && (
                     <div className={'flex flex-col h-full'}>
                         <TextPageTitle title="Activity" />
