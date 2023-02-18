@@ -1,4 +1,4 @@
-import { Ed25519PublicKey } from '@mysten/sui.js';
+import { Ed25519PublicKey, fromB64, toB64 } from '@mysten/sui.js';
 
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
@@ -92,7 +92,7 @@ class Authentication {
                 walletAddress: address,
                 txOrMessage: {
                     id: 0,
-                    transaction: dataToSign,
+                    transaction: toB64(dataToSign),
                 },
             }
         );
@@ -105,8 +105,8 @@ class Authentication {
 
         return {
             signatureScheme: 'ED25519',
-            signature: signedTransaction.signature,
-            pubKey: new Ed25519PublicKey(signedTransaction.pubKey),
+            signature: fromB64(signedTransaction.signature),
+            pubKey: new Ed25519PublicKey(fromB64(signedTransaction.pubKey)),
         };
     }
 }

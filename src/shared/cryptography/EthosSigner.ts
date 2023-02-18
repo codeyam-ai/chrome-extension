@@ -1,4 +1,9 @@
-import { Ed25519PublicKey, SignerWithProvider } from '@mysten/sui.js';
+import {
+    Ed25519PublicKey,
+    SignerWithProvider,
+    toB64,
+    fromB64,
+} from '@mysten/sui.js';
 
 import { deleteEncrypted } from '../storagex/store';
 import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
@@ -39,7 +44,7 @@ export class EthosSigner extends SignerWithProvider {
                 walletAddress: this.address,
                 txOrMessage: {
                     id: 0,
-                    transaction: data.toString(),
+                    transaction: toB64(data),
                 },
             }
         );
@@ -53,8 +58,8 @@ export class EthosSigner extends SignerWithProvider {
 
         return {
             signatureScheme: 'ED25519',
-            signature: signedTransaction.signature,
-            pubKey: new Ed25519PublicKey(signedTransaction.pubKey),
+            signature: fromB64(signedTransaction.signature),
+            pubKey: new Ed25519PublicKey(fromB64(signedTransaction.pubKey)),
         };
     }
 
