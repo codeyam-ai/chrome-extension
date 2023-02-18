@@ -6,6 +6,7 @@ import {
     JsonRpcProvider,
     RawSigner,
     SIGNATURE_SCHEME_TO_FLAG,
+    fromB64,
     toB64,
 } from '@mysten/sui.js';
 import { filter, lastValueFrom, map, race, Subject, take } from 'rxjs';
@@ -391,16 +392,12 @@ class Transactions {
             result: { txBytes },
         } = json;
 
-        const txBytesBuffer = toB64(txBytes);
+        const message = fromB64(txBytes);
 
-        const INTENT_BYTES = [0, 0, 0];
-        const intentMessage = new Uint8Array(
-            INTENT_BYTES.length + txBytesBuffer.length
-        );
-        intentMessage.set(INTENT_BYTES);
-        intentMessage.set(txBytes, INTENT_BYTES.length);
-
-        // const dataToSign = fromB64(intentMessage);
+        const intent = [0, 0, 0];
+        const intentMessage = new Uint8Array(intent.length + message.length);
+        intentMessage.set(intent);
+        intentMessage.set(message, intent.length);
 
         let signature;
         let publicKey;
@@ -432,11 +429,11 @@ class Transactions {
         if (!signature || !publicKey) return;
 
         const serializedSig = new Uint8Array(
-            1 + signature.getLength() + publicKey.toBytes().length
+            1 + signature.length + publicKey.toBytes().length
         );
         serializedSig.set([SIGNATURE_SCHEME_TO_FLAG['ED25519']]);
-        serializedSig.set(signature.getData(), 1);
-        serializedSig.set(publicKey.toBytes(), 1 + signature.getLength());
+        serializedSig.set(signature, 1);
+        serializedSig.set(publicKey.toBytes(), 1 + signature.length);
 
         const data = {
             method: 'POST',
@@ -445,7 +442,7 @@ class Transactions {
                 jsonrpc: '2.0',
                 method: 'sui_executeTransactionSerializedSig',
                 params: [
-                    txBytesBuffer.toString(),
+                    toB64(message),
                     toB64(serializedSig),
                     options?.requestType || 'WaitForLocalExecution',
                 ],
@@ -454,6 +451,7 @@ class Transactions {
         };
 
         const executeResponse = await fetch(endpoint, data);
+
         const txResponse = await executeResponse.json();
 
         return txResponse;
