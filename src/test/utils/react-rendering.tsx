@@ -4,6 +4,7 @@ import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 
+import { API_ENV } from '../../ui/app/ApiProvider';
 import { queryClient } from '_app/helpers/queryClient';
 import App from '_app/index';
 import { AppType } from '_redux/slices/app/AppType';
@@ -15,7 +16,6 @@ import type { RenderOptions } from '@testing-library/react';
 import type { RootState } from '_redux/RootReducer';
 import type { Dependencies } from '_shared/utils/dependenciesContext';
 import type { AppStore } from '_store';
-import type React from 'react';
 import type { PropsWithChildren } from 'react';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
@@ -28,7 +28,12 @@ interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
 export function renderApp({
     preloadedState = {},
     // Automatically create a store instance if no store was passed in
-    store = createStore({ app: { appType: AppType.fullscreen } }),
+    store = createStore({ 
+        app: { 
+            appType: AppType.fullscreen,
+            apiEnv: API_ENV.devNet
+        } 
+    }),
     initialRoute,
     dependencies = {
         closeWindow: jest.fn(),

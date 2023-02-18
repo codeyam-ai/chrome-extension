@@ -151,6 +151,7 @@ export default function ViewSeedPage() {
                     )}
                     <input
                         id="view-phrase-password"
+                        data-testid="view-phrase-password"
                         aria-describedby="view-phrase-password-description"
                         name="view-phrase-password"
                         type="password"

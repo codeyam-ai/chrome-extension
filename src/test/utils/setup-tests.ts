@@ -1,8 +1,8 @@
+import nock from 'nock';
 import * as util from 'util';
 
 import { fakeBrowser, clearLocalStorage } from './fake-browser';
 
-import nock from 'nock';
 
 jest.mock('webextension-polyfill', () => {
     return fakeBrowser;
