@@ -194,9 +194,10 @@ export default function ViewPrivateKeyPage() {
                         </div>
                     )}
                     <input
-                        id="view-phrase-password"
-                        aria-describedby="view-phrase-password-description"
-                        name="view-phrase-password"
+                        id="view-private-key-password"
+                        data-testid="view-private-key-password"
+                        aria-describedby="view-private-key-password-description"
+                        name="view-private-key-password"
                         type="password"
                         onChange={onChangeProvidedPassword}
                         className="rounded border-gray-300 focus:ring-purple-500 dark:focus:ring-violet-700 dark:border-gray-400 dark:bg-gray-700"
