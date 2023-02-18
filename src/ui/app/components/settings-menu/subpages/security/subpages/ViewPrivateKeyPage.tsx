@@ -1,4 +1,5 @@
-import { fromHEX, toB64, toHEX } from '@mysten/bcs';
+import { toB64, toHEX } from '@mysten/bcs';
+import { fromB64 } from '@mysten/sui.js';
 import { useCallback, useEffect, useState } from 'react';
 
 import { secureApiCall } from '../../../../../../../shared/utils/simpleApiCall';
@@ -38,7 +39,7 @@ export default function ViewPrivateKeyPage() {
             if (!authentication) return;
 
             const { json, status } = await secureApiCall(
-                'users/recovery_phrase',
+                'users/private_key',
                 'POST',
                 authentication,
                 { chain: 'sui' }
@@ -48,10 +49,10 @@ export default function ViewPrivateKeyPage() {
                 throw new Error(`Error retrieving private key: ${status}`);
             }
 
-            const { phrase } = json;
+            const { privateKey } = json;
 
-            const keypair = getKeypairFromMnemonics(phrase, activeAccountIndex);
-            setHostedPrivateKey(toHEX(keypair.secretKey));
+            // const keypair = getKeypairFromMnemonics(phrase, activeAccountIndex);
+            setHostedPrivateKey(privateKey);
         };
 
         getHostedPrivateKey();
@@ -88,9 +89,7 @@ export default function ViewPrivateKeyPage() {
                     <div className="text-lg">Hex</div>
                     <textarea
                         rows={3}
-                        value={
-                            privateKey ? toHEX(privateKey) : hostedPrivateKey
-                        }
+                        value={toHEX(privateKey || fromB64(hostedPrivateKey))}
                         id="hexPrivateKey"
                         className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
                         name="hexPrivateKey"
@@ -102,9 +101,7 @@ export default function ViewPrivateKeyPage() {
                     <textarea
                         rows={3}
                         value={
-                            privateKey
-                                ? toB64(privateKey)
-                                : toB64(fromHEX(hostedPrivateKey))
+                            privateKey ? toB64(privateKey) : hostedPrivateKey
                         }
                         id="hexPrivateKey"
                         className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
@@ -119,7 +116,7 @@ export default function ViewPrivateKeyPage() {
                         value={
                             privateKey
                                 ? privateKey.toString()
-                                : fromHEX(hostedPrivateKey).toString()
+                                : fromB64(hostedPrivateKey).toString()
                         }
                         id="hexPrivateKey"
                         className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
