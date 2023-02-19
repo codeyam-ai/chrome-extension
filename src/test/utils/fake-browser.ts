@@ -47,7 +47,7 @@ export const fakeBrowser = {
     runtime: {
         id: 'chrome-runtime-id',
         connect: () => fakePort(),
-        getManifest: () => ({ version: "0.0.0.1" })
+        getManifest: () => ({ version: '0.0.0.1' }),
     },
     storage: {
         local: {

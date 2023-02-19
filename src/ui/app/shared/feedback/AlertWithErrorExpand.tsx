@@ -53,6 +53,7 @@ const AlertWithErrorExpand = ({
     const [comment, setComment] = useState('');
     const [reportId, setReportId] = useState('');
     const [isReportSent, setIsReportSent] = useState(false);
+    const [sendReportError, setSendReportError] = useState('');
 
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex, mnemonic } }) =>
@@ -72,7 +73,14 @@ const AlertWithErrorExpand = ({
 
     const handleErrorCommentChange = useCallback(
         (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-            setComment(event.target.value);
+            if (event.target.value.length > 1000) {
+                setSendReportError(
+                    'That comment is too long. Please use fewer words. Feel free to follow up in our discord with the unique ID given after your submission.'
+                );
+            } else {
+                setSendReportError('');
+                setComment(event.target.value);
+            }
         },
         []
     );
@@ -124,8 +132,11 @@ const AlertWithErrorExpand = ({
             if (response.json.id) {
                 setReportId(response.json.id);
                 setIsReportSent(true);
+            } else {
+                setSendReportError(
+                    'There was an issue sending your error report. Please try again later.'
+                );
             }
-            // set error!
         },
         [
             accountInfo?.address,
@@ -196,9 +207,18 @@ const AlertWithErrorExpand = ({
                             id="error"
                             onChange={handleErrorCommentChange}
                             placeholder="What were you trying to do when you got this error?"
-                            className="h-[150px]"
+                            errorText={sendReportError}
+                            className="min-h-[150px]"
                         />
-                        <Button type="submit" removeContainerPadding>
+                        <Body isTextColorMedium>
+                            No need to paste the error message, that will be
+                            sent along with your comment.
+                        </Body>
+                        <Button
+                            type="submit"
+                            removeContainerPadding
+                            disabled={!!sendReportError}
+                        >
                             Send
                         </Button>
                     </div>

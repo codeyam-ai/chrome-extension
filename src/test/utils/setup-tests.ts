@@ -3,7 +3,6 @@ import * as util from 'util';
 
 import { fakeBrowser, clearLocalStorage } from './fake-browser';
 
-
 jest.mock('webextension-polyfill', () => {
     return fakeBrowser;
 });

@@ -28,11 +28,11 @@ interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
 export function renderApp({
     preloadedState = {},
     // Automatically create a store instance if no store was passed in
-    store = createStore({ 
-        app: { 
+    store = createStore({
+        app: {
             appType: AppType.fullscreen,
-            apiEnv: API_ENV.devNet
-        } 
+            apiEnv: API_ENV.devNet,
+        },
     }),
     initialRoute,
     dependencies = {
