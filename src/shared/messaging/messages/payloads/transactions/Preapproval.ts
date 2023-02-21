@@ -11,7 +11,6 @@ export interface Preapproval {
     totalGasLimit: number;
     perTransactionGasLimit: number;
     maxTransactionCount: number;
-    transactions: TransactionSummary[];
     approved?: boolean;
     createdDate?: string;
 }
