@@ -14,13 +14,14 @@ import Body from '_src/ui/app/shared/typography/Body';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
+import { sumCoinBalances } from '_src/ui/app/helpers/sumCoinBalances';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 function TokensPage() {
     const setExplorerPermission = useExplorerPermission();
     const balances = useAppSelector(accountAggregateBalancesSelector);
-    const mistBalance = balances[GAS_TYPE_ARG] || 0;
+    const mistBalance = sumCoinBalances(balances) || 0;
     const [, , usdAmount] = useFormatCoin(mistBalance, GAS_TYPE_ARG);
 
     const accountInfo = useAppSelector(
