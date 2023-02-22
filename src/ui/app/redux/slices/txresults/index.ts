@@ -1,32 +1,33 @@
 import {
-    getTransactions,
-    getTransactionKindName,
-    getTransferObjectTransaction,
-    getExecutionStatusType,
-    getTotalGasUsed,
-    getTransferSuiTransaction,
-    getExecutionStatusError,
-    getMoveCallTransaction,
-    getTransactionSender,
-    getObjectId,
-    getObjectFields,
     Coin,
+    getExecutionStatusError,
+    getExecutionStatusType,
+    getMoveCallTransaction,
+    getObjectFields,
+    getObjectId,
     getPaySuiTransaction,
     getPayTransaction,
+    getTotalGasUsed,
+    getTransactionKindName,
+    getTransactions,
+    getTransactionSender,
+    getTransferObjectTransaction,
+    getTransferSuiTransaction,
 } from '@mysten/sui.js';
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
+import getObjTypeFromObjId from '_app/helpers/getObjTypeFromObjId';
 import { notEmpty } from '_helpers';
-import getObjTypeFromObjId from '_src/ui/app/helpers/getObjTypeFromObjId';
 
 import type {
-    SuiTransactionResponse,
-    TransactionKindName,
     ExecutionStatusType,
-    TransactionEffects,
     SuiEvent,
     SuiTransactionKind,
+    SuiTransactionResponse,
+    TransactionEffects,
+    TransactionKindName,
 } from '@mysten/sui.js';
+import type ApiProvider from '_app/ApiProvider';
 import type { FormattedCoin } from '_src/ui/app/helpers/formatCoin';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
@@ -136,6 +137,125 @@ const getTxnEffectsEventID = (
     return objectIDs;
 };
 
+export async function getFullTransactionDetails(
+    txs: SuiTransactionResponse[],
+    address: string,
+    api: ApiProvider
+): Promise<TxResultState[]> {
+    const txResults = txs.map((txEff) => {
+        const txns = getTransactions(txEff.certificate);
+
+        // TODO handle batch transactions
+        if (txns.length > 1) {
+            return null;
+        }
+
+        const txn = txns[0];
+        const txKind = getTransactionKindName(txn);
+        const payCoin = getPayTransaction(txn);
+        const transferSui = getTransferSuiTransaction(txn);
+        const paySui = getPaySuiTransaction(txn);
+        const txTransferObject = getTransferObjectTransaction(txn);
+        const recipient =
+            payCoin?.recipients[0] ||
+            transferSui?.recipient ||
+            txTransferObject?.recipient ||
+            paySui?.recipients[0];
+        const moveCallTxn = getMoveCallTransaction(txn);
+        const objId = txEff.effects?.created?.[0]?.reference.objectId;
+        const metaDataObjectId = getTxnEffectsEventID(txEff.effects, address);
+        const sender = getTransactionSender(txEff.certificate);
+        const amountByRecipient = getAmount(txn);
+
+        // todo: handle multiple recipients, for now just return first
+        const amount =
+            typeof amountByRecipient === 'number'
+                ? amountByRecipient
+                : Object.values(amountByRecipient || {})[0];
+
+        return {
+            txId: txEff.certificate.transactionDigest,
+            status: getExecutionStatusType(txEff),
+            txGas: getTotalGasUsed(txEff),
+            kind: txKind,
+            callModuleName: moveCallTxnName(moveCallTxn?.module),
+            callFunctionName: moveCallTxnName(moveCallTxn?.function),
+            from: sender,
+            isSender: sender === address,
+            error: getExecutionStatusError(txEff),
+            timestampMs: txEff.timestamp_ms,
+            ...(recipient && { to: recipient }),
+            ...(amount && {
+                amount,
+            }),
+            ...((txTransferObject?.objectRef?.objectId ||
+                metaDataObjectId.length > 0) && {
+                objectId: txTransferObject?.objectRef?.objectId
+                    ? [txTransferObject?.objectRef?.objectId]
+                    : [...metaDataObjectId],
+            }),
+            objId,
+        };
+    });
+
+    const objectIds = txResults.map((itm) => itm?.objectId).filter(notEmpty);
+    const objectIDs = Array.from(new Set(objectIds.flat()));
+    const getObjectBatch = await api.instance.fullNode.getObjectBatch(
+        objectIDs
+    );
+    const txObjects = getObjectBatch.filter(
+        ({ status }) => status === 'Exists'
+    );
+
+    const txnResp: TxResultState[] = await Promise.all(
+        txResults.map(async (itm) => {
+            const txnObjects =
+                txObjects && itm?.objectId && Array.isArray(txObjects)
+                    ? txObjects
+                          .filter(({ status }) => status === 'Exists')
+                          .find((obj) =>
+                              itm.objectId?.includes(getObjectId(obj))
+                          )
+                    : null;
+
+            const { details } = txnObjects || {};
+
+            let objType = undefined;
+            if (itm?.objId) {
+                objType = await getObjTypeFromObjId(itm.objId);
+            }
+
+            const fields =
+                txnObjects &&
+                details &&
+                typeof details !== 'string' &&
+                'data' in details &&
+                details.data.dataType === 'moveObject'
+                    ? getObjectFields(txnObjects)
+                    : null;
+
+            return {
+                ...itm,
+                objType,
+                objSymbol: objType && Coin.getCoinSymbol(objType),
+                ...(fields &&
+                    fields.url && {
+                        description:
+                            typeof fields.description === 'string' &&
+                            fields.description,
+                        name: typeof fields.name === 'string' && fields.name,
+                        url: fields.url,
+                    }),
+                ...(fields && {
+                    balance: fields.balance,
+                }),
+            };
+        })
+    );
+
+    return txnResp;
+}
+
 export const getTransactionsByAddress = createAsyncThunk<
     TxResultByAddress,
     SuiTransactionResponse[] | undefined,
@@ -169,125 +289,7 @@ export const getTransactionsByAddress = createAsyncThunk<
         } else {
             txs = txEffs;
         }
-
-        const txResults = txs.map((txEff) => {
-            const txns = getTransactions(txEff.certificate);
-
-            // TODO handle batch transactions
-            if (txns.length > 1) {
-                return null;
-            }
-
-            const txn = txns[0];
-            const txKind = getTransactionKindName(txn);
-            const payCoin = getPayTransaction(txn);
-            const transferSui = getTransferSuiTransaction(txn);
-            const paySui = getPaySuiTransaction(txn);
-            const txTransferObject = getTransferObjectTransaction(txn);
-            const recipient =
-                payCoin?.recipients[0] ||
-                transferSui?.recipient ||
-                txTransferObject?.recipient ||
-                paySui?.recipients[0];
-            const moveCallTxn = getMoveCallTransaction(txn);
-            const objId = txEff.effects?.created?.[0]?.reference.objectId;
-            const metaDataObjectId = getTxnEffectsEventID(
-                txEff.effects,
-                address
-            );
-            const sender = getTransactionSender(txEff.certificate);
-            const amountByRecipient = getAmount(txn);
-
-            // todo: handle multiple recipients, for now just return first
-            const amount =
-                typeof amountByRecipient === 'number'
-                    ? amountByRecipient
-                    : Object.values(amountByRecipient || {})[0];
-
-            return {
-                txId: txEff.certificate.transactionDigest,
-                status: getExecutionStatusType(txEff),
-                txGas: getTotalGasUsed(txEff),
-                kind: txKind,
-                callModuleName: moveCallTxnName(moveCallTxn?.module),
-                callFunctionName: moveCallTxnName(moveCallTxn?.function),
-                from: sender,
-                isSender: sender === address,
-                error: getExecutionStatusError(txEff),
-                timestampMs: txEff.timestamp_ms,
-                ...(recipient && { to: recipient }),
-                ...(amount && {
-                    amount,
-                }),
-                ...((txTransferObject?.objectRef?.objectId ||
-                    metaDataObjectId.length > 0) && {
-                    objectId: txTransferObject?.objectRef?.objectId
-                        ? [txTransferObject?.objectRef?.objectId]
-                        : [...metaDataObjectId],
-                }),
-                objId,
-            };
-        });
-
-        const objectIds = txResults
-            .map((itm) => itm?.objectId)
-            .filter(notEmpty);
-        const objectIDs = Array.from(new Set(objectIds.flat()));
-        const getObjectBatch = await api.instance.fullNode.getObjectBatch(
-            objectIDs
-        );
-        const txObjects = getObjectBatch.filter(
-            ({ status }) => status === 'Exists'
-        );
-
-        const txnResp: TxResultState[] = await Promise.all(
-            txResults.map(async (itm) => {
-                const txnObjects =
-                    txObjects && itm?.objectId && Array.isArray(txObjects)
-                        ? txObjects
-                              .filter(({ status }) => status === 'Exists')
-                              .find((obj) =>
-                                  itm.objectId?.includes(getObjectId(obj))
-                              )
-                        : null;
-
-                const { details } = txnObjects || {};
-
-                let objType = undefined;
-                if (itm?.objId) {
-                    objType = await getObjTypeFromObjId(itm.objId);
-                }
-
-                const fields =
-                    txnObjects &&
-                    details &&
-                    typeof details !== 'string' &&
-                    'data' in details &&
-                    details.data.dataType === 'moveObject'
-                        ? getObjectFields(txnObjects)
-                        : null;
-
-                return {
-                    ...itm,
-                    objType,
-                    objSymbol: objType && Coin.getCoinSymbol(objType),
-                    ...(fields &&
-                        fields.url && {
-                            description:
-                                typeof fields.description === 'string' &&
-                                fields.description,
-                            name:
-                                typeof fields.name === 'string' && fields.name,
-                            url: fields.url,
-                        }),
-                    ...(fields && {
-                        balance: fields.balance,
-                    }),
-                };
-            })
-        );
-
-        return txnResp;
+        return await getFullTransactionDetails(txs, address, api);
     }
 );
 

@@ -65,13 +65,22 @@ export const mockSuiObjects = function (
             `{"jsonrpc": "2.0", "id": "fbf9bf0c-a3c9-460a-a999-b7e87096dd1c", "result": ${value}}`
     );
     const finalRenderedTemplate = `[${renderedResponses.join(',')}]`;
+
+    // TODO: make this work for both wallets that are in play for the user (see fake-local-storage).
+
+    // TODO: clean this up.  in the case where renderedResponses is an empty array (i.e. fresh wallet with nothing in
+    //  it), it doesn't make sense for sui_getObject to return "[]". In that case we wouldn't expect sui_getObject to
+    // get called at all.
+
     nock('http://devNet-fullnode.example.com')
+        .persist()
         .post('/', /sui_getObjectsOwnedByAddress/)
         .reply(200, {
             jsonrpc: '2.0',
             result: [],
             id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
-        })
+        });
+    nock('http://devNet-fullnode.example.com')
         .post('/', /sui_getObject/)
         .reply(200, finalRenderedTemplate);
 };

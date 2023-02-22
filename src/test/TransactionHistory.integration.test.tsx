@@ -1,4 +1,5 @@
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import _ from 'lodash';
 import nock from 'nock';
 
@@ -47,6 +48,35 @@ describe('The Transaction History Page', () => {
         // https://discord.com/channels/723559267868737556/723565903228305549/1075109945541926913
         preventActWarning();
         await new Promise((r) => setTimeout(r, 10));
+    });
+
+    test('Shows correct transactions when switching wallet', async () => {
+        mockSuiObjects();
+        mockTransactionHistory();
+        renderApp({ initialRoute: '/transactions' });
+        await screen.findByText('$100.00', {}, { timeout: 2000 });
+
+        let currentWallet = await screen.findByTestId('current-wallet');
+        await within(currentWallet).findByText('Wallet 1');
+        await userEvent.click(currentWallet);
+
+        const wallet2Link = await screen.findByText('Wallet 2');
+        await userEvent.click(wallet2Link);
+
+        currentWallet = await screen.findByTestId('current-wallet');
+        await within(currentWallet).findByText('Wallet 2');
+
+        await await new Promise((r) => setTimeout(r, 500));
+
+        // Note: the page will be loading until the next time the sui objects are fetched on the timer. So that's why we
+        // wait 4 seconds. This is a bug, see
+        //linear.app/ethoswallet/issue/ETHOS-414/switching-wallets-should-not-cause-the-page-to-reload-for-as-much-as-4
+        https: await screen.findByText(
+            'No transactions yet',
+            {},
+            { timeout: 4000 }
+        );
+        expect(screen.queryByText('$100.00')).toBeFalsy();
     });
 
     function mockTransactionHistory() {
@@ -114,6 +144,11 @@ describe('The Transaction History Page', () => {
                     id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
                 },
             ]);
+
+        // TODO: sui_getObject is already mocked in mockchain...it's inconsistent to mock it a second time here. probably
+        // we should expand mockchain such that it will create objects and transactions together. after all,
+        // you can't have objects without transactions, so it makes sense that if you tell it you want an object,
+        // you'll also get a corresponding transaction
         nock('http://devNet-fullnode.example.com')
             .persist()
             .post(
@@ -144,5 +179,71 @@ describe('The Transaction History Page', () => {
                 result: view,
                 id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
             });
+
+        nock('http://devNet-fullnode.example.com')
+            .persist()
+            .post(
+                '/',
+                _.matches([
+                    {
+                        method: 'sui_getObject',
+                        params: ['0x0000000000000000000000000000000000000005'],
+                    },
+                ])
+            )
+            .reply(200, [
+                {
+                    jsonrpc: '2.0',
+                    result: {},
+                    id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
+                },
+            ]);
+
+        nock('http://devNet-fullnode.example.com')
+            .persist()
+            .post(
+                '/',
+                _.matches([
+                    {
+                        method: 'sui_getTransactions',
+                        params: [
+                            {
+                                ToAddress:
+                                    '0x434ffd2c55c39aa97f465eb4402ca949a263b868',
+                            },
+                            null,
+                            null,
+                            true,
+                        ],
+                    },
+                    {
+                        method: 'sui_getTransactions',
+                        params: [
+                            {
+                                FromAddress:
+                                    '0x434ffd2c55c39aa97f465eb4402ca949a263b868',
+                            },
+                            null,
+                            null,
+                            true,
+                        ],
+                    },
+                ])
+            )
+            .reply(200, [
+                {
+                    jsonrpc: '2.0',
+                    result: {
+                        data: [],
+                        nextCursor: null,
+                    },
+                    id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
+                },
+                {
+                    jsonrpc: '2.0',
+                    result: { data: [], nextCursor: null },
+                    id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
+                },
+            ]);
     }
 });
