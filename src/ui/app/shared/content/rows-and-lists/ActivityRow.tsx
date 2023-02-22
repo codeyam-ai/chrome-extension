@@ -1,6 +1,7 @@
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import { Link } from 'react-router-dom';
 import _ from 'lodash';
+import { Link } from 'react-router-dom';
+
 import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
 import truncateString from '_src/ui/app/helpers/truncate-string';
