@@ -6,24 +6,26 @@ import nock from 'nock';
 import { join } from 'path';
 import { renderTemplate } from './json-templates';
 
-export const mockBlockchainCall = function (
-    request: { method: string; params?: any },
-    result: any,
-    persist?: boolean
-) {
-    let theNock = nock('http://devNet-fullnode.example.com');
-    if (persist) {
-        theNock = theNock.persist();
+export class Mockchain {
+    mockBlockchainCall(
+        request: { method: string; params?: any },
+        result: any,
+        persist?: boolean
+    ) {
+        let theNock = nock('http://devNet-fullnode.example.com');
+        if (persist) {
+            theNock = theNock.persist();
+        }
+        theNock.post('/', _.matches(request)).reply(200, {
+            jsonrpc: '2.0',
+            result: result,
+            id: uuidV4.toString(),
+        });
     }
-    theNock.post('/', _.matches(request)).reply(200, {
-        jsonrpc: '2.0',
-        result: result,
-        id: uuidV4.toString(),
-    });
-};
+}
 
 export const mockCommonCalls = function () {
-    mockBlockchainCall(
+    new Mockchain().mockBlockchainCall(
         { method: 'rpc.discover' },
         { info: { version: '0.20.1' } },
         true
@@ -37,7 +39,7 @@ export const mockCommonCalls = function () {
         iconUrl: null,
         id: null,
     };
-    mockBlockchainCall(
+    new Mockchain().mockBlockchainCall(
         { method: 'sui_getCoinMetadata' },
         coinMetadataResponse,
         true
