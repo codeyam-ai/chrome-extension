@@ -2,13 +2,15 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 
-import { mockSuiObjects, mockCommonCalls } from './utils/mockchain';
+import { mockSuiObjects, Mockchain } from './utils/mockchain';
 import { BASE_URL } from '_src/shared/constants';
 import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('Email Authentication', () => {
+    let mockchain: Mockchain;
     beforeEach(() => {
-        mockCommonCalls();
+        mockchain = new Mockchain();
+        mockchain.mockCommonCalls();
     });
 
     test('User can enter email and is prompted to wait for the magic login link', async () => {

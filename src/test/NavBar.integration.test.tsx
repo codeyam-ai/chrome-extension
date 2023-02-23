@@ -2,13 +2,15 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { Mockchain, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('Top Nav Wallet Management', () => {
+    let mockchain: Mockchain;
     beforeEach(async () => {
+        mockchain = new Mockchain();
         simulateAuthenticatedUser();
-        mockCommonCalls();
+        mockchain.mockCommonCalls();
         mockSuiObjects();
     });
 

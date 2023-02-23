@@ -22,30 +22,31 @@ export class Mockchain {
             id: uuidV4.toString(),
         });
     }
+
+    mockCommonCalls() {
+        this.mockBlockchainCall(
+            { method: 'rpc.discover' },
+            { info: { version: '0.20.1' } },
+            true
+        );
+
+        const coinMetadataResponse = {
+            decimals: 9,
+            name: 'Sui',
+            symbol: 'SUI',
+            description: '',
+            iconUrl: null,
+            id: null,
+        };
+        this.mockBlockchainCall(
+            { method: 'sui_getCoinMetadata' },
+            coinMetadataResponse,
+            true
+        );
+    }
 }
 
-export const mockCommonCalls = function () {
-    new Mockchain().mockBlockchainCall(
-        { method: 'rpc.discover' },
-        { info: { version: '0.20.1' } },
-        true
-    );
-
-    const coinMetadataResponse = {
-        decimals: 9,
-        name: 'Sui',
-        symbol: 'SUI',
-        description: '',
-        iconUrl: null,
-        id: null,
-    };
-    new Mockchain().mockBlockchainCall(
-        { method: 'sui_getCoinMetadata' },
-        coinMetadataResponse,
-        true
-    );
-};
-
+// TODO: move this over to Mockchain class
 export const mockSuiObjects = function (
     options: {
         coinId?: string;
