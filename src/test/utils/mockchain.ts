@@ -1,18 +1,8 @@
 import { readFileSync } from 'fs';
-import Mustache from 'mustache';
 import nock from 'nock';
 import { join } from 'path';
+import { renderTemplate } from './json-templates';
 
-// TODO: this is duplicated from json-templates, DRY up
-const readTemplate = (templateName: string) => {
-    return readFileSync(
-        join(__dirname, `mockchain-templates/${templateName}.json.mustache`),
-        'utf-8'
-    );
-};
-
-const suiCoinTemplate = readTemplate('coinObject');
-const suiNftTemplate = readTemplate('nftObject');
 
 export const mockCommonCalls = function () {
     nock('http://devNet-fullnode.example.com')
@@ -47,24 +37,25 @@ export const mockSuiObjects = function (
 ) {
     const renderedObjects = [];
     if (options.suiBalance) {
-        const renderedCoinResult = Mustache.render(suiCoinTemplate, {
+        const renderedCoinResult = renderTemplate('coinObject', {
             balance: options.suiBalance,
             id: options.coinId,
         });
         renderedObjects.push(renderedCoinResult);
     }
     if (options.nftDetails) {
-        const renderedNftResult = Mustache.render(suiNftTemplate, {
+        const renderedNftResult = renderTemplate('nftObject', {
             name: options.nftDetails.name,
         });
         renderedObjects.push(renderedNftResult);
     }
 
     const renderedResponses = renderedObjects.map(
-        (value) =>
-            `{"jsonrpc": "2.0", "id": "fbf9bf0c-a3c9-460a-a999-b7e87096dd1c", "result": ${value}}`
+        (value) => {
+            return {jsonrpc: "2.0", id: "fbf9bf0c-a3c9-460a-a999-b7e87096dd1c", result: value}
+        }
     );
-    const finalRenderedTemplate = `[${renderedResponses.join(',')}]`;
+    // const finalRenderedTemplate = `[${renderedResponses.join(',')}]`;
 
     // TODO: make this work for both wallets that are in play for the user (see fake-local-storage).
 
@@ -82,5 +73,5 @@ export const mockSuiObjects = function (
         });
     nock('http://devNet-fullnode.example.com')
         .post('/', /sui_getObject/)
-        .reply(200, finalRenderedTemplate);
+        .reply(200, renderedResponses);
 };
