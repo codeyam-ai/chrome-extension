@@ -6,7 +6,7 @@ import {
     simulateAuthenticatedUser,
     simulateLogout,
 } from '_src/test/utils/fake-local-storage';
-import { Mockchain, mockSuiObjects } from '_src/test/utils/mockchain';
+import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('Unlocking the wallet', () => {
@@ -31,12 +31,13 @@ describe('Unlocking the wallet', () => {
         await userEvent.click(screen.getByTestId('submit'));
         await screen.findByText('Wallet Balance');
     });
+
+    const createLockedWallet = async () => {
+        await simulateAuthenticatedUser();
+        await simulateLogout();
+        mockchain.mockSuiObjects();
+        renderApp();
+        await screen.findAllByText('Unlock Wallet');
+    };    
 });
 
-const createLockedWallet = async () => {
-    await simulateAuthenticatedUser();
-    await simulateLogout();
-    mockSuiObjects();
-    renderApp();
-    await screen.findAllByText('Unlock Wallet');
-};

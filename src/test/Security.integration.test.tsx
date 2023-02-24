@@ -8,12 +8,14 @@ import {
     recoveryPhrase,
     simulateAuthenticatedUser,
 } from '_src/test/utils/fake-local-storage';
-import { Mockchain, mockSuiObjects } from '_src/test/utils/mockchain';
+import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('The Security Settings page', () => {
+    let mockchain: Mockchain;
+
     const init = async () => {
-        mockSuiObjects();
+        mockchain.mockSuiObjects();
         renderApp();
 
         await screen.findByText('Get started with Sui');
@@ -32,7 +34,6 @@ describe('The Security Settings page', () => {
         await navigateToSecurity();
     };
 
-    let mockchain: Mockchain;
     beforeEach(async () => {
         mockchain = new Mockchain();
         simulateAuthenticatedUser();

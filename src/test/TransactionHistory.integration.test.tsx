@@ -5,7 +5,7 @@ import nock from 'nock';
 
 import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
 import { renderTemplate } from '_src/test/utils/json-templates';
-import { Mockchain, mockSuiObjects } from '_src/test/utils/mockchain';
+import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { preventActWarning } from '_src/test/utils/test-helpers';
 
@@ -18,7 +18,7 @@ describe('The Transaction History Page', () => {
     });
 
     test('Handles a wallet that has no transactions', async () => {
-        mockSuiObjects();
+        mockchain.mockSuiObjects();
         nock('http://devNet-fullnode.example.com')
             .post('/', /sui_getTransactions/)
             .reply(200, [
@@ -40,7 +40,7 @@ describe('The Transaction History Page', () => {
     });
 
     test('Shows transactions TO the current wallet', async () => {
-        mockSuiObjects();
+        mockchain.mockSuiObjects();
         mockTransactionHistory();
         renderApp({ initialRoute: '/transactions' });
         await screen.findByText('$100.00', {}, { timeout: 2000 });
@@ -53,7 +53,7 @@ describe('The Transaction History Page', () => {
     });
 
     test('Shows correct transactions when switching wallet', async () => {
-        mockSuiObjects();
+        mockchain.mockSuiObjects();
         mockTransactionHistory();
         renderApp({ initialRoute: '/transactions' });
         await screen.findByText('$100.00', {}, { timeout: 2000 });
