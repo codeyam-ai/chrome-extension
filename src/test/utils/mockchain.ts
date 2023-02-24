@@ -22,6 +22,7 @@ export class Mockchain {
             result: result,
             id: uuidV4.toString(),
         });
+        return theNock;
     }
 
     mockBlockchainBatchCall(
@@ -43,6 +44,7 @@ export class Mockchain {
 
 
         theNock.post('/', _.matches(requests)).reply(200, responses);
+        return theNock;
     }
 
     mockCommonCalls() {
