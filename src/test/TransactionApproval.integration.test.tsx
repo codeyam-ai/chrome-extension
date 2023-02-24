@@ -8,7 +8,7 @@ import { BackgroundClient } from '_app/background-client';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
 import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
 import { renderTemplate } from '_src/test/utils/json-templates';
-import { mockCommonCalls } from '_src/test/utils/mockchain';
+import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { createStore } from '_store';
 import { thunkExtras } from '_store/thunk-extras';
@@ -18,8 +18,10 @@ import type { AppStore } from '_store';
 
 describe('The Transaction Approval popup', () => {
     let store: AppStore;
+    let mockchain: Mockchain;
     beforeEach(async () => {
-        mockCommonCalls();
+        mockchain = new Mockchain();
+        mockchain.mockCommonCalls();
         simulateAuthenticatedUser();
         store = createStore({});
 

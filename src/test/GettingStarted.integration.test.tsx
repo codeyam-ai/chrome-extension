@@ -1,12 +1,17 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { mockCommonCalls } from '_src/test/utils/mockchain';
+import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('Authenticating by importing an account with a seed phrase', () => {
+    let mockchain: Mockchain;
+    beforeEach(() => {
+        mockchain = new Mockchain();
+        mockchain.mockCommonCalls();
+    });
+
     test('Entire flow works', async () => {
-        mockCommonCalls();
         const validSeedPhrase =
             'girl empower human spring circle ceiling wild pact stumble model wheel chuckle';
         const seedPhraseList = validSeedPhrase.split(' ');

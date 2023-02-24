@@ -5,14 +5,16 @@ import nock from 'nock';
 
 import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
 import { renderTemplate } from '_src/test/utils/json-templates';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { Mockchain, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { preventActWarning } from '_src/test/utils/test-helpers';
 
 describe('The Transaction History Page', () => {
+    let mockchain: Mockchain;
     beforeEach(async () => {
+        mockchain = new Mockchain();
         simulateAuthenticatedUser();
-        mockCommonCalls();
+        mockchain.mockCommonCalls();
     });
 
     test('Handles a wallet that has no transactions', async () => {

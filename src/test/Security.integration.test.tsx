@@ -8,7 +8,7 @@ import {
     recoveryPhrase,
     simulateAuthenticatedUser,
 } from '_src/test/utils/fake-local-storage';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { Mockchain, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('The Security Settings page', () => {
@@ -32,9 +32,11 @@ describe('The Security Settings page', () => {
         await navigateToSecurity();
     };
 
+    let mockchain: Mockchain;
     beforeEach(async () => {
+        mockchain = new Mockchain();
         simulateAuthenticatedUser();
-        mockCommonCalls();
+        mockchain.mockCommonCalls();
     });
 
     test('requires a valid password to view the recovery phrase', async () => {
