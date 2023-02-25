@@ -19,20 +19,16 @@ describe('The Transaction History Page', () => {
 
     test('Handles a wallet that has no transactions', async () => {
         mockchain.mockSuiObjects();
-        nock('http://devNet-fullnode.example.com')
-            .post('/', /sui_getTransactions/)
-            .reply(200, [
-                {
-                    jsonrpc: '2.0',
-                    result: { data: [], nextCursor: null },
-                    id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
-                },
-                {
-                    jsonrpc: '2.0',
-                    result: { data: [], nextCursor: null },
-                    id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
-                },
-            ]);
+        mockchain.mockBlockchainBatchCall(
+            [
+                { method: 'sui_getTransactions' },
+                { method: 'sui_getTransactions' },
+            ],
+            [
+                { data: [], nextCursor: null },
+                { data: [], nextCursor: null },
+            ]
+        );
         renderApp({ initialRoute: '/transactions' });
 
         // this fails on CI occasionally. 1000ms (the default timeout) seems like it should be plenty, but alas.
@@ -83,169 +79,105 @@ describe('The Transaction History Page', () => {
 
     function mockTransactionHistory() {
         const view = renderTemplate('transaction', {});
-        nock('http://devNet-fullnode.example.com')
-            .post(
-                '/',
-                _.matches([
-                    {
-                        method: 'sui_getTransactions',
-                        params: [
-                            {
-                                ToAddress:
-                                    '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
-                            },
-                            null,
-                            null,
-                            true,
-                        ],
-                    },
-                    {
-                        method: 'sui_getTransactions',
-                        params: [
-                            {
-                                FromAddress:
-                                    '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
-                            },
-                            null,
-                            null,
-                            true,
-                        ],
-                    },
-                ])
-            )
-            .reply(200, [
+        mockchain.mockBlockchainBatchCall(
+            [
                 {
-                    jsonrpc: '2.0',
-                    result: {
-                        data: ['5VaudApwJSXRCcpzAeKuGsXatyYa1PBMAHhPEDJHEMNH'],
-                        nextCursor: null,
-                    },
-                    id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
+                    method: 'sui_getTransactions',
+                    params: [
+                        {
+                            ToAddress:
+                                '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+                        },
+                    ],
                 },
                 {
-                    jsonrpc: '2.0',
-                    result: { data: [], nextCursor: null },
-                    id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
+                    method: 'sui_getTransactions',
+                    params: [
+                        {
+                            FromAddress:
+                                '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+                        },
+                    ],
                 },
-            ])
-            .post(
-                '/',
-                _.matches([
-                    {
-                        method: 'sui_getTransaction',
-                        params: [
-                            '5VaudApwJSXRCcpzAeKuGsXatyYa1PBMAHhPEDJHEMNH',
-                        ],
-                    },
-                ])
-            )
-            .reply(200, [
+            ],
+            [
                 {
-                    jsonrpc: '2.0',
-                    result: view,
-                    id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
+                    data: ['5VaudApwJSXRCcpzAeKuGsXatyYa1PBMAHhPEDJHEMNH'],
+                    nextCursor: null,
                 },
-            ]);
+                { data: [], nextCursor: null },
+            ]
+        );
+        mockchain.mockBlockchainBatchCall(
+            [
+                {
+                    method: 'sui_getTransaction',
+                    params: ['5VaudApwJSXRCcpzAeKuGsXatyYa1PBMAHhPEDJHEMNH'],
+                },
+            ],
+            [view]
+        );
 
         // TODO: sui_getObject is already mocked in mockchain...it's inconsistent to mock it a second time here. probably
         // we should expand mockchain such that it will create objects and transactions together. after all,
         // you can't have objects without transactions, so it makes sense that if you tell it you want an object,
         // you'll also get a corresponding transaction
-        nock('http://devNet-fullnode.example.com')
-            .persist()
-            .post(
-                '/',
-                _.matches({
+        mockchain.mockBlockchainCall(
+            {
+                method: 'sui_getObject',
+                params: ['0x12e502e444d75209e744cd0b8e29b01e7c3ebf96'],
+            },
+            renderTemplate('coinObject', {
+                balance: 200000000,
+                id: '0x12e502e444d75209e744cd0b8e29b01e7c3ebf96',
+            }),
+            true
+        );
+        mockchain.mockBlockchainCall(
+            {
+                method: 'sui_getTransaction',
+                params: ['5VaudApwJSXRCcpzAeKuGsXatyYa1PBMAHhPEDJHEMNH'],
+            },
+            view
+        );
+
+        mockchain.mockBlockchainBatchCall(
+            [
+                {
                     method: 'sui_getObject',
-                    params: ['0x12e502e444d75209e744cd0b8e29b01e7c3ebf96'],
-                })
-            )
-            .reply(200, {
-                jsonrpc: '2.0',
-                result: renderTemplate('coinObject', {
-                    balance: 200000000,
-                    id: '0x12e502e444d75209e744cd0b8e29b01e7c3ebf96',
-                }),
-                id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
-            });
-        nock('http://devNet-fullnode.example.com')
-            .post(
-                '/',
-                _.matches({
-                    method: 'sui_getTransaction',
-                    params: ['5VaudApwJSXRCcpzAeKuGsXatyYa1PBMAHhPEDJHEMNH'],
-                })
-            )
-            .reply(200, {
-                jsonrpc: '2.0',
-                result: view,
-                id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
-            });
+                    params: ['0x0000000000000000000000000000000000000005'],
+                },
+            ],
+            [],
+            true
+        );
 
-        nock('http://devNet-fullnode.example.com')
-            .persist()
-            .post(
-                '/',
-                _.matches([
-                    {
-                        method: 'sui_getObject',
-                        params: ['0x0000000000000000000000000000000000000005'],
-                    },
-                ])
-            )
-            .reply(200, [
+        mockchain.mockBlockchainBatchCall(
+            [
                 {
-                    jsonrpc: '2.0',
-                    result: {},
-                    id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
-                },
-            ]);
-
-        nock('http://devNet-fullnode.example.com')
-            .persist()
-            .post(
-                '/',
-                _.matches([
-                    {
-                        method: 'sui_getTransactions',
-                        params: [
-                            {
-                                ToAddress:
-                                    '0x434ffd2c55c39aa97f465eb4402ca949a263b868',
-                            },
-                            null,
-                            null,
-                            true,
-                        ],
-                    },
-                    {
-                        method: 'sui_getTransactions',
-                        params: [
-                            {
-                                FromAddress:
-                                    '0x434ffd2c55c39aa97f465eb4402ca949a263b868',
-                            },
-                            null,
-                            null,
-                            true,
-                        ],
-                    },
-                ])
-            )
-            .reply(200, [
-                {
-                    jsonrpc: '2.0',
-                    result: {
-                        data: [],
-                        nextCursor: null,
-                    },
-                    id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
+                    method: 'sui_getTransactions',
+                    params: [
+                        {
+                            ToAddress:
+                                '0x434ffd2c55c39aa97f465eb4402ca949a263b868',
+                        },
+                    ],
                 },
                 {
-                    jsonrpc: '2.0',
-                    result: { data: [], nextCursor: null },
-                    id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
+                    method: 'sui_getTransactions',
+                    params: [
+                        {
+                            FromAddress:
+                                '0x434ffd2c55c39aa97f465eb4402ca949a263b868',
+                        },
+                    ],
                 },
-            ]);
+            ],
+            [
+                { data: [], nextCursor: null },
+                { data: [], nextCursor: null },
+            ],
+            true
+        );
     }
 });

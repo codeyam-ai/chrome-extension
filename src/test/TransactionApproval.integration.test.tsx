@@ -106,50 +106,69 @@ describe('The Transaction Approval popup', () => {
     }
 
     function mockBlockchainTransactionExecution() {
-        const payScope = mockchain.mockBlockchainCall({method: 'sui_pay'}, renderTemplate('pay', {
-            base64EncodedTxBytes: 'ZmFrZSBkYXRh',
-        }), true);
+        const payScope = mockchain.mockBlockchainCall(
+            { method: 'sui_pay' },
+            renderTemplate('pay', {
+                base64EncodedTxBytes: 'ZmFrZSBkYXRh',
+            }),
+            true
+        );
 
         // note: this is only expected to be called once
-        const dryRunTransactionScope = mockchain.mockBlockchainCall({
-            method: 'sui_dryRunTransaction',
-            params: ['ZmFrZSBkYXRh'],
-        }, renderTemplate('dryRunTransaction', {}))
+        const dryRunTransactionScope = mockchain.mockBlockchainCall(
+            {
+                method: 'sui_dryRunTransaction',
+                params: ['ZmFrZSBkYXRh'],
+            },
+            renderTemplate('dryRunTransaction', {})
+        );
 
-        const getObjectForDryRunScope = mockchain.mockBlockchainCall({
-            method: 'sui_getObject',
-            params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690']
-        }, renderTemplate('coinObject', {
-            balance: 40000000,
-            id: '0x395c50c614cc22156c9de8db24163f48e4ff66ae',
-        }))
-
-        const getCoinsForDryRunScope = mockchain.mockBlockchainCall({
-            method: 'sui_getCoins',
-            params: [
-                '1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
-                '0x2::sui::SUI',
-                null,
-                null,
-            ],
-        }, renderTemplate('getCoins', {}));
-
-        const getObjectForDryRunScope2 = mockchain.mockBlockchainBatchCall([
+        const getObjectForDryRunScope = mockchain.mockBlockchainCall(
             {
                 method: 'sui_getObject',
                 params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
             },
-        ], [
             renderTemplate('coinObject', {
-                balance: 50000000,
-                id: '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690',
-            }),
-        ])
+                balance: 40000000,
+                id: '0x395c50c614cc22156c9de8db24163f48e4ff66ae',
+            })
+        );
 
-        const executeScope = mockchain.mockBlockchainCall({
-            method: 'sui_executeTransactionSerializedSig',
-            params: ['ZmFrZSBkYXRh'],
-        }, renderTemplate('executeTransaction', {}));
+        const getCoinsForDryRunScope = mockchain.mockBlockchainCall(
+            {
+                method: 'sui_getCoins',
+                params: [
+                    '1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+                    '0x2::sui::SUI',
+                    null,
+                    null,
+                ],
+            },
+            renderTemplate('getCoins', {})
+        );
+
+        const getObjectForDryRunScope2 = mockchain.mockBlockchainBatchCall(
+            [
+                {
+                    method: 'sui_getObject',
+                    params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
+                },
+            ],
+            [
+                renderTemplate('coinObject', {
+                    balance: 50000000,
+                    id: '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690',
+                }),
+            ]
+        );
+
+        const executeScope = mockchain.mockBlockchainCall(
+            {
+                method: 'sui_executeTransactionSerializedSig',
+                params: ['ZmFrZSBkYXRh'],
+            },
+            renderTemplate('executeTransaction', {})
+        );
 
         return {
             executeScope,

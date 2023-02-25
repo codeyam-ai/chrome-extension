@@ -38,6 +38,5 @@ describe('Unlocking the wallet', () => {
         mockchain.mockSuiObjects();
         renderApp();
         await screen.findAllByText('Unlock Wallet');
-    };    
+    };
 });
-

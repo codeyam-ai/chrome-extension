@@ -42,7 +42,6 @@ export class Mockchain {
             };
         });
 
-
         theNock.post('/', _.matches(requests)).reply(200, responses);
         return theNock;
     }
@@ -99,8 +98,15 @@ export class Mockchain {
             };
         });
 
-        this.mockBlockchainCall({method: 'sui_getObjectsOwnedByAddress'}, [], true)
-        this.mockBlockchainBatchCall([{method: 'sui_getObject', params: [SUI_SYSTEM_STATE_OBJECT_ID]}], renderedObjects)
-    };
-}
+        this.mockBlockchainCall(
+            { method: 'sui_getObjectsOwnedByAddress' },
+            [],
+            true
+        );
 
+        this.mockBlockchainBatchCall(
+            [{ method: 'sui_getObject', params: [SUI_SYSTEM_STATE_OBJECT_ID] }],
+            renderedObjects
+        );
+    }
+}
