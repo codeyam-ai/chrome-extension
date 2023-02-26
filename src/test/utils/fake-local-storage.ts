@@ -1,5 +1,4 @@
 import { deleteEncrypted, setEncrypted } from '_shared/storagex/store';
-import { getEncrypted } from '_src/shared/storagex/store';
 
 export const password = 'Password';
 export const recoveryPhrase = 'girl empower human spring circle ceiling wild pact stumble model wheel chuckle';

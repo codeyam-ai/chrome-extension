@@ -70,13 +70,13 @@ describe('The Security Settings page', () => {
         test('requires a valid password to view the private key', async () => {
             await initAndNavigateToSecurity();
     
-            const recoveryPhraseButton = await screen.findByText('View Private Key');
-            await userEvent.click(recoveryPhraseButton)
+            const privateKeyButton = await screen.findByText('View Private Key');
+            await userEvent.click(privateKeyButton)
     
             const uint8Array = Uint8Array.from(accountInfos[0].privateKey.split(',').map(u => parseInt(u)))
             const privateKey = toB64(uint8Array)
-            let recoveryPhraseElements = screen.queryAllByText(privateKey)
-            expect(recoveryPhraseElements.length).toBe(0);
+            let privateKeyElements = screen.queryAllByText(privateKey)
+            expect(privateKeyElements.length).toBe(0);
     
             const passwordInput = await screen.findByTestId('view-private-key-password');
             await userEvent.type(passwordInput, 'bad-password');
@@ -86,8 +86,8 @@ describe('The Security Settings page', () => {
     
             await screen.findByText('Password is not correct.')
     
-            recoveryPhraseElements = screen.queryAllByText(privateKey)
-            expect(recoveryPhraseElements.length).toBe(0);
+            privateKeyElements = screen.queryAllByText(privateKey)
+            expect(privateKeyElements.length).toBe(0);
     
             await userEvent.clear(passwordInput)
             await userEvent.type(passwordInput, password);
@@ -151,7 +151,7 @@ describe('The Security Settings page', () => {
             let recoveryPhraseElements = screen.queryAllByText(recoveryPhrase)
             expect(recoveryPhraseElements.length).toBe(0);
 
-            const viewPhraseCheck = await screen.findByTestId('view-phrase-check');
+            const viewPhraseCheck = await screen.findByText("I understand");
             await userEvent.click(viewPhraseCheck);
 
             const viewPhraseButton = await screen.findByText('View recovery phrase');
@@ -160,6 +160,81 @@ describe('The Security Settings page', () => {
             recoveryPhraseElements = screen.queryAllByText(recoveryPhrase)
             
             expect(recoveryPhraseElements.length).toBe(1);
+        }); 
+
+        test('shows the private key for email accounts', async () => {
+            const uint8Array = Uint8Array.from(accountInfos[0].privateKey.split(',').map(u => parseInt(u)))
+            const privateKey = toB64(uint8Array)
+
+            nock(BASE_URL, {
+                reqheaders: { 'x-supabase-access-token': fakeAccessToken },
+            })
+                .persist()
+                .post('/api/users/private_key', {
+                    chain: 'sui',
+                    index: 0,
+                })                
+                .reply(200, { privateKey });
+
+            await initAndNavigateToSecurity();
+    
+            const recoveryPhraseButton = await screen.findByText('View Private Key');
+            await userEvent.click(recoveryPhraseButton)
+
+            let privateKeyElements = screen.queryAllByText(privateKey)
+            expect(privateKeyElements.length).toBe(0);
+
+            const viewPhraseCheck = await screen.findByText("I understand");
+            await userEvent.click(viewPhraseCheck);
+
+            const viewPhraseButton = await screen.findByText('View private key');
+            await userEvent.click(viewPhraseButton);
+
+            privateKeyElements = screen.queryAllByText(privateKey)
+            
+            expect(privateKeyElements.length).toBe(1);
+        }); 
+
+        test('shows the private key for the selected account', async () => {
+            const uint8Array = Uint8Array.from(accountInfos[1].privateKey.split(',').map(u => parseInt(u)))
+            const privateKey = toB64(uint8Array)
+
+            nock(BASE_URL, {
+                reqheaders: { 'x-supabase-access-token': fakeAccessToken },
+            })
+                .persist()
+                .post('/api/users/private_key', {
+                    chain: 'sui',
+                    index: 1,
+                })                
+                .reply(200, { privateKey });
+
+                await init();
+    
+            const currentWallet = await screen.findByTestId('current-wallet');
+            await within(currentWallet).findByText('Wallet 1');
+            await userEvent.click(currentWallet);
+    
+            const wallet2Link = await screen.findByText('Wallet 2');
+            await userEvent.click(wallet2Link);    
+    
+            await navigateToSecurity();
+
+            const recoveryPhraseButton = await screen.findByText('View Private Key');
+            await userEvent.click(recoveryPhraseButton)
+
+            let privateKeyElements = screen.queryAllByText(privateKey)
+            expect(privateKeyElements.length).toBe(0);
+
+            const viewPhraseCheck = await screen.findByText("I understand");
+            await userEvent.click(viewPhraseCheck);
+
+            const viewPhraseButton = await screen.findByText('View private key');
+            await userEvent.click(viewPhraseButton);
+
+            privateKeyElements = screen.queryAllByText(privateKey)
+            
+            expect(privateKeyElements.length).toBe(1);
         }); 
     })
 

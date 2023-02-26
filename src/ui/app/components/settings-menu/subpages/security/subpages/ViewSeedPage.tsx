@@ -101,7 +101,6 @@ export default function ViewSeedPage() {
                         <div className="flex items-center h-5">
                             <input
                                 id="view-phrase-check"
-                                data-testid="view-phrase-check"
                                 aria-describedby="view-phrase-check-description"
                                 name="view-phrase-check"
                                 type="checkbox"
