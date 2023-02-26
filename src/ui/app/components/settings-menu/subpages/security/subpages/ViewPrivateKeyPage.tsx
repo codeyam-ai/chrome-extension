@@ -44,7 +44,7 @@ export default function ViewPrivateKeyPage() {
                 authentication,
                 { chain: 'sui', index: activeAccountIndex }
             );
-            
+
             if (status !== 200) {
                 throw new Error(`Error retrieving private key: ${status}`);
             }

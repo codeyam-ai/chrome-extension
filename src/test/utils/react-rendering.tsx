@@ -36,13 +36,13 @@ export function renderApp({
 }: ExtendedRenderOptions = {}) {
     function Wrapper({ children }: PropsWithChildren<unknown>): JSX.Element {
         if (!store) {
-            store = createStore({ 
-                app: { 
+            store = createStore({
+                app: {
                     appType: AppType.fullscreen,
-                    apiEnv: API_ENV.devNet
+                    apiEnv: API_ENV.devNet,
                 },
-                ...preloadedState 
-            })
+                ...preloadedState,
+            });
         }
 
         return (
