@@ -8,8 +8,8 @@ import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('The Security Settings page', () => {
     const init = async () => {
-        mockSuiObjects();
-        renderApp();
+        await mockSuiObjects();
+        await renderApp();
 
         await screen.findByText('Get started with Sui');
     }
@@ -94,31 +94,30 @@ describe('The Security Settings page', () => {
         await screen.findByText(privateKey)
     });
 
-    // test('shows the proper private key for the selected account', async () => {
-    //     init();
+    test('shows the proper private key for the selected account', async () => {
+        await init();
 
-    //     const currentWallet = await screen.findByTestId('current-wallet');
-    //     await within(currentWallet).findByText('Wallet 1');
-    //     await userEvent.click(currentWallet);
+        const currentWallet = await screen.findByTestId('current-wallet');
+        await within(currentWallet).findByText('Wallet 1');
+        await userEvent.click(currentWallet);
 
-    //     const wallet2Link = await screen.findByText('Wallet 2');
-    //     await userEvent.click(wallet2Link);    
+        const wallet2Link = await screen.findByText('Wallet 2');
+        await userEvent.click(wallet2Link);    
 
-    //     // await navigateToSecurity();
+        await navigateToSecurity();
 
-    //     // const recoveryPhraseButton = await screen.findByText('View Private Key');
-    //     // await userEvent.click(recoveryPhraseButton)
+        const recoveryPhraseButton = await screen.findByText('View Private Key');
+        await userEvent.click(recoveryPhraseButton)
 
-    //     // const uint8Array = Uint8Array.from(accountInfos[1].privateKey.split(',').map(u => parseInt(u)))
-    //     // const privateKey = toB64(uint8Array)
-    //     // console.log("privateKey", privateKey)
+        const uint8Array = Uint8Array.from(accountInfos[1].privateKey.split(',').map(u => parseInt(u)))
+        const privateKey = toB64(uint8Array)
 
-    //     // const passwordInput = await screen.findByTestId('view-private-key-password');
-    //     // const submitPasswordButton = await screen.findByText('View private key')
+        const passwordInput = await screen.findByTestId('view-private-key-password');
+        const submitPasswordButton = await screen.findByText('View private key')
 
-    //     // await userEvent.type(passwordInput, password);
-    //     // await userEvent.click(submitPasswordButton)
+        await userEvent.type(passwordInput, password);
+        await userEvent.click(submitPasswordButton)
 
-    //     // await screen.findByText(privateKey)
-    // });
+        await screen.findByText(privateKey)
+    });
 });
