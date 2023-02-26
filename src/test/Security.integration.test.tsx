@@ -11,8 +11,11 @@ import { renderApp } from '_src/test/utils/react-rendering';
 describe('The Security Settings page', () => {
     let mockchain: Mockchain;
 
-    const init = async () => {
+    beforeEach(() => {
         mockchain = new Mockchain
+    })
+    
+    const init = async () => {
         await mockchain.mockSuiObjects();
         await renderApp();
 

@@ -33,7 +33,7 @@ describe('Unlocking the wallet', () => {
     });
 
     const createLockedWallet = async () => {
-        await simulateAuthenticatedUser();
+        await simulateMnemonicUser();
         await simulateLogout();
         mockchain.mockSuiObjects();
         renderApp();
