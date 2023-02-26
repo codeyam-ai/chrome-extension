@@ -225,8 +225,6 @@ export function DappTxApprovalPage() {
                     'AddressOwner' in transactionEffects.gasObject.owner &&
                     transactionEffects.gasObject.owner.AddressOwner !== address
                 ) {
-                    console.log("ERROR!!!!!!! 2", transactionEffects.gasObject.owner.AddressOwner, address)
-
                     const gasAddress =
                         transactionEffects.gasObject.owner.AddressOwner;
 
@@ -266,7 +264,6 @@ export function DappTxApprovalPage() {
                     }
 
                     if (isErrorCausedByIncorrectSigner(errorMessage)) {
-                        console.log("ERROR!!!!!!! 1", errorMessage)
                         const errorAddress = errorMessage
                             .match(
                                 /is owned by account address (.*), but signer address is/
