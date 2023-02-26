@@ -1,4 +1,5 @@
 import { deleteEncrypted, setEncrypted } from '_shared/storagex/store';
+import { getEncrypted } from '_src/shared/storagex/store';
 
 export const password = 'Password';
 export const recoveryPhrase = 'girl empower human spring circle ceiling wild pact stumble model wheel chuckle';
@@ -20,12 +21,20 @@ export const accountInfos = [
     },
 ];
 
-export const simulateAuthenticatedUser = async function () {
+export const fakeAccessToken = "ewhfbiuh3rh23d"
+
+export const simulateMnemonicUser = async function () {
     const accountInfosJson = JSON.stringify(accountInfos);
     await setEncrypted('passphrase', password);
     await setEncrypted('accountInfos', accountInfosJson, password);
     await setEncrypted('mnemonic', recoveryPhrase, password);
     await setEncrypted('locked', `locked${password}`, password);
+};
+
+export const simulateEmailUser = async function () {
+    const accountInfosJson = JSON.stringify(accountInfos);
+    await setEncrypted('authentication', fakeAccessToken);
+    await setEncrypted('accountInfos', accountInfosJson, fakeAccessToken);
 };
 
 export const simulateLogout = async function () {

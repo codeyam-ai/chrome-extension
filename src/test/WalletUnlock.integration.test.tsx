@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import {
     password as correctPassword,
-    simulateAuthenticatedUser,
+    simulateMnemonicUser,
     simulateLogout,
 } from '_src/test/utils/fake-local-storage';
 import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
@@ -31,7 +31,7 @@ describe('Unlocking the wallet', () => {
 });
 
 const createLockedWallet = async () => {
-    await simulateAuthenticatedUser();
+    await simulateMnemonicUser();
     await simulateLogout();
     mockCommonCalls();
     mockSuiObjects();

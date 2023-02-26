@@ -1,12 +1,12 @@
 import { screen } from '@testing-library/react';
 
-import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
+import { simulateMnemonicUser } from '_src/test/utils/fake-local-storage';
 import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('Rendering the Tokens page', () => {
     beforeEach(async () => {
-        simulateAuthenticatedUser();
+        simulateMnemonicUser();
         mockCommonCalls();
     });
 

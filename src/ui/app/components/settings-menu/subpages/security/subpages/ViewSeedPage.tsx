@@ -100,9 +100,10 @@ export default function ViewSeedPage() {
                     <div className="flex px-3">
                         <div className="flex items-center h-5">
                             <input
-                                id="save-phrase-check"
-                                aria-describedby="save-phrase-check-description"
-                                name="save-phrase-check"
+                                id="view-phrase-check"
+                                data-testid="view-phrase-check"
+                                aria-describedby="view-phrase-check-description"
+                                name="view-phrase-check"
                                 type="checkbox"
                                 onChange={onHandleConfirmed}
                                 checked={hasConfirmed}
@@ -111,9 +112,9 @@ export default function ViewSeedPage() {
                         </div>
                         <div className="ml-3 text-sm">
                             <label
-                                htmlFor="save-phrase-check"
+                                htmlFor="view-phrase-check"
                                 className="font-medium text-gray-700 dark:text-gray-400"
-                                id="save-phrase-check-description"
+                                id="view-phrase-check-description"
                             >
                                 I understand
                             </label>

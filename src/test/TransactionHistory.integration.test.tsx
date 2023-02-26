@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import _ from 'lodash';
 import nock from 'nock';
 
-import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
+import { simulateMnemonicUser } from '_src/test/utils/fake-local-storage';
 import { renderTemplate } from '_src/test/utils/json-templates';
 import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
@@ -10,7 +10,7 @@ import { preventActWarning } from '_src/test/utils/test-helpers';
 
 describe('The Transaction History Page', () => {
     beforeEach(async () => {
-        simulateAuthenticatedUser();
+        simulateMnemonicUser();
         mockCommonCalls();
     });
 
