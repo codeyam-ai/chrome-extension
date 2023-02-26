@@ -2,6 +2,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 
+import { fakeAccessToken } from './utils/fake-local-storage';
 import { Mockchain } from './utils/mockchain';
 import { BASE_URL } from '_src/shared/constants';
 import { renderApp } from '_src/test/utils/react-rendering';
@@ -14,7 +15,6 @@ describe('Email Authentication', () => {
     });
 
     test('User can enter email and is prompted to wait for the magic login link', async () => {
-        const fakeAccessToken = '12345';
         nock(BASE_URL, {
             reqheaders: { 'x-supabase-access-token': fakeAccessToken },
         })

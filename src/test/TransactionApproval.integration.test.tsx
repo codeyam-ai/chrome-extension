@@ -1,12 +1,10 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import _ from 'lodash';
-import nock from 'nock';
 
 import KeypairVault from '_app/KeypairVault';
 import { BackgroundClient } from '_app/background-client';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
-import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
+import { simulateMnemonicUser } from '_src/test/utils/fake-local-storage';
 import { renderTemplate } from '_src/test/utils/json-templates';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
@@ -22,7 +20,7 @@ describe('The Transaction Approval popup', () => {
     beforeEach(async () => {
         mockchain = new Mockchain();
         mockchain.mockCommonCalls();
-        simulateAuthenticatedUser();
+        simulateMnemonicUser();
         store = createStore({});
 
         // TODO: consider moving this code to a common place. these objects hold state and every test should start

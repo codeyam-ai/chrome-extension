@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import _ from 'lodash';
 import nock from 'nock';
 
-import { simulateAuthenticatedUser } from '_src/test/utils/fake-local-storage';
+import { simulateMnemonicUser } from '_src/test/utils/fake-local-storage';
 import { renderTemplate } from '_src/test/utils/json-templates';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
@@ -13,7 +13,7 @@ describe('The Transaction History Page', () => {
     let mockchain: Mockchain;
     beforeEach(async () => {
         mockchain = new Mockchain();
-        simulateAuthenticatedUser();
+        simulateMnemonicUser();
         mockchain.mockCommonCalls();
     });
 

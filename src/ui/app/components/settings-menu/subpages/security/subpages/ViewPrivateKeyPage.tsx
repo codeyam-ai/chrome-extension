@@ -42,7 +42,7 @@ export default function ViewPrivateKeyPage() {
                 'users/private_key',
                 'POST',
                 authentication,
-                { chain: 'sui' }
+                { chain: 'sui', index: activeAccountIndex }
             );
 
             if (status !== 200) {
@@ -51,7 +51,6 @@ export default function ViewPrivateKeyPage() {
 
             const { privateKey } = json;
 
-            // const keypair = getKeypairFromMnemonics(phrase, activeAccountIndex);
             setHostedPrivateKey(privateKey);
         };
 
@@ -144,9 +143,9 @@ export default function ViewPrivateKeyPage() {
                     <div className="flex px-3">
                         <div className="flex items-center h-5">
                             <input
-                                id="save-private-key-check"
-                                aria-describedby="save-private-key-check-description"
-                                name="save-private-key-check"
+                                id="view-private-key-check"
+                                aria-describedby="view-private-key-check-description"
+                                name="view-private-key-check"
                                 type="checkbox"
                                 onChange={onHandleConfirmed}
                                 checked={hasConfirmed}
@@ -155,9 +154,9 @@ export default function ViewPrivateKeyPage() {
                         </div>
                         <div className="ml-3 text-sm">
                             <label
-                                htmlFor="save-private-key-check"
+                                htmlFor="view-private-key-check"
                                 className="font-medium text-gray-700 dark:text-gray-400"
-                                id="save-private-key-check-description"
+                                id="view-private-key-check-description"
                             >
                                 I understand
                             </label>
