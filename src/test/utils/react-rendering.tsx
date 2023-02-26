@@ -27,13 +27,7 @@ interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
 
 export function renderApp({
     preloadedState = {},
-    // Automatically create a store instance if no store was passed in
-    store = createStore({ 
-        app: { 
-            appType: AppType.fullscreen,
-            apiEnv: API_ENV.devNet
-        } 
-    }),
+    store,
     initialRoute,
     dependencies = {
         closeWindow: jest.fn(),
@@ -41,6 +35,16 @@ export function renderApp({
     ...renderOptions
 }: ExtendedRenderOptions = {}) {
     function Wrapper({ children }: PropsWithChildren<unknown>): JSX.Element {
+        if (!store) {
+            store = createStore({ 
+                app: { 
+                    appType: AppType.fullscreen,
+                    apiEnv: API_ENV.devNet
+                },
+                ...preloadedState 
+            })
+        }
+
         return (
             <MemoryRouter
                 // we start at '/tokens' because if we use the index route of '/' it will navigate to '/tokens'
