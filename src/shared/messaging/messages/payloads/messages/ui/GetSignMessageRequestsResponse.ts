@@ -7,7 +7,7 @@ import type { SignMessageRequest } from '../SignMessageRequest';
 import type { BasePayload, Payload } from '_payloads';
 
 export interface GetSignMessageRequestsResponse extends BasePayload {
-    type: 'get-sign-message-requests-response';
+    type: 'get-sign-message-request-response';
     signMessageRequests: SignMessageRequest[];
 }
 
@@ -16,6 +16,6 @@ export function isGetSignMessageRequestsResponse(
 ): payload is GetSignMessageRequestsResponse {
     return (
         isBasePayload(payload) &&
-        payload.type === 'get-sign-message-requests-response'
+        payload.type === 'get-sign-message-request-response'
     );
 }

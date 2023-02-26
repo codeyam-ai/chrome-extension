@@ -99,7 +99,7 @@ export class UiConnection extends Connection {
         this.send(
             createMessage<GetSignMessageRequestsResponse>(
                 {
-                    type: 'get-sign-message-requests-response',
+                    type: 'get-sign-message-request-response',
                     signMessageRequests,
                 },
                 requestID

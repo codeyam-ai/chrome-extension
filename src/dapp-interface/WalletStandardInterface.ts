@@ -1,11 +1,13 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-// import { Base64DataBuffer } from '@mysten/sui.js';
 import {
     SUI_CHAINS,
     ReadonlyWalletAccount,
-    type SuiSignAndExecuteTransactionFeature,
+    SUI_DEVNET_CHAIN,
+    SUI_TESTNET_CHAIN,
+    SUI_LOCALNET_CHAIN,
+    type SuiFeatures,
     type SuiSignAndExecuteTransactionMethod,
     type ConnectFeature,
     type ConnectMethod,
@@ -13,11 +15,7 @@ import {
     type EventsFeature,
     type EventsOnMethod,
     type EventsListeners,
-    type DisconnectFeature,
-    type DisconnectMethod,
-    type WalletIcon,
-    // type SignMessageFeature,
-    // type SignMessageMethod,
+    type SuiSignTransactionMethod,
 } from '@mysten/wallet-standard';
 import mitt, { type Emitter } from 'mitt';
 import { filter, map, type Observable } from 'rxjs';
@@ -25,38 +23,61 @@ import { filter, map, type Observable } from 'rxjs';
 import { mapToPromise } from './utils';
 import { createMessage } from '_messages';
 import { WindowMessageStream } from '_messaging/WindowMessageStream';
-import { type Payload } from '_payloads';
 import {
     type AcquirePermissionsRequest,
     type AcquirePermissionsResponse,
-    ALL_PERMISSION_TYPES,
     type HasPermissionsRequest,
     type HasPermissionsResponse,
+    ALL_PERMISSION_TYPES,
 } from '_payloads/permissions';
-// import { deserializeSignaturePubkeyPair } from '_src/shared/signature-serialization';
+import { API_ENV } from '_src/shared/api-env';
+import { isWalletStatusChangePayload } from '_src/shared/messaging/messages/payloads/wallet-status-change';
 
+import type { SuiAddress } from '@mysten/sui.js';
+import type { BasePayload, Payload } from '_payloads';
 import type { GetAccount } from '_payloads/account/GetAccount';
 import type { GetAccountResponse } from '_payloads/account/GetAccountResponse';
-// import type { ExecuteSignMessageRequest } from '_payloads/messages/ExecuteSignMessageRequest';
-// import type { ExecuteSignMessageResponse } from '_payloads/messages/ExecuteSignMessageResponse';
+import type { SetNetworkPayload } from '_payloads/network';
 import type {
+    StakeRequest,
     ExecuteTransactionRequest,
     ExecuteTransactionResponse,
+    SignTransactionRequest,
+    SignTransactionResponse,
 } from '_payloads/transactions';
-import type { DisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
-import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
+import type { NetworkEnvType } from '_src/background/NetworkEnv';
 
 type WalletEventsMap = {
     [E in keyof EventsListeners]: Parameters<EventsListeners[E]>[0];
 };
 
-// TODO: rebuild event interface with Mitt.
-export class EthosWallet implements Wallet {
+// NOTE: Because this runs in a content script, we can't fetch the manifest.
+const name = process.env.APP_NAME || 'Sui Wallet';
+
+type StakeInput = { validatorAddress: string };
+type SuiWalletStakeFeature = {
+    'suiWallet:stake': {
+        version: '0.0.1';
+        stake: (input: StakeInput) => Promise<void>;
+    };
+};
+type ChainType = Wallet['chains'][number];
+const API_ENV_TO_CHAIN: Record<
+    Exclude<API_ENV, API_ENV.customRPC>,
+    ChainType
+> = {
+    [API_ENV.local]: SUI_LOCALNET_CHAIN,
+    [API_ENV.devNet]: SUI_DEVNET_CHAIN,
+    [API_ENV.testNet]: SUI_TESTNET_CHAIN,
+};
+
+export class SuiWallet implements Wallet {
     readonly #events: Emitter<WalletEventsMap>;
     readonly #version = '1.0.0' as const;
-    readonly #name = 'Ethos Wallet' as const;
-    #account: ReadonlyWalletAccount | null;
+    readonly #name = name;
+    #accounts: ReadonlyWalletAccount[];
     #messagesStream: WindowMessageStream;
+    #activeChain: ChainType | null = null;
 
     get version() {
         return this.#version;
@@ -76,46 +97,86 @@ export class EthosWallet implements Wallet {
     }
 
     get features(): ConnectFeature &
-        DisconnectFeature &
         EventsFeature &
-        // SignMessageFeature &
-        SuiSignAndExecuteTransactionFeature {
+        SuiFeatures &
+        SuiWalletStakeFeature {
         return {
             'standard:connect': {
                 version: '1.0.0',
                 connect: this.#connect,
             },
-            'standard:disconnect': {
-                version: '1.0.0',
-                disconnect: this.#disconnect,
-            },
             'standard:events': {
                 version: '1.0.0',
                 on: this.#on,
             },
-            // 'standard:signMessage': {
-            //     version: '1.0.0',
-            //     signMessage: this.#signMessage,
-            // },
+            'sui:signTransaction': {
+                version: '2.0.0',
+                signTransaction: this.#signTransaction,
+            },
             'sui:signAndExecuteTransaction': {
-                version: '1.1.0',
+                version: '2.0.0',
                 signAndExecuteTransaction: this.#signAndExecuteTransaction,
+            },
+            'suiWallet:stake': {
+                version: '0.0.1',
+                stake: this.#stake,
             },
         };
     }
 
     get accounts() {
-        return this.#account ? [this.#account] : [];
+        return this.#accounts;
+    }
+
+    #setAccounts(addresses: SuiAddress[]) {
+        this.#accounts = addresses.map(
+            (address) =>
+                new ReadonlyWalletAccount({
+                    address,
+                    // TODO: Expose public key instead of address:
+                    publicKey: new Uint8Array(),
+                    chains: this.#activeChain ? [this.#activeChain] : [],
+                    features: ['sui:signAndExecuteTransaction'],
+                })
+        );
     }
 
     constructor() {
         this.#events = mitt();
-        this.#account = null;
+        this.#accounts = [];
         this.#messagesStream = new WindowMessageStream(
             'ethos_in-page',
             'ethos_content-script'
         );
-
+        this.#messagesStream.messages.subscribe(({ payload }) => {
+            if (isWalletStatusChangePayload(payload)) {
+                const { network, accounts } = payload;
+                if (network) {
+                    this.#setActiveChain(network);
+                    if (!accounts) {
+                        // in case an accounts change exists skip updating chains of current accounts
+                        // accounts will be updated in the if block below
+                        this.#accounts = this.#accounts.map(
+                            ({ address, features, icon, label, publicKey }) =>
+                                new ReadonlyWalletAccount({
+                                    address,
+                                    publicKey,
+                                    chains: this.#activeChain
+                                        ? [this.#activeChain]
+                                        : [],
+                                    features,
+                                    label,
+                                    icon,
+                                })
+                        );
+                    }
+                }
+                if (accounts) {
+                    this.#setAccounts(accounts);
+                }
+                this.#events.emit('change', { accounts: this.accounts });
+            }
+        });
         this.#connected();
     }
 
@@ -125,30 +186,14 @@ export class EthosWallet implements Wallet {
     };
 
     #connected = async () => {
+        this.#setActiveChain(await this.#getActiveNetwork());
         if (!(await this.#hasPermissions(['viewAccount']))) {
             return;
         }
-        const accounts = await mapToPromise(
-            this.#send<GetAccount, GetAccountResponse>({
-                type: 'get-account',
-            }),
-            (response) => response.accounts
-        );
-
-        const [address] = accounts;
-
-        if (address) {
-            const account = this.#account;
-            if (!account || account.address !== address) {
-                this.#account = new ReadonlyWalletAccount({
-                    address,
-                    // TODO: Expose public key instead of address:
-                    publicKey: new Uint8Array(),
-                    chains: SUI_CHAINS,
-                    features: ['sui:signAndExecuteTransaction'],
-                });
-                this.#events.emit('change', { accounts: this.accounts });
-            }
+        const accounts = await this.#getAccounts();
+        this.#setAccounts(accounts);
+        if (this.#accounts.length) {
+            this.#events.emit('change', { accounts: this.accounts });
         }
     };
 
@@ -171,13 +216,13 @@ export class EthosWallet implements Wallet {
         return { accounts: this.accounts };
     };
 
-    #disconnect: DisconnectMethod = async () => {
-        this.#account = null;
-        await mapToPromise(
-            this.#send<DisconnectRequest, DisconnectResponse>({
-                type: 'disconnect-request',
+    #signTransaction: SuiSignTransactionMethod = async (input) => {
+        return mapToPromise(
+            this.#send<SignTransactionRequest, SignTransactionResponse>({
+                type: 'sign-transaction-request',
+                transaction: input,
             }),
-            (response) => response.success
+            (response) => response.result
         );
     };
 
@@ -197,35 +242,12 @@ export class EthosWallet implements Wallet {
         );
     };
 
-    // #signMessage: SignMessageMethod = async (input) => {
-    //     let { message } = input;
-
-    //     let messageData;
-    //     let messageString;
-
-    //     // convert utf8 string to Uint8Array
-    //     if (typeof message === 'string') {
-    //         messageString = message;
-    //         message = new Uint8Array(Buffer.from(message, 'utf8'));
-    //     }
-
-    //     // convert Uint8Array to base64 string
-    //     if (message instanceof Uint8Array) {
-    //         messageData = new Base64DataBuffer(message).toString();
-    //     }
-
-    //     return mapToPromise(
-    //         this.send<ExecuteSignMessageRequest, ExecuteSignMessageResponse>({
-    //             type: 'execute-sign-message-request',
-    //             messageData,
-    //             messageString,
-    //         }),
-    //         (response) =>
-    //             response.signature
-    //                 ? deserializeSignaturePubkeyPair(response.signature)
-    //                 : undefined
-    //     );
-    // };
+    #stake = async (input: StakeInput) => {
+        this.#send<StakeRequest, void>({
+            type: 'stake-request',
+            validatorAddress: input.validatorAddress,
+        });
+    };
 
     #hasPermissions(permissions: HasPermissionsRequest['permissions']) {
         return mapToPromise(
@@ -235,6 +257,29 @@ export class EthosWallet implements Wallet {
             }),
             ({ result }) => result
         );
+    }
+
+    #getAccounts() {
+        return mapToPromise(
+            this.#send<GetAccount, GetAccountResponse>({
+                type: 'get-account',
+            }),
+            (response) => response.accounts
+        );
+    }
+
+    #getActiveNetwork() {
+        return mapToPromise(
+            this.#send<BasePayload, SetNetworkPayload>({
+                type: 'get-network',
+            }),
+            ({ network }) => network
+        );
+    }
+
+    #setActiveChain({ env }: NetworkEnvType) {
+        this.#activeChain =
+            env === API_ENV.customRPC ? 'sui:unknown' : API_ENV_TO_CHAIN[env];
     }
 
     #send<

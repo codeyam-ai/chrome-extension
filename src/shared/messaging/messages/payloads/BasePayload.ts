@@ -34,7 +34,19 @@ export type PayloadType =
     | 'execute-sign-message-response'
     | 'sign-message-request-response'
     | 'get-sign-message-requests'
-    | 'get-sign-message-requests-response';
+    | 'get-sign-message-request-response'
+    | 'sign-transaction-request'
+    | 'sign-transaction-response'
+    | 'update-active-origin'
+    | 'disconnect-app'
+    | 'done'
+    | 'keyring'
+    | 'stake-request'
+    | 'wallet-status-changed'
+    | 'get-features'
+    | 'features-response'
+    | 'get-network'
+    | 'set-network';
 
 export interface BasePayload {
     type: PayloadType;
