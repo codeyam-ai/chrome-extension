@@ -13,6 +13,7 @@ import CopyAsset from './CopyAsset';
 import FormattedCoin from './FormattedCoin';
 import SectionElement from './SectionElement';
 import TabElement from './TabElement';
+import IncorrectSigner from './errors/IncorrectSigner';
 import {
     isErrorCausedByIncorrectSigner,
     isErrorCausedByMissingObject,
@@ -25,36 +26,25 @@ import {
 import { getGasDataFromError } from './lib/extractGasData';
 import getErrorDisplaySuiForMist from './lib/getErrorDisplaySuiForMist';
 import * as summaries from './summaries';
-import AccountAddress from '../../components/account-address';
-import { AddressMode } from '../../components/account-address/index';
 import truncateMiddle from '../../helpers/truncate-middle';
 import { AppState } from '../../hooks/useInitializedGuard';
-import { saveActiveAccountIndex } from '../../redux/slices/account/index';
 import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
-import Button from '../../shared/buttons/Button';
 import Alert from '../../shared/feedback/Alert';
 import AlertWithErrorExpand from '../../shared/feedback/AlertWithErrorExpand';
 import Body from '../../shared/typography/Body';
 import CopyBody from '../../shared/typography/CopyBody';
 import EthosLink from '../../shared/typography/EthosLink';
 import Loading from '_components/loading';
-import {
-    useAppDispatch,
-    useAppSelector,
-    useFormatCoin,
-    useInitializedGuard,
-} from '_hooks';
+import { useAppSelector, useFormatCoin, useInitializedGuard } from '_hooks';
 import { txRequestsSelectors } from '_redux/slices/transaction-requests';
 import { thunkExtras } from '_redux/store/thunk-extras';
 import { useDependencies } from '_shared/utils/dependenciesContext';
 import { MAILTO_SUPPORT_URL } from '_src/shared/constants';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
-import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
 
 import type { Detail } from './DetailElement';
 import type { Section } from './SectionElement';
 import type { SmallDetail } from './SmallValue';
-import type { AccountInfo } from '../../KeypairVault';
 import type { SuiMoveNormalizedType, TransactionEffects } from '@mysten/sui.js';
 import type {
     SignableTransaction,
@@ -112,8 +102,6 @@ export function DappTxApprovalPage() {
     const txRequest = useAppSelector(txRequestSelector);
     const [done, setDone] = useState<boolean>(false);
 
-    const dispatch = useAppDispatch();
-
     const normalizedFunction = useNormalizedFunction(txRequest);
 
     const [effects, setEffects] = useState<
@@ -121,17 +109,11 @@ export function DappTxApprovalPage() {
     >();
     const [dryRunError, setDryRunError] = useState<string | undefined>();
     const [explicitError, setExplicitError] = useState<ReactNode | undefined>();
-    const [incorrectSigner, setIncorrectSigner] = useState<
-        AccountInfo | undefined
-    >();
 
     const loading =
         guardLoading ||
         txRequestsLoading ||
-        (effects === undefined &&
-            !dryRunError &&
-            !explicitError &&
-            !incorrectSigner);
+        (effects === undefined && !dryRunError && !explicitError);
 
     const summaryKey = useCustomSummary(txRequest);
 
@@ -204,7 +186,6 @@ export function DappTxApprovalPage() {
 
                 setDryRunError(undefined);
                 setExplicitError(undefined);
-                setIncorrectSigner(undefined);
 
                 const transactionEffects = await signer.dryRunTransaction(
                     transaction.data
@@ -217,7 +198,7 @@ export function DappTxApprovalPage() {
                         )
                     ) {
                         setDryRunError(
-                            'Sui Devnet is having technical issues. Please checkback later when these issues are resolved.'
+                            'Sui Devnet is having technical issues. Please check back later when these issues are resolved.'
                         );
                     } else if (
                         isErrorObjectVersionUnavailable(
@@ -244,13 +225,15 @@ export function DappTxApprovalPage() {
                     'AddressOwner' in transactionEffects.gasObject.owner &&
                     transactionEffects.gasObject.owner.AddressOwner !== address
                 ) {
+                    console.log("ERROR!!!!!!! 2", transactionEffects.gasObject.owner.AddressOwner, address)
+
                     const gasAddress =
                         transactionEffects.gasObject.owner.AddressOwner;
-                    const accountInfo = accountInfos.find(
-                        (account) => account.address === gasAddress
-                    );
-                    if (accountInfo && accountInfo.address !== address) {
-                        setIncorrectSigner(accountInfo);
+
+                    if (gasAddress !== address) {
+                        setExplicitError(
+                            <IncorrectSigner correctAddress={gasAddress} />
+                        );
                     } else {
                         setEffects(transactionEffects);
                     }
@@ -283,36 +266,23 @@ export function DappTxApprovalPage() {
                     }
 
                     if (isErrorCausedByIncorrectSigner(errorMessage)) {
+                        console.log("ERROR!!!!!!! 1", errorMessage)
                         const errorAddress = errorMessage
                             .match(
                                 /is owned by account address (.*), but signer address is/
                             )?.[1]
                             .split(',')[0];
-                        const accountInfo = accountInfos.find(
-                            (account) => account.address === errorAddress
-                        );
+
                         if (errorAddress === address) {
                             setEffects(null);
                             return;
-                        } else if (accountInfo) {
-                            setIncorrectSigner(accountInfo);
                         } else {
                             setExplicitError(
-                                <AlertWithErrorExpand
-                                    title="Wrong Signing Address"
-                                    body={
-                                        <Body>
-                                            It looks like you are trying to sign
-                                            this transaction with the wrong
-                                            wallet address.
-                                        </Body>
-                                    }
-                                    fullErrorText={errorMessage}
-                                    txInfo={{
-                                        dAppUrl: txRequest?.origin || '',
-                                        txId: txID || '',
-                                        txRequest,
-                                    }}
+                                <IncorrectSigner
+                                    correctAddress={errorAddress}
+                                    errorMessage={errorMessage}
+                                    txID={txID}
+                                    txRequest={txRequest}
                                 />
                             );
                         }
@@ -783,62 +753,9 @@ export function DappTxApprovalPage() {
         summaryKey,
     ]);
 
-    const switchSigner = useCallback(async () => {
-        setIncorrectSigner(undefined);
-        const index = accountInfos.findIndex(
-            (accountInfo) => accountInfo === incorrectSigner
-        );
-        await dispatch(saveActiveAccountIndex(index));
-    }, [dispatch, accountInfos, incorrectSigner]);
-
     const errorElement = useMemo(() => {
         if (explicitError)
             return <div className="px-6 pb-6">{explicitError}</div>;
-
-        if (incorrectSigner)
-            return (
-                <div className="px-6 pb-6 flex flex-col gap-6 items-start justify-start">
-                    <Alert
-                        title="Wrong Wallet Address"
-                        subtitle={
-                            <Body as="div" className="flex flex-col gap-6 py-6">
-                                <div>
-                                    This transaction request needs to be signed
-                                    with the wallet address:
-                                </div>
-                                <div className="flex gap-2 items-center">
-                                    {incorrectSigner.color && (
-                                        <WalletColorAndEmojiCircle
-                                            {...incorrectSigner}
-                                            circleSizeClasses="h-6 w-6 "
-                                            emojiSizeInPx={12}
-                                        />
-                                    )}
-                                    {incorrectSigner.name && (
-                                        <div>{incorrectSigner.name}</div>
-                                    )}
-                                    <AccountAddress
-                                        showName={false}
-                                        showLink={false}
-                                        mode={AddressMode.FADED}
-                                    />
-                                </div>
-                                <div>
-                                    Would you like to switch to this wallet
-                                    address?
-                                </div>
-                                <Button
-                                    buttonStyle="primary"
-                                    onClick={switchSigner}
-                                    removeContainerPadding={true}
-                                >
-                                    Switch
-                                </Button>
-                            </Body>
-                        }
-                    />
-                </div>
-            );
 
         if (dryRunError)
             return (
@@ -867,14 +784,7 @@ export function DappTxApprovalPage() {
                     />
                 </div>
             );
-    }, [
-        explicitError,
-        incorrectSigner,
-        switchSigner,
-        dryRunError,
-        txRequest,
-        txID,
-    ]);
+    }, [explicitError, dryRunError, txRequest, txID]);
 
     return (
         <Loading loading={loading} big={true} resize={true}>
@@ -886,9 +796,7 @@ export function DappTxApprovalPage() {
                     approveTitle="Approve"
                     rejectTitle="Reject"
                     onSubmit={handleOnSubmit}
-                    hasError={
-                        !!dryRunError || !!explicitError || !!incorrectSigner
-                    }
+                    hasError={!!dryRunError || !!explicitError}
                     hideHeader={summaryKey !== 'standard'}
                 >
                     {errorElement ? (
