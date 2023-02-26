@@ -226,7 +226,10 @@ const NavBar = () => {
                 </button>
             ) : (
                 <Link to={'/settings/main'}>
-                    <Cog6ToothIcon data-testid="settings-toggle" className="h-6 w-6 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                    <Cog6ToothIcon
+                        data-testid="settings-toggle"
+                        className="h-6 w-6 text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
+                    />
                 </Link>
             )}
             <WalletProfile />

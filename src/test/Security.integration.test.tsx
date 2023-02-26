@@ -3,15 +3,17 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 
-import { fakeAccessToken } from './utils/fake-local-storage';
 import { BASE_URL } from '_src/shared/constants';
-import { accountInfos, password, recoveryPhrase, simulateMnemonicUser, simulateEmailUser } from '_src/test/utils/fake-local-storage';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { fakeAccessToken, accountInfos, password, recoveryPhrase, simulateMnemonicUser, simulateEmailUser } from '_src/test/utils/fake-local-storage';
+import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('The Security Settings page', () => {
+    let mockchain: Mockchain;
+
     const init = async () => {
-        await mockSuiObjects();
+        mockchain = new Mockchain
+        await mockchain.mockSuiObjects();
         await renderApp();
 
         await screen.findByText('Get started with Sui');
@@ -34,7 +36,7 @@ describe('The Security Settings page', () => {
 
         beforeEach(async () => {
             simulateMnemonicUser();
-            mockCommonCalls();
+            mockchain.mockCommonCalls();
         });
     
         test('requires a valid password to view the recovery phrase', async () => {
@@ -139,7 +141,7 @@ describe('The Security Settings page', () => {
                 });
 
             simulateEmailUser();
-            mockCommonCalls();
+            mockchain.mockCommonCalls();
         });
 
         test('shows the seed phrase for email accounts', async () => {

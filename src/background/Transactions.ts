@@ -125,9 +125,6 @@ class Transactions {
             const gasUsed = computationCost + (storageCost - storageRebate);
             preapproval.totalGasLimit -= gasUsed;
 
-            preapprovalRequest.preapproval.transactions.push({
-                gasUsed,
-            });
             if (
                 preapprovalRequest.preapproval.maxTransactionCount > 0 &&
                 preapprovalRequest.preapproval.totalGasLimit > gasUsed * 1.5
@@ -477,8 +474,6 @@ class Transactions {
             };
         }
 
-        preapproval.transactions ||= [];
-
         const preapprovalRequest =
             existingPreapprovalRequest ||
             (await this.createPreapprovalRequest(
@@ -652,6 +647,14 @@ class Transactions {
 
     private async storePreapprovalRequest(request: PreapprovalRequest) {
         const requests = await this.getPreapprovalRequests();
+
+        // Limit active preapprovals to 10 to save user's local storage
+        const requestIds = Object.keys(requests);
+        if (requestIds.length > 10) {
+            const oldestRequestId = requestIds[0];
+            delete requests[oldestRequestId];
+        }
+
         requests[request.id as string] = request;
         await this.savePreapprovalRequests(requests);
     }

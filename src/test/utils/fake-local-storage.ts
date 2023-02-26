@@ -1,7 +1,8 @@
 import { deleteEncrypted, setEncrypted } from '_shared/storagex/store';
 
 export const password = 'Password';
-export const recoveryPhrase = 'girl empower human spring circle ceiling wild pact stumble model wheel chuckle';
+export const recoveryPhrase =
+    'girl empower human spring circle ceiling wild pact stumble model wheel chuckle';
 
 export const accountInfos = [
     {

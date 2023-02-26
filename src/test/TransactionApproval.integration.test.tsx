@@ -1,14 +1,12 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import _ from 'lodash';
-import nock from 'nock';
 
 import KeypairVault from '_app/KeypairVault';
 import { BackgroundClient } from '_app/background-client';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
 import { simulateMnemonicUser } from '_src/test/utils/fake-local-storage';
 import { renderTemplate } from '_src/test/utils/json-templates';
-import { mockCommonCalls } from '_src/test/utils/mockchain';
+import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { createStore } from '_store';
 import { thunkExtras } from '_store/thunk-extras';
@@ -18,8 +16,10 @@ import type { AppStore } from '_store';
 
 describe('The Transaction Approval popup', () => {
     let store: AppStore;
+    let mockchain: Mockchain;
     beforeEach(async () => {
-        mockCommonCalls();
+        mockchain = new Mockchain();
+        mockchain.mockCommonCalls();
         simulateMnemonicUser();
         store = createStore({});
 
@@ -104,111 +104,69 @@ describe('The Transaction Approval popup', () => {
     }
 
     function mockBlockchainTransactionExecution() {
-        const payScope = nock('http://devNet-fullnode.example.com')
-            .persist() // this gets called twice in the case where the transaction is approved
-            .post('/', /sui_pay/)
-            .reply(200, {
-                jsonrpc: '2.0',
-                result: renderTemplate('pay', {
-                    base64EncodedTxBytes: 'ZmFrZSBkYXRh',
-                }),
-                id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
-            });
+        const payScope = mockchain.mockBlockchainCall(
+            { method: 'sui_pay' },
+            renderTemplate('pay', {
+                base64EncodedTxBytes: 'ZmFrZSBkYXRh',
+            }),
+            true
+        );
 
         // note: this is only expected to be called once
-        const dryRunTransactionScope = nock(
-            'http://devNet-fullnode.example.com'
-        )
-            .post(
-                '/',
-                _.matches({
-                    method: 'sui_dryRunTransaction',
-                    params: ['ZmFrZSBkYXRh'],
-                })
-            )
-            .reply(200, {
-                jsonrpc: '2.0',
-                result: renderTemplate('dryRunTransaction', {}),
-                id: 'd48d0fe2-688d-456c-91b1-45122ebb4812',
-            });
+        const dryRunTransactionScope = mockchain.mockBlockchainCall(
+            {
+                method: 'sui_dryRunTransaction',
+                params: ['ZmFrZSBkYXRh'],
+            },
+            renderTemplate('dryRunTransaction', {})
+        );
 
-        const getObjectForDryRunScope = nock(
-            'http://devNet-fullnode.example.com'
-        )
-            .post(
-                '/',
-                _.matches({
+        const getObjectForDryRunScope = mockchain.mockBlockchainCall(
+            {
+                method: 'sui_getObject',
+                params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
+            },
+            renderTemplate('coinObject', {
+                balance: 40000000,
+                id: '0x395c50c614cc22156c9de8db24163f48e4ff66ae',
+            })
+        );
+
+        const getCoinsForDryRunScope = mockchain.mockBlockchainCall(
+            {
+                method: 'sui_getCoins',
+                params: [
+                    '1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+                    '0x2::sui::SUI',
+                    null,
+                    null,
+                ],
+            },
+            renderTemplate('getCoins', {})
+        );
+
+        const getObjectForDryRunScope2 = mockchain.mockBlockchainBatchCall(
+            [
+                {
                     method: 'sui_getObject',
                     params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
-                })
-            )
-            .reply(200, {
-                jsonrpc: '2.0',
-                result: renderTemplate('coinObject', {
-                    balance: 40000000,
-                    id: '0x395c50c614cc22156c9de8db24163f48e4ff66ae',
-                }),
-                id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
-            });
-
-        const getCoinsForDryRunScope = nock(
-            'http://devNet-fullnode.example.com'
-        )
-            .post(
-                '/',
-                _.matches({
-                    method: 'sui_getCoins',
-                    params: [
-                        '1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
-                        '0x2::sui::SUI',
-                        null,
-                        null,
-                    ],
-                })
-            )
-            .reply(200, {
-                jsonrpc: '2.0',
-                result: renderTemplate('getCoins', {}),
-                id: '2d26cac8-6480-4f65-b7d2-c83e71b5900a',
-            });
-
-        const getObjectForDryRunScope2 = nock(
-            'http://devNet-fullnode.example.com'
-        )
-            .post(
-                '/',
-                _.matches([
-                    {
-                        method: 'sui_getObject',
-                        jsonrpc: '2.0',
-                        params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
-                    },
-                ])
-            )
-            .reply(200, [
-                {
-                    jsonrpc: '2.0',
-                    result: renderTemplate('coinObject', {
-                        balance: 50000000,
-                        id: '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690',
-                    }),
-                    id: '74a3abb0-bd8a-48bb-a98a-861d8b37297a',
                 },
-            ]);
+            ],
+            [
+                renderTemplate('coinObject', {
+                    balance: 50000000,
+                    id: '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690',
+                }),
+            ]
+        );
 
-        const executeScope = nock('http://devNet-fullnode.example.com')
-            .post(
-                '/',
-                _.matches({
-                    method: 'sui_executeTransactionSerializedSig',
-                    params: ['ZmFrZSBkYXRh'],
-                })
-            )
-            .reply(200, {
-                jsonrpc: '2.0',
-                result: renderTemplate('executeTransaction', {}),
-                id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
-            });
+        const executeScope = mockchain.mockBlockchainCall(
+            {
+                method: 'sui_executeTransactionSerializedSig',
+                params: ['ZmFrZSBkYXRh'],
+            },
+            renderTemplate('executeTransaction', {})
+        );
 
         return {
             executeScope,

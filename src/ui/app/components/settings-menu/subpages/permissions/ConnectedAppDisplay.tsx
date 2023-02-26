@@ -92,22 +92,8 @@ const ConnectedAppDisplay = ({
                 const p = preapprovalData.preapproval;
                 const items: KeyNameAndValue[] = [
                     {
-                        keyName: 'Transactions Executed',
-                        value: p.transactions.length.toString(),
-                    },
-                    {
                         keyName: 'Transactions Remaining',
                         value: p.maxTransactionCount.toString(),
-                    },
-                    {
-                        keyName: 'Total Gas Used',
-                        value: p.transactions
-                            .reduce(
-                                (total, transaction) =>
-                                    total + transaction.gasUsed,
-                                0
-                            )
-                            .toString(),
                     },
                     {
                         keyName: 'Gas Remaining',

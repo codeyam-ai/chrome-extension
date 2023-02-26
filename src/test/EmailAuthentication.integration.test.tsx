@@ -3,13 +3,15 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 
 import { fakeAccessToken } from './utils/fake-local-storage';
-import { mockSuiObjects, mockCommonCalls } from './utils/mockchain';
+import { Mockchain } from './utils/mockchain';
 import { BASE_URL } from '_src/shared/constants';
 import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('Email Authentication', () => {
+    let mockchain: Mockchain;
     beforeEach(() => {
-        mockCommonCalls();
+        mockchain = new Mockchain();
+        mockchain.mockCommonCalls();
     });
 
     test('User can enter email and is prompted to wait for the magic login link', async () => {
@@ -50,7 +52,7 @@ describe('Email Authentication', () => {
 
     test('User can see tokens page after logged in via the iframe', async () => {
         const fakeAccessToken = '12345';
-        mockSuiObjects();
+        mockchain.mockSuiObjects();
         nock(BASE_URL, {
             reqheaders: { 'x-supabase-access-token': fakeAccessToken },
         })
