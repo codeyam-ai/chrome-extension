@@ -1,6 +1,10 @@
-export const getGasDataFromError = (
-    errorMessage: string
-): { gasBalance?: number; gasBudget: number; gasPrice?: number } | null => {
+export type GasData = {
+    gasBalance?: number;
+    gasBudget: number;
+    gasPrice?: number;
+};
+
+export const getGasDataFromError = (errorMessage: string): GasData | null => {
     if (errorMessage.includes('GasBalanceTooLowToCoverGasBudget')) {
         return extractGasDataFromErrorGasBalanceTooLowToCoverGasBudget(
             errorMessage

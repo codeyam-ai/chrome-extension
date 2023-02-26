@@ -14,6 +14,8 @@ import FormattedCoin from './FormattedCoin';
 import SectionElement from './SectionElement';
 import TabElement from './TabElement';
 import IncorrectSigner from './errors/IncorrectSigner';
+import MissingObject from './errors/MissingObject';
+import NotEnoughGas from './errors/NotEnoughGas';
 import {
     isErrorCausedByIncorrectSigner,
     isErrorCausedByMissingObject,
@@ -24,7 +26,6 @@ import {
     useNormalizedFunction,
 } from './lib';
 import { getGasDataFromError } from './lib/extractGasData';
-import getErrorDisplaySuiForMist from './lib/getErrorDisplaySuiForMist';
 import * as summaries from './summaries';
 import truncateMiddle from '../../helpers/truncate-middle';
 import { AppState } from '../../hooks/useInitializedGuard';
@@ -285,27 +286,12 @@ export function DappTxApprovalPage() {
                         }
                     } else if (isErrorCausedByMissingObject(errorMessage)) {
                         setExplicitError(
-                            <div className="flex flex-col gap-6">
-                                <AlertWithErrorExpand
-                                    title="Missing Object or Contract"
-                                    body={
-                                        <Body>
-                                            An object or the contract this
-                                            transaction references does not
-                                            exist on {selectedApiEnv}. Please
-                                            ensure you are on the correct
-                                            network or contact the creator of
-                                            this app to report this error.
-                                        </Body>
-                                    }
-                                    fullErrorText={errorMessage}
-                                    txInfo={{
-                                        dAppUrl: txRequest?.origin || '',
-                                        txId: txID || '',
-                                        txRequest,
-                                    }}
-                                />
-                            </div>
+                            <MissingObject
+                                selectedApiEnv={selectedApiEnv}
+                                errorMessage={errorMessage}
+                                txID={txID}
+                                txRequest={txRequest}
+                            />
                         );
                     } else if (
                         isErrorCausedByUserNotHavingEnoughSuiToPayForGas(
@@ -315,29 +301,12 @@ export function DappTxApprovalPage() {
                         const gasData = getGasDataFromError(errorMessage);
                         if (gasData) {
                             setExplicitError(
-                                <div className="flex flex-col gap-6">
-                                    <AlertWithErrorExpand
-                                        title="You don't have enough SUI"
-                                        body={
-                                            <Body>
-                                                It looks like your wallet
-                                                doesn&apos;t have enough SUI to
-                                                pay for the gas for this
-                                                transaction. Gas required:{' '}
-                                                {getErrorDisplaySuiForMist(
-                                                    gasData.gasBudget
-                                                )}{' '}
-                                                SUI
-                                            </Body>
-                                        }
-                                        fullErrorText={errorMessage}
-                                        txInfo={{
-                                            dAppUrl: txRequest?.origin || '',
-                                            txId: txID || '',
-                                            txRequest,
-                                        }}
-                                    />
-                                </div>
+                                <NotEnoughGas
+                                    gasData={gasData}
+                                    errorMessage={errorMessage}
+                                    txID={txID}
+                                    txRequest={txRequest}
+                                />
                             );
                         } else {
                             setExplicitError(
