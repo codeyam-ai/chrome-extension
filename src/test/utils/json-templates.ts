@@ -12,6 +12,5 @@ const loadTemplateAsString = function (templateName: string) {
 export function renderTemplate(templateName: string, view: unknown) {
     const templateAsString = loadTemplateAsString(templateName);
     const renderedString = Mustache.render(templateAsString, view);
-    // console.log("renderedString", renderedString)
     return JSON.parse(renderedString);
 }

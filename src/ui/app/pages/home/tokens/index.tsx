@@ -9,6 +9,7 @@ import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
+import { sumCoinBalances } from '_src/ui/app/helpers/sumCoinBalances';
 import SendReceiveButtonGroup from '_src/ui/app/shared/buttons/SendReceiveButtonGroup';
 import Body from '_src/ui/app/shared/typography/Body';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
@@ -20,7 +21,7 @@ import type { AccountInfo } from '_src/ui/app/KeypairVault';
 function TokensPage() {
     const setExplorerPermission = useExplorerPermission();
     const balances = useAppSelector(accountAggregateBalancesSelector);
-    const mistBalance = balances[GAS_TYPE_ARG] || 0;
+    const mistBalance = sumCoinBalances(balances) || 0;
     const [, , usdAmount] = useFormatCoin(mistBalance, GAS_TYPE_ARG);
 
     const accountInfo = useAppSelector(

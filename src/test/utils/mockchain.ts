@@ -1,77 +1,112 @@
 import { readFileSync } from 'fs';
-import Mustache from 'mustache';
+import _ from 'lodash';
+import { v4 as uuidV4 } from 'uuid';
+
 import nock from 'nock';
 import { join } from 'path';
+import { renderTemplate } from './json-templates';
+import { SUI_SYSTEM_STATE_OBJECT_ID } from '_src/ui/app/redux/slices/sui-objects/Coin';
 
-// TODO: this is duplicated from json-templates, DRY up
-const readTemplate = (templateName: string) => {
-    return readFileSync(
-        join(__dirname, `mockchain-templates/${templateName}.json.mustache`),
-        'utf-8'
-    );
-};
-
-const suiCoinTemplate = readTemplate('coinObject');
-const suiNftTemplate = readTemplate('nftObject');
-
-export const mockCommonCalls = function () {
-    nock('http://devNet-fullnode.example.com')
-        .persist()
-        .post('/', /rpc.discover/)
-        .reply(200, {
+export class Mockchain {
+    mockBlockchainCall(
+        request: { method: string; params?: any },
+        result: any,
+        persist?: boolean
+    ) {
+        let theNock = nock('http://devNet-fullnode.example.com');
+        if (persist) {
+            theNock = theNock.persist();
+        }
+        theNock.post('/', _.matches(request)).reply(200, {
             jsonrpc: '2.0',
-            result: { info: { version: '0.20.1' } },
-            id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
-        })
-        .post('/', /sui_getCoinMetadata/)
-        .reply(200, {
-            jsonrpc: '2.0',
-            result: {
-                decimals: 9,
-                name: 'Sui',
-                symbol: 'SUI',
-                description: '',
-                iconUrl: null,
-                id: null,
-            },
-            id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
+            result: result,
+            id: uuidV4.toString(),
         });
-};
-
-export const mockSuiObjects = function (
-    options: {
-        coinId?: string;
-        suiBalance?: number;
-        nftDetails?: { name: string };
-    } = {}
-) {
-    const renderedObjects = [];
-    if (options.suiBalance) {
-        const renderedCoinResult = Mustache.render(suiCoinTemplate, {
-            balance: options.suiBalance,
-            id: options.coinId,
-        });
-        renderedObjects.push(renderedCoinResult);
-    }
-    if (options.nftDetails) {
-        const renderedNftResult = Mustache.render(suiNftTemplate, {
-            name: options.nftDetails.name,
-        });
-        renderedObjects.push(renderedNftResult);
+        return theNock;
     }
 
-    const renderedResponses = renderedObjects.map(
-        (value) =>
-            `{"jsonrpc": "2.0", "id": "fbf9bf0c-a3c9-460a-a999-b7e87096dd1c", "result": ${value}}`
-    );
-    const finalRenderedTemplate = `[${renderedResponses.join(',')}]`;
-    nock('http://devNet-fullnode.example.com')
-        .post('/', /sui_getObjectsOwnedByAddress/)
-        .reply(200, {
-            jsonrpc: '2.0',
-            result: [],
-            id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
-        })
-        .post('/', /sui_getObject/)
-        .reply(200, finalRenderedTemplate);
-};
+    mockBlockchainBatchCall(
+        requests: { method: string; params?: any }[],
+        results: any[],
+        persist?: boolean
+    ) {
+        let theNock = nock('http://devNet-fullnode.example.com');
+        if (persist) {
+            theNock = theNock.persist();
+        }
+        const responses = results.map((response) => {
+            return {
+                jsonrpc: '2.0',
+                id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
+                result: response,
+            };
+        });
+
+        theNock.post('/', _.matches(requests)).reply(200, responses);
+        return theNock;
+    }
+
+    mockCommonCalls() {
+        this.mockBlockchainCall(
+            { method: 'rpc.discover' },
+            { info: { version: '0.20.1' } },
+            true
+        );
+
+        const coinMetadataResponse = {
+            decimals: 9,
+            name: 'Sui',
+            symbol: 'SUI',
+            description: '',
+            iconUrl: null,
+            id: null,
+        };
+        this.mockBlockchainCall(
+            { method: 'sui_getCoinMetadata' },
+            coinMetadataResponse,
+            true
+        );
+    }
+
+    mockSuiObjects(
+        options: {
+            coinId?: string;
+            suiBalance?: number;
+            nftDetails?: { name: string };
+        } = {}
+    ) {
+        const renderedObjects = [];
+        if (options.suiBalance) {
+            const renderedCoinResult = renderTemplate('coinObject', {
+                balance: options.suiBalance,
+                id: options.coinId,
+            });
+            renderedObjects.push(renderedCoinResult);
+        }
+        if (options.nftDetails) {
+            const renderedNftResult = renderTemplate('nftObject', {
+                name: options.nftDetails.name,
+            });
+            renderedObjects.push(renderedNftResult);
+        }
+
+        const renderedResponses = renderedObjects.map((value) => {
+            return {
+                jsonrpc: '2.0',
+                id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
+                result: value,
+            };
+        });
+
+        this.mockBlockchainCall(
+            { method: 'sui_getObjectsOwnedByAddress' },
+            [],
+            true
+        );
+
+        this.mockBlockchainBatchCall(
+            [{ method: 'sui_getObject', params: [SUI_SYSTEM_STATE_OBJECT_ID] }],
+            renderedObjects
+        );
+    }
+}

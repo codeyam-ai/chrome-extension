@@ -125,9 +125,6 @@ class Transactions {
             const gasUsed = computationCost + (storageCost - storageRebate);
             preapproval.totalGasLimit -= gasUsed;
 
-            preapprovalRequest.preapproval.transactions.push({
-                gasUsed,
-            });
             if (
                 preapprovalRequest.preapproval.maxTransactionCount > 0 &&
                 preapprovalRequest.preapproval.totalGasLimit > gasUsed * 1.5
@@ -150,118 +147,6 @@ class Transactions {
         if (tx.type === 'v2' || tx.type === 'move-call') {
             let moveCall: MoveCallTransaction | undefined;
             if (tx.type === 'v2') {
-                // if (
-                //     typeof tx.data === 'object' &&
-                //     !('buffer' in tx.data.data) &&
-                //     'gasBudget' in tx.data.data &&
-                //     !('amount' in tx.data.data) &&
-                //     !('inputCoins' in tx.data.data) &&
-                //     !tx.data.data.gasPayment
-                // ) {
-                //     try {
-                //         const activeAccount = await this.getActiveAccount();
-                //         const { sui_Env } = await Browser.storage.local.get(
-                //             'sui_Env'
-                //         );
-                //         const endpoint = api.getEndPoints(sui_Env).fullNode;
-
-                //         const gasResponse = await fetch(endpoint, {
-                //             method: 'POST',
-                //             headers: { 'Content-Type': 'application/json' },
-                //             body: JSON.stringify({
-                //                 jsonrpc: '2.0',
-                //                 method: 'sui_getReferenceGasPrice',
-                //                 id: 1,
-                //             }),
-                //         });
-
-                //         const gasJson = await gasResponse.json();
-                //         const gasPrice = gasJson.result;
-                //         const suiNeeded =
-                //             (tx.data.data.gasBudget || 0) * gasPrice +
-                //             DEFAULT_GAS_BUDGET_FOR_PAY * gasPrice;
-
-                //         const callData = {
-                //             method: 'POST',
-                //             headers: { 'Content-Type': 'application/json' },
-                //             body: JSON.stringify({
-                //                 jsonrpc: '2.0',
-                //                 method: 'sui_getAllCoins',
-                //                 params: [activeAccount.address],
-                //                 id: 1,
-                //             }),
-                //         };
-
-                //         const response = await fetch(endpoint, callData);
-                //         const {
-                //             result: { data: coins },
-                //         } = await response.json();
-
-                //         const sortedCoins = (coins as SimpleCoin[])
-                //             .filter((coin) => coin.coinType === GAS_TYPE_ARG)
-                //             .sort((a, b) => b.balance - a.balance);
-
-                //         let totalSui = 0;
-                //         const coinIds: string[] = [];
-                //         const serializedArgs =
-                //             'arguments' in tx.data.data
-                //                 ? JSON.stringify(tx.data.data.arguments)
-                //                 : '';
-                //         for (const coin of sortedCoins) {
-                //             if (coin.coinType !== GAS_TYPE_ARG) continue;
-                //             if (serializedArgs.indexOf(coin.coinObjectId) > -1)
-                //                 continue;
-
-                //             coinIds.push(coin.coinObjectId);
-                //             totalSui += coin.balance;
-                //             if (totalSui > suiNeeded) {
-                //                 break;
-                //             }
-                //         }
-
-                //         let gasCoinId = coinIds[0];
-                //         if (coinIds.length > 1) {
-                //             const callData = {
-                //                 method: 'POST',
-                //                 headers: { 'Content-Type': 'application/json' },
-                //                 body: JSON.stringify({
-                //                     jsonrpc: '2.0',
-                //                     method: 'sui_payAllSui',
-                //                     params: [
-                //                         activeAccount.address,
-                //                         coinIds,
-                //                         activeAccount.address,
-                //                         DEFAULT_GAS_BUDGET_FOR_PAY,
-                //                     ],
-                //                     id: 1,
-                //                 }),
-                //             };
-
-                //             const payResponse =
-                //                 await this.executeTransactionDirectly({
-                //                     callData,
-                //                 });
-
-                //             if (
-                //                 payResponse.result &&
-                //                 'EffectsCert' in payResponse.result
-                //             ) {
-                //                 const newCoin =
-                //                     payResponse.EffectsCert.effects.effects
-                //                         .mutated?.[0]?.reference?.objectId;
-                //                 if (newCoin) {
-                //                     gasCoinId = newCoin;
-                //                 }
-                //             }
-                //         }
-
-                //         tx.data.data.gasPayment = gasCoinId;
-                //     } catch (e) {
-                //         // eslint-disable-next-line no-console
-                //         console.log('Error getting gas objects', e);
-                //     }
-                // }
-
                 if (tx.data.kind === 'moveCall') {
                     moveCall = tx.data.data;
                 }
@@ -477,8 +362,6 @@ class Transactions {
             };
         }
 
-        preapproval.transactions ||= [];
-
         const preapprovalRequest =
             existingPreapprovalRequest ||
             (await this.createPreapprovalRequest(
@@ -652,6 +535,14 @@ class Transactions {
 
     private async storePreapprovalRequest(request: PreapprovalRequest) {
         const requests = await this.getPreapprovalRequests();
+
+        // Limit active preapprovals to 10 to save user's local storage
+        const requestIds = Object.keys(requests);
+        if (requestIds.length > 10) {
+            const oldestRequestId = requestIds[0];
+            delete requests[oldestRequestId];
+        }
+
         requests[request.id as string] = request;
         await this.savePreapprovalRequests(requests);
     }

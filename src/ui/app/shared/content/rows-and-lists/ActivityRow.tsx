@@ -1,4 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/24/solid';
+import _ from 'lodash';
 import { Link } from 'react-router-dom';
 
 import Body from '../../typography/Body';
@@ -44,7 +45,7 @@ export const ActivityRow = ({
                     </Body>
                 ) : (
                     <Body isTextColorMedium className={'flex flex-row gap-3'}>
-                        {typeIcon} {type}
+                        {typeIcon} {_.capitalize(type)}
                     </Body>
                 )}
                 <Body isTextColorMedium>{date}</Body>
@@ -65,12 +66,12 @@ export const ActivityRow = ({
                             <BodyLarge
                                 isSemibold
                                 className={
-                                    type === 'Send'
+                                    type === 'send'
                                         ? 'text-[#CE3838]'
                                         : 'text-[#238044]'
                                 }
                             >
-                                {type === 'Send'
+                                {type === 'send'
                                     ? `-${displayFormattedAmount}`
                                     : `+${displayFormattedAmount}`}{' '}
                                 {symbol}
