@@ -6,3 +6,4 @@ export * from './ExecuteTransactionResponse';
 export * from './TransactionRequest';
 export * from './PreapprovalRequest';
 export * from './PreapprovalResponse';
+export * from './Staking';
