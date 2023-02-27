@@ -30,7 +30,7 @@ import {
     type HasPermissionsResponse,
     ALL_PERMISSION_TYPES,
 } from '_payloads/permissions';
-import { API_ENV } from '_src/shared/api-env'
+import { API_ENV } from '_src/shared/api-env';
 import { isWalletStatusChangePayload } from '_src/shared/messaging/messages/payloads/wallet-status-change';
 
 import type { SuiAddress } from '@mysten/sui.js';

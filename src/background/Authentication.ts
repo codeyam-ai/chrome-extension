@@ -1,4 +1,5 @@
-import { Ed25519PublicKey, fromB64, toB64 } from '@mysten/sui.js';
+import { fromB64, toB64 } from '@mysten/bcs';
+import { Ed25519PublicKey } from '@mysten/sui.js';
 
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { simpleApiCall } from '_src/shared/utils/simpleApiCall';

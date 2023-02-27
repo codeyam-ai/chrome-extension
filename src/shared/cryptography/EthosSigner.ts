@@ -1,15 +1,11 @@
-import {
-    Ed25519PublicKey,
-    SignerWithProvider,
-    toB64,
-    fromB64,
-} from '@mysten/sui.js';
+import { toB64 } from '@mysten/bcs';
+import { SignerWithProvider } from '@mysten/sui.js';
 
 import { deleteEncrypted } from '../storagex/store';
 import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
 
 import type {
-    SignaturePubkeyPair,
+    SerializedSignature,
     SuiAddress,
     Provider,
     TxnDataSerializer,
@@ -34,7 +30,7 @@ export class EthosSigner extends SignerWithProvider {
         return this.address;
     }
 
-    async signData(data: Uint8Array): Promise<SignaturePubkeyPair> {
+    async signData(data: Uint8Array): Promise<SerializedSignature> {
         const { json, status } = await simpleApiCall(
             'transaction/sign',
             'POST',
@@ -54,13 +50,9 @@ export class EthosSigner extends SignerWithProvider {
             throw new Error(`Signing error: ${status}`);
         }
 
-        const { signedTransaction } = json;
+        const { serializedSignature } = json;
 
-        return {
-            signatureScheme: 'ED25519',
-            signature: fromB64(signedTransaction.signature),
-            pubKey: new Ed25519PublicKey(fromB64(signedTransaction.pubKey)),
-        };
+        return serializedSignature;
     }
 
     connect(provider: Provider): SignerWithProvider {

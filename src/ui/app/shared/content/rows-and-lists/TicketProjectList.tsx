@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import isValidTicket from '../../../helpers/isValidTicket';
 import { accountTicketsSelector } from '../../../redux/slices/account/index';
 import Body from '../../typography/Body';
+import featureGating from '_src/background/FeatureGating';
 import Loading from '_src/ui/app/components/loading';
-import { growthbook } from '_src/ui/app/experimentation/feature-gating';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { TicketProjectDetailsContent } from '_src/ui/app/pages/home/ticket-project-details';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
@@ -66,6 +66,7 @@ const TicketProjectList = () => {
         const getTicketProjects = async () => {
             if (loadingTickets) return;
 
+            const growthbook = await featureGating.getGrowthBook();
             const ticketProjectIds = await growthbook.getFeatureValue(
                 'ticket-projects',
                 []

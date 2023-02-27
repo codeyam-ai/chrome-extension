@@ -1,13 +1,12 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { fromB64, toB64 } from '@mysten/bcs';
 import {
     Ed25519Keypair,
     JsonRpcProvider,
     RawSigner,
     SIGNATURE_SCHEME_TO_FLAG,
-    fromB64,
-    toB64,
 } from '@mysten/sui.js';
 import { filter, lastValueFrom, map, race, Subject, take } from 'rxjs';
 import nacl from 'tweetnacl';

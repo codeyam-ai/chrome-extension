@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { toB64 } from '@mysten/sui.js';
+import { toB64 } from '@mysten/bcs';
 import { filter, map } from 'rxjs';
 
 import { mapToPromise } from './utils';

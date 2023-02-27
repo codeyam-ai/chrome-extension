@@ -1,5 +1,4 @@
-import { toB64, toHEX } from '@mysten/bcs';
-import { fromB64 } from '@mysten/sui.js';
+import { fromB64, toB64, toHEX } from '@mysten/bcs';
 import { useCallback, useEffect, useState } from 'react';
 
 import { secureApiCall } from '../../../../../../../shared/utils/simpleApiCall';
