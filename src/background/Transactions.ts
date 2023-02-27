@@ -2,12 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { fromB64, toB64 } from '@mysten/bcs';
-import {
-    Ed25519Keypair,
-    JsonRpcProvider,
-    RawSigner,
-    SIGNATURE_SCHEME_TO_FLAG,
-} from '@mysten/sui.js';
+import { Ed25519Keypair, JsonRpcProvider, RawSigner } from '@mysten/sui.js';
 import { filter, lastValueFrom, map, race, Subject, take } from 'rxjs';
 import nacl from 'tweetnacl';
 import { v4 as uuidV4 } from 'uuid';
@@ -264,8 +259,8 @@ class Transactions {
         const activeAccount = await this.getActiveAccount();
 
         const { sui_Env } = await Browser.storage.local.get('sui_Env');
-        const endpoint = api.getEndPoints(sui_Env).fullNode;
-        const response = await fetch(endpoint, callData);
+        const connection = api.getEndPoints(sui_Env);
+        const response = await fetch(connection.fullnode, callData);
         const json = await response.json();
 
         if (json.error) {
@@ -283,8 +278,7 @@ class Transactions {
         intentMessage.set(intent);
         intentMessage.set(message, intent.length);
 
-        let signature;
-        let publicKey;
+        let serializedSig;
         if (activeAccount.seed) {
             const seed = Uint8Array.from(
                 activeAccount.seed.split(',').map((s) => parseInt(s))
@@ -294,30 +288,18 @@ class Transactions {
                 nacl.sign.keyPair.fromSeed(new Uint8Array(seed))
             );
 
-            const provider = new JsonRpcProvider(endpoint);
+            const provider = new JsonRpcProvider(connection);
             const signer = new RawSigner(keypair, provider);
 
-            const signed = await signer.signData(intentMessage);
-
-            signature = signed.signature;
-            publicKey = signed.pubKey;
+            serializedSig = await signer.signData(intentMessage);
         } else {
-            const signed = await Authentication.sign(
+            serializedSig = await Authentication.sign(
                 activeAccount.address,
                 intentMessage
             );
-            publicKey = signed?.pubKey;
-            signature = signed?.signature;
         }
 
-        if (!signature || !publicKey) return;
-
-        const serializedSig = new Uint8Array(
-            1 + signature.length + publicKey.toBytes().length
-        );
-        serializedSig.set([SIGNATURE_SCHEME_TO_FLAG['ED25519']]);
-        serializedSig.set(signature, 1);
-        serializedSig.set(publicKey.toBytes(), 1 + signature.length);
+        if (!serializedSig) return;
 
         const data = {
             method: 'POST',
@@ -334,7 +316,7 @@ class Transactions {
             }),
         };
 
-        const executeResponse = await fetch(endpoint, data);
+        const executeResponse = await fetch(connection.fullnode, data);
 
         const txResponse = await executeResponse.json();
 

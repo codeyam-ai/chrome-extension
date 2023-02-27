@@ -102,13 +102,9 @@ class Authentication {
             return;
         }
 
-        const { signedTransaction } = json;
+        const { serializedSig } = json;
 
-        return {
-            signatureScheme: 'ED25519',
-            signature: fromB64(signedTransaction.signature),
-            pubKey: new Ed25519PublicKey(fromB64(signedTransaction.pubKey)),
-        };
+        return serializedSig;
     }
 }
 

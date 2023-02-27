@@ -17,6 +17,7 @@ import type { EntityState, PayloadAction } from '@reduxjs/toolkit';
 import type { SignMessageRequest } from '_payloads/messages/SignMessageRequest';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
+import { SerializedSignature } from '@mysten/sui.js';
 
 const signMessageRequestsAdapter = createEntityAdapter<SignMessageRequest>({
     sortComparer: (a, b) => {
@@ -52,8 +53,7 @@ export const respondToSignMessageRequest = createAsyncThunk<
         if (!signMessageRequest) {
             throw new Error(`SignMessageRequest ${id} not found`);
         }
-        let signMessageResult: SerializedSignaturePubkeyPair | undefined =
-            undefined;
+        let signMessageResult: SerializedSignature;
         let signMessageResultError: string | undefined;
         if (approved) {
             let signer;
@@ -69,10 +69,8 @@ export const respondToSignMessageRequest = createAsyncThunk<
             }
             try {
                 if (signMessageRequest.messageData) {
-                    signMessageResult = serializeSignaturePubkeyPair(
-                        await signer.signData(
-                            fromB64(signMessageRequest.messageData)
-                        )
+                    signMessageResult = await signer.signData(
+                        fromB64(signMessageRequest.messageData)
                     );
                 } else {
                     throw new Error('Message must be defined.');

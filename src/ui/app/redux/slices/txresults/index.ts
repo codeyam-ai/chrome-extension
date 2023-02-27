@@ -142,61 +142,66 @@ export async function getFullTransactionDetails(
     address: string,
     api: ApiProvider
 ): Promise<TxResultState[]> {
-    const txResults = txs.map((txEff) => {
-        const txns = getTransactions(txEff.certificate);
+    const txResults = txs
+        .filter((tx) => !!tx.certificate)
+        .map((txEff) => {
+            const txns = getTransactions(txEff);
 
-        // TODO handle batch transactions
-        if (txns.length > 1) {
-            return null;
-        }
+            // TODO handle batch transactions
+            if (txns.length > 1) {
+                return null;
+            }
 
-        const txn = txns[0];
-        const txKind = getTransactionKindName(txn);
-        const payCoin = getPayTransaction(txn);
-        const transferSui = getTransferSuiTransaction(txn);
-        const paySui = getPaySuiTransaction(txn);
-        const txTransferObject = getTransferObjectTransaction(txn);
-        const recipient =
-            payCoin?.recipients[0] ||
-            transferSui?.recipient ||
-            txTransferObject?.recipient ||
-            paySui?.recipients[0];
-        const moveCallTxn = getMoveCallTransaction(txn);
-        const objId = txEff.effects?.created?.[0]?.reference.objectId;
-        const metaDataObjectId = getTxnEffectsEventID(txEff.effects, address);
-        const sender = getTransactionSender(txEff.certificate);
-        const amountByRecipient = getAmount(txn);
+            const txn = txns[0];
+            const txKind = getTransactionKindName(txn);
+            const payCoin = getPayTransaction(txn);
+            const transferSui = getTransferSuiTransaction(txn);
+            const paySui = getPaySuiTransaction(txn);
+            const txTransferObject = getTransferObjectTransaction(txn);
+            const recipient =
+                payCoin?.recipients[0] ||
+                transferSui?.recipient ||
+                txTransferObject?.recipient ||
+                paySui?.recipients[0];
+            const moveCallTxn = getMoveCallTransaction(txn);
+            const objId = txEff.effects?.created?.[0]?.reference.objectId;
+            const metaDataObjectId = getTxnEffectsEventID(
+                txEff.effects,
+                address
+            );
+            const sender = getTransactionSender(txEff);
+            const amountByRecipient = getAmount(txn);
 
-        // todo: handle multiple recipients, for now just return first
-        const amount =
-            typeof amountByRecipient === 'number'
-                ? amountByRecipient
-                : Object.values(amountByRecipient || {})[0];
+            // todo: handle multiple recipients, for now just return first
+            const amount =
+                typeof amountByRecipient === 'number'
+                    ? amountByRecipient
+                    : Object.values(amountByRecipient || {})[0];
 
-        return {
-            txId: txEff.certificate.transactionDigest,
-            status: getExecutionStatusType(txEff),
-            txGas: getTotalGasUsed(txEff),
-            kind: txKind,
-            callModuleName: moveCallTxnName(moveCallTxn?.module),
-            callFunctionName: moveCallTxnName(moveCallTxn?.function),
-            from: sender,
-            isSender: sender === address,
-            error: getExecutionStatusError(txEff),
-            timestampMs: txEff.timestamp_ms,
-            ...(recipient && { to: recipient }),
-            ...(amount && {
-                amount,
-            }),
-            ...((txTransferObject?.objectRef?.objectId ||
-                metaDataObjectId.length > 0) && {
-                objectId: txTransferObject?.objectRef?.objectId
-                    ? [txTransferObject?.objectRef?.objectId]
-                    : [...metaDataObjectId],
-            }),
-            objId,
-        };
-    });
+            return {
+                txId: txEff.certificate?.transactionDigest,
+                status: getExecutionStatusType(txEff),
+                txGas: getTotalGasUsed(txEff),
+                kind: txKind,
+                callModuleName: moveCallTxnName(moveCallTxn?.module),
+                callFunctionName: moveCallTxnName(moveCallTxn?.function),
+                from: sender,
+                isSender: sender === address,
+                error: getExecutionStatusError(txEff),
+                timestampMs: txEff.timestamp_ms,
+                ...(recipient && { to: recipient }),
+                ...(amount && {
+                    amount,
+                }),
+                ...((txTransferObject?.objectRef?.objectId ||
+                    metaDataObjectId.length > 0) && {
+                    objectId: txTransferObject?.objectRef?.objectId
+                        ? [txTransferObject?.objectRef?.objectId]
+                        : [...metaDataObjectId],
+                }),
+                objId,
+            };
+        });
 
     const objectIds = txResults.map((itm) => itm?.objectId).filter(notEmpty);
     const objectIDs = Array.from(new Set(objectIds.flat()));

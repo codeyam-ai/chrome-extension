@@ -1,4 +1,4 @@
-import { JsonRpcProvider } from '@mysten/sui.js';
+import { Connection, JsonRpcProvider } from '@mysten/sui.js';
 
 const cleanRawObjType = (rawCoinType: string): string => {
     return rawCoinType.replace(/^[^<]*<|>$/g, '');
@@ -8,7 +8,7 @@ const getObjTypeFromObjId = async (
     objId: string,
     network: string
 ): Promise<string | undefined> => {
-    const provider = new JsonRpcProvider(network);
+    const provider = new JsonRpcProvider(new Connection({ fullnode: network }));
     const obj = await provider.getObject(objId);
 
     if (
