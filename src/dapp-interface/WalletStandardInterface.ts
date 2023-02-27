@@ -53,7 +53,7 @@ type WalletEventsMap = {
 };
 
 // NOTE: Because this runs in a content script, we can't fetch the manifest.
-const name = process.env.APP_NAME || 'Sui Wallet';
+const name = process.env.APP_NAME || 'Ethos Wallet';
 
 type StakeInput = { validatorAddress: string };
 type SuiWalletStakeFeature = {
@@ -72,7 +72,7 @@ const API_ENV_TO_CHAIN: Record<
     [API_ENV.testNet]: SUI_TESTNET_CHAIN,
 };
 
-export class SuiWallet implements Wallet {
+export class EthosWallet implements Wallet {
     readonly #events: Emitter<WalletEventsMap>;
     readonly #version = '1.0.0' as const;
     readonly #name = name;
