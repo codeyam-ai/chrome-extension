@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-    getCertifiedTransaction,
     getExecutionStatusType,
     getTransactionKindName,
     getTransactions,
@@ -18,7 +17,10 @@ import { useAppSelector } from '_hooks';
 import { txSelectors } from '_redux/slices/transactions';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 
-import type { TransactionKindName } from '@mysten/sui.js';
+import type {
+    TransactionKindName,
+    SuiTransactionResponse,
+} from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 
 import st from './TransactionDetailsPage.module.scss';
@@ -46,15 +48,11 @@ function TransactionDetailsPage() {
         [txDigest]
     );
     // TODO: load tx if not found locally
-    const txDetails = useAppSelector(txSelector);
+    const txDetails = useAppSelector(txSelector) as SuiTransactionResponse;
     const status = txDetails && getExecutionStatusType(txDetails);
     const statusIcon = status === 'success' ? 'check2-circle' : 'x-circle';
-    const transferKind =
-        txDetails &&
-        getTransactionKindName(
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            getTransactions(getCertifiedTransaction(txDetails)!)[0]
-        );
+    const [transaction] = txDetails && getTransactions(txDetails);
+    const transferKind = transaction && getTransactionKindName(transaction);
     return (
         <div className={cl('container')}>
             {txDetails ? (

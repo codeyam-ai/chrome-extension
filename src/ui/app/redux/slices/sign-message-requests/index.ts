@@ -8,16 +8,11 @@ import {
     createSlice,
 } from '@reduxjs/toolkit';
 
-import {
-    type SerializedSignaturePubkeyPair,
-    serializeSignaturePubkeyPair,
-} from '_shared/signature-serialization';
-
+import type { SerializedSignature } from '@mysten/sui.js';
 import type { EntityState, PayloadAction } from '@reduxjs/toolkit';
 import type { SignMessageRequest } from '_payloads/messages/SignMessageRequest';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
-import { SerializedSignature } from '@mysten/sui.js';
 
 const signMessageRequestsAdapter = createEntityAdapter<SignMessageRequest>({
     sortComparer: (a, b) => {
@@ -31,7 +26,7 @@ export const respondToSignMessageRequest = createAsyncThunk<
     {
         id: string;
         approved: boolean;
-        signature: SerializedSignaturePubkeyPair | null;
+        signature: SerializedSignature | null;
     },
     { id: string; approved: boolean },
     AppThunkConfig
@@ -53,7 +48,7 @@ export const respondToSignMessageRequest = createAsyncThunk<
         if (!signMessageRequest) {
             throw new Error(`SignMessageRequest ${id} not found`);
         }
-        let signMessageResult: SerializedSignature;
+        let signMessageResult: SerializedSignature | undefined;
         let signMessageResultError: string | undefined;
         if (approved) {
             let signer;

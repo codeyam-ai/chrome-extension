@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { toB64 } from '@mysten/bcs';
+import { fromSerializedSignature } from '@mysten/sui.js';
 import { filter, map } from 'rxjs';
 
 import { mapToPromise } from './utils';
@@ -10,7 +11,6 @@ import { WindowMessageStream } from '_messaging/WindowMessageStream';
 import { ALL_PERMISSION_TYPES } from '_payloads/permissions';
 import { type GetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
 import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
-import { deserializeSignaturePubkeyPair } from '_src/shared/signature-serialization';
 import { type AccountCustomization } from '_src/types/AccountCustomization';
 
 import type {
@@ -192,7 +192,7 @@ export class DAppInterface {
             }),
             (response) =>
                 response.signature
-                    ? deserializeSignaturePubkeyPair(response.signature)
+                    ? fromSerializedSignature(response.signature)
                     : undefined
         );
     }

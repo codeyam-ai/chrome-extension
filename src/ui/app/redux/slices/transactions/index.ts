@@ -207,31 +207,6 @@ export const executeMoveCall = createAsyncThunk<
             );
         }
 
-        // console.log('moveCall.gasPayment', moveCall.gasPayment);
-        // if (!moveCall.gasPayment) {
-        //     const gasPrice = await signer.provider.getReferenceGasPrice();
-        //     const coins: SuiMoveObject[] = accountCoinsSelector(state);
-        //     const minimalSetOfCoins =
-        //         CoinAPI.selectCoinSetWithCombinedBalanceGreaterThanOrEqual(
-        //             coins,
-        //             BigInt(moveCall.gasBudget * gasPrice)
-        //         );
-        //     console.log('minimalSetOfCoins', minimalSetOfCoins);
-        //     if (minimalSetOfCoins.length > 1) {
-        //         const response = await signer.signAndExecuteTransaction(
-        //             await CoinAPI.newPayTransaction(
-        //                 coins,
-        //                 GAS_TYPE_ARG,
-        //                 BigInt(moveCall.gasBudget * gasPrice),
-        //                 address || '',
-        //                 DEFAULT_GAS_BUDGET_FOR_PAY
-        //             )
-        //         );
-        //         console.log('RESPONSE', response);
-        //     }
-        //     moveCall.gasPayment = CoinAPI.getID(minimalSetOfCoins[0]);
-        // }
-
         const response = await signer.signAndExecuteTransaction({
             kind: 'moveCall',
             data: moveCall,

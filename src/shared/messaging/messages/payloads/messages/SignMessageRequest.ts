@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import type { SerializedSignaturePubkeyPair } from '_shared/signature-serialization';
+import type { SerializedSignature } from '@mysten/sui.js';
 
 export type SignMessageRequest = {
     id: string;
@@ -11,5 +11,5 @@ export type SignMessageRequest = {
     messageData?: string; // base64 encoded string
     messageString?: string;
     createdDate: string;
-    signature?: SerializedSignaturePubkeyPair;
+    signature?: SerializedSignature;
 };
