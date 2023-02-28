@@ -40,12 +40,12 @@ export const ENV_TO_API: Record<string, Connection | null> = {
         faucet: process.env.API_ENDPOINT_LOCAL_FAUCET || '',
     }),
     [API_ENV.devNet.toString()]: new Connection({
-        fullnode: process.env.API_ENDPOINT_DEV_NET_FULLNODE || '',
-        faucet: process.env.API_ENDPOINT_DEV_NET_FAUCET || '',
+        fullnode: process.env.API_ENDPOINT_DEVNET_FULLNODE || '',
+        faucet: process.env.API_ENDPOINT_DEVNET_FAUCET || '',
     }),
     [API_ENV.customRPC.toString()]: null,
     [API_ENV.testNet.toString()]: new Connection({
-        fullnode: process.env.API_ENDPOINT_TEST_NET_FULLNODE || '',
+        fullnode: process.env.API_ENDPOINT_TESTNET_FULLNODE || '',
         // NOTE: Faucet is currently disabled for testnet:
         // faucet: process.env.API_ENDPOINT_TEST_NET_FAUCET || '',
     }),

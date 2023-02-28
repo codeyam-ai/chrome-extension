@@ -39,7 +39,7 @@ Object.defineProperty(window, 'matchMedia', {
     })),
 });
 
-process.env.GROWTHBOOK_API_KEY = "test";
+process.env.GROWTHBOOK_API_KEY = 'test';
 
 process.env.API_ENDPOINT_DEVNET_FULLNODE =
     'http://devNet-fullnode.example.com/';
@@ -51,7 +51,7 @@ process.env.API_ENDPOINT_TESTNET_FAUCET = 'http://testNet-faucet.example.com/';
 
 process.env.BASE_URL = 'http://ethos-base-url.example.com/';
 
-nock("https://cdn.growthbook.io")
+nock('https://cdn.growthbook.io')
     .persist()
     .get(`/api/features/test`)
     .reply(200, {});
