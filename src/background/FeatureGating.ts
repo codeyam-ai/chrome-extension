@@ -23,7 +23,6 @@ class FeatureGating {
     private async loadFeatures() {
         setAttributes(this.#growthBook);
         try {
-            console.log("GROWTHBOOK", `https://cdn.growthbook.io/api/features/${GROWTHBOOK_API_KEY}`)
             const res = await fetch(
                 `https://cdn.growthbook.io/api/features/${GROWTHBOOK_API_KEY}`
             );
