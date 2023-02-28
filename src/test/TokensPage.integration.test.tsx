@@ -20,7 +20,6 @@ describe('Rendering the Tokens page', () => {
 
     test('rendering the Tokens page when the wallet has some coins', async () => {
         mockchain.mockSuiObjects({
-            coinId: '0xfd9cff9fd6befa0e7d6481d0eeae02056b2ca46e',
             suiBalance: 400000000,
         });
         renderApp();
