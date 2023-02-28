@@ -16,6 +16,7 @@ import {
     type EventsOnMethod,
     type EventsListeners,
     type SuiSignTransactionMethod,
+    // type SuiSignMessageMethod,
 } from '@mysten/wallet-standard';
 import mitt, { type Emitter } from 'mitt';
 import { filter, map, type Observable } from 'rxjs';
@@ -38,6 +39,10 @@ import type { IconString } from '@wallet-standard/standard';
 import type { BasePayload, Payload } from '_payloads';
 import type { GetAccount } from '_payloads/account/GetAccount';
 import type { GetAccountResponse } from '_payloads/account/GetAccountResponse';
+// import type {
+//     ExecuteSignMessageRequest,
+//     ExecuteSignMessageResponse,
+// } from '_payloads/messages';
 import type { SetNetworkPayload } from '_payloads/network';
 import type {
     StakeRequest,
@@ -56,12 +61,12 @@ type WalletEventsMap = {
 const name = process.env.APP_NAME || 'Ethos Wallet';
 
 type StakeInput = { validatorAddress: string };
-type SuiWalletStakeFeature = {
-    'suiWallet:stake': {
-        version: '0.0.1';
-        stake: (input: StakeInput) => Promise<void>;
-    };
-};
+// type SuiWalletStakeFeature = {
+//     'suiWallet:stake': {
+//         version: '0.0.1';
+//         stake: (input: StakeInput) => Promise<void>;
+//     };
+// };
 type ChainType = Wallet['chains'][number];
 const API_ENV_TO_CHAIN: Record<
     Exclude<API_ENV, API_ENV.customRPC>,
@@ -99,8 +104,7 @@ export class EthosWallet implements Wallet {
 
     get features(): ConnectFeature &
         EventsFeature &
-        SuiFeatures &
-        SuiWalletStakeFeature {
+        Omit<SuiFeatures, 'sui:signMessage'> {
         return {
             'standard:connect': {
                 version: '1.0.0',
@@ -110,6 +114,10 @@ export class EthosWallet implements Wallet {
                 version: '1.0.0',
                 on: this.#on,
             },
+            // 'sui:signMessage': {
+            //     version: '1.0.0',
+            //     signMessage: this.#signMessage,
+            // },
             'sui:signTransaction': {
                 version: '2.0.0',
                 signTransaction: this.#signTransaction,
@@ -118,10 +126,10 @@ export class EthosWallet implements Wallet {
                 version: '2.0.0',
                 signAndExecuteTransaction: this.#signAndExecuteTransaction,
             },
-            'suiWallet:stake': {
-                version: '0.0.1',
-                stake: this.#stake,
-            },
+            // 'suiWallet:stake': {
+            //     version: '0.0.1',
+            //     stake: this.#stake,
+            // },
         };
     }
 
@@ -216,6 +224,16 @@ export class EthosWallet implements Wallet {
 
         return { accounts: this.accounts };
     };
+
+    // #signMessage: SuiSignMessageMethod = async (input) => {
+    //     return mapToPromise(
+    //         this.#send<ExecuteSignMessageRequest, ExecuteSignMessageResponse>({
+    //             type: 'execute-sign-message-request',
+    //             messageData: input,
+    //         }),
+    //         (response) => response.result
+    //     );
+    // };
 
     #signTransaction: SuiSignTransactionMethod = async (input) => {
         return mapToPromise(

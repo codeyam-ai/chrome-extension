@@ -1,4 +1,4 @@
-``# EThos Sui Wallet
+# Ethos Sui Wallet
 
 A chrome (v88+) extension wallet for [Sui](https://sui.io) by [Ethos](https://https://ethoswallet.xyz).
 
