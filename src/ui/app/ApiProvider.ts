@@ -27,11 +27,11 @@ type EnvInfo = {
     name: string;
 };
 
-export const API_ENV_TO_INFO: Record<API_ENV, EnvInfo> = {
-    [API_ENV.local]: { name: 'Local' },
-    [API_ENV.devNet]: { name: 'Devnet' },
-    [API_ENV.customRPC]: { name: 'Custom RPC URL' },
-    [API_ENV.testNet]: { name: 'Testnet' },
+export const API_ENV_TO_INFO: Record<string, EnvInfo> = {
+    [API_ENV.local.toString()]: { name: 'Local' },
+    [API_ENV.devNet.toString()]: { name: 'Devnet' },
+    [API_ENV.customRPC.toString()]: { name: 'Custom RPC URL' },
+    [API_ENV.testNet.toString()]: { name: 'Testnet' },
 };
 
 export const ENV_TO_API: Record<string, Connection | null> = {

@@ -39,6 +39,11 @@ Object.defineProperty(window, 'matchMedia', {
     })),
 });
 
+nock("https://cdn.growthbook.io")
+    .persist()
+    .get(`/api/features/undefined`)
+    .reply(200, {});
+
 process.env.API_ENDPOINT_DEVNET_FULLNODE =
     'http://devNet-fullnode.example.com/';
 process.env.API_ENDPOINT_DEVNET_FAUCET = 'http://devNet-faucet.example.com/';
