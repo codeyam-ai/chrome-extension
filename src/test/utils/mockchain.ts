@@ -1,50 +1,58 @@
-import { readFileSync } from 'fs';
 import _ from 'lodash';
+import nock from 'nock';
 import { v4 as uuidV4 } from 'uuid';
 
-import nock from 'nock';
-import { join } from 'path';
 import { renderTemplate } from './json-templates';
-import { SUI_SYSTEM_STATE_OBJECT_ID } from '_src/ui/app/redux/slices/sui-objects/Coin';
-import { SuiObjectInfo } from '@mysten/sui.js';
+import { suiSystemStateObject } from '_src/test/utils/mockchain-templates/sui-system-state';
+
+import type { SuiObjectInfo } from '@mysten/sui.js';
+
+interface ExpectedCall {
+    method: string;
+    params?: any;
+    result: any;
+    numExpectedCalls?: number;
+}
+
+interface CallContext {
+    expectedCall: ExpectedCall;
+    actualCalls: number;
+}
 
 export class Mockchain {
+    registeredCalls: CallContext[];
+
+    constructor() {
+        this.registeredCalls = [];
+        nock('http://devNet-fullnode.example.com')
+            .persist()
+            .post('/')
+            .reply(200, (uri: string, requestBody: nock.Body) => {
+                return this.matchIncomingRequest(uri, requestBody);
+            });
+    }
+
     mockBlockchainCall(
         request: { method: string; params?: any },
         result: any,
         persist?: boolean
-    ) {
-        let theNock = nock('http://devNet-fullnode.example.com');
-        if (persist) {
-            theNock = theNock.persist();
+    ): CallContext {
+        let expectedCalls;
+        if (!persist) {
+            expectedCalls = 1;
         }
-        theNock.post('/', _.matches(request)).reply(200, {
-            jsonrpc: '2.0',
+        const expectedCall: ExpectedCall = {
+            method: request.method,
+            params: request.params,
             result: result,
-            id: uuidV4.toString(),
-        });
-        return theNock;
-    }
-
-    mockBlockchainBatchCall(
-        requests: { method: string; params?: any }[],
-        results: any[],
-        persist?: boolean
-    ) {
-        let theNock = nock('http://devNet-fullnode.example.com');
-        if (persist) {
-            theNock = theNock.persist();
-        }
-        const responses = results.map((response) => {
-            return {
-                jsonrpc: '2.0',
-                id: 'fbf9bf0c-a3c9-460a-a999-b7e87096dd1c',
-                result: response,
-            };
-        });
-
-        theNock.post('/', _.matches(requests)).reply(200, responses);
-        return theNock;
+            numExpectedCalls: expectedCalls,
+        };
+        const callContext = {
+            expectedCall: expectedCall,
+            actualCalls: 0,
+        };
+        this.registeredCalls.push(callContext);
+        return callContext;
     }
 
     mockCommonCalls() {
@@ -70,10 +78,7 @@ export class Mockchain {
     }
 
     mockSuiObjects(
-        options: {
-            suiBalance?: number;
-            nftDetails?: { name: string };
-        } = {}
+        options: { suiBalance?: number; nftDetails?: { name: string } } = {}
     ) {
         const fullObjects = [];
         const objectInfos = [];
@@ -124,14 +129,83 @@ export class Mockchain {
             true
         );
 
-        const expectedIds = objectInfos.map(
-            (objectInfo) => objectInfo.objectId
-        );
-        expectedIds.push(SUI_SYSTEM_STATE_OBJECT_ID);
-        const expectedCalls = expectedIds.map((expectedId) => ({
-            method: 'sui_getObject',
-            params: [expectedId],
-        }));
-        this.mockBlockchainBatchCall(expectedCalls, fullObjects);
+        fullObjects.push(suiSystemStateObject);
+        fullObjects.forEach((fullObject) => {
+            this.mockBlockchainCall(
+                {
+                    method: 'sui_getObject',
+                    params: [fullObject.details.reference.objectId],
+                },
+                fullObject,
+                true
+            );
+        });
+    }
+
+    matchIncomingRequest(uri: string, requestBody: nock.Body) {
+        const allJsonRpcResponses: any[] = [];
+
+        let isBatch: boolean;
+        let allJsonRpcCalls: any[];
+        if (Array.isArray(requestBody)) {
+            allJsonRpcCalls = requestBody;
+            isBatch = true;
+        } else {
+            allJsonRpcCalls = [requestBody];
+            isBatch = false;
+        }
+
+        allJsonRpcCalls.forEach((jsonRpcCall) => {
+            this.registeredCalls.forEach((callContext) => {
+                const expectedBody: any = {
+                    method: callContext.expectedCall.method,
+                };
+                if (callContext.expectedCall.params) {
+                    expectedBody.params = callContext.expectedCall.params;
+                }
+                const matches = _.matches(expectedBody)(jsonRpcCall);
+                const numExpectedCalls =
+                    callContext.expectedCall.numExpectedCalls;
+                const reachedLimit =
+                    numExpectedCalls &&
+                    callContext.actualCalls === numExpectedCalls;
+                if (matches) {
+                    if (!reachedLimit) {
+                        callContext.actualCalls += 1;
+                        allJsonRpcResponses.push(
+                            callContext.expectedCall.result
+                        );
+                    } else {
+                        throw new Error(
+                            `Found a match for method ${callContext.expectedCall.method} with params ${callContext.expectedCall.params} but request already happened ${numExpectedCalls} times!\n Consider passing persist: true`
+                        );
+                    }
+                }
+            });
+        });
+
+        if (allJsonRpcCalls.length === allJsonRpcResponses.length) {
+            if (isBatch) {
+                // return an array where each object corresponds to an incoming request
+                return allJsonRpcResponses.map((response) => {
+                    return {
+                        jsonrpc: '2.0',
+                        result: response,
+                        id: uuidV4(),
+                    };
+                });
+            } else {
+                return {
+                    jsonrpc: '2.0',
+                    result: allJsonRpcResponses[0],
+                    id: uuidV4(),
+                };
+            }
+        } else {
+            const bodyAsRecord = requestBody as Record<string, any>;
+            throw new Error(
+                `Found no match for method ${bodyAsRecord.method} with params ${bodyAsRecord.params}!`
+            );
+        }
     }
 }

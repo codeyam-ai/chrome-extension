@@ -19,15 +19,34 @@ describe('The Transaction History Page', () => {
 
     test('Handles a wallet that has no transactions', async () => {
         mockchain.mockSuiObjects();
-        mockchain.mockBlockchainBatchCall(
-            [
-                { method: 'sui_getTransactions' },
-                { method: 'sui_getTransactions' },
-            ],
-            [
-                { data: [], nextCursor: null },
-                { data: [], nextCursor: null },
-            ]
+        mockchain.mockBlockchainCall(
+            {
+                method: 'sui_getTransactions',
+                params: [
+                    {
+                        ToAddress: '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+                    },
+                ],
+            },
+            {
+                data: [],
+                nextCursor: null,
+            }
+        );
+        mockchain.mockBlockchainCall(
+            {
+                method: 'sui_getTransactions',
+                params: [
+                    {
+                        FromAddress:
+                            '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+                    },
+                ],
+            },
+            {
+                data: [],
+                nextCursor: null,
+            }
         );
         renderApp({ initialRoute: '/transactions' });
 
@@ -79,49 +98,43 @@ describe('The Transaction History Page', () => {
 
     function mockTransactionHistory() {
         const view = renderTemplate('transaction', {});
-        mockchain.mockBlockchainBatchCall(
-            [
-                {
-                    method: 'sui_getTransactions',
-                    params: [
-                        {
-                            ToAddress:
-                                '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
-                        },
-                    ],
-                },
-                {
-                    method: 'sui_getTransactions',
-                    params: [
-                        {
-                            FromAddress:
-                                '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
-                        },
-                    ],
-                },
-            ],
-            [
-                {
-                    data: ['5VaudApwJSXRCcpzAeKuGsXatyYa1PBMAHhPEDJHEMNH'],
-                    nextCursor: null,
-                },
-                { data: [], nextCursor: null },
-            ]
+        mockchain.mockBlockchainCall(
+            {
+                method: 'sui_getTransactions',
+                params: [
+                    {
+                        ToAddress: '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+                    },
+                ],
+            },
+            {
+                data: ['5VaudApwJSXRCcpzAeKuGsXatyYa1PBMAHhPEDJHEMNH'],
+                nextCursor: null,
+            }
         );
-        mockchain.mockBlockchainBatchCall(
-            [
-                {
-                    method: 'sui_getTransaction',
-                    params: ['5VaudApwJSXRCcpzAeKuGsXatyYa1PBMAHhPEDJHEMNH'],
-                },
-            ],
-            [view]
+        mockchain.mockBlockchainCall(
+            {
+                method: 'sui_getTransactions',
+                params: [
+                    {
+                        FromAddress:
+                            '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+                    },
+                ],
+            },
+            {
+                data: [],
+                nextCursor: null,
+            }
+        );
+        mockchain.mockBlockchainCall(
+            {
+                method: 'sui_getTransaction',
+                params: ['5VaudApwJSXRCcpzAeKuGsXatyYa1PBMAHhPEDJHEMNH'],
+            },
+            view
         );
 
-        // TODO: sui_getObject is already mocked in mockchain...it's inconsistent to mock it a second time here. probably
-        // we should expand mockchain such that it will create objects and transactions together. after all,
-        // you can't have objects without transactions, so it makes sense that if you tell it you want an object,
-        // you'll also get a corresponding transaction
         mockchain.mockBlockchainCall(
             {
                 method: 'sui_getObject',
@@ -133,51 +146,35 @@ describe('The Transaction History Page', () => {
             }),
             true
         );
+
         mockchain.mockBlockchainCall(
             {
-                method: 'sui_getTransaction',
-                params: ['5VaudApwJSXRCcpzAeKuGsXatyYa1PBMAHhPEDJHEMNH'],
+                method: 'sui_getTransactions',
+                params: [
+                    {
+                        ToAddress: '0x434ffd2c55c39aa97f465eb4402ca949a263b868',
+                    },
+                ],
             },
-            view
+            {
+                data: [],
+                nextCursor: null,
+            }
         );
-
-        mockchain.mockBlockchainBatchCall(
-            [
-                {
-                    method: 'sui_getObject',
-                    params: ['0x0000000000000000000000000000000000000005'],
-                },
-            ],
-            [],
-            true
-        );
-
-        mockchain.mockBlockchainBatchCall(
-            [
-                {
-                    method: 'sui_getTransactions',
-                    params: [
-                        {
-                            ToAddress:
-                                '0x434ffd2c55c39aa97f465eb4402ca949a263b868',
-                        },
-                    ],
-                },
-                {
-                    method: 'sui_getTransactions',
-                    params: [
-                        {
-                            FromAddress:
-                                '0x434ffd2c55c39aa97f465eb4402ca949a263b868',
-                        },
-                    ],
-                },
-            ],
-            [
-                { data: [], nextCursor: null },
-                { data: [], nextCursor: null },
-            ],
-            true
+        mockchain.mockBlockchainCall(
+            {
+                method: 'sui_getTransactions',
+                params: [
+                    {
+                        FromAddress:
+                            '0x434ffd2c55c39aa97f465eb4402ca949a263b868',
+                    },
+                ],
+            },
+            {
+                data: [],
+                nextCursor: null,
+            }
         );
     }
 });
