@@ -32,7 +32,7 @@ describe('The Transaction Approval popup', () => {
 
     test('shows the transaction and allows user to approve it', async () => {
         const { txRequestId } = simulateReduxStateWithTransaction();
-        const { executeScope } = mockBlockchainTransactionExecution();
+        const executeScope = mockBlockchainTransactionExecution();
 
         const mockWindowCloser = jest.fn();
         renderApp({
@@ -49,12 +49,12 @@ describe('The Transaction Approval popup', () => {
             expect(mockWindowCloser.mock.calls.length).toEqual(1);
         });
 
-        expect(executeScope.isDone()).toBeTruthy();
+        expect(executeScope.actualCalls).toEqual(1);
     });
 
     test('the user can reject the transaction', async () => {
         const { txRequestId } = simulateReduxStateWithTransaction();
-        const { executeScope } = mockBlockchainTransactionExecution();
+        const executeScope = mockBlockchainTransactionExecution();
 
         const mockWindowCloser = jest.fn();
         renderApp({
@@ -71,7 +71,7 @@ describe('The Transaction Approval popup', () => {
             expect(mockWindowCloser.mock.calls.length).toEqual(1)
         );
 
-        expect(executeScope.isDone()).toBeFalsy();
+        expect(executeScope.actualCalls).toEqual(0);
     });
 
     function simulateReduxStateWithTransaction() {
@@ -104,7 +104,7 @@ describe('The Transaction Approval popup', () => {
     }
 
     function mockBlockchainTransactionExecution() {
-        const payScope = mockchain.mockBlockchainCall(
+        mockchain.mockBlockchainCall(
             { method: 'sui_pay' },
             renderTemplate('pay', {
                 base64EncodedTxBytes: 'ZmFrZSBkYXRh',
@@ -113,7 +113,7 @@ describe('The Transaction Approval popup', () => {
         );
 
         // note: this is only expected to be called once
-        const dryRunTransactionScope = mockchain.mockBlockchainCall(
+        mockchain.mockBlockchainCall(
             {
                 method: 'sui_dryRunTransaction',
                 params: ['ZmFrZSBkYXRh'],
@@ -121,7 +121,7 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('dryRunTransaction', {})
         );
 
-        const getObjectForDryRunScope = mockchain.mockBlockchainCall(
+        mockchain.mockBlockchainCall(
             {
                 method: 'sui_getObject',
                 params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
@@ -132,7 +132,7 @@ describe('The Transaction Approval popup', () => {
             })
         );
 
-        const getCoinsForDryRunScope = mockchain.mockBlockchainCall(
+        mockchain.mockBlockchainCall(
             {
                 method: 'sui_getCoins',
                 params: [
@@ -145,36 +145,23 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('getCoins', {})
         );
 
-        const getObjectForDryRunScope2 = mockchain.mockBlockchainBatchCall(
-            [
-                {
-                    method: 'sui_getObject',
-                    params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
-                },
-            ],
-            [
-                renderTemplate('coinObject', {
-                    balance: 50000000,
-                    id: '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690',
-                }),
-            ]
+        mockchain.mockBlockchainCall(
+            {
+                method: 'sui_getObject',
+                params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
+            },
+            renderTemplate('coinObject', {
+                balance: 50000000,
+                id: '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690',
+            })
         );
 
-        const executeScope = mockchain.mockBlockchainCall(
+        return mockchain.mockBlockchainCall(
             {
                 method: 'sui_executeTransactionSerializedSig',
                 params: ['ZmFrZSBkYXRh'],
             },
             renderTemplate('executeTransaction', {})
         );
-
-        return {
-            executeScope,
-            dryRunTransactionScope,
-            getObjectForDryRunScope,
-            getCoinsForDryRunScope,
-            getObjectForDryRunScope2,
-            payScope,
-        };
     }
 });
