@@ -9,8 +9,8 @@ import type { SuiObjectInfo } from '@mysten/sui.js';
 
 interface ExpectedCall {
     method: string;
-    params?: any;
-    result: any;
+    params?: unknown[];
+    result: unknown;
     numExpectedCalls?: number;
 }
 
@@ -33,8 +33,8 @@ export class Mockchain {
     }
 
     mockBlockchainCall(
-        request: { method: string; params?: any },
-        result: any,
+        request: { method: string; params?: unknown[] },
+        result: unknown,
         persist?: boolean
     ): CallContext {
         let expectedCalls;
@@ -143,10 +143,10 @@ export class Mockchain {
     }
 
     matchIncomingRequest(uri: string, requestBody: nock.Body) {
-        const allJsonRpcResponses: any[] = [];
+        const allJsonRpcResponses: unknown[] = [];
 
         let isBatch: boolean;
-        let allJsonRpcCalls: any[];
+        let allJsonRpcCalls: unknown[];
         if (Array.isArray(requestBody)) {
             allJsonRpcCalls = requestBody;
             isBatch = true;
@@ -157,7 +157,7 @@ export class Mockchain {
 
         allJsonRpcCalls.forEach((jsonRpcCall) => {
             this.registeredCalls.forEach((callContext) => {
-                const expectedBody: any = {
+                const expectedBody: {method: string, params?: unknown[]} = {
                     method: callContext.expectedCall.method,
                 };
                 if (callContext.expectedCall.params) {
@@ -202,7 +202,7 @@ export class Mockchain {
                 };
             }
         } else {
-            const bodyAsRecord = requestBody as Record<string, any>;
+            const bodyAsRecord = requestBody as Record<string, unknown>;
             throw new Error(
                 `Found no match for method ${bodyAsRecord.method} with params ${bodyAsRecord.params}!`
             );

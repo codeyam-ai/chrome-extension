@@ -1,7 +1,5 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import _ from 'lodash';
-import nock from 'nock';
 
 import { simulateMnemonicUser } from '_src/test/utils/fake-local-storage';
 import { renderTemplate } from '_src/test/utils/json-templates';
@@ -87,8 +85,8 @@ describe('The Transaction History Page', () => {
 
         // Note: the page will be loading until the next time the sui objects are fetched on the timer. So that's why we
         // wait 4 seconds. This is a bug, see
-        //linear.app/ethoswallet/issue/ETHOS-414/switching-wallets-should-not-cause-the-page-to-reload-for-as-much-as-4
-        https: await screen.findByText(
+        // https://linear.app/ethoswallet/issue/ETHOS-414/switching-wallets-should-not-cause-the-page-to-reload-for-as-much-as-4
+        await screen.findByText(
             'No transactions yet',
             {},
             { timeout: 4000 }
