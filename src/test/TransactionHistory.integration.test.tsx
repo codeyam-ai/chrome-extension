@@ -56,7 +56,7 @@ describe('The Transaction History Page', () => {
         mockchain.mockSuiObjects();
         mockTransactionHistory();
         renderApp({ initialRoute: '/transactions' });
-        await screen.findByText('$100.00', {}, { timeout: 2000 });
+        await screen.findByText('$1.00', {}, { timeout: 2000 });
 
         // this annoying code prevents async code from getting scheduled after the test is over. It would be good to
         // find a better pattern; see discussion here:
@@ -69,7 +69,7 @@ describe('The Transaction History Page', () => {
         mockchain.mockSuiObjects();
         mockTransactionHistory();
         renderApp({ initialRoute: '/transactions' });
-        await screen.findByText('$100.00', {}, { timeout: 2000 });
+        await screen.findByText('$1.00', {}, { timeout: 2000 });
 
         let currentWallet = await screen.findByTestId('current-wallet');
         await within(currentWallet).findByText('Wallet 1');
@@ -87,7 +87,7 @@ describe('The Transaction History Page', () => {
         // wait 4 seconds. This is a bug, see
         // https://linear.app/ethoswallet/issue/ETHOS-414/switching-wallets-should-not-cause-the-page-to-reload-for-as-much-as-4
         await screen.findByText('No transactions yet', {}, { timeout: 4000 });
-        expect(screen.queryByText('$100.00')).toBeFalsy();
+        expect(screen.queryByText('$1.00')).toBeFalsy();
     });
 
     function mockTransactionHistory() {

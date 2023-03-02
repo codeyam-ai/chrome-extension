@@ -20,7 +20,7 @@ describe('Rendering the Tokens page', () => {
 
     test('rendering the Tokens page when the wallet has some coins', async () => {
         mockchain.mockSuiObjects({
-            suiBalance: 400000000,
+            suiBalance: 40000000000,
         });
         renderApp();
         await screen.findByText('$40');
