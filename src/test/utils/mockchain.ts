@@ -157,7 +157,7 @@ export class Mockchain {
 
         allJsonRpcCalls.forEach((jsonRpcCall) => {
             this.registeredCalls.forEach((callContext) => {
-                const expectedBody: {method: string, params?: unknown[]} = {
+                const expectedBody: { method: string; params?: unknown[] } = {
                     method: callContext.expectedCall.method,
                 };
                 if (callContext.expectedCall.params) {

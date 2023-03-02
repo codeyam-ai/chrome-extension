@@ -86,11 +86,7 @@ describe('The Transaction History Page', () => {
         // Note: the page will be loading until the next time the sui objects are fetched on the timer. So that's why we
         // wait 4 seconds. This is a bug, see
         // https://linear.app/ethoswallet/issue/ETHOS-414/switching-wallets-should-not-cause-the-page-to-reload-for-as-much-as-4
-        await screen.findByText(
-            'No transactions yet',
-            {},
-            { timeout: 4000 }
-        );
+        await screen.findByText('No transactions yet', {}, { timeout: 4000 });
         expect(screen.queryByText('$100.00')).toBeFalsy();
     });
 
