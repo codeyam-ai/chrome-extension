@@ -37,7 +37,7 @@ const getDollars = (balance?: bigint | number | string): string | undefined => {
     if (!balance) {
         return undefined;
     }
-    return dollarFormatter.format(parseFloat(formatBalance(balance, 7)));
+    return dollarFormatter.format(parseFloat(formatBalance(balance, 6)));
 };
 
 const formatCoin = async (
