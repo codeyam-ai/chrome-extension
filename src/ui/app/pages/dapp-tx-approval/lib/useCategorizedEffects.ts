@@ -43,7 +43,7 @@ const useCategorizedEffects = ({
     const creating = useMemo(() => {
         if (!effects?.events) return [];
 
-        const newEvents = effects.events.filter(
+        const newEvents = effects.created.filter(
             (event) =>
                 'newObject' in event &&
                 event.newObject &&
