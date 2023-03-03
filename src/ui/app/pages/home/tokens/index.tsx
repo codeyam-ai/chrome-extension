@@ -3,7 +3,6 @@
 
 import CoinList from './CoinList';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
-import { useFormatCoin } from '../../../hooks/useFormatCoin';
 import { useAppSelector, useExplorerPermission } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { LinkType } from '_src/enums/LinkType';
