@@ -6,7 +6,6 @@ import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import { useFormatCoin } from '../../../hooks/useFormatCoin';
 import { useAppSelector, useExplorerPermission } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
-import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import { sumCoinBalances } from '_src/ui/app/helpers/sumCoinBalances';
@@ -17,12 +16,21 @@ import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import { getDollars } from '_src/ui/app/helpers/formatCoin';
 
 function TokensPage() {
     const setExplorerPermission = useExplorerPermission();
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const mistBalance = sumCoinBalances(balances) || 0;
-    const [, , usdAmount] = useFormatCoin(mistBalance, GAS_TYPE_ARG);
+
+    const sumCoinTotal = Object.keys(balances).reduce((acc, key) => {
+        const coinAmt = balances[key];
+        const dollars = getDollars(coinAmt);
+
+        if (!dollars) return acc;
+
+        return acc + parseFloat(dollars?.replace(/[$,]/g, '') as string);
+    }, 0);
 
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex } }) =>
@@ -36,7 +44,7 @@ function TokensPage() {
         <>
             <WalletBalanceAndIconHomeView
                 accountInfo={accountInfo}
-                dollarValue={usdAmount}
+                dollarValue={`$${sumCoinTotal}`}
             />
 
             <SendReceiveButtonGroup mistBalance={mistBalance} />

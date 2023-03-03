@@ -1,14 +1,6 @@
-import { Coin, type JsonRpcProvider } from '@mysten/sui.js';
-
-import { formatBalance } from '../hooks/useFormatCoin';
-
-export interface FormattedCoin {
-    formattedBalance?: string;
-    coinSymbol: string;
-    dollars?: string;
-    coinName: string;
-    coinIcon: string | null;
-}
+import { Coin, JsonRpcProvider } from '@mysten/sui.js';
+import { FormattedCoin } from '../pages/home/transactions/FormattedCoin';
+import { formatBalance } from './formatBalance';
 
 const numberFormatter = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 0,
@@ -19,7 +11,7 @@ const dollarFormatter = new Intl.NumberFormat('en-US', {
     currency: 'USD',
 });
 
-const getFormattedBalance = (
+export const getFormattedBalance = (
     balance?: bigint | number | string,
     decimals?: number
 ): string | undefined => {
@@ -33,10 +25,13 @@ const getFormattedBalance = (
     }
 };
 
-const getDollars = (balance?: bigint | number | string): string | undefined => {
+export const getDollars = (
+    balance?: bigint | number | string
+): string | undefined => {
     if (!balance) {
         return undefined;
     }
+
     return dollarFormatter.format(parseFloat(formatBalance(balance, 6)));
 };
 
@@ -65,7 +60,6 @@ const formatCoin = async (
     }
 
     const formattedBalance = getFormattedBalance(balance, decimals);
-
     const dollars = getDollars(balance);
 
     return {
