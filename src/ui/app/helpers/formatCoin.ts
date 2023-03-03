@@ -1,6 +1,13 @@
 import { Coin, JsonRpcProvider } from '@mysten/sui.js';
-import { FormattedCoin } from '../pages/home/transactions/FormattedCoin';
 import { formatBalance } from './formatBalance';
+
+export interface FormattedCoin {
+    formattedBalance?: string;
+    coinSymbol: string;
+    dollars?: string;
+    coinName: string;
+    coinIcon: string | null;
+  }
 
 const numberFormatter = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 0,
