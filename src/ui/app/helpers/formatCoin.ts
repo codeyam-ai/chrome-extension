@@ -7,7 +7,7 @@ export interface FormattedCoin {
     dollars?: string;
     coinName: string;
     coinIcon: string | null;
-  }
+}
 
 const numberFormatter = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 0,
