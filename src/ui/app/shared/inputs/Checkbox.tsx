@@ -3,7 +3,7 @@ interface CheckboxProps
         React.InputHTMLAttributes<HTMLInputElement>,
         HTMLInputElement
     > {
-    label: string;
+    label: string | React.ReactNode;
     id: string;
     onChange: React.ChangeEventHandler<HTMLInputElement>;
     checked: boolean;
