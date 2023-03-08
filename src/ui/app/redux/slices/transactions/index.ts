@@ -19,7 +19,7 @@ import { Coin } from '_redux/slices/sui-objects/Coin';
 import type {
     SuiAddress,
     SuiMoveObject,
-    SuiExecuteTransactionResponse,
+    SuiTransactionResponse,
     MoveCallTransaction,
 } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
@@ -31,7 +31,7 @@ type SendTokensTXArgs = {
     recipientAddress: SuiAddress;
 };
 
-type TransactionResult = SuiExecuteTransactionResponse;
+type TransactionResult = SuiTransactionResponse;
 
 type GasCoinResponse = {
     gasCoinObjectId?: SuiAddress;
@@ -110,13 +110,9 @@ export const createGasCoin = createAsyncThunk<
             // TODO: better way to sync latest objects
             dispatch(fetchAllOwnedAndRequiredObjects());
 
-            if (
-                'EffectsCert' in response &&
-                'effects' in response.EffectsCert
-            ) {
+            if ('EffectsCert' in response && 'effects' in response) {
                 const gasCoinObjectId =
-                    response.EffectsCert.effects.effects.created?.[0]?.reference
-                        ?.objectId;
+                    response.effects.created?.[0]?.reference?.objectId;
                 return { gasCoinObjectId };
             }
         } catch (error) {

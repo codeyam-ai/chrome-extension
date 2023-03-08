@@ -27,7 +27,7 @@ import {
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
 import type { KeyNameAndValue } from '../../shared/content/rows-and-lists/KeyValueList';
-import type { SuiObject } from '@mysten/sui.js';
+import type { SuiObjectRef } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 
 const truncateMiddle = (s = '', length = 6) =>
@@ -57,12 +57,12 @@ type PermissionInputArgs = {
     onChange: (field: string, value: string) => void;
 };
 
-interface EnhancedSuiObject extends SuiObject {
+interface EnhancedSuiObject extends SuiObjectRef {
     objectName: string;
     action: string;
 }
 
-const NftDisplay = ({ nft }: { nft: SuiObject }) => {
+const NftDisplay = ({ nft }: { nft: SuiObjectRef }) => {
     const { filePath, nftFields, fileExtentionType } = useNFTBasicData(nft);
 
     if (!filePath) return <></>;
@@ -235,7 +235,7 @@ export function DappPreapprovalPage() {
             const object = await provider.getObject(preapproval.objectId);
             const nft = {
                 ...onchainInfo,
-                ...(object.details as SuiObject),
+                ...(object.details as SuiObjectRef),
             };
 
             setNft(nft);
