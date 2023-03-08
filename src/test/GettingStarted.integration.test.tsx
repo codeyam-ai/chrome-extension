@@ -43,6 +43,9 @@ describe('Authenticating by importing an account with a seed phrase', () => {
             screen.getByTestId('confirmPassword'),
             'This is a Password'
         );
+
+        await userEvent.click(screen.getByTestId('terms-of-service'));
+
         await userEvent.click(screen.getByTestId('submit'));
         await screen.findByText('Wallet Set Up');
     });
