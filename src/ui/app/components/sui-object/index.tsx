@@ -12,7 +12,7 @@ import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { useMiddleEllipsis, useMediaUrl, useSuiObjectFields } from '_hooks';
 
-import type { SuiObject as SuiObjectType } from '@mysten/sui.js';
+import type { SuiObjectRef as SuiObjectType } from '@mysten/sui.js';
 
 import st from './SuiObject.module.scss';
 
@@ -22,9 +22,9 @@ export type SuiObjectProps = {
 };
 
 function SuiObject({ obj, sendNFT }: SuiObjectProps) {
-    const { objectId } = obj.reference;
+    const { objectId } = obj;
     const shortId = useMiddleEllipsis(objectId);
-    const objType =
+    /*const objType =
         (obj.data.dataType === 'moveObject' && obj.data.type) || 'Move Package';
     const imgUrl = useMediaUrl(obj.data);
     const { keys } = useSuiObjectFields(obj.data);
@@ -34,13 +34,13 @@ function SuiObject({ obj, sendNFT }: SuiObjectProps) {
     const sendUrl = useMemo(
         () => `/send-nft?${new URLSearchParams({ objectId }).toString()}`,
         [objectId]
-    );
+    );*/
     return (
         <div className={st.container}>
             <span className={st.id} title={objectId}>
                 <CopyToClipboard txt={objectId}>{shortId}</CopyToClipboard>
             </span>
-            <span className={st.type}>{objType}</span>
+            {/*<span className={st.type}>{objType}</span>
             <div className={st.content}>
                 {imgUrl ? (
                     <>
@@ -80,7 +80,8 @@ function SuiObject({ obj, sendNFT }: SuiObjectProps) {
                         </Field>
                     ) : null}
                 </div>
-            </div>
+                            </div>*/}
+            <div>COMMENTED OUT</div>
             <ExplorerLink
                 type={ExplorerLinkType.object}
                 objectID={objectId}
