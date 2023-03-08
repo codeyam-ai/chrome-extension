@@ -15,7 +15,7 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
 
 import type { FormValues } from '.';
-import type { SuiObject } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js';
 import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
 import st from './TransferNFTForm.module.scss';
@@ -24,7 +24,7 @@ import 'react-toastify/dist/ReactToastify.css';
 export type TransferNFTFormProps = {
     submitError: string | null;
     gasBalance: string;
-    nftobj: SuiObject;
+    nftobj: SuiObjectData;
     onClearSubmitError: () => void;
 };
 
