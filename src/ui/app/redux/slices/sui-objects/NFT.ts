@@ -1,10 +1,10 @@
-import { SuiObject, is } from '@mysten/sui.js';
+import { getObjectFields, getObjectType, getSuiObjectData, SuiObjectData, is } from '@mysten/sui.js';
 import get from 'lodash/get';
 
 import ipfs from '_src/ui/app/helpers/ipfs';
 
 import type {
-    GetObjectDataResponse,
+    SuiObjectResponse,
     JsonRpcProvider,
     SuiMoveObject,
 } from '@mysten/sui.js';
@@ -18,35 +18,37 @@ export type BagNFT = {
 };
 
 export class NFT {
-    public static isNFT(obj: SuiObject): boolean {
-        if (this.isBagNFT(obj)) return true;
+    public static isNFT(data: SuiObjectData): boolean {
+        if (this.isBagNFT(data)) return true;
 
         return (
-            'fields' in obj.data &&
-            'url' in obj.data.fields &&
-            !('ticket_id' in obj.data.fields)
+            !!data.content &&
+            'fields' in data.content &&
+            'url' in data.content.fields &&
+            !('ticket_id' in data.content.fields)
         );
     }
 
-    public static isBagNFT(obj: SuiObject): boolean {
+    public static isBagNFT(data: SuiObjectData): boolean {
         return (
-            'fields' in obj.data &&
-            'logical_owner' in obj.data.fields &&
-            'bag' in obj.data.fields
+            !!data.content &&
+            'fields' in data.content &&
+            'logical_owner' in data.content.fields &&
+            'bag' in data.content.fields
         );
     }
 
     public static async parseBagNFT(
         provider: JsonRpcProvider,
-        obj: SuiObject
-    ): Promise<SuiObject | BagNFT> {
-        if (!this.isBagNFT(obj)) return obj;
+        data: SuiObjectData
+    ): Promise<SuiObjectData | BagNFT> {
+        if (!this.isBagNFT(data)) return data;
 
-        const id = get(obj, 'reference.objectId');
-        const bagId = get(obj, 'data.fields.bag.fields.id.id');
-        const owner = get(obj, 'data.fields.logical_owner');
+        const id = get(data, 'objectId');
+        const bagId = get(data, 'content.fields.bag.fields.id.id');
+        const owner = get(data, 'content.fields.logical_owner');
 
-        if (!bagId) return obj;
+        if (!bagId) return data;
 
         const { data: bagObjects } = await provider.getDynamicFields(bagId);
         const objectIds = bagObjects.map((bagObject) => bagObject.objectId);
@@ -65,8 +67,8 @@ export interface WithIds {
 
 type FetchFnParser<RpcResponse, DataModel> = (
     typedData: RpcResponse,
-    suiObject: SuiObject,
-    rpcResponse: GetObjectDataResponse
+    suiObject: SuiObjectData,
+    rpcResponse: SuiObjectResponse
 ) => DataModel | undefined;
 
 type SuiObjectParser<RpcResponse, DataModel> = {
@@ -142,11 +144,11 @@ export const NftParser: SuiObjectParser<NftRpcResponse, NftRaw> = {
     parser: (data, suiData, rpcResponse) => {
         if (
             typeof rpcResponse.details === 'object' &&
-            'data' in rpcResponse.details
+            'owner' in rpcResponse.details
         ) {
             const { owner } = rpcResponse.details;
 
-            const matches = (suiData.data as SuiMoveObject).type.match(
+            const matches = (suiData.content as SuiMoveObject).type.match(
                 NftRegex
             );
             if (!matches) {
@@ -158,8 +160,8 @@ export const NftParser: SuiObjectParser<NftRpcResponse, NftRaw> = {
 
             return {
                 owner,
-                type: suiData.data.dataType,
-                id: rpcResponse.details.reference.objectId,
+                type: suiData.content?.dataType,
+                id: rpcResponse.details.objectId,
                 packageObjectId,
                 packageModule,
                 packageModuleClassName,
@@ -173,48 +175,115 @@ export const NftParser: SuiObjectParser<NftRpcResponse, NftRaw> = {
     regex: NftRegex,
 };
 
-const isTypeMatchRegex = (d: GetObjectDataResponse, regex: RegExp) => {
+const isObjectExists = (o: SuiObjectResponse) => o.status === 'Exists';
+
+const isTypeMatchRegex = (d: SuiObjectResponse, regex: RegExp) => {
     const { details } = d;
-    if (is(details, SuiObject)) {
-        const { data } = details;
-        if ('type' in data) {
-            return data.type.match(regex);
+    if (is(details, SuiObjectData)) {
+        const { content } = details;
+        if (content && 'type' in content) {
+            return content.type.match(regex);
         }
     }
     return false;
 };
 
-export const parseDomains = (domains: GetObjectDataResponse[]) => {
+export const parseDomains = (domains: SuiObjectResponse[]) => {
     const response: Partial<NftDomains> = {};
     const urlDomain = domains.find((d) => isTypeMatchRegex(d, UrlDomainRegex));
     const displayDomain = domains.find((d) =>
         isTypeMatchRegex(d, DisplayDomainRegex)
     );
 
-    if (
-        urlDomain &&
-        is(urlDomain.details, SuiObject) &&
-        'fields' in urlDomain.details.data
-    ) {
-        const { data } = urlDomain.details;
-        const url = (data.fields as UrlDomainRpcResponse).value.fields.url;
-        if (url) {
-            response.url = ipfs(url);
-        }
+    if (urlDomain && getObjectFields(urlDomain)) {
+        const url = (
+            getObjectFields(urlDomain) as UrlDomainRpcResponse
+        ).value.fields.url;
+        response.url = ipfs(url);
     }
-    if (
-        displayDomain &&
-        is(displayDomain.details, SuiObject) &&
-        'fields' in displayDomain.details.data
-    ) {
-        const { data } = displayDomain.details;
+    if (displayDomain && getObjectFields(displayDomain)) {
         response.description = (
-            data.fields as DisplayDomainRpcResponse
+            getObjectFields(displayDomain) as DisplayDomainRpcResponse
         ).value.fields.description;
         response.name = (
-            data.fields as DisplayDomainRpcResponse
+            getObjectFields(displayDomain) as DisplayDomainRpcResponse
         ).value.fields.name;
     }
 
     return response;
 };
+
+export class NftClient {
+    private provider: JsonRpcProvider;
+
+    constructor(provider: JsonRpcProvider) {
+        this.provider = provider;
+    }
+
+    parseObjects = async (objects: SuiObjectResponse[]): Promise<NftRaw[]> => {
+        const parsedObjects = objects
+            .filter(isObjectExists)
+            .map((object) => {
+                if (getObjectType(object)?.match(NftParser.regex)) {
+                    const data = getSuiObjectData(object);
+                    if (data) {
+                        return NftParser.parser(
+                            getObjectFields(object) as NftRpcResponse,
+                            data,
+                            object
+                        );    
+                    }
+                }
+                return undefined;
+            })
+            .filter((object): object is NftRaw => !!object);
+
+        return parsedObjects;
+    };
+
+    fetchAndParseObjectsById = async (ids: string[]): Promise<NftRaw[]> => {
+        if (ids.length === 0) {
+            return new Array<NftRaw>();
+        }
+        const objects = await this.provider.getObjectBatch(ids, {
+            showType: true,
+            showContent: true,
+            showOwner: true,
+        });
+        return this.parseObjects(objects);
+    };
+
+    getBagContent = async (bagId: string) => {
+        const bagObjects = await this.provider.getDynamicFields(bagId);
+        const objectIds = bagObjects.data.map(
+            (bagObject) => bagObject.objectId
+        );
+        return this.provider.getObjectBatch(objectIds, {
+            showType: true,
+            showContent: true,
+            showOwner: true,
+        });
+    };
+
+    getNftsById = async (params: WithIds): Promise<Nft[]> => {
+        const nfts = await this.fetchAndParseObjectsById(params.objectIds);
+        const bags = await Promise.all(
+            nfts.map(async (nft) => {
+                const content = await this.getBagContent(nft.bagId);
+                return {
+                    nftId: nft.id,
+                    content: parseDomains(content),
+                };
+            })
+        );
+        const bagsByNftId = new Map(bags.map((b) => [b.nftId, b]));
+
+        return nfts.map((nft) => {
+            const fields = bagsByNftId.get(nft.id);
+            return {
+                nft,
+                fields: fields?.content,
+            };
+        });
+    };
+}

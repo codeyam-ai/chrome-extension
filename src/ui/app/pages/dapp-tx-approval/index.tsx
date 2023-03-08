@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { fromB64 } from '@mysten/bcs';
-import { getCertifiedTransaction, getTransactionEffects } from '@mysten/sui.js';
+import { getTransactionEffects, Transaction } from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -43,12 +43,12 @@ import UserApproveContainer from '_src/ui/app/components/user-approve-container'
 import type { Detail } from './DetailElement';
 import type { Section } from './SectionElement';
 import type { SmallDetail } from './SmallValue';
-import type { SuiMoveNormalizedType, TransactionEffects } from '@mysten/sui.js';
 import type {
     SignableTransaction,
-    SuiExecuteTransactionResponse,
+    SuiMoveNormalizedType,
     SuiTransactionResponse,
-} from '@mysten/sui.js/src';
+    TransactionEffects,
+} from '@mysten/sui.js';
 import type { TransactionRequest } from '_payloads/transactions';
 import type { RootState } from '_redux/RootReducer';
 import type { ReactElement, ReactNode } from 'react';
@@ -185,9 +185,8 @@ export function DappTxApprovalPage() {
                 setDryRunError(undefined);
                 setExplicitError(undefined);
 
-                const { effects: transactionEffects } = await signer.dryRunTransaction(
-                    transaction.data
-                );
+                const { effects: transactionEffects } =
+                    await signer.dryRunTransaction(transaction.data);
 
                 if (transactionEffects.status.status === 'failure') {
                     if (
@@ -471,32 +470,32 @@ export function DappTxApprovalPage() {
                                   <CopyAsset key={`reading-${i}`} {...r} />
                               )),
                           },
-                          {
-                              label: 'Modifying',
-                              content: `${mutating.length} Assets`,
-                              detail: mutating.map((m, i) => (
-                                  <CopyAsset key={`modifying-${i}`} {...m} />
-                              )),
-                          },
-                          {
-                              label: 'Transferring',
-                              content: `${transferring.length} Assets`,
-                              detail: transferring.map((t, i) => (
-                                  <CopyAsset key={`transferring-${i}`} {...t} />
-                              )),
-                          },
-                          {
-                              label: 'Full Access',
-                              content: `${deleting.length} Assets`,
-                              detail: deleting.map((d, i) => (
-                                  <CopyBody
-                                      key={`deleting-${i}`}
-                                      txt={d?.name || ''}
-                                  >
-                                      {truncateMiddle(d?.name)}
-                                  </CopyBody>
-                              )),
-                          },
+                          //   {
+                          //       label: 'Modifying',
+                          //       content: `${mutating.length} Assets`,
+                          //       detail: mutating.map((m, i) => (
+                          //           <CopyAsset key={`modifying-${i}`} {...m} />
+                          //       )),
+                          //   },
+                          //   {
+                          //       label: 'Transferring',
+                          //       content: `${transferring.length} Assets`,
+                          //       detail: transferring.map((t, i) => (
+                          //           <CopyAsset key={`transferring-${i}`} {...t} />
+                          //       )),
+                          //   },
+                          //   {
+                          //       label: 'Full Access',
+                          //       content: `${deleting.length} Assets`,
+                          //       detail: deleting.map((d, i) => (
+                          //           <CopyBody
+                          //               key={`deleting-${i}`}
+                          //               txt={d?.name || ''}
+                          //           >
+                          //               {truncateMiddle(d?.name)}
+                          //           </CopyBody>
+                          //       )),
+                          //   },
                           {
                               label: 'Coins',
                               content: `${
@@ -532,48 +531,48 @@ export function DappTxApprovalPage() {
                     : null,
                 details: anyAssetEffects
                     ? [
-                          {
-                              label: 'Creating',
-                              content: `${creating.length} Assets`,
-                              detail: creating.map((c, i) => (
-                                  <CopyAsset
-                                      key={`asset-creating-${i}`}
-                                      {...c}
-                                  />
-                              )),
-                          },
-                          {
-                              label: 'Modifying',
-                              content: `${mutating.length} Assets`,
-                              detail: mutating.map((m, i) => (
-                                  <CopyAsset
-                                      key={`asset-modifying-${i}`}
-                                      {...m}
-                                  />
-                              )),
-                          },
-                          {
-                              label: 'Transferring',
-                              content: `${transferring.length} Assets`,
-                              detail: transferring.map((t, i) => (
-                                  <CopyAsset
-                                      key={`asset-transferring-${i}`}
-                                      {...t}
-                                  />
-                              )),
-                          },
-                          {
-                              label: 'Deleting',
-                              content: `${deleting.length} Assets`,
-                              detail: deleting.map((d, i) => (
-                                  <CopyBody
-                                      key={`asset-deleting-${i}`}
-                                      txt={d?.name || ''}
-                                  >
-                                      {truncateMiddle(d?.name)}
-                                  </CopyBody>
-                              )),
-                          },
+                          //   {
+                          //       label: 'Creating',
+                          //       content: `${creating.length} Assets`,
+                          //       detail: creating.map((c, i) => (
+                          //           <CopyAsset
+                          //               key={`asset-creating-${i}`}
+                          //               {...c}
+                          //           />
+                          //       )),
+                          //   },
+                          //   {
+                          //       label: 'Modifying',
+                          //       content: `${mutating.length} Assets`,
+                          //       detail: mutating.map((m, i) => (
+                          //           <CopyAsset
+                          //               key={`asset-modifying-${i}`}
+                          //               {...m}
+                          //           />
+                          //       )),
+                          //   },
+                          //   {
+                          //       label: 'Transferring',
+                          //       content: `${transferring.length} Assets`,
+                          //       detail: transferring.map((t, i) => (
+                          //           <CopyAsset
+                          //               key={`asset-transferring-${i}`}
+                          //               {...t}
+                          //           />
+                          //       )),
+                          //   },
+                          //   {
+                          //       label: 'Deleting',
+                          //       content: `${deleting.length} Assets`,
+                          //       detail: deleting.map((d, i) => (
+                          //           <CopyBody
+                          //               key={`asset-deleting-${i}`}
+                          //               txt={d?.name || ''}
+                          //           >
+                          //               {truncateMiddle(d?.name)}
+                          //           </CopyBody>
+                          //       )),
+                          //   },
                           {
                               label: 'Balances',
                               content: `${
@@ -833,7 +832,7 @@ async function finishTransaction(
         }
 
         try {
-            let response: SuiExecuteTransactionResponse;
+            let response: SuiTransactionResponse;
             if (
                 txRequest.tx.type === 'v2' ||
                 txRequest.tx.type === 'move-call'
@@ -854,14 +853,7 @@ async function finishTransaction(
                 throw new Error(`Either tx or txBytes needs to be defined.`);
             }
 
-            txResult = {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                certificate: getCertifiedTransaction(response)!,
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                effects: getTransactionEffects(response)!,
-                timestamp_ms: null,
-                parsed_data: null,
-            };
+            txResult = response;
         } catch (e) {
             tsResultError = (e as Error).message;
         }
