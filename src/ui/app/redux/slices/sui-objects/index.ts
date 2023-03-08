@@ -9,7 +9,7 @@ import {
     getTransactionDigest,
     getObjectVersion,
     Transaction,
-    getObjectNotExistsResponse,
+    getSuiObjectData
 } from '@mysten/sui.js';
 import {
     createAsyncThunk,
@@ -22,17 +22,17 @@ import {
     SUI_SYSTEM_STATE_OBJECT_ID,
 } from './Coin';
 
-import type { SuiAddress, SuiObjectInfo, ObjectId } from '@mysten/sui.js';
+import type { SuiAddress, ObjectId, SuiObjectData} from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
-const objectsAdapter = createEntityAdapter<SuiObjectInfo>({
+const objectsAdapter = createEntityAdapter<SuiObjectData>({
     selectId: (info) => info.objectId,
     sortComparer: (a, b) => a.objectId.localeCompare(b.objectId),
 });
 
 export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
-    SuiObjectInfo[],
+    SuiObjectData[],
     void,
     AppThunkConfig
 >('sui-objects/fetch-all', async (_, { getState, extra: { api } }) => {
@@ -40,7 +40,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
     const {
         account: { address },
     } = state;
-    const allSuiObjects: SuiObjectInfo[] = [];
+    const allSuiObjects: SuiObjectData[] = [];
     if (address) {
         const allObjectRefs =
             await api.instance.fullNode.getObjectsOwnedByAddress(`${address}`);
@@ -65,26 +65,10 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         objectIDs.push(SUI_SYSTEM_STATE_OBJECT_ID);
         const allObjRes = await api.instance.fullNode.getObjectBatch(objectIDs);
         for (const objRes of allObjRes) {
-            const suiObjNotExists = getObjectNotExistsResponse(objRes);
-            if (!suiObjNotExists) {
-                const suiObj = allSuiObjects.push(objRes);
+            const suiObjectData = getSuiObjectData(objRes);
+            if (suiObjectData) {
+                allSuiObjects.push(suiObjectData);
             }
-        }
-    }
-    return allSuiObjects;
-});
-
-export const batchFetchObject = createAsyncThunk<
-    SuiObject[],
-    ObjectId[],
-    AppThunkConfig
->('sui-objects/batch', async (objectIDs, { extra: { api } }) => {
-    const allSuiObjects: SuiObject[] = [];
-    const allObjRes = await api.instance.fullNode.getObjectBatch(objectIDs);
-    for (const objRes of allObjRes) {
-        const suiObj = getObjectExistsResponse(objRes);
-        if (suiObj) {
-            allSuiObjects.push(suiObj);
         }
     }
     return allSuiObjects;
