@@ -33,7 +33,7 @@ function TransferNFTReview() {
     const selectedNFTObj = useMemo(
         () =>
             nftCollections.filter(
-                (nftItems) => nftItems.reference.objectId === formState.nftId
+                (nftItems) => nftItems.objectId === formState.nftId
             )[0],
         [nftCollections, formState.nftId]
     );
