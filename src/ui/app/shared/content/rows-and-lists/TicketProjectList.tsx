@@ -1,5 +1,5 @@
+import { SuiMoveObject, is, getSuiObjectData } from '@mysten/sui.js';
 import { useEffect, useState } from 'react';
-// import { Link } from 'react-router-dom';
 
 import isValidTicket from '../../../helpers/isValidTicket';
 import { accountTicketsSelector } from '../../../redux/slices/account/index';
@@ -9,6 +9,8 @@ import Loading from '_src/ui/app/components/loading';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { TicketProjectDetailsContent } from '_src/ui/app/pages/home/ticket-project-details';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
+
+import type { SuiObjectResponse, SuiObjectData } from '@mysten/sui.js';
 
 export interface TicketProjectProps {
     objectId: string;
@@ -23,33 +25,6 @@ export interface TicketProjectProps {
     tokenUrl?: string;
 }
 
-// const TicketProject = ({
-//     ticketProject,
-// }: {
-//     ticketProject: TicketProjectProps;
-// }) => {
-//     const drilldownLink = `/ticket-project?${new URLSearchParams({
-//         objectId: ticketProject.objectId,
-//     }).toString()}`;
-
-//     return (
-//         <Link to={drilldownLink}>
-//             <div className="flex flex-col gap-3 items-center w-11/12 mx-auto">
-//                 <div className="bg-[#F2F2F2] dark:bg-[#717377] p-4 rounded-xl">
-//                     <img
-//                         src={ticketProject.coverImage}
-//                         alt={`${ticketProject.name} Ticket`}
-//                     />
-//                 </div>
-//                 <div className="text-left">
-//                     <span className="font-semibold">{ticketProject.name}</span>{' '}
-//                     | {ticketProject.description}
-//                 </div>
-//             </div>
-//         </Link>
-//     );
-// };
-
 const TicketProjectList = () => {
     const loadingTickets = useAppSelector(
         ({ suiObjects }) => suiObjects.loading && !suiObjects.lastSync
@@ -57,7 +32,7 @@ const TicketProjectList = () => {
     const [loading, setLoading] = useState(true);
 
     const address = useAppSelector(({ account }) => account.address);
-    const tickets = useAppSelector(accountTicketsSelector);
+    const tickets: SuiObjectData[] = useAppSelector(accountTicketsSelector);
     const [ticketProjects, setTicketProjects] = useState<TicketProjectProps[]>(
         []
     );
@@ -72,25 +47,27 @@ const TicketProjectList = () => {
                 []
             );
 
-            const ticketProjectObjects =
+            const ticketProjectObjects: SuiObjectResponse[] =
                 await api.instance.fullNode.getObjectBatch(ticketProjectIds);
 
             const ticketProjects = ticketProjectObjects.map(
                 (ticketProjectObject) => {
-                    const { details } = ticketProjectObject;
-                    if (typeof details === 'string' || !('data' in details))
-                        return null;
+                    const suiObjectData = getSuiObjectData(ticketProjectObject);
+                    if (!suiObjectData) return null;
+                    if (!suiObjectData.type) return null;
 
-                    const { data } = details;
-                    if (!('fields' in data)) return null;
+                    const { content } = suiObjectData;
+                    if (!is(content, SuiMoveObject)) return null;
 
-                    const token = data.type.replace('>', '').split('<')[1];
-                    const { fields } = data;
+                    const token = suiObjectData.type
+                        .replace('>', '')
+                        .split('<')[1];
+                    const { fields } = content;
                     return {
-                        objectId: details.reference.objectId,
-                        packageObjectId: data.type.split('::')[0],
-                        agentObjectId: details.reference.objectId,
-                        module: data.type.split('::')[1],
+                        objectId: suiObjectData.objectId,
+                        packageObjectId: suiObjectData.type.split('::')[0],
+                        agentObjectId: suiObjectData.objectId,
+                        module: suiObjectData.type.split('::')[1],
                         name: fields.name,
                         description: fields.description,
                         url: fields.url,
@@ -107,10 +84,15 @@ const TicketProjectList = () => {
 
                 let foundValidTicket = false;
                 for (const ticket of tickets) {
-                    if ('type' in ticket.data && 'fields' in ticket.data) {
+                    if (
+                        ticket.type &&
+                        ticket.content &&
+                        is(ticket.content, SuiMoveObject)
+                    ) {
+                        const fields = ticket.content.fields;
                         const isValid = await isValidTicket(
                             api.instance.fullNode,
-                            ticket.data,
+                            { type: ticket.type, fields: fields },
                             address || '',
                             ticketProject.agentObjectId
                         );
