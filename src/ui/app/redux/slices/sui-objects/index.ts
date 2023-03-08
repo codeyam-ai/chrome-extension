@@ -9,7 +9,7 @@ import {
     getTransactionDigest,
     getObjectVersion,
     Transaction,
-    getSuiObjectData
+    getSuiObjectData,
 } from '@mysten/sui.js';
 import {
     createAsyncThunk,
@@ -22,7 +22,7 @@ import {
     SUI_SYSTEM_STATE_OBJECT_ID,
 } from './Coin';
 
-import type { SuiAddress, ObjectId, SuiObjectData} from '@mysten/sui.js';
+import type { SuiAddress, ObjectId, SuiObjectData } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
