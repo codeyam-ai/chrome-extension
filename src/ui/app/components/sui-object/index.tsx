@@ -12,12 +12,12 @@ import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { useMiddleEllipsis, useMediaUrl, useSuiObjectFields } from '_hooks';
 
-import type { SuiObject as SuiObjectType } from '@mysten/sui.js';
+//import type { SuiObject as SuiObjectType } from '@mysten/sui.js';
 
 import st from './SuiObject.module.scss';
 
 export type SuiObjectProps = {
-    obj: SuiObjectType;
+    obj: any; // TODO: Determine the correct type for this
     sendNFT?: boolean;
 };
 
