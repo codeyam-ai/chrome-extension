@@ -47,7 +47,7 @@ function TransferNFTRecipient() {
     const selectedNFTObj = useMemo(
         () =>
             nftCollections.filter(
-                (nftItems) => nftItems.objectId === objectId
+                (nftItems) => nftItems.reference.objectId === objectId
             )[0],
         [nftCollections, objectId]
     );
@@ -94,9 +94,8 @@ function TransferNFTRecipient() {
             });
 
             const gasFee =
-                signedTx.effects.gasUsed.computationCost +
-                (signedTx.effects.gasUsed.storageCost -
-                    signedTx.effects.gasUsed.storageRebate);
+                signedTx.gasUsed.computationCost +
+                (signedTx.gasUsed.storageCost - signedTx.gasUsed.storageRebate);
 
             setSendError(null);
 
