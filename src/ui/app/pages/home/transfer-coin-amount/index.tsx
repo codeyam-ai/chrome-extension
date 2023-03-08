@@ -148,9 +148,10 @@ function TransferCoinAmountPage() {
 
             const signedTx = await signer.dryRunTransaction(tx);
 
-            const gasFee =
-                signedTx.gasUsed.computationCost +
-                (signedTx.gasUsed.storageCost - signedTx.gasUsed.storageRebate);
+            const { computationCost, storageCost, storageRebate } =
+                signedTx.effects.gasUsed;
+
+            const gasFee = computationCost + (storageCost - storageRebate);
 
             dispatch(
                 setSuiAmount({
