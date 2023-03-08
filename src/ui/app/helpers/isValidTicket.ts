@@ -1,10 +1,6 @@
 import { Ticket } from '../redux/slices/sui-objects/Ticket';
 
-import type { JsonRpcProvider } from '@mysten/sui.js';
-import {
-    ObjectContentFields,
-    SuiObjectData,
-} from '../../../../../../sui/sdk/typescript/src';
+import type { JsonRpcProvider, ObjectContentFields } from '@mysten/sui.js';
 
 export type SuiTicketData = {
     type: string;
