@@ -178,7 +178,7 @@ function NFTdetailsContent({
 
 function NFTDetailsPage() {
     const [searchParams] = useSearchParams();
-    const [selectedNFT, setSelectedNFT] = useState<SuiObject | null>(null);
+    const [selectedNFT, setSelectedNFT] = useState<SuiObjectData | null>(null);
     const navigate = useNavigate();
     const objectId = useMemo(
         () => searchParams.get('objectId'),
@@ -189,7 +189,7 @@ function NFTDetailsPage() {
 
     const activeNFT = useMemo(() => {
         const selectedNFT = nftCollections.filter(
-            (nftItem) => getObjectId(nftItem.reference) === objectId
+            (nftItem) => getObjectId(nftItem) === objectId
         )[0];
         setSelectedNFT(selectedNFT);
         return selectedNFT;
