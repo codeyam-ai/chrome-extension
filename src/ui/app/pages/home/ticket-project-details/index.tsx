@@ -24,7 +24,7 @@ import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 
-import type { SuiObject } from '@mysten/sui.js';
+import type { SuiObjectData as SuiObject } from '@mysten/sui.js';
 import type { TicketProjectProps } from '_src/ui/app/shared/content/rows-and-lists/TicketProjectList';
 
 type RPCError = {
@@ -54,7 +54,7 @@ export const TicketProjectDetailsContent = ({
         tokenName = ticketProject.token.split('::')[2];
 
         for (const nft of nfts) {
-            if ('type' in nft.data && nft.data.type === ticketProject.token) {
+            if ('type' in nft && nft.type === ticketProject.token) {
                 tokenNFT = nft;
             }
         }
@@ -124,7 +124,7 @@ export const TicketProjectDetailsContent = ({
         const typeArguments = ticketProject.token ? [ticketProject.token] : [];
         const args = [ticketData, signature, ticketProject.agentObjectId];
         if (ticketProject.token && tokenNFT) {
-            args.unshift(tokenNFT.reference.objectId);
+            args.unshift(tokenNFT.objectId);
         }
 
         try {
@@ -142,11 +142,11 @@ export const TicketProjectDetailsContent = ({
 
             if (
                 'EffectsCert' in response &&
-                'effects' in response.EffectsCert &&
-                'effects' in response.EffectsCert.effects &&
-                'status' in response.EffectsCert.effects.effects
+                'effects' in response &&
+                'effects' in response.effects &&
+                'status' in response.effects
             ) {
-                const { status, events } = response.EffectsCert.effects.effects;
+                const { status, events } = response.effects;
                 if (status.status === 'success' && events) {
                     const event = events.find((event) => 'moveEvent' in event);
                     if (
