@@ -5,7 +5,7 @@ import truncateString from '../../helpers/truncate-string';
 import Body from '../../shared/typography/Body';
 import { useNFTBasicData } from '_hooks';
 
-import type { SuiObject as SuiObjectType } from '@mysten/sui.js';
+import type { SuiObjectRef as SuiObjectType } from '@mysten/sui.js';
 
 export type NFTsProps = {
     nftobj: SuiObjectType;
