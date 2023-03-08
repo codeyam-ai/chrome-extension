@@ -5,12 +5,12 @@ import { Coin as CoinAPI, SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import type {
     ObjectId,
-    SuiObject,
     RawSigner,
     SuiAddress,
     SuiMoveObject,
+    SuiObjectData,
+    SuiObjectInfo,
     JsonRpcProvider,
-    SuiExecuteTransactionResponse,
 } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
@@ -27,11 +27,8 @@ export const SUI_SYSTEM_STATE_OBJECT_ID =
 
 // TODO use sdk
 export class Coin {
-    public static isCoin(obj: SuiObject) {
-        return (
-            obj.data.dataType === 'moveObject' &&
-            obj.data.type.startsWith(COIN_TYPE)
-        );
+    public static isCoin(data: SuiObjectData) {
+        return !!data.type && data.type.startsWith(COIN_TYPE);
     }
 
     public static getCoinTypeArg(obj: SuiMoveObject) {
@@ -60,21 +57,21 @@ export class Coin {
         return `${COIN_TYPE}<${coinTypeArg}>`;
     }
 
-    public static computeGasBudgetForPay(
-        coins: SuiMoveObject[],
-        amountToSend: bigint
-    ): number {
-        // TODO: improve the gas budget estimation
-        const numInputCoins =
-            CoinAPI.selectCoinSetWithCombinedBalanceGreaterThanOrEqual(
-                coins,
-                amountToSend
-            ).length;
-        return (
-            DEFAULT_GAS_BUDGET_FOR_PAY *
-            Math.max(2, Math.min(100, numInputCoins / 2))
-        );
-    }
+    // public static computeGasBudgetForPay(
+    //     coins: SuiMoveObject[],
+    //     amountToSend: bigint
+    // ): number {
+    //     // TODO: improve the gas budget estimation
+    //     const numInputCoins =
+    //         CoinAPI.selectCoinSetWithCombinedBalanceGreaterThanOrEqual(
+    //             coins,
+    //             amountToSend
+    //         ).length;
+    //     return (
+    //         DEFAULT_GAS_BUDGET_FOR_PAY *
+    //         Math.max(2, Math.min(100, numInputCoins / 2))
+    //     );
+    // }
 
     /**
      * Stake `amount` of Coin<T> to `validator`. Technically it means user delegates `amount` of Coin<T> to `validator`,
@@ -85,92 +82,92 @@ export class Coin {
      * @param amount The amount to be staked
      * @param validator The sui address of the chosen validator
      */
-    public static async stakeCoin(
-        signer: RawSigner | EthosSigner,
-        coins: SuiMoveObject[],
-        amount: bigint,
-        validator: SuiAddress
-    ): Promise<SuiExecuteTransactionResponse> {
-        const coin = await Coin.requestSuiCoinWithExactAmount(
-            signer,
-            coins,
-            amount
-        );
-        const txn = {
-            packageObjectId: '0x2',
-            module: 'sui_system',
-            function: 'request_add_delegation',
-            typeArguments: [],
-            arguments: [SUI_SYSTEM_STATE_OBJECT_ID, coin, validator],
-            gasBudget: DEFAULT_GAS_BUDGET_FOR_STAKE,
-        };
-        return await signer.executeMoveCall(txn);
-    }
+    // public static async stakeCoin(
+    //     signer: RawSigner | EthosSigner,
+    //     coins: SuiMoveObject[],
+    //     amount: bigint,
+    //     validator: SuiAddress
+    // ): Promise<SuiExecuteTransactionResponse> {
+    //     const coin = await Coin.requestSuiCoinWithExactAmount(
+    //         signer,
+    //         coins,
+    //         amount
+    //     );
+    //     const txn = {
+    //         packageObjectId: '0x2',
+    //         module: 'sui_system',
+    //         function: 'request_add_delegation',
+    //         typeArguments: [],
+    //         arguments: [SUI_SYSTEM_STATE_OBJECT_ID, coin, validator],
+    //         gasBudget: DEFAULT_GAS_BUDGET_FOR_STAKE,
+    //     };
+    //     return await signer.executeMoveCall(txn);
+    // }
 
-    private static async requestSuiCoinWithExactAmount(
-        signer: RawSigner | EthosSigner,
-        coins: SuiMoveObject[],
-        amount: bigint
-    ): Promise<ObjectId> {
-        const coinWithExactAmount = await Coin.selectSuiCoinWithExactAmount(
-            signer,
-            coins,
-            amount
-        );
-        if (coinWithExactAmount) {
-            return coinWithExactAmount;
-        }
-        // use transferSui API to get a coin with the exact amount
-        await signer.signAndExecuteTransaction(
-            await CoinAPI.newPayTransaction(
-                coins,
-                SUI_TYPE_ARG,
-                amount,
-                await signer.getAddress(),
-                Coin.computeGasBudgetForPay(coins, amount)
-            )
-        );
+    // private static async requestSuiCoinWithExactAmount(
+    //     signer: RawSigner | EthosSigner,
+    //     coins: SuiMoveObject[],
+    //     amount: bigint
+    // ): Promise<ObjectId> {
+    //     const coinWithExactAmount = await Coin.selectSuiCoinWithExactAmount(
+    //         signer,
+    //         coins,
+    //         amount
+    //     );
+    //     if (coinWithExactAmount) {
+    //         return coinWithExactAmount;
+    //     }
+    //     // use transferSui API to get a coin with the exact amount
+    //     await signer.signAndExecuteTransaction(
+    //         await CoinAPI.newPayTransaction(
+    //             coins,
+    //             SUI_TYPE_ARG,
+    //             amount,
+    //             await signer.getAddress(),
+    //             Coin.computeGasBudgetForPay(coins, amount)
+    //         )
+    //     );
 
-        const coinWithExactAmount2 = await Coin.selectSuiCoinWithExactAmount(
-            signer,
-            coins,
-            amount,
-            true
-        );
-        if (!coinWithExactAmount2) {
-            throw new Error(`requestCoinWithExactAmount failed unexpectedly`);
-        }
-        return coinWithExactAmount2;
-    }
+    //     const coinWithExactAmount2 = await Coin.selectSuiCoinWithExactAmount(
+    //         signer,
+    //         coins,
+    //         amount,
+    //         true
+    //     );
+    //     if (!coinWithExactAmount2) {
+    //         throw new Error(`requestCoinWithExactAmount failed unexpectedly`);
+    //     }
+    //     return coinWithExactAmount2;
+    // }
 
-    private static async selectSuiCoinWithExactAmount(
-        signer: RawSigner | EthosSigner,
-        coins: SuiMoveObject[],
-        amount: bigint,
-        refreshData = false
-    ): Promise<ObjectId | undefined> {
-        const coinsWithSufficientAmount = refreshData
-            ? await signer.provider.selectCoinsWithBalanceGreaterThanOrEqual(
-                  await signer.getAddress(),
-                  amount,
-                  SUI_TYPE_ARG,
-                  []
-              )
-            : await CoinAPI.selectCoinsWithBalanceGreaterThanOrEqual(
-                  coins,
-                  amount
-              );
+    // private static async selectSuiCoinWithExactAmount(
+    //     signer: RawSigner | EthosSigner,
+    //     coins: SuiMoveObject[],
+    //     amount: bigint,
+    //     refreshData = false
+    // ): Promise<ObjectId | undefined> {
+    //     const coinsWithSufficientAmount = refreshData
+    //         ? await signer.provider.selectCoinsWithBalanceGreaterThanOrEqual(
+    //               await signer.getAddress(),
+    //               amount,
+    //               SUI_TYPE_ARG,
+    //               []
+    //           )
+    //         : await CoinAPI.selectCoinsWithBalanceGreaterThanOrEqual(
+    //               coins,
+    //               amount
+    //           );
 
-        if (
-            coinsWithSufficientAmount.length > 0 &&
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            CoinAPI.getBalance(coinsWithSufficientAmount[0])! === amount
-        ) {
-            return CoinAPI.getID(coinsWithSufficientAmount[0]);
-        }
+    //     if (
+    //         coinsWithSufficientAmount.length > 0 &&
+    //         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    //         CoinAPI.getBalance(coinsWithSufficientAmount[0])! === amount
+    //     ) {
+    //         return CoinAPI.getID(coinsWithSufficientAmount[0]);
+    //     }
 
-        return undefined;
-    }
+    //     return undefined;
+    // }
 
     public static async getActiveValidators(
         provider: JsonRpcProvider

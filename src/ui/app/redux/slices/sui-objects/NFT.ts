@@ -1,4 +1,10 @@
-import { getObjectFields, getObjectType, getSuiObjectData, SuiObjectData, is } from '@mysten/sui.js';
+import {
+    getObjectFields,
+    getObjectType,
+    getSuiObjectData,
+    SuiObjectData,
+    is,
+} from '@mysten/sui.js';
 import get from 'lodash/get';
 
 import ipfs from '_src/ui/app/helpers/ipfs';
@@ -196,9 +202,8 @@ export const parseDomains = (domains: SuiObjectResponse[]) => {
     );
 
     if (urlDomain && getObjectFields(urlDomain)) {
-        const url = (
-            getObjectFields(urlDomain) as UrlDomainRpcResponse
-        ).value.fields.url;
+        const url = (getObjectFields(urlDomain) as UrlDomainRpcResponse).value
+            .fields.url;
         response.url = ipfs(url);
     }
     if (displayDomain && getObjectFields(displayDomain)) {
@@ -231,7 +236,7 @@ export class NftClient {
                             getObjectFields(object) as NftRpcResponse,
                             data,
                             object
-                        );    
+                        );
                     }
                 }
                 return undefined;

@@ -3,12 +3,13 @@
 
 import {
     getExecutionStatusType,
-    getObjectExistsResponse,
     getObjectId,
     getTimestampFromTransactionResponse,
     getTotalGasUsed,
     getTransactionDigest,
     getObjectVersion,
+    Transaction,
+    getObjectNotExistsResponse,
 } from '@mysten/sui.js';
 import {
     createAsyncThunk,
@@ -21,18 +22,17 @@ import {
     SUI_SYSTEM_STATE_OBJECT_ID,
 } from './Coin';
 
-import type { SuiObject, SuiAddress, ObjectId } from '@mysten/sui.js';
+import type { SuiAddress, SuiObjectInfo, ObjectId } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
-const objectsAdapter = createEntityAdapter<SuiObject>({
-    selectId: ({ reference }) => reference.objectId,
-    sortComparer: (a, b) =>
-        a.reference.objectId.localeCompare(b.reference.objectId),
+const objectsAdapter = createEntityAdapter<SuiObjectInfo>({
+    selectId: (info) => info.objectId,
+    sortComparer: (a, b) => a.objectId.localeCompare(b.objectId),
 });
 
 export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
-    SuiObject[],
+    SuiObjectInfo[],
     void,
     AppThunkConfig
 >('sui-objects/fetch-all', async (_, { getState, extra: { api } }) => {
@@ -40,7 +40,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
     const {
         account: { address },
     } = state;
-    const allSuiObjects: SuiObject[] = [];
+    const allSuiObjects: SuiObjectInfo[] = [];
     if (address) {
         const allObjectRefs =
             await api.instance.fullNode.getObjectsOwnedByAddress(`${address}`);
@@ -53,7 +53,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                     getObjectId(anObj)
                 );
                 const storedVersion = storedObj
-                    ? getObjectVersion(storedObj.reference)
+                    ? getObjectVersion(storedObj)
                     : null;
                 const objOutdated = fetchedVersion !== storedVersion;
                 if (!objOutdated && storedObj) {
@@ -65,9 +65,9 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         objectIDs.push(SUI_SYSTEM_STATE_OBJECT_ID);
         const allObjRes = await api.instance.fullNode.getObjectBatch(objectIDs);
         for (const objRes of allObjRes) {
-            const suiObj = getObjectExistsResponse(objRes);
-            if (suiObj) {
-                allSuiObjects.push(suiObj);
+            const suiObjNotExists = getObjectNotExistsResponse(objRes);
+            if (!suiObjNotExists) {
+                const suiObj = allSuiObjects.push(objRes);
             }
         }
     }
@@ -115,17 +115,25 @@ export const transferNFT = createAsyncThunk<
                 keypairVault.getKeyPair(activeAccountIndex)
             );
         }
-        const txn = await signer.transferObject({
-            objectId: data.nftId,
-            recipient: data.recipientAddress,
-            gasBudget: DEFAULT_NFT_TRANSFER_GAS_FEE,
-        });
+        const tx = new Transaction();
+        tx.setGasBudget(DEFAULT_NFT_TRANSFER_GAS_FEE);
+        tx.add(
+            Transaction.Commands.TransferObjects(
+                [tx.input(data.nftId)],
+                tx.input(data.recipientAddress)
+            )
+        );
+        const executedTransaction = await signer.signAndExecuteTransaction(tx);
+
         await dispatch(fetchAllOwnedAndRequiredObjects());
         const txnResp = {
-            timestamp_ms: getTimestampFromTransactionResponse(txn),
-            status: getExecutionStatusType(txn),
-            gasFee: txn ? getTotalGasUsed(txn) : 0,
-            txId: getTransactionDigest(txn),
+            timestamp_ms:
+                getTimestampFromTransactionResponse(executedTransaction),
+            status: getExecutionStatusType(executedTransaction),
+            gasFee: executedTransaction
+                ? getTotalGasUsed(executedTransaction)
+                : 0,
+            txId: getTransactionDigest(executedTransaction),
         };
         return txnResp as NFTTxResponse;
     }
