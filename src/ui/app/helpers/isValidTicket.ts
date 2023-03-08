@@ -1,10 +1,14 @@
 import { Ticket } from '../redux/slices/sui-objects/Ticket';
 
 import type { JsonRpcProvider } from '@mysten/sui.js';
+import {
+    ObjectContentFields,
+    SuiObjectData,
+} from '../../../../../../sui/sdk/typescript/src';
 
 export type SuiTicketData = {
     type: string;
-    fields: Record<string, string | Record<string, string>>;
+    fields: ObjectContentFields;
 };
 
 const isValidTicket = async (
