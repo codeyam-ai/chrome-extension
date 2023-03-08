@@ -27,7 +27,7 @@ import {
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
 import type { KeyNameAndValue } from '../../shared/content/rows-and-lists/KeyValueList';
-import type { SuiObject } from '@mysten/sui.js';
+import type { SuiObjectData as SuiObject } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 
 const truncateMiddle = (s = '', length = 6) =>
