@@ -2,16 +2,16 @@ import { Link } from 'react-router-dom';
 
 import { useNFTBasicData } from '_src/ui/app/hooks';
 
-import type { SuiObject } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js';
 
 interface NftGridItemProps {
-    nft: SuiObject;
+    nft: SuiObjectData;
 }
 
 const NftGridItem = ({ nft }: NftGridItemProps) => {
     const { filePath, fileExtentionType } = useNFTBasicData(nft);
     const drilldownLink = `/nfts/details?${new URLSearchParams({
-        objectId: nft.reference.objectId,
+        objectId: nft.objectId,
     }).toString()}`;
 
     return (
