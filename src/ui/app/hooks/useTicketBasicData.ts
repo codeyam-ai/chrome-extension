@@ -6,18 +6,16 @@ import { getObjectId, getObjectFields } from '@mysten/sui.js';
 import useFileExtentionType from './useFileExtentionType';
 import useMediaUrl from './useMediaUrl';
 
-import type { SuiObject } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js';
 
-export default function useTicketBasicData(ticketObj: SuiObject) {
-    const ticketObjectID = getObjectId(ticketObj.reference);
-    const coverFilePath = useMediaUrl(ticketObj.data, 'cover_image');
-    const urlFilePath = useMediaUrl(ticketObj.data, 'url');
+export default function useTicketBasicData(ticketObj: SuiObjectData) {
+    const ticketObjectID = getObjectId(ticketObj);
+    const coverFilePath = useMediaUrl(ticketObj, 'cover_image');
+    const urlFilePath = useMediaUrl(ticketObj, 'url');
     const filePath = coverFilePath || urlFilePath;
 
     const ticketFields =
-        ticketObj.data.dataType === 'moveObject'
-            ? getObjectFields(ticketObj.data)
-            : null;
+        ticketObj.type === 'moveObject' ? getObjectFields(ticketObj) : null;
     const fileExtentionType = useFileExtentionType(filePath || '');
     return {
         ticketObjectID,

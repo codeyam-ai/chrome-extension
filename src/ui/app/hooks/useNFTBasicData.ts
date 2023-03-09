@@ -9,19 +9,17 @@ import useMediaUrl from './useMediaUrl';
 import { NFT } from '_redux/slices/sui-objects/NFT';
 import { api } from '_redux/store/thunk-extras';
 
-import type { SuiObject } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js';
 
-export default function useNFTBasicData(nftObj: SuiObject) {
-    const nftObjectID = getObjectId(nftObj.reference);
+export default function useNFTBasicData(nftObj: SuiObjectData) {
+    const nftObjectID = getObjectId(nftObj);
 
-    const defaultFilePath = useMediaUrl(nftObj.data);
+    const defaultFilePath = useMediaUrl(nftObj);
     const [filePath, setFilePath] = useState(defaultFilePath);
     const fileExtentionType = useFileExtentionType(filePath || '');
 
     const defaultNftFields =
-        nftObj.data.dataType === 'moveObject'
-            ? getObjectFields(nftObj.data)
-            : null;
+        nftObj.type === 'moveObject' ? getObjectFields(nftObj) : null;
     const [nftFields, setNftFields] = useState(defaultNftFields);
 
     useEffect(() => {
