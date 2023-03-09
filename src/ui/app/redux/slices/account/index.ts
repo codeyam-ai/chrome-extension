@@ -28,7 +28,7 @@ import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
 import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 import { AUTHENTICATION_REQUESTED } from '_src/ui/app/pages/initialize/hosted';
 
-import type { SuiAddress, SuiMoveObject } from '@mysten/sui.js';
+import type { SuiAddress, SuiMoveObject, SuiObjectData } from '@mysten/sui.js';
 import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
@@ -585,7 +585,7 @@ export const accountCoinsSelector = createSelector(
     (allSuiObjects) => {
         return allSuiObjects
             .filter(Coin.isCoin)
-            .map((aCoin) => aCoin.data as SuiMoveObject);
+            .map((aCoin) => aCoin as SuiMoveObject);
     }
 );
 

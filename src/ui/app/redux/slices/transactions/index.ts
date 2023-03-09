@@ -1,7 +1,11 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { getTransactionDigest, Coin as CoinAPI } from '@mysten/sui.js';
+import {
+    getTransactionDigest,
+    Coin as CoinAPI,
+    SuiObjectData,
+} from '@mysten/sui.js';
 import {
     createAsyncThunk,
     createEntityAdapter,
@@ -242,14 +246,14 @@ export const StakeTokens = createAsyncThunk<
         }
         const coinType = Coin.getCoinTypeFromArg(tokenTypeArg);
 
-        const coins: SuiMoveObject[] = suiObjectsAdapterSelectors
+        const coins: SuiObjectData[] = suiObjectsAdapterSelectors
             .selectAll(state)
             .filter(
                 (anObj) =>
-                    anObj.data.dataType === 'moveObject' &&
-                    anObj.data.type.startsWith(coinType)
+                    anObj.type === 'moveObject' &&
+                    anObj.type.startsWith(coinType)
             )
-            .map(({ data }) => data as SuiMoveObject);
+            .map((anObj) => anObj as SuiObjectData);
 
         // TODO: fetch the first active validator for now,
         // repalce it with the user picked one

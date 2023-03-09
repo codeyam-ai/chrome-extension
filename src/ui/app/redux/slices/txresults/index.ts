@@ -143,7 +143,7 @@ export async function getFullTransactionDetails(
     api: ApiProvider
 ): Promise<TxResultState[]> {
     const txResults = txs
-        .filter((tx) => !!tx.certificate)
+        .filter((tx) => !!tx.effects)
         .map((txEff) => {
             const txns = getTransactions(txEff);
 
@@ -179,7 +179,7 @@ export async function getFullTransactionDetails(
                     : Object.values(amountByRecipient || {})[0];
 
             return {
-                txId: txEff.certificate?.transactionDigest,
+                txId: txEff.effects?.transactionDigest,
                 status: getExecutionStatusType(txEff),
                 txGas: getTotalGasUsed(txEff),
                 kind: txKind,
@@ -188,7 +188,7 @@ export async function getFullTransactionDetails(
                 from: sender,
                 isSender: sender === address,
                 error: getExecutionStatusError(txEff),
-                timestampMs: txEff.timestamp_ms,
+                timestampMs: txEff.timestampMs,
                 ...(recipient && { to: recipient }),
                 ...(amount && {
                     amount,
@@ -234,8 +234,8 @@ export async function getFullTransactionDetails(
                 txnObjects &&
                 details &&
                 typeof details !== 'string' &&
-                'data' in details &&
-                details.data.dataType === 'moveObject'
+                'type' in details &&
+                details.type === 'moveObject'
                     ? getObjectFields(txnObjects)
                     : null;
 
