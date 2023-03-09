@@ -1,4 +1,5 @@
-import { Coin, JsonRpcProvider } from '@mysten/sui.js';
+import { Coin, type JsonRpcProvider } from '@mysten/sui.js';
+
 import { formatBalance } from './formatBalance';
 
 export interface FormattedCoin {

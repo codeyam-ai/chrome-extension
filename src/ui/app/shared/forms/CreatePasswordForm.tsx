@@ -3,11 +3,11 @@ import { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 
 import Button from '../buttons/Button';
+import Checkbox from '../inputs/Checkbox';
 import Input from '../inputs/Input';
+import { BASE_URL } from '_src/shared/constants';
 
 import type { FormikValues } from 'formik';
-import Checkbox from '../inputs/Checkbox';
-import { BASE_URL } from '_src/shared/constants';
 
 type CreatePasswordFormProps = {
     onSubmit: (passphrase: string) => void;
@@ -19,6 +19,10 @@ const CustomFormikForm = () => {
     const [checked, setChecked] = useState(false);
     const [field, meta] = useField('password');
     const [confirmField, confirmMeta] = useField('confirmPassword');
+
+    const isChecked = useCallback(() => {
+        setChecked(!checked);
+    }, [checked]);
 
     return (
         <>
@@ -63,6 +67,7 @@ const CustomFormikForm = () => {
                             target={'_blank'}
                             href={`${BASE_URL}/terms-of-service`}
                             className={'text-ethos-light-primary-light'}
+                            rel="noreferrer"
                         >
                             Terms of Service.
                         </a>
@@ -70,7 +75,7 @@ const CustomFormikForm = () => {
                 }
                 id="terms-of-service"
                 name="termsOfService"
-                onChange={() => setChecked(!checked)}
+                onChange={isChecked}
                 checked={checked}
             />
 

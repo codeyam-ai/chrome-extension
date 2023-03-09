@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { ChangeEvent, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AppState } from '../hooks/useInitializedGuard';
@@ -15,7 +15,6 @@ import GetStartedCard from '../shared/layouts/GetStartedCard';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
 import PageLayout from '_src/ui/app/pages/PageLayout';
-import Checkbox from '../shared/inputs/Checkbox';
 
 const PasswordPage = () => {
     const dispatch = useAppDispatch();
