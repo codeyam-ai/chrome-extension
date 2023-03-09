@@ -585,7 +585,7 @@ export const accountCoinsSelector = createSelector(
     (allSuiObjects) => {
         return allSuiObjects
             .filter(Coin.isCoin)
-            .map((aCoin) => aCoin.bcs as SuiMoveObject);
+            .map((aCoin) => aCoin.content as SuiMoveObject);
     }
 );
 

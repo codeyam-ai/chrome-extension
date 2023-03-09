@@ -3,12 +3,12 @@
 
 import Browser from 'webextension-polyfill';
 
-export function openInNewTab(page = 'ui.html') {
+export const openInNewTab = (page = 'ui.html') => {
     const url = Browser.runtime.getURL(page);
     return Browser.tabs.create({ url });
-}
+};
 
-export function isValidUrl(url: string | null) {
+export const isValidUrl = (url: string | null) => {
     if (!url) {
         return false;
     }
@@ -18,4 +18,4 @@ export function isValidUrl(url: string | null) {
     } catch (e) {
         return false;
     }
-}
+};

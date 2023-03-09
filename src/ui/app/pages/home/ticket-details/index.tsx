@@ -11,9 +11,9 @@ import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 
-import type { SuiObject } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js';
 
-const TIcketDetailsContent = ({ ticket }: { ticket: SuiObject }) => {
+const TIcketDetailsContent = ({ ticket }: { ticket: SuiObjectData }) => {
     const { filePath, ticketFields } = useTicketBasicData(ticket);
 
     return (
@@ -64,7 +64,7 @@ const TIcketDetailsContent = ({ ticket }: { ticket: SuiObject }) => {
 
 const TicketDetails = () => {
     const [searchParams] = useSearchParams();
-    const [selectedTicket, setSelectedTicket] = useState<SuiObject | null>(
+    const [selectedTicket, setSelectedTicket] = useState<SuiObjectData | null>(
         null
     );
     const objectId = useMemo(
@@ -76,7 +76,7 @@ const TicketDetails = () => {
 
     const activeTicket = useMemo(() => {
         const selectedTicket = tickets.filter(
-            (ticket) => getObjectId(ticket.reference) === objectId
+            (ticket) => ticket.objectId === objectId
         )[0];
         setSelectedTicket(selectedTicket);
         return selectedTicket;

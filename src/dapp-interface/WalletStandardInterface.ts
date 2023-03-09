@@ -51,6 +51,7 @@ import type {
     SignTransactionRequest,
     SignTransactionResponse,
 } from '_payloads/transactions';
+
 import type { NetworkEnvType } from '_src/background/NetworkEnv';
 
 type WalletEventsMap = {

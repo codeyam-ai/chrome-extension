@@ -173,8 +173,8 @@ export class Coin {
         provider: JsonRpcProvider
     ): Promise<Array<SuiMoveObject>> {
         const contents = await provider.getObject(SUI_SYSTEM_STATE_OBJECT_ID);
-        const data = (contents.details as SuiObject).data;
-        const validators = (data as SuiMoveObject).fields.validators;
+        const data = contents.details as SuiObjectData;
+        const validators = (data.content as SuiMoveObject).fields.validators;
         const active_validators = (validators as SuiMoveObject).fields
             .active_validators;
         return active_validators as Array<SuiMoveObject>;

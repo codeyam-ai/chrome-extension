@@ -347,29 +347,33 @@ const TicketProjectDetails = () => {
                 return;
             }
 
-            const { data } = details;
-            if (!('fields' in data)) {
-                setLoading(false);
-                return;
+            if ('content' in details) {
+                const { content } = details;
+                if (content) {
+                    if (!('fields' in content)) {
+                        setLoading(false);
+                        return;
+                    }
+
+                    const token = content.type.replace('>', '').split('<')[1];
+                    const { fields } = content;
+                    const ticketProject = {
+                        objectId: details.objectId,
+                        packageObjectId: content.type.split('::')[0],
+                        agentObjectId: objectId,
+                        module: content.type.split('::')[1],
+                        name: fields.name,
+                        description: fields.description,
+                        url: fields.url,
+                        token: token,
+                        tokenUrl: fields.token_url,
+                        coverImage: fields.cover_image,
+                    };
+
+                    setTicketProject(ticketProject);
+                    setLoading(false);
+                }
             }
-
-            const token = data.type.replace('>', '').split('<')[1];
-            const { fields } = data;
-            const ticketProject = {
-                objectId: details.reference.objectId,
-                packageObjectId: data.type.split('::')[0],
-                agentObjectId: objectId,
-                module: data.type.split('::')[1],
-                name: fields.name,
-                description: fields.description,
-                url: fields.url,
-                token: token,
-                tokenUrl: fields.token_url,
-                coverImage: fields.cover_image,
-            };
-
-            setTicketProject(ticketProject);
-            setLoading(false);
         };
 
         getTicketProject();

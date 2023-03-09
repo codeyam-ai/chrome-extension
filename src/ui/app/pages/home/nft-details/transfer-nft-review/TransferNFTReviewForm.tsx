@@ -58,8 +58,8 @@ function TransferNftReviewForm({
     }
 
     let fields;
-    if (nftobj.bcs && 'fields' in nftobj.bcs) {
-        fields = nftobj.bcs.fields;
+    if (nftobj.content && 'fields' in nftobj.content) {
+        fields = nftobj.content.fields;
     }
 
     const onSubmit = useCallback(() => {
