@@ -8,7 +8,7 @@ export const LINK_URL = process.env.ETHOS_BETA_URL || BASE_URL;
 
 // const queryParamFrom = '?from=ethos-extension';
 
-export const ToS_LINK = BASE_URL + '/terms';
+export const ToS_LINK = BASE_URL + '/terms-of-service';
 export const DASHBOARD_LINK = LINK_URL + '/dashboard'; // + queryParamFrom;
 export const IFRAME_URL = BASE_URL + '/wallet?appId=ethos';
 export const NFT_EXPERIMENT_LINK = BASE_URL + '/dashboard/experiment'; //+ queryParamFrom;
