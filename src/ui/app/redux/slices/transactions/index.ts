@@ -35,6 +35,7 @@ type SendTokensTXArgs = {
     recipientAddress: SuiAddress;
 };
 
+// TODO: why alias this here?
 type TransactionResult = SuiTransactionResponse;
 
 type GasCoinResponse = {

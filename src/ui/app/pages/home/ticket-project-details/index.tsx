@@ -146,7 +146,8 @@ export const TicketProjectDetailsContent = ({
                 'effects' in response.effects &&
                 'status' in response.effects
             ) {
-                const { status, events } = response.effects;
+                const status = response.effects.status;
+                const events = response.events;
                 if (status.status === 'success' && events) {
                     const event = events.find((event) => 'moveEvent' in event);
                     if (
