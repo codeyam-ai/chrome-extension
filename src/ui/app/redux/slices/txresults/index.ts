@@ -122,10 +122,10 @@ function getAmount(
 
 // Get objectId from a transaction effects -> events where recipient is the address
 const getTxnEffectsEventID = (
-    txEffects: TransactionEffects,
+    txnResponse: SuiTransactionResponse,
     address: string
 ): string[] => {
-    const events = txEffects?.events || [];
+    const events = txnResponse?.events || [];
     const objectIDs = events
         ?.map((event: SuiEvent) => {
             const data = Object.values(event).find(
@@ -143,34 +143,34 @@ export async function getFullTransactionDetails(
     api: ApiProvider
 ): Promise<TxResultState[]> {
     const txResults = txs
-        .filter((tx) => !!tx.effects)
-        .map((txEff) => {
-            const txns = getTransactions(txEff);
+        .filter((txnResponse) => !!txnResponse.effects)
+        .map((txnResponse) => {
+            const txnKinds = getTransactions(txnResponse);
 
             // TODO handle batch transactions
-            if (txns.length > 1) {
+            if (txnKinds.length > 1) {
                 return null;
             }
 
-            const txn = txns[0];
-            const txKind = getTransactionKindName(txn);
-            const payCoin = getPayTransaction(txn);
-            const transferSui = getTransferSuiTransaction(txn);
-            const paySui = getPaySuiTransaction(txn);
-            const txTransferObject = getTransferObjectTransaction(txn);
+            const txnKind = txnKinds[0];
+            const txnKindName = getTransactionKindName(txnKind);
+            const payCoin = getPayTransaction(txnKind);
+            const transferSui = getTransferSuiTransaction(txnKind);
+            const paySui = getPaySuiTransaction(txnKind);
+            const txTransferObject = getTransferObjectTransaction(txnKind);
             const recipient =
                 payCoin?.recipients[0] ||
                 transferSui?.recipient ||
                 txTransferObject?.recipient ||
                 paySui?.recipients[0];
-            const moveCallTxn = getMoveCallTransaction(txn);
-            const objId = txEff.effects?.created?.[0]?.reference.objectId;
+            const moveCallTxn = getMoveCallTransaction(txnKind);
+            const objId = txnResponse.effects?.created?.[0]?.reference.objectId;
             const metaDataObjectId = getTxnEffectsEventID(
-                txEff.effects,
+                txnResponse,
                 address
             );
-            const sender = getTransactionSender(txEff);
-            const amountByRecipient = getAmount(txn);
+            const sender = getTransactionSender(txnResponse);
+            const amountByRecipient = getAmount(txnKind);
 
             // todo: handle multiple recipients, for now just return first
             const amount =
@@ -179,16 +179,16 @@ export async function getFullTransactionDetails(
                     : Object.values(amountByRecipient || {})[0];
 
             return {
-                txId: txEff.effects?.transactionDigest,
-                status: getExecutionStatusType(txEff),
-                txGas: getTotalGasUsed(txEff),
-                kind: txKind,
+                txId: txnResponse.effects?.transactionDigest,
+                status: getExecutionStatusType(txnResponse),
+                txGas: getTotalGasUsed(txnResponse),
+                kind: txnKindName,
                 callModuleName: moveCallTxnName(moveCallTxn?.module),
                 callFunctionName: moveCallTxnName(moveCallTxn?.function),
                 from: sender,
                 isSender: sender === address,
-                error: getExecutionStatusError(txEff),
-                timestampMs: txEff.timestampMs,
+                error: getExecutionStatusError(txnResponse),
+                timestampMs: txnResponse.timestampMs,
                 ...(recipient && { to: recipient }),
                 ...(amount && {
                     amount,
