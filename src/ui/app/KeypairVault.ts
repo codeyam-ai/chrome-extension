@@ -4,6 +4,7 @@
 import { getKeypairFromMnemonics } from '_shared/cryptography/mnemonics';
 
 import type { Ed25519Keypair } from '@mysten/sui.js';
+import { fromB64 } from '@mysten/bcs';
 
 export type AccountInfo = {
     index: number;
@@ -68,7 +69,9 @@ export default class KeypairVault {
             this._activeIndex = index;
         }
 
-        return getSeedFromMnemonics(this._mnemonic, index);
+        const b64Seed = getKeypairFromMnemonics(this._mnemonic, index).export()
+            .privateKey;
+        return fromB64(b64Seed);
     }
 
     public setActiveIndex(index: number): void {
