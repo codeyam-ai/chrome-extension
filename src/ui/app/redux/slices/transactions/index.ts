@@ -214,7 +214,7 @@ export const sendTokens = createAsyncThunk<
 
         console.log('HI');
         const x = await signer.dryRunTransaction(transaction);
-        console.log('HI2', x, transaction.build);
+        console.log('HI2', x);
         const response = await signer.signAndExecuteTransaction(transaction);
         console.log('HI3', response);
 

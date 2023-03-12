@@ -1,6 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { SUI_TYPE_ARG, Transaction } from '@mysten/sui.js';
 import { Formik } from 'formik';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -13,10 +14,7 @@ import {
     accountAggregateBalancesSelector,
     accountNftsSelector,
 } from '_redux/slices/account';
-import {
-    DEFAULT_NFT_TRANSFER_GAS_FEE,
-    SUI_TYPE_ARG,
-} from '_redux/slices/sui-objects/Coin';
+import { DEFAULT_NFT_TRANSFER_GAS_FEE } from '_redux/slices/sui-objects/Coin';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 import { setNftDetails } from '_src/ui/app/redux/slices/forms';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
@@ -84,14 +82,16 @@ function TransferNFTRecipient() {
                 activeAccountIndex
             );
 
-            const signedTx = await signer.dryRunTransaction({
-                kind: 'transferObject',
-                data: {
-                    objectId: objectId,
-                    recipient: to,
-                    gasBudget: DEFAULT_NFT_TRANSFER_GAS_FEE,
-                },
-            });
+            const transaction = new Transaction();
+            transaction.setGasBudget(DEFAULT_NFT_TRANSFER_GAS_FEE);
+            transaction.add(
+                Transaction.Commands.TransferObjects(
+                    [transaction.object(objectId)],
+                    transaction.pure(to)
+                )
+            );
+
+            const signedTx = await signer.dryRunTransaction(transaction);
 
             const gasFee =
                 signedTx.effects.gasUsed.computationCost +

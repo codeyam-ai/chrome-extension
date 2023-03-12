@@ -110,11 +110,13 @@ export const transferNFT = createAsyncThunk<
         tx.setGasBudget(DEFAULT_NFT_TRANSFER_GAS_FEE);
         tx.add(
             Transaction.Commands.TransferObjects(
-                [tx.input(data.nftId)],
-                tx.input(data.recipientAddress)
+                [tx.object(data.nftId)],
+                tx.pure(data.recipientAddress)
             )
         );
+        console.log('HI1');
         const executedTransaction = await signer.signAndExecuteTransaction(tx);
+        console.log('HI2', executedTransaction);
 
         await dispatch(fetchAllOwnedAndRequiredObjects());
         const txnResp = {
