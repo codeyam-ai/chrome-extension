@@ -4,7 +4,7 @@
 import {
     getExecutionStatusType,
     getTransactionKindName,
-    getTransactions,
+    getTransactionKinds,
 } from '@mysten/sui.js';
 import clBind from 'classnames/bind';
 import { useMemo } from 'react';
@@ -51,8 +51,8 @@ function TransactionDetailsPage() {
     const txDetails = useAppSelector(txSelector) as SuiTransactionResponse;
     const status = txDetails && getExecutionStatusType(txDetails);
     const statusIcon = status === 'success' ? 'check2-circle' : 'x-circle';
-    const [transaction] = txDetails && getTransactions(txDetails);
-    const transferKind = transaction && getTransactionKindName(transaction);
+    const transactions = getTransactionKinds(txDetails);
+    const transferKind = getTransactionKindName(transactions);
     return (
         <div className={cl('container')}>
             {txDetails ? (

@@ -1,12 +1,9 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { Ed25519Keypair } from '@mysten/sui.js';
+import { getKeypairFromMnemonics } from '_shared/cryptography/mnemonics';
 
-import {
-    getKeypairFromMnemonics,
-    getSeedFromMnemonics,
-} from '_shared/cryptography/mnemonics';
+import type { Ed25519Keypair } from '@mysten/sui.js';
 
 export type AccountInfo = {
     index: number;
@@ -36,9 +33,7 @@ export default class KeypairVault {
         }
 
         const key = index.toString();
-        const keypair = new Ed25519Keypair(
-            getKeypairFromMnemonics(this._mnemonic, index)
-        );
+        const keypair = getKeypairFromMnemonics(this._mnemonic, index);
         this._keypairs[key] = keypair;
         return keypair;
     }

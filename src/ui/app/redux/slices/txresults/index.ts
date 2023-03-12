@@ -9,7 +9,6 @@ import {
     getPayTransaction,
     getTotalGasUsed,
     getTransactionKindName,
-    getTransactions,
     getTransactionSender,
     getTransferObjectTransaction,
     getTransferSuiTransaction,
@@ -165,10 +164,7 @@ export async function getFullTransactionDetails(
                 paySui?.recipients[0];
             const moveCallTxn = getMoveCallTransaction(txnKind);
             const objId = txnResponse.effects?.created?.[0]?.reference.objectId;
-            const metaDataObjectId = getTxnEffectsEventID(
-                txnResponse,
-                address
-            );
+            const metaDataObjectId = getTxnEffectsEventID(txnResponse, address);
             const sender = getTransactionSender(txnResponse);
             const amountByRecipient = getAmount(txnKind);
 

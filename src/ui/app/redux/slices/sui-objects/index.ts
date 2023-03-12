@@ -63,7 +63,14 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
             })
             .map((anObj) => anObj.objectId);
         objectIDs.push(SUI_SYSTEM_STATE_OBJECT_ID);
-        const allObjRes = await api.instance.fullNode.getObjectBatch(objectIDs);
+        const allObjRes = await api.instance.fullNode.getObjectBatch(
+            objectIDs,
+            {
+                showOwner: true,
+                showContent: true,
+                showType: true,
+            }
+        );
         for (const objRes of allObjRes) {
             const suiObjectData = getSuiObjectData(objRes);
             if (suiObjectData) {

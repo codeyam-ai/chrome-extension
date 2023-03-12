@@ -1,18 +1,14 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-    getTransactionDigest,
-    Coin as CoinAPI,
-    SuiObjectData,
-} from '@mysten/sui.js';
+import { getTransactionDigest, Coin as CoinAPI } from '@mysten/sui.js';
 import {
     createAsyncThunk,
     createEntityAdapter,
     createSlice,
 } from '@reduxjs/toolkit';
 
-import { DEFAULT_GAS_BUDGET_FOR_PAY, GAS_TYPE_ARG } from '../sui-objects/Coin';
+import { DEFAULT_GAS_BUDGET_FOR_PAY } from '../sui-objects/Coin';
 import { accountCoinsSelector } from '_redux/slices/account';
 import {
     fetchAllOwnedAndRequiredObjects,
@@ -23,11 +19,12 @@ import { Coin } from '_redux/slices/sui-objects/Coin';
 import type {
     SuiAddress,
     SuiMoveObject,
+    SuiObjectData,
     SuiTransactionResponse,
-    MoveCallTransaction,
 } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
+import { Transaction } from '@mysten/sui.js';
 
 type SendTokensTXArgs = {
     tokenTypeArg: string;
@@ -38,110 +35,110 @@ type SendTokensTXArgs = {
 // TODO: why alias this here?
 type TransactionResult = SuiTransactionResponse;
 
-type GasCoinResponse = {
-    gasCoinObjectId?: SuiAddress;
-    error?: string;
-    totalSui?: bigint;
-    gasCost?: bigint;
-};
+// type GasCoinResponse = {
+//     gasCoinObjectId?: SuiAddress;
+//     error?: string;
+//     totalSui?: bigint;
+//     gasCost?: bigint;
+// };
 
-export const createGasCoin = createAsyncThunk<
-    GasCoinResponse,
-    bigint,
-    AppThunkConfig
->(
-    'sui-objects/create-gas-coin',
-    async (
-        amount,
-        { getState, extra: { api, keypairVault }, dispatch }
-    ): Promise<GasCoinResponse> => {
-        const state = getState();
-        const {
-            account: { authentication, address, activeAccountIndex },
-        } = state;
+// export const createGasCoin = createAsyncThunk<
+//     GasCoinResponse,
+//     bigint,
+//     AppThunkConfig
+// >(
+//     'sui-objects/create-gas-coin',
+//     async (
+//         amount,
+//         { getState, extra: { api, keypairVault }, dispatch }
+//     ): Promise<GasCoinResponse> => {
+//         const state = getState();
+//         const {
+//             account: { authentication, address, activeAccountIndex },
+//         } = state;
 
-        let signer;
-        if (authentication) {
-            signer = api.getEthosSignerInstance(address || '', authentication);
-        } else {
-            signer = api.getSignerInstance(
-                keypairVault.getKeyPair(activeAccountIndex)
-            );
-        }
+//         let signer;
+//         if (authentication) {
+//             signer = api.getEthosSignerInstance(address || '', authentication);
+//         } else {
+//             signer = api.getSignerInstance(
+//                 keypairVault.getKeyPair(activeAccountIndex)
+//             );
+//         }
 
-        const gasPrice = await signer.provider.getReferenceGasPrice();
-        const gasAmount =
-            amount * BigInt(gasPrice) +
-            BigInt(DEFAULT_GAS_BUDGET_FOR_PAY * gasPrice);
+//         const gasPrice = await signer.provider.getReferenceGasPrice();
+//         const gasAmount =
+//             amount * BigInt(gasPrice) +
+//             BigInt(DEFAULT_GAS_BUDGET_FOR_PAY * gasPrice);
 
-        const coins: SuiMoveObject[] = accountCoinsSelector(state);
-        const sortedCoins = coins
-            .filter((coin) => Coin.isSUI(coin))
-            .sort(
-                (a, b) =>
-                    parseInt(b.fields.balance) - parseInt(a.fields.balance)
-            );
+//         const coins: SuiMoveObject[] = accountCoinsSelector(state);
+//         const sortedCoins = coins
+//             .filter((coin) => Coin.isSUI(coin))
+//             .sort(
+//                 (a, b) =>
+//                     parseInt(b.fields.balance) - parseInt(a.fields.balance)
+//             );
 
-        if (sortedCoins.length === 0)
-            return {
-                error: "You don't have any Sui",
-                totalSui: BigInt(0),
-                gasCost: gasAmount,
-            };
+//         if (sortedCoins.length === 0)
+//             return {
+//                 error: "You don't have any Sui",
+//                 totalSui: BigInt(0),
+//                 gasCost: gasAmount,
+//             };
 
-        if (
-            sortedCoins.length === 1 ||
-            BigInt(sortedCoins[0].fields.balance) >= gasAmount
-        ) {
-            return {
-                gasCoinObjectId: sortedCoins[0].fields.id.id,
-                totalSui: sortedCoins[0].fields.balance,
-                gasCost: gasAmount,
-            };
-        }
+//         if (
+//             sortedCoins.length === 1 ||
+//             BigInt(sortedCoins[0].fields.balance) >= gasAmount
+//         ) {
+//             return {
+//                 gasCoinObjectId: sortedCoins[0].fields.id.id,
+//                 totalSui: sortedCoins[0].fields.balance,
+//                 gasCost: gasAmount,
+//             };
+//         }
 
-        try {
-            const payTransaction = await CoinAPI.newPayTransaction(
-                sortedCoins,
-                GAS_TYPE_ARG,
-                gasAmount,
-                address || '',
-                DEFAULT_GAS_BUDGET_FOR_PAY + sortedCoins.length * 5
-            );
+//         try {
+//             const payTransaction = await CoinAPI.newPayTransaction(
+//                 sortedCoins,
+//                 GAS_TYPE_ARG,
+//                 gasAmount,
+//                 address || '',
+//                 DEFAULT_GAS_BUDGET_FOR_PAY + sortedCoins.length * 5
+//             );
 
-            const response = await signer.signAndExecuteTransaction(
-                payTransaction
-            );
-            // TODO: better way to sync latest objects
-            dispatch(fetchAllOwnedAndRequiredObjects());
+//             const response = await signer.signAndExecuteTransaction(
+//                 payTransaction
+//             );
+//             // TODO: better way to sync latest objects
+//             dispatch(fetchAllOwnedAndRequiredObjects());
 
-            if ('EffectsCert' in response && 'effects' in response) {
-                const gasCoinObjectId =
-                    response.effects.created?.[0]?.reference?.objectId;
-                return { gasCoinObjectId };
-            }
-        } catch (error) {
-            // eslint-disable-next-line no-console
-            console.log('Error transferring', error);
-            const message = (error as { message: string }).message;
+//             if ('EffectsCert' in response && 'effects' in response) {
+//                 const gasCoinObjectId =
+//                     response.effects.created?.[0]?.reference?.objectId;
+//                 return { gasCoinObjectId };
+//             }
+//         } catch (error) {
+//             // eslint-disable-next-line no-console
+//             console.log('Error transferring', error);
+//             const message = (error as { message: string }).message;
 
-            if (message.includes('GasBalanceTooLowToCoverGasBudget')) {
-                return {
-                    error: "You don't have enough Sui to cover the gas for this transaction.",
-                    gasCost: gasAmount,
-                };
-            }
+//             if (message.includes('GasBalanceTooLowToCoverGasBudget')) {
+//                 return {
+//                     error: "You don't have enough Sui to cover the gas for this transaction.",
+//                     gasCost: gasAmount,
+//                 };
+//             }
 
-            return {
-                error: message,
-            };
-        }
+//             return {
+//                 error: message,
+//             };
+//         }
 
-        return {
-            error: 'Unable to merge coins for gas payment',
-        };
-    }
-);
+//         return {
+//             error: 'Unable to merge coins for gas payment',
+//         };
+//     }
+// );
 
 export const sendTokens = createAsyncThunk<
     TransactionResult,
@@ -168,15 +165,23 @@ export const sendTokens = createAsyncThunk<
         }
 
         const coins: SuiMoveObject[] = accountCoinsSelector(state);
-        const response = await signer.signAndExecuteTransaction(
-            await CoinAPI.newPayTransaction(
-                coins,
-                tokenTypeArg,
-                amount,
-                recipientAddress,
-                DEFAULT_GAS_BUDGET_FOR_PAY
-            )
-        );
+        const transaction = new Transaction();
+        // const neededCoins = coins.filter(
+        //     (coin) => coin.f
+        // )
+        // transaction.add(
+        //     Transaction.Commands.TransferObjects(coins, recipientAddress)
+        // );
+
+        // const response = await signer.signAndExecuteTransaction(
+        //     await CoinAPI.newPayTransaction(
+        //         coins,
+        //         tokenTypeArg,
+        //         amount,
+        //         recipientAddress,
+        //         DEFAULT_GAS_BUDGET_FOR_PAY
+        //     )
+        // );
 
         // TODO: better way to sync latest objects
         dispatch(fetchAllOwnedAndRequiredObjects());

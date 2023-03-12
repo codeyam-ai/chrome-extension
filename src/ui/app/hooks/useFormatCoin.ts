@@ -58,7 +58,7 @@ export function useCoinDecimals(coinType?: string | null) {
                 );
             }
 
-            return api.instance.fullNode.getCoinMetadata(coinType);
+            return api.instance.fullNode.getCoinMetadata({ coinType });
         },
         {
             // This is currently expected to fail for non-SUI tokens, so disable retries:
