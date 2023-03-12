@@ -48,6 +48,12 @@ function TransferNftReviewForm({
             )
     );
 
+    const onSubmit = useCallback(() => {
+        transferNft();
+    }, [transferNft]);
+
+    if (!nftobj) return <></>;
+
     let address;
     if (
         nftobj.owner &&
@@ -61,10 +67,6 @@ function TransferNftReviewForm({
     if (nftobj.content && 'fields' in nftobj.content) {
         fields = nftobj.content.fields;
     }
-
-    const onSubmit = useCallback(() => {
-        transferNft();
-    }, [transferNft]);
 
     return (
         <div>
