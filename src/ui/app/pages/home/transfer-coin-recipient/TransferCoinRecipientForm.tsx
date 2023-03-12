@@ -46,6 +46,7 @@ function TransferCoinRecipientForm({
         txresults.latestTx.filter((tx) => tx.isSender)
     );
 
+    console.log('txByAddress', txByAddress);
     const recentTxs: string[] = [];
     txByAddress.forEach((tx) => {
         if (tx.to) {

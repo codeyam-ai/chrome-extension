@@ -1,9 +1,11 @@
+import { Transaction } from '@mysten/sui.js';
 import get from 'lodash/get';
 
 import { growthbook } from '../../experimentation/feature-gating';
 import { api } from '../../redux/store/thunk-extras';
+import transactions from '../../../../background/Transactions';
 
-const SENDER = '0xd4c4c0f3c6eae1bec838442a49bacc358fdc3c5b';
+const SENDER = '0x0000000000000000000000000000000000000002';
 const DEV_INSPECT_RESULT_PATH_0 = 'results.Ok[0][1].returnValues[0][0]';
 const DEV_INSPECT_RESULT_PATH_1 = 'results.Ok[0][1].returnValues[1][0]';
 
@@ -38,37 +40,36 @@ export const getSuiName = async (address: string, sender: string = SENDER) => {
         const { packageAddress, registryAddress } =
             await getNameserviceValues();
 
+        const registryTx = new Transaction();
+        registryTx.add(
+            Transaction.Commands.MoveCall({
+                target: `${packageAddress}::base_registry::get_record_by_key`,
+                arguments: [
+                    registryTx.object(registryAddress),
+                    registryTx.pure(`${trimAddress(address)}.addr.reverse`),
+                ],
+            })
+        );
         const resolverBytes = get(
-            await suiProvider.devInspectTransaction(sender, {
-                kind: 'moveCall',
-                data: {
-                    packageObjectId: packageAddress,
-                    module: 'base_registry',
-                    function: 'get_record_by_key',
-                    typeArguments: [],
-                    arguments: [
-                        registryAddress,
-                        `${trimAddress(address)}.addr.reverse`,
-                    ],
-                },
-            }),
+            await suiProvider.devInspectTransaction(sender, registryTx),
             DEV_INSPECT_RESULT_PATH_1
         );
         if (!resolverBytes) return address;
 
         const resolver = toFullAddress(toHexString(resolverBytes));
+        const resolverTx = new Transaction();
+        resolverTx.add(
+            Transaction.Commands.MoveCall({
+                target: `${packageAddress}::resolver::name`,
+                arguments: [
+                    registryTx.object(resolver),
+                    registryTx.pure(address),
+                ],
+            })
+        );
         const resolverResponse = await suiProvider.devInspectTransaction(
             sender,
-            {
-                kind: 'moveCall',
-                data: {
-                    packageObjectId: packageAddress,
-                    module: 'resolver',
-                    function: 'name',
-                    typeArguments: [],
-                    arguments: [resolver, address],
-                },
-            }
+            resolverTx
         );
 
         const nameByteArray = get(resolverResponse, DEV_INSPECT_RESULT_PATH_0);
@@ -92,36 +93,37 @@ export const getSuiAddress = async (
     const { packageAddress, registryAddress } = await getNameserviceValues();
 
     try {
+        const registryTx = new Transaction();
+        registryTx.add(
+            Transaction.Commands.MoveCall({
+                target: `${packageAddress}::base_registry::get_record_by_key`,
+                arguments: [
+                    registryTx.object(registryAddress),
+                    registryTx.pure(domain),
+                ],
+            })
+        );
         const resolverResponse = await suiProvider.devInspectTransaction(
             sender,
-            {
-                kind: 'moveCall',
-                data: {
-                    packageObjectId: packageAddress,
-                    module: 'base_registry',
-                    function: 'get_record_by_key',
-                    typeArguments: [],
-                    arguments: [registryAddress, domain],
-                },
-            }
+            registryTx
         );
-
         const resolverBytes = get(resolverResponse, DEV_INSPECT_RESULT_PATH_1);
         if (!resolverBytes) return domain;
 
         const resolver = toFullAddress(toHexString(resolverBytes));
+        const resolverTx = new Transaction();
+        resolverTx.add(
+            Transaction.Commands.MoveCall({
+                target: `${packageAddress}::resolver::addr`,
+                arguments: [
+                    registryTx.object(resolver),
+                    registryTx.pure(domain),
+                ],
+            })
+        );
         const resolverResponse2 = await suiProvider.devInspectTransaction(
             sender,
-            {
-                kind: 'moveCall',
-                data: {
-                    packageObjectId: packageAddress,
-                    module: 'resolver',
-                    function: 'addr',
-                    typeArguments: [],
-                    arguments: [resolver, domain],
-                },
-            }
+            resolverTx
         );
         const addr = get(resolverResponse2, DEV_INSPECT_RESULT_PATH_0);
 
