@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { fromB64 } from '@mysten/bcs';
-import { getTransactionEffects, Transaction } from '@mysten/sui.js';
+import {
+    getTransactionEffects,
+    SUI_TYPE_ARG,
+    Transaction,
+} from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -26,7 +30,6 @@ import { getGasDataFromError } from './lib/extractGasData';
 import * as summaries from './summaries';
 import truncateMiddle from '../../helpers/truncate-middle';
 import { AppState } from '../../hooks/useInitializedGuard';
-import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import Alert from '../../shared/feedback/Alert';
 import AlertWithErrorExpand from '../../shared/feedback/AlertWithErrorExpand';
 import Body from '../../shared/typography/Body';
@@ -125,20 +128,20 @@ export function DappTxApprovalPage() {
         useCategorizedEffects({ normalizedFunction, effects, address });
 
     const charges = useMemo(
-        () => (coinChanges[GAS_TYPE_ARG] || 0) - (gas || 0),
+        () => (coinChanges[SUI_TYPE_ARG] || 0) - (gas || 0),
         [coinChanges, gas]
     );
     const [formattedCharges, chargesSymbol, chargeDollars] = useFormatCoin(
         charges,
-        GAS_TYPE_ARG
+        SUI_TYPE_ARG
     );
     const [formattedGas, gasSymbol, gasDollars] = useFormatCoin(
         gas,
-        GAS_TYPE_ARG
+        SUI_TYPE_ARG
     );
     const [formattedTotal, totalSymbol, totalDollars] = useFormatCoin(
-        coinChanges[GAS_TYPE_ARG],
-        GAS_TYPE_ARG
+        coinChanges[SUI_TYPE_ARG],
+        SUI_TYPE_ARG
     );
 
     useEffect(() => {
@@ -635,7 +638,7 @@ export function DappTxApprovalPage() {
                                 type: 'small',
                                 content: parsedData[attribute],
                                 coinType: ['gasBudget'].includes(attribute)
-                                    ? GAS_TYPE_ARG
+                                    ? SUI_TYPE_ARG
                                     : null,
                             } as SmallDetail,
                         });
@@ -654,7 +657,7 @@ export function DappTxApprovalPage() {
                     content: {
                         type: 'small',
                         content: gasUsed?.computationCost || '---',
-                        coinType: GAS_TYPE_ARG,
+                        coinType: SUI_TYPE_ARG,
                     } as SmallDetail,
                 },
                 {
@@ -662,7 +665,7 @@ export function DappTxApprovalPage() {
                     content: {
                         type: 'small',
                         content: gasUsed?.storageCost || '---',
-                        coinType: GAS_TYPE_ARG,
+                        coinType: SUI_TYPE_ARG,
                     } as SmallDetail,
                 },
                 {
@@ -670,7 +673,7 @@ export function DappTxApprovalPage() {
                     content: {
                         type: 'small',
                         content: gasUsed?.storageRebate || '---',
-                        coinType: GAS_TYPE_ARG,
+                        coinType: SUI_TYPE_ARG,
                     } as SmallDetail,
                 },
                 {
@@ -681,7 +684,7 @@ export function DappTxApprovalPage() {
                     content: {
                         type: 'small',
                         content: gas,
-                        coinType: GAS_TYPE_ARG,
+                        coinType: SUI_TYPE_ARG,
                     } as SmallDetail,
                 },
             ],

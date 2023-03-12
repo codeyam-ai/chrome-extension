@@ -1,11 +1,12 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import BigNumber from 'bignumber.js';
 import * as Yup from 'yup';
 
 import { formatBalance } from '_app/hooks/useFormatCoin';
-import { GAS_SYMBOL, GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
+import { SUI_SYMBOL } from '_redux/slices/sui-objects/Coin';
 
 export function createTokenValidation(
     coinType: string,
@@ -75,17 +76,18 @@ export function createTokenValidation(
             )
             .test(
                 'gas-balance-check',
-                `Insufficient ${GAS_SYMBOL} balance to cover gas fee (${formatBalance(
+                `Insufficient ${SUI_SYMBOL} balance to cover gas fee (${formatBalance(
                     gasBudget,
                     gasDecimals
-                )} ${GAS_SYMBOL})`,
+                )} ${SUI_SYMBOL})`,
                 (amount?: BigNumber) => {
                     if (!amount) {
                         return false;
                     }
                     try {
                         let availableGas = gasBalance;
-                        if (coinType === GAS_TYPE_ARG) {
+                        console.log('AVAILABLE GAS', gasBalance);
+                        if (coinType === SUI_TYPE_ARG) {
                             availableGas -= BigInt(
                                 amount.shiftedBy(decimals).toString()
                             );

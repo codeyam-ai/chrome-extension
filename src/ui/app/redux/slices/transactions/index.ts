@@ -100,7 +100,7 @@ type TransactionResult = SuiTransactionResponse;
 //         try {
 //             const payTransaction = await CoinAPI.newPayTransaction(
 //                 sortedCoins,
-//                 GAS_TYPE_ARG,
+//                 SUI_TYPE_ARG,
 //                 gasAmount,
 //                 address || '',
 //                 DEFAULT_GAS_BUDGET_FOR_PAY + sortedCoins.length * 5

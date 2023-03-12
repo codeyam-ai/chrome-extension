@@ -1,3 +1,4 @@
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -18,7 +19,6 @@ import {
 import ExternalLink from '_src/ui/app/components/external-link';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import generateTicketData from '_src/ui/app/helpers/generateTicketData';
-import { GAS_TYPE_ARG } from '_src/ui/app/redux/slices/sui-objects/Coin';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
@@ -42,7 +42,7 @@ export const TicketProjectDetailsContent = ({
         ({ suiObjects }) => suiObjects.loading && !suiObjects.lastSync
     );
     const balances = useAppSelector(accountAggregateBalancesSelector);
-    const sufficientBalance = (balances[GAS_TYPE_ARG] || 0) > 1000;
+    const sufficientBalance = (balances[SUI_TYPE_ARG] || 0) > 1000;
     const address = useAppSelector(({ account: { address } }) => address);
     const nfts = useAppSelector(accountNftsSelector) || [];
     const [minting, setMinting] = useState(false);
@@ -79,7 +79,7 @@ export const TicketProjectDetailsContent = ({
                 error += ` The cost of gas is ${mistToSui(
                     gasCoinInfo.gasCost
                 )} Sui, but you only have ${mistToSui(
-                    balances[GAS_TYPE_ARG]
+                    balances[SUI_TYPE_ARG]
                 )} Sui`;
             }
             setMinting(false);

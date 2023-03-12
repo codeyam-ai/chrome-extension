@@ -15,7 +15,7 @@ import {
 } from '_redux/slices/account';
 import {
     DEFAULT_NFT_TRANSFER_GAS_FEE,
-    GAS_TYPE_ARG,
+    SUI_TYPE_ARG,
 } from '_redux/slices/sui-objects/Coin';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 import { setNftDetails } from '_src/ui/app/redux/slices/forms';
@@ -55,7 +55,7 @@ function TransferNFTRecipient() {
     const aggregateBalances = useAppSelector(accountAggregateBalancesSelector);
 
     const gasAggregateBalance = useMemo(
-        () => aggregateBalances[GAS_TYPE_ARG] || BigInt(0),
+        () => aggregateBalances[SUI_TYPE_ARG] || BigInt(0),
         [aggregateBalances]
     );
 

@@ -1,9 +1,9 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-// import { getTransactionDigest } from '@mysten/sui.js';
+// import { getTransactionDigest, Transaction, SUI_TYPE_ARG } from '@mysten/sui.js';
 
-import { Coin as CoinAPI } from '@mysten/sui.js';
+import { Coin as CoinAPI, SUI_TYPE_ARG, Transaction } from '@mysten/sui.js';
 import BigNumber from 'bignumber.js';
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
@@ -19,7 +19,6 @@ import {
 import {
     Coin,
     DEFAULT_GAS_BUDGET_FOR_PAY,
-    GAS_TYPE_ARG,
 } from '_redux/slices/sui-objects/Coin';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 import {
@@ -55,11 +54,11 @@ function TransferCoinAmountPage() {
     );
     const [formattedBalance] = useFormatCoin(
         coinBalance,
-        coinType || GAS_TYPE_ARG
+        coinType || SUI_TYPE_ARG
     );
 
     const gasAggregateBalance = useMemo(
-        () => aggregateBalances[GAS_TYPE_ARG] || BigInt(0),
+        () => aggregateBalances[SUI_TYPE_ARG] || BigInt(0),
         [aggregateBalances]
     );
 
@@ -71,7 +70,7 @@ function TransferCoinAmountPage() {
     const [sendError, setSendError] = useState<string | null>(null);
 
     const [coinDecimals] = useCoinDecimals(coinType);
-    const [gasDecimals] = useCoinDecimals(GAS_TYPE_ARG);
+    const [gasDecimals] = useCoinDecimals(SUI_TYPE_ARG);
     const allCoins = useAppSelector(accountCoinsSelector);
 
     const allCoinsOfSelectedTypeArg = useMemo(
@@ -137,16 +136,54 @@ function TransferCoinAmountPage() {
                 activeAccountIndex
             );
 
-            const coins: SuiMoveObject[] = accountCoinsSelector(state);
-            const tx = await CoinAPI.newPayTransaction(
-                coins,
-                coinType,
-                bigIntAmount,
-                formState.to,
-                DEFAULT_GAS_BUDGET_FOR_PAY
+            const allCoins: SuiMoveObject[] = accountCoinsSelector(state);
+            const [primaryCoin, ...coins] = allCoins.filter(
+                (coin) => coin.type === `0x2::coin::Coin<${coinType}>`
             );
 
-            const signedTx = await signer.dryRunTransaction(tx);
+            const transaction = new Transaction();
+
+            if (coinType === SUI_TYPE_ARG) {
+                const coin = transaction.add(
+                    Transaction.Commands.SplitCoin(
+                        transaction.gas,
+                        transaction.pure(bigIntAmount)
+                    )
+                );
+                transaction.add(
+                    Transaction.Commands.TransferObjects(
+                        [coin],
+                        transaction.pure(formState.to)
+                    )
+                );
+            } else {
+                const primaryCoinInput = transaction.object(
+                    Coin.getID(primaryCoin)
+                );
+                transaction.add(
+                    Transaction.Commands.MergeCoins(
+                        primaryCoinInput,
+                        coins.map((coin) =>
+                            transaction.object(Coin.getID(coin))
+                        )
+                    )
+                );
+                const coin = transaction.add(
+                    Transaction.Commands.SplitCoin(
+                        primaryCoinInput,
+                        transaction.pure(bigIntAmount)
+                    )
+                );
+                transaction.add(
+                    Transaction.Commands.TransferObjects(
+                        [coin],
+                        transaction.pure(formState.to)
+                    )
+                );
+            }
+            transaction.setGasBudget(DEFAULT_GAS_BUDGET_FOR_PAY);
+
+            const signedTx = await signer.dryRunTransaction(transaction);
 
             const { computationCost, storageCost, storageRebate } =
                 signedTx.effects.gasUsed;

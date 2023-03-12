@@ -10,6 +10,7 @@ import {
     SparklesIcon,
     XMarkIcon,
 } from '@heroicons/react/24/solid';
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import _ from 'lodash';
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -29,7 +30,6 @@ import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { formatDate } from '_helpers';
 import { useAppSelector, useFormatCoin, useMiddleEllipsis } from '_hooks';
-import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
 import CopyBody from '_src/ui/app/shared/typography/CopyBody';
 
 import type { TxResultState } from '_redux/slices/txresults';
@@ -185,7 +185,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         TRUNCATE_MAX_CHAR - 1
     );
 
-    const [gas] = useFormatCoin(txDigest.txGas, GAS_TYPE_ARG);
+    const [gas] = useFormatCoin(txDigest.txGas, SUI_TYPE_ARG);
 
     const [total, totalSymbol, dollars, , icon] = useFormatCoin(
         txDigest.amount ? txDigest.amount : null,
