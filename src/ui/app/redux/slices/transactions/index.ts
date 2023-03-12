@@ -1,7 +1,12 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { getTransactionDigest, Coin as CoinAPI } from '@mysten/sui.js';
+import {
+    getTransactionDigest,
+    Coin as CoinAPI,
+    SUI_TYPE_ARG,
+    Transaction,
+} from '@mysten/sui.js';
 import {
     createAsyncThunk,
     createEntityAdapter,
@@ -24,7 +29,6 @@ import type {
 } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
-import { Transaction } from '@mysten/sui.js';
 
 type SendTokensTXArgs = {
     tokenTypeArg: string;
@@ -164,24 +168,55 @@ export const sendTokens = createAsyncThunk<
             );
         }
 
-        const coins: SuiMoveObject[] = accountCoinsSelector(state);
-        const transaction = new Transaction();
-        // const neededCoins = coins.filter(
-        //     (coin) => coin.f
-        // )
-        // transaction.add(
-        //     Transaction.Commands.TransferObjects(coins, recipientAddress)
-        // );
+        const allCoins: SuiMoveObject[] = accountCoinsSelector(state);
+        const [primaryCoin, ...coins] = allCoins.filter(
+            (coin) => coin.type === `0x2::coin::Coin<${tokenTypeArg}>`
+        );
 
-        // const response = await signer.signAndExecuteTransaction(
-        //     await CoinAPI.newPayTransaction(
-        //         coins,
-        //         tokenTypeArg,
-        //         amount,
-        //         recipientAddress,
-        //         DEFAULT_GAS_BUDGET_FOR_PAY
-        //     )
-        // );
+        const transaction = new Transaction();
+        transaction.setGasBudget(DEFAULT_GAS_BUDGET_FOR_PAY * 2);
+        if (tokenTypeArg === SUI_TYPE_ARG) {
+            const coin = transaction.add(
+                Transaction.Commands.SplitCoin(
+                    transaction.gas,
+                    transaction.pure(amount)
+                )
+            );
+            transaction.add(
+                Transaction.Commands.TransferObjects(
+                    [coin],
+                    transaction.pure(recipientAddress)
+                )
+            );
+        } else {
+            const primaryCoinInput = transaction.object(
+                Coin.getID(primaryCoin)
+            );
+            transaction.add(
+                Transaction.Commands.MergeCoins(
+                    primaryCoinInput,
+                    coins.map((coin) => transaction.object(Coin.getID(coin)))
+                )
+            );
+            const coin = transaction.add(
+                Transaction.Commands.SplitCoin(
+                    primaryCoinInput,
+                    transaction.pure(amount)
+                )
+            );
+            transaction.add(
+                Transaction.Commands.TransferObjects(
+                    [coin],
+                    transaction.pure(recipientAddress)
+                )
+            );
+        }
+
+        console.log('HI');
+        const x = await signer.dryRunTransaction(transaction);
+        console.log('HI2', x, transaction.build);
+        const response = await signer.signAndExecuteTransaction(transaction);
+        console.log('HI3', response);
 
         // TODO: better way to sync latest objects
         dispatch(fetchAllOwnedAndRequiredObjects());

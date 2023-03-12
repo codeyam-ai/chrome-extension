@@ -86,7 +86,6 @@ export function createTokenValidation(
                     }
                     try {
                         let availableGas = gasBalance;
-                        console.log('AVAILABLE GAS', gasBalance);
                         if (coinType === SUI_TYPE_ARG) {
                             availableGas -= BigInt(
                                 amount.shiftedBy(decimals).toString()

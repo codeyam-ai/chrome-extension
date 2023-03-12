@@ -142,7 +142,7 @@ function TransferCoinAmountPage() {
             );
 
             const transaction = new Transaction();
-
+            transaction.setGasBudget(DEFAULT_GAS_BUDGET_FOR_PAY * 2);
             if (coinType === SUI_TYPE_ARG) {
                 const coin = transaction.add(
                     Transaction.Commands.SplitCoin(
@@ -181,9 +181,8 @@ function TransferCoinAmountPage() {
                     )
                 );
             }
-            transaction.setGasBudget(DEFAULT_GAS_BUDGET_FOR_PAY);
 
-            const signedTx = await signer.dryRunTransaction(transaction);
+            const signedTx = await signer.devInspectTransaction(transaction);
 
             const { computationCost, storageCost, storageRebate } =
                 signedTx.effects.gasUsed;

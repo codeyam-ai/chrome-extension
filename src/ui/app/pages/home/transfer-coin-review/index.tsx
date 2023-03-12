@@ -95,6 +95,7 @@ function TransferCoinReviewPage() {
                 navigate(receiptUrl);
             } catch (e) {
                 const error = e as { message: string };
+                console.log('error', error);
                 const failAlertText =
                     isErrorCausedByUserNotHavingEnoughSuiToPayForGas(
                         error.message
