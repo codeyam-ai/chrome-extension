@@ -1,10 +1,14 @@
 import { BCS, getSuiMoveConfig } from '@mysten/bcs';
 
-import type { JsonRpcProvider, SuiObject } from '@mysten/sui.js';
+import type { JsonRpcProvider, SuiObjectData } from '@mysten/sui.js';
 
 export class Ticket {
-    public static isTicket(obj: SuiObject): boolean {
-        return 'fields' in obj.data && 'ticket_id' in obj.data.fields;
+    public static isTicket(obj: SuiObjectData): boolean {
+        if (obj.content) {
+            return 'fields' in obj.content && 'ticket_id' in obj.content.fields;
+        } else {
+            return false;
+        }
     }
 
     public static async lookupTicketRecord(
