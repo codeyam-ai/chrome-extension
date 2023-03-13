@@ -160,200 +160,73 @@ export function DappTxApprovalPage() {
         if (!accountInfos || accountInfos.length === 0) return;
 
         const getEffects = async () => {
-            try {
-                if (
-                    !transaction ||
-                    transaction.type === 'move-call' ||
-                    (typeof transaction.data === 'object' &&
-                        transaction.data.kind === 'bytes')
-                ) {
-                    setEffects(null);
-                    return;
-                }
+            let signer;
+            if (authentication) {
+                signer = thunkExtras.api.getEthosSignerInstance(
+                    address || '',
+                    authentication
+                );
+            } else {
+                signer = thunkExtras.api.getSignerInstance(
+                    thunkExtras.keypairVault.getKeyPair(activeAccountIndex),
+                    true
+                );
+            }
 
-                let signer;
-                if (authentication) {
-                    signer = thunkExtras.api.getEthosSignerInstance(
-                        address || '',
-                        authentication
+            const signableTransaction = Transaction.from(transaction.data);
+
+            setDryRunError(undefined);
+            setExplicitError(undefined);
+
+            const { effects: transactionEffects } =
+                await signer.dryRunTransaction(signableTransaction);
+
+            if (transactionEffects.status.status === 'failure') {
+                if (
+                    transactionEffects?.status?.error?.includes(
+                        'quorum of validators'
+                    )
+                ) {
+                    setDryRunError(
+                        'Sui Devnet is having technical issues. Please check back later when these issues are resolved.'
+                    );
+                } else if (
+                    isErrorObjectVersionUnavailable(
+                        transactionEffects?.status?.error || ''
+                    )
+                ) {
+                    setExplicitError(
+                        <div className="flex flex-col gap-6">
+                            <Alert
+                                title="Object or Coin In Use"
+                                subtitle="One of the objects or coins in this transaction is already in use. Please wait a moment and try again.    "
+                            />
+                            <Alert
+                                title="Error Details"
+                                subtitle={transactionEffects?.status?.error}
+                            />
+                        </div>
                     );
                 } else {
-                    signer = thunkExtras.api.getSignerInstance(
-                        thunkExtras.keypairVault.getKeyPair(activeAccountIndex),
-                        true
-                    );
+                    setDryRunError(transactionEffects.status.error);
                 }
+            } else if (
+                typeof transactionEffects.gasObject.owner === 'object' &&
+                'AddressOwner' in transactionEffects.gasObject.owner &&
+                transactionEffects.gasObject.owner.AddressOwner !== address
+            ) {
+                const gasAddress =
+                    transactionEffects.gasObject.owner.AddressOwner;
 
-                setDryRunError(undefined);
-                setExplicitError(undefined);
-
-                const { effects: transactionEffects } =
-                    await signer.dryRunTransaction(transaction.data);
-
-                if (transactionEffects.status.status === 'failure') {
-                    if (
-                        transactionEffects?.status?.error?.includes(
-                            'quorum of validators'
-                        )
-                    ) {
-                        setDryRunError(
-                            'Sui Devnet is having technical issues. Please check back later when these issues are resolved.'
-                        );
-                    } else if (
-                        isErrorObjectVersionUnavailable(
-                            transactionEffects?.status?.error || ''
-                        )
-                    ) {
-                        setExplicitError(
-                            <div className="flex flex-col gap-6">
-                                <Alert
-                                    title="Object or Coin In Use"
-                                    subtitle="One of the objects or coins in this transaction is already in use. Please wait a moment and try again.    "
-                                />
-                                <Alert
-                                    title="Error Details"
-                                    subtitle={transactionEffects?.status?.error}
-                                />
-                            </div>
-                        );
-                    } else {
-                        setDryRunError(transactionEffects.status.error);
-                    }
-                } else if (
-                    typeof transactionEffects.gasObject.owner === 'object' &&
-                    'AddressOwner' in transactionEffects.gasObject.owner &&
-                    transactionEffects.gasObject.owner.AddressOwner !== address
-                ) {
-                    const gasAddress =
-                        transactionEffects.gasObject.owner.AddressOwner;
-
-                    if (gasAddress !== address) {
-                        setExplicitError(
-                            <IncorrectSigner correctAddress={gasAddress} />
-                        );
-                    } else {
-                        setEffects(transactionEffects);
-                    }
+                if (gasAddress !== address) {
+                    setExplicitError(
+                        <IncorrectSigner correctAddress={gasAddress} />
+                    );
                 } else {
                     setEffects(transactionEffects);
                 }
-            } catch (e) {
-                const errorMessage = (e as Error).message;
-
-                if (errorMessage === 'Account mnemonic is not set') {
-                    // this is expected; it happens the first time we render because the redux state is not in good
-                    // shape yet. we basically ingore it and expect the next re-render to work.
-                    // TODO: this seems weird - it would be good to find a better way.
-                } else {
-                    if (
-                        errorMessage.includes('Error: Unknown call arg type') ||
-                        errorMessage.includes('remaining input') ||
-                        errorMessage.includes('byte deserialization failed') ||
-                        errorMessage.includes('expected an byte array') ||
-                        errorMessage.includes('serialization error') ||
-                        errorMessage.includes(
-                            'RangeError: Offset is outside the bounds of the DataView'
-                        ) ||
-                        errorMessage.includes(
-                            'Expected SuiObjectRef to be an Object, got: undefined'
-                        )
-                    ) {
-                        setEffects(null);
-                        return;
-                    }
-
-                    if (isErrorCausedByIncorrectSigner(errorMessage)) {
-                        const errorAddress = errorMessage
-                            .match(
-                                /is owned by account address (.*), but signer address is/
-                            )?.[1]
-                            .split(',')[0];
-
-                        if (errorAddress === address) {
-                            setEffects(null);
-                            return;
-                        } else {
-                            setExplicitError(
-                                <IncorrectSigner
-                                    correctAddress={errorAddress}
-                                    errorMessage={errorMessage}
-                                    txID={txID}
-                                    txRequest={txRequest}
-                                />
-                            );
-                        }
-                    } else if (isErrorCausedByMissingObject(errorMessage)) {
-                        setExplicitError(
-                            <MissingObject
-                                selectedApiEnv={selectedApiEnv}
-                                errorMessage={errorMessage}
-                                txID={txID}
-                                txRequest={txRequest}
-                            />
-                        );
-                    } else if (
-                        isErrorCausedByUserNotHavingEnoughSuiToPayForGas(
-                            errorMessage
-                        )
-                    ) {
-                        const gasData = getGasDataFromError(errorMessage);
-                        if (gasData) {
-                            setExplicitError(
-                                <NotEnoughGas
-                                    gasData={gasData}
-                                    errorMessage={errorMessage}
-                                    txID={txID}
-                                    txRequest={txRequest}
-                                />
-                            );
-                        } else {
-                            setExplicitError(
-                                <div className="flex flex-col gap-6">
-                                    <AlertWithErrorExpand
-                                        title="You don't have enough SUI"
-                                        body={
-                                            <Body>
-                                                It looks like your wallet
-                                                doesn&apos;t have enough SUI to
-                                                pay for the gas for this
-                                                transaction.
-                                            </Body>
-                                        }
-                                        fullErrorText={errorMessage}
-                                        txInfo={{
-                                            dAppUrl: txRequest?.origin || '',
-                                            txId: txID || '',
-                                            txRequest,
-                                        }}
-                                    />
-                                </div>
-                            );
-                        }
-                    } else if (isErrorObjectVersionUnavailable(errorMessage)) {
-                        setExplicitError(
-                            <div className="flex flex-col gap-6">
-                                <AlertWithErrorExpand
-                                    title="Object or Coin In Use"
-                                    body={
-                                        <Body>
-                                            One of the objects or coins in this
-                                            transaction is already in use.
-                                            Please wait a moment and try again.
-                                        </Body>
-                                    }
-                                    fullErrorText={errorMessage}
-                                    txInfo={{
-                                        dAppUrl: txRequest?.origin || '',
-                                        txId: txID || '',
-                                        txRequest,
-                                    }}
-                                />
-                            </div>
-                        );
-                    } else {
-                        setDryRunError(errorMessage);
-                    }
-                }
+            } else {
+                setEffects(transactionEffects);
             }
         };
 
@@ -373,7 +246,7 @@ export function DappTxApprovalPage() {
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
             await finishTransaction(
-                txRequest,
+                transaction,
                 txID,
                 approved,
                 authentication,
@@ -806,16 +679,16 @@ export function DappTxApprovalPage() {
 }
 
 async function finishTransaction(
-    txRequest: TransactionRequest | null,
+    transaction: Transaction | null,
     txID: string | undefined,
     approved: boolean,
     authentication: string | null,
     address: string | null,
     activeAccountIndex: number
 ) {
-    if (!txRequest) {
+    if (!transaction) {
         // TODO: delete? doesn't seem like we got have gotten this far without txRequest
-        throw new Error(`TransactionRequest ${txID} not found`);
+        throw new Error(`Transaction ${txID} not found`);
     }
 
     let txResult: SuiTransactionResponse | undefined = undefined;
@@ -834,34 +707,7 @@ async function finishTransaction(
         }
 
         try {
-            let response: SuiTransactionResponse;
-            if (
-                txRequest.tx.type === 'v2' ||
-                txRequest.tx.type === 'move-call'
-            ) {
-                // const transaction = new Transaction();
-                // transaction.add(
-                //     Transaction.Commands.MoveCall({
-                //         target: `${txRequest.tx.data.}`
-                //     })
-                // )
-                const txn: SignableTransaction =
-                    txRequest.tx.type === 'move-call'
-                        ? {
-                              kind: 'moveCall',
-                              data: txRequest.tx.data,
-                          }
-                        : txRequest.tx.data;
-
-                response = await signer.signAndExecuteTransaction(txn);
-            } else if (txRequest.tx.type === 'serialized-move-call') {
-                const txBytes = fromB64(txRequest.tx.data);
-                response = await signer.signAndExecuteTransaction(txBytes);
-            } else {
-                throw new Error(`Either tx or txBytes needs to be defined.`);
-            }
-
-            txResult = response;
+            txResult = await signer.signAndExecuteTransaction(transaction);
         } catch (e) {
             tsResultError = (e as Error).message;
         }
