@@ -275,11 +275,11 @@ export function DappTxApprovalPage() {
     }, [closeWindow, done]);
 
     const content: TabSections = useMemo(() => {
-        const txInfo = txRequest?.tx.data;
+        const transaction = Transaction.from(txRequest?.tx.data);
 
         const data = {
             address,
-            txInfo,
+            transaction,
             reading,
             mutating,
             creating,
@@ -487,45 +487,45 @@ export function DappTxApprovalPage() {
 
         const details = [];
 
-        if (txInfo && typeof txInfo !== 'string' && 'kind' in txInfo) {
-            if (txInfo.kind === 'bytes') {
-                details.push({
-                    title: 'Transaction',
-                    details: [
-                        {
-                            label: 'Bytes',
-                            content: {
-                                type: 'small',
-                                content: txInfo.data.toLocaleString(),
-                            } as SmallDetail,
-                        },
-                    ],
-                } as Section);
-            } else {
-                const parsedData = JSON.parse(JSON.stringify(txInfo.data));
-                for (const attribute of [
-                    'packageObjectId',
-                    'module',
-                    'function',
-                    'arguments',
-                    'gasBudget',
-                    'gasPayment',
-                ]) {
-                    if (attribute in txInfo.data) {
-                        transactionDetails.details.push({
-                            label: attribute,
-                            content: {
-                                type: 'small',
-                                content: parsedData[attribute],
-                                coinType: ['gasBudget'].includes(attribute)
-                                    ? SUI_TYPE_ARG
-                                    : null,
-                            } as SmallDetail,
-                        });
-                    }
-                }
-            }
-        }
+        // if (txInfo && typeof txInfo !== 'string' && 'kind' in txInfo) {
+        //     if (txInfo.kind === 'bytes') {
+        //         details.push({
+        //             title: 'Transaction',
+        //             details: [
+        //                 {
+        //                     label: 'Bytes',
+        //                     content: {
+        //                         type: 'small',
+        //                         content: txInfo.data.toLocaleString(),
+        //                     } as SmallDetail,
+        //                 },
+        //             ],
+        //         } as Section);
+        //     } else {
+        //         const parsedData = JSON.parse(JSON.stringify(txInfo.data));
+        //         for (const attribute of [
+        //             'packageObjectId',
+        //             'module',
+        //             'function',
+        //             'arguments',
+        //             'gasBudget',
+        //             'gasPayment',
+        //         ]) {
+        //             if (attribute in txInfo.data) {
+        //                 transactionDetails.details.push({
+        //                     label: attribute,
+        //                     content: {
+        //                         type: 'small',
+        //                         content: parsedData[attribute],
+        //                         coinType: ['gasBudget'].includes(attribute)
+        //                             ? SUI_TYPE_ARG
+        //                             : null,
+        //                     } as SmallDetail,
+        //                 });
+        //             }
+        //         }
+        //     }
+        // }
 
         details.push(transactionDetails);
 
