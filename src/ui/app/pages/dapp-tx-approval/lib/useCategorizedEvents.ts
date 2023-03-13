@@ -69,9 +69,7 @@ const useCategorizedEffects = ({
 
         return events
             .filter((event) => {
-                return (
-                    event.type === "mutateObject"
-                )
+                return event.type === 'mutateObject';
             })
             .map((event) => {
                 if (event.type !== 'mutateObject') return null;
@@ -83,7 +81,6 @@ const useCategorizedEffects = ({
                     name: objectTypeParts[2].split('<')[0],
                 };
             });
-
     }, [events]);
 
     const transferring = useMemo(() => {
