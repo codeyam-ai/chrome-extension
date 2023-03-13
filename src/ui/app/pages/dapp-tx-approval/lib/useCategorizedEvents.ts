@@ -70,8 +70,11 @@ const useCategorizedEffects = ({
         return events
             .filter((event) => {
                 return (
-                    event.type === "mutateObject"
-                )
+                    event.type === 'mutateObject' //&&
+                    // typeof event.content.owner === 'object' &&
+                    // 'AddressOwner' in event.content.owner &&
+                    // event.content.owner.AddressOwner === address
+                );
             })
             .map((event) => {
                 if (event.type !== 'mutateObject') return null;
@@ -82,76 +85,72 @@ const useCategorizedEffects = ({
                     module: objectTypeParts[1],
                     name: objectTypeParts[2].split('<')[0],
                 };
-            });
-
+            })
+            .filter((mutate) => !!mutate);
     }, [events]);
 
     const transferring = useMemo(() => {
-        return [];
-        // if (!effects?.events) return [];
+        if (!events) return [];
 
-        // const transferring = effects.events
-        //     .filter(
-        //         (event) =>
-        //             'transferObject' in event &&
-        //             event.transferObject &&
-        //             typeof event.transferObject.recipient !== 'string' &&
-        //             'AddressOwner' in event.transferObject.recipient &&
-        //             event.transferObject.recipient.AddressOwner
-        //     )
-        //     .map((event) => {
-        //         if (!('transferObject' in event)) return {};
+        return events
+            .filter(
+                (event) =>
+                    event.type === 'transferObject' &&
+                    typeof event.content.recipient === 'object' &&
+                    'AddressOwner' in event.content.recipient &&
+                    event.content.recipient.AddressOwner
+            )
+            .map((event) => {
+                if (event.type !== 'transferObject') return null;
 
-        //         const objectTypeParts =
-        //             event.transferObject.objectType.split('::');
-        //         return {
-        //             address: objectTypeParts[0],
-        //             module: objectTypeParts[1],
-        //             name: objectTypeParts[2].split('<')[0],
-        //         };
-        //     });
-
-        // return transferring;
+                const objectTypeParts = event.content.objectType.split('::');
+                return {
+                    address: objectTypeParts[0],
+                    module: objectTypeParts[1],
+                    name: objectTypeParts[2].split('<')[0],
+                };
+            })
+            .filter((transfer) => !!transfer);
     }, [events]);
 
     const deleting = useMemo(() => {
-        return [];
-        // if (!effects?.events) return [];
+        if (!events) return [];
 
-        // const deleting = effects.events
-        //     .filter((event) => 'deleteObject' in event)
-        //     .map((event) => {
-        //         if (!('deleteObject' in event)) return {};
-        //         return {
-        //             name: event.deleteObject.objectId,
-        //         };
-        //     });
+        const deleting = events
+            .filter((event) => event.type === 'deleteObject')
+            .map((event) => {
+                if (event.type !== 'deleteObject') return null;
 
-        // return deleting;
+                return {
+                    name: event.content.objectId,
+                };
+            })
+            .filter((d) => !!d);
+
+        return deleting;
     }, [events]);
 
     const coinChanges = useMemo(() => {
         const zero: Record<string, number> = {};
-        return zero;
 
-        // if (!effects?.events) return zero;
+        if (!events) return zero;
 
-        // const coinBalanceChangeEvents = effects.events.filter(
-        //     (e) =>
-        //         'coinBalanceChange' in e &&
-        //         typeof e.coinBalanceChange.owner !== 'string' &&
-        //         'AddressOwner' in e.coinBalanceChange.owner &&
-        //         e.coinBalanceChange.owner.AddressOwner === address
-        // );
+        const coinBalanceChangeEvents = events.filter(
+            (e) =>
+                e.type === 'coinBalanceChange' &&
+                typeof e.content.owner === 'object' &&
+                'AddressOwner' in e.content.owner &&
+                e.content.owner.AddressOwner === address
+        );
 
-        // return coinBalanceChangeEvents.reduce((totals, e) => {
-        //     if (!('coinBalanceChange' in e)) return totals;
+        return coinBalanceChangeEvents.reduce((totals, e) => {
+            if (e.type !== 'coinBalanceChange') return totals;
 
-        //     const { coinType, amount } = e.coinBalanceChange;
-        //     if (!totals[coinType]) totals[coinType] = 0;
-        //     totals[coinType] += amount * -1;
-        //     return totals;
-        // }, zero);
+            const { coinType, amount } = e.content;
+            if (!totals[coinType]) totals[coinType] = 0;
+            totals[coinType] += amount * -1;
+            return totals;
+        }, zero);
     }, [events, address]);
 
     return {
