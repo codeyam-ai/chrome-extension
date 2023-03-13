@@ -22,7 +22,7 @@ import {
     isErrorCausedByMissingObject,
     isErrorCausedByUserNotHavingEnoughSuiToPayForGas,
     isErrorObjectVersionUnavailable,
-    useCategorizedEffects,
+    useCategorizedEvents,
     useCustomSummary,
     useNormalizedFunction,
 } from './lib';
@@ -50,6 +50,7 @@ import type {
     SuiMoveNormalizedType,
     SuiTransactionResponse,
     TransactionEffects,
+    TransactionEvents,
 } from '@mysten/sui.js';
 import type { TransactionRequest } from '_payloads/transactions';
 import type { RootState } from '_redux/RootReducer';
@@ -100,6 +101,11 @@ export function DappTxApprovalPage() {
         [txID]
     );
     const txRequest = useAppSelector(txRequestSelector);
+    const signableTransaction = useMemo(() => {
+        if (!txRequest) return null;
+        return Transaction.from(txRequest.tx.data);
+    }, [txRequest]);
+
     const [done, setDone] = useState<boolean>(false);
 
     const normalizedFunction = useNormalizedFunction(txRequest);
@@ -107,13 +113,16 @@ export function DappTxApprovalPage() {
     const [effects, setEffects] = useState<
         TransactionEffects | undefined | null
     >();
+    const [events, setEvents] = useState<
+        TransactionEvents | undefined | null
+    >();
     const [dryRunError, setDryRunError] = useState<string | undefined>();
     const [explicitError, setExplicitError] = useState<ReactNode | undefined>();
 
     const loading =
         guardLoading ||
         txRequestsLoading ||
-        (effects === undefined && !dryRunError && !explicitError);
+        (events === undefined && !dryRunError && !explicitError);
 
     const summaryKey = useCustomSummary(txRequest);
 
@@ -124,7 +133,7 @@ export function DappTxApprovalPage() {
         : null;
 
     const { reading, mutating, creating, deleting, transferring, coinChanges } =
-        useCategorizedEffects({ normalizedFunction, effects, address });
+        useCategorizedEvents({ normalizedFunction, events, address });
 
     const charges = useMemo(
         () => (coinChanges[SUI_TYPE_ARG] || 0) - (gas || 0),
@@ -155,11 +164,11 @@ export function DappTxApprovalPage() {
         };
     }, []);
 
-    const transaction = txRequest?.tx;
     useEffect(() => {
-        if (!accountInfos || accountInfos.length === 0) return;
+        if (!signableTransaction || !accountInfos || accountInfos.length === 0)
+            return;
 
-        const getEffects = async () => {
+        const getTransactionInfo = async () => {
             let signer;
             if (authentication) {
                 signer = thunkExtras.api.getEthosSignerInstance(
@@ -173,14 +182,11 @@ export function DappTxApprovalPage() {
                 );
             }
 
-            const signableTransaction = Transaction.from(transaction.data);
-
             setDryRunError(undefined);
             setExplicitError(undefined);
 
-            const { effects: transactionEffects } =
+            const { effects: transactionEffects, events: transactionEvents } =
                 await signer.dryRunTransaction(signableTransaction);
-
             if (transactionEffects.status.status === 'failure') {
                 if (
                     transactionEffects?.status?.error?.includes(
@@ -223,16 +229,18 @@ export function DappTxApprovalPage() {
                         <IncorrectSigner correctAddress={gasAddress} />
                     );
                 } else {
+                    setEvents(transactionEvents);
                     setEffects(transactionEffects);
                 }
             } else {
+                setEvents(transactionEvents);
                 setEffects(transactionEffects);
             }
         };
 
-        getEffects();
+        getTransactionInfo();
     }, [
-        transaction,
+        signableTransaction,
         activeAccountIndex,
         address,
         authentication,
@@ -246,7 +254,7 @@ export function DappTxApprovalPage() {
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
             await finishTransaction(
-                transaction,
+                signableTransaction,
                 txID,
                 approved,
                 authentication,
@@ -255,7 +263,7 @@ export function DappTxApprovalPage() {
             );
             setDone(true);
         },
-        [txRequest, activeAccountIndex, address, authentication, txID]
+        [signableTransaction, txID, authentication, address, activeAccountIndex]
     );
 
     const closeWindow = useDependencies().closeWindow;
@@ -406,48 +414,48 @@ export function DappTxApprovalPage() {
                     : null,
                 details: anyAssetEffects
                     ? [
-                          //   {
-                          //       label: 'Creating',
-                          //       content: `${creating.length} Assets`,
-                          //       detail: creating.map((c, i) => (
-                          //           <CopyAsset
-                          //               key={`asset-creating-${i}`}
-                          //               {...c}
-                          //           />
-                          //       )),
-                          //   },
-                          //   {
-                          //       label: 'Modifying',
-                          //       content: `${mutating.length} Assets`,
-                          //       detail: mutating.map((m, i) => (
-                          //           <CopyAsset
-                          //               key={`asset-modifying-${i}`}
-                          //               {...m}
-                          //           />
-                          //       )),
-                          //   },
-                          //   {
-                          //       label: 'Transferring',
-                          //       content: `${transferring.length} Assets`,
-                          //       detail: transferring.map((t, i) => (
-                          //           <CopyAsset
-                          //               key={`asset-transferring-${i}`}
-                          //               {...t}
-                          //           />
-                          //       )),
-                          //   },
-                          //   {
-                          //       label: 'Deleting',
-                          //       content: `${deleting.length} Assets`,
-                          //       detail: deleting.map((d, i) => (
-                          //           <CopyBody
-                          //               key={`asset-deleting-${i}`}
-                          //               txt={d?.name || ''}
-                          //           >
-                          //               {truncateMiddle(d?.name)}
-                          //           </CopyBody>
-                          //       )),
-                          //   },
+                          {
+                              label: 'Creating',
+                              content: `${creating.length} Assets`,
+                              detail: creating.map((c, i) => (
+                                  <CopyAsset
+                                      key={`asset-creating-${i}`}
+                                      {...c}
+                                  />
+                              )),
+                          },
+                          {
+                              label: 'Modifying',
+                              content: `${mutating.length} Assets`,
+                              detail: mutating.map((m, i) => (
+                                  <CopyAsset
+                                      key={`asset-modifying-${i}`}
+                                      {...m}
+                                  />
+                              )),
+                          },
+                          {
+                              label: 'Transferring',
+                              content: `${transferring.length} Assets`,
+                              detail: transferring.map((t, i) => (
+                                  <CopyAsset
+                                      key={`asset-transferring-${i}`}
+                                      {...t}
+                                  />
+                              )),
+                          },
+                          {
+                              label: 'Deleting',
+                              content: `${deleting.length} Assets`,
+                              detail: deleting.map((d, i) => (
+                                  <CopyBody
+                                      key={`asset-deleting-${i}`}
+                                      txt={d?.name || ''}
+                                  >
+                                      {truncateMiddle(d?.name)}
+                                  </CopyBody>
+                              )),
+                          },
                           {
                               label: 'Balances',
                               content: `${
