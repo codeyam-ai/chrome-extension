@@ -43,7 +43,7 @@ const useCategorizedEffects = ({
     const creating = useMemo(() => {
         if (!events) return [];
 
-        const creating = events
+        return events
             .filter(
                 (event) =>
                     event.type === 'newObject' &&
@@ -62,48 +62,29 @@ const useCategorizedEffects = ({
                 };
             })
             .filter((event) => !!event);
-
-        return creating;
     }, [events, address]);
 
     const mutating = useMemo(() => {
-        // if (!effects?.mutated) return [];
-        return [];
+        if (!events) return [];
 
-        // const mutating = effects.mutated
-        //     .filter((event) => {
-        //         if (!('mutateObject' in event)) return false;
-        //         const mutation = event.mutateObject;
-        //         const mutated = effects.mutated;
-        //         return (
-        //             mutation &&
-        //             mutated &&
-        //             mutation.objectType.indexOf(
-        //                 cleanObjectId(mutation.packageId)
-        //             ) > -1 &&
-        //             mutated.find(
-        //                 (asset) =>
-        //                     asset.reference.objectId === mutation.objectId &&
-        //                     typeof asset.owner !== 'string' &&
-        //                     'AddressOwner' in asset.owner &&
-        //                     asset.owner.AddressOwner === address
-        //             )
-        //         );
-        //     })
-        //     .map((event) => {
-        //         if (!('mutateObject' in event)) return {};
+        return events
+            .filter((event) => {
+                return (
+                    event.type === "mutateObject"
+                )
+            })
+            .map((event) => {
+                if (event.type !== 'mutateObject') return null;
 
-        //         const objectTypeParts =
-        //             event.mutateObject.objectType.split('::');
-        //         return {
-        //             address: objectTypeParts[0],
-        //             module: objectTypeParts[1],
-        //             name: objectTypeParts[2].split('<')[0],
-        //         };
-        //     });
+                const objectTypeParts = event.content.objectType.split('::');
+                return {
+                    address: objectTypeParts[0],
+                    module: objectTypeParts[1],
+                    name: objectTypeParts[2].split('<')[0],
+                };
+            });
 
-        // return mutating;
-    }, [events, address]);
+    }, [events]);
 
     const transferring = useMemo(() => {
         return [];
