@@ -283,13 +283,22 @@ export const getTransactionsByAddress = createAsyncThunk<
 
             const _txEffs =
                 await api.instance.fullNode.getTransactionResponseBatch(
-                    deduplicate(transactionIds)
+                    deduplicate(transactionIds),
+                    {
+                        showInput: true,
+                        showEffects: true,
+                        showEvents: true,
+                    }
                 );
 
             txs = _txEffs;
         } else {
             txs = txEffs;
         }
+        console.log(
+            'getFullTransactionDetails',
+            await getFullTransactionDetails(txs, address, api)
+        );
         return await getFullTransactionDetails(txs, address, api);
     }
 );

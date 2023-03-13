@@ -47,7 +47,6 @@ import type { Detail } from './DetailElement';
 import type { Section } from './SectionElement';
 import type { SmallDetail } from './SmallValue';
 import type {
-    SignableTransaction,
     SuiMoveNormalizedType,
     SuiTransactionResponse,
     TransactionEffects,
@@ -840,6 +839,12 @@ async function finishTransaction(
                 txRequest.tx.type === 'v2' ||
                 txRequest.tx.type === 'move-call'
             ) {
+                // const transaction = new Transaction();
+                // transaction.add(
+                //     Transaction.Commands.MoveCall({
+                //         target: `${txRequest.tx.data.}`
+                //     })
+                // )
                 const txn: SignableTransaction =
                     txRequest.tx.type === 'move-call'
                         ? {
