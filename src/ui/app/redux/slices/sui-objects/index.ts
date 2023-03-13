@@ -63,7 +63,14 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
             })
             .map((anObj) => anObj.objectId);
         objectIDs.push(SUI_SYSTEM_STATE_OBJECT_ID);
-        const allObjRes = await api.instance.fullNode.getObjectBatch(objectIDs);
+        const allObjRes = await api.instance.fullNode.getObjectBatch(
+            objectIDs,
+            {
+                showOwner: true,
+                showContent: true,
+                showType: true,
+            }
+        );
         for (const objRes of allObjRes) {
             const suiObjectData = getSuiObjectData(objRes);
             if (suiObjectData) {
@@ -103,11 +110,15 @@ export const transferNFT = createAsyncThunk<
         tx.setGasBudget(DEFAULT_NFT_TRANSFER_GAS_FEE);
         tx.add(
             Transaction.Commands.TransferObjects(
-                [tx.input(data.nftId)],
-                tx.input(data.recipientAddress)
+                [tx.object(data.nftId)],
+                tx.pure(data.recipientAddress)
             )
         );
-        const executedTransaction = await signer.signAndExecuteTransaction(tx);
+        const executedTransaction = await signer.signAndExecuteTransaction(
+            tx,
+            { showEffects: true, showEvents: true, showInput: true },
+            'WaitForLocalExecution'
+        );
 
         await dispatch(fetchAllOwnedAndRequiredObjects());
         const txnResp = {

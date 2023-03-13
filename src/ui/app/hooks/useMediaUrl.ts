@@ -5,10 +5,11 @@ import { useMemo } from 'react';
 
 import ipfs from '../helpers/ipfs';
 
-import type { SuiData } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js';
 
-export default function useMediaUrl(objData: SuiData, fieldName = 'url') {
-    const { fields } = (objData.dataType === 'moveObject' && objData) || {};
+export default function useMediaUrl(objData: SuiObjectData, fieldName = 'url') {
+    const { fields } =
+        (objData?.content?.dataType === 'moveObject' && objData?.content) || {};
     return useMemo(() => {
         if (fields) {
             const mediaUrl = fields[fieldName];

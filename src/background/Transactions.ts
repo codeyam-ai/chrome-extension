@@ -11,7 +11,7 @@ import Browser from 'webextension-polyfill';
 import Authentication from './Authentication';
 import { Window } from './Window';
 // import {
-//     GAS_TYPE_ARG,
+//     SUI_TYPE_ARG,
 //     DEFAULT_GAS_BUDGET_FOR_PAY,
 // } from '../ui/app/redux/slices/sui-objects/Coin';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';

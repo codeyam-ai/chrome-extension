@@ -13,7 +13,6 @@ import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
 function NftsPage() {
     const nfts = useAppSelector(accountNftsSelector) || [];
-
     return (
         <div>
             {nfts.length <= 0 ? (

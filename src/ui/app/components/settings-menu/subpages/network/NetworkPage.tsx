@@ -37,7 +37,7 @@ function NetworkPage() {
 
     const dispatch = useAppDispatch();
 
-    const netWorks = useMemo(() => {
+    const networks = useMemo(() => {
         return generateActiveNetworkList().map((itm) => ({
             ...API_ENV_TO_INFO[itm as keyof typeof API_ENV],
             networkName: itm,
@@ -46,10 +46,10 @@ function NetworkPage() {
 
     const networkOptions = useMemo(() => {
         const options: SegmentedControlItem[] = [];
-        netWorks.forEach((network) => {
-            if (network.networkName === 'local') {
-                return;
-            }
+        networks.forEach((network) => {
+            // if (network.networkName === 'local') {
+            //     return;
+            // }
             const changeToThisNetwork = () => {
                 const name = network.networkName;
                 setShowCustomRPCInput(name === API_ENV.customRPC);
@@ -77,7 +77,7 @@ function NetworkPage() {
             });
         });
         return options;
-    }, [netWorks, selectedNetworkName, customRPC, dispatch]);
+    }, [networks, selectedNetworkName, customRPC, dispatch]);
 
     return (
         <div className="flex flex-col">

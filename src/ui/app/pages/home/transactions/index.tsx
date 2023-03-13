@@ -42,7 +42,7 @@ const TransactionsPage = () => {
                     );
 
                 const newTransactions =
-                    await api.instance.fullNode.getTransactionWithEffectsBatch(
+                    await api.instance.fullNode.getTransactionResponseBatch(
                         deduplicate(transactionIds)
                     );
 

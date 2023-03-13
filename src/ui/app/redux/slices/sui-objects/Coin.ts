@@ -19,8 +19,7 @@ const COIN_TYPE_ARG_REGEX = /^0x2::coin::Coin<(.+)>$/;
 
 export const DEFAULT_GAS_BUDGET_FOR_PAY = 500;
 export const DEFAULT_GAS_BUDGET_FOR_STAKE = 50000;
-export const GAS_TYPE_ARG = '0x2::sui::SUI';
-export const GAS_SYMBOL = 'SUI';
+export const SUI_SYMBOL = 'SUI';
 export const DEFAULT_NFT_TRANSFER_GAS_FEE = 500;
 export const SUI_SYSTEM_STATE_OBJECT_ID =
     '0x0000000000000000000000000000000000000005';
@@ -57,21 +56,22 @@ export class Coin {
         return `${COIN_TYPE}<${coinTypeArg}>`;
     }
 
-    // public static computeGasBudgetForPay(
-    //     coins: SuiMoveObject[],
-    //     amountToSend: bigint
-    // ): number {
-    //     // TODO: improve the gas budget estimation
-    //     const numInputCoins =
-    //         CoinAPI.selectCoinSetWithCombinedBalanceGreaterThanOrEqual(
-    //             coins,
-    //             amountToSend
-    //         ).length;
-    //     return (
-    //         DEFAULT_GAS_BUDGET_FOR_PAY *
-    //         Math.max(2, Math.min(100, numInputCoins / 2))
-    //     );
-    // }
+    public static computeGasBudgetForPay(
+        coins: SuiMoveObject[],
+        amountToSend: bigint
+    ): number {
+        return DEFAULT_GAS_BUDGET_FOR_PAY;
+        // // TODO: improve the gas budget estimation
+        // const numInputCoins =
+        //     CoinAPI.selectCoinSetWithCombinedBalanceGreaterThanOrEqual(
+        //         coins,
+        //         amountToSend
+        //     ).length;
+        // return (
+        //     DEFAULT_GAS_BUDGET_FOR_PAY *
+        //     Math.max(2, Math.min(100, numInputCoins / 2))
+        // );
+    }
 
     /**
      * Stake `amount` of Coin<T> to `validator`. Technically it means user delegates `amount` of Coin<T> to `validator`,

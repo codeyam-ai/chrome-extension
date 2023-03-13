@@ -58,7 +58,7 @@ function CoinBalance({ type, balance }: CoinProps) {
     //     [type]
     // );
     // // TODO from Sui team: turn stake feature back on when fix is ready on next release.
-    // // const showStake = !hideStake && GAS_TYPE_ARG === type;
+    // // const showStake = !hideStake && SUI_TYPE_ARG === type;
     // const showStake = false;
     // const shortenType = useMiddleEllipsis(type, 30);
     return (

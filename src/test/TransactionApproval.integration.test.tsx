@@ -92,7 +92,7 @@ describe('The Transaction Approval popup', () => {
                         recipients: [
                             '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
                         ],
-                        amounts: [1500000],
+                        amounts: ['1500000'],
                         gasBudget: 1000,
                     },
                 },

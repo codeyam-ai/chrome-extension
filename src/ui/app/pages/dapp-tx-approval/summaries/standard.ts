@@ -1,4 +1,4 @@
-import { GAS_TYPE_ARG } from '_src/ui/app/redux/slices/sui-objects/Coin';
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import type { Permission, DistilledEffect } from '..';
 import type { Detail } from '../DetailElement';
@@ -271,7 +271,7 @@ const standard = ({
             effects.details.push({
                 label: 'Coins',
                 content: Object.keys(coinChanges)
-                    .filter((name) => name !== GAS_TYPE_ARG)
+                    .filter((name) => name !== SUI_TYPE_ARG)
                     .map(
                         (coinName) =>
                             ({

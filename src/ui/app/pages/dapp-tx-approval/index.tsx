@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { fromB64 } from '@mysten/bcs';
-import { getTransactionEffects, Transaction } from '@mysten/sui.js';
+import {
+    getTransactionEffects,
+    SUI_TYPE_ARG,
+    Transaction,
+} from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -26,7 +30,6 @@ import { getGasDataFromError } from './lib/extractGasData';
 import * as summaries from './summaries';
 import truncateMiddle from '../../helpers/truncate-middle';
 import { AppState } from '../../hooks/useInitializedGuard';
-import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import Alert from '../../shared/feedback/Alert';
 import AlertWithErrorExpand from '../../shared/feedback/AlertWithErrorExpand';
 import Body from '../../shared/typography/Body';
@@ -44,7 +47,6 @@ import type { Detail } from './DetailElement';
 import type { Section } from './SectionElement';
 import type { SmallDetail } from './SmallValue';
 import type {
-    SignableTransaction,
     SuiMoveNormalizedType,
     SuiTransactionResponse,
     TransactionEffects,
@@ -125,20 +127,20 @@ export function DappTxApprovalPage() {
         useCategorizedEffects({ normalizedFunction, effects, address });
 
     const charges = useMemo(
-        () => (coinChanges[GAS_TYPE_ARG] || 0) - (gas || 0),
+        () => (coinChanges[SUI_TYPE_ARG] || 0) - (gas || 0),
         [coinChanges, gas]
     );
     const [formattedCharges, chargesSymbol, chargeDollars] = useFormatCoin(
         charges,
-        GAS_TYPE_ARG
+        SUI_TYPE_ARG
     );
     const [formattedGas, gasSymbol, gasDollars] = useFormatCoin(
         gas,
-        GAS_TYPE_ARG
+        SUI_TYPE_ARG
     );
     const [formattedTotal, totalSymbol, totalDollars] = useFormatCoin(
-        coinChanges[GAS_TYPE_ARG],
-        GAS_TYPE_ARG
+        coinChanges[SUI_TYPE_ARG],
+        SUI_TYPE_ARG
     );
 
     useEffect(() => {
@@ -158,200 +160,73 @@ export function DappTxApprovalPage() {
         if (!accountInfos || accountInfos.length === 0) return;
 
         const getEffects = async () => {
-            try {
-                if (
-                    !transaction ||
-                    transaction.type === 'move-call' ||
-                    (typeof transaction.data === 'object' &&
-                        transaction.data.kind === 'bytes')
-                ) {
-                    setEffects(null);
-                    return;
-                }
+            let signer;
+            if (authentication) {
+                signer = thunkExtras.api.getEthosSignerInstance(
+                    address || '',
+                    authentication
+                );
+            } else {
+                signer = thunkExtras.api.getSignerInstance(
+                    thunkExtras.keypairVault.getKeyPair(activeAccountIndex),
+                    true
+                );
+            }
 
-                let signer;
-                if (authentication) {
-                    signer = thunkExtras.api.getEthosSignerInstance(
-                        address || '',
-                        authentication
+            const signableTransaction = Transaction.from(transaction.data);
+
+            setDryRunError(undefined);
+            setExplicitError(undefined);
+
+            const { effects: transactionEffects } =
+                await signer.dryRunTransaction(signableTransaction);
+
+            if (transactionEffects.status.status === 'failure') {
+                if (
+                    transactionEffects?.status?.error?.includes(
+                        'quorum of validators'
+                    )
+                ) {
+                    setDryRunError(
+                        'Sui Devnet is having technical issues. Please check back later when these issues are resolved.'
+                    );
+                } else if (
+                    isErrorObjectVersionUnavailable(
+                        transactionEffects?.status?.error || ''
+                    )
+                ) {
+                    setExplicitError(
+                        <div className="flex flex-col gap-6">
+                            <Alert
+                                title="Object or Coin In Use"
+                                subtitle="One of the objects or coins in this transaction is already in use. Please wait a moment and try again.    "
+                            />
+                            <Alert
+                                title="Error Details"
+                                subtitle={transactionEffects?.status?.error}
+                            />
+                        </div>
                     );
                 } else {
-                    signer = thunkExtras.api.getSignerInstance(
-                        thunkExtras.keypairVault.getKeyPair(activeAccountIndex),
-                        true
-                    );
+                    setDryRunError(transactionEffects.status.error);
                 }
+            } else if (
+                typeof transactionEffects.gasObject.owner === 'object' &&
+                'AddressOwner' in transactionEffects.gasObject.owner &&
+                transactionEffects.gasObject.owner.AddressOwner !== address
+            ) {
+                const gasAddress =
+                    transactionEffects.gasObject.owner.AddressOwner;
 
-                setDryRunError(undefined);
-                setExplicitError(undefined);
-
-                const { effects: transactionEffects } =
-                    await signer.dryRunTransaction(transaction.data);
-
-                if (transactionEffects.status.status === 'failure') {
-                    if (
-                        transactionEffects?.status?.error?.includes(
-                            'quorum of validators'
-                        )
-                    ) {
-                        setDryRunError(
-                            'Sui Devnet is having technical issues. Please check back later when these issues are resolved.'
-                        );
-                    } else if (
-                        isErrorObjectVersionUnavailable(
-                            transactionEffects?.status?.error || ''
-                        )
-                    ) {
-                        setExplicitError(
-                            <div className="flex flex-col gap-6">
-                                <Alert
-                                    title="Object or Coin In Use"
-                                    subtitle="One of the objects or coins in this transaction is already in use. Please wait a moment and try again.    "
-                                />
-                                <Alert
-                                    title="Error Details"
-                                    subtitle={transactionEffects?.status?.error}
-                                />
-                            </div>
-                        );
-                    } else {
-                        setDryRunError(transactionEffects.status.error);
-                    }
-                } else if (
-                    typeof transactionEffects.gasObject.owner === 'object' &&
-                    'AddressOwner' in transactionEffects.gasObject.owner &&
-                    transactionEffects.gasObject.owner.AddressOwner !== address
-                ) {
-                    const gasAddress =
-                        transactionEffects.gasObject.owner.AddressOwner;
-
-                    if (gasAddress !== address) {
-                        setExplicitError(
-                            <IncorrectSigner correctAddress={gasAddress} />
-                        );
-                    } else {
-                        setEffects(transactionEffects);
-                    }
+                if (gasAddress !== address) {
+                    setExplicitError(
+                        <IncorrectSigner correctAddress={gasAddress} />
+                    );
                 } else {
                     setEffects(transactionEffects);
                 }
-            } catch (e) {
-                const errorMessage = (e as Error).message;
-
-                if (errorMessage === 'Account mnemonic is not set') {
-                    // this is expected; it happens the first time we render because the redux state is not in good
-                    // shape yet. we basically ingore it and expect the next re-render to work.
-                    // TODO: this seems weird - it would be good to find a better way.
-                } else {
-                    if (
-                        errorMessage.includes('Error: Unknown call arg type') ||
-                        errorMessage.includes('remaining input') ||
-                        errorMessage.includes('byte deserialization failed') ||
-                        errorMessage.includes('expected an byte array') ||
-                        errorMessage.includes('serialization error') ||
-                        errorMessage.includes(
-                            'RangeError: Offset is outside the bounds of the DataView'
-                        ) ||
-                        errorMessage.includes(
-                            'Expected SuiObjectRef to be an Object, got: undefined'
-                        )
-                    ) {
-                        setEffects(null);
-                        return;
-                    }
-
-                    if (isErrorCausedByIncorrectSigner(errorMessage)) {
-                        const errorAddress = errorMessage
-                            .match(
-                                /is owned by account address (.*), but signer address is/
-                            )?.[1]
-                            .split(',')[0];
-
-                        if (errorAddress === address) {
-                            setEffects(null);
-                            return;
-                        } else {
-                            setExplicitError(
-                                <IncorrectSigner
-                                    correctAddress={errorAddress}
-                                    errorMessage={errorMessage}
-                                    txID={txID}
-                                    txRequest={txRequest}
-                                />
-                            );
-                        }
-                    } else if (isErrorCausedByMissingObject(errorMessage)) {
-                        setExplicitError(
-                            <MissingObject
-                                selectedApiEnv={selectedApiEnv}
-                                errorMessage={errorMessage}
-                                txID={txID}
-                                txRequest={txRequest}
-                            />
-                        );
-                    } else if (
-                        isErrorCausedByUserNotHavingEnoughSuiToPayForGas(
-                            errorMessage
-                        )
-                    ) {
-                        const gasData = getGasDataFromError(errorMessage);
-                        if (gasData) {
-                            setExplicitError(
-                                <NotEnoughGas
-                                    gasData={gasData}
-                                    errorMessage={errorMessage}
-                                    txID={txID}
-                                    txRequest={txRequest}
-                                />
-                            );
-                        } else {
-                            setExplicitError(
-                                <div className="flex flex-col gap-6">
-                                    <AlertWithErrorExpand
-                                        title="You don't have enough SUI"
-                                        body={
-                                            <Body>
-                                                It looks like your wallet
-                                                doesn&apos;t have enough SUI to
-                                                pay for the gas for this
-                                                transaction.
-                                            </Body>
-                                        }
-                                        fullErrorText={errorMessage}
-                                        txInfo={{
-                                            dAppUrl: txRequest?.origin || '',
-                                            txId: txID || '',
-                                            txRequest,
-                                        }}
-                                    />
-                                </div>
-                            );
-                        }
-                    } else if (isErrorObjectVersionUnavailable(errorMessage)) {
-                        setExplicitError(
-                            <div className="flex flex-col gap-6">
-                                <AlertWithErrorExpand
-                                    title="Object or Coin In Use"
-                                    body={
-                                        <Body>
-                                            One of the objects or coins in this
-                                            transaction is already in use.
-                                            Please wait a moment and try again.
-                                        </Body>
-                                    }
-                                    fullErrorText={errorMessage}
-                                    txInfo={{
-                                        dAppUrl: txRequest?.origin || '',
-                                        txId: txID || '',
-                                        txRequest,
-                                    }}
-                                />
-                            </div>
-                        );
-                    } else {
-                        setDryRunError(errorMessage);
-                    }
-                }
+            } else {
+                setEffects(transactionEffects);
             }
         };
 
@@ -371,7 +246,7 @@ export function DappTxApprovalPage() {
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
             await finishTransaction(
-                txRequest,
+                transaction,
                 txID,
                 approved,
                 authentication,
@@ -635,7 +510,7 @@ export function DappTxApprovalPage() {
                                 type: 'small',
                                 content: parsedData[attribute],
                                 coinType: ['gasBudget'].includes(attribute)
-                                    ? GAS_TYPE_ARG
+                                    ? SUI_TYPE_ARG
                                     : null,
                             } as SmallDetail,
                         });
@@ -654,7 +529,7 @@ export function DappTxApprovalPage() {
                     content: {
                         type: 'small',
                         content: gasUsed?.computationCost || '---',
-                        coinType: GAS_TYPE_ARG,
+                        coinType: SUI_TYPE_ARG,
                     } as SmallDetail,
                 },
                 {
@@ -662,7 +537,7 @@ export function DappTxApprovalPage() {
                     content: {
                         type: 'small',
                         content: gasUsed?.storageCost || '---',
-                        coinType: GAS_TYPE_ARG,
+                        coinType: SUI_TYPE_ARG,
                     } as SmallDetail,
                 },
                 {
@@ -670,7 +545,7 @@ export function DappTxApprovalPage() {
                     content: {
                         type: 'small',
                         content: gasUsed?.storageRebate || '---',
-                        coinType: GAS_TYPE_ARG,
+                        coinType: SUI_TYPE_ARG,
                     } as SmallDetail,
                 },
                 {
@@ -681,7 +556,7 @@ export function DappTxApprovalPage() {
                     content: {
                         type: 'small',
                         content: gas,
-                        coinType: GAS_TYPE_ARG,
+                        coinType: SUI_TYPE_ARG,
                     } as SmallDetail,
                 },
             ],
@@ -804,16 +679,16 @@ export function DappTxApprovalPage() {
 }
 
 async function finishTransaction(
-    txRequest: TransactionRequest | null,
+    transaction: Transaction | null,
     txID: string | undefined,
     approved: boolean,
     authentication: string | null,
     address: string | null,
     activeAccountIndex: number
 ) {
-    if (!txRequest) {
+    if (!transaction) {
         // TODO: delete? doesn't seem like we got have gotten this far without txRequest
-        throw new Error(`TransactionRequest ${txID} not found`);
+        throw new Error(`Transaction ${txID} not found`);
     }
 
     let txResult: SuiTransactionResponse | undefined = undefined;
@@ -832,28 +707,7 @@ async function finishTransaction(
         }
 
         try {
-            let response: SuiTransactionResponse;
-            if (
-                txRequest.tx.type === 'v2' ||
-                txRequest.tx.type === 'move-call'
-            ) {
-                const txn: SignableTransaction =
-                    txRequest.tx.type === 'move-call'
-                        ? {
-                              kind: 'moveCall',
-                              data: txRequest.tx.data,
-                          }
-                        : txRequest.tx.data;
-
-                response = await signer.signAndExecuteTransaction(txn);
-            } else if (txRequest.tx.type === 'serialized-move-call') {
-                const txBytes = fromB64(txRequest.tx.data);
-                response = await signer.signAndExecuteTransaction(txBytes);
-            } else {
-                throw new Error(`Either tx or txBytes needs to be defined.`);
-            }
-
-            txResult = response;
+            txResult = await signer.signAndExecuteTransaction(transaction);
         } catch (e) {
             tsResultError = (e as Error).message;
         }

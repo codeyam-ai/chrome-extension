@@ -1,12 +1,12 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import CoinList from './CoinList';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import { useFormatCoin } from '../../../hooks/useFormatCoin';
 import { useAppSelector, useExplorerPermission } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
-import { GAS_TYPE_ARG } from '_redux/slices/sui-objects/Coin';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import { sumCoinBalances } from '_src/ui/app/helpers/sumCoinBalances';
@@ -22,7 +22,7 @@ function TokensPage() {
     const setExplorerPermission = useExplorerPermission();
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const mistBalance = sumCoinBalances(balances) || 0;
-    const [, , usdAmount] = useFormatCoin(mistBalance, GAS_TYPE_ARG);
+    const [, , usdAmount] = useFormatCoin(mistBalance, SUI_TYPE_ARG);
 
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex } }) =>

@@ -81,6 +81,7 @@ function TransferNFTReview() {
             }
         } catch (e) {
             const error = e as { message: string };
+            console.log('TRANSFER NFT ERROR', e);
             const failAlertText =
                 isErrorCausedByUserNotHavingEnoughSuiToPayForGas(error.message)
                     ? `You don't have enough SUI to pay the transaction cost of ${getErrorDisplaySuiForMist(

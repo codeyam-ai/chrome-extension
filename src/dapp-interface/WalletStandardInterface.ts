@@ -1,6 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { type SuiAddress, toB64, Transaction } from '@mysten/sui.js';
 import {
     SUI_CHAINS,
     ReadonlyWalletAccount,
@@ -16,7 +17,8 @@ import {
     type EventsOnMethod,
     type EventsListeners,
     type SuiSignTransactionMethod,
-    // type SuiSignMessageMethod,
+    type SuiSignMessageMethod,
+    SuiSignAndExecuteTransactionInput,
 } from '@mysten/wallet-standard';
 import mitt, { type Emitter } from 'mitt';
 import { filter, map, type Observable } from 'rxjs';
@@ -32,17 +34,13 @@ import {
     ALL_PERMISSION_TYPES,
 } from '_payloads/permissions';
 import { API_ENV } from '_src/shared/api-env';
+import { type SignMessageRequest } from '_src/shared/messaging/messages/payloads/transactions';
 import { isWalletStatusChangePayload } from '_src/shared/messaging/messages/payloads/wallet-status-change';
 
-import type { SuiAddress } from '@mysten/sui.js';
 import type { IconString } from '@wallet-standard/standard';
 import type { BasePayload, Payload } from '_payloads';
 import type { GetAccount } from '_payloads/account/GetAccount';
 import type { GetAccountResponse } from '_payloads/account/GetAccountResponse';
-// import type {
-//     ExecuteSignMessageRequest,
-//     ExecuteSignMessageResponse,
-// } from '_payloads/messages';
 import type { SetNetworkPayload } from '_payloads/network';
 import type {
     StakeRequest,
@@ -51,7 +49,6 @@ import type {
     SignTransactionRequest,
     SignTransactionResponse,
 } from '_payloads/transactions';
-
 import type { NetworkEnvType } from '_src/background/NetworkEnv';
 
 type WalletEventsMap = {
@@ -62,12 +59,12 @@ type WalletEventsMap = {
 const name = process.env.APP_NAME || 'Ethos Wallet';
 
 type StakeInput = { validatorAddress: string };
-// type SuiWalletStakeFeature = {
-//     'suiWallet:stake': {
-//         version: '0.0.1';
-//         stake: (input: StakeInput) => Promise<void>;
-//     };
-// };
+type SuiWalletStakeFeature = {
+    'suiWallet:stake': {
+        version: '0.0.1';
+        stake: (input: StakeInput) => Promise<void>;
+    };
+};
 type ChainType = Wallet['chains'][number];
 const API_ENV_TO_CHAIN: Record<
     Exclude<API_ENV, API_ENV.customRPC>,
@@ -105,7 +102,8 @@ export class EthosWallet implements Wallet {
 
     get features(): ConnectFeature &
         EventsFeature &
-        Omit<SuiFeatures, 'sui:signMessage'> {
+        SuiFeatures &
+        SuiWalletStakeFeature {
         return {
             'standard:connect': {
                 version: '1.0.0',
@@ -115,10 +113,6 @@ export class EthosWallet implements Wallet {
                 version: '1.0.0',
                 on: this.#on,
             },
-            // 'sui:signMessage': {
-            //     version: '1.0.0',
-            //     signMessage: this.#signMessage,
-            // },
             'sui:signTransaction': {
                 version: '2.0.0',
                 signTransaction: this.#signTransaction,
@@ -127,10 +121,14 @@ export class EthosWallet implements Wallet {
                 version: '2.0.0',
                 signAndExecuteTransaction: this.#signAndExecuteTransaction,
             },
-            // 'suiWallet:stake': {
-            //     version: '0.0.1',
-            //     stake: this.#stake,
-            // },
+            'suiWallet:stake': {
+                version: '0.0.1',
+                stake: this.#stake,
+            },
+            'sui:signMessage': {
+                version: '1.0.0',
+                signMessage: this.#signMessage,
+            },
         };
     }
 
@@ -226,21 +224,26 @@ export class EthosWallet implements Wallet {
         return { accounts: this.accounts };
     };
 
-    // #signMessage: SuiSignMessageMethod = async (input) => {
-    //     return mapToPromise(
-    //         this.#send<ExecuteSignMessageRequest, ExecuteSignMessageResponse>({
-    //             type: 'execute-sign-message-request',
-    //             messageData: input,
-    //         }),
-    //         (response) => response.result
-    //     );
-    // };
-
     #signTransaction: SuiSignTransactionMethod = async (input) => {
+        if (!Transaction.is(input.transaction)) {
+            throw new Error(
+                'Unexpect transaction format found. Ensure that you are using the `Transaction` class.'
+            );
+        }
+
         return mapToPromise(
             this.#send<SignTransactionRequest, SignTransactionResponse>({
                 type: 'sign-transaction-request',
-                transaction: input,
+                transaction: {
+                    ...input,
+                    // account might be undefined if previous version of adapters is used
+                    // in that case use the first account address
+                    account:
+                        input.account?.address ||
+                        this.#accounts[0]?.address ||
+                        '',
+                    transaction: input.transaction.serialize(),
+                },
             }),
             (response) => response.result
         );
@@ -249,13 +252,28 @@ export class EthosWallet implements Wallet {
     #signAndExecuteTransaction: SuiSignAndExecuteTransactionMethod = async (
         input
     ) => {
+        //Something is off with the types
+        const { transaction, account } = {
+            ...input.transaction,
+        } as SuiSignAndExecuteTransactionInput;
+
+        if (!Transaction.is(transaction)) {
+            throw new Error(
+                'Unexpect transaction format found. Ensure that you are using the `Transaction` class.'
+            );
+        }
+
         return mapToPromise(
             this.#send<ExecuteTransactionRequest, ExecuteTransactionResponse>({
                 type: 'execute-transaction-request',
                 transaction: {
-                    type: 'v2',
-                    data: input.transaction,
+                    type: 'transaction',
+                    data: transaction.serialize(),
                     options: input.options,
+                    // account might be undefined if previous version of adapters is used
+                    // in that case use the first account address
+                    account:
+                        account?.address || this.#accounts[0]?.address || '',
                 },
             }),
             (response) => response.result
@@ -267,6 +285,29 @@ export class EthosWallet implements Wallet {
             type: 'stake-request',
             validatorAddress: input.validatorAddress,
         });
+    };
+
+    #signMessage: SuiSignMessageMethod = async ({
+        message,
+        account,
+        options,
+    }) => {
+        return mapToPromise(
+            this.#send<SignMessageRequest, SignMessageRequest>({
+                type: 'sign-message-request',
+                args: {
+                    message: toB64(message),
+                    accountAddress: account.address,
+                    options,
+                },
+            }),
+            (response) => {
+                if (!response.return) {
+                    throw new Error('Invalid sign message response');
+                }
+                return response.return;
+            }
+        );
     };
 
     #hasPermissions(permissions: HasPermissionsRequest['permissions']) {
