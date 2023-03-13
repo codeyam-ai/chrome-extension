@@ -4,20 +4,20 @@ import { cleanObjectId } from '.';
 
 import type {
     SuiMoveNormalizedFunction,
-    TransactionEffects,
+    TransactionEvents,
 } from '@mysten/sui.js';
 
-export type useCategorizedEffectsArgs = {
+export type useCategorizedEventsArgs = {
     normalizedFunction?: SuiMoveNormalizedFunction;
-    effects?: TransactionEffects | null;
+    events?: TransactionEvents | null;
     address?: string | null;
 };
 
 const useCategorizedEffects = ({
     normalizedFunction,
-    effects,
+    events,
     address,
-}: useCategorizedEffectsArgs) => {
+}: useCategorizedEventsArgs) => {
     const reading = useMemo(() => {
         if (!normalizedFunction) return [];
 
@@ -41,34 +41,33 @@ const useCategorizedEffects = ({
     }, [normalizedFunction]);
 
     const creating = useMemo(() => {
-        if (!effects?.created) return [];
+        if (!events) return [];
 
-        return [];
-        // const newEvents = effects.created.filter(
-        //     (event) =>
-        //         'newObject' in event &&
-        //         event.newObject &&
-        //         typeof event.newObject.recipient !== 'string' &&
-        //         'AddressOwner' in event.newObject.recipient &&
-        //         event.newObject.recipient.AddressOwner === address
-        // );
+        const creating = events
+            .filter(
+                (event) =>
+                    event.type === 'newObject' &&
+                    typeof event.content.recipient === 'object' &&
+                    'AddressOwner' in event.content.recipient &&
+                    event.content.recipient.AddressOwner === address
+            )
+            .map((event) => {
+                if (event.type !== 'newObject') return null;
 
-        // const creating = newEvents.map((event) => {
-        //     if (!('newObject' in event)) return {};
+                const objectTypeParts = event.content.objectType.split('::');
+                return {
+                    address: objectTypeParts[0],
+                    module: objectTypeParts[1],
+                    name: objectTypeParts[2].split('<')[0],
+                };
+            })
+            .filter((event) => !!event);
 
-        //     const objectTypeParts = event.newObject.objectType.split('::');
-        //     return {
-        //         address: objectTypeParts[0],
-        //         module: objectTypeParts[1],
-        //         name: objectTypeParts[2].split('<')[0],
-        //     };
-        // });
-
-        // return creating;
-    }, [effects, address]);
+        return creating;
+    }, [events, address]);
 
     const mutating = useMemo(() => {
-        if (!effects?.mutated) return [];
+        // if (!effects?.mutated) return [];
         return [];
 
         // const mutating = effects.mutated
@@ -104,7 +103,7 @@ const useCategorizedEffects = ({
         //     });
 
         // return mutating;
-    }, [effects, address]);
+    }, [events, address]);
 
     const transferring = useMemo(() => {
         return [];
@@ -132,7 +131,7 @@ const useCategorizedEffects = ({
         //     });
 
         // return transferring;
-    }, [effects]);
+    }, [events]);
 
     const deleting = useMemo(() => {
         return [];
@@ -148,7 +147,7 @@ const useCategorizedEffects = ({
         //     });
 
         // return deleting;
-    }, [effects]);
+    }, [events]);
 
     const coinChanges = useMemo(() => {
         const zero: Record<string, number> = {};
@@ -172,7 +171,7 @@ const useCategorizedEffects = ({
         //     totals[coinType] += amount * -1;
         //     return totals;
         // }, zero);
-    }, [effects, address]);
+    }, [events, address]);
 
     return {
         reading,
