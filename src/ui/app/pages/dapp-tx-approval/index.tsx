@@ -487,45 +487,39 @@ export function DappTxApprovalPage() {
 
         const details = [];
 
-        // if (txInfo && typeof txInfo !== 'string' && 'kind' in txInfo) {
-        //     if (txInfo.kind === 'bytes') {
-        //         details.push({
-        //             title: 'Transaction',
-        //             details: [
-        //                 {
-        //                     label: 'Bytes',
-        //                     content: {
-        //                         type: 'small',
-        //                         content: txInfo.data.toLocaleString(),
-        //                     } as SmallDetail,
-        //                 },
-        //             ],
-        //         } as Section);
-        //     } else {
-        //         const parsedData = JSON.parse(JSON.stringify(txInfo.data));
-        //         for (const attribute of [
-        //             'packageObjectId',
-        //             'module',
-        //             'function',
-        //             'arguments',
-        //             'gasBudget',
-        //             'gasPayment',
-        //         ]) {
-        //             if (attribute in txInfo.data) {
-        //                 transactionDetails.details.push({
-        //                     label: attribute,
-        //                     content: {
-        //                         type: 'small',
-        //                         content: parsedData[attribute],
-        //                         coinType: ['gasBudget'].includes(attribute)
-        //                             ? SUI_TYPE_ARG
-        //                             : null,
-        //                     } as SmallDetail,
-        //                 });
-        //             }
-        //         }
-        //     }
-        // }
+        if (transaction?.transactionData) {
+            if (transaction.transactionData.gasConfig.budget) {
+                transactionDetails.details.push({
+                    label: 'Gas Budget',
+                    content: {
+                        type: 'small',
+                        content: transaction.transactionData.gasConfig.budget,
+                        coinType: SUI_TYPE_ARG,
+                    } as SmallDetail,
+                });
+                // } else if (transaction.transactionData.commands.)
+                // for (const attribute of [
+                //     'packageObjectId',
+                //     'module',
+                //     'function',
+                //     'arguments',
+                //     'gasBudget',
+                //     'gasPayment',
+                // ]) {
+                //     if (attribute in txInfo.data) {
+                //         transactionDetails.details.push({
+                //             label: attribute,
+                //             content: {
+                //                 type: 'small',
+                //                 content: parsedData[attribute],
+                //                 coinType: ['gasBudget'].includes(attribute)
+                //                     ? SUI_TYPE_ARG
+                //                     : null,
+                //             } as SmallDetail,
+                //         });
+                //     }
+            }
+        }
 
         details.push(transactionDetails);
 
