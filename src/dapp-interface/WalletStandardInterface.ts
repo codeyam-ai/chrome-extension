@@ -18,6 +18,7 @@ import {
     type EventsListeners,
     type SuiSignTransactionMethod,
     type SuiSignMessageMethod,
+    SuiSignAndExecuteTransactionInput,
 } from '@mysten/wallet-standard';
 import mitt, { type Emitter } from 'mitt';
 import { filter, map, type Observable } from 'rxjs';
@@ -251,7 +252,12 @@ export class EthosWallet implements Wallet {
     #signAndExecuteTransaction: SuiSignAndExecuteTransactionMethod = async (
         input
     ) => {
-        if (!Transaction.is(input.transaction)) {
+        //Something is off with the types
+        const { transaction, account } = {
+            ...input.transaction,
+        } as SuiSignAndExecuteTransactionInput;
+
+        if (!Transaction.is(transaction)) {
             throw new Error(
                 'Unexpect transaction format found. Ensure that you are using the `Transaction` class.'
             );
@@ -262,14 +268,12 @@ export class EthosWallet implements Wallet {
                 type: 'execute-transaction-request',
                 transaction: {
                     type: 'transaction',
-                    data: input.transaction.serialize(),
+                    data: transaction.serialize(),
                     options: input.options,
                     // account might be undefined if previous version of adapters is used
                     // in that case use the first account address
                     account:
-                        input.account?.address ||
-                        this.#accounts[0]?.address ||
-                        '',
+                        account?.address || this.#accounts[0]?.address || '',
                 },
             }),
             (response) => response.result
