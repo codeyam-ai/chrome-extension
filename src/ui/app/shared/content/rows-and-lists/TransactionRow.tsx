@@ -19,10 +19,10 @@ import { getHumanReadable } from '_src/ui/app/helpers/transactions';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
 
-import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
+// import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
 interface TransactionRowProps {
-    txn: TxResultState;
+    txn: any;
 }
 
 interface RowDataTypes extends SharedTypes {
