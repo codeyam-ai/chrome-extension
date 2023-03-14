@@ -42,10 +42,14 @@ function TransferCoinRecipientForm({
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
 
-    const txByAddress: TxResultState[] = useAppSelector(({ txresults }) => {
-        console.log('txresults', txresults);
-        return txresults.latestTx.filter((tx) => tx.isSender);
-    });
+    const txByAddress: TxResultState[] = useAppSelector(
+        ({ txresults }: { txresults: TxResultState }) => {
+            console.log('txresults', txresults);
+            return txresults.latestTx.filter(
+                (tx: TxResultState) => tx.isSender
+            );
+        }
+    );
 
     console.log('txByAddress', txByAddress);
     const recentTxs: string[] = [];
@@ -55,7 +59,9 @@ function TransferCoinRecipientForm({
         }
     });
 
-    const loading = useAppSelector(({ txresults }) => txresults.loading);
+    const loading = useAppSelector(
+        ({ txresults }: { txresults: TxResultState }) => txresults.loading
+    );
     const dispatch = useAppDispatch();
 
     useEffect(() => {

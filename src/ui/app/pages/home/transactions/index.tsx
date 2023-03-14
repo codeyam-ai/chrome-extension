@@ -16,6 +16,7 @@ import Alert from '_src/ui/app/shared/feedback/Alert';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
+import { FormattedTxResultState } from './FormattedTxResultState';
 
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
@@ -80,34 +81,36 @@ const TransactionsPage = () => {
                 api
             );
             const newFormattedTransactions: TxResultState[] = await Promise.all(
-                fullTransactionDetails?.map(async (tx) => {
-                    // TODO: fix type error for any
-                    const txType = getTxType(tx);
-                    if (txType === 'nft' || txType === 'func') {
-                        return tx;
-                    }
-                    const {
-                        formattedBalance,
-                        coinSymbol,
-                        dollars,
-                        coinName,
-                        coinIcon,
-                    } = await formatCoin(
-                        api.instance.fullNode,
-                        tx.amount,
-                        tx.objType
-                    );
-                    return {
-                        ...tx,
-                        formatted: {
+                fullTransactionDetails?.map(
+                    async (tx: FormattedTxResultState) => {
+                        // TODO: fix type error for any
+                        const txType = getTxType(tx);
+                        if (txType === 'nft' || txType === 'func') {
+                            return tx;
+                        }
+                        const {
                             formattedBalance,
                             coinSymbol,
                             dollars,
                             coinName,
                             coinIcon,
-                        },
-                    };
-                })
+                        } = await formatCoin(
+                            api.instance.fullNode,
+                            tx.amount,
+                            tx.objType
+                        );
+                        return {
+                            ...tx,
+                            formatted: {
+                                formattedBalance,
+                                coinSymbol,
+                                dollars,
+                                coinName,
+                                coinIcon,
+                            },
+                        };
+                    }
+                )
             );
 
             if (newFormattedTransactions) {
