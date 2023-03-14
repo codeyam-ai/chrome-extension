@@ -45,7 +45,6 @@ const TransactionsPage = () => {
                 //     await api.instance.fullNode.getTransactionResponseBatch(
                 //         deduplicate(transactionIds)
                 //     );
-
                 // setSuiTxns(newTransactions);
                 // if (newTransactions.length === 0) {
                 //     setLoadingTxns(false);

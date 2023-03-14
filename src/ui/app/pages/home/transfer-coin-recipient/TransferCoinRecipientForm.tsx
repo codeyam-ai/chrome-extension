@@ -90,7 +90,7 @@ function TransferCoinRecipientForm({
     if (!coinType) return <></>;
 
     return (
-        <div/>
+        <div />
         // <Loading loading={loading} big={true}>
         //     <Form autoComplete="off" noValidate={true}>
         //         <div className="pt-6 px-6 text-left flex flex-col absolute w-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
