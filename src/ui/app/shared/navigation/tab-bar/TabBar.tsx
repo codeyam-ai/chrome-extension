@@ -76,15 +76,19 @@ const TabBar = () => {
             );
             if (ticketIndex === -1) {
                 try {
-                    const ticketProjectIds = await growthBook.getFeatureValue(
-                        'ticket-projects',
-                        []
-                    );
+                    const ticketProjectIds: string[] =
+                        await growthBook.getFeatureValue('ticket-projects', []);
 
                     const ticketProjectObjects =
-                        await api.instance.fullNode.getObjectBatch(
-                            ticketProjectIds
-                        );
+                        await api.instance.fullNode.multiGetObjects({
+                            ids: ticketProjectIds,
+                            options: {
+                                showContent: true,
+                                showType: true,
+                                showDisplay: true,
+                                showOwner: true,
+                            },
+                        });
                     const existingTicketProjectObjects =
                         ticketProjectObjects.filter(
                             (ticketProjectObject) =>

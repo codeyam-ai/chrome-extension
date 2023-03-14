@@ -43,7 +43,9 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
     const allSuiObjects: SuiObjectData[] = [];
     if (address) {
         const allObjectRefs =
-            await api.instance.fullNode.getObjectsOwnedByAddress(`${address}`);
+            await api.instance.fullNode.getObjectsOwnedByAddress({
+                owner: address,
+            });
 
         const objectIDs = allObjectRefs
             .filter((anObj) => {
@@ -63,14 +65,14 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
             })
             .map((anObj) => anObj.objectId);
         objectIDs.push(SUI_SYSTEM_STATE_OBJECT_ID);
-        const allObjRes = await api.instance.fullNode.getObjectBatch(
-            objectIDs,
-            {
+        const allObjRes = await api.instance.fullNode.multiGetObjects({
+            ids: objectIDs,
+            options: {
                 showOwner: true,
                 showContent: true,
                 showType: true,
-            }
-        );
+            },
+        });
         for (const objRes of allObjRes) {
             const suiObjectData = getSuiObjectData(objRes);
             if (suiObjectData) {

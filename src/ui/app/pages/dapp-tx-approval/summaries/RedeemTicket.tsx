@@ -27,9 +27,14 @@ const RedeemTicket = ({
                 'packageObjectId' in txInfo.data &&
                 typeof txInfo.data.arguments[1] === 'string'
             ) {
-                const ticket = await api.instance.fullNode.getObject(
-                    txInfo.data.arguments[1]
-                );
+                const ticket = await api.instance.fullNode.getObject({
+                    id: txInfo.data.arguments[1],
+                    options: {
+                        showContent: true,
+                        showOwner: true,
+                        showType: true,
+                    },
+                });
 
                 const fields = get(ticket, 'details.data.fields');
                 if (!fields) return;

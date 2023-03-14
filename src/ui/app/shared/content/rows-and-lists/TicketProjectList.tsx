@@ -42,13 +42,21 @@ const TicketProjectList = () => {
             if (loadingTickets) return;
 
             const growthbook = await featureGating.getGrowthBook();
-            const ticketProjectIds = await growthbook.getFeatureValue(
+            const ticketProjectIds: string[] = await growthbook.getFeatureValue(
                 'ticket-projects',
                 []
             );
 
             const ticketProjectObjects: SuiObjectResponse[] =
-                await api.instance.fullNode.getObjectBatch(ticketProjectIds);
+                await api.instance.fullNode.multiGetObjects({
+                    ids: ticketProjectIds,
+                    options: {
+                        showContent: true,
+                        showType: true,
+                        showDisplay: true,
+                        showOwner: true,
+                    },
+                });
 
             const ticketProjects = ticketProjectObjects.map(
                 (ticketProjectObject) => {

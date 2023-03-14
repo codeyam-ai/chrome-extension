@@ -232,7 +232,10 @@ export function DappPreapprovalPage() {
                 return;
             }
 
-            const object = await provider.getObject(preapproval.objectId);
+            const object = await provider.getObject({
+                id: preapproval.objectId,
+                options: { showContent: true },
+            });
             const nft = {
                 ...onchainInfo,
                 ...(object.details as SuiObject),

@@ -9,7 +9,10 @@ const getObjTypeFromObjId = async (
     network: string
 ): Promise<string | undefined> => {
     const provider = new JsonRpcProvider(new Connection({ fullnode: network }));
-    const obj = await provider.getObject(objId);
+    const obj = await provider.getObject({
+        id: objId,
+        options: { showType: true },
+    });
 
     if (
         obj.status === 'Exists' &&
