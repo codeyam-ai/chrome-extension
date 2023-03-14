@@ -3,7 +3,6 @@ import get from 'lodash/get';
 
 import { growthbook } from '../../experimentation/feature-gating';
 import { api } from '../../redux/store/thunk-extras';
-import transactions from '../../../../background/Transactions';
 
 const SENDER = '0x0000000000000000000000000000000000000002';
 const DEV_INSPECT_RESULT_PATH_0 = 'results.Ok[0][1].returnValues[0][0]';
@@ -51,7 +50,10 @@ export const getSuiName = async (address: string, sender: string = SENDER) => {
             })
         );
         const resolverBytes = get(
-            await suiProvider.devInspectTransaction(sender, registryTx),
+            await suiProvider.devInspectTransaction({
+                sender: sender,
+                transaction: registryTx,
+            }),
             DEV_INSPECT_RESULT_PATH_1
         );
         if (!resolverBytes) return address;
@@ -67,10 +69,10 @@ export const getSuiName = async (address: string, sender: string = SENDER) => {
                 ],
             })
         );
-        const resolverResponse = await suiProvider.devInspectTransaction(
-            sender,
-            resolverTx
-        );
+        const resolverResponse = await suiProvider.devInspectTransaction({
+            sender: sender,
+            transaction: resolverTx,
+        });
 
         const nameByteArray = get(resolverResponse, DEV_INSPECT_RESULT_PATH_0);
         if (!nameByteArray) return address;
@@ -103,10 +105,10 @@ export const getSuiAddress = async (
                 ],
             })
         );
-        const resolverResponse = await suiProvider.devInspectTransaction(
-            sender,
-            registryTx
-        );
+        const resolverResponse = await suiProvider.devInspectTransaction({
+            sender: sender,
+            transaction: registryTx,
+        });
         const resolverBytes = get(resolverResponse, DEV_INSPECT_RESULT_PATH_1);
         if (!resolverBytes) return domain;
 
@@ -121,10 +123,10 @@ export const getSuiAddress = async (
                 ],
             })
         );
-        const resolverResponse2 = await suiProvider.devInspectTransaction(
-            sender,
-            resolverTx
-        );
+        const resolverResponse2 = await suiProvider.devInspectTransaction({
+            sender: sender,
+            transaction: resolverTx,
+        });
         const addr = get(resolverResponse2, DEV_INSPECT_RESULT_PATH_0);
 
         if (!addr) return domain;

@@ -42,11 +42,11 @@ export const loadTransactionResponseMetadata = createAsyncThunk<
             throw new Error(`TransactionRequest ${txRequestID} not found`);
         }
 
-        const metadata = await api.instance.fullNode.getNormalizedMoveFunction(
-            objectId,
-            moduleName,
-            functionName
-        );
+        const metadata = await api.instance.fullNode.getNormalizedMoveFunction({
+            package: objectId,
+            module: moduleName,
+            function: functionName,
+        });
 
         return { txRequestID, metadata };
     }

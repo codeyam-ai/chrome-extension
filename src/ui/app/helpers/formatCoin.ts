@@ -58,7 +58,7 @@ const formatCoin = async (
             decimals,
             iconUrl,
             name,
-        } = await provider.getCoinMetadata(coinType || ''));
+        } = await provider.getCoinMetadata({ coinType: coinType || '' }));
     } catch (error) {
         // eslint-disable-next-line no-console
         console.log('error getting coin metadata :>> ', error);

@@ -91,7 +91,9 @@ function TransferNFTRecipient() {
                 )
             );
 
-            const signedTx = await signer.dryRunTransaction(transaction);
+            const signedTx = await signer.dryRunTransaction({
+                transaction: transaction,
+            });
 
             const gasFee =
                 signedTx.effects.gasUsed.computationCost +

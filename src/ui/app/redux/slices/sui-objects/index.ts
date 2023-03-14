@@ -116,11 +116,10 @@ export const transferNFT = createAsyncThunk<
                 tx.pure(data.recipientAddress)
             )
         );
-        const executedTransaction = await signer.signAndExecuteTransaction(
-            tx,
-            { showEffects: true, showEvents: true, showInput: true },
-            'WaitForLocalExecution'
-        );
+        const executedTransaction = await signer.signAndExecuteTransaction({
+            transaction: tx,
+            options: { showEffects: true, showEvents: true, showInput: true },
+        });
 
         await dispatch(fetchAllOwnedAndRequiredObjects());
         const txnResp = {

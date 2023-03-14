@@ -91,6 +91,7 @@ function getAmount(
     address?: string
 ): { [key: string]: number } | number | null {
     //TODO: add PayAllSuiTransaction
+    console.log('get amount for => ', txnData);
     const transferSui = getTransferSuiTransaction(txnData);
     if (transferSui?.amount) {
         return transferSui.amount;
@@ -201,16 +202,12 @@ export async function getFullTransactionDetails(
 
     const objectIds = txResults.map((itm) => itm?.objectId).filter(notEmpty);
     const objectIDs = Array.from(new Set(objectIds.flat()));
-    const multiObjects = await api.instance.fullNode.multiGetObjects({
-        ids: objectIDs,
-        options: {
-            showContent: true,
-            showType: true,
-            showDisplay: true,
-            showOwner: true,
-        },
-    });
-    const txObjects = multiObjects.filter(({ status }) => status === 'Exists');
+    const getObjectBatch = await api.instance.fullNode.getObjectBatch(
+        objectIDs
+    );
+    const txObjects = getObjectBatch.filter(
+        ({ status }) => status === 'Exists'
+    );
 
     const txnResp: TxResultState[] = await Promise.all(
         txResults.map(async (itm) => {
@@ -279,32 +276,21 @@ export const getTransactionsByAddress = createAsyncThunk<
         }
 
         if (!txEffs) {
-            const fromTransactions =
-                await api.instance.fullNode.queryTransactions({
-                    filter: {
-                        ToAddress: address,
-                    },
-                });
+            const transactionIds: string[] =
+                await api.instance.fullNode.getTransactionsForAddress(
+                    address as string,
+                    true
+                );
 
-            const toTransactions =
-                await api.instance.fullNode.queryTransactions({
-                    filter: {
-                        FromAddress: address,
-                    },
-                });
-
-            const _txEffs = await api.instance.fullNode.multiGetTransactions({
-                digests: deduplicate(
-                    [...fromTransactions.data, ...toTransactions.data].map(
-                        (tx) => tx.digest
-                    )
-                ),
-                options: {
-                    showInput: true,
-                    showEffects: true,
-                    showEvents: true,
-                },
-            });
+            const _txEffs =
+                await api.instance.fullNode.getTransactionResponseBatch(
+                    deduplicate(transactionIds),
+                    {
+                        showInput: true,
+                        showEffects: true,
+                        showEvents: true,
+                    }
+                );
 
             txs = _txEffs;
         } else {
