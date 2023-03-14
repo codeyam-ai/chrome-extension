@@ -1,5 +1,5 @@
 import { toB64 } from '@mysten/bcs';
-import { SignerWithProvider} from '@mysten/sui.js';
+import { SignerWithProvider } from '@mysten/sui.js';
 
 import { deleteEncrypted } from '../storagex/store';
 import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
@@ -7,7 +7,7 @@ import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
 import type {
     SerializedSignature,
     SuiAddress,
-    JsonRpcProvider
+    JsonRpcProvider,
 } from '@mysten/sui.js';
 
 export class EthosSigner extends SignerWithProvider {
