@@ -56,7 +56,9 @@ export class NFT {
 
         if (!bagId) return data;
 
-        const { data: bagObjects } = await provider.getDynamicFields(bagId);
+        const { data: bagObjects } = await provider.getDynamicFields({
+            parentId: bagId,
+        });
         const objectIds = bagObjects.map((bagObject) => bagObject.objectId);
         const objects = await provider.multiGetObjects({
             ids: objectIds,
@@ -271,7 +273,9 @@ export class NftClient {
     };
 
     getBagContent = async (bagId: string) => {
-        const bagObjects = await this.provider.getDynamicFields(bagId);
+        const bagObjects = await this.provider.getDynamicFields({
+            parentId: bagId,
+        });
         const objectIds = bagObjects.data.map(
             (bagObject) => bagObject.objectId
         );

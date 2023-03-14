@@ -338,9 +338,12 @@ const TicketProjectDetails = () => {
         const getTicketProject = async () => {
             if (!objectId) return;
 
-            const ticketProjectObject = await api.instance.fullNode.getObject(
-                objectId
-            );
+            const ticketProjectObject = await api.instance.fullNode.getObject({
+                id: objectId,
+                options: {
+                    showContent: true,
+                },
+            });
 
             const { details } = ticketProjectObject;
             if (typeof details === 'string' || !('data' in details)) {
