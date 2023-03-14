@@ -279,21 +279,32 @@ export const getTransactionsByAddress = createAsyncThunk<
         }
 
         if (!txEffs) {
-            const transactionIds: string[] =
-                await api.instance.fullNode.getTransactionsForAddress(
-                    address as string,
-                    true
-                );
+            const fromTransactions =
+                await api.instance.fullNode.queryTransactions({
+                    filter: {
+                        ToAddress: address,
+                    },
+                });
 
-            const _txEffs =
-                await api.instance.fullNode.getTransactionResponseBatch(
-                    deduplicate(transactionIds),
-                    {
-                        showInput: true,
-                        showEffects: true,
-                        showEvents: true,
-                    }
-                );
+            const toTransactions =
+                await api.instance.fullNode.queryTransactions({
+                    filter: {
+                        FromAddress: address,
+                    },
+                });
+
+            const _txEffs = await api.instance.fullNode.multiGetTransactions({
+                digests: deduplicate(
+                    [...fromTransactions.data, ...toTransactions.data].map(
+                        (tx) => tx.digest
+                    )
+                ),
+                options: {
+                    showInput: true,
+                    showEffects: true,
+                    showEvents: true,
+                },
+            });
 
             txs = _txEffs;
         } else {
