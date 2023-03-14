@@ -309,6 +309,7 @@ export class EthosWallet implements Wallet {
         account,
         options,
     }) => {
+        console.log('SIGN MESSAGE', message, account);
         return mapToPromise(
             this.#send<SignMessageRequest, SignMessageRequest>({
                 type: 'sign-message-request',

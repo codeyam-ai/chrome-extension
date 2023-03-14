@@ -10,6 +10,7 @@ import { BASE_URL } from '_src/shared/constants';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 
 import type { ContentScriptConnection } from './connections/ContentScriptConnection';
+import type { SuiAddress } from '@mysten/sui.js';
 import type {
     Permission,
     PermissionResponse,
@@ -196,7 +197,8 @@ class Permissions {
     public async hasPermissions(
         origin: string,
         permissionTypes: readonly PermissionType[],
-        permission?: Permission | null
+        permission?: Permission | null,
+        address?: SuiAddress
     ): Promise<boolean> {
         const existingPermission = await this.getPermission(origin, permission);
         return Boolean(
@@ -204,7 +206,9 @@ class Permissions {
                 existingPermission.allowed &&
                 permissionTypes.every((permissionType) =>
                     existingPermission.permissions.includes(permissionType)
-                )
+                ) &&
+                (!address ||
+                    (address && existingPermission.accounts.includes(address)))
         );
     }
 

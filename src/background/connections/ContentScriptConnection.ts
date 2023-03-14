@@ -4,16 +4,20 @@
 import { Connection } from './Connection';
 import { DEFAULT_API_ENV } from '../../ui/app/ApiProvider';
 import Authentication from '../Authentication';
-import Messages from '../Messages';
 import { createMessage } from '_messages';
 import { isGetAccount } from '_payloads/account/GetAccount';
 import {
     isAcquirePermissionsRequest,
     isHasPermissionRequest,
+    type AcquirePermissionsResponse,
+    type HasPermissionsResponse,
+    type PermissionType,
 } from '_payloads/permissions';
 import {
     isPreapprovalRequest,
     isExecuteTransactionRequest,
+    type PreapprovalResponse,
+    type ExecuteTransactionResponse,
 } from '_payloads/transactions';
 import Permissions from '_src/background/Permissions';
 import Transactions from '_src/background/Transactions';
@@ -21,29 +25,23 @@ import { isGetAccountCustomizations } from '_src/shared/messaging/messages/paylo
 import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
 import { isGetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
 import { isDisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
-import { isExecuteSignMessageRequest } from '_src/shared/messaging/messages/payloads/messages/ExecuteSignMessageRequest';
+import {
+    isSignMessageRequest,
+    type SignMessageRequest,
+} from '_src/shared/messaging/messages/payloads/transactions/SignMessage';
 import { isGetUrl } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
 import { get, getEncrypted } from '_src/shared/storagex/store';
 import { openInNewTab } from '_src/shared/utils';
 import { type AccountCustomization } from '_src/types/AccountCustomization';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 
-import type { SuiAddress } from '@mysten/sui.js';
+import type { SuiAddress, SuiTransactionResponse } from '@mysten/sui.js';
 import type { Message } from '_messages';
 import type { PortChannelName } from '_messaging/PortChannelName';
 import type { ErrorPayload } from '_payloads';
 import type { GetAccountResponse } from '_payloads/account/GetAccountResponse';
-import type {
-    HasPermissionsResponse,
-    AcquirePermissionsResponse,
-} from '_payloads/permissions';
-import type {
-    PreapprovalResponse,
-    ExecuteTransactionResponse,
-} from '_payloads/transactions';
 import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
-import type { ExecuteSignMessageResponse } from '_src/shared/messaging/messages/payloads/messages/ExecuteSignMessageResponse';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
 import type { Runtime } from 'webextension-polyfill';
 
@@ -63,6 +61,7 @@ export class ContentScriptConnection extends Connection {
 
     protected async handleMessage(msg: Message) {
         const { payload } = msg;
+
         if (isGetAccount(payload)) {
             const existingPermission = await Permissions.getPermission(
                 this.origin
@@ -145,70 +144,39 @@ export class ContentScriptConnection extends Connection {
                 );
             }
         } else if (isExecuteTransactionRequest(payload)) {
-            const allowed = await Permissions.hasPermissions(this.origin, [
-                'viewAccount',
-                'suggestTransactions',
-            ]);
-            if (allowed) {
-                try {
-                    const result = await Transactions.executeTransaction(
-                        payload.transaction,
-                        this
-                    );
-                    this.send(
-                        createMessage<ExecuteTransactionResponse>(
-                            { type: 'execute-transaction-response', result },
-                            msg.id
-                        )
-                    );
-                } catch (e) {
-                    this.sendError(
-                        {
-                            error: true,
-                            code: -1,
-                            message: (e as Error).message,
-                        },
-                        msg.id
-                    );
-                }
-            } else {
-                this.sendNotAllowedError(msg.id);
+            if (!payload.transaction.account) {
+                // make sure we don't execute transactions that doesn't have a specified account
+                throw new Error('Missing account');
             }
-        } else if (isExecuteSignMessageRequest(payload)) {
-            const allowed = await Permissions.hasPermissions(this.origin, [
-                'viewAccount',
-                'suggestSignMessages',
-            ]);
-
-            if (allowed) {
-                try {
-                    const signature = await Messages.signMessage(
-                        payload.messageData,
-                        payload.messageString,
-                        this
-                    );
-                    this.send(
-                        createMessage<ExecuteSignMessageResponse>(
-                            {
-                                type: 'execute-sign-message-response',
-                                signature,
-                            },
-                            msg.id
-                        )
-                    );
-                } catch (e) {
-                    this.sendError(
-                        {
-                            error: true,
-                            code: -1,
-                            message: (e as Error).message,
-                        },
-                        msg.id
-                    );
-                }
-            } else {
-                this.sendNotAllowedError(msg.id);
-            }
+            await this.ensurePermissions(
+                ['viewAccount', 'suggestTransactions'],
+                payload.transaction.account
+            );
+            const result = await Transactions.executeOrSignTransaction(
+                { tx: payload.transaction },
+                this
+            );
+            this.send(
+                createMessage<ExecuteTransactionResponse>(
+                    {
+                        type: 'execute-transaction-response',
+                        result: result as SuiTransactionResponse,
+                    },
+                    msg.id
+                )
+            );
+        } else if (isSignMessageRequest(payload) && payload.args) {
+            await this.ensurePermissions(
+                ['viewAccount', 'suggestTransactions'],
+                payload.args.accountAddress
+            );
+            const result = await Transactions.signMessage(payload.args, this);
+            this.send(
+                createMessage<SignMessageRequest>(
+                    { type: 'sign-message-request', return: result },
+                    msg.id
+                )
+            );
         } else if (isPreapprovalRequest(payload)) {
             const allowed = await Permissions.hasPermissions(this.origin, [
                 'viewAccount',
@@ -346,5 +314,24 @@ export class ContentScriptConnection extends Connection {
                 responseForID
             )
         );
+    }
+
+    private async ensurePermissions(
+        permissions: PermissionType[],
+        account?: SuiAddress
+    ) {
+        const existingPermission = await Permissions.getPermission(this.origin);
+        const allowed = await Permissions.hasPermissions(
+            this.origin,
+            permissions,
+            existingPermission,
+            account
+        );
+        if (!allowed || !existingPermission) {
+            throw new Error(
+                "Operation not allowed, dapp doesn't have the required permissions"
+            );
+        }
+        return existingPermission;
     }
 }

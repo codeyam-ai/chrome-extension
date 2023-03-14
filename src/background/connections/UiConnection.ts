@@ -20,13 +20,11 @@ import { isGetPreapprovalRequests } from '_src/shared/messaging/messages/payload
 import type { Message } from '_messages';
 import type { PortChannelName } from '_messaging/PortChannelName';
 import type { Permission, PermissionRequests } from '_payloads/permissions';
-import type {
-    PreapprovalRequest,
-    TransactionRequest,
-} from '_payloads/transactions';
+import type { PreapprovalRequest } from '_payloads/transactions';
 import type { GetTransactionRequestsResponse } from '_payloads/transactions/ui/GetTransactionRequestsResponse';
 import type { SignMessageRequest } from '_src/shared/messaging/messages/payloads/messages/SignMessageRequest';
 import type { GetSignMessageRequestsResponse } from '_src/shared/messaging/messages/payloads/messages/ui/GetSignMessageRequestsResponse';
+import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions/ApprovalRequest';
 import type { GetPreapprovalResponse } from '_src/shared/messaging/messages/payloads/transactions/ui/GetPreapprovalResponse';
 
 export class UiConnection extends Connection {
@@ -34,6 +32,7 @@ export class UiConnection extends Connection {
 
     protected async handleMessage(msg: Message) {
         const { payload, id } = msg;
+
         if (isGetPermissionRequests(payload)) {
             this.sendPermissions(
                 Object.values(await Permissions.getPermissions()),
@@ -78,7 +77,7 @@ export class UiConnection extends Connection {
     }
 
     private sendTransactionRequests(
-        txRequests: TransactionRequest[],
+        txRequests: ApprovalRequest[],
         requestID: string
     ) {
         this.send(

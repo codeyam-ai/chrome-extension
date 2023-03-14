@@ -17,14 +17,26 @@ import { Window } from './Window';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
-import type { MoveCallTransaction } from '@mysten/sui.js';
-import type { SuiSignAndExecuteTransactionOptions } from '@mysten/wallet-standard';
-import type { TransactionDataType } from '_messages/payloads/transactions/ExecuteTransactionRequest';
+import type {
+    MoveCallCommand,
+    Transaction,
+    SignedTransaction,
+    SuiTransactionResponse,
+} from '@mysten/sui.js';
+import type {
+    SuiSignAndExecuteTransactionOptions,
+    SuiSignMessageOutput,
+} from '@mysten/wallet-standard';
 import type {
     PreapprovalRequest,
     PreapprovalResponse,
-    TransactionRequest,
+    SignMessageRequest,
+    SuiSignTransactionSerialized,
 } from '_payloads/transactions';
+import type {
+    TransactionDataType,
+    ApprovalRequest,
+} from '_payloads/transactions/ApprovalRequest';
 import type { TransactionRequestResponse } from '_payloads/transactions/ui/TransactionRequestResponse';
 import type { ContentScriptConnection } from '_src/background/connections/ContentScriptConnection';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
@@ -61,11 +73,51 @@ class Transactions {
     private _txResponseMessages = new Subject<TransactionRequestResponse>();
     private _preapprovalResponseMessages = new Subject<PreapprovalResponse>();
 
+    public async executeOrSignTransaction(
+        {
+            tx,
+            sign,
+        }:
+            | { tx: TransactionDataType; sign?: undefined }
+            | {
+                  tx?: undefined;
+                  sign: SuiSignTransactionSerialized;
+              },
+        connection: ContentScriptConnection
+    ): Promise<SuiTransactionResponse | SignedTransaction> {
+        const { txResultError, txResult, txSigned } =
+            await this.requestApproval(
+                tx ?? {
+                    type: 'transaction',
+                    justSign: true,
+                    data: sign.transaction,
+                    account: sign.account,
+                },
+                connection.origin,
+                connection.originFavIcon
+            );
+        if (txResultError) {
+            throw new Error(
+                `Transaction failed with the following error. ${txResultError}`
+            );
+        }
+        if (sign && !txSigned) {
+            throw new Error('Transaction signature is empty');
+        }
+        if (tx) {
+            if (!txResult || !('digest' in txResult)) {
+                throw new Error(`Transaction result is empty ${txResult}`);
+            }
+            return txResult;
+        }
+        return txSigned!;
+    }
+
     private async findPreapprovalRequest({
         moveCall,
         preapproval,
     }: {
-        moveCall?: MoveCallTransaction;
+        moveCall?: MoveCallCommand;
         preapproval?: Preapproval;
     }) {
         const activeAccount = await this.getActiveAccount();
@@ -78,13 +130,13 @@ class Transactions {
             if (existingPreapproval.address !== activeAccount.address) continue;
 
             const found = moveCall
-                ? moveCall.packageObjectId ===
-                      existingPreapproval.packageObjectId &&
-                  moveCall.function === existingPreapproval.function &&
-                  moveCall.arguments.indexOf(existingPreapproval.objectId) > -1
-                : preapproval?.packageObjectId ===
-                      existingPreapproval.packageObjectId &&
-                  preapproval?.function === existingPreapproval.function &&
+                ? moveCall.target === existingPreapproval.target &&
+                  moveCall.arguments.find(
+                      (a) =>
+                          a.kind === 'Input' &&
+                          a.value === existingPreapproval.objectId
+                  )
+                : preapproval?.target === existingPreapproval.target &&
                   preapproval?.objectId === existingPreapproval.objectId;
 
             if (found) {
@@ -94,159 +146,188 @@ class Transactions {
     }
 
     private async tryDirectExecution(
-        tx: MoveCallTransaction,
+        tx: Transaction,
         preapprovalRequest: PreapprovalRequest,
         options?: SuiSignAndExecuteTransactionOptions
     ) {
-        try {
-            const txDirectResult =
-                await this.executeMoveCallTransactionDirectly({
-                    tx,
-                    options,
-                });
+        throw new Error('tryDirectExecution not ready yet');
+        // try {
+        //     const txDirectResult =
+        //         await this.executeMoveCallTransactionDirectly({
+        //             tx,
+        //             options,
+        //         });
 
-            const { result, error } = txDirectResult;
+        //     const { result, error } = txDirectResult;
 
-            if (error) {
-                return { error, effects: null };
-            }
+        //     if (error) {
+        //         return { error, effects: null };
+        //     }
 
-            const { preapproval } = preapprovalRequest;
-            preapproval.maxTransactionCount -= 1;
-            const { effects } = result.EffectsCert || result;
-            const { computationCost, storageCost, storageRebate } =
-                effects.effects.gasUsed;
-            const gasUsed = computationCost + (storageCost - storageRebate);
-            preapproval.totalGasLimit -= gasUsed;
+        //     const { preapproval } = preapprovalRequest;
+        //     preapproval.maxTransactionCount -= 1;
+        //     const { effects } = result.EffectsCert || result;
+        //     const { computationCost, storageCost, storageRebate } =
+        //         effects.effects.gasUsed;
+        //     const gasUsed = computationCost + (storageCost - storageRebate);
+        //     preapproval.totalGasLimit -= gasUsed;
 
-            if (
-                preapprovalRequest.preapproval.maxTransactionCount > 0 &&
-                preapprovalRequest.preapproval.totalGasLimit > gasUsed * 1.5
-            ) {
-                this.storePreapprovalRequest(preapprovalRequest);
-            } else {
-                this.removePreapprovalRequest(preapprovalRequest.id as string);
-            }
+        //     if (
+        //         preapprovalRequest.preapproval.maxTransactionCount > 0 &&
+        //         preapprovalRequest.preapproval.totalGasLimit > gasUsed * 1.5
+        //     ) {
+        //         this.storePreapprovalRequest(preapprovalRequest);
+        //     } else {
+        //         this.removePreapprovalRequest(preapprovalRequest.id as string);
+        //     }
 
-            return { effects, error: null };
-        } catch (e) {
-            return { error: e, effects: null };
-        }
+        //     return { effects, error: null };
+        // } catch (e) {
+        //     return { error: e, effects: null };
+        // }
     }
 
     public async executeTransaction(
         tx: TransactionDataType,
         connection: ContentScriptConnection
     ) {
-        if (tx.type === 'v2' || tx.type === 'move-call') {
-            let moveCall: MoveCallTransaction | undefined;
-            if (tx.type === 'v2') {
-                if (tx.data.kind === 'moveCall') {
-                    moveCall = tx.data.data;
-                }
-            } else {
-                moveCall = tx.data;
-            }
+        throw new Error('executeTransaction not ready yet');
+        // if (tx.type === 'v2' || tx.type === 'move-call') {
+        //     let moveCall: MoveCallTransaction | undefined;
+        //     if (tx.type === 'v2') {
+        //         if (tx.data.kind === 'moveCall') {
+        //             moveCall = tx.data.data;
+        //         }
+        //     } else {
+        //         moveCall = tx.data;
+        //     }
 
-            if (moveCall) {
-                const permissionRequest = await this.findPreapprovalRequest({
-                    moveCall,
-                });
+        //     if (moveCall) {
+        //         const permissionRequest = await this.findPreapprovalRequest({
+        //             moveCall,
+        //         });
 
-                if (permissionRequest) {
-                    let options;
-                    if ('options' in tx) {
-                        options = tx.options;
-                    }
-                    const { effects, error } = await this.tryDirectExecution(
-                        moveCall,
-                        permissionRequest,
-                        options
-                    );
-                    if (effects) {
-                        return effects;
-                    }
+        //         if (permissionRequest) {
+        //             let options;
+        //             if ('options' in tx) {
+        //                 options = tx.options;
+        //             }
+        //             const { effects, error } = await this.tryDirectExecution(
+        //                 moveCall,
+        //                 permissionRequest,
+        //                 options
+        //             );
+        //             if (effects) {
+        //                 return effects;
+        //             }
 
-                    if (error) {
-                        throw new Error(error.message);
-                    }
-                }
-            }
-        }
+        //             if (error) {
+        //                 throw new Error(error.message);
+        //             }
+        //         }
+        //     }
+        // }
 
-        const txRequest = this.createTransactionRequest(
-            tx,
+        // const txRequest = this.createTransactionRequest(
+        //     tx,
+        //     connection.origin,
+        //     connection.originFavIcon
+        // );
+        // await this.storeTransactionRequest(txRequest);
+        // const popUp = openTxWindow(txRequest.id);
+        // const popUpClose = (await popUp.show()).pipe(
+        //     take(1),
+        //     map<number, false>(() => false)
+        // );
+        // const txResponseMessage = this._txResponseMessages.pipe(
+        //     filter((msg) => msg.txID === txRequest.id),
+        //     take(1)
+        // );
+        // return lastValueFrom(
+        //     race(popUpClose, txResponseMessage).pipe(
+        //         take(1),
+        //         map(async (response) => {
+        //             if (response) {
+        //                 const { approved, txResult, tsResultError } = response;
+        //                 if (approved) {
+        //                     txRequest.txResult = txResult;
+        //                     txRequest.txResultError = tsResultError;
+        //                     await this.storeTransactionRequest(txRequest);
+        //                     if (tsResultError) {
+        //                         throw new Error(
+        //                             `Transaction failed with the following error. ${tsResultError}`
+        //                         );
+        //                     }
+        //                     if (!txResult) {
+        //                         throw new Error(`Transaction result is empty`);
+        //                     }
+        //                     return txResult;
+        //                 }
+        //             }
+        //             await this.removeTransactionRequest(txRequest.id);
+        //             throw new Error('Transaction rejected from user');
+        //         })
+        //     )
+        // );
+    }
+
+    public async signMessage(
+        {
+            accountAddress,
+            message,
+        }: Required<Pick<SignMessageRequest, 'args'>>['args'],
+        connection: ContentScriptConnection
+    ): Promise<SuiSignMessageOutput> {
+        const { txResult, txResultError } = await this.requestApproval(
+            { type: 'sign-message', accountAddress, message },
             connection.origin,
             connection.originFavIcon
         );
-        await this.storeTransactionRequest(txRequest);
-        const popUp = openTxWindow(txRequest.id);
-        const popUpClose = (await popUp.show()).pipe(
-            take(1),
-            map<number, false>(() => false)
-        );
-        const txResponseMessage = this._txResponseMessages.pipe(
-            filter((msg) => msg.txID === txRequest.id),
-            take(1)
-        );
-        return lastValueFrom(
-            race(popUpClose, txResponseMessage).pipe(
-                take(1),
-                map(async (response) => {
-                    if (response) {
-                        const { approved, txResult, tsResultError } = response;
-                        if (approved) {
-                            txRequest.txResult = txResult;
-                            txRequest.txResultError = tsResultError;
-                            await this.storeTransactionRequest(txRequest);
-                            if (tsResultError) {
-                                throw new Error(
-                                    `Transaction failed with the following error. ${tsResultError}`
-                                );
-                            }
-                            if (!txResult) {
-                                throw new Error(`Transaction result is empty`);
-                            }
-                            return txResult;
-                        }
-                    }
-                    await this.removeTransactionRequest(txRequest.id);
-                    throw new Error('Transaction rejected from user');
-                })
-            )
-        );
+        if (txResultError) {
+            throw new Error(
+                `Signing message failed with the following error ${txResultError}`
+            );
+        }
+        if (!txResult) {
+            throw new Error('Sign message result is empty');
+        }
+        if (!('messageBytes' in txResult)) {
+            throw new Error('Sign message error, unknown result');
+        }
+        return txResult;
     }
 
     private async executeMoveCallTransactionDirectly({
         tx,
         options,
     }: {
-        tx: MoveCallTransaction;
+        tx: MoveCallCommand;
         options?: SuiSignAndExecuteTransactionOptions;
     }) {
-        const activeAccount = await this.getActiveAccount();
+        throw new Error('executeMoveCallTransactionDirectly not working yet');
+        // const activeAccount = await this.getActiveAccount();
 
-        const callData = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                jsonrpc: '2.0',
-                method: 'sui_moveCall',
-                params: [
-                    activeAccount.address,
-                    tx.packageObjectId,
-                    tx.module,
-                    tx.function,
-                    tx.typeArguments,
-                    tx.arguments,
-                    tx.gasPayment,
-                    tx.gasBudget,
-                ],
-                id: 1,
-            }),
-        };
+        // const callData = {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify({
+        //         jsonrpc: '2.0',
+        //         method: 'sui_moveCall',
+        //         params: [
+        //             activeAccount.address,
+        //             tx.packageObjectId,
+        //             tx.module,
+        //             tx.function,
+        //             tx.typeArguments,
+        //             tx.arguments,
+        //             tx.gasPayment,
+        //             tx.gasBudget,
+        //         ],
+        //         id: 1,
+        //     }),
+        // };
 
-        return this.executeTransactionDirectly({ callData, options });
+        // return this.executeTransactionDirectly({ callData, options });
     }
 
     private async executeTransactionDirectly({
@@ -392,12 +473,12 @@ class Transactions {
     }
 
     public async getTransactionRequests(): Promise<
-        Record<string, TransactionRequest>
+        Record<string, ApprovalRequest>
     > {
-        const requestsString = await getEncrypted(TX_STORE_KEY);
-        return JSON.parse(requestsString || '{}');
+        return (await Browser.storage.local.get({ [TX_STORE_KEY]: {} }))[
+            TX_STORE_KEY
+        ];
     }
-
     public async getPreapprovalRequests(): Promise<
         Record<string, PreapprovalRequest>
     > {
@@ -407,7 +488,7 @@ class Transactions {
 
     public async getTransactionRequest(
         txRequestID: string
-    ): Promise<TransactionRequest | null> {
+    ): Promise<ApprovalRequest | null> {
         return (await this.getTransactionRequests())[txRequestID] || null;
     }
 
@@ -449,12 +530,13 @@ class Transactions {
     }
 
     private createTransactionRequest(
-        tx: TransactionDataType,
+        tx: ApprovalRequest['tx'],
         origin: string,
         originFavIcon?: string
-    ): TransactionRequest {
+    ): ApprovalRequest {
         return {
             id: uuidV4(),
+            approved: null,
             origin,
             originFavIcon,
             createdDate: new Date().toISOString(),
@@ -480,9 +562,9 @@ class Transactions {
     }
 
     private async saveTransactionRequests(
-        txRequests: Record<string, TransactionRequest>
+        txRequests: Record<string, ApprovalRequest>
     ) {
-        await setEncrypted(TX_STORE_KEY, JSON.stringify(txRequests));
+        await Browser.storage.local.set({ [TX_STORE_KEY]: txRequests });
     }
 
     private async savePreapprovalRequests(
@@ -491,13 +573,8 @@ class Transactions {
         await setEncrypted(PREAPPROVAL_KEY, JSON.stringify(requests));
     }
 
-    private async storeTransactionRequest(txRequest: TransactionRequest) {
+    private async storeTransactionRequest(txRequest: ApprovalRequest) {
         const txs = await this.getTransactionRequests();
-
-        for (const id of Object.keys(txs)) {
-            if (txs[id].txResult) delete txs[id];
-        }
-
         txs[txRequest.id] = txRequest;
         await this.saveTransactionRequests(txs);
     }
@@ -526,6 +603,49 @@ class Transactions {
 
         requests[request.id as string] = request;
         await this.savePreapprovalRequests(requests);
+    }
+
+    private async requestApproval(
+        request: ApprovalRequest['tx'],
+        origin: string,
+        favIcon?: string
+    ) {
+        const txRequest = this.createTransactionRequest(
+            request,
+            origin,
+            favIcon
+        );
+        await this.storeTransactionRequest(txRequest);
+        const popUp = openTxWindow(txRequest.id);
+        const popUpClose = (await popUp.show()).pipe(
+            take(1),
+            map<number, false>(() => false)
+        );
+        const txResponseMessage = this._txResponseMessages.pipe(
+            filter((msg) => msg.txID === txRequest.id),
+            take(1)
+        );
+        return lastValueFrom(
+            race(popUpClose, txResponseMessage).pipe(
+                take(1),
+                map(async (response) => {
+                    if (response) {
+                        const { approved, txResult, txSigned, txResultError } =
+                            response;
+                        if (approved) {
+                            txRequest.approved = approved;
+                            txRequest.txResult = txResult;
+                            txRequest.txResultError = txResultError;
+                            txRequest.txSigned = txSigned;
+                            await this.storeTransactionRequest(txRequest);
+                            return txRequest;
+                        }
+                    }
+                    await this.removeTransactionRequest(txRequest.id);
+                    throw new Error('Rejected from user');
+                })
+            )
+        );
     }
 }
 

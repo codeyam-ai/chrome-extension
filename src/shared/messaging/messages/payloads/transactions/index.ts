@@ -3,7 +3,7 @@
 
 export * from './ExecuteTransactionRequest';
 export * from './ExecuteTransactionResponse';
-export * from './TransactionRequest';
+export * from './ApprovalRequest';
 export * from './PreapprovalRequest';
 export * from './PreapprovalResponse';
 export * from './Staking';
