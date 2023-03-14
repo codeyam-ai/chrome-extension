@@ -18,7 +18,7 @@ import {
     type EventsListeners,
     type SuiSignTransactionMethod,
     type SuiSignMessageMethod,
-    SuiSignAndExecuteTransactionInput,
+    type SuiSignAndExecuteTransactionInput,
 } from '@mysten/wallet-standard';
 import mitt, { type Emitter } from 'mitt';
 import { filter, map, type Observable } from 'rxjs';

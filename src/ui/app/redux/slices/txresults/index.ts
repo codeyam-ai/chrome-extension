@@ -201,12 +201,16 @@ export async function getFullTransactionDetails(
 
     const objectIds = txResults.map((itm) => itm?.objectId).filter(notEmpty);
     const objectIDs = Array.from(new Set(objectIds.flat()));
-    const getObjectBatch = await api.instance.fullNode.getObjectBatch(
-        objectIDs
-    );
-    const txObjects = getObjectBatch.filter(
-        ({ status }) => status === 'Exists'
-    );
+    const multiObjects = await api.instance.fullNode.multiGetObjects({
+        ids: objectIDs,
+        options: {
+            showContent: true,
+            showType: true,
+            showDisplay: true,
+            showOwner: true,
+        },
+    });
+    const txObjects = multiObjects.filter(({ status }) => status === 'Exists');
 
     const txnResp: TxResultState[] = await Promise.all(
         txResults.map(async (itm) => {

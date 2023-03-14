@@ -58,7 +58,15 @@ export class NFT {
 
         const { data: bagObjects } = await provider.getDynamicFields(bagId);
         const objectIds = bagObjects.map((bagObject) => bagObject.objectId);
-        const objects = await provider.getObjectBatch(objectIds);
+        const objects = await provider.multiGetObjects({
+            ids: objectIds,
+            options: {
+                showContent: true,
+                showType: true,
+                showDisplay: true,
+                showOwner: true,
+            },
+        });
         return {
             id,
             owner,
@@ -250,10 +258,14 @@ export class NftClient {
         if (ids.length === 0) {
             return new Array<NftRaw>();
         }
-        const objects = await this.provider.getObjectBatch(ids, {
-            showType: true,
-            showContent: true,
-            showOwner: true,
+        const objects = await this.provider.multiGetObjects({
+            ids,
+            options: {
+                showContent: true,
+                showType: true,
+                showDisplay: true,
+                showOwner: true,
+            },
         });
         return this.parseObjects(objects);
     };
@@ -263,10 +275,14 @@ export class NftClient {
         const objectIds = bagObjects.data.map(
             (bagObject) => bagObject.objectId
         );
-        return this.provider.getObjectBatch(objectIds, {
-            showType: true,
-            showContent: true,
-            showOwner: true,
+        return this.provider.multiGetObjects({
+            ids: objectIds,
+            options: {
+                showContent: true,
+                showType: true,
+                showDisplay: true,
+                showOwner: true,
+            },
         });
     };
 
