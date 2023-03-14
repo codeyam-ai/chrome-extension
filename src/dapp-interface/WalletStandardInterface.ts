@@ -234,13 +234,14 @@ export class EthosWallet implements Wallet {
     };
 
     #disconnect: DisconnectMethod = async () => {
-        this.#setAccounts([]);
         await mapToPromise(
             this.#send<DisconnectRequest, DisconnectResponse>({
                 type: 'disconnect-request',
             }),
             (response) => response.success
         );
+        this.#setAccounts([]);
+        this.#events.emit('change', { accounts: this.accounts });
     };
 
     #signTransaction: SuiSignTransactionMethod = async (input) => {
@@ -271,10 +272,7 @@ export class EthosWallet implements Wallet {
     #signAndExecuteTransaction: SuiSignAndExecuteTransactionMethod = async (
         input
     ) => {
-        //Something is off with the types
-        const { transaction, account } = {
-            ...input.transaction,
-        } as SuiSignAndExecuteTransactionInput;
+        const { transaction, account, options } = input;
 
         if (!Transaction.is(transaction)) {
             throw new Error(
@@ -288,7 +286,7 @@ export class EthosWallet implements Wallet {
                 transaction: {
                     type: 'transaction',
                     data: transaction.serialize(),
-                    options: input.options,
+                    options,
                     // account might be undefined if previous version of adapters is used
                     // in that case use the first account address
                     account:

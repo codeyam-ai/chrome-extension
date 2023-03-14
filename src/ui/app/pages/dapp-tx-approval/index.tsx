@@ -186,7 +186,9 @@ export function DappTxApprovalPage() {
             setExplicitError(undefined);
 
             const { effects: transactionEffects, events: transactionEvents } =
-                await signer.dryRunTransaction(signableTransaction);
+                await signer.dryRunTransaction({
+                    transaction: signableTransaction,
+                });
             if (transactionEffects.status.status === 'failure') {
                 if (
                     transactionEffects?.status?.error?.includes(
@@ -709,7 +711,7 @@ async function finishTransaction(
         }
 
         try {
-            txResult = await signer.signAndExecuteTransaction(transaction);
+            txResult = await signer.signAndExecuteTransaction({ transaction });
         } catch (e) {
             tsResultError = (e as Error).message;
         }
