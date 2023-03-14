@@ -154,8 +154,9 @@ export default class ApiProvider {
         if (!this._apiFullNodeProvider) {
             this.setNewJsonRpcProvider();
         }
+
         if (!this._signer || force) {
-            this._signer = new RawSigner(keypair, this._apiFullNodeProvider);
+            this._signer = new RawSigner(keypair, this.instance.fullNode);
         }
         return this._signer;
     }
