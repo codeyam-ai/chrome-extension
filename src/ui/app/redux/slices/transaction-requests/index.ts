@@ -74,7 +74,11 @@ export const respondToTransactionRequest = createAsyncThunk<
             }
 
             try {
-                if (txRequest.tx.type === 'transaction') {
+                if (txRequest.tx.type === 'sign-message') {
+                    txResult = await signer.signMessage({
+                        message: fromB64(txRequest.tx.message),
+                    });
+                } else if (txRequest.tx.type === 'transaction') {
                     const tx = Transaction.from(txRequest.tx.data);
                     if (txRequest.tx.justSign) {
                         // Just a signing request, do not submit

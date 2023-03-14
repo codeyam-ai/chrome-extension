@@ -32,12 +32,12 @@ import { formatDate } from '_helpers';
 import { useAppSelector, useFormatCoin, useMiddleEllipsis } from '_hooks';
 import CopyBody from '_src/ui/app/shared/typography/CopyBody';
 
-import type { TxResultState } from '_redux/slices/txresults';
+// import type { TxResultState } from '_redux/slices/txresults';
 
 import st from './ReceiptCard.module.scss';
 
 type TxResponseProps = {
-    txDigest: TxResultState;
+    txDigest: any;
     transferType?: 'nft' | 'coin' | null;
 };
 

@@ -12,14 +12,14 @@ import Icon, { SuiIcons } from '_components/icon';
 import { formatDate } from '_helpers';
 import { useFormatCoin, useMiddleEllipsis } from '_hooks';
 
-import type { TxResultState } from '_redux/slices/txresults';
+// import type { TxResultState } from '_redux/slices/txresults';
 
 import st from './TransactionsCard.module.scss';
 
 const TRUNCATE_MAX_LENGTH = 8;
 const TRUNCATE_PREFIX_LENGTH = 4;
 
-function TransactionCard({ txn }: { txn: TxResultState }) {
+function TransactionCard({ txn }: { txn: any }) {
     const toAddrStr = useMiddleEllipsis(
         txn.to || '',
         TRUNCATE_MAX_LENGTH,
