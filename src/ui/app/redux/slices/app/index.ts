@@ -11,7 +11,7 @@ import {
     generateActiveNetworkList,
 } from '_app/ApiProvider';
 import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
-import { getTransactionsByAddress } from '_redux/slices/txresults';
+// import { getTransactionsByAddress } from '_redux/slices/txresults';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { AppThunkConfig } from '_store/thunk-extras';
@@ -57,7 +57,7 @@ export const changeRPCNetwork = createAsyncThunk<void, API_ENV, AppThunkConfig>(
         // don't switch if customRPC and empty input //handle default
         dispatch(setApiEnv(networkName));
         api.setNewJsonRpcProvider(networkName, customRPCURL);
-        dispatch(getTransactionsByAddress());
+        // dispatch(getTransactionsByAddress());
         dispatch(fetchAllOwnedAndRequiredObjects());
         // Set persistent network state
         Browser.storage.local.set({ sui_Env: networkName });

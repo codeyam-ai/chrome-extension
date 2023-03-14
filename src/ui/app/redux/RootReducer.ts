@@ -11,14 +11,14 @@ import preapprovalRequests from './slices/preapproval-requests';
 import suiObjects from './slices/sui-objects';
 import transactionRequests from './slices/transaction-requests';
 import transactions from './slices/transactions';
-import txresults from './slices/txresults';
+// import txresults from './slices/txresults';
 
 const rootReducer = combineReducers({
     account,
     app,
     suiObjects,
     transactions,
-    txresults,
+    // txresults,
     permissions,
     forms,
     transactionRequests,
