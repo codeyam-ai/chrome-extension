@@ -43,91 +43,95 @@ const useCategorizedEffects = ({
     const creating = useMemo(() => {
         if (!events) return [];
 
-        return events
-            .filter(
-                (event) =>
-                    event.type === 'newObject' &&
-                    typeof event.content.recipient === 'object' &&
-                    'AddressOwner' in event.content.recipient &&
-                    event.content.recipient.AddressOwner === address
-            )
-            .map((event) => {
-                if (event.type !== 'newObject') return null;
-
-                const objectTypeParts = event.content.objectType.split('::');
-                return {
-                    address: objectTypeParts[0],
-                    module: objectTypeParts[1],
-                    name: objectTypeParts[2].split('<')[0],
-                };
-            })
-            .filter((event) => !!event);
+        return []
+        // return events
+        //     .filter(
+        //         (event) =>
+        //             event.type === 'newObject' &&
+        //             typeof event.content.recipient === 'object' &&
+        //             'AddressOwner' in event.content.recipient &&
+        //             event.content.recipient.AddressOwner === address
+        //     )
+        //     .map((event) => {
+        //         if (event.type !== 'newObject') return null;
+        //
+        //         const objectTypeParts = event.content.objectType.split('::');
+        //         return {
+        //             address: objectTypeParts[0],
+        //             module: objectTypeParts[1],
+        //             name: objectTypeParts[2].split('<')[0],
+        //         };
+        //     })
+        //     .filter((event) => !!event);
     }, [events, address]);
 
     const mutating = useMemo(() => {
         if (!events) return [];
 
-        return events
-            .filter((event) => {
-                return (
-                    event.type === 'mutateObject' //&&
-                    // typeof event.content.owner === 'object' &&
-                    // 'AddressOwner' in event.content.owner &&
-                    // event.content.owner.AddressOwner === address
-                );
-            })
-            .map((event) => {
-                if (event.type !== 'mutateObject') return null;
-
-                const objectTypeParts = event.content.objectType.split('::');
-                return {
-                    address: objectTypeParts[0],
-                    module: objectTypeParts[1],
-                    name: objectTypeParts[2].split('<')[0],
-                };
-            })
-            .filter((mutate) => !!mutate);
+        return [];
+        // return events
+        //     .filter((event) => {
+        //         return (
+        //             event.type === 'mutateObject' //&&
+        //             // typeof event.content.owner === 'object' &&
+        //             // 'AddressOwner' in event.content.owner &&
+        //             // event.content.owner.AddressOwner === address
+        //         );
+        //     })
+        //     .map((event) => {
+        //         if (event.type !== 'mutateObject') return null;
+        //
+        //         const objectTypeParts = event.content.objectType.split('::');
+        //         return {
+        //             address: objectTypeParts[0],
+        //             module: objectTypeParts[1],
+        //             name: objectTypeParts[2].split('<')[0],
+        //         };
+        //     })
+        //     .filter((mutate) => !!mutate);
     }, [events]);
 
     const transferring = useMemo(() => {
         if (!events) return [];
 
-        return events
-            .filter(
-                (event) =>
-                    event.type === 'transferObject' &&
-                    typeof event.content.recipient === 'object' &&
-                    'AddressOwner' in event.content.recipient &&
-                    event.content.recipient.AddressOwner
-            )
-            .map((event) => {
-                if (event.type !== 'transferObject') return null;
-
-                const objectTypeParts = event.content.objectType.split('::');
-                return {
-                    address: objectTypeParts[0],
-                    module: objectTypeParts[1],
-                    name: objectTypeParts[2].split('<')[0],
-                };
-            })
-            .filter((transfer) => !!transfer);
+        return [];
+        // return events
+        //     .filter(
+        //         (event) =>
+        //             event.type === 'transferObject' &&
+        //             typeof event.content.recipient === 'object' &&
+        //             'AddressOwner' in event.content.recipient &&
+        //             event.content.recipient.AddressOwner
+        //     )
+        //     .map((event) => {
+        //         if (event.type !== 'transferObject') return null;
+        //
+        //         const objectTypeParts = event.content.objectType.split('::');
+        //         return {
+        //             address: objectTypeParts[0],
+        //             module: objectTypeParts[1],
+        //             name: objectTypeParts[2].split('<')[0],
+        //         };
+        //     })
+        //     .filter((transfer) => !!transfer);
     }, [events]);
 
     const deleting = useMemo(() => {
         if (!events) return [];
 
-        const deleting = events
-            .filter((event) => event.type === 'deleteObject')
-            .map((event) => {
-                if (event.type !== 'deleteObject') return null;
-
-                return {
-                    name: event.content.objectId,
-                };
-            })
-            .filter((d) => !!d);
-
-        return deleting;
+        return [];
+        // const deleting = events
+        //     .filter((event) => event.type === 'deleteObject')
+        //     .map((event) => {
+        //         if (event.type !== 'deleteObject') return null;
+        //
+        //         return {
+        //             name: event.content.objectId,
+        //         };
+        //     })
+        //     .filter((d) => !!d);
+        //
+        // return deleting;
     }, [events]);
 
     const coinChanges = useMemo(() => {
@@ -135,22 +139,23 @@ const useCategorizedEffects = ({
 
         if (!events) return zero;
 
-        const coinBalanceChangeEvents = events.filter(
-            (e) =>
-                e.type === 'coinBalanceChange' &&
-                typeof e.content.owner === 'object' &&
-                'AddressOwner' in e.content.owner &&
-                e.content.owner.AddressOwner === address
-        );
-
-        return coinBalanceChangeEvents.reduce((totals, e) => {
-            if (e.type !== 'coinBalanceChange') return totals;
-
-            const { coinType, amount } = e.content;
-            if (!totals[coinType]) totals[coinType] = 0;
-            totals[coinType] += amount * -1;
-            return totals;
-        }, zero);
+        return zero;
+        // const coinBalanceChangeEvents = events.filter(
+        //     (e) =>
+        //         e.type === 'coinBalanceChange' &&
+        //         typeof e.content.owner === 'object' &&
+        //         'AddressOwner' in e.content.owner &&
+        //         e.content.owner.AddressOwner === address
+        // );
+        //
+        // return coinBalanceChangeEvents.reduce((totals, e) => {
+        //     if (e.type !== 'coinBalanceChange') return totals;
+        //
+        //     const { coinType, amount } = e.content;
+        //     if (!totals[coinType]) totals[coinType] = 0;
+        //     totals[coinType] += amount * -1;
+        //     return totals;
+        // }, zero);
     }, [events, address]);
 
     return {

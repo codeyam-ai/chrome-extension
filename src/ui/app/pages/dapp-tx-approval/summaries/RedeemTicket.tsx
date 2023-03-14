@@ -8,7 +8,7 @@ import Body from '_src/ui/app/shared/typography/Body';
 import type { SummaryGeneratorArgs } from './standard';
 
 const RedeemTicket = ({
-    txInfo,
+    // txInfo,
     formattedGas,
     gasSymbol,
     gasDollars,
@@ -19,35 +19,35 @@ const RedeemTicket = ({
     const [count, setCount] = useState<number | undefined>();
     const [coverImage, setCoverImage] = useState<string | undefined>();
 
-    useEffect(() => {
-        const getTicket = async () => {
-            if (
-                typeof txInfo === 'object' &&
-                'data' in txInfo &&
-                'packageObjectId' in txInfo.data &&
-                typeof txInfo.data.arguments[1] === 'string'
-            ) {
-                const ticket = await api.instance.fullNode.getObject({
-                    id: txInfo.data.arguments[1],
-                    options: {
-                        showContent: true,
-                        showOwner: true,
-                        showType: true,
-                    },
-                });
-
-                const fields = get(ticket, 'details.data.fields');
-                if (!fields) return;
-
-                const { count, url: coverImage } = fields;
-
-                setCount(parseInt(count));
-                setCoverImage(coverImage);
-            }
-        };
-
-        getTicket();
-    }, [txInfo]);
+    // useEffect(() => {
+    //     const getTicket = async () => {
+    //         if (
+    //             typeof txInfo === 'object' &&
+    //             'data' in txInfo &&
+    //             'packageObjectId' in txInfo.data &&
+    //             typeof txInfo.data.arguments[1] === 'string'
+    //         ) {
+    //             const ticket = await api.instance.fullNode.getObject({
+    //                 id: txInfo.data.arguments[1],
+    //                 options: {
+    //                     showContent: true,
+    //                     showOwner: true,
+    //                     showType: true,
+    //                 },
+    //             });
+    //
+    //             const fields = get(ticket, 'details.data.fields');
+    //             if (!fields) return;
+    //
+    //             const { count, url: coverImage } = fields;
+    //
+    //             setCount(parseInt(count));
+    //             setCoverImage(coverImage);
+    //         }
+    //     };
+    //
+    //     getTicket();
+    // }, [txInfo]);
 
     return (
         <div className="bg-[#F3F9FF] dark:bg-[#1A1C26] p-6 flex flex-col gap-6 rounded-2xl text-black dark:text-white">

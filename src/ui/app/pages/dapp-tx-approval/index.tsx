@@ -102,7 +102,7 @@ export function DappTxApprovalPage() {
     );
     const txRequest = useAppSelector(txRequestSelector);
     const signableTransaction = useMemo(() => {
-        if (!txRequest) return null;
+        if (!txRequest || !('data' in txRequest.tx) ) return null;
         return Transaction.from(txRequest.tx.data);
     }, [txRequest]);
 
@@ -277,7 +277,8 @@ export function DappTxApprovalPage() {
     }, [closeWindow, done]);
 
     const content: TabSections = useMemo(() => {
-        const transaction = Transaction.from(txRequest?.tx.data);
+        // const transaction = Transaction.from(txRequest?.tx.data);
+        const transaction: Transaction = new Transaction();
 
         const data = {
             address,
@@ -416,48 +417,48 @@ export function DappTxApprovalPage() {
                     : null,
                 details: anyAssetEffects
                     ? [
-                          {
-                              label: 'Creating',
-                              content: `${creating.length} Assets`,
-                              detail: creating.map((c, i) => (
-                                  <CopyAsset
-                                      key={`asset-creating-${i}`}
-                                      {...c}
-                                  />
-                              )),
-                          },
-                          {
-                              label: 'Modifying',
-                              content: `${mutating.length} Assets`,
-                              detail: mutating.map((m, i) => (
-                                  <CopyAsset
-                                      key={`asset-modifying-${i}`}
-                                      {...m}
-                                  />
-                              )),
-                          },
-                          {
-                              label: 'Transferring',
-                              content: `${transferring.length} Assets`,
-                              detail: transferring.map((t, i) => (
-                                  <CopyAsset
-                                      key={`asset-transferring-${i}`}
-                                      {...t}
-                                  />
-                              )),
-                          },
-                          {
-                              label: 'Deleting',
-                              content: `${deleting.length} Assets`,
-                              detail: deleting.map((d, i) => (
-                                  <CopyBody
-                                      key={`asset-deleting-${i}`}
-                                      txt={d?.name || ''}
-                                  >
-                                      {truncateMiddle(d?.name)}
-                                  </CopyBody>
-                              )),
-                          },
+                          // {
+                          //     label: 'Creating',
+                          //     content: `${creating.length} Assets`,
+                          //     detail: creating.map((c, i) => (
+                          //         <CopyAsset
+                          //             key={`asset-creating-${i}`}
+                          //             {...c}
+                          //         />
+                          //     )),
+                          // },
+                          // {
+                          //     label: 'Modifying',
+                          //     content: `${mutating.length} Assets`,
+                          //     detail: mutating.map((m, i) => (
+                          //         <CopyAsset
+                          //             key={`asset-modifying-${i}`}
+                          //             {...m}
+                          //         />
+                          //     )),
+                          // },
+                          // {
+                          //     label: 'Transferring',
+                          //     content: `${transferring.length} Assets`,
+                          //     detail: transferring.map((t, i) => (
+                          //         <CopyAsset
+                          //             key={`asset-transferring-${i}`}
+                          //             {...t}
+                          //         />
+                          //     )),
+                          // },
+                          // {
+                          //     label: 'Deleting',
+                          //     content: `${deleting.length} Assets`,
+                          //     detail: deleting.map((d, i) => (
+                          //         <CopyBody
+                          //             key={`asset-deleting-${i}`}
+                          //             txt={d?.name || ''}
+                          //         >
+                          //             {truncateMiddle(d?.name)}
+                          //         </CopyBody>
+                          //     )),
+                          // },
                           {
                               label: 'Balances',
                               content: `${
