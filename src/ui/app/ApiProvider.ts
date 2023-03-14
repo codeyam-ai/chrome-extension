@@ -172,6 +172,7 @@ export default class ApiProvider {
         if (!this._apiFullNodeProvider) {
             this.setNewJsonRpcProvider();
         }
-        return new EthosSigner(address, accessToken, this._apiFullNodeProvider);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return new EthosSigner(address, accessToken, this._apiFullNodeProvider!);
     }
 }

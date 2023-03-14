@@ -1,5 +1,5 @@
 import { toB64 } from '@mysten/bcs';
-import { SignerWithProvider } from '@mysten/sui.js';
+import { SignerWithProvider} from '@mysten/sui.js';
 
 import { deleteEncrypted } from '../storagex/store';
 import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
@@ -7,8 +7,7 @@ import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
 import type {
     SerializedSignature,
     SuiAddress,
-    Provider,
-    TxnDataSerializer,
+    JsonRpcProvider
 } from '@mysten/sui.js';
 
 export class EthosSigner extends SignerWithProvider {
@@ -18,10 +17,9 @@ export class EthosSigner extends SignerWithProvider {
     constructor(
         address: SuiAddress,
         accessToken: string,
-        provider?: Provider,
-        serializer?: TxnDataSerializer
+        provider: JsonRpcProvider
     ) {
-        super(provider, serializer);
+        super(provider);
         this.address = address;
         this.accessToken = accessToken;
     }
@@ -55,7 +53,7 @@ export class EthosSigner extends SignerWithProvider {
         return serializedSignature;
     }
 
-    connect(provider: Provider): SignerWithProvider {
+    connect(provider: JsonRpcProvider): SignerWithProvider {
         return new EthosSigner(this.address, this.accessToken, provider);
     }
 }
