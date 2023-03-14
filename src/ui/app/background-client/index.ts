@@ -5,25 +5,20 @@ import { lastValueFrom, take } from 'rxjs';
 
 import { createMessage } from '_messages';
 import { PortStream } from '_messaging/PortStream';
-import { isGetSignMessageRequestsResponse } from '_payloads/messages/ui/GetSignMessageRequestsResponse';
 import { isPermissionRequests } from '_payloads/permissions';
 import { isGetTransactionRequestsResponse } from '_payloads/transactions/ui/GetTransactionRequestsResponse';
 import { setPermissions } from '_redux/slices/permissions';
 import { setPreapprovalRequests } from '_redux/slices/preapproval-requests';
-import { setSignMessageRequests } from '_redux/slices/sign-message-requests';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
 import { isGetPreapprovalResponse } from '_src/shared/messaging/messages/payloads/transactions/ui/GetPreapprovalResponse';
 
 import type {
-    SerializedSignature,
     SignedMessage,
     SignedTransaction,
     SuiAddress,
     SuiTransactionResponse,
 } from '@mysten/sui.js';
 import type { Message } from '_messages';
-import type { GetSignMessageRequests } from '_payloads/messages/ui/GetSignMessageRequests';
-import type { SignMessageRequestResponse } from '_payloads/messages/ui/SignMessageRequestResponse';
 import type {
     GetPermissionRequests,
     PermissionResponse,
@@ -51,7 +46,6 @@ export class BackgroundClient {
             this.sendGetPermissionRequests(),
             this.sendGetTransactionRequests(),
             this.sendGetPreapprovalRequests(),
-            this.sendGetSignMessageRequests(),
         ]).then(() => undefined);
     }
 
@@ -101,23 +95,6 @@ export class BackgroundClient {
         );
     }
 
-    public async sendSignMessageRequestResponse(
-        signMessageRequestID: string,
-        approved: boolean,
-        signature: SerializedSignature | undefined,
-        error: string | undefined
-    ) {
-        this.sendMessage(
-            createMessage<SignMessageRequestResponse>({
-                type: 'sign-message-request-response',
-                signMessageRequestID,
-                approved,
-                signature,
-                error,
-            })
-        );
-    }
-
     public async sendPreapprovalResponse(
         preapprovalResponseID: string,
         approved: boolean,
@@ -138,16 +115,6 @@ export class BackgroundClient {
             this.sendMessage(
                 createMessage<GetTransactionRequests>({
                     type: 'get-transaction-requests',
-                })
-            ).pipe(take(1))
-        );
-    }
-
-    public async sendGetSignMessageRequests() {
-        return lastValueFrom(
-            this.sendMessage(
-                createMessage<GetSignMessageRequests>({
-                    type: 'get-sign-message-requests',
                 })
             ).pipe(take(1))
         );
@@ -175,8 +142,6 @@ export class BackgroundClient {
             this._dispatch(setPermissions(payload.permissions));
         } else if (isGetTransactionRequestsResponse(payload)) {
             this._dispatch(setTransactionRequests(payload.txRequests));
-        } else if (isGetSignMessageRequestsResponse(payload)) {
-            this._dispatch(setSignMessageRequests(payload.signMessageRequests));
         } else if (isGetPreapprovalResponse(payload)) {
             this._dispatch(setPreapprovalRequests(payload.preapprovalRequests));
         }

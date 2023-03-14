@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Connection } from './Connection';
-import Messages from '../Messages';
 import { createMessage } from '_messages';
 import {
     isGetPermissionRequests,
@@ -13,8 +12,6 @@ import { isGetTransactionRequests } from '_payloads/transactions/ui/GetTransacti
 import { isTransactionRequestResponse } from '_payloads/transactions/ui/TransactionRequestResponse';
 import Permissions from '_src/background/Permissions';
 import Transactions from '_src/background/Transactions';
-import { isGetSignMessageRequests } from '_src/shared/messaging/messages/payloads/messages/ui/GetSignMessageRequests';
-import { isSignMessageRequestResponse } from '_src/shared/messaging/messages/payloads/messages/ui/SignMessageRequestResponse';
 import { isGetPreapprovalRequests } from '_src/shared/messaging/messages/payloads/transactions/ui/GetPreapprovalRequests';
 
 import type { Message } from '_messages';
@@ -22,8 +19,6 @@ import type { PortChannelName } from '_messaging/PortChannelName';
 import type { Permission, PermissionRequests } from '_payloads/permissions';
 import type { PreapprovalRequest } from '_payloads/transactions';
 import type { GetTransactionRequestsResponse } from '_payloads/transactions/ui/GetTransactionRequestsResponse';
-import type { SignMessageRequest } from '_src/shared/messaging/messages/payloads/messages/SignMessageRequest';
-import type { GetSignMessageRequestsResponse } from '_src/shared/messaging/messages/payloads/messages/ui/GetSignMessageRequestsResponse';
 import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions/ApprovalRequest';
 import type { GetPreapprovalResponse } from '_src/shared/messaging/messages/payloads/transactions/ui/GetPreapprovalResponse';
 
@@ -45,13 +40,6 @@ export class UiConnection extends Connection {
         } else if (isGetTransactionRequests(payload)) {
             this.sendTransactionRequests(
                 Object.values(await Transactions.getTransactionRequests()),
-                id
-            );
-        } else if (isSignMessageRequestResponse(payload)) {
-            Messages.handleMessage(payload);
-        } else if (isGetSignMessageRequests(payload)) {
-            this.sendSignMessageRequests(
-                Object.values(await Messages.getSignMessageRequests()),
                 id
             );
         } else if (isPreapprovalResponse(payload)) {
@@ -85,21 +73,6 @@ export class UiConnection extends Connection {
                 {
                     type: 'get-transaction-requests-response',
                     txRequests,
-                },
-                requestID
-            )
-        );
-    }
-
-    private sendSignMessageRequests(
-        signMessageRequests: SignMessageRequest[],
-        requestID: string
-    ) {
-        this.send(
-            createMessage<GetSignMessageRequestsResponse>(
-                {
-                    type: 'get-sign-message-request-response',
-                    signMessageRequests,
                 },
                 requestID
             )
