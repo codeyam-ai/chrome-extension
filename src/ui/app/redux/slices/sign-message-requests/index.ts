@@ -126,5 +126,5 @@ export const { setSignMessageRequests } = slice.actions;
 
 export const signMessageRequestsSelectors =
     signMessageRequestsAdapter.getSelectors(
-        (state: RootState) => state.signMessageRequests
+        (state: RootState) => state.transactionRequests
     );

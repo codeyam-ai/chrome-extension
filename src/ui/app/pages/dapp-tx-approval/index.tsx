@@ -52,7 +52,7 @@ import type {
     TransactionEffects,
     TransactionEvents,
 } from '@mysten/sui.js';
-import type { TransactionRequest } from '_payloads/transactions';
+import type { ApprovalRequest } from '_payloads/transactions';
 import type { RootState } from '_redux/RootReducer';
 import type { ReactElement, ReactNode } from 'react';
 

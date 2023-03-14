@@ -16,6 +16,8 @@ import { isGetPreapprovalResponse } from '_src/shared/messaging/messages/payload
 
 import type {
     SerializedSignature,
+    SignedMessage,
+    SignedTransaction,
     SuiAddress,
     SuiTransactionResponse,
 } from '@mysten/sui.js';
@@ -80,11 +82,12 @@ export class BackgroundClient {
         );
     }
 
-    public async sendTransactionRequestResponse(
+    public sendTransactionRequestResponse(
         txID: string,
         approved: boolean,
-        txResult: SuiTransactionResponse | undefined,
-        tsResultError: string | undefined
+        txResult?: SuiTransactionResponse | SignedMessage,
+        txResultError?: string,
+        txSigned?: SignedTransaction
     ) {
         this.sendMessage(
             createMessage<TransactionRequestResponse>({
@@ -92,7 +95,8 @@ export class BackgroundClient {
                 approved,
                 txID,
                 txResult,
-                tsResultError,
+                txResultError,
+                txSigned,
             })
         );
     }

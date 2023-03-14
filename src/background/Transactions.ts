@@ -51,11 +51,20 @@ import type { AccountInfo } from '_src/ui/app/KeypairVault';
 const TX_STORE_KEY = 'transactions';
 const PREAPPROVAL_KEY = 'preapprovals';
 
-function openTxWindow(txRequestID: string) {
+function openTxWindow(txRequestId: string) {
     return new Window({
         url:
             Browser.runtime.getURL('ui.html') +
-            `#/tx-approval/${encodeURIComponent(txRequestID)}`,
+            `#/tx-approval/${encodeURIComponent(txRequestId)}`,
+        height: 720,
+    });
+}
+
+function openSignMessageWindow(txRequestId: string) {
+    return new Window({
+        url:
+            Browser.runtime.getURL('ui.html') +
+            `#/sign-message-approval/${encodeURIComponent(txRequestId)}`,
         height: 720,
     });
 }
@@ -93,6 +102,7 @@ class Transactions {
                     data: sign.transaction,
                     account: sign.account,
                 },
+                false,
                 connection.origin,
                 connection.originFavIcon
             );
@@ -101,16 +111,16 @@ class Transactions {
                 `Transaction failed with the following error. ${txResultError}`
             );
         }
-        if (sign && !txSigned) {
-            throw new Error('Transaction signature is empty');
-        }
         if (tx) {
             if (!txResult || !('digest' in txResult)) {
                 throw new Error(`Transaction result is empty ${txResult}`);
             }
             return txResult;
         }
-        return txSigned!;
+        if (!txSigned) {
+            throw new Error('Transaction signature is empty');
+        }
+        return txSigned;
     }
 
     private async findPreapprovalRequest({
@@ -280,6 +290,7 @@ class Transactions {
     ): Promise<SuiSignMessageOutput> {
         const { txResult, txResultError } = await this.requestApproval(
             { type: 'sign-message', accountAddress, message },
+            true,
             connection.origin,
             connection.originFavIcon
         );
@@ -607,6 +618,7 @@ class Transactions {
 
     private async requestApproval(
         request: ApprovalRequest['tx'],
+        sign: boolean,
         origin: string,
         favIcon?: string
     ) {
@@ -616,7 +628,9 @@ class Transactions {
             favIcon
         );
         await this.storeTransactionRequest(txRequest);
-        const popUp = openTxWindow(txRequest.id);
+        const popUp = sign
+            ? openSignMessageWindow(txRequest.id)
+            : openTxWindow(txRequest.id);
         const popUpClose = (await popUp.show()).pipe(
             take(1),
             map<number, false>(() => false)
