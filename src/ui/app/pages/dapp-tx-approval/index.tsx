@@ -300,33 +300,33 @@ export function DappTxApprovalPage() {
             totalDollars,
         };
 
-        let summary;
-        switch (summaryKey) {
-            case 'redeem-ticket':
-                summary = [
-                    <summaries.RedeemTicket
-                        key="redeem-ticket-summary"
-                        {...data}
-                    />,
-                ];
-                break;
-            case 'capy-vote':
-                summary = [
-                    <summaries.CapyVote key="capy-vote-summary" {...data} />,
-                ];
-                break;
-            case 'capy-nominate':
-                summary = [
-                    <summaries.CapyNominate
-                        key="capy-nominate-summary"
-                        {...data}
-                    />,
-                ];
-                break;
-            default:
-                summary = summaries.standard(data);
-        }
-
+        // let summary;
+        // switch (summaryKey) {
+        //     case 'redeem-ticket':
+        //         summary = [
+        //             <summaries.RedeemTicket
+        //                 key="redeem-ticket-summary"
+        //                 {...data}
+        //             />,
+        //         ];
+        //         break;
+        //     case 'capy-vote':
+        //         summary = [
+        //             <summaries.CapyVote key="capy-vote-summary" {...data} />,
+        //         ];
+        //         break;
+        //     case 'capy-nominate':
+        //         summary = [
+        //             <summaries.CapyNominate
+        //                 key="capy-nominate-summary"
+        //                 {...data}
+        //             />,
+        //         ];
+        //         break;
+        //     default:
+        //         summary = summaries.standard(data);
+        // }
+        const summary = summaries.standard(data);
         const anyPermissionsRequested =
             reading.length > 0 ||
             mutating.length > 0 ||
