@@ -212,7 +212,9 @@ export const sendTokens = createAsyncThunk<
             );
         }
 
-        const response = await signer.signAndExecuteTransaction(transaction);
+        const response = await signer.signAndExecuteTransaction({
+            transaction: transaction,
+        });
 
         // TODO: better way to sync latest objects
         dispatch(fetchAllOwnedAndRequiredObjects());
@@ -222,7 +224,7 @@ export const sendTokens = createAsyncThunk<
 
 export const executeMoveCall = createAsyncThunk<
     TransactionResult,
-    MoveCallTransaction,
+    Transaction,
     AppThunkConfig
 >(
     'sui-objects/execute-move-call',
@@ -245,8 +247,7 @@ export const executeMoveCall = createAsyncThunk<
         }
 
         const response = await signer.signAndExecuteTransaction({
-            kind: 'moveCall',
-            data: moveCall,
+            transaction: moveCall,
         });
 
         return response;

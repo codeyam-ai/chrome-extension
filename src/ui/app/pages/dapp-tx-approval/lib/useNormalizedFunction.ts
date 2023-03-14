@@ -25,9 +25,11 @@ const useNormalizedFunction = (txRequest: TransactionRequest | null) => {
 
             const normalizedFunction =
                 await thunkExtras.api.instance.fullNode.getNormalizedMoveFunction(
-                    packageObjectId,
-                    module,
-                    func
+                    {
+                        package: packageObjectId,
+                        module: module,
+                        function: func,
+                    }
                 );
             setNormalizedFunction(normalizedFunction);
         };
