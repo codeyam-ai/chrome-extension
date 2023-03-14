@@ -19,6 +19,8 @@ import {
     type SuiSignTransactionMethod,
     type SuiSignMessageMethod,
     type SuiSignAndExecuteTransactionInput,
+    type DisconnectFeature,
+    type DisconnectMethod,
 } from '@mysten/wallet-standard';
 import mitt, { type Emitter } from 'mitt';
 import { filter, map, type Observable } from 'rxjs';
@@ -50,6 +52,8 @@ import type {
     SignTransactionResponse,
 } from '_payloads/transactions';
 import type { NetworkEnvType } from '_src/background/NetworkEnv';
+import type { DisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
+import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 
 type WalletEventsMap = {
     [E in keyof EventsListeners]: Parameters<EventsListeners[E]>[0];
@@ -103,11 +107,16 @@ export class EthosWallet implements Wallet {
     get features(): ConnectFeature &
         EventsFeature &
         SuiFeatures &
-        SuiWalletStakeFeature {
+        SuiWalletStakeFeature &
+        DisconnectFeature {
         return {
             'standard:connect': {
                 version: '1.0.0',
                 connect: this.#connect,
+            },
+            'standard:disconnect': {
+                version: '1.0.0',
+                disconnect: this.#disconnect,
             },
             'standard:events': {
                 version: '1.0.0',
@@ -222,6 +231,16 @@ export class EthosWallet implements Wallet {
         await this.#connected();
 
         return { accounts: this.accounts };
+    };
+
+    #disconnect: DisconnectMethod = async () => {
+        this.#setAccounts([]);
+        await mapToPromise(
+            this.#send<DisconnectRequest, DisconnectResponse>({
+                type: 'disconnect-request',
+            }),
+            (response) => response.success
+        );
     };
 
     #signTransaction: SuiSignTransactionMethod = async (input) => {
