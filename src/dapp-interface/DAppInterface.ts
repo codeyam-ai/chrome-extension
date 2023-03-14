@@ -132,10 +132,7 @@ export class DAppInterface {
         return mapToPromise(
             this.send<ExecuteTransactionRequest, ExecuteTransactionResponse>({
                 type: 'execute-transaction-request',
-                transaction: {
-                    type: 'v2',
-                    data: transaction,
-                },
+                transaction: transaction,
             }),
             (response) => response.result
         );
@@ -145,10 +142,7 @@ export class DAppInterface {
         return mapToPromise(
             this.send<ExecuteTransactionRequest, ExecuteTransactionResponse>({
                 type: 'execute-transaction-request',
-                transaction: {
-                    type: 'move-call',
-                    data: transaction,
-                },
+                transaction: transaction,
             }),
             (response) => response.result
         );
