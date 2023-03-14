@@ -182,7 +182,9 @@ function TransferCoinAmountPage() {
                 );
             }
 
-            const signedTx = await signer.devInspectTransaction(transaction);
+            const signedTx = await signer.devInspectTransaction({
+                transaction,
+            });
 
             const { computationCost, storageCost, storageRebate } =
                 signedTx.effects.gasUsed;
