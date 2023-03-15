@@ -13,27 +13,29 @@ jest.spyOn(window, 'resizeTo').mockImplementation();
 
 jest.mock('animate.css/animate.min.css', () => '');
 jest.mock('react-toastify/dist/ReactToastify.css', () => '');
-jest.mock('_shared/cryptography/mnemonics', () => ({
-    getKeypairFromMnemonics: jest.fn((_mnemonic, index) => {
-        const accountInfo = accountInfos.find(
-            (accountInfo) => accountInfo.index === index
-        )
-        return {
-            getPublicKey: jest.fn(() => ({
-                toSuiAddress: jest.fn(() => accountInfo?.address)
-            })),
-            export: jest.fn(() => ({
-                privateKey: toB64(
-                    Uint8Array.from(
-                        (accountInfo?.privateKey || '').split(',').map((s) => parseInt(s))
+jest.mock('_shared/cryptography/mnemonics', () => {
+    const mnemonics = jest.requireActual('_shared/cryptography/mnemonics');
+    return {
+        ...mnemonics,
+        getKeypairFromMnemonics: jest.fn((_mnemonic, index) => {
+            const accountInfo = accountInfos.find(
+                (accountInfo) => accountInfo.index === index
+            )
+            return {
+                getPublicKey: jest.fn(() => ({
+                    toSuiAddress: jest.fn(() => accountInfo?.address)
+                })),
+                export: jest.fn(() => ({
+                    privateKey: toB64(
+                        Uint8Array.from(
+                            (accountInfo?.privateKey || '').split(',').map((s) => parseInt(s))
+                        )
                     )
-                )
-            }))
-        }
-    }),
-    normalizeMnemonics: jest.fn((mnemonic) => mnemonic),
-    validateMnemonics: jest.fn(() => true)
-}))
+                }))
+            }
+        }),
+    }
+})
 
 beforeEach(() => clearLocalStorage());
 

@@ -1,4 +1,4 @@
-import { fromB64, toB64, toHEX, fromHEX } from '@mysten/bcs';
+import { fromB64, toHEX } from '@mysten/bcs';
 import { useCallback, useEffect, useState } from 'react';
 
 import { secureApiCall } from '../../../../../../../shared/utils/simpleApiCall';
@@ -9,7 +9,6 @@ import Alert from '_src/ui/app/shared/feedback/Alert';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { ChangeEventHandler } from 'react';
-import { Ed25519Keypair } from '@mysten/sui.js';
 
 export default function ViewPrivateKeyPage() {
     const [hasConfirmed, setHasConfirmed] = useState(false);
