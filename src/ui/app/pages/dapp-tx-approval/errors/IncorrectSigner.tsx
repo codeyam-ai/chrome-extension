@@ -11,13 +11,13 @@ import Button from '_src/ui/app/shared/buttons/Button';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 import Body from '_src/ui/app/shared/typography/Body';
 
-import type { TransactionRequest } from '_src/shared/messaging/messages/payloads/transactions';
+import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
 
 type IncorrectSignerProps = {
     correctAddress?: string;
     errorMessage?: string;
     txID?: string;
-    txRequest?: TransactionRequest | null;
+    txRequest?: ApprovalRequest | null;
 };
 
 const IncorrectSigner = ({
