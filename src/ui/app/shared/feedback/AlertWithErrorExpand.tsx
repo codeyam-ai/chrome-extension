@@ -18,8 +18,9 @@ import TextArea from '../inputs/TextArea';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import EthosLink from '../typography/EthosLink';
-import { type TransactionRequest } from '_src/shared/messaging/messages/payloads/transactions';
 import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
+
+import type { ApprovalRequest } from '_payloads/transactions/ApprovalRequest';
 
 const extractTextFromHTML = (html: ReactElement): string => {
     const div = document.createElement('div');
@@ -32,7 +33,7 @@ const extractTextFromHTML = (html: ReactElement): string => {
 type TxInfo = {
     dAppUrl: string;
     txId: string;
-    txRequest: TransactionRequest | null;
+    txRequest: ApprovalRequest | null;
 };
 
 interface AlertWithErrorExpandProps {
