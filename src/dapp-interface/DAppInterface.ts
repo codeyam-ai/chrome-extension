@@ -1,8 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { toB64 } from '@mysten/bcs';
-import { fromSerializedSignature } from '@mysten/sui.js';
 import { filter, map } from 'rxjs';
 
 import { mapToPromise } from './utils';
@@ -13,16 +11,10 @@ import { type GetAccountCustomizations } from '_src/shared/messaging/messages/pa
 import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
 import { type AccountCustomization } from '_src/types/AccountCustomization';
 
-import type {
-    SuiAddress,
-    MoveCallTransaction,
-    SignableTransaction,
-} from '@mysten/sui.js';
+import type { SuiAddress } from '@mysten/sui.js';
 import type { Payload } from '_payloads';
 import type { GetAccount } from '_payloads/account/GetAccount';
 import type { GetAccountResponse } from '_payloads/account/GetAccountResponse';
-import type { ExecuteSignMessageRequest } from '_payloads/messages/ExecuteSignMessageRequest';
-import type { ExecuteSignMessageResponse } from '_payloads/messages/ExecuteSignMessageResponse';
 import type {
     PermissionType,
     HasPermissionsRequest,
@@ -33,8 +25,6 @@ import type {
 import type {
     PreapprovalRequest,
     PreapprovalResponse,
-    ExecuteTransactionRequest,
-    ExecuteTransactionResponse,
 } from '_payloads/transactions';
 import type { GetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
 import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
@@ -125,69 +115,6 @@ export class DAppInterface {
                 preapproval,
             }),
             (response) => response
-        );
-    }
-
-    public signAndExecuteTransaction(transaction: SignableTransaction) {
-        return mapToPromise(
-            this.send<ExecuteTransactionRequest, ExecuteTransactionResponse>({
-                type: 'execute-transaction-request',
-                transaction: transaction,
-            }),
-            (response) => response.result
-        );
-    }
-
-    public executeMoveCall(transaction: MoveCallTransaction) {
-        return mapToPromise(
-            this.send<ExecuteTransactionRequest, ExecuteTransactionResponse>({
-                type: 'execute-transaction-request',
-                transaction: transaction,
-            }),
-            (response) => response.result
-        );
-    }
-
-    public executeSerializedMoveCall(tx: string | Uint8Array) {
-        const data =
-            typeof tx === 'string' ? tx : Buffer.from(tx).toString('base64');
-        return mapToPromise(
-            this.send<ExecuteTransactionRequest, ExecuteTransactionResponse>({
-                type: 'execute-transaction-request',
-                transaction: {
-                    type: 'serialized-move-call',
-                    data,
-                },
-            }),
-            (response) => response.result
-        );
-    }
-
-    public signMessage(message: Uint8Array | string) {
-        let messageData;
-        let messageString;
-
-        // convert utf8 string to Uint8Array
-        if (typeof message === 'string') {
-            messageString = message;
-            message = new Uint8Array(Buffer.from(message, 'utf8'));
-        }
-
-        // convert Uint8Array to base64 string
-        if (message instanceof Uint8Array) {
-            messageData = toB64(message);
-        }
-
-        return mapToPromise(
-            this.send<ExecuteSignMessageRequest, ExecuteSignMessageResponse>({
-                type: 'execute-sign-message-request',
-                messageData,
-                messageString,
-            }),
-            (response) =>
-                response.signature
-                    ? fromSerializedSignature(response.signature)
-                    : undefined
         );
     }
 

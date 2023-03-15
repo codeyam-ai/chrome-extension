@@ -11,7 +11,7 @@ import { renderApp } from '_src/test/utils/react-rendering';
 import { createStore } from '_store';
 import { thunkExtras } from '_store/thunk-extras';
 
-import type { TransactionRequest } from '_payloads/transactions';
+import type { ApprovalRequest } from '_payloads/transactions';
 import type { AppStore } from '_store';
 
 describe('The Transaction Approval popup', () => {
@@ -76,7 +76,7 @@ describe('The Transaction Approval popup', () => {
 
     function simulateReduxStateWithTransaction() {
         const txRequestId = '95ae4a0d-0b7b-478b-ab70-bc3fe291540e';
-        const txRequest: TransactionRequest = {
+        const txRequest: ApprovalRequest = {
             id: txRequestId,
             origin: 'https://ethoswallet.xyz',
             originFavIcon: 'https://ethoswallet.xyz/favicon.ico',

@@ -51,7 +51,7 @@ export const respondToPreapprovalRequest = createAsyncThunk<
 
         if (!preapprovalRequest) {
             throw new Error(
-                `TransactionRequest ${preapprovalRequestID} not found`
+                `ApprovalRequest ${preapprovalRequestID} not found`
             );
         }
 

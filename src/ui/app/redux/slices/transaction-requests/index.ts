@@ -48,7 +48,7 @@ export const respondToTransactionRequest = createAsyncThunk<
         const state = getState();
         const txRequest = txRequestsSelectors.selectById(state, txRequestID);
         if (!txRequest) {
-            throw new Error(`TransactionRequest ${txRequestID} not found`);
+            throw new Error(`ApprovalRequest ${txRequestID} not found`);
         }
 
         let txSigned: SignedTransaction | undefined = undefined;
