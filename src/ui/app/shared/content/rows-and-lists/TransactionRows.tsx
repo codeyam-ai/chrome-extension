@@ -9,10 +9,15 @@ import TransactionRow from './TransactionRow';
 const TransactionRows = ({ transactions }: any) => {
     return (
         <div className="px-6 pb-6 divide-ethos-light-text-stroke">
-            {/*{transactions &&*/}
-            {/*    transactions.map((txn) => {*/}
-            {/*        return <TransactionRow txn={txn} key={txn.txId} />;*/}
-            {/*    })}*/}
+            {transactions &&
+                transactions.map((txn: any, index: number) => {
+                    return (
+                        <TransactionRow
+                            txn={txn}
+                            key={`txn-${index}-${txn.txId}`}
+                        />
+                    );
+                })}
         </div>
     );
 };

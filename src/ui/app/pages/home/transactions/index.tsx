@@ -23,32 +23,56 @@ const TransactionsPage = () => {
     const [loadingTxns, setLoadingTxns] = useState(true);
     const [moreTxnsAvailable, setMoreTxnsAvailable] = useState(true);
     const [suiTxns, setSuiTxns] = useState<SuiTransactionResponse[]>([]);
-    // const [formattedTxns, setFormattedTxns] = useState<TxResultState[]>([]);
+    const [formattedTxns, setFormattedTxns] = useState<any[]>([]);
     const [error, setError] = useState<string | undefined>();
 
     const txPerPage = 5;
 
     // fetch all transactions from the blockchain
     useEffect(() => {
-        if (!address) {
-            return;
-        }
         async function fetchSuiTransactions() {
+            if (!address) {
+                return;
+            }
+
             try {
-                // const transactionIds: string[] =
-                //     await api.instance.fullNode.getTransactionsForAddress(
-                //         address as string,
-                //         true
-                //     );
-                //
-                // const newTransactions =
-                //     await api.instance.fullNode.getTransactionResponseBatch(
-                //         deduplicate(transactionIds)
-                //     );
-                // setSuiTxns(newTransactions);
-                // if (newTransactions.length === 0) {
-                //     setLoadingTxns(false);
-                // }
+                const [txnIds, fromTxnIds] = await Promise.all([
+                    api.instance.fullNode.queryTransactions({
+                        filter: {
+                            ToAddress: address,
+                        },
+                    }),
+                    api.instance.fullNode.queryTransactions({
+                        filter: {
+                            FromAddress: address,
+                        },
+                    }),
+                ]);
+                // TODO: replace this with queryTransactions
+                // It seems to be expensive to fetch all transaction data at once though
+                const resp = await api.instance.fullNode.multiGetTransactions({
+                    digests: deduplicate(
+                        [...txnIds.data, ...fromTxnIds.data].map(
+                            (x) => x.digest
+                        )
+                    ),
+                    options: {
+                        showInput: true,
+                        showEffects: true,
+                        showEvents: true,
+                    },
+                });
+
+                const sortedTransactions = resp.sort(
+                    // timestamp could be null, so we need to handle
+                    (a, b) => (b.timestampMs || 0) - (a.timestampMs || 0)
+                );
+
+                console.log(sortedTransactions);
+                setSuiTxns(sortedTransactions);
+                if (sortedTransactions.length === 0) {
+                    setLoadingTxns(false);
+                }
             } catch (e) {
                 setError(`${e}`);
             }
@@ -56,12 +80,12 @@ const TransactionsPage = () => {
         fetchSuiTransactions();
     }, [address]);
 
-    // determine if ore transactions are available
+    // determine if more transactions are available
     // useEffect(() => {
     //     if (suiTxns.length > 0 && formattedTxns.length === suiTxns.length) {
     //         setMoreTxnsAvailable(false);
     //     }
-    // }, [formattedTxns, suiTxns]);
+    // }, [suiTxns, formattedTxns]);
 
     // load a page of "formatted transactions"
     useEffect(() => {
@@ -73,6 +97,7 @@ const TransactionsPage = () => {
             const start = currentPage * txPerPage;
             const end = start + txPerPage;
             const transactionsToFormat = suiTxns.slice(start, end);
+            setFormattedTxns(transactionsToFormat);
             // const fullTransactionDetails = await getFullTransactionDetails(
             //     transactionsToFormat,
             //     address,
@@ -142,10 +167,12 @@ const TransactionsPage = () => {
     return (
         <React.Fragment>
             <Loading loading={loadingTxns} big={true}>
-                {/*{formattedTxns && formattedTxns.length > 0 && (*/}
-                {/*    <div className={'flex flex-col h-full'}>*/}
-                {/*        <TextPageTitle title="Activity" />*/}
-                {/*        <TransactionRows transactions={formattedTxns} />*/}
+                {formattedTxns && formattedTxns.length > 0 && (
+                    <div className={'flex flex-col h-full'}>
+                        <TextPageTitle title="Activity" />
+                        <TransactionRows transactions={formattedTxns} />
+                    </div>
+                )}
                 {/*        {moreTxnsAvailable && (*/}
                 {/*            <div*/}
                 {/*                className={*/}

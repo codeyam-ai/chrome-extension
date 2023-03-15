@@ -42,6 +42,7 @@ interface SharedTypes {
 }
 
 const TransactionRow = ({ txn }: TransactionRowProps) => {
+    console.log('TXN', txn);
     const { txType, txAction, nftImageUri, timeDisplay } =
         getHumanReadable(txn);
 
