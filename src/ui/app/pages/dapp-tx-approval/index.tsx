@@ -101,7 +101,7 @@ export function DappTxApprovalPage() {
         [txID]
     );
     const txRequest = useAppSelector(txRequestSelector);
-    console.log('txRequest', txRequest);
+    // console.log('txRequest', txRequest);
     const transaction = useMemo(() => {
         if (!txRequest || !('data' in txRequest.tx)) return null;
         return Transaction.from(txRequest.tx.data);

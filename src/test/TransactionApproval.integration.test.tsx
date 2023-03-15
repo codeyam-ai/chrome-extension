@@ -1,10 +1,11 @@
+import { Transaction } from '@mysten/sui.js';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import KeypairVault from '_app/KeypairVault';
 import { BackgroundClient } from '_app/background-client';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
-import { simulateMnemonicUser } from '_src/test/utils/fake-local-storage';
+import { accountInfos, simulateMnemonicUser } from '_src/test/utils/fake-local-storage';
 import { renderTemplate } from '_src/test/utils/json-templates';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
@@ -76,27 +77,30 @@ describe('The Transaction Approval popup', () => {
 
     function simulateReduxStateWithTransaction() {
         const txRequestId = '95ae4a0d-0b7b-478b-ab70-bc3fe291540e';
+
+        const transaction = new Transaction();
+        transaction.transferObjects(
+            [
+                transaction.object(
+                    '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'
+                ),
+            ],
+            transaction.pure(
+                '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b'
+            ),
+        );
+        transaction.setGasBudget(1000)
         const txRequest: ApprovalRequest = {
             id: txRequestId,
             origin: 'https://ethoswallet.xyz',
             originFavIcon: 'https://ethoswallet.xyz/favicon.ico',
             createdDate: '2022-11-29T23:33:53.084Z',
+            approved: true,
             tx: {
-                type: 'v2',
-                data: {
-                    kind: 'pay',
-                    data: {
-                        inputCoins: [
-                            '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690',
-                        ],
-                        recipients: [
-                            '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
-                        ],
-                        amounts: ['1500000'],
-                        gasBudget: 1000,
-                    },
-                },
-            },
+                type: 'transaction',
+                data: transaction.serialize(),
+                account: accountInfos[0].address
+            }
         };
 
         store.dispatch(setTransactionRequests([txRequest]));
@@ -105,38 +109,63 @@ describe('The Transaction Approval popup', () => {
 
     function mockBlockchainTransactionExecution() {
         mockchain.mockBlockchainCall(
-            { method: 'sui_pay' },
-            renderTemplate('pay', {
-                base64EncodedTxBytes: 'ZmFrZSBkYXRh',
-            }),
-            true
-        );
-
-        // note: this is only expected to be called once
-        mockchain.mockBlockchainCall(
-            {
-                method: 'sui_dryRunTransaction',
-                params: ['ZmFrZSBkYXRh'],
+            { 
+                method: 'sui_multiGetObjects', 
+                params: [
+                    [
+                        "0x19fe0d83a3e3cb15570b6edc1160a15cc894e690"
+                    ],
+                    {
+                        "showOwner": true
+                    }
+                ] 
             },
-            renderTemplate('dryRunTransaction', {})
-        );
-
-        mockchain.mockBlockchainCall(
-            {
-                method: 'sui_getObject',
-                params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
-            },
-            renderTemplate('coinObject', {
+            [renderTemplate('coinObject', {
                 balance: 40000000,
                 id: '0x395c50c614cc22156c9de8db24163f48e4ff66ae',
-            })
+            })]
         );
+
+        mockchain.mockBlockchainCall(
+            { 
+                method: 'sui_getReferenceGasPrice', 
+                params: [] 
+            },
+            10
+        );
+
+    //     mockchain.mockBlockchainCall(
+    //         { method: 'sui_pay' },
+    //         renderTemplate('pay', {
+    //             base64EncodedTxBytes: 'ZmFrZSBkYXRh',
+    //         })
+    //     );
+
+    //     // note: this is only expected to be called once
+    //     mockchain.mockBlockchainCall(
+    //         {
+    //             method: 'sui_dryRunTransaction',
+    //             params: ['ZmFrZSBkYXRh'],
+    //         },
+    //         renderTemplate('dryRunTransaction', {})
+    //     );
+
+    //     mockchain.mockBlockchainCall(
+    //         {
+    //             method: 'sui_getObject',
+    //             params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
+    //         },
+    //         renderTemplate('coinObject', {
+    //             balance: 40000000,
+    //             id: '0x395c50c614cc22156c9de8db24163f48e4ff66ae',
+    //         })
+    //     );
 
         mockchain.mockBlockchainCall(
             {
                 method: 'sui_getCoins',
                 params: [
-                    '1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+                    '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de',
                     '0x2::sui::SUI',
                     null,
                     null,
@@ -145,16 +174,16 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('getCoins', {})
         );
 
-        mockchain.mockBlockchainCall(
-            {
-                method: 'sui_getObject',
-                params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
-            },
-            renderTemplate('coinObject', {
-                balance: 50000000,
-                id: '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690',
-            })
-        );
+    //     mockchain.mockBlockchainCall(
+    //         {
+    //             method: 'sui_getObject',
+    //             params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
+    //         },
+    //         renderTemplate('coinObject', {
+    //             balance: 50000000,
+    //             id: '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690',
+    //         })
+    //     );
 
         return mockchain.mockBlockchainCall(
             {

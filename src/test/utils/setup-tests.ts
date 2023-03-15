@@ -1,9 +1,9 @@
+import { toB64 } from '@mysten/bcs';
 import nock from 'nock';
 import * as util from 'util';
 
 import { fakeBrowser, clearLocalStorage } from './fake-browser';
 import { accountInfos } from './fake-local-storage';
-import { toB64 } from '@mysten/bcs';
 
 jest.mock('webextension-polyfill', () => {
     return fakeBrowser;
