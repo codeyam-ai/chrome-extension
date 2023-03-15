@@ -1,4 +1,4 @@
-import { toB64 } from '@mysten/bcs';
+import { fromHEX, toB64 } from '@mysten/bcs';
 import nock from 'nock';
 import * as util from 'util';
 
@@ -24,6 +24,7 @@ jest.mock('_shared/cryptography/mnemonics', () => {
             return {
                 getPublicKey: jest.fn(() => ({
                     toSuiAddress: jest.fn(() => accountInfo?.address),
+                    toBytes: jest.fn(() => fromHEX(accountInfo?.address || '')),
                 })),
                 export: jest.fn(() => ({
                     privateKey: toB64(
@@ -34,6 +35,8 @@ jest.mock('_shared/cryptography/mnemonics', () => {
                         )
                     ),
                 })),
+                signData: jest.fn((data) => data),
+                getKeyScheme: jest.fn(() => 'ED25519'),
             };
         }),
     };

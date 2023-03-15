@@ -124,7 +124,7 @@ export class Mockchain {
         }
 
         this.mockBlockchainCall(
-            { method: 'sui_getObjectsOwnedByAddress' },
+            { method: 'sui_getOwnedObjects' },
             objectInfos,
             true
         );

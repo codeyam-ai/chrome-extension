@@ -42,10 +42,9 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
     } = state;
     const allSuiObjects: SuiObjectData[] = [];
     if (address) {
-        const allObjectRefs =
-            await api.instance.fullNode.getObjectsOwnedByAddress({
-                owner: address,
-            });
+        const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
+            owner: address,
+        });
 
         const objectIDs = allObjectRefs
             .filter((anObj) => {

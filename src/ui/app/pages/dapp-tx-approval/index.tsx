@@ -101,7 +101,6 @@ export function DappTxApprovalPage() {
         [txID]
     );
     const txRequest = useAppSelector(txRequestSelector);
-    // console.log('txRequest', txRequest);
     const transaction = useMemo(() => {
         if (!txRequest || !('data' in txRequest.tx)) return null;
         return Transaction.from(txRequest.tx.data);
@@ -241,7 +240,6 @@ export function DappTxApprovalPage() {
                     setEffects(transactionEffects);
                 }
             } catch (e: unknown) {
-                console.log('ERROR', e);
                 setEvents(null);
                 setEffects(null);
             }
@@ -284,8 +282,9 @@ export function DappTxApprovalPage() {
     }, [closeWindow, done]);
 
     const content: TabSections = useMemo(() => {
-        // const transaction = Transaction.from(txRequest?.tx.data);
-        const transaction: Transaction = new Transaction();
+        if (txRequest?.tx.type !== 'transaction') return [] as TabSections;
+
+        const transaction = Transaction.from(txRequest?.tx.data);
 
         const data = {
             address,
