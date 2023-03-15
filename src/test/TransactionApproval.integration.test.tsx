@@ -5,7 +5,10 @@ import userEvent from '@testing-library/user-event';
 import KeypairVault from '_app/KeypairVault';
 import { BackgroundClient } from '_app/background-client';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
-import { accountInfos, simulateMnemonicUser } from '_src/test/utils/fake-local-storage';
+import {
+    accountInfos,
+    simulateMnemonicUser,
+} from '_src/test/utils/fake-local-storage';
 import { renderTemplate } from '_src/test/utils/json-templates';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
@@ -80,16 +83,10 @@ describe('The Transaction Approval popup', () => {
 
         const transaction = new Transaction();
         transaction.transferObjects(
-            [
-                transaction.object(
-                    '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'
-                ),
-            ],
-            transaction.pure(
-                '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b'
-            ),
+            [transaction.object('0x19fe0d83a3e3cb15570b6edc1160a15cc894e690')],
+            transaction.pure('0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b')
         );
-        transaction.setGasBudget(1000)
+        transaction.setGasBudget(1000);
         const txRequest: ApprovalRequest = {
             id: txRequestId,
             origin: 'https://ethoswallet.xyz',
@@ -99,8 +96,8 @@ describe('The Transaction Approval popup', () => {
             tx: {
                 type: 'transaction',
                 data: transaction.serialize(),
-                account: accountInfos[0].address
-            }
+                account: accountInfos[0].address,
+            },
         };
 
         store.dispatch(setTransactionRequests([txRequest]));
@@ -109,57 +106,59 @@ describe('The Transaction Approval popup', () => {
 
     function mockBlockchainTransactionExecution() {
         mockchain.mockBlockchainCall(
-            { 
-                method: 'sui_multiGetObjects', 
+            {
+                method: 'sui_multiGetObjects',
                 params: [
-                    [
-                        "0x19fe0d83a3e3cb15570b6edc1160a15cc894e690"
-                    ],
+                    ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
                     {
-                        "showOwner": true
-                    }
-                ] 
+                        showOwner: true,
+                    },
+                ],
             },
-            [renderTemplate('coinObject', {
-                balance: 40000000,
-                id: '0x395c50c614cc22156c9de8db24163f48e4ff66ae',
-            })]
+            [
+                renderTemplate('coinObject', {
+                    balance: 40000000,
+                    id: '0x395c50c614cc22156c9de8db24163f48e4ff66ae',
+                }),
+            ]
         );
 
         mockchain.mockBlockchainCall(
-            { 
-                method: 'sui_getReferenceGasPrice', 
-                params: [] 
+            {
+                method: 'sui_getReferenceGasPrice',
+                params: [],
             },
             10
         );
 
-    //     mockchain.mockBlockchainCall(
-    //         { method: 'sui_pay' },
-    //         renderTemplate('pay', {
-    //             base64EncodedTxBytes: 'ZmFrZSBkYXRh',
-    //         })
-    //     );
+        //     mockchain.mockBlockchainCall(
+        //         { method: 'sui_pay' },
+        //         renderTemplate('pay', {
+        //             base64EncodedTxBytes: 'ZmFrZSBkYXRh',
+        //         })
+        //     );
 
         // note: this is only expected to be called once
         mockchain.mockBlockchainCall(
             {
                 method: 'sui_dryRunTransaction',
-                params: ['AAACAQA5XFDGFMwiFWyd6NskFj9I5P9mrgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfABQc5QM+gq6aSOp0O1A9lrSbnFf+CwEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3goAAAAAAAAA6AMAAAAAAAAA'],
+                params: [
+                    'AAACAQA5XFDGFMwiFWyd6NskFj9I5P9mrgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfABQc5QM+gq6aSOp0O1A9lrSbnFf+CwEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3goAAAAAAAAA6AMAAAAAAAAA',
+                ],
             },
             renderTemplate('dryRunTransaction', {})
         );
 
-    //     mockchain.mockBlockchainCall(
-    //         {
-    //             method: 'sui_getObject',
-    //             params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
-    //         },
-    //         renderTemplate('coinObject', {
-    //             balance: 40000000,
-    //             id: '0x395c50c614cc22156c9de8db24163f48e4ff66ae',
-    //         })
-    //     );
+        //     mockchain.mockBlockchainCall(
+        //         {
+        //             method: 'sui_getObject',
+        //             params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
+        //         },
+        //         renderTemplate('coinObject', {
+        //             balance: 40000000,
+        //             id: '0x395c50c614cc22156c9de8db24163f48e4ff66ae',
+        //         })
+        //     );
 
         mockchain.mockBlockchainCall(
             {
@@ -174,16 +173,16 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('getCoins', {})
         );
 
-    //     mockchain.mockBlockchainCall(
-    //         {
-    //             method: 'sui_getObject',
-    //             params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
-    //         },
-    //         renderTemplate('coinObject', {
-    //             balance: 50000000,
-    //             id: '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690',
-    //         })
-    //     );
+        //     mockchain.mockBlockchainCall(
+        //         {
+        //             method: 'sui_getObject',
+        //             params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
+        //         },
+        //         renderTemplate('coinObject', {
+        //             balance: 50000000,
+        //             id: '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690',
+        //         })
+        //     );
 
         return mockchain.mockBlockchainCall(
             {
