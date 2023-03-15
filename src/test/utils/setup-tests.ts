@@ -20,22 +20,24 @@ jest.mock('_shared/cryptography/mnemonics', () => {
         getKeypairFromMnemonics: jest.fn((_mnemonic, index) => {
             const accountInfo = accountInfos.find(
                 (accountInfo) => accountInfo.index === index
-            )
+            );
             return {
                 getPublicKey: jest.fn(() => ({
-                    toSuiAddress: jest.fn(() => accountInfo?.address)
+                    toSuiAddress: jest.fn(() => accountInfo?.address),
                 })),
                 export: jest.fn(() => ({
                     privateKey: toB64(
                         Uint8Array.from(
-                            (accountInfo?.privateKey || '').split(',').map((s) => parseInt(s))
+                            (accountInfo?.privateKey || '')
+                                .split(',')
+                                .map((s) => parseInt(s))
                         )
-                    )
-                }))
-            }
+                    ),
+                })),
+            };
         }),
-    }
-})
+    };
+});
 
 beforeEach(() => clearLocalStorage());
 
