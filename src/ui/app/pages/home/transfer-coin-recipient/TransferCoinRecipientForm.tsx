@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Field, Form, useFormikContext } from 'formik';
-import { memo, useCallback, useEffect, useRef } from 'react';
+import { memo, useCallback, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import AddressInput from '_components/address-input';

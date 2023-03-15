@@ -8,7 +8,7 @@ import { Content } from '_app/shared/bottom-menu-layout';
 import AddressInput from '_components/address-input';
 import NFTDisplayCard from '_components/nft-display';
 import { DEFAULT_NFT_TRANSFER_GAS_FEE } from '_redux/slices/sui-objects/Coin';
-import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
+import { useAppSelector } from '_src/ui/app/hooks';
 // import { getTransactionsByAddress } from '_src/ui/app/redux/slices/txresults';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
@@ -51,7 +51,7 @@ function TransferNFTForm({
     //     }
     // });
 
-    const dispatch = useAppDispatch();
+    // const dispatch = useAppDispatch();
 
     // useEffect(() => {
     //     dispatch(getTransactionsByAddress()).unwrap();

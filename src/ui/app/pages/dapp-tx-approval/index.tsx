@@ -1,9 +1,9 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { fromB64 } from '@mysten/bcs';
+// import { fromB64 } from '@mysten/bcs';
 import {
-    getTransactionEffects,
+    // getTransactionEffects,
     SUI_TYPE_ARG,
     Transaction,
 } from '@mysten/sui.js';
@@ -15,18 +15,18 @@ import FormattedCoin from './FormattedCoin';
 import SectionElement from './SectionElement';
 import TabElement from './TabElement';
 import IncorrectSigner from './errors/IncorrectSigner';
-import MissingObject from './errors/MissingObject';
-import NotEnoughGas from './errors/NotEnoughGas';
+// import MissingObject from './errors/MissingObject';
+// import NotEnoughGas from './errors/NotEnoughGas';
 import {
-    isErrorCausedByIncorrectSigner,
-    isErrorCausedByMissingObject,
-    isErrorCausedByUserNotHavingEnoughSuiToPayForGas,
+    // isErrorCausedByIncorrectSigner,
+    // isErrorCausedByMissingObject,
+    // isErrorCausedByUserNotHavingEnoughSuiToPayForGas,
     isErrorObjectVersionUnavailable,
     useCategorizedEvents,
     useCustomSummary,
-    useNormalizedFunction,
+    // useNormalizedFunction,
 } from './lib';
-import { getGasDataFromError } from './lib/extractGasData';
+// import { getGasDataFromError } from './lib/extractGasData';
 import * as summaries from './summaries';
 import truncateMiddle from '../../helpers/truncate-middle';
 import { AppState } from '../../hooks/useInitializedGuard';
@@ -52,7 +52,7 @@ import type {
     TransactionEffects,
     TransactionEvents,
 } from '@mysten/sui.js';
-import type { ApprovalRequest } from '_payloads/transactions';
+// import type { ApprovalRequest } from '_payloads/transactions';
 import type { RootState } from '_redux/RootReducer';
 import type { ReactElement, ReactNode } from 'react';
 
@@ -108,7 +108,7 @@ export function DappTxApprovalPage() {
 
     const [done, setDone] = useState<boolean>(false);
 
-    const normalizedFunction = useNormalizedFunction(txRequest);
+    // const normalizedFunction = useNormalizedFunction(txRequest);
 
     const [effects, setEffects] = useState<
         TransactionEffects | undefined | null
@@ -133,7 +133,11 @@ export function DappTxApprovalPage() {
         : null;
 
     const { reading, mutating, creating, deleting, transferring, coinChanges } =
-        useCategorizedEvents({ normalizedFunction, events, address });
+        useCategorizedEvents({
+            normalizedFunction: undefined,
+            events,
+            address,
+        });
 
     const charges = useMemo(
         () => (coinChanges[SUI_TYPE_ARG] || 0) - (gas || 0),
@@ -598,7 +602,7 @@ export function DappTxApprovalPage() {
         gasUsed,
         coinChanges,
         address,
-        summaryKey,
+        // summaryKey,
     ]);
 
     const errorElement = useMemo(() => {

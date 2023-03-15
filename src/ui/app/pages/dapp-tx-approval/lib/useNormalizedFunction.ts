@@ -1,15 +1,14 @@
-import { useEffect, useState } from 'react';
+// import { useState } from 'react';
 
-import { thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
+// import { thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
 
-import type { SuiMoveNormalizedFunction } from '@mysten/sui.js';
+// import type { SuiMoveNormalizedFunction } from '@mysten/sui.js';
 import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
 
 const useNormalizedFunction = (txRequest: ApprovalRequest | null) => {
-    const [normalizedFunction, setNormalizedFunction] = useState<
-        SuiMoveNormalizedFunction | undefined
-    >();
-
+    // const [normalizedFunction, setNormalizedFunction] = useState<
+    //     SuiMoveNormalizedFunction | undefined
+    // >();
     // useEffect(() => {
     //     const getNormalizedFunction = async () => {
     //         if (!txRequest) return [];
@@ -37,7 +36,7 @@ const useNormalizedFunction = (txRequest: ApprovalRequest | null) => {
     //     getNormalizedFunction();
     // }, [txRequest]);
     //
-    return normalizedFunction;
+    // return normalizedFunction;
 };
 
 export default useNormalizedFunction;

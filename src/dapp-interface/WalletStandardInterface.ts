@@ -18,7 +18,7 @@ import {
     type EventsListeners,
     type SuiSignTransactionMethod,
     type SuiSignMessageMethod,
-    type SuiSignAndExecuteTransactionInput,
+    // type SuiSignAndExecuteTransactionInput,
     type DisconnectFeature,
     type DisconnectMethod,
 } from '@mysten/wallet-standard';
