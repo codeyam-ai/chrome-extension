@@ -101,7 +101,7 @@ const Button = (props: ButtonProps) => {
             </div>
         );
     } else {
-        return <div className={buttonWrapperClassNames}>{buttonElement}</div>;
+        return <div className={buttonWrapperClassNames} >{buttonElement}</div>;
     }
 };
 

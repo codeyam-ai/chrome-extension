@@ -108,6 +108,7 @@ const SendReceiveButtonGroup = ({
                 <InlineButtonGroup
                     onClickButtonPrimary={_faucet}
                     isButtonPrimaryDisabled={isFaucetInProgress}
+                    buttonPrimaryTestId="faucet"
                     buttonPrimaryChildren={
                         <>
                             <SuiIcon width={11} height={16} />
@@ -120,6 +121,7 @@ const SendReceiveButtonGroup = ({
                         </>
                     }
                     buttonSecondaryTo={isBalanceZero ? '/receive' : sendUrl}
+                    buttonSecondaryTestId={isBalanceZero ? 'buy' : 'send'}
                     buttonSecondaryChildren={
                         <>
                             {isBalanceZero ? (

@@ -55,7 +55,7 @@ function TransferCoinRecipientForm({
     //     }
     // });
 
-    // const loading = useAppSelector(({ txresults }) => txresults.loading);
+    const loading = false; //useAppSelector(({ txresults }) => txresults.loading);
     const dispatch = useAppDispatch();
 
     // useEffect(() => {
@@ -90,68 +90,67 @@ function TransferCoinRecipientForm({
     if (!coinType) return <></>;
 
     return (
-        <div />
-        // <Loading loading={loading} big={true}>
-        //     <Form autoComplete="off" noValidate={true}>
-        //         <div className="pt-6 px-6 text-left flex flex-col absolute w-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
-        //             <div
-        //                 className={
-        //                     'mb-6 flex flex-row items-center gap-6 relative z-5'
-        //                 }
-        //             >
-        //                 <BodyLarge isTextColorMedium>Sending</BodyLarge>
-        //                 <CoinSelect selectedCoinType={coinType} />
-        //             </div>
-        //             <div className={'relative'}>
-        //                 <Field
-        //                     placeholder={'0x... or SuiNS name'}
-        //                     className={'flex flex-col gap-2 pl-0 pr-0'}
-        //                     component={AddressInput}
-        //                     name="to"
-        //                     id="to"
-        //                     label={'Recipient'}
-        //                     onBlur={handleOnblur}
-        //                 />
-        //                 <div
-        //                     className={`absolute top-0 right-0 mt-1 text-red-500 dark:text-red-400 ${
-        //                         isValid && 'hidden'
-        //                     }`}
-        //                 >
-        //                     {!isValid && to !== '' ? errors.to : ' '}
-        //                 </div>
-        //             </div>
-        //         </div>
-        //         <div className={'pb-[80px] pt-[202px]'}>
-        //             {recentWallets.length > 0 && (
-        //                 <SuiTxWalletList
-        //                     header={'Recent Wallets'}
-        //                     wallets={accountInfos}
-        //                     transactions={recentWallets}
-        //                     activeAccountIndex={activeAccountIndex}
-        //                     setFieldValue={setFieldValue}
-        //                 />
-        //             )}
-        //             {accountInfos.length > 1 && (
-        //                 <SuiTxWalletList
-        //                     header={'Transfer Between My Wallets'}
-        //                     wallets={accountInfos}
-        //                     activeAccountIndex={activeAccountIndex}
-        //                     setFieldValue={setFieldValue}
-        //                 />
-        //             )}
-        //         </div>
-        //         <div className="flex flex-col mb-2 absolute w-full bottom-[-10px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4 rounded-b-2xl">
-        //             <Button
-        //                 buttonStyle="primary"
-        //                 type="submit"
-        //                 disabled={!isValid || isSubmitting}
-        //                 className="mt-2"
-        //             >
-        //                 {isSubmitting ? <LoadingIndicator /> : 'Continue'}
-        //             </Button>
-        //         </div>
-        //     </Form>
-        // </Loading>
+        <Loading loading={loading} big={true}>
+            <Form autoComplete="off" noValidate={true}>
+                <div className="pt-6 px-6 text-left flex flex-col absolute w-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
+                    <div
+                        className={
+                            'mb-6 flex flex-row items-center gap-6 relative z-5'
+                        }
+                    >
+                        <BodyLarge isTextColorMedium>Sending</BodyLarge>
+                        <CoinSelect selectedCoinType={coinType} />
+                    </div>
+                    <div className={'relative'}>
+                        <Field
+                            placeholder={'0x... or SuiNS name'}
+                            className={'flex flex-col gap-2 pl-0 pr-0'}
+                            component={AddressInput}
+                            name="to"
+                            id="to"
+                            label={'Recipient'}
+                            onBlur={handleOnblur}
+                        />
+                        <div
+                            className={`absolute top-0 right-0 mt-1 text-red-500 dark:text-red-400 ${
+                                isValid && 'hidden'
+                            }`}
+                        >
+                            {!isValid && to !== '' ? errors.to : ' '}
+                        </div>
+                    </div>
+                </div>
+                <div className={'pb-[80px] pt-[202px]'}>
+                    {recentWallets.length > 0 && (
+                        <SuiTxWalletList
+                            header={'Recent Wallets'}
+                            wallets={accountInfos}
+                            transactions={recentWallets}
+                            activeAccountIndex={activeAccountIndex}
+                            setFieldValue={setFieldValue}
+                        />
+                    )}
+                    {accountInfos.length > 1 && (
+                        <SuiTxWalletList
+                            header={'Transfer Between My Wallets'}
+                            wallets={accountInfos}
+                            activeAccountIndex={activeAccountIndex}
+                            setFieldValue={setFieldValue}
+                        />
+                    )}
+                </div>
+                <div className="flex flex-col mb-2 absolute w-full bottom-[-10px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4 rounded-b-2xl">
+                    <Button
+                        buttonStyle="primary"
+                        type="submit"
+                        disabled={!isValid || isSubmitting}
+                        className="mt-2"
+                    >
+                        {isSubmitting ? <LoadingIndicator /> : 'Continue'}
+                    </Button>
+                </div>
+            </Form>
+        </Loading>
     );
 }
 
