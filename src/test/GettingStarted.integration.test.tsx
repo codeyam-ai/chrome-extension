@@ -16,7 +16,7 @@ describe('Authenticating by importing an account with a seed phrase', () => {
             'girl empower human spring circle ceiling wild pact stumble model wheel chuckle';
         const seedPhraseList = validSeedPhrase.split(' ');
         const walletAddressFromSeed =
-            '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b';
+            '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de';
         renderApp();
 
         await screen.findByText('Welcome to Ethos');
