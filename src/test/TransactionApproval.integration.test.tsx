@@ -45,7 +45,7 @@ describe('The Transaction Approval popup', () => {
             dependencies: { closeWindow: mockWindowCloser },
         });
 
-        await screen.findByText('1500000');
+        await screen.findByText('Costs');
         const approveButton = await screen.findByText('Approve');
 
         await userEvent.click(approveButton);
@@ -67,7 +67,7 @@ describe('The Transaction Approval popup', () => {
             dependencies: { closeWindow: mockWindowCloser },
         });
 
-        await screen.findByText('1500000');
+        await screen.findByText('Costs');
         const rejectButton = await screen.findByText('Reject');
 
         await userEvent.click(rejectButton);
@@ -186,8 +186,7 @@ describe('The Transaction Approval popup', () => {
 
         return mockchain.mockBlockchainCall(
             {
-                method: 'sui_executeTransactionSerializedSig',
-                params: ['ZmFrZSBkYXRh'],
+                method: 'sui_executeTransaction',
             },
             renderTemplate('executeTransaction', {})
         );
