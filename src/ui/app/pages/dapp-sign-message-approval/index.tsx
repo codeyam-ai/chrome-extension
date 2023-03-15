@@ -54,7 +54,7 @@ export function DappSignMessageApprovalPage() {
                             signMessageRequest.tx.accountAddress,
                     })
                 );
-                // window.close();
+                window.close();
             }
         },
         [dispatch, signMessageRequest]
@@ -66,7 +66,7 @@ export function DappSignMessageApprovalPage() {
             (!signMessageRequest ||
                 (signMessageRequest && signMessageRequest.approved !== null))
         ) {
-            // window.close();
+            window.close();
         }
     }, [loading, signMessageRequest]);
 

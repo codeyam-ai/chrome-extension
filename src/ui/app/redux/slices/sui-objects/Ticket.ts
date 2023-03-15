@@ -1,4 +1,4 @@
-import { BCS, getSuiMoveConfig } from '@mysten/bcs';
+// import { BCS, getSuiMoveConfig } from '@mysten/bcs';
 
 import type { JsonRpcProvider, SuiObjectData } from '@mysten/sui.js';
 

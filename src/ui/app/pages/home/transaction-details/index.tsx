@@ -3,8 +3,8 @@
 
 import {
     getExecutionStatusType,
+    getTransactionKind,
     getTransactionKindName,
-    getTransactionKinds,
 } from '@mysten/sui.js';
 import clBind from 'classnames/bind';
 import { useMemo } from 'react';
@@ -28,14 +28,16 @@ import st from './TransactionDetailsPage.module.scss';
 const cl = clBind.bind(st);
 
 const txKindToTxt: Record<TransactionKindName, string> = {
-    TransferObject: 'Object transfer',
-    Call: 'Call',
-    Publish: 'Publish',
-    TransferSui: 'Sui transfer',
-    ChangeEpoch: 'Change epoch',
-    Pay: 'Pay',
-    PaySui: 'PaySui',
-    PayAllSui: 'PayAllSui',
+    // TransferObject: 'Object transfer',
+    // Call: 'Call',
+    // Publish: 'Publish',
+    // TransferSui: 'Sui transfer',
+    // ChangeEpoch: 'Change epoch',
+    // Pay: 'Pay',
+    // PaySui: 'PaySui',
+    // PayAllSui: 'PayAllSui',
+    ProgrammableTransaction: 'ProgrammableTransaction',
+    ChangeEpoch: 'ChangeEpoch',
     Genesis: 'Genesis',
     ConsensusCommitPrologue: 'ConsensusCommitPrologue',
 };
@@ -51,8 +53,9 @@ function TransactionDetailsPage() {
     const txDetails = useAppSelector(txSelector) as SuiTransactionResponse;
     const status = txDetails && getExecutionStatusType(txDetails);
     const statusIcon = status === 'success' ? 'check2-circle' : 'x-circle';
-    const transactions = getTransactionKinds(txDetails);
-    const transferKind = getTransactionKindName(transactions);
+    const txnKind = getTransactionKind(txDetails);
+    const transferKind = txnKind ? getTransactionKindName(txnKind) : undefined;
+
     return (
         <div className={cl('container')}>
             {txDetails ? (

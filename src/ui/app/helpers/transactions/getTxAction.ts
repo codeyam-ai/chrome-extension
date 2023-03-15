@@ -27,8 +27,8 @@ const getTxAction = (txn: FormattedTxResultState): TxAction => {
         type = 'send';
     } else if (!txn.isSender && !txn.callFunctionName) {
         type = 'receive';
-    } else if (txn.kind === 'TransferObject') {
-        type = 'transfer';
+        // } else if (txn.kind === 'TransferObject') {
+        //     type = 'transfer';
     }
 
     return type;

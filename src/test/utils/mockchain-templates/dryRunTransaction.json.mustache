@@ -1,106 +1,70 @@
 {
-  "status": {
-    "status": "success"
-  },
-  "gasUsed": {
-    "computationCost": 48,
-    "storageCost": 48,
-    "storageRebate": 32
-  },
-  "transactionDigest": "7fZ76NmXVKzWPSEyiR3rTExp3bZ9NNyWtamVYnZ84UiU",
-  "created": [
-    {
-      "owner": {
-        "AddressOwner": "0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b"
+    "effects": {
+      "messageVersion": "v1",
+      "status": { "status": "success" },
+      "executedEpoch": 0,
+      "gasUsed": {
+        "computationCost": 745,
+        "storageCost": 41,
+        "storageRebate": 13
       },
-      "reference": {
-        "objectId": "0x19cd6aba5b099dffccd94f660fbee88a6eaea6e8",
-        "version": 3838,
-        "digest": "dSafR4PWD3yoP1IIfvIM/MJ5Y0eXzx+eCVgxsJvYgOM="
-      }
-    }
-  ],
-  "mutated": [
-    {
-      "owner": {
-        "AddressOwner": "0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b"
+      "transactionDigest": "9TpW8wFiTEdNgv5H53FF3rmtkjY8sRhc2y3aKntvKiKp",
+      "created": [
+        {
+          "owner": {
+            "AddressOwner": "0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de"
+          },
+          "reference": {
+            "objectId": "0xafff18843f4289b7bf2b21968dda52fdb9b829f640b6ee285bcc039a7d64d4cb",
+            "version": 3,
+            "digest": "WTcTAQyt1mk7BCmG7MT11gM94CkK2644YynaiM4ozDK"
+          }
+        }
+      ],
+      "mutated": [
+        {
+          "owner": {
+            "AddressOwner": "0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de"
+          },
+          "reference": {
+            "objectId": "0xf51bfc7d98d86fbd75f19d16c37484b0f0f7382eb6c9bfcad2fe4a94be2c8822",
+            "version": 3,
+            "digest": "EPfwDgzWr3aajJEbg2BCipTbTBu9XDDhMuC7NEG7qr24"
+          }
+        }
+      ],
+      "gasObject": {
+        "owner": {
+          "AddressOwner": "0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de"
+        },
+        "reference": {
+          "objectId": "0xf51bfc7d98d86fbd75f19d16c37484b0f0f7382eb6c9bfcad2fe4a94be2c8822",
+          "version": 3,
+          "digest": "EPfwDgzWr3aajJEbg2BCipTbTBu9XDDhMuC7NEG7qr24"
+        }
       },
-      "reference": {
-        "objectId": "0x395c50c614cc22156c9de8db24163f48e4ff66ae",
-        "version": 3838,
-        "digest": "dCpDnIw+npsYqZIkUYQZqBRWNmufKJXjva85u9BZXCk="
-      }
+      "eventsDigest": "6HLU895rkxPErbvVFwwGKSoEtfbWDaxSSLyvTsrWzKaJ",
+      "dependencies": [
+        "AYWVC7CXcFeycD6K11soBSpK8tEfhQRP2Vffh78m5Az",
+        "9GhSba92VsoY3BDJGgfqAYFzk2MDGuBgVj9pygL9dNmi"
+      ]
     },
-    {
-      "owner": {
-        "AddressOwner": "0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b"
-      },
-      "reference": {
-        "objectId": "0xb1476dc46615a392a4f5bc4e61a5a7d30d42c769",
-        "version": 3838,
-        "digest": "rN6naj6kqLI16JIqY4Dq1EIx5drvg4bkHwol8+C8AAU="
-      }
-    }
-  ],
-  "gasObject": {
-    "owner": {
-      "AddressOwner": "0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b"
-    },
-    "reference": {
-      "objectId": "0x395c50c614cc22156c9de8db24163f48e4ff66ae",
-      "version": 3838,
-      "digest": "dCpDnIw+npsYqZIkUYQZqBRWNmufKJXjva85u9BZXCk="
-    }
-  },
-  "events": [
-    {
-      "coinBalanceChange": {
-        "packageId": "0x0000000000000000000000000000000000000002",
-        "transactionModule": "gas",
-        "sender": "0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b",
-        "changeType": "Gas",
-        "owner": {
-          "AddressOwner": "0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b"
+    "events": [
+      {
+        "id": {
+          "txDigest": "9TpW8wFiTEdNgv5H53FF3rmtkjY8sRhc2y3aKntvKiKp",
+          "eventSeq": 0
         },
-        "coinType": "0x2::sui::SUI",
-        "coinObjectId": "0x395c50c614cc22156c9de8db24163f48e4ff66ae",
-        "version": 3837,
-        "amount": -64
-      }
-    },
-    {
-      "coinBalanceChange": {
-        "packageId": "0x0000000000000000000000000000000000000002",
-        "transactionModule": "pay",
-        "sender": "0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b",
-        "changeType": "Receive",
-        "owner": {
-          "AddressOwner": "0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b"
+        "packageId": "0x0000000000000000000000000000000000000000000000000000000000000002",
+        "transactionModule": "devnet_nft",
+        "sender": "0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de",
+        "type": "0x2::devnet_nft::MintNFTEvent",
+        "parsedJson": {
+          "creator": "0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de",
+          "name": "Ethos Example NFT",
+          "object_id": "0xafff18843f4289b7bf2b21968dda52fdb9b829f640b6ee285bcc039a7d64d4cb"
         },
-        "coinType": "0x2::sui::SUI",
-        "coinObjectId": "0x19cd6aba5b099dffccd94f660fbee88a6eaea6e8",
-        "version": 3838,
-        "amount": 1000000
+        "bcs": "eN1rL8sgpMJo3SCCrZXQ5ZGskzZoBd9yTEZVV6fGGGXndMtpBzecXbPJhbgREsRYYuHhtFstse38G8pkKuF52nLRQK15ffSrRkpbnDNPJE9hybGf"
       }
-    },
-    {
-      "coinBalanceChange": {
-        "packageId": "0x0000000000000000000000000000000000000002",
-        "transactionModule": "pay",
-        "sender": "0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b",
-        "changeType": "Pay",
-        "owner": {
-          "AddressOwner": "0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b"
-        },
-        "coinType": "0x2::sui::SUI",
-        "coinObjectId": "0xb1476dc46615a392a4f5bc4e61a5a7d30d42c769",
-        "version": 3833,
-        "amount": -1000000
-      }
-    }
-  ],
-  "dependencies": [
-    "fhLeS7zmEQxUdEnNyvmAiyyDw11Xuxqv135JzsSnhqB",
-    "7RvgfKrWJjLik81aCXWZfeyyAzGYsZfpgm58P4941usi"
-  ]
+    ]
 }

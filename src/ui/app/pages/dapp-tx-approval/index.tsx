@@ -101,7 +101,8 @@ export function DappTxApprovalPage() {
         [txID]
     );
     const txRequest = useAppSelector(txRequestSelector);
-    const signableTransaction = useMemo(() => {
+    // console.log('txRequest', txRequest);
+    const transaction = useMemo(() => {
         if (!txRequest || !('data' in txRequest.tx)) return null;
         return Transaction.from(txRequest.tx.data);
     }, [txRequest]);
@@ -165,8 +166,7 @@ export function DappTxApprovalPage() {
     }, []);
 
     useEffect(() => {
-        if (!signableTransaction || !accountInfos || accountInfos.length === 0)
-            return;
+        if (!transaction || !accountInfos || accountInfos.length === 0) return;
 
         const getTransactionInfo = async () => {
             let signer;
@@ -185,64 +185,71 @@ export function DappTxApprovalPage() {
             setDryRunError(undefined);
             setExplicitError(undefined);
 
-            const { effects: transactionEffects, events: transactionEvents } =
-                await signer.dryRunTransaction({
-                    transaction: signableTransaction,
-                });
-            if (transactionEffects.status.status === 'failure') {
-                if (
-                    transactionEffects?.status?.error?.includes(
-                        'quorum of validators'
-                    )
-                ) {
-                    setDryRunError(
-                        'Sui Devnet is having technical issues. Please check back later when these issues are resolved.'
-                    );
-                } else if (
-                    isErrorObjectVersionUnavailable(
-                        transactionEffects?.status?.error || ''
-                    )
-                ) {
-                    setExplicitError(
-                        <div className="flex flex-col gap-6">
-                            <Alert
-                                title="Object or Coin In Use"
-                                subtitle="One of the objects or coins in this transaction is already in use. Please wait a moment and try again.    "
-                            />
-                            <Alert
-                                title="Error Details"
-                                subtitle={transactionEffects?.status?.error}
-                            />
-                        </div>
-                    );
-                } else {
-                    setDryRunError(transactionEffects.status.error);
-                }
-            } else if (
-                typeof transactionEffects.gasObject.owner === 'object' &&
-                'AddressOwner' in transactionEffects.gasObject.owner &&
-                transactionEffects.gasObject.owner.AddressOwner !== address
-            ) {
-                const gasAddress =
-                    transactionEffects.gasObject.owner.AddressOwner;
+            try {
+                const {
+                    effects: transactionEffects,
+                    events: transactionEvents,
+                } = await signer.dryRunTransaction({ transaction });
 
-                if (gasAddress !== address) {
-                    setExplicitError(
-                        <IncorrectSigner correctAddress={gasAddress} />
-                    );
+                if (transactionEffects.status.status === 'failure') {
+                    if (
+                        transactionEffects?.status?.error?.includes(
+                            'quorum of validators'
+                        )
+                    ) {
+                        setDryRunError(
+                            'Sui Devnet is having technical issues. Please check back later when these issues are resolved.'
+                        );
+                    } else if (
+                        isErrorObjectVersionUnavailable(
+                            transactionEffects?.status?.error || ''
+                        )
+                    ) {
+                        setExplicitError(
+                            <div className="flex flex-col gap-6">
+                                <Alert
+                                    title="Object or Coin In Use"
+                                    subtitle="One of the objects or coins in this transaction is already in use. Please wait a moment and try again.    "
+                                />
+                                <Alert
+                                    title="Error Details"
+                                    subtitle={transactionEffects?.status?.error}
+                                />
+                            </div>
+                        );
+                    } else {
+                        setDryRunError(transactionEffects.status.error);
+                    }
+                } else if (
+                    typeof transactionEffects.gasObject.owner === 'object' &&
+                    'AddressOwner' in transactionEffects.gasObject.owner &&
+                    transactionEffects.gasObject.owner.AddressOwner !== address
+                ) {
+                    const gasAddress =
+                        transactionEffects.gasObject.owner.AddressOwner;
+
+                    if (gasAddress !== address) {
+                        setExplicitError(
+                            <IncorrectSigner correctAddress={gasAddress} />
+                        );
+                    } else {
+                        setEvents(transactionEvents);
+                        setEffects(transactionEffects);
+                    }
                 } else {
                     setEvents(transactionEvents);
                     setEffects(transactionEffects);
                 }
-            } else {
-                setEvents(transactionEvents);
-                setEffects(transactionEffects);
+            } catch (e: unknown) {
+                console.log('ERROR', e);
+                setEvents(null);
+                setEffects(null);
             }
         };
 
         getTransactionInfo();
     }, [
-        signableTransaction,
+        transaction,
         activeAccountIndex,
         address,
         authentication,
@@ -256,7 +263,7 @@ export function DappTxApprovalPage() {
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
             await finishTransaction(
-                signableTransaction,
+                transaction,
                 txID,
                 approved,
                 authentication,
@@ -265,7 +272,7 @@ export function DappTxApprovalPage() {
             );
             setDone(true);
         },
-        [signableTransaction, txID, authentication, address, activeAccountIndex]
+        [transaction, txID, authentication, address, activeAccountIndex]
     );
 
     const closeWindow = useDependencies().closeWindow;
@@ -300,33 +307,33 @@ export function DappTxApprovalPage() {
             totalDollars,
         };
 
-        let summary;
-        switch (summaryKey) {
-            case 'redeem-ticket':
-                summary = [
-                    <summaries.RedeemTicket
-                        key="redeem-ticket-summary"
-                        {...data}
-                    />,
-                ];
-                break;
-            case 'capy-vote':
-                summary = [
-                    <summaries.CapyVote key="capy-vote-summary" {...data} />,
-                ];
-                break;
-            case 'capy-nominate':
-                summary = [
-                    <summaries.CapyNominate
-                        key="capy-nominate-summary"
-                        {...data}
-                    />,
-                ];
-                break;
-            default:
-                summary = summaries.standard(data);
-        }
-
+        // let summary;
+        // switch (summaryKey) {
+        //     case 'redeem-ticket':
+        //         summary = [
+        //             <summaries.RedeemTicket
+        //                 key="redeem-ticket-summary"
+        //                 {...data}
+        //             />,
+        //         ];
+        //         break;
+        //     case 'capy-vote':
+        //         summary = [
+        //             <summaries.CapyVote key="capy-vote-summary" {...data} />,
+        //         ];
+        //         break;
+        //     case 'capy-nominate':
+        //         summary = [
+        //             <summaries.CapyNominate
+        //                 key="capy-nominate-summary"
+        //                 {...data}
+        //             />,
+        //         ];
+        //         break;
+        //     default:
+        //         summary = summaries.standard(data);
+        // }
+        const summary = summaries.standard(data);
         const anyPermissionsRequested =
             reading.length > 0 ||
             mutating.length > 0 ||

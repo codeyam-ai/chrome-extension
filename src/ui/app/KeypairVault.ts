@@ -1,10 +1,11 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { fromB64 } from '@mysten/bcs';
+
 import { getKeypairFromMnemonics } from '_shared/cryptography/mnemonics';
 
 import type { Ed25519Keypair } from '@mysten/sui.js';
-import { fromB64 } from '@mysten/bcs';
 
 export type AccountInfo = {
     index: number;

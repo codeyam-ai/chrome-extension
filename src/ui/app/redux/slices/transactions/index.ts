@@ -3,7 +3,7 @@
 
 import {
     getTransactionDigest,
-    Coin as CoinAPI,
+    // Coin as CoinAPI,
     SUI_TYPE_ARG,
     Transaction,
 } from '@mysten/sui.js';
@@ -17,14 +17,14 @@ import { DEFAULT_GAS_BUDGET_FOR_PAY } from '../sui-objects/Coin';
 import { accountCoinsSelector } from '_redux/slices/account';
 import {
     fetchAllOwnedAndRequiredObjects,
-    suiObjectsAdapterSelectors,
+    // suiObjectsAdapterSelectors,
 } from '_redux/slices/sui-objects';
 import { Coin } from '_redux/slices/sui-objects/Coin';
 
 import type {
     SuiAddress,
     SuiMoveObject,
-    SuiObjectData,
+    // SuiObjectData,
     SuiTransactionResponse,
 } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
@@ -254,63 +254,63 @@ export const executeMoveCall = createAsyncThunk<
     }
 );
 
-type StakeTokensTXArgs = {
-    tokenTypeArg: string;
-    amount: bigint;
-};
+// type StakeTokensTXArgs = {
+//     tokenTypeArg: string;
+//     amount: bigint;
+// };
 
-export const StakeTokens = createAsyncThunk<
-    TransactionResult,
-    StakeTokensTXArgs,
-    AppThunkConfig
->(
-    'sui-objects/stake',
-    async (
-        { tokenTypeArg, amount },
-        { getState, extra: { api, keypairVault }, dispatch }
-    ) => {
-        const state = getState();
-        const {
-            account: { authentication, address, activeAccountIndex },
-        } = state;
+// export const StakeTokens = createAsyncThunk<
+//     TransactionResult,
+//     StakeTokensTXArgs,
+//     AppThunkConfig
+// >(
+//     'sui-objects/stake',
+//     async (
+//         { tokenTypeArg, amount },
+//         { getState, extra: { api, keypairVault }, dispatch }
+//     ) => {
+//         const state = getState();
+//         const {
+//             account: { authentication, address, activeAccountIndex },
+//         } = state;
 
-        let signer;
-        if (authentication) {
-            signer = api.getEthosSignerInstance(address || '', authentication);
-        } else {
-            signer = api.getSignerInstance(
-                keypairVault.getKeyPair(activeAccountIndex)
-            );
-        }
-        const coinType = Coin.getCoinTypeFromArg(tokenTypeArg);
+//         let signer;
+//         if (authentication) {
+//             signer = api.getEthosSignerInstance(address || '', authentication);
+//         } else {
+//             signer = api.getSignerInstance(
+//                 keypairVault.getKeyPair(activeAccountIndex)
+//             );
+//         }
+//         const coinType = Coin.getCoinTypeFromArg(tokenTypeArg);
 
-        const coins: SuiObjectData[] = suiObjectsAdapterSelectors
-            .selectAll(state)
-            .filter(
-                (anObj) =>
-                    anObj.type === 'moveObject' &&
-                    anObj.type.startsWith(coinType)
-            )
-            .map((anObj) => anObj as SuiObjectData);
+//         const coins: SuiObjectData[] = suiObjectsAdapterSelectors
+//             .selectAll(state)
+//             .filter(
+//                 (anObj) =>
+//                     anObj.type === 'moveObject' &&
+//                     anObj.type.startsWith(coinType)
+//             )
+//             .map((anObj) => anObj as SuiObjectData);
 
-        // TODO: fetch the first active validator for now,
-        // repalce it with the user picked one
-        const activeValidators = await Coin.getActiveValidators(
-            api.instance.fullNode
-        );
-        const first_validator = activeValidators[0];
-        const metadata = (first_validator as SuiMoveObject).fields.metadata;
-        const validatorAddress = (metadata as SuiMoveObject).fields.sui_address;
-        const response = await Coin.stakeCoin(
-            signer,
-            coins,
-            amount,
-            validatorAddress
-        );
-        dispatch(fetchAllOwnedAndRequiredObjects());
-        return response;
-    }
-);
+//         // TODO: fetch the first active validator for now,
+//         // repalce it with the user picked one
+//         const activeValidators = await Coin.getActiveValidators(
+//             api.instance.fullNode
+//         );
+//         const first_validator = activeValidators[0];
+//         const metadata = (first_validator as SuiMoveObject).fields.metadata;
+//         const validatorAddress = (metadata as SuiMoveObject).fields.sui_address;
+//         const response = await Coin.stakeCoin(
+//             signer,
+//             coins,
+//             amount,
+//             validatorAddress
+//         );
+//         dispatch(fetchAllOwnedAndRequiredObjects());
+//         return response;
+//     }
+// );
 
 const txAdapter = createEntityAdapter<TransactionResult>({
     selectId: (tx) => getTransactionDigest(tx),
@@ -336,9 +336,9 @@ const slice = createSlice({
         builder.addCase(executeMoveCall.fulfilled, (state, { payload }) => {
             return txAdapter.setOne(state, payload);
         });
-        builder.addCase(StakeTokens.fulfilled, (state, { payload }) => {
-            return txAdapter.setOne(state, payload);
-        });
+        // builder.addCase(StakeTokens.fulfilled, (state, { payload }) => {
+        //     return txAdapter.setOne(state, payload);
+        // });
     },
 });
 

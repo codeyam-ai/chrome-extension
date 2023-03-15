@@ -3,13 +3,13 @@ import AlertWithErrorExpand from '_src/ui/app/shared/feedback/AlertWithErrorExpa
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { GasData } from '../lib/extractGasData';
-import type { TransactionRequest } from '_shared/messaging/messages/payloads/transactions/TransactionRequest';
+import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
 
 type NotEnoughGasProps = {
     gasData: GasData;
     errorMessage: string;
     txID?: string;
-    txRequest: TransactionRequest | null;
+    txRequest: ApprovalRequest | null;
 };
 
 const NotEnoughGas = ({

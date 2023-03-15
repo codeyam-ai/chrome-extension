@@ -190,12 +190,14 @@ export function DappPreapprovalPage() {
         if (!preapproval) return;
 
         const retrieveDetails = async () => {
+            const [packageObjectId, module, fun] =
+                preapproval.target.split('::');
             const provider = api.instance.fullNode;
-            const functionDetails = await provider.getNormalizedMoveFunction(
-                preapproval.packageObjectId,
-                preapproval.module,
-                preapproval.function
-            );
+            const functionDetails = await provider.getNormalizedMoveFunction({
+                package: packageObjectId,
+                module,
+                function: fun,
+            });
 
             const onchainInfo = {
                 action: '',
@@ -218,8 +220,8 @@ export function DappPreapprovalPage() {
                 }
 
                 const affectsObject =
-                    struct?.address === preapproval.packageObjectId &&
-                    struct?.module === preapproval.module;
+                    struct?.address === packageObjectId &&
+                    struct?.module === module;
 
                 if (affectsObject) {
                     onchainInfo.action = key || '';
@@ -270,10 +272,13 @@ export function DappPreapprovalPage() {
     );
 
     const Details = () => {
+        const [packageObjectId, module, fun] = (
+            preapproval?.target || ''
+        ).split('::');
         const keyValueListItems: KeyNameAndValue[] = [
             {
                 keyName: 'Module',
-                value: preapproval?.module || '',
+                value: module || '',
             },
             {
                 keyName: 'Object',
@@ -281,11 +286,11 @@ export function DappPreapprovalPage() {
             },
             {
                 keyName: 'Function',
-                value: preapproval?.function || '',
+                value: fun || '',
             },
             {
                 keyName: 'Package',
-                value: truncateMiddle(preapproval?.packageObjectId || '', 6),
+                value: truncateMiddle(packageObjectId || '', 6),
             },
         ];
 
