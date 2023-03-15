@@ -99,7 +99,9 @@ export default function ViewPrivateKeyPage() {
                     <textarea
                         rows={3}
                         value={
-                            privateKey ? toB64(fromHEX(privateKey)) : hostedPrivateKey
+                            privateKey
+                                ? toB64(fromHEX(privateKey))
+                                : hostedPrivateKey
                         }
                         id="hexPrivateKey"
                         className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"

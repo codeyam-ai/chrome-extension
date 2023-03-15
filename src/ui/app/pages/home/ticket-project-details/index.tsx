@@ -36,7 +36,7 @@ export const TicketProjectDetailsContent = ({
 }: {
     ticketProject: TicketProjectProps;
 }) => {
-    return <></>
+    return <></>;
     // const dispatch = useAppDispatch();
     // const navigate = useNavigate();
     // const loadingNFTs = useAppSelector(
@@ -324,7 +324,7 @@ export const TicketProjectDetailsContent = ({
 };
 
 const TicketProjectDetails = () => {
-    return <></>
+    return <></>;
     // const [loading, setLoading] = useState(true);
     // const [searchParams] = useSearchParams();
     // const objectId = useMemo(

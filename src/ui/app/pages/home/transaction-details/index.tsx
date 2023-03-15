@@ -28,14 +28,16 @@ import st from './TransactionDetailsPage.module.scss';
 const cl = clBind.bind(st);
 
 const txKindToTxt: Record<TransactionKindName, string> = {
-    TransferObject: 'Object transfer',
-    Call: 'Call',
-    Publish: 'Publish',
-    TransferSui: 'Sui transfer',
-    ChangeEpoch: 'Change epoch',
-    Pay: 'Pay',
-    PaySui: 'PaySui',
-    PayAllSui: 'PayAllSui',
+    // TransferObject: 'Object transfer',
+    // Call: 'Call',
+    // Publish: 'Publish',
+    // TransferSui: 'Sui transfer',
+    // ChangeEpoch: 'Change epoch',
+    // Pay: 'Pay',
+    // PaySui: 'PaySui',
+    // PayAllSui: 'PayAllSui',
+    ProgrammableTransaction: 'ProgrammableTransaction',
+    ChangeEpoch: 'ChangeEpoch',
     Genesis: 'Genesis',
     ConsensusCommitPrologue: 'ConsensusCommitPrologue',
 };

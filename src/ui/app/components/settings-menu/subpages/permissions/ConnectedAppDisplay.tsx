@@ -90,7 +90,7 @@ const ConnectedAppDisplay = ({
             )}
             {connectedApp.preappovals.map((preapprovalData, index) => {
                 const p = preapprovalData.preapproval;
-                const [packageObjectId, , fun] = p.target.split("::")
+                const [packageObjectId, , fun] = p.target.split('::');
                 const items: KeyNameAndValue[] = [
                     {
                         keyName: 'Transactions Remaining',

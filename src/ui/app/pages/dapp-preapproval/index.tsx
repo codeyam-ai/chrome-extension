@@ -270,10 +270,13 @@ export function DappPreapprovalPage() {
     );
 
     const Details = () => {
+        const [packageObjectId, module, fun] = (
+            preapproval?.target || ''
+        ).split('::');
         const keyValueListItems: KeyNameAndValue[] = [
             {
                 keyName: 'Module',
-                value: preapproval?.module || '',
+                value: module || '',
             },
             {
                 keyName: 'Object',
@@ -281,11 +284,11 @@ export function DappPreapprovalPage() {
             },
             {
                 keyName: 'Function',
-                value: preapproval?.function || '',
+                value: fun || '',
             },
             {
                 keyName: 'Package',
-                value: truncateMiddle(preapproval?.packageObjectId || '', 6),
+                value: truncateMiddle(packageObjectId || '', 6),
             },
         ];
 

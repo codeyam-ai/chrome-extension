@@ -15,10 +15,10 @@ describe('mnemonics', () => {
         expect(mnemonics.split(' ').length).toBe(12);
         const parsedKeypair = getKeypairFromMnemonics(mnemonics, -1);
 
-        const pubKey = keypair.getPublicKey()
-        const privKey = keypair.export().privateKey
-        const parsedPubKey = parsedKeypair.getPublicKey()
-        const parsedPrivKey = parsedKeypair.export().privateKey
+        const pubKey = keypair.getPublicKey();
+        const privKey = keypair.export().privateKey;
+        const parsedPubKey = parsedKeypair.getPublicKey();
+        const parsedPrivKey = parsedKeypair.export().privateKey;
         expect(pubKey).toEqual(parsedPubKey);
         expect(privKey).toEqual(parsedPrivKey);
     });
