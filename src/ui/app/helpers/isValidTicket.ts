@@ -13,29 +13,29 @@ const isValidTicket = async (
     walletAddress: string,
     ticketAgentId: string
 ) => {
-    if (ticketData.fields.ticket_agent_id === ticketAgentId) {
-        const typeArguments = [];
-        if (ticketData.type.indexOf('<') > -1) {
-            const type = ticketData.type.split('<')[1];
-            if (type) {
-                typeArguments.push(type.replace('>', ''));
-            }
-        }
-        const ticketRecord = await Ticket.lookupTicketRecord(
-            provider,
-            ticketData.type.split('::')[0],
-            walletAddress,
-            ticketData.fields.ticket_id as string,
-            ticketAgentId,
-            typeArguments
-        );
-        if (
-            ticketRecord.redemption_count > 0 &&
-            `0x${ticketRecord.address}` === walletAddress
-        ) {
-            return true;
-        }
-    }
+    // if (ticketData.fields.ticket_agent_id === ticketAgentId) {
+    //     const typeArguments = [];
+    //     if (ticketData.type.indexOf('<') > -1) {
+    //         const type = ticketData.type.split('<')[1];
+    //         if (type) {
+    //             typeArguments.push(type.replace('>', ''));
+    //         }
+    //     }
+    //     const ticketRecord = await Ticket.lookupTicketRecord(
+    //         provider,
+    //         ticketData.type.split('::')[0],
+    //         walletAddress,
+    //         ticketData.fields.ticket_id as string,
+    //         ticketAgentId,
+    //         typeArguments
+    //     );
+    //     if (
+    //         ticketRecord.redemption_count > 0 &&
+    //         `0x${ticketRecord.address}` === walletAddress
+    //     ) {
+    //         return true;
+    //     }
+    // }
     return false;
 };
 
