@@ -43,7 +43,7 @@ const useCategorizedEffects = ({
     const creating = useMemo(() => {
         if (!events) return [];
 
-        return []
+        return [];
         // return events
         //     .filter(
         //         (event) =>

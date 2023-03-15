@@ -102,7 +102,7 @@ export function DappTxApprovalPage() {
     );
     const txRequest = useAppSelector(txRequestSelector);
     const signableTransaction = useMemo(() => {
-        if (!txRequest || !('data' in txRequest.tx) ) return null;
+        if (!txRequest || !('data' in txRequest.tx)) return null;
         return Transaction.from(txRequest.tx.data);
     }, [txRequest]);
 
