@@ -190,12 +190,14 @@ export function DappPreapprovalPage() {
         if (!preapproval) return;
 
         const retrieveDetails = async () => {
+            const [packageObjectId, module, fun] =
+                preapproval.target.split('::');
             const provider = api.instance.fullNode;
-            const functionDetails = await provider.getNormalizedMoveFunction(
-                preapproval.packageObjectId,
-                preapproval.module,
-                preapproval.function
-            );
+            const functionDetails = await provider.getNormalizedMoveFunction({
+                package: packageObjectId,
+                module,
+                function: fun,
+            });
 
             const onchainInfo = {
                 action: '',
@@ -218,8 +220,8 @@ export function DappPreapprovalPage() {
                 }
 
                 const affectsObject =
-                    struct?.address === preapproval.packageObjectId &&
-                    struct?.module === preapproval.module;
+                    struct?.address === packageObjectId &&
+                    struct?.module === module;
 
                 if (affectsObject) {
                     onchainInfo.action = key || '';
