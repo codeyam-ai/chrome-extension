@@ -3,7 +3,6 @@
 
 import { Ed25519Keypair } from '@mysten/sui.js';
 import bip39 from 'bip39-light';
-import { simulateMnemonicUser } from '_src/test/utils/fake-local-storage';
 
 /**
  * Generate a 12-word random mnemonic and keypair using crypto.randomBytes
