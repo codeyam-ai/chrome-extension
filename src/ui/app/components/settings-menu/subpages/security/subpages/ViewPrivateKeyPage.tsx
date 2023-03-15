@@ -9,6 +9,7 @@ import Alert from '_src/ui/app/shared/feedback/Alert';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { ChangeEventHandler } from 'react';
+import { Ed25519Keypair } from '@mysten/sui.js';
 
 export default function ViewPrivateKeyPage() {
     const [hasConfirmed, setHasConfirmed] = useState(false);
@@ -87,7 +88,7 @@ export default function ViewPrivateKeyPage() {
                     <div className="text-lg">Hex</div>
                     <textarea
                         rows={3}
-                        value={privateKey || toHEX(fromB64(hostedPrivateKey))}
+                        value={toHEX(fromB64(privateKey || hostedPrivateKey))}
                         id="hexPrivateKey"
                         className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
                         name="hexPrivateKey"
@@ -98,11 +99,7 @@ export default function ViewPrivateKeyPage() {
                     <div className="text-lg">Base-64</div>
                     <textarea
                         rows={3}
-                        value={
-                            privateKey
-                                ? toB64(fromHEX(privateKey))
-                                : hostedPrivateKey
-                        }
+                        value={privateKey ?? hostedPrivateKey}
                         id="hexPrivateKey"
                         className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
                         name="hexPrivateKey"
@@ -113,11 +110,9 @@ export default function ViewPrivateKeyPage() {
                     <div className="text-lg">UInt8Array</div>
                     <textarea
                         rows={3}
-                        value={
-                            privateKey
-                                ? privateKey.toString()
-                                : fromB64(hostedPrivateKey).toString()
-                        }
+                        value={fromB64(
+                            privateKey ?? hostedPrivateKey
+                        ).toString()}
                         id="hexPrivateKey"
                         className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
                         name="hexPrivateKey"

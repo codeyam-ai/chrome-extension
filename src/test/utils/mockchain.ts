@@ -129,12 +129,25 @@ export class Mockchain {
             true
         );
 
+        this.mockBlockchainCall(
+            { method: 'sui_multiGetObjects' , params: [
+                ["0x0000000000000000000000000000000000000005"],
+                {
+                  "showOwner": true,
+                  "showContent": true,
+                  "showType": true
+                }
+            ]},
+            [suiSystemStateObject],
+            true
+        );
+
         fullObjects.push(suiSystemStateObject);
         fullObjects.forEach((fullObject) => {
             this.mockBlockchainCall(
                 {
                     method: 'sui_getObject',
-                    params: [fullObject.details.reference.objectId],
+                    params: [fullObject.details.objectId],
                 },
                 fullObject,
                 true
@@ -203,6 +216,8 @@ export class Mockchain {
             }
         } else {
             const bodyAsRecord = requestBody as Record<string, unknown>;
+            // eslint-disable-next-line no-console
+            console.log(`Found no match for method ${bodyAsRecord.method} with params ${JSON.stringify(bodyAsRecord.params, null, 2)}! Coming from ${new Error().stack}`)
             throw new Error(
                 `Found no match for method ${bodyAsRecord.method} with params ${bodyAsRecord.params}!`
             );
