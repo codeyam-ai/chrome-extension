@@ -42,123 +42,123 @@ describe('The Security Settings page', () => {
         await navigateToSecurity();
     };
 
-    // describe('mnemonic user', () => {
-    //     beforeEach(async () => {
-    //         simulateMnemonicUser();
-    //         mockchain.mockCommonCalls();
-    //     });
+    describe('mnemonic user', () => {
+        beforeEach(async () => {
+            simulateMnemonicUser();
+            mockchain.mockCommonCalls();
+        });
 
-    //     test('requires a valid password to view the recovery phrase', async () => {
-    //         await initAndNavigateToSecurity();
+        test('requires a valid password to view the recovery phrase', async () => {
+            await initAndNavigateToSecurity();
 
-    //         const recoveryPhraseButton = await screen.findByText(
-    //             'View Recovery Phrase'
-    //         );
-    //         await userEvent.click(recoveryPhraseButton);
+            const recoveryPhraseButton = await screen.findByText(
+                'View Recovery Phrase'
+            );
+            await userEvent.click(recoveryPhraseButton);
 
-    //         let recoveryPhraseElements = screen.queryAllByText(recoveryPhrase);
-    //         expect(recoveryPhraseElements.length).toBe(0);
+            let recoveryPhraseElements = screen.queryAllByText(recoveryPhrase);
+            expect(recoveryPhraseElements.length).toBe(0);
 
-    //         const passwordInput = await screen.findByTestId(
-    //             'view-phrase-password'
-    //         );
-    //         await userEvent.type(passwordInput, 'bad-password');
+            const passwordInput = await screen.findByTestId(
+                'view-phrase-password'
+            );
+            await userEvent.type(passwordInput, 'bad-password');
 
-    //         const submitPasswordButton = await screen.findByText(
-    //             'View recovery phrase'
-    //         );
-    //         await userEvent.click(submitPasswordButton);
+            const submitPasswordButton = await screen.findByText(
+                'View recovery phrase'
+            );
+            await userEvent.click(submitPasswordButton);
 
-    //         await screen.findByText('Password is not correct.');
+            await screen.findByText('Password is not correct.');
 
-    //         recoveryPhraseElements = screen.queryAllByText(recoveryPhrase);
-    //         expect(recoveryPhraseElements.length).toBe(0);
+            recoveryPhraseElements = screen.queryAllByText(recoveryPhrase);
+            expect(recoveryPhraseElements.length).toBe(0);
 
-    //         await userEvent.clear(passwordInput);
-    //         await userEvent.type(passwordInput, password);
-    //         await userEvent.click(submitPasswordButton);
+            await userEvent.clear(passwordInput);
+            await userEvent.type(passwordInput, password);
+            await userEvent.click(submitPasswordButton);
 
-    //         const errors = screen.queryAllByText('Password is not correct.');
-    //         expect(errors.length).toBe(0);
+            const errors = screen.queryAllByText('Password is not correct.');
+            expect(errors.length).toBe(0);
 
-    //         await screen.findByText(recoveryPhrase);
-    //     });
+            await screen.findByText(recoveryPhrase);
+        });
 
-    //     test('requires a valid password to view the private key', async () => {
-    //         await initAndNavigateToSecurity();
+        test('requires a valid password to view the private key', async () => {
+            await initAndNavigateToSecurity();
 
-    //         const privateKeyButton = await screen.findByText(
-    //             'View Private Key'
-    //         );
-    //         await userEvent.click(privateKeyButton);
+            const privateKeyButton = await screen.findByText(
+                'View Private Key'
+            );
+            await userEvent.click(privateKeyButton);
 
-    //         const uint8Array = Uint8Array.from(
-    //             accountInfos[0].privateKey.split(',').map((u) => parseInt(u))
-    //         );
-    //         const privateKey = toB64(uint8Array);
-    //         let privateKeyElements = screen.queryAllByText(privateKey);
-    //         expect(privateKeyElements.length).toBe(0);
+            const uint8Array = Uint8Array.from(
+                accountInfos[0].privateKey.split(',').map((u) => parseInt(u))
+            );
+            const privateKey = toB64(uint8Array);
+            let privateKeyElements = screen.queryAllByText(privateKey);
+            expect(privateKeyElements.length).toBe(0);
 
-    //         const passwordInput = await screen.findByTestId(
-    //             'view-private-key-password'
-    //         );
-    //         await userEvent.type(passwordInput, 'bad-password');
+            const passwordInput = await screen.findByTestId(
+                'view-private-key-password'
+            );
+            await userEvent.type(passwordInput, 'bad-password');
 
-    //         const submitPasswordButton = await screen.findByText(
-    //             'View private key'
-    //         );
-    //         await userEvent.click(submitPasswordButton);
+            const submitPasswordButton = await screen.findByText(
+                'View private key'
+            );
+            await userEvent.click(submitPasswordButton);
 
-    //         await screen.findByText('Password is not correct.');
+            await screen.findByText('Password is not correct.');
 
-    //         privateKeyElements = screen.queryAllByText(privateKey);
-    //         expect(privateKeyElements.length).toBe(0);
+            privateKeyElements = screen.queryAllByText(privateKey);
+            expect(privateKeyElements.length).toBe(0);
 
-    //         await userEvent.clear(passwordInput);
-    //         await userEvent.type(passwordInput, password);
-    //         await userEvent.click(submitPasswordButton);
+            await userEvent.clear(passwordInput);
+            await userEvent.type(passwordInput, password);
+            await userEvent.click(submitPasswordButton);
 
-    //         const errors = screen.queryAllByText('Password is not correct.');
-    //         expect(errors.length).toBe(0);
+            const errors = screen.queryAllByText('Password is not correct.');
+            expect(errors.length).toBe(0);
 
-    //         await screen.findByText(privateKey);
-    //     });
+            await screen.findByText(privateKey);
+        });
 
-    //     test('shows the proper private key for the selected account', async () => {
-    //         await init();
+        test('shows the proper private key for the selected account', async () => {
+            await init();
 
-    //         const currentWallet = await screen.findByTestId('current-wallet');
-    //         await within(currentWallet).findByText('Wallet 1');
-    //         await userEvent.click(currentWallet);
+            const currentWallet = await screen.findByTestId('current-wallet');
+            await within(currentWallet).findByText('Wallet 1');
+            await userEvent.click(currentWallet);
 
-    //         const wallet2Link = await screen.findByText('Wallet 2');
-    //         await userEvent.click(wallet2Link);
+            const wallet2Link = await screen.findByText('Wallet 2');
+            await userEvent.click(wallet2Link);
 
-    //         await navigateToSecurity();
+            await navigateToSecurity();
 
-    //         const recoveryPhraseButton = await screen.findByText(
-    //             'View Private Key'
-    //         );
-    //         await userEvent.click(recoveryPhraseButton);
+            const recoveryPhraseButton = await screen.findByText(
+                'View Private Key'
+            );
+            await userEvent.click(recoveryPhraseButton);
 
-    //         const uint8Array = Uint8Array.from(
-    //             accountInfos[1].privateKey.split(',').map((u) => parseInt(u))
-    //         );
-    //         const privateKey = toB64(uint8Array);
+            const uint8Array = Uint8Array.from(
+                accountInfos[1].privateKey.split(',').map((u) => parseInt(u))
+            );
+            const privateKey = toB64(uint8Array);
 
-    //         const passwordInput = await screen.findByTestId(
-    //             'view-private-key-password'
-    //         );
-    //         const submitPasswordButton = await screen.findByText(
-    //             'View private key'
-    //         );
+            const passwordInput = await screen.findByTestId(
+                'view-private-key-password'
+            );
+            const submitPasswordButton = await screen.findByText(
+                'View private key'
+            );
 
-    //         await userEvent.type(passwordInput, password);
-    //         await userEvent.click(submitPasswordButton);
+            await userEvent.type(passwordInput, password);
+            await userEvent.click(submitPasswordButton);
 
-    //         await screen.findByText(privateKey);
-    //     });
-    // });
+            await screen.findByText(privateKey);
+        });
+    });
 
     describe('email user', () => {
         beforeEach(async () => {
