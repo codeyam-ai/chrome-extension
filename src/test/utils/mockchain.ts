@@ -88,16 +88,19 @@ export class Mockchain {
                 balance: options.suiBalance,
                 id: objId,
             });
-            const coinObjectInfo: SuiObjectInfo = {
-                objectId: objId,
-                version: 0,
-                digest: '12Pe8JN96upsApMseeghANkkNMKUWA6Bz4JD5NTWko2q',
-                type: '0x2::coin::Coin<0x2::sui::SUI>',
-                owner: {
-                    AddressOwner: '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
-                },
-                previousTransaction:
-                    '2joDzF1sDVAVv9ej7j8197ZwiZ1hX73kSFW48c1nNxv3',
+            const coinObjectInfo = {
+                status: "Exists",
+                details: {
+                    objectId: objId,
+                    version: 0,
+                    digest: '12Pe8JN96upsApMseeghANkkNMKUWA6Bz4JD5NTWko2q',
+                    type: '0x2::coin::Coin<0x2::sui::SUI>',
+                    owner: {
+                        AddressOwner: '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+                    },
+                    previousTransaction:
+                        '2joDzF1sDVAVv9ej7j8197ZwiZ1hX73kSFW48c1nNxv3',    
+                }
             };
             objectInfos.push(coinObjectInfo);
             fullObjects.push(coinObject);
@@ -125,7 +128,11 @@ export class Mockchain {
 
         this.mockBlockchainCall(
             { method: 'sui_getOwnedObjects' },
-            objectInfos,
+            {
+                "data": objectInfos,
+                "nextCursor": "0xe986888d31f35cf985a28155f4b4dea19fd324838107084107d42f0541be12c9",
+                "hasNextPage": false
+            },
             true
         );
 
