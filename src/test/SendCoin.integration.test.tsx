@@ -34,7 +34,7 @@ describe('The Security Settings page', () => {
     const navigateToSend = async () => {
         const sendButton = await screen.findByTestId('send');
         await userEvent.click(sendButton);
-        await screen.findByText("Sending")
+        await screen.findByText('Sending');
     };
 
     const initAndNavigateToSend = async () => {

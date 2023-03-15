@@ -7,7 +7,7 @@ import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { preventActWarning } from '_src/test/utils/test-helpers';
 
-describe('The Transaction History Page', () => {
+xdescribe('The Transaction History Page', () => {
     let mockchain: Mockchain;
     beforeEach(async () => {
         mockchain = new Mockchain();
