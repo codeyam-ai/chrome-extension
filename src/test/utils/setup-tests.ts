@@ -2,6 +2,7 @@ import nock from 'nock';
 import * as util from 'util';
 
 import { fakeBrowser, clearLocalStorage } from './fake-browser';
+import { accountInfos } from './fake-local-storage';
 
 jest.mock('webextension-polyfill', () => {
     return fakeBrowser;
@@ -11,6 +12,18 @@ jest.spyOn(window, 'resizeTo').mockImplementation();
 
 jest.mock('animate.css/animate.min.css', () => '');
 jest.mock('react-toastify/dist/ReactToastify.css', () => '');
+jest.mock('_shared/cryptography/mnemonics', () => ({
+    getKeypairFromMnemonics: jest.fn((_mnemonic, index) => {
+        const accountInfo = accountInfos.find(
+            (accountInfo) => accountInfo.index === index
+        )
+        return {
+            getPublicKey: jest.fn(() => ({
+                toSuiAddress: jest.fn(() => accountInfo?.address)
+            }))
+        }
+    })
+}))
 
 beforeEach(() => clearLocalStorage());
 

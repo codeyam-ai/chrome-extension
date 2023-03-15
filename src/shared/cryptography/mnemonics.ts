@@ -29,7 +29,6 @@ export function getKeypairFromMnemonics(
     index = 0
 ): Ed25519Keypair {
     const derivationPath = makeDerivationPath(index);
-    console.log("mnemonics", mnemonics)
     const keypair = Ed25519Keypair.deriveKeypair(mnemonics, derivationPath);
     return keypair;
 }
