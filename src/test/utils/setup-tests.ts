@@ -3,6 +3,7 @@ import * as util from 'util';
 
 import { fakeBrowser, clearLocalStorage } from './fake-browser';
 import { accountInfos } from './fake-local-storage';
+import { toB64 } from '@mysten/bcs';
 
 jest.mock('webextension-polyfill', () => {
     return fakeBrowser;
@@ -20,9 +21,18 @@ jest.mock('_shared/cryptography/mnemonics', () => ({
         return {
             getPublicKey: jest.fn(() => ({
                 toSuiAddress: jest.fn(() => accountInfo?.address)
+            })),
+            export: jest.fn(() => ({
+                privateKey: toB64(
+                    Uint8Array.from(
+                        (accountInfo?.privateKey || '').split(',').map((s) => parseInt(s))
+                    )
+                )
             }))
         }
-    })
+    }),
+    normalizeMnemonics: jest.fn((mnemonic) => mnemonic),
+    validateMnemonics: jest.fn(() => true)
 }))
 
 beforeEach(() => clearLocalStorage());
