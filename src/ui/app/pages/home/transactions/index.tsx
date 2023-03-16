@@ -26,7 +26,7 @@ const TransactionsPage = () => {
     const [formattedTxns, setFormattedTxns] = useState<TxResultState[]>([]);
     const [error, setError] = useState<string | undefined>();
 
-    // const txPerPage = 5;
+    const txPerPage = 5;
 
     // fetch all transactions from the blockchain
     useEffect(() => {
@@ -94,23 +94,29 @@ const TransactionsPage = () => {
         }
 
         const loadFormattedTransactionsForCurrentPage = async () => {
-            // const start = currentPage * txPerPage;
-            // const end = start + txPerPage;
-            // const transactionsToFormat = suiTxns.slice(start, end);
+            const start = currentPage * txPerPage;
+            const end = start + txPerPage;
+            const transactionsToFormat = suiTxns.slice(start, end);
 
             const formattedTxs: TxResultState[] = [];
-            // for (const transactionToFormat of transactionsToFormat) {
-            //     const x = await api.instance.fullNode.getTransaction({
-            //         digest: transactionToFormat.digest,
-            //         options: {
-            //             showEffects: true,
-            //             showEvents: true,
-            //             showInput: true,
-            //             showObjectChanges: true,
-            //         },
-            //     });
-            //     console.log('X', x);
-            // }
+            for (const transactionToFormat of transactionsToFormat) {
+                formattedTxs.push({
+                    ...transactionToFormat,
+                    txId: transactionToFormat.digest,
+                    objSymbol: 'NA',
+                    status: transactionToFormat.confirmedLocalExecution
+                        ? 'success'
+                        : 'failure',
+                    from:
+                        transactionToFormat.transaction?.data.sender ||
+                        'Unknown',
+                    kind: 'ProgrammableTransaction',
+                    type: '',
+                    txGas:
+                        transactionToFormat.transaction?.data.gasData.price ||
+                        0,
+                });
+            }
 
             setFormattedTxns(formattedTxs);
             // const fullTransactionDetails = await getFullTransactionDetails(
