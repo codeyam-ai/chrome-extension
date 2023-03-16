@@ -1,4 +1,3 @@
-export {};
 // import {
 //     Coin,
 //     getExecutionStatusError,
@@ -19,47 +18,47 @@ export {};
 // import getObjTypeFromObjId from '_app/helpers/getObjTypeFromObjId';
 // import { notEmpty } from '_helpers';
 //
-// import type {
-//     ExecutionStatusType,
-//     SuiEvent,
-//     SuiTransactionKind,
-//     SuiTransactionResponse,
-//     TransactionEffects,
-//     TransactionKindName,
-// } from '@mysten/sui.js';
+import type {
+    ExecutionStatusType,
+    // SuiEvent,
+    // SuiTransactionKind,
+    // SuiTransactionResponse,
+    // TransactionEffects,
+    TransactionKindName,
+} from '@mysten/sui.js';
 // import type ApiProvider from '_app/ApiProvider';
-// import type { FormattedCoin } from '_src/ui/app/helpers/formatCoin';
+import type { FormattedCoin } from '_src/ui/app/helpers/formatCoin';
 // import type { AppThunkConfig } from '_store/thunk-extras';
 //
-// export type TxResultState = {
-//     objSymbol: string;
-//     to?: string;
-//     txId: string;
-//     status: ExecutionStatusType;
-//     txGas: number;
-//     kind: TransactionKindName | undefined;
-//     from: string;
-//     amount?: number;
-//     timestampMs?: number;
-//     url?: string;
-//     balance?: number;
-//     objectId?: string;
-//     description?: string;
-//     name?: string;
-//     objType?: string;
-//     isSender?: boolean;
-//     error?: string;
-//     callFunctionName?: string;
-//     callModuleName?: string;
-//     coinSymbol?: string;
-//     coinType?: string;
-//     toAddr?: string;
-//     txAmount?: number;
-//     vendor?: string;
-//     txType?: string;
-//     type: string;
-//     formatted?: FormattedCoin;
-// };
+export type TxResultState = {
+    objSymbol: string;
+    to?: string;
+    txId: string;
+    status: ExecutionStatusType;
+    txGas: number;
+    kind: TransactionKindName | undefined;
+    from: string;
+    amount?: number;
+    timestampMs?: number;
+    url?: string;
+    balance?: number;
+    objectId?: string;
+    description?: string;
+    name?: string;
+    objType?: string;
+    isSender?: boolean;
+    error?: string;
+    callFunctionName?: string;
+    callModuleName?: string;
+    coinSymbol?: string;
+    coinType?: string;
+    toAddr?: string;
+    txAmount?: number;
+    vendor?: string;
+    txType?: string;
+    type: string;
+    formatted?: FormattedCoin;
+};
 //
 // interface TransactionManualState {
 //     loading: boolean;

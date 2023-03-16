@@ -1,32 +1,32 @@
-import { QueueListIcon } from '@heroicons/react/24/solid';
+// import { QueueListIcon } from '@heroicons/react/24/solid';
 import { type SuiTransactionResponse } from '@mysten/sui.js';
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 
 import { useAppSelector } from '_hooks';
 // import { getFullTransactionDetails } from '_redux/slices/txresults';
-// import { type TxResultState } from '_redux/slices/txresults';
+import { type TxResultState } from '_redux/slices/txresults';
 import Loading from '_src/ui/app/components/loading';
 import deduplicate from '_src/ui/app/helpers/deduplicate';
-import formatCoin from '_src/ui/app/helpers/formatCoin';
-import { getTxType } from '_src/ui/app/helpers/transactions';
+// import formatCoin from '_src/ui/app/helpers/formatCoin';
+// import { getTxType } from '_src/ui/app/helpers/transactions';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
-import Button from '_src/ui/app/shared/button';
+// import Button from '_src/ui/app/shared/button';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
-import { Icon } from '_src/ui/app/shared/icons/Icon';
-import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
+// import { Icon } from '_src/ui/app/shared/icons/Icon';
+// import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage] = useState(0);
     const [loadingTxns, setLoadingTxns] = useState(true);
-    const [moreTxnsAvailable, setMoreTxnsAvailable] = useState(true);
+    // const [moreTxnsAvailable, setMoreTxnsAvailable] = useState(true);
     const [suiTxns, setSuiTxns] = useState<SuiTransactionResponse[]>([]);
-    const [formattedTxns, setFormattedTxns] = useState<any[]>([]);
+    const [formattedTxns, setFormattedTxns] = useState<TxResultState[]>([]);
     const [error, setError] = useState<string | undefined>();
 
-    const txPerPage = 5;
+    // const txPerPage = 5;
 
     // fetch all transactions from the blockchain
     useEffect(() => {
@@ -68,7 +68,7 @@ const TransactionsPage = () => {
                     (a, b) => (b.timestampMs || 0) - (a.timestampMs || 0)
                 );
 
-                console.log(sortedTransactions);
+                // console.log(sortedTransactions);
                 setSuiTxns(sortedTransactions);
                 if (sortedTransactions.length === 0) {
                     setLoadingTxns(false);
@@ -94,25 +94,25 @@ const TransactionsPage = () => {
         }
 
         const loadFormattedTransactionsForCurrentPage = async () => {
-            const start = currentPage * txPerPage;
-            const end = start + txPerPage;
-            const transactionsToFormat = suiTxns.slice(start, end);
+            // const start = currentPage * txPerPage;
+            // const end = start + txPerPage;
+            // const transactionsToFormat = suiTxns.slice(start, end);
 
-            const formattedTxs = [];
-            for (const transactionToFormat of transactionsToFormat) {
-                const x = await api.instance.fullNode.getTransaction({
-                    digest: transactionToFormat.digest,
-                    options: {
-                        showEffects: true,
-                        showEvents: true,
-                        showInput: true,
-                        showObjectChanges: true,
-                    },
-                });
-                console.log('X', x);
-            }
+            const formattedTxs: TxResultState[] = [];
+            // for (const transactionToFormat of transactionsToFormat) {
+            //     const x = await api.instance.fullNode.getTransaction({
+            //         digest: transactionToFormat.digest,
+            //         options: {
+            //             showEffects: true,
+            //             showEvents: true,
+            //             showInput: true,
+            //             showObjectChanges: true,
+            //         },
+            //     });
+            //     console.log('X', x);
+            // }
 
-            setFormattedTxns(transactionsToFormat);
+            setFormattedTxns(formattedTxs);
             // const fullTransactionDetails = await getFullTransactionDetails(
             //     transactionsToFormat,
             //     address,
@@ -163,9 +163,9 @@ const TransactionsPage = () => {
         }
     }, [address, currentPage, suiTxns]);
 
-    const incrementPage = useCallback(() => {
-        setCurrentPage(currentPage + 1);
-    }, [currentPage]);
+    // const incrementPage = useCallback(() => {
+    //     setCurrentPage(currentPage + 1);
+    // }, [currentPage]);
 
     if (error) {
         return (

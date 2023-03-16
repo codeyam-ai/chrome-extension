@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { cleanObjectId } from '.';
+// import { cleanObjectId } from '.';
 
 import type {
     SuiMoveNormalizedFunction,
@@ -63,7 +63,7 @@ const useCategorizedEffects = ({
         //         };
         //     })
         //     .filter((event) => !!event);
-    }, [events, address]);
+    }, [events]);
 
     const mutating = useMemo(() => {
         if (!events) return [];
@@ -156,7 +156,7 @@ const useCategorizedEffects = ({
         //     totals[coinType] += amount * -1;
         //     return totals;
         // }, zero);
-    }, [events, address]);
+    }, [events]);
 
     return {
         reading,

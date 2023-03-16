@@ -1,16 +1,20 @@
 import TransactionRow from './TransactionRow';
 
-// import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
+import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
 // interface TransactionRowsProps {
 //     transactions: TxResultState[] | undefined;
 // }
 
-const TransactionRows = ({ transactions }: any) => {
+const TransactionRows = ({
+    transactions,
+}: {
+    transactions: TxResultState[];
+}) => {
     return (
         <div className="px-6 pb-6 divide-ethos-light-text-stroke">
             {transactions &&
-                transactions.map((txn: any, index: number) => {
+                transactions.map((txn: TxResultState, index: number) => {
                     return (
                         <TransactionRow
                             txn={txn}

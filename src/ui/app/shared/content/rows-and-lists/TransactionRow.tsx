@@ -19,10 +19,10 @@ import { getHumanReadable } from '_src/ui/app/helpers/transactions';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
 
-// import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
+import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
 interface TransactionRowProps {
-    txn: any;
+    txn: TxResultState;
 }
 
 interface RowDataTypes extends SharedTypes {
@@ -42,7 +42,6 @@ interface SharedTypes {
 }
 
 const TransactionRow = ({ txn }: TransactionRowProps) => {
-    console.log('TXN', txn);
     const { txType, txAction, nftImageUri, timeDisplay } =
         getHumanReadable(txn);
 
