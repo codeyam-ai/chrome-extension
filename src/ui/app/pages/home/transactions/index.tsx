@@ -97,6 +97,21 @@ const TransactionsPage = () => {
             const start = currentPage * txPerPage;
             const end = start + txPerPage;
             const transactionsToFormat = suiTxns.slice(start, end);
+
+            const formattedTxs = [];
+            for (const transactionToFormat of transactionsToFormat) {
+                const x = await api.instance.fullNode.getTransaction({
+                    digest: transactionToFormat.digest,
+                    options: {
+                        showEffects: true,
+                        showEvents: true,
+                        showInput: true,
+                        showObjectChanges: true,
+                    },
+                });
+                console.log('X', x);
+            }
+
             setFormattedTxns(transactionsToFormat);
             // const fullTransactionDetails = await getFullTransactionDetails(
             //     transactionsToFormat,

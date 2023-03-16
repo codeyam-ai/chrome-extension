@@ -34,7 +34,6 @@ export function DappSignMessageApprovalPage() {
         [signMessageRequestID]
     );
     const signMessageRequest = useAppSelector(signMessageRequestSelector);
-    console.log('signMessageRequest', signMessageRequest);
     const loading = guardLoading || signMessageRequestLoading;
     const dispatch = useAppDispatch();
 

@@ -1,4 +1,4 @@
-import { getObjectId } from '@mysten/sui.js';
+// import { getObjectId } from '@mysten/sui.js';
 import { useMemo, useState } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 

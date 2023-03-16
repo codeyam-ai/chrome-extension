@@ -1,8 +1,8 @@
-import { BCS, getSuiMoveConfig } from '@mysten/bcs';
-import { useMemo } from 'react';
+// import { BCS, getSuiMoveConfig } from '@mysten/bcs';
+// import { useMemo } from 'react';
 
-import { Dot } from '../CostValue';
-import Body from '_src/ui/app/shared/typography/Body';
+// import { Dot } from '../CostValue';
+// import Body from '_src/ui/app/shared/typography/Body';
 
 import type { SummaryGeneratorArgs } from './standard';
 

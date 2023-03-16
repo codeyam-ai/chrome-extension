@@ -110,7 +110,6 @@ const standard = ({
                 } as Section,
             ];
         } else if (primaryCommand?.kind === 'TransferObjects') {
-            console.log('TRANSFERRING', primaryCommand);
             summary = [
                 {
                     title: 'Transfer Asset',

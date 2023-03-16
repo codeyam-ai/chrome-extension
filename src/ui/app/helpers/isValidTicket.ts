@@ -1,4 +1,4 @@
-import { Ticket } from '../redux/slices/sui-objects/Ticket';
+// import { Ticket } from '../redux/slices/sui-objects/Ticket';
 
 import type { JsonRpcProvider, ObjectContentFields } from '@mysten/sui.js';
 

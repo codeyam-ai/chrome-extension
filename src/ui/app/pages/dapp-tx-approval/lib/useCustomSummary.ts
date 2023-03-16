@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { growthbook } from '_src/ui/app/experimentation/feature-gating';
+// import { growthbook } from '_src/ui/app/experimentation/feature-gating';
 
 import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
 
@@ -8,11 +8,11 @@ const useCustomSummary = (txRequest: ApprovalRequest | null) => {
     const summaryKey = useMemo(() => {
         if (!txRequest) return;
 
-        const txInfo = txRequest?.tx;
-        const customSummaries = growthbook.getFeatureValue(
-            'custom-summaries',
-            {} as Record<string, string>
-        );
+        // const txInfo = txRequest?.tx;
+        // const customSummaries = growthbook.getFeatureValue(
+        //     'custom-summaries',
+        //     {} as Record<string, string>
+        // );
 
         const summaryKey = 'standard';
 
