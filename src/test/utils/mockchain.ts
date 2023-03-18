@@ -78,7 +78,11 @@ export class Mockchain {
     }
 
     mockSuiObjects(
-        options: { suiBalance?: number; nftDetails?: { name: string } } = {}
+        options: {
+            suiBalance?: number;
+            nftDetails?: { name: string };
+            logObjects?: boolean;
+        } = {}
     ) {
         const fullObjects = [];
         const objectInfos = [];
@@ -152,6 +156,11 @@ export class Mockchain {
             fullObjects,
             true
         );
+
+        if (options.logObjects) {
+            console.log('fullObjects: ', JSON.stringify(fullObjects, null, 2));
+            console.log('objectInfos: ', JSON.stringify(objectInfos, null, 2));
+        }
     }
 
     matchIncomingRequest(uri: string, requestBody: nock.Body) {
