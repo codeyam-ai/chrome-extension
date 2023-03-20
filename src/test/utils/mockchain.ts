@@ -5,7 +5,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { renderTemplate } from './json-templates';
 import { suiSystemStateObject } from '_src/test/utils/mockchain-templates/sui-system-state';
 
-import type { SuiObjectInfo } from '@mysten/sui.js';
+import type { SuiObjectData, SuiObjectInfo } from '@mysten/sui.js';
 
 interface ExpectedCall {
     method: string;
@@ -78,7 +78,11 @@ export class Mockchain {
     }
 
     mockSuiObjects(
-        options: { suiBalance?: number; nftDetails?: { name: string } } = {}
+        options: {
+            suiBalance?: number;
+            nftDetails?: { name: string };
+            logObjects?: boolean;
+        } = {}
     ) {
         const fullObjects = [];
         const objectInfos = [];
@@ -111,17 +115,14 @@ export class Mockchain {
                 name: options.nftDetails.name,
             });
 
-            const objId = '0xc157dc52d54697f53329520499500de0ec6fcf70';
-            const nftObjectInfo: SuiObjectInfo = {
-                objectId: objId,
-                version: 11,
-                digest: 'QfLsnpIr0FkDxZ8nRjtZFQHB8WyyMqSb5XrNjRPbhJ4=',
-                type: '0x2::devnet_nft::DevNetNFT',
-                owner: {
-                    AddressOwner: '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+            const nftObjectInfo = {
+                status: 'Exists',
+                details: {
+                    objectId:
+                        '0x3c36fe1eca57222e087352959ab0edf83251fe0a5aa8a0ec87c4e3fa1714f367',
+                    version: 10,
+                    digest: '3LrFiM2niq5to7XJ466L7b9oVkQtXqTvNhfiLWCNCTTN',
                 },
-                previousTransaction:
-                    '9eYRTpu476zfPVbXbkCDUKbdpp6yYKnEQXworrzKDdrM',
             };
             objectInfos.push(nftObjectInfo);
             fullObjects.push(renderedNftResult);
@@ -155,6 +156,11 @@ export class Mockchain {
             fullObjects,
             true
         );
+
+        if (options.logObjects) {
+            console.log('fullObjects: ', JSON.stringify(fullObjects, null, 2));
+            console.log('objectInfos: ', JSON.stringify(objectInfos, null, 2));
+        }
     }
 
     matchIncomingRequest(uri: string, requestBody: nock.Body) {
