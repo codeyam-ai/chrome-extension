@@ -11,6 +11,7 @@ import { accountAggregateBalancesSelector } from '../../redux/slices/account';
 import TestnetFaucetModal from '../alerts/TestnetFaucetModal';
 import Alert from '../feedback/Alert';
 import SuiIcon from '../svg/SuiIcon';
+import { api } from '_redux/store/thunk-extras';
 
 interface SendReceiveButtonGroupProps {
     mistBalance: number | bigint;
@@ -57,7 +58,7 @@ const SendReceiveButtonGroup = ({
         }
         setIsFaucetInProgress(true);
         const faucet = async () => {
-            const result = await fetch('https://faucet.devnet.sui.io/gas', {
+            const result = await fetch(`${api.getEndPoints().faucet}gas`, {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',

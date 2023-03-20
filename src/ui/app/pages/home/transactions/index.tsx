@@ -9,6 +9,7 @@ import Loading from '_src/ui/app/components/loading';
 import deduplicate from '_src/ui/app/helpers/deduplicate';
 // import formatCoin from '_src/ui/app/helpers/formatCoin';
 // import { getTxType } from '_src/ui/app/helpers/transactions';
+import { useQueryTransactionsByAddress } from '_src/ui/app/hooks/useQueryTransactionsByAddress';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 // import Button from '_src/ui/app/shared/button';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
@@ -20,65 +21,14 @@ import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
     const [currentPage] = useState(0);
-    const [loadingTxns, setLoadingTxns] = useState(true);
     // const [moreTxnsAvailable, setMoreTxnsAvailable] = useState(true);
-    const [suiTxns, setSuiTxns] = useState<SuiTransactionResponse[]>([]);
     const [formattedTxns, setFormattedTxns] = useState<TxResultState[]>([]);
     const [error, setError] = useState<string | undefined>();
+    const { isLoading: loadingTxns, data: suiTxns } =
+        useQueryTransactionsByAddress(address);
+    console.log('TRANSACTIONS', loadingTxns, suiTxns);
 
     const txPerPage = 5;
-
-    // fetch all transactions from the blockchain
-    useEffect(() => {
-        async function fetchSuiTransactions() {
-            if (!address) {
-                return;
-            }
-
-            try {
-                const [txnIds, fromTxnIds] = await Promise.all([
-                    api.instance.fullNode.queryTransactions({
-                        filter: {
-                            ToAddress: address,
-                        },
-                    }),
-                    api.instance.fullNode.queryTransactions({
-                        filter: {
-                            FromAddress: address,
-                        },
-                    }),
-                ]);
-                // TODO: replace this with queryTransactions
-                // It seems to be expensive to fetch all transaction data at once though
-                const resp = await api.instance.fullNode.multiGetTransactions({
-                    digests: deduplicate(
-                        [...txnIds.data, ...fromTxnIds.data].map(
-                            (x) => x.digest
-                        )
-                    ),
-                    options: {
-                        showInput: true,
-                        showEffects: true,
-                        showEvents: true,
-                    },
-                });
-
-                const sortedTransactions = resp.sort(
-                    // timestamp could be null, so we need to handle
-                    (a, b) => (b.timestampMs || 0) - (a.timestampMs || 0)
-                );
-
-                // console.log(sortedTransactions);
-                setSuiTxns(sortedTransactions);
-                if (sortedTransactions.length === 0) {
-                    setLoadingTxns(false);
-                }
-            } catch (e) {
-                setError(`${e}`);
-            }
-        }
-        fetchSuiTransactions();
-    }, [address]);
 
     // determine if more transactions are available
     // useEffect(() => {
@@ -94,12 +44,16 @@ const TransactionsPage = () => {
         }
 
         const loadFormattedTransactionsForCurrentPage = async () => {
+            if (!suiTxns) return;
+
+            console.log('SUITXNS', suiTxns);
             const start = currentPage * txPerPage;
             const end = start + txPerPage;
             const transactionsToFormat = suiTxns.slice(start, end);
 
             const formattedTxs: TxResultState[] = [];
             for (const transactionToFormat of transactionsToFormat) {
+                console.log('transactionToFormat', transactionToFormat);
                 formattedTxs.push({
                     ...transactionToFormat,
                     txId: transactionToFormat.digest,
@@ -162,11 +116,6 @@ const TransactionsPage = () => {
             //     ]);
             // }
         };
-        if (suiTxns.length > 0) {
-            loadFormattedTransactionsForCurrentPage().then(() => {
-                setLoadingTxns(false);
-            });
-        }
     }, [address, currentPage, suiTxns]);
 
     // const incrementPage = useCallback(() => {

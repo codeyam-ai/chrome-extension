@@ -1,13 +1,15 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { type SuiAddress, JsonRpcProvider } from '@mysten/sui.js';
+import { type SuiAddress } from '@mysten/sui.js';
 import { useQuery } from '@tanstack/react-query';
+
+import { api } from '_redux/store/thunk-extras';
 
 const dedupe = (arr: string[]) => Array.from(new Set(arr));
 
 export function useQueryTransactionsByAddress(address: SuiAddress | null) {
-    const rpc = new JsonRpcProvider();
+    const rpc = api.instance.fullNode;
 
     return useQuery(
         ['transactions-by-address', address],
@@ -16,12 +18,12 @@ export function useQueryTransactionsByAddress(address: SuiAddress | null) {
             const [txnIds, fromTxnIds] = await Promise.all([
                 rpc.queryTransactions({
                     filter: {
-                        ToAddress: address!,
+                        ToAddress: address || '',
                     },
                 }),
                 rpc.queryTransactions({
                     filter: {
-                        FromAddress: address!,
+                        FromAddress: address || '',
                     },
                 }),
             ]);
@@ -35,8 +37,10 @@ export function useQueryTransactionsByAddress(address: SuiAddress | null) {
                     showInput: true,
                     showEffects: true,
                     showEvents: true,
+                    showObjectChanges: true,
                 },
             });
+            console.log('resp', resp);
 
             return resp.sort(
                 // timestamp could be null, so we need to handle
