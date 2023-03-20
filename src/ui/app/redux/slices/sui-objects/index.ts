@@ -17,10 +17,7 @@ import {
     createSlice,
 } from '@reduxjs/toolkit';
 
-import {
-    DEFAULT_NFT_TRANSFER_GAS_FEE,
-    SUI_SYSTEM_STATE_OBJECT_ID,
-} from './Coin';
+import { SUI_SYSTEM_STATE_OBJECT_ID } from './Coin';
 
 import type { SuiAddress, ObjectId, SuiObjectData } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';

@@ -2,7 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { fromB64, toB64 } from '@mysten/bcs';
-import { Ed25519Keypair, JsonRpcProvider, RawSigner } from '@mysten/sui.js';
+import {
+    Ed25519Keypair,
+    JsonRpcProvider,
+    RawSigner,
+    Transaction,
+} from '@mysten/sui.js';
 import { filter, lastValueFrom, map, race, Subject, take } from 'rxjs';
 import nacl from 'tweetnacl';
 import { v4 as uuidV4 } from 'uuid';
@@ -19,7 +24,6 @@ import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 import type {
     MoveCallCommand,
-    Transaction,
     SignedTransaction,
     SuiTransactionResponse,
 } from '@mysten/sui.js';
@@ -160,125 +164,94 @@ class Transactions {
         preapprovalRequest: PreapprovalRequest,
         options?: SuiSignAndExecuteTransactionOptions
     ) {
-        throw new Error('tryDirectExecution not ready yet');
-        // try {
-        //     const txDirectResult =
-        //         await this.executeMoveCallTransactionDirectly({
-        //             tx,
-        //             options,
-        //         });
+        try {
+            const txDirectResult =
+                await this.executeMoveCallTransactionDirectly({
+                    tx,
+                    options,
+                });
 
-        //     const { result, error } = txDirectResult;
+            const { result, error } = txDirectResult;
 
-        //     if (error) {
-        //         return { error, effects: null };
-        //     }
+            if (error) {
+                return { error, effects: null };
+            }
 
-        //     const { preapproval } = preapprovalRequest;
-        //     preapproval.maxTransactionCount -= 1;
-        //     const { effects } = result.EffectsCert || result;
-        //     const { computationCost, storageCost, storageRebate } =
-        //         effects.effects.gasUsed;
-        //     const gasUsed = computationCost + (storageCost - storageRebate);
-        //     preapproval.totalGasLimit -= gasUsed;
+            const { preapproval } = preapprovalRequest;
+            preapproval.maxTransactionCount -= 1;
+            const { effects } = result.EffectsCert || result;
+            const { computationCost, storageCost, storageRebate } =
+                effects.effects.gasUsed;
+            const gasUsed = computationCost + (storageCost - storageRebate);
+            preapproval.totalGasLimit -= gasUsed;
 
-        //     if (
-        //         preapprovalRequest.preapproval.maxTransactionCount > 0 &&
-        //         preapprovalRequest.preapproval.totalGasLimit > gasUsed * 1.5
-        //     ) {
-        //         this.storePreapprovalRequest(preapprovalRequest);
-        //     } else {
-        //         this.removePreapprovalRequest(preapprovalRequest.id as string);
-        //     }
+            if (
+                preapprovalRequest.preapproval.maxTransactionCount > 0 &&
+                preapprovalRequest.preapproval.totalGasLimit > gasUsed * 1.5
+            ) {
+                this.storePreapprovalRequest(preapprovalRequest);
+            } else {
+                this.removePreapprovalRequest(preapprovalRequest.id as string);
+            }
 
-        //     return { effects, error: null };
-        // } catch (e) {
-        //     return { error: e, effects: null };
-        // }
+            return { effects, error: null };
+        } catch (e) {
+            return { error: e, effects: null };
+        }
     }
 
     public async executeTransaction(
         tx: TransactionDataType,
         connection: ContentScriptConnection
     ) {
-        throw new Error('executeTransaction not ready yet');
-        // if (tx.type === 'v2' || tx.type === 'move-call') {
-        //     let moveCall: MoveCallTransaction | undefined;
-        //     if (tx.type === 'v2') {
-        //         if (tx.data.kind === 'moveCall') {
-        //             moveCall = tx.data.data;
-        //         }
-        //     } else {
-        //         moveCall = tx.data;
-        //     }
+        const transaction = Transaction.from(tx.data);
+        if (transaction) {
+            throw new Error(
+                `COMMANDS: ${transaction.transactionData.commands.length}`
+            );
+        }
 
-        //     if (moveCall) {
-        //         const permissionRequest = await this.findPreapprovalRequest({
-        //             moveCall,
-        //         });
-
-        //         if (permissionRequest) {
-        //             let options;
-        //             if ('options' in tx) {
-        //                 options = tx.options;
-        //             }
-        //             const { effects, error } = await this.tryDirectExecution(
-        //                 moveCall,
-        //                 permissionRequest,
-        //                 options
-        //             );
-        //             if (effects) {
-        //                 return effects;
-        //             }
-
-        //             if (error) {
-        //                 throw new Error(error.message);
-        //             }
-        //         }
-        //     }
-        // }
-
-        // const txRequest = this.createTransactionRequest(
-        //     tx,
-        //     connection.origin,
-        //     connection.originFavIcon
-        // );
-        // await this.storeTransactionRequest(txRequest);
-        // const popUp = openTxWindow(txRequest.id);
-        // const popUpClose = (await popUp.show()).pipe(
-        //     take(1),
-        //     map<number, false>(() => false)
-        // );
-        // const txResponseMessage = this._txResponseMessages.pipe(
-        //     filter((msg) => msg.txID === txRequest.id),
-        //     take(1)
-        // );
-        // return lastValueFrom(
-        //     race(popUpClose, txResponseMessage).pipe(
-        //         take(1),
-        //         map(async (response) => {
-        //             if (response) {
-        //                 const { approved, txResult, tsResultError } = response;
-        //                 if (approved) {
-        //                     txRequest.txResult = txResult;
-        //                     txRequest.txResultError = tsResultError;
-        //                     await this.storeTransactionRequest(txRequest);
-        //                     if (tsResultError) {
-        //                         throw new Error(
-        //                             `Transaction failed with the following error. ${tsResultError}`
-        //                         );
-        //                     }
-        //                     if (!txResult) {
-        //                         throw new Error(`Transaction result is empty`);
-        //                     }
-        //                     return txResult;
-        //                 }
-        //             }
-        //             await this.removeTransactionRequest(txRequest.id);
-        //             throw new Error('Transaction rejected from user');
-        //         })
-        //     )
-        // );
+        const txRequest = this.createTransactionRequest(
+            tx,
+            connection.origin,
+            connection.originFavIcon
+        );
+        await this.storeTransactionRequest(txRequest);
+        const popUp = openTxWindow(txRequest.id);
+        const popUpClose = (await popUp.show()).pipe(
+            take(1),
+            map<number, false>(() => false)
+        );
+        const txResponseMessage = this._txResponseMessages.pipe(
+            filter((msg) => msg.txID === txRequest.id),
+            take(1)
+        );
+        return lastValueFrom(
+            race(popUpClose, txResponseMessage).pipe(
+                take(1),
+                map(async (response) => {
+                    if (response) {
+                        const { approved, txResult } = response;
+                        if (approved) {
+                            txRequest.txResult = txResult;
+                            // txRequest.txResultError = tsResultError;
+                            await this.storeTransactionRequest(txRequest);
+                            // if (tsResultError) {
+                            //     throw new Error(
+                            //         `Transaction failed with the following error. ${tsResultError}`
+                            //     );
+                            // }
+                            if (!txResult) {
+                                throw new Error(`Transaction result is empty`);
+                            }
+                            return txResult;
+                        }
+                    }
+                    await this.removeTransactionRequest(txRequest.id);
+                    throw new Error('Transaction rejected from user');
+                })
+            )
+        );
     }
 
     public async signMessage(
@@ -312,10 +285,10 @@ class Transactions {
         tx,
         options,
     }: {
-        tx: MoveCallCommand;
+        tx: Transaction;
         options?: SuiSignAndExecuteTransactionOptions;
     }) {
-        throw new Error('executeMoveCallTransactionDirectly not working yet');
+        const callData = {};
         // const activeAccount = await this.getActiveAccount();
 
         // const callData = {
@@ -338,7 +311,7 @@ class Transactions {
         //     }),
         // };
 
-        // return this.executeTransactionDirectly({ callData, options });
+        return this.executeTransactionDirectly({ callData, options });
     }
 
     private async executeTransactionDirectly({

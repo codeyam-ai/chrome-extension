@@ -13,7 +13,6 @@ import {
     createSlice,
 } from '@reduxjs/toolkit';
 
-import { DEFAULT_GAS_BUDGET_FOR_PAY } from '../sui-objects/Coin';
 import { accountCoinsSelector } from '_redux/slices/account';
 import {
     fetchAllOwnedAndRequiredObjects,

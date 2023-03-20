@@ -53,6 +53,7 @@ import type {
     TransactionEvents,
 } from '@mysten/sui.js';
 // import type { ApprovalRequest } from '_payloads/transactions';
+import type { SuiSignAndExecuteTransactionOptions } from '@mysten/wallet-standard';
 import type { RootState } from '_redux/RootReducer';
 import type { ReactElement, ReactNode } from 'react';
 
@@ -270,11 +271,19 @@ export function DappTxApprovalPage() {
                 approved,
                 authentication,
                 address,
-                activeAccountIndex
+                activeAccountIndex,
+                txRequest?.tx.options
             );
             setDone(true);
         },
-        [transaction, txID, authentication, address, activeAccountIndex]
+        [
+            transaction,
+            txID,
+            authentication,
+            address,
+            activeAccountIndex,
+            txRequest?.tx.options,
+        ]
     );
 
     const closeWindow = useDependencies().closeWindow;
@@ -699,7 +708,8 @@ async function finishTransaction(
     approved: boolean,
     authentication: string | null,
     address: string | null,
-    activeAccountIndex: number
+    activeAccountIndex: number,
+    options?: SuiSignAndExecuteTransactionOptions
 ) {
     if (!transaction) {
         // TODO: delete? doesn't seem like we got have gotten this far without txRequest
@@ -722,7 +732,11 @@ async function finishTransaction(
         }
 
         try {
-            txResult = await signer.signAndExecuteTransaction({ transaction });
+            txResult = await signer.signAndExecuteTransaction({
+                transaction,
+                options: options?.contentOptions,
+                requestType: options?.requestType,
+            });
         } catch (e) {
             tsResultError = (e as Error).message;
         }

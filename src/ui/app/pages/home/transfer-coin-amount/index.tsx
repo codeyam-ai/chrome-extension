@@ -16,10 +16,7 @@ import {
     accountAggregateBalancesSelector,
     accountCoinsSelector,
 } from '_redux/slices/account';
-import {
-    Coin,
-    DEFAULT_GAS_BUDGET_FOR_PAY,
-} from '_redux/slices/sui-objects/Coin';
+import { Coin } from '_redux/slices/sui-objects/Coin';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 import {
     useCoinDecimals,
