@@ -174,7 +174,6 @@ export const sendTokens = createAsyncThunk<
         );
 
         const transaction = new Transaction();
-        transaction.setGasBudget(DEFAULT_GAS_BUDGET_FOR_PAY * 2);
         if (tokenTypeArg === SUI_TYPE_ARG) {
             const coin = transaction.add(
                 Transaction.Commands.SplitCoin(

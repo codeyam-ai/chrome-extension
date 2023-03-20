@@ -86,7 +86,6 @@ describe('The Transaction Approval popup', () => {
             [transaction.object('0x19fe0d83a3e3cb15570b6edc1160a15cc894e690')],
             transaction.pure('0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b')
         );
-        transaction.setGasBudget(1000);
         const txRequest: ApprovalRequest = {
             id: txRequestId,
             origin: 'https://ethoswallet.xyz',

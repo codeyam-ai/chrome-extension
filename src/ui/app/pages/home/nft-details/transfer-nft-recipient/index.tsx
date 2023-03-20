@@ -83,7 +83,6 @@ function TransferNFTRecipient() {
             );
 
             const transaction = new Transaction();
-            transaction.setGasBudget(DEFAULT_NFT_TRANSFER_GAS_FEE);
             transaction.add(
                 Transaction.Commands.TransferObjects(
                     [transaction.object(objectId)],
