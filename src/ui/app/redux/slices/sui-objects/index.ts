@@ -46,7 +46,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
             owner: address,
         });
 
-        const objectIDs = allObjectRefs
+        const objectIDs = allObjectRefs.data
             .filter((anObj) => {
                 const fetchedVersion = getObjectVersion(anObj);
                 const storedObj = suiObjectsAdapterSelectors.selectById(
@@ -62,7 +62,18 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                 }
                 return objOutdated;
             })
-            .map((anObj) => anObj.objectId);
+            .map((anObj) => {
+                if (
+                    typeof anObj.details === 'object' &&
+                    'objectId' in anObj.details
+                ) {
+                    return anObj.details.objectId;
+                } else {
+                    return '';
+                }
+            })
+            .filter((objId) => objId.length > 0);
+
         objectIDs.push(SUI_SYSTEM_STATE_OBJECT_ID);
         const allObjRes = await api.instance.fullNode.multiGetObjects({
             ids: objectIDs,

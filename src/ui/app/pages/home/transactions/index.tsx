@@ -1,16 +1,16 @@
 // import { QueueListIcon } from '@heroicons/react/24/solid';
-import { type SuiTransactionResponse } from '@mysten/sui.js';
+// import { type SuiTransactionResponse } from '@mysten/sui.js';
 import React, { memo, useEffect, useState } from 'react';
 
 import { useAppSelector } from '_hooks';
 // import { getFullTransactionDetails } from '_redux/slices/txresults';
 import { type TxResultState } from '_redux/slices/txresults';
 import Loading from '_src/ui/app/components/loading';
-import deduplicate from '_src/ui/app/helpers/deduplicate';
+// import deduplicate from '_src/ui/app/helpers/deduplicate';
 // import formatCoin from '_src/ui/app/helpers/formatCoin';
 // import { getTxType } from '_src/ui/app/helpers/transactions';
 import { useQueryTransactionsByAddress } from '_src/ui/app/hooks/useQueryTransactionsByAddress';
-import { api } from '_src/ui/app/redux/store/thunk-extras';
+// import { api } from '_src/ui/app/redux/store/thunk-extras';
 // import Button from '_src/ui/app/shared/button';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import Alert from '_src/ui/app/shared/feedback/Alert';
@@ -26,7 +26,7 @@ const TransactionsPage = () => {
     const [error, setError] = useState<string | undefined>();
     const { isLoading: loadingTxns, data: suiTxns } =
         useQueryTransactionsByAddress(address);
-    console.log('TRANSACTIONS', loadingTxns, suiTxns);
+    // console.log('TRANSACTIONS', loadingTxns, suiTxns);
 
     const txPerPage = 5;
 
