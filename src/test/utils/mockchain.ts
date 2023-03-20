@@ -232,10 +232,10 @@ export class Mockchain {
                     bodyAsRecord.params,
                     null,
                     2
-                )}! Coming from ${new Error().stack}`
+                )} - Coming from ${new Error().stack}`
             );
             throw new Error(
-                `Found no match for method ${bodyAsRecord.method} with params ${bodyAsRecord.params}!`
+                `Found no match for method ${bodyAsRecord.method} with params ${bodyAsRecord.params}`
             );
         }
     }

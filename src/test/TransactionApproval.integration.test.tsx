@@ -130,34 +130,25 @@ describe('The Transaction Approval popup', () => {
             10
         );
 
-        //     mockchain.mockBlockchainCall(
-        //         { method: 'sui_pay' },
-        //         renderTemplate('pay', {
-        //             base64EncodedTxBytes: 'ZmFrZSBkYXRh',
-        //         })
-        //     );
-
-        // note: this is only expected to be called once
         mockchain.mockBlockchainCall(
             {
                 method: 'sui_dryRunTransaction',
                 params: [
-                    'AAACAQA5XFDGFMwiFWyd6NskFj9I5P9mrgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfABQc5QM+gq6aSOp0O1A9lrSbnFf+CwEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3goAAAAAAAAA6AMAAAAAAAAA',
+                    'AAACAQA5XFDGFMwiFWyd6NskFj9I5P9mrgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfABQc5QM+gq6aSOp0O1A9lrSbnFf+CwEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeCgAAAAAAAAAAypo7AAAAAAA=',
                 ],
             },
             renderTemplate('dryRunTransaction', {})
         );
 
-        //     mockchain.mockBlockchainCall(
-        //         {
-        //             method: 'sui_getObject',
-        //             params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
-        //         },
-        //         renderTemplate('coinObject', {
-        //             balance: 40000000,
-        //             id: '0x395c50c614cc22156c9de8db24163f48e4ff66ae',
-        //         })
-        //     );
+        mockchain.mockBlockchainCall(
+            {
+                method: 'sui_dryRunTransaction',
+                params: [
+                    'AAACAQA5XFDGFMwiFWyd6NskFj9I5P9mrgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfABQc5QM+gq6aSOp0O1A9lrSbnFf+CwEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3goAAAAAAAAAdgMAAAAAAAAA',
+                ],
+            },
+            renderTemplate('dryRunTransaction', {})
+        );
 
         mockchain.mockBlockchainCall(
             {
@@ -171,17 +162,6 @@ describe('The Transaction Approval popup', () => {
             },
             renderTemplate('getCoins', {})
         );
-
-        //     mockchain.mockBlockchainCall(
-        //         {
-        //             method: 'sui_getObject',
-        //             params: ['0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'],
-        //         },
-        //         renderTemplate('coinObject', {
-        //             balance: 50000000,
-        //             id: '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690',
-        //         })
-        //     );
 
         return mockchain.mockBlockchainCall(
             {

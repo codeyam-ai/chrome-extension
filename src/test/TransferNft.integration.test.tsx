@@ -1,10 +1,10 @@
 import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { renderTemplate } from './utils/json-templates';
 import { simulateMnemonicUser } from '_src/test/utils/fake-local-storage';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
-import { renderTemplate } from './utils/json-templates';
 
 describe('Creating and sending an NFT', () => {
     let mockchain: Mockchain;
@@ -69,7 +69,18 @@ describe('Creating and sending an NFT', () => {
             {
                 method: 'sui_dryRunTransaction',
                 params: [
-                    'AAACAQD9nP+f1r76Dn1kgdDurgIFayykbgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfACCMF1mug0FubdgPzMY2gCPz+LFf+0RZwF43JzIjuWUa1wEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gEAAAAAAAAA9AEAAAAAAAAA',
+                    'AAACAQD9nP+f1r76Dn1kgdDurgIFayykbgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfACCMF1mug0FubdgPzMY2gCPz+LFf+0RZwF43JzIjuWUa1wEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAQAAAAAAAAAAypo7AAAAAAA=',
+                ],
+            },
+            renderTemplate('dryRunTransaction', {}),
+            true
+        );
+
+        mockchain.mockBlockchainCall(
+            {
+                method: 'sui_dryRunTransaction',
+                params: [
+                    'AAACAQD9nP+f1r76Dn1kgdDurgIFayykbgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfACCMF1mug0FubdgPzMY2gCPz+LFf+0RZwF43JzIjuWUa1wEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gEAAAAAAAAAHAMAAAAAAAAA',
                 ],
             },
             renderTemplate('dryRunTransaction', {}),
@@ -80,11 +91,15 @@ describe('Creating and sending an NFT', () => {
             {
                 method: 'sui_executeTransaction',
                 params: [
-                    'AAACAQD9nP+f1r76Dn1kgdDurgIFayykbgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfACCMF1mug0FubdgPzMY2gCPz+LFf+0RZwF43JzIjuWUa1wEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gEAAAAAAAAA9AEAAAAAAAAA',
+                    "AAACAQD9nP+f1r76Dn1kgdDurgIFayykbgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfACCMF1mug0FubdgPzMY2gCPz+LFf+0RZwF43JzIjuWUa1wEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gEAAAAAAAAAHAMAAAAAAAAA",
                     [
-                        'AAAAAAAAAgEA/Zz/n9a++g59ZIHQ7q4CBWsspG4CAAAAAAAAACC0NORS9wfT/VvZQ0Ep/qsSeMZXnFSBBBluwHj1OMhsHwAgjBdZroNBbm3YD8zGNoAj8/ixX/tEWcBeNycyI7llGtcBAQEBAAABAQD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gH1G/x9mNhvvXXxnRbDdISw8Pc4LrbJv8rS/kqUviyIIgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwf/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4BAAAAAAAAAPQBAAAAAAAAAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLe',
+                        "AAAAAAAAAgEA/Zz/n9a++g59ZIHQ7q4CBWsspG4CAAAAAAAAACC0NORS9wfT/VvZQ0Ep/qsSeMZXnFSBBBluwHj1OMhsHwAgjBdZroNBbm3YD8zGNoAj8/ixX/tEWcBeNycyI7llGtcBAQEBAAABAQD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gH1G/x9mNhvvXXxnRbDdISw8Pc4LrbJv8rS/kqUviyIIgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwf/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4BAAAAAAAAABwDAAAAAAAAAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLe"
                     ],
-                    { showEffects: true, showEvents: true, showInput: true },
+                    {
+                        "showEffects": true,
+                        "showEvents": true,
+                        "showInput": true
+                    },
                     null,
                 ],
             },
