@@ -32,6 +32,7 @@ import type { SuiAddress, SuiMoveObject } from '@mysten/sui.js';
 import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import { PASSPHRASE_TEST } from '_src/shared/constants';
 
 export enum AccountType {
     EMAIL = 'EMAIL',
@@ -49,7 +50,6 @@ type InitialAccountInfo = {
     accountType: AccountType;
 };
 
-export const PASSPHRASE_TEST = 'PASSPHRASE_TEST';
 export const LOCKED = 'locked';
 
 export const loadAccountInformationFromStorage = createAsyncThunk(

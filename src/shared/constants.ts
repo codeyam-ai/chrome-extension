@@ -19,3 +19,5 @@ export const TWITTER_URL = 'https://twitter.com/EthosWalletXYZ';
 export const MIST_PER_SUI = 1000000000;
 
 export const WALLET_LOCK_TIMEOUT_MS = 15 * 60000;
+
+export const PASSPHRASE_TEST = "PASSPHRASE_TEST"

@@ -1,4 +1,5 @@
 import { deleteEncrypted, setEncrypted } from '_shared/storagex/store';
+import { PASSPHRASE_TEST } from '_src/shared/constants';
 
 export const password = 'Password';
 export const recoveryPhrase =
@@ -36,9 +37,9 @@ export const simulateMnemonicUser = async function () {
     });
     await setEncrypted({
         key: 'passphrase-test',
-        value: "PASSPHRASE_TEST",
+        value: PASSPHRASE_TEST,
         session: false,
-        passphrase: password
+        passphrase: password,
     });
     await setEncrypted({
         key: 'accountInfos',
