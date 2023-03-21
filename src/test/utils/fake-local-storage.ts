@@ -29,18 +29,50 @@ export const fakeAccessToken = 'ewhfbiuh3rh23d';
 
 export const simulateMnemonicUser = async function () {
     const accountInfosJson = JSON.stringify(accountInfos);
-    await setEncrypted('passphrase', password);
-    await setEncrypted('accountInfos', accountInfosJson, password);
-    await setEncrypted('mnemonic', recoveryPhrase, password);
-    await setEncrypted('locked', `locked${password}`, password);
+    await setEncrypted({
+        key: 'passphrase',
+        value: password,
+        session: true,
+    });
+    await setEncrypted({
+        key: 'accountInfos',
+        value: accountInfosJson,
+        session: false,
+        passphrase: password,
+    });
+    await setEncrypted({
+        key: 'mnemonic',
+        value: recoveryPhrase,
+        session: false,
+        passphrase: password,
+    });
+    await setEncrypted({
+        key: 'locked',
+        value: `locked${password}`,
+        session: false,
+        passphrase: password,
+    });
 };
 
 export const simulateEmailUser = async function () {
     const accountInfosJson = JSON.stringify(accountInfos);
-    await setEncrypted('authentication', fakeAccessToken);
-    await setEncrypted('accountInfos', accountInfosJson, fakeAccessToken);
+    await setEncrypted({
+        key: 'authentication',
+        value: fakeAccessToken,
+        session: true,
+    });
+    await setEncrypted({
+        key: 'accountInfos',
+        value: accountInfosJson,
+        session: false,
+        passphrase: fakeAccessToken,
+    });
 };
 
 export const simulateLogout = async function () {
-    await deleteEncrypted('locked', password);
+    await deleteEncrypted({
+        key: 'locked',
+        session: true,
+        passphrase: password,
+    });
 };

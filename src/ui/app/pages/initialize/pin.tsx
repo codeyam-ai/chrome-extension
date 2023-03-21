@@ -31,7 +31,10 @@ const PinPage = () => {
 
     useEffect(() => {
         const _setIsHosted = async () => {
-            const authentication = await getEncrypted('authentication');
+            const authentication = await getEncrypted({
+                key: 'authentication',
+                session: true,
+            });
             setIsHostedWallet(authentication !== null);
         };
         _setIsHosted();

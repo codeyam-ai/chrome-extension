@@ -18,10 +18,11 @@ class Authentication {
 
         if (!force && this._accountInfos) return this._accountInfos;
 
-        const accountsString = await getEncrypted(
-            'accountInfos',
-            this._accessToken
-        );
+        const accountsString = await getEncrypted({
+            key: 'accountInfos',
+            session: false,
+            passphrase: this._accessToken,
+        });
 
         let accounts;
         if (!force && accountsString) {
@@ -42,11 +43,12 @@ class Authentication {
         }
         this._accountInfos = accounts;
 
-        await setEncrypted(
-            'accountInfos',
-            JSON.stringify(accounts),
-            this._accessToken
-        );
+        await setEncrypted({
+            key: 'accountInfos',
+            value: JSON.stringify(accounts),
+            session: false,
+            passphrase: this._accessToken,
+        });
 
         return accounts;
     }

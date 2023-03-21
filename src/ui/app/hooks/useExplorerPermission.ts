@@ -13,7 +13,10 @@ const useExplorerPermission = () => {
     const setExplorerPermission = useCallback(async () => {
         if (!activeAddress) return;
 
-        const permissionsString = await getEncrypted(PERMISSIONS_STORAGE_KEY);
+        const permissionsString = await getEncrypted({
+            key: PERMISSIONS_STORAGE_KEY,
+            session: false,
+        });
         const permissions = JSON.parse(permissionsString || '{}');
 
         if (
@@ -38,10 +41,11 @@ const useExplorerPermission = () => {
             };
 
             permissions[LINK_URL] = walletExplorerPermission;
-            await setEncrypted(
-                PERMISSIONS_STORAGE_KEY,
-                JSON.stringify(permissions)
-            );
+            await setEncrypted({
+                key: PERMISSIONS_STORAGE_KEY,
+                session: false,
+                value: JSON.stringify(permissions),
+            });
         }
     }, [activeAddress]);
 

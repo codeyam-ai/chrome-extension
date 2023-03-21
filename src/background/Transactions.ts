@@ -238,8 +238,13 @@ class Transactions {
         options?: SuiSignAndExecuteTransactionOptions;
     }) {
         const activeAccount = await this.getActiveAccount();
-        const { sui_Env } = await Browser.storage.local.get('sui_Env');
+
+        // const { sui_Env } = await Browser.storage.local.get('sui_Env');
+        const { sui_Env } = await chrome.storage.session.get('sui_Env');
+        console.log('sui_ENV', sui_Env);
+
         const connection = api.getEndPoints(sui_Env);
+        console.log('CONNECTION', connection.fullnode);
         const provider = new JsonRpcProvider(connection);
         const secretKey = Uint8Array.from(
             activeAccount.seed.split(',').map((n) => parseInt(n))
@@ -247,13 +252,18 @@ class Transactions {
         const keypair = Ed25519Keypair.fromSecretKey(secretKey);
         const signer = new RawSigner(keypair, provider);
 
-        const txResponse = await signer.signAndExecuteTransaction({
-            transaction,
-            options: options?.contentOptions,
-            requestType: options?.requestType,
-        });
+        try {
+            const txResponse = await signer.signAndExecuteTransaction({
+                transaction,
+                options: options?.contentOptions,
+                requestType: options?.requestType,
+            });
 
-        return txResponse;
+            return txResponse;
+        } catch (e) {
+            console.log('Error executing direct transaction', e);
+            return null;
+        }
     }
 
     public async requestPreapproval(
@@ -334,7 +344,10 @@ class Transactions {
     public async getPreapprovalRequests(): Promise<
         Record<string, PreapprovalRequest>
     > {
-        const resultsString = await getEncrypted(PREAPPROVAL_KEY);
+        const resultsString = await getEncrypted({
+            key: PREAPPROVAL_KEY,
+            session: false,
+        });
         return JSON.parse(resultsString || '{}');
     }
 
@@ -353,25 +366,33 @@ class Transactions {
     }
 
     private async getActiveAccount(): Promise<AccountInfo> {
-        const locked = await getEncrypted('locked');
+        const locked = await getEncrypted({ key: 'locked', session: false });
         if (locked) {
             throw new Error('Wallet is locked');
         }
-        const passphrase = await getEncrypted('passphrase');
-        const authentication = await getEncrypted('authentication');
-        const activeAccountIndex = await getEncrypted(
-            'activeAccountIndex',
-            (passphrase || authentication) as string
-        );
+        const passphrase = await getEncrypted({
+            key: 'passphrase',
+            session: true,
+        });
+        const authentication = await getEncrypted({
+            key: 'authentication',
+            session: true,
+        });
+        const activeAccountIndex = await getEncrypted({
+            key: 'activeAccountIndex',
+            session: false,
+            passphrase: (passphrase || authentication) as string,
+        });
         let accountInfos;
         if (authentication) {
             Authentication.set(authentication);
             accountInfos = await Authentication.getAccountInfos();
         } else {
-            const accountInfosString = await getEncrypted(
-                'accountInfos',
-                (passphrase || authentication) as string
-            );
+            const accountInfosString = await getEncrypted({
+                key: 'accountInfos',
+                session: false,
+                passphrase: (passphrase || authentication) as string,
+            });
             accountInfos = JSON.parse(accountInfosString || '[]');
         }
 
@@ -422,7 +443,11 @@ class Transactions {
     private async savePreapprovalRequests(
         requests: Record<string, PreapprovalRequest>
     ) {
-        await setEncrypted(PREAPPROVAL_KEY, JSON.stringify(requests));
+        await setEncrypted({
+            key: PREAPPROVAL_KEY,
+            value: JSON.stringify(requests),
+            session: true,
+        });
     }
 
     private async storeTransactionRequest(txRequest: ApprovalRequest) {

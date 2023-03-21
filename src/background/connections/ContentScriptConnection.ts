@@ -30,7 +30,7 @@ import {
     type SignMessageRequest,
 } from '_src/shared/messaging/messages/payloads/transactions/SignMessage';
 import { isGetUrl } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
-import { get, getEncrypted } from '_src/shared/storagex/store';
+import { getLocal, getEncrypted } from '_src/shared/storagex/store';
 import { openInNewTab } from '_src/shared/utils';
 import { type AccountCustomization } from '_src/types/AccountCustomization';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
@@ -103,7 +103,7 @@ export class ContentScriptConnection extends Connection {
 
             this.sendAccountCustomizations(accountCustomizations, msg.id);
         } else if (isGetNetwork(payload)) {
-            const network = (await get('sui_Env')) || DEFAULT_API_ENV;
+            const network = (await getLocal('sui_Env')) || DEFAULT_API_ENV;
             this.sendNetwork(network, msg.id);
         } else if (isHasPermissionRequest(payload)) {
             this.send(
@@ -237,21 +237,28 @@ export class ContentScriptConnection extends Connection {
     }
 
     private async getAccountInfos(): Promise<AccountInfo[]> {
-        const locked = await getEncrypted('locked');
+        const locked = await getEncrypted({ key: 'locked', session: false });
         if (locked) {
             throw new Error('Wallet is locked');
         }
-        const passphrase = await getEncrypted('passphrase');
-        const authentication = await getEncrypted('authentication');
+        const passphrase = await getEncrypted({
+            key: 'passphrase',
+            session: true,
+        });
+        const authentication = await getEncrypted({
+            key: 'authentication',
+            session: true,
+        });
         let accountInfos;
         if (authentication) {
             Authentication.set(authentication);
             accountInfos = await Authentication.getAccountInfos();
         } else {
-            const accountInfosString = await getEncrypted(
-                'accountInfos',
-                (passphrase || authentication) as string
-            );
+            const accountInfosString = await getEncrypted({
+                key: 'accountInfos',
+                session: false,
+                passphrase: (passphrase || authentication) as string,
+            });
             accountInfos = JSON.parse(accountInfosString || '[]');
         }
 

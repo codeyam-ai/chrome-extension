@@ -44,7 +44,7 @@ export class EthosSigner extends SignerWithProvider {
         );
 
         if (status !== 200) {
-            await deleteEncrypted('authentication');
+            await deleteEncrypted({ key: 'authentication', session: true });
             throw new Error(`Signing error: ${status}`);
         }
 

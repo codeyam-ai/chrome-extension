@@ -124,7 +124,6 @@ export default class ApiProvider {
         customRPC?: string | null
     ) {
         this._apiEnv = apiEnv;
-        Browser.storage.local.set({ sui_Env: apiEnv });
         // We also clear the query client whenever set set a new API provider:
         queryClient.clear();
 

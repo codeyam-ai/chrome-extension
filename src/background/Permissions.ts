@@ -102,7 +102,10 @@ class Permissions {
 
     public async getPermissions(): Promise<Record<string, Permission>> {
         const permissionString =
-            (await getEncrypted(PERMISSIONS_STORAGE_KEY)) || '{}';
+            (await getEncrypted({
+                key: PERMISSIONS_STORAGE_KEY,
+                session: false,
+            })) || '{}';
         return JSON.parse(permissionString);
     }
 
@@ -250,7 +253,11 @@ class Permissions {
         const permissions = await this.getPermissions();
         permissions[permission.origin] = permission;
         const permissionsString = JSON.stringify(permissions);
-        await setEncrypted(PERMISSIONS_STORAGE_KEY, permissionsString);
+        await setEncrypted({
+            key: PERMISSIONS_STORAGE_KEY,
+            value: permissionsString,
+            session: false,
+        });
     }
 }
 
