@@ -49,7 +49,7 @@ type InitialAccountInfo = {
     accountType: AccountType;
 };
 
-const PASSPHRASE_TEST = 'PASSPHRASE_TEST';
+export const PASSPHRASE_TEST = 'PASSPHRASE_TEST';
 export const LOCKED = 'locked';
 
 export const loadAccountInformationFromStorage = createAsyncThunk(
