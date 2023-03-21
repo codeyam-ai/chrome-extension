@@ -11,7 +11,7 @@ export async function getLocal(key: string): Promise<string | number> {
 }
 
 export async function getSession(key: string): Promise<string | number> {
-    const response = await Browser.storage.local.get(key);
+    const response = await chrome.storage.session.get(key);
     return response[key];
 }
 

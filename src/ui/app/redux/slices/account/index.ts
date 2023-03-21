@@ -33,6 +33,12 @@ import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
+export enum AccountType {
+    EMAIL = 'EMAIL',
+    PASSWORD = 'PASSWORD',
+    UNINITIALIZED = 'UNINITIALIZED',
+}
+
 type InitialAccountInfo = {
     authentication: string | null;
     mnemonic: string | null;
@@ -40,14 +46,22 @@ type InitialAccountInfo = {
     accountInfos: AccountInfo[];
     activeAccountIndex: number;
     locked: boolean;
+    accountType: AccountType;
 };
 
+const PASSPHRASE_TEST = 'PASSPHRASE_TEST';
 export const LOCKED = 'locked';
 
 export const loadAccountInformationFromStorage = createAsyncThunk(
     'account/loadAccountInformation',
     async (_args, { getState }): Promise<InitialAccountInfo> => {
         let activeAccountIndex = 0;
+
+        const accountTypeString = ((await getEncrypted({
+            key: 'account-type',
+            session: false,
+        })) || AccountType.UNINITIALIZED) as keyof typeof AccountType;
+        const accountType = AccountType[accountTypeString];
 
         let authentication = await getEncrypted({
             key: 'authentication',
@@ -83,6 +97,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 accountInfos,
                 activeAccountIndex,
                 locked: false,
+                accountType,
             };
         }
 
@@ -98,6 +113,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 accountInfos: [],
                 activeAccountIndex: 0,
                 locked: false,
+                accountType,
             };
         }
 
@@ -168,6 +184,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 accountInfos,
                 activeAccountIndex,
                 locked: true,
+                accountType,
             };
         }
 
@@ -178,6 +195,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             accountInfos,
             activeAccountIndex,
             locked: false,
+            accountType,
         };
     }
 );
@@ -223,6 +241,12 @@ export const saveAuthentication = createAsyncThunk(
                 key: 'authentication',
                 value: authentication,
                 session: true,
+            });
+
+            await setEncrypted({
+                key: 'account-type',
+                value: AccountType.EMAIL,
+                session: false,
             });
         }
         return authentication;
@@ -397,6 +421,20 @@ export const savePassphrase: AsyncThunk<
             value: passphrase,
             session: true,
         });
+
+        await setEncrypted({
+            key: 'passphrase-test',
+            value: PASSPHRASE_TEST,
+            session: false,
+            passphrase,
+        });
+
+        await setEncrypted({
+            key: 'account-type',
+            value: AccountType.PASSWORD,
+            session: false,
+        });
+
         await setEncrypted({
             key: LOCKED,
             value: `${LOCKED}${passphrase}`,
@@ -472,18 +510,19 @@ export const logout = createAsyncThunk(
         if (authentication) {
             await deleteEncrypted({ key: 'authentication', session: true });
         } else if (passphrase) {
-            await deleteEncrypted({ key: LOCKED, session: true, passphrase });
+            await deleteEncrypted({ key: LOCKED, session: false, passphrase });
         }
     }
 );
 
 const isPasswordCorrect = async (password: string) => {
-    const existingPassphrase = await getEncrypted({
-        key: 'passphrase',
-        session: true,
+    const passphraseTest = await getEncrypted({
+        key: 'passphrase-test',
+        session: false,
+        passphrase: password,
     });
 
-    if (existingPassphrase !== password) return false;
+    if (passphraseTest !== PASSPHRASE_TEST) return false;
 
     return true;
 };
@@ -499,23 +538,29 @@ export const assertPasswordIsCorrect: AsyncThunk<
     }
 );
 
-export const unlock: AsyncThunk<boolean, string | null, AppThunkConfig> =
-    createAsyncThunk<boolean, string | null, AppThunkConfig>(
+export const unlock: AsyncThunk<string | null, string | null, AppThunkConfig> =
+    createAsyncThunk<string | null, string | null, AppThunkConfig>(
         'account/unlock',
-        async (passphrase): Promise<boolean> => {
+        async (passphrase): Promise<string | null> => {
             if (passphrase) {
                 const isCorrect = await isPasswordCorrect(passphrase);
                 if (isCorrect) {
+                    await setEncrypted({
+                        key: 'passphrase',
+                        value: passphrase,
+                        session: true,
+                    });
+
                     await setEncrypted({
                         key: LOCKED,
                         value: `${LOCKED}${passphrase}`,
                         session: false,
                         passphrase,
                     });
-                    return true;
+                    return passphrase;
                 }
             }
-            return false;
+            return null;
         }
     );
 
@@ -530,6 +575,7 @@ type AccountState = {
     address: SuiAddress | null;
     accountInfos: AccountInfo[];
     activeAccountIndex: number;
+    accountType: AccountType;
     locked: boolean;
 };
 
@@ -544,6 +590,7 @@ const initialState: AccountState = {
     address: null,
     accountInfos: [],
     activeAccountIndex: 0,
+    accountType: AccountType.UNINITIALIZED,
     locked: false,
 };
 
@@ -595,6 +642,7 @@ const accountSlice = createSlice({
                                 (accountInfo.index || 0) ===
                                 state.activeAccountIndex
                         )?.address || null;
+                    state.accountType = action.payload.accountType;
                     state.locked = action.payload.locked;
                 }
             )
@@ -632,6 +680,7 @@ const accountSlice = createSlice({
             })
             .addCase(unlock.fulfilled, (state, action) => {
                 state.locked = !action.payload;
+                state.passphrase = action.payload;
             })
             .addCase(logout.fulfilled, (state) => {
                 if (state.authentication) {

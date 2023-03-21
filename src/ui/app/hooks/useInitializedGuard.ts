@@ -6,6 +6,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import useAppSelector from './useAppSelector';
 import { AUTHENTICATION_REQUESTED } from '../pages/initialize/hosted';
+import { AccountType } from '_redux/slices/account';
 import { openInNewTab } from '_src/shared/utils';
 
 export enum AppState {
@@ -26,6 +27,8 @@ export default function useInitializedGuard(
     const params = useParams();
 
     let currentState = AppState.UNINITIALIZED;
+
+    const accountType = useAppSelector((state) => state.account.accountType);
     const loading = useAppSelector((state) => state.account.loading);
     if (loading) currentState = AppState.LOADING;
 
@@ -46,7 +49,7 @@ export default function useInitializedGuard(
     }
 
     const locked = useAppSelector(({ account: { locked } }) => locked);
-    if (locked) {
+    if (locked || (!passwordReady && accountType === AccountType.PASSWORD)) {
         currentState = AppState.LOCKED;
     }
 
@@ -108,6 +111,7 @@ export default function useInitializedGuard(
                 destination = destination + pathname;
             }
 
+            // console.log('DESTINATION', destination, currentState);
             navigate(destination, { replace: true });
         }
     }, [
