@@ -5,7 +5,7 @@ import * as util from 'util';
 import { fakeBrowser, clearLocalStorage } from './fake-browser';
 import { accountInfos } from './fake-local-storage';
 
-let chromeSessionStorage: Record<string, string> = {}
+let chromeSessionStorage: Record<string, string> = {};
 global.chrome = {
     ...(global.chrome || {}),
     storage: {
@@ -15,19 +15,22 @@ global.chrome = {
             set: jest.fn(async (items) => {
                 chromeSessionStorage = {
                     ...chromeSessionStorage,
-                    ...items
-                }
+                    ...items,
+                };
             }),
             get: jest.fn(async (items) => {
                 if (!items) return {};
 
-                const key = typeof items === "object" ?
-                    Object.keys(items)[0] : 
-                    typeof items === "string" ? items : items[0]
-                return { [key]: chromeSessionStorage[key] }
+                const key =
+                    typeof items === 'object'
+                        ? Object.keys(items)[0]
+                        : typeof items === 'string'
+                        ? items
+                        : items[0];
+                return { [key]: chromeSessionStorage[key] };
             }),
-        }
-    }
+        },
+    },
 };
 
 jest.mock('webextension-polyfill', () => {

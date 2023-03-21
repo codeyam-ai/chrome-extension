@@ -1,31 +1,46 @@
-import { toB64 } from '@mysten/bcs';
-import { screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import nock from 'nock';
-
-import { BASE_URL } from '_src/shared/constants';
 import {
-    fakeAccessToken,
-    accountInfos,
-    password,
-    recoveryPhrase,
-    simulateMnemonicUser,
-    simulateEmailUser,
-} from '_src/test/utils/fake-local-storage';
+    DevInspectResults,
+    SuiMoveNormalizedFunction,
+    TransactionEffects,
+} from '@mysten/sui.js';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+import { simulateMnemonicUser } from '_src/test/utils/fake-local-storage';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
+import { renderTemplate } from './utils/json-templates';
 
-describe('The Security Settings page', () => {
+describe('send coin flow', () => {
     let mockchain: Mockchain;
 
-    beforeEach(() => {
+    beforeEach(async () => {
         mockchain = new Mockchain();
+        await simulateMnemonicUser();
+        mockchain.mockCommonCalls();
+        mockchain.mockSuiObjects({
+            suiBalance: 4_000_000_000, // MIST units
+        });
     });
 
     const init = () => {
-        mockchain.mockSuiObjects({
-            suiBalance: 400000000,
-        });
+        mockchain.mockBlockchainCall(
+            { method: 'sui_getNormalizedMoveFunction' },
+            renderTemplate('getNormalizedMoveFunction', {}),
+            true
+        );
+
+        mockchain.mockBlockchainCall(
+            { method: 'sui_devInspectTransaction' },
+            renderTemplate('devInspectTransaction', {})
+        );
+
+        mockchain.mockBlockchainCall(
+            { method: 'sui_getReferenceGasPrice', params: [] },
+            1,
+            true
+        );
+
         renderApp();
     };
 
@@ -57,7 +72,7 @@ describe('The Security Settings page', () => {
 
     const shouldAddAmountAndClickReview = async () => {
         const input = await screen.findByPlaceholderText('Amount');
-        await userEvent.type(input, '0.2');
+        await userEvent.type(input, '1');
         const reviewButton = await screen.findByRole('button', {
             name: 'Review',
         });
@@ -72,56 +87,20 @@ describe('The Security Settings page', () => {
         await screen.findByText('Transaction submitted.');
     };
 
-    describe('mnemonic user', () => {
-        beforeEach(async () => {
-            simulateMnemonicUser();
-            mockchain.mockCommonCalls();
-
-            // TODO: Remove this and still have the test pass!
-            // It seems to be a useless call that errors anyways.
-            mockchain.mockBlockchainCall(
-                {
-                    method: 'sui_getNormalizedMoveFunction',
-                    params: [
-                        '0x0000000000000000000000000000000000000000000000000000000000000000',
-                        'base_registry',
-                        'get_record_by_key',
-                    ],
-                },
-                {
-                    jsonrpc: '2.0',
-                    error: {
-                        code: -32000,
-                        message:
-                            'Package object does not exist with ID 0x0000000000000000000000000000000000000000000000000000000000000000',
-                        visibility: 'public',
-                    },
-                    id: '48ae51da-5987-46fc-8026-274b8f14de80',
-                }
-            );
-        });
-
-        test('allows you to send Sui', async () => {
-            init();
-            await shouldSeeRootPageAndClickSend();
-            // await shouldSeeErrorForInvalidAddress();
-            await shouldAddRecipientAndClickContinue();
-            await shouldAddAmountAndClickReview();
-            // await shouldClickConfirmAndSeeTransactionSubmitted();
-        });
-
-        test.todo('it allows you to switch coins');
-
-        test.todo(
-            'it shows recent transactions and other internal wallet addresses'
-        );
-
-        test.todo(
-            'it should fail gracefully when you try to transfer more than you have'
-        );
+    test('allows you to send Sui', async () => {
+        init();
+        await shouldSeeRootPageAndClickSend();
+        await shouldSeeErrorForInvalidAddress();
+        await shouldAddRecipientAndClickContinue();
+        await shouldAddAmountAndClickReview();
+        await shouldClickConfirmAndSeeTransactionSubmitted();
     });
 
-    // describe('email user', () => {
+    test.todo(
+        'it shows recent transactions and other internal wallet addresses'
+    );
 
-    // });
+    test.todo(
+        'it should fail gracefully when you try to transfer more than you have'
+    );
 });
