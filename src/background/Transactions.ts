@@ -1,7 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { fromB64, toB64 } from '@mysten/bcs';
 import {
     Ed25519Keypair,
     JsonRpcProvider,
@@ -9,16 +8,11 @@ import {
     Transaction,
 } from '@mysten/sui.js';
 import { filter, lastValueFrom, map, race, Subject, take } from 'rxjs';
-import nacl from 'tweetnacl';
 import { v4 as uuidV4 } from 'uuid';
 import Browser from 'webextension-polyfill';
 
 import Authentication from './Authentication';
 import { Window } from './Window';
-// import {
-//     SUI_TYPE_ARG,
-//     DEFAULT_GAS_BUDGET_FOR_PAY,
-// } from '../ui/app/redux/slices/sui-objects/Coin';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
@@ -98,6 +92,15 @@ class Transactions {
               },
         connection: ContentScriptConnection
     ): Promise<SuiTransactionResponse | SignedTransaction> {
+        if (tx) {
+            const txResult = await this.tryDirectExecution(
+                Transaction.from(tx.data),
+                tx?.options
+            );
+            if (txResult) {
+                return txResult;
+            }
+        }
         const { txResultError, txResult, txSigned } =
             await this.requestApproval(
                 tx ?? {
@@ -110,6 +113,7 @@ class Transactions {
                 connection.origin,
                 connection.originFavIcon
             );
+
         if (txResultError) {
             throw new Error(
                 `Transaction failed with the following error. ${txResultError}`
@@ -161,97 +165,42 @@ class Transactions {
 
     private async tryDirectExecution(
         tx: Transaction,
-        preapprovalRequest: PreapprovalRequest,
+        // preapprovalRequest: PreapprovalRequest,
         options?: SuiSignAndExecuteTransactionOptions
     ) {
         try {
-            const txDirectResult =
-                await this.executeMoveCallTransactionDirectly({
-                    tx,
-                    options,
-                });
+            const txDirectResult = await this.executeTransactionDirectly({
+                transaction: tx,
+                options,
+            });
 
-            const { result, error } = txDirectResult;
+            // const { result, error } = txDirectResult;
 
-            if (error) {
-                return { error, effects: null };
-            }
+            // if (error) {
+            //     return { error, effects: null };
+            // }
 
-            const { preapproval } = preapprovalRequest;
-            preapproval.maxTransactionCount -= 1;
-            const { effects } = result.EffectsCert || result;
-            const { computationCost, storageCost, storageRebate } =
-                effects.effects.gasUsed;
-            const gasUsed = computationCost + (storageCost - storageRebate);
-            preapproval.totalGasLimit -= gasUsed;
+            // const { preapproval } = preapprovalRequest;
+            // preapproval.maxTransactionCount -= 1;
+            // const { effects } = result.EffectsCert || result;
+            // const { computationCost, storageCost, storageRebate } =
+            //     effects.effects.gasUsed;
+            // const gasUsed = computationCost + (storageCost - storageRebate);
+            // preapproval.totalGasLimit -= gasUsed;
 
-            if (
-                preapprovalRequest.preapproval.maxTransactionCount > 0 &&
-                preapprovalRequest.preapproval.totalGasLimit > gasUsed * 1.5
-            ) {
-                this.storePreapprovalRequest(preapprovalRequest);
-            } else {
-                this.removePreapprovalRequest(preapprovalRequest.id as string);
-            }
+            // if (
+            //     preapprovalRequest.preapproval.maxTransactionCount > 0 &&
+            //     preapprovalRequest.preapproval.totalGasLimit > gasUsed * 1.5
+            // ) {
+            //     this.storePreapprovalRequest(preapprovalRequest);
+            // } else {
+            //     this.removePreapprovalRequest(preapprovalRequest.id as string);
+            // }
 
-            return { effects, error: null };
+            return txDirectResult;
         } catch (e) {
-            return { error: e, effects: null };
+            return null;
         }
-    }
-
-    public async executeTransaction(
-        tx: TransactionDataType,
-        connection: ContentScriptConnection
-    ) {
-        const transaction = Transaction.from(tx.data);
-        if (transaction) {
-            throw new Error(
-                `COMMANDS: ${transaction.transactionData.commands.length}`
-            );
-        }
-
-        const txRequest = this.createTransactionRequest(
-            tx,
-            connection.origin,
-            connection.originFavIcon
-        );
-        await this.storeTransactionRequest(txRequest);
-        const popUp = openTxWindow(txRequest.id);
-        const popUpClose = (await popUp.show()).pipe(
-            take(1),
-            map<number, false>(() => false)
-        );
-        const txResponseMessage = this._txResponseMessages.pipe(
-            filter((msg) => msg.txID === txRequest.id),
-            take(1)
-        );
-        return lastValueFrom(
-            race(popUpClose, txResponseMessage).pipe(
-                take(1),
-                map(async (response) => {
-                    if (response) {
-                        const { approved, txResult } = response;
-                        if (approved) {
-                            txRequest.txResult = txResult;
-                            // txRequest.txResultError = tsResultError;
-                            await this.storeTransactionRequest(txRequest);
-                            // if (tsResultError) {
-                            //     throw new Error(
-                            //         `Transaction failed with the following error. ${tsResultError}`
-                            //     );
-                            // }
-                            if (!txResult) {
-                                throw new Error(`Transaction result is empty`);
-                            }
-                            return txResult;
-                        }
-                    }
-                    await this.removeTransactionRequest(txRequest.id);
-                    throw new Error('Transaction rejected from user');
-                })
-            )
-        );
     }
 
     public async signMessage(
@@ -281,109 +230,28 @@ class Transactions {
         return txResult;
     }
 
-    private async executeMoveCallTransactionDirectly({
-        tx,
-        options,
-    }: {
-        tx: Transaction;
-        options?: SuiSignAndExecuteTransactionOptions;
-    }) {
-        const callData = {};
-        // const activeAccount = await this.getActiveAccount();
-
-        // const callData = {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify({
-        //         jsonrpc: '2.0',
-        //         method: 'sui_moveCall',
-        //         params: [
-        //             activeAccount.address,
-        //             tx.packageObjectId,
-        //             tx.module,
-        //             tx.function,
-        //             tx.typeArguments,
-        //             tx.arguments,
-        //             tx.gasPayment,
-        //             tx.gasBudget,
-        //         ],
-        //         id: 1,
-        //     }),
-        // };
-
-        return this.executeTransactionDirectly({ callData, options });
-    }
-
     private async executeTransactionDirectly({
-        callData,
+        transaction,
         options,
     }: {
-        callData: RequestInit;
+        transaction: Transaction;
         options?: SuiSignAndExecuteTransactionOptions;
     }) {
         const activeAccount = await this.getActiveAccount();
-
         const { sui_Env } = await Browser.storage.local.get('sui_Env');
         const connection = api.getEndPoints(sui_Env);
-        const response = await fetch(connection.fullnode, callData);
-        const json = await response.json();
+        const provider = new JsonRpcProvider(connection);
+        const secretKey = Uint8Array.from(
+            activeAccount.seed.split(',').map((n) => parseInt(n))
+        );
+        const keypair = Ed25519Keypair.fromSecretKey(secretKey);
+        const signer = new RawSigner(keypair, provider);
 
-        if (json.error) {
-            throw new Error(json.error.message);
-        }
-
-        const {
-            result: { txBytes },
-        } = json;
-
-        const message = fromB64(txBytes);
-
-        const intent = [0, 0, 0];
-        const intentMessage = new Uint8Array(intent.length + message.length);
-        intentMessage.set(intent);
-        intentMessage.set(message, intent.length);
-
-        let serializedSig;
-        if (activeAccount.seed) {
-            const seed = Uint8Array.from(
-                activeAccount.seed.split(',').map((s) => parseInt(s))
-            );
-
-            const keypair = new Ed25519Keypair(
-                nacl.sign.keyPair.fromSeed(new Uint8Array(seed))
-            );
-
-            const provider = new JsonRpcProvider(connection);
-            const signer = new RawSigner(keypair, provider);
-
-            serializedSig = await signer.signData(intentMessage);
-        } else {
-            serializedSig = await Authentication.sign(
-                activeAccount.address,
-                intentMessage
-            );
-        }
-
-        if (!serializedSig) return;
-
-        const data = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                jsonrpc: '2.0',
-                method: 'sui_executeTransactionSerializedSig',
-                params: [
-                    toB64(message),
-                    toB64(serializedSig),
-                    options?.requestType || 'WaitForLocalExecution',
-                ],
-                id: 1,
-            }),
-        };
-
-        const executeResponse = await fetch(connection.fullnode, data);
-
-        const txResponse = await executeResponse.json();
+        const txResponse = await signer.signAndExecuteTransaction({
+            transaction,
+            options: options?.contentOptions,
+            requestType: options?.requestType,
+        });
 
         return txResponse;
     }

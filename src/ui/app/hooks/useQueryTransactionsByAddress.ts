@@ -20,13 +20,29 @@ export function useQueryTransactionsByAddress(address: SuiAddress | null) {
                     filter: {
                         ToAddress: address || '',
                     },
+                    options: {
+                        showBalanceChanges: true,
+                        showEffects: true,
+                        showEvents: true,
+                        showInput: true,
+                        showObjectChanges: true,
+                    },
                 }),
                 rpc.queryTransactions({
                     filter: {
                         FromAddress: address || '',
                     },
+                    options: {
+                        showBalanceChanges: true,
+                        showEffects: true,
+                        showEvents: true,
+                        showInput: true,
+                        showObjectChanges: true,
+                    },
                 }),
             ]);
+
+            console.log('TRANSACTIONS', [txnIds, fromTxnIds]);
             // TODO: replace this with queryTransactions
             // It seems to be expensive to fetch all transaction data at once though
             const resp = await rpc.multiGetTransactions({
