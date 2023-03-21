@@ -36,8 +36,6 @@ export default function useInitializedGuard(
     const mnemonicReady = useAppSelector((state) => !!state.account.mnemonic);
     if (passwordReady && mnemonicReady) {
         currentState = AppState.MNEMONIC;
-
-        // if (passwordReady) currentState = AppState.MNEMONIC;
     }
 
     const { authentication, accountInfos } = useAppSelector(
