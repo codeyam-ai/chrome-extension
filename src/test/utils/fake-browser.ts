@@ -1,30 +1,38 @@
 // This module provides fake implementations of the webextension-polyfill Browser object
 // NOTE: this is incomplete and provides just enough implementation for tests to pass
 
-let records: Record<string, unknown> = {};
+class FakeStorage {
 
-function fakeLocalStorageGet(
-    dkeys?: null | string | string[] | Record<string, unknown>
-): Promise<Record<string, unknown>> {
-    return new Promise<Record<string, unknown>>((resolve, reject) => {
-        const returnVal: Record<string, unknown> = {};
-        if (typeof dkeys === 'string') {
-            returnVal[dkeys] = records[dkeys];
-        }
-        resolve(returnVal);
-    });
-}
+    records: Record<string, unknown> = {};
 
-async function fakeLocalStorageSet(
-    items: Record<string, unknown>
-): Promise<void> {
-    for (const property in items) {
-        records[property] = items[property];
+    get(dkeys?: null | string | string[] | Record<string, unknown>): Promise<Record<string, unknown>> {
+        return new Promise<Record<string, unknown>>((resolve, reject) => {
+            const returnVal: Record<string, unknown> = {};
+            if (typeof dkeys === 'string') {
+                returnVal[dkeys] = this.records[dkeys];
+            }
+            resolve(returnVal);
+        });
     }
-    return new Promise<void>((resolve, reject) => {
-        resolve();
-    });
+
+    async set(
+        items: Record<string, unknown>
+    ): Promise<void> {
+        for (const property in items) {
+            this.records[property] = items[property];
+        }
+        return new Promise<void>((resolve, reject) => {
+            resolve();
+        });
+    }
+
+    clear() {
+        this.records = {}
+    }
+
 }
+
+const fakeLocalStorage = new FakeStorage();
 
 function fakeEvent() {
     return {
@@ -50,13 +58,10 @@ export const fakeBrowser = {
         getManifest: () => ({ version: '0.0.0.1' }),
     },
     storage: {
-        local: {
-            get: fakeLocalStorageGet,
-            set: fakeLocalStorageSet,
-        },
+        local: fakeLocalStorage,
     },
 };
 
 export const clearLocalStorage = () => {
-    records = {};
+    fakeLocalStorage.clear();
 };
