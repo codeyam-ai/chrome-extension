@@ -1,4 +1,3 @@
-import { PASSPHRASE_TEST } from '_redux/slices/account/index';
 import { deleteEncrypted, setEncrypted } from '_shared/storagex/store';
 
 export const password = 'Password';
@@ -35,12 +34,12 @@ export const simulateMnemonicUser = async function () {
         value: password,
         session: true,
     });
-    // await setEncrypted({
-    //     key: 'passphrase-test',
-    //     value: PASSPHRASE_TEST,
-    //     session: false,
-    //     passphrase: password
-    // });
+    await setEncrypted({
+        key: 'passphrase-test',
+        value: "PASSPHRASE_TEST",
+        session: false,
+        passphrase: password
+    });
     await setEncrypted({
         key: 'accountInfos',
         value: accountInfosJson,
