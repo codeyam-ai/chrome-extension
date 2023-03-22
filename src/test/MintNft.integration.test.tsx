@@ -23,6 +23,8 @@ describe('Minting an NFT', () => {
         await screen.findByText('No NFTs here yet');
         const mintButton = await screen.findByText('Mint an NFT');
         await userEvent.click(mintButton);
-        expect(mintButton.getAttribute('href')).toMatch('/dashboard/experiment')
+        expect(mintButton.getAttribute('href')).toMatch(
+            '/dashboard/experiment'
+        );
     });
 });

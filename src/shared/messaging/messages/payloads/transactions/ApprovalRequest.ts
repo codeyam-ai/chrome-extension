@@ -5,6 +5,7 @@ import {
     type SuiSignMessageOutput,
     type SuiSignMessageOptions,
     type SuiSignAndExecuteTransactionOptions,
+    type IdentifierString,
 } from '@mysten/wallet-standard';
 
 import type {
@@ -17,6 +18,7 @@ export type TransactionDataType = {
     type: 'transaction';
     data: string;
     account: SuiAddress;
+    chain?: IdentifierString;
     justSign?: boolean;
     options?: SuiSignAndExecuteTransactionOptions;
 };

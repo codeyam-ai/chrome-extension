@@ -13,12 +13,18 @@ import Browser from 'webextension-polyfill';
 
 import Authentication from './Authentication';
 import { Window } from './Window';
+import { API_ENV } from '../ui/app/ApiProvider';
 import { PREAPPROVAL_KEY, TX_STORE_KEY } from '_src/shared/constants';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
-import type { SignedTransaction, SuiTransactionResponse } from '@mysten/sui.js';
 import type {
+    SignedTransaction,
+    SuiAddress,
+    SuiTransactionResponse,
+} from '@mysten/sui.js';
+import type {
+    IdentifierString,
     SuiSignAndExecuteTransactionOptions,
     SuiSignMessageOutput,
 } from '@mysten/wallet-standard';
@@ -104,10 +110,15 @@ class Transactions {
                     const preapproval = await this.findPreapprovalRequest({
                         target: command.target,
                         objectIds,
+                        address: tx.account,
+                        chain: tx.chain,
                     });
+
                     if (preapproval?.approved) {
                         const txResult = await this.tryDirectExecution(
                             transaction,
+                            tx.account,
+                            tx.chain,
                             preapproval,
                             tx?.options
                         );
@@ -151,26 +162,30 @@ class Transactions {
     private async findPreapprovalRequest({
         target,
         objectIds,
+        address,
+        chain,
         preapproval,
     }: {
         target?: `${string}::${string}::${string}`;
         objectIds?: string[];
+        address?: SuiAddress;
+        chain?: IdentifierString;
         preapproval?: Preapproval;
     }) {
-        const activeAccount = await this.getActiveAccount();
-
         const preapprovalRequests = await this.getPreapprovalRequests();
 
         for (const preapprovalRequest of Object.values(preapprovalRequests)) {
             const { preapproval: existingPreapproval } = preapprovalRequest;
 
-            if (existingPreapproval.address !== activeAccount.address) continue;
-
             const found = target
                 ? target === existingPreapproval.target &&
-                  objectIds?.includes(existingPreapproval.objectId)
+                  objectIds?.includes(existingPreapproval.objectId) &&
+                  address === existingPreapproval.address &&
+                  chain === existingPreapproval.chain
                 : preapproval?.target === existingPreapproval.target &&
-                  preapproval?.objectId === existingPreapproval.objectId;
+                  preapproval?.objectId === existingPreapproval.objectId &&
+                  preapproval?.address === existingPreapproval.address &&
+                  preapproval?.chain === existingPreapproval.chain;
 
             if (found) {
                 return preapprovalRequest;
@@ -180,12 +195,16 @@ class Transactions {
 
     private async tryDirectExecution(
         tx: Transaction,
+        address: SuiAddress,
+        chain: IdentifierString | undefined,
         preapprovalRequest: PreapprovalRequest,
         options?: SuiSignAndExecuteTransactionOptions
     ) {
         try {
             const txDirectResult = await this.executeTransactionDirectly({
                 transaction: tx,
+                address,
+                chain,
                 options,
             });
 
@@ -245,15 +264,44 @@ class Transactions {
 
     private async executeTransactionDirectly({
         transaction,
+        address,
+        chain,
         options,
     }: {
         transaction: Transaction;
+        address: SuiAddress;
+        chain?: IdentifierString;
         options?: SuiSignAndExecuteTransactionOptions;
     }) {
-        const activeAccount = await this.getActiveAccount();
+        const activeAccount = await this.getAccount(address);
 
-        const { sui_Env } = await chrome.storage.session.get('sui_Env');
-        const connection = api.getEndPoints(sui_Env);
+        let env;
+        switch (chain) {
+            case 'sui::devnet':
+                env = API_ENV.devNet;
+                break;
+            case 'sui::testnet':
+                env = API_ENV.testNet;
+                break;
+            case 'sui::local':
+                env = API_ENV.local;
+                break;
+            case 'sui::custom':
+                env = API_ENV.customRPC;
+                break;
+            default: {
+                const envInfo = await Browser.storage.local.get([
+                    'sui_Env',
+                    'sui_Env_RPC',
+                ]);
+
+                env =
+                    envInfo?.sui_Env === API_ENV.customRPC
+                        ? envInfo.sui_Env_RPC
+                        : API_ENV[envInfo.sui_Env as keyof typeof API_ENV];
+            }
+        }
+        const connection = api.getEndPoints(env);
 
         const provider = new JsonRpcProvider(connection);
         const secretKey = Uint8Array.from(
@@ -371,8 +419,8 @@ class Transactions {
         this._preapprovalResponseMessages.next(msg);
     }
 
-    private async getActiveAccount(): Promise<AccountInfo> {
-        // const locked = await getEncrypted({ key: 'locked', session: false });
+    private async getAccount(address: SuiAddress): Promise<AccountInfo> {
+        const locked = await getEncrypted({ key: 'locked', session: false });
         const passphrase = await getEncrypted({
             key: 'passphrase',
             session: true,
@@ -381,16 +429,11 @@ class Transactions {
             key: 'authentication',
             session: true,
         });
-        // if (locked || (!passphrase && !authentication)) {
-        //     throw new Error(
-        //         `Wallet is locked: ${locked} ${passphrase} ${authentication}`
-        //     );
-        // }
-        const activeAccountIndex = await getEncrypted({
-            key: 'activeAccountIndex',
-            session: false,
-            passphrase: (passphrase || authentication) as string,
-        });
+        if (locked || (!passphrase && !authentication)) {
+            throw new Error(
+                `Wallet is locked: ${locked} ${passphrase} ${authentication}`
+            );
+        }
         let accountInfos;
         if (authentication) {
             Authentication.set(authentication);
@@ -405,8 +448,7 @@ class Transactions {
         }
 
         return accountInfos.find(
-            (accountInfo: AccountInfo) =>
-                (accountInfo.index || 0) === parseInt(activeAccountIndex || '0')
+            (accountInfo: AccountInfo) => accountInfo.address === address
         );
     }
 

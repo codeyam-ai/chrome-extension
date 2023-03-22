@@ -10,17 +10,16 @@ import {
     SUI_LOCALNET_CHAIN,
     type SuiFeatures,
     type SuiSignAndExecuteTransactionMethod,
-    type ConnectFeature,
-    type ConnectMethod,
+    type StandardConnectFeature,
+    type StandardConnectMethod,
     type Wallet,
-    type EventsFeature,
-    type EventsOnMethod,
-    type EventsListeners,
+    type StandardEventsFeature,
+    type StandardEventsOnMethod,
+    type StandardEventsListeners,
     type SuiSignTransactionMethod,
     type SuiSignMessageMethod,
-    // type SuiSignAndExecuteTransactionInput,
-    type DisconnectFeature,
-    type DisconnectMethod,
+    type StandardDisconnectFeature,
+    type StandardDisconnectMethod,
 } from '@mysten/wallet-standard';
 import mitt, { type Emitter } from 'mitt';
 import { filter, map, type Observable } from 'rxjs';
@@ -56,7 +55,9 @@ import type { DisconnectRequest } from '_src/shared/messaging/messages/payloads/
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 
 type WalletEventsMap = {
-    [E in keyof EventsListeners]: Parameters<EventsListeners[E]>[0];
+    [E in keyof StandardEventsListeners]: Parameters<
+        StandardEventsListeners[E]
+    >[0];
 };
 
 // NOTE: Because this runs in a content script, we can't fetch the manifest.
@@ -104,11 +105,11 @@ export class EthosWallet implements Wallet {
         return SUI_CHAINS;
     }
 
-    get features(): ConnectFeature &
-        EventsFeature &
+    get features(): StandardConnectFeature &
+        StandardEventsFeature &
         SuiFeatures &
         SuiWalletStakeFeature &
-        DisconnectFeature {
+        StandardDisconnectFeature {
         return {
             'standard:connect': {
                 version: '1.0.0',
@@ -197,7 +198,7 @@ export class EthosWallet implements Wallet {
         this.#connected();
     }
 
-    #on: EventsOnMethod = (event, listener) => {
+    #on: StandardEventsOnMethod = (event, listener) => {
         this.#events.on(event, listener);
         return () => this.#events.off(event, listener);
     };
@@ -214,7 +215,7 @@ export class EthosWallet implements Wallet {
         }
     };
 
-    #connect: ConnectMethod = async (input) => {
+    #connect: StandardConnectMethod = async (input) => {
         if (!input?.silent) {
             await mapToPromise(
                 this.#send<
@@ -233,7 +234,7 @@ export class EthosWallet implements Wallet {
         return { accounts: this.accounts };
     };
 
-    #disconnect: DisconnectMethod = async () => {
+    #disconnect: StandardDisconnectMethod = async () => {
         await mapToPromise(
             this.#send<DisconnectRequest, DisconnectResponse>({
                 type: 'disconnect-request',
@@ -272,7 +273,7 @@ export class EthosWallet implements Wallet {
     #signAndExecuteTransaction: SuiSignAndExecuteTransactionMethod = async (
         input
     ) => {
-        const { transaction, account, options } = input;
+        const { transaction, account, chain, options } = input;
 
         if (!Transaction.is(transaction)) {
             throw new Error(
@@ -291,6 +292,7 @@ export class EthosWallet implements Wallet {
                     // in that case use the first account address
                     account:
                         account?.address || this.#accounts[0]?.address || '',
+                    chain,
                 },
             }),
             (response) => response.result
