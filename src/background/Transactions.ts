@@ -13,6 +13,7 @@ import Browser from 'webextension-polyfill';
 
 import Authentication from './Authentication';
 import { Window } from './Window';
+import { PREAPPROVAL_KEY, TX_STORE_KEY } from '_src/shared/constants';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
@@ -28,8 +29,8 @@ import type {
     SuiSignTransactionSerialized,
 } from '_payloads/transactions';
 import type {
-    TransactionDataType,
     ApprovalRequest,
+    TransactionDataType,
 } from '_payloads/transactions/ApprovalRequest';
 import type { TransactionRequestResponse } from '_payloads/transactions/ui/TransactionRequestResponse';
 import type { ContentScriptConnection } from '_src/background/connections/ContentScriptConnection';
@@ -41,9 +42,6 @@ import type { AccountInfo } from '_src/ui/app/KeypairVault';
 //     coinObjectId: string;
 //     coinType: string;
 // };
-
-const TX_STORE_KEY = 'transactions';
-const PREAPPROVAL_KEY = 'preapprovals';
 
 function openTxWindow(txRequestId: string) {
     return new Window({
