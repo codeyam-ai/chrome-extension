@@ -1,5 +1,7 @@
 import { deleteEncrypted, setEncrypted } from '_shared/storagex/store';
-import { PASSPHRASE_TEST } from '_src/shared/constants';
+import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
+import { PASSPHRASE_TEST, PREAPPROVAL_KEY } from '_src/shared/constants';
+import { type Permission } from '_src/shared/messaging/messages/payloads/permissions';
 
 export const password = 'Password';
 export const recoveryPhrase =
@@ -81,5 +83,38 @@ export const simulateLogout = async function () {
         key: 'locked',
         session: false,
         passphrase: password,
+    });
+};
+
+export const simulateConnectedApps = async function () {
+    const permissionsToEncrypt: Record<string, Permission> = {
+        'https://beta.ethoswallet.xyz': {
+            id: 'ddca6998-d673-4bce-be3a-a1872293b847',
+            title: 'Ethos Wallet Explorer',
+            accounts: [
+                '0x189dca9b509b37fa2b0e53a4ef0dae164d465d6d8853eb6bc2da4e3d9d0c4814',
+            ],
+            allowed: true,
+            createdDate: '2023-03-21T23:20:16.540Z',
+            favIcon: 'https://beta.ethoswallet.xyz/favicon.ico',
+            origin: 'https://beta.ethoswallet.xyz',
+            permissions: [
+                'viewAccount',
+                'suggestTransactions',
+                'suggestSignMessages',
+            ],
+            responseDate: '2023-03-21T23:20:16.541Z',
+        },
+    };
+    await setEncrypted({
+        key: PERMISSIONS_STORAGE_KEY,
+        value: JSON.stringify(permissionsToEncrypt),
+        session: false,
+    });
+
+    await setEncrypted({
+        key: PREAPPROVAL_KEY,
+        value: JSON.stringify({}),
+        session: false,
     });
 };

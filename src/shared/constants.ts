@@ -21,3 +21,5 @@ export const MIST_PER_SUI = 1000000000;
 export const WALLET_LOCK_TIMEOUT_MS = 15 * 60000;
 
 export const PASSPHRASE_TEST = "PASSPHRASE_TEST"
+export const TX_STORE_KEY = 'transactions';
+export const PREAPPROVAL_KEY = 'preapprovals';

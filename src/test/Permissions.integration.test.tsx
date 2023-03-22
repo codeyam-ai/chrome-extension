@@ -1,16 +1,9 @@
-import { toB64 } from '@mysten/bcs';
-import { screen, within } from '@testing-library/react';
+import { screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import nock from 'nock';
 
-import { BASE_URL } from '_src/shared/constants';
 import {
-    fakeAccessToken,
-    accountInfos,
-    password,
-    recoveryPhrase,
+    simulateConnectedApps,
     simulateMnemonicUser,
-    simulateEmailUser,
 } from '_src/test/utils/fake-local-storage';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
@@ -18,9 +11,10 @@ import { renderApp } from '_src/test/utils/react-rendering';
 describe('The Permissions page', () => {
     let mockchain: Mockchain;
 
-    beforeEach(() => {
+    beforeEach(async () => {
         mockchain = new Mockchain();
-        simulateMnemonicUser();
+        await simulateMnemonicUser();
+        await simulateConnectedApps();
         mockchain.mockCommonCalls();
         mockchain.mockSuiObjects();
     });
@@ -34,5 +28,11 @@ describe('The Permissions page', () => {
         await userEvent.click(permissionsButton);
 
         await screen.findByText('Connected Apps');
+        const connectedApp = await screen.findByText('Ethos Wallet Explorer');
+        const revokeButton = await screen.findByRole('button', {
+            name: 'Revoke',
+        });
+        await userEvent.click(revokeButton);
+        await waitForElementToBeRemoved(connectedApp);
     });
 });
