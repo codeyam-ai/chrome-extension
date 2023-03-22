@@ -5,14 +5,6 @@ import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import Tooltip from '../../components/Tooltip';
-import { AppState } from '../../hooks/useInitializedGuard';
-import { api } from '../../redux/store/thunk-extras';
-import Accordion from '../../shared/content/Accordion';
-import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
-import Alert from '../../shared/feedback/Alert';
-import Input from '../../shared/inputs/Input';
-import Body from '../../shared/typography/Body';
 import Loading from '_components/loading';
 import {
     useAppDispatch,
@@ -24,7 +16,15 @@ import {
     preapprovalRequestsSelectors,
     respondToPreapprovalRequest,
 } from '_redux/slices/preapproval-requests';
+import Tooltip from '_src/ui/app/components/Tooltip';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
+import { AppState } from '_src/ui/app/hooks/useInitializedGuard';
+import { api } from '_src/ui/app/redux/store/thunk-extras';
+import Accordion from '_src/ui/app/shared/content/Accordion';
+import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
+import Alert from '_src/ui/app/shared/feedback/Alert';
+import Input from '_src/ui/app/shared/inputs/Input';
+import Body from '_src/ui/app/shared/typography/Body';
 
 import type { KeyNameAndValue } from '../../shared/content/rows-and-lists/KeyValueList';
 import type { SuiObjectData as SuiObject } from '@mysten/sui.js';
@@ -144,16 +144,6 @@ export function DappPreapprovalPage() {
     const preapprovalRequest = useAppSelector(preapprovalRequestSelector);
     const preapproval = preapprovalRequest?.preapproval;
 
-    // const nfts = useAppSelector(accountNftsSelector);
-    // console.log('NFTS', nfts);
-    // const nft = useMemo(() => {
-    //     const selectedNFT = nfts.filter(
-    //         (nftItem) =>
-    //             getObjectId(nftItem.reference) === preapproval?.objectId
-    //     )[0];
-    //     return selectedNFT;
-    // }, [nfts, preapproval?.objectId]);
-
     const loading = guardLoading || preapprovalRequestsLoading;
 
     const [changes, setChanges] = useState<Record<string, string>>({});
@@ -238,6 +228,7 @@ export function DappPreapprovalPage() {
                 id: preapproval.objectId,
                 options: { showContent: true },
             });
+            console.log('OBJECT', object);
             const nft = {
                 ...onchainInfo,
                 ...(object.details as SuiObject),
@@ -277,7 +268,7 @@ export function DappPreapprovalPage() {
         ).split('::');
         const keyValueListItems: KeyNameAndValue[] = [
             {
-                keyName: 'Module',
+                keyName: 'Target',
                 value: module || '',
             },
             {

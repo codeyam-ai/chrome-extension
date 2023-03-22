@@ -18,6 +18,7 @@ import { Coin } from '_redux/slices/sui-objects/Coin';
 import { generateMnemonic } from '_shared/cryptography/mnemonics';
 import Authentication from '_src/background/Authentication';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
+import { PASSPHRASE_TEST } from '_src/shared/constants';
 import {
     getEncrypted,
     setEncrypted,
@@ -32,7 +33,6 @@ import type { SuiAddress, SuiMoveObject } from '@mysten/sui.js';
 import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-import { PASSPHRASE_TEST } from '_src/shared/constants';
 
 export enum AccountType {
     EMAIL = 'EMAIL',

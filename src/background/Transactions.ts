@@ -16,11 +16,7 @@ import { Window } from './Window';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
-import type {
-    MoveCallCommand,
-    SignedTransaction,
-    SuiTransactionResponse,
-} from '@mysten/sui.js';
+import type { SignedTransaction, SuiTransactionResponse } from '@mysten/sui.js';
 import type {
     SuiSignAndExecuteTransactionOptions,
     SuiSignMessageOutput,
@@ -93,12 +89,35 @@ class Transactions {
         connection: ContentScriptConnection
     ): Promise<SuiTransactionResponse | SignedTransaction> {
         if (tx) {
-            const txResult = await this.tryDirectExecution(
-                Transaction.from(tx.data),
-                tx?.options
-            );
-            if (txResult) {
-                return txResult;
+            const transaction = Transaction.from(tx.data);
+            for (const command of transaction.transactionData.commands) {
+                if (command.kind === 'MoveCall') {
+                    const objectIds: string[] = [];
+                    for (const argument of command.arguments) {
+                        if (
+                            argument.kind === 'Input' &&
+                            argument.type === 'object' &&
+                            !!argument.value
+                        ) {
+                            objectIds.push(`${argument.value}`);
+                        }
+                    }
+
+                    const preapproval = await this.findPreapprovalRequest({
+                        target: command.target,
+                        objectIds,
+                    });
+                    if (preapproval?.approved) {
+                        const txResult = await this.tryDirectExecution(
+                            transaction,
+                            preapproval,
+                            tx?.options
+                        );
+                        if (txResult) {
+                            return txResult;
+                        }
+                    }
+                }
             }
         }
         const { txResultError, txResult, txSigned } =
@@ -132,10 +151,12 @@ class Transactions {
     }
 
     private async findPreapprovalRequest({
-        moveCall,
+        target,
+        objectIds,
         preapproval,
     }: {
-        moveCall?: MoveCallCommand;
+        target?: `${string}::${string}::${string}`;
+        objectIds?: string[];
         preapproval?: Preapproval;
     }) {
         const activeAccount = await this.getActiveAccount();
@@ -147,13 +168,9 @@ class Transactions {
 
             if (existingPreapproval.address !== activeAccount.address) continue;
 
-            const found = moveCall
-                ? moveCall.target === existingPreapproval.target &&
-                  moveCall.arguments.find(
-                      (a) =>
-                          a.kind === 'Input' &&
-                          a.value === existingPreapproval.objectId
-                  )
+            const found = target
+                ? target === existingPreapproval.target &&
+                  objectIds?.includes(existingPreapproval.objectId)
                 : preapproval?.target === existingPreapproval.target &&
                   preapproval?.objectId === existingPreapproval.objectId;
 
@@ -165,7 +182,7 @@ class Transactions {
 
     private async tryDirectExecution(
         tx: Transaction,
-        // preapprovalRequest: PreapprovalRequest,
+        preapprovalRequest: PreapprovalRequest,
         options?: SuiSignAndExecuteTransactionOptions
     ) {
         try {
@@ -174,28 +191,26 @@ class Transactions {
                 options,
             });
 
-            // const { result, error } = txDirectResult;
+            if (!txDirectResult?.effects) {
+                return txDirectResult;
+            }
 
-            // if (error) {
-            //     return { error, effects: null };
-            // }
+            const { preapproval } = preapprovalRequest;
+            preapproval.maxTransactionCount -= 1;
 
-            // const { preapproval } = preapprovalRequest;
-            // preapproval.maxTransactionCount -= 1;
-            // const { effects } = result.EffectsCert || result;
-            // const { computationCost, storageCost, storageRebate } =
-            //     effects.effects.gasUsed;
-            // const gasUsed = computationCost + (storageCost - storageRebate);
-            // preapproval.totalGasLimit -= gasUsed;
+            const { computationCost, storageCost, storageRebate } =
+                txDirectResult.effects.gasUsed;
+            const gasUsed = computationCost + (storageCost - storageRebate);
+            preapproval.totalGasLimit -= gasUsed;
 
-            // if (
-            //     preapprovalRequest.preapproval.maxTransactionCount > 0 &&
-            //     preapprovalRequest.preapproval.totalGasLimit > gasUsed * 1.5
-            // ) {
-            //     this.storePreapprovalRequest(preapprovalRequest);
-            // } else {
-            //     this.removePreapprovalRequest(preapprovalRequest.id as string);
-            // }
+            if (
+                preapprovalRequest.preapproval.maxTransactionCount > 0 &&
+                preapprovalRequest.preapproval.totalGasLimit > gasUsed * 1.5
+            ) {
+                this.storePreapprovalRequest(preapprovalRequest);
+            } else {
+                this.removePreapprovalRequest(preapprovalRequest.id as string);
+            }
 
             return txDirectResult;
         } catch (e) {
@@ -239,12 +254,9 @@ class Transactions {
     }) {
         const activeAccount = await this.getActiveAccount();
 
-        // const { sui_Env } = await Browser.storage.local.get('sui_Env');
         const { sui_Env } = await chrome.storage.session.get('sui_Env');
-        console.log('sui_ENV', sui_Env);
-
         const connection = api.getEndPoints(sui_Env);
-        console.log('CONNECTION', connection.fullnode);
+
         const provider = new JsonRpcProvider(connection);
         const secretKey = Uint8Array.from(
             activeAccount.seed.split(',').map((n) => parseInt(n))
@@ -261,7 +273,6 @@ class Transactions {
 
             return txResponse;
         } catch (e) {
-            console.log('Error executing direct transaction', e);
             return null;
         }
     }
@@ -270,9 +281,6 @@ class Transactions {
         preapproval: Preapproval,
         connection: ContentScriptConnection
     ): Promise<PreapprovalResponse> {
-        const activeAccount = await this.getActiveAccount();
-        preapproval.address = activeAccount.address;
-
         const existingPreapprovalRequest = await this.findPreapprovalRequest({
             preapproval,
         });
@@ -346,7 +354,7 @@ class Transactions {
     > {
         const resultsString = await getEncrypted({
             key: PREAPPROVAL_KEY,
-            session: false,
+            session: true,
         });
         return JSON.parse(resultsString || '{}');
     }
@@ -366,10 +374,7 @@ class Transactions {
     }
 
     private async getActiveAccount(): Promise<AccountInfo> {
-        const locked = await getEncrypted({ key: 'locked', session: false });
-        if (locked) {
-            throw new Error('Wallet is locked');
-        }
+        // const locked = await getEncrypted({ key: 'locked', session: false });
         const passphrase = await getEncrypted({
             key: 'passphrase',
             session: true,
@@ -378,6 +383,11 @@ class Transactions {
             key: 'authentication',
             session: true,
         });
+        // if (locked || (!passphrase && !authentication)) {
+        //     throw new Error(
+        //         `Wallet is locked: ${locked} ${passphrase} ${authentication}`
+        //     );
+        // }
         const activeAccountIndex = await getEncrypted({
             key: 'activeAccountIndex',
             session: false,

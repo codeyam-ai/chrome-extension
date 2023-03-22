@@ -104,7 +104,8 @@ export default function useInitializedGuard(
             if (
                 params?.requestID ||
                 params?.txID ||
-                params?.signMessageRequestID
+                params?.signMessageRequestID ||
+                params?.preapprovalRequestID
             ) {
                 destination = destination + pathname;
             }
