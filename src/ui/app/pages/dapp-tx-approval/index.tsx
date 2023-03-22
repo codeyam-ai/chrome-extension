@@ -245,6 +245,7 @@ export function DappTxApprovalPage() {
                     setEffects(transactionEffects);
                 }
             } catch (e: unknown) {
+                setDryRunError(`${e}`);
                 setEvents(null);
                 setEffects(null);
             }
