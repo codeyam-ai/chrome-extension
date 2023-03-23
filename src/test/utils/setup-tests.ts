@@ -2,34 +2,20 @@ import { fromHEX, toB64 } from '@mysten/bcs';
 import nock from 'nock';
 import * as util from 'util';
 
-import { fakeBrowser, clearLocalStorage } from './fake-browser';
-import { accountInfos } from './fake-local-storage';
+import {
+    fakeBrowser,
+    clearFakeStorages,
+    fakeSessionStorage,
+} from './fake-browser';
+import { accountInfos } from './storage';
 
-let chromeSessionStorage: Record<string, string> = {};
 global.chrome = {
     ...(global.chrome || {}),
     storage: {
         ...(global.chrome?.storage || {}),
-        session: {
-            ...(global.chrome?.storage?.session || {}),
-            set: jest.fn(async (items) => {
-                chromeSessionStorage = {
-                    ...chromeSessionStorage,
-                    ...items,
-                };
-            }),
-            get: jest.fn(async (items) => {
-                if (!items) return {};
-
-                const key =
-                    typeof items === 'object'
-                        ? Object.keys(items)[0]
-                        : typeof items === 'string'
-                        ? items
-                        : items[0];
-                return { [key]: chromeSessionStorage[key] };
-            }),
-        },
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        session: fakeSessionStorage,
     },
 };
 
@@ -70,7 +56,7 @@ jest.mock('_shared/cryptography/mnemonics', () => {
     };
 });
 
-beforeEach(() => clearLocalStorage());
+beforeEach(() => clearFakeStorages());
 
 // ref: https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 // ref: https://github.com/jsdom/jsdom/issues/2524
