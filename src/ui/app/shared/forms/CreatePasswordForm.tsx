@@ -1,4 +1,5 @@
 import { Formik, Form, useField } from 'formik';
+import zxcvbn from 'zxcvbn';
 import { useCallback } from 'react';
 import * as Yup from 'yup';
 
@@ -75,6 +76,28 @@ const CreatePasswordForm = ({ onSubmit }: CreatePasswordFormProps) => {
         },
         [onSubmit]
     );
+
+    const passwordValidation = Yup.string()
+        .ensure()
+        .required('Enter a password')
+        .test({
+            name: 'password-strength',
+            test: (password: string) => {
+                return zxcvbn(password).score > 2;
+            },
+            message: ({ value }) => {
+                const {
+                    feedback: { warning, suggestions },
+                } = zxcvbn(value);
+                return 'Password is not strong enough.';
+            },
+        })
+    const passwordsMustMatch = Yup.string()
+        .required('Confirm your password')
+        .oneOf(
+            [Yup.ref('password'), null],
+            'Passwords must match'
+        );
     return (
         <div>
             <Formik
@@ -83,13 +106,8 @@ const CreatePasswordForm = ({ onSubmit }: CreatePasswordFormProps) => {
                     confirmPassword: '',
                 }}
                 validationSchema={Yup.object({
-                    password: Yup.string().required('Enter a password'),
-                    confirmPassword: Yup.string()
-                        .required('Confirm your password')
-                        .oneOf(
-                            [Yup.ref('password'), null],
-                            'Passwords must match'
-                        ),
+                    password: passwordValidation,
+                    confirmPassword: passwordsMustMatch,
                 })}
                 onSubmit={_onSubmit}
             >
