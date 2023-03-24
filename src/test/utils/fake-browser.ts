@@ -65,4 +65,5 @@ export const fakeBrowser = {
 
 export const clearFakeStorages = () => {
     fakeLocalStorage.clear();
+    fakeSessionStorage.clear();
 };

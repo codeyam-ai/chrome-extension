@@ -110,7 +110,6 @@ export default function useInitializedGuard(
                 destination = destination + pathname;
             }
 
-            // console.log('DESTINATION', destination, currentState);
             navigate(destination, { replace: true });
         }
     }, [
