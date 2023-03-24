@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
-import Browser, {ActivityLog} from 'webextension-polyfill';
+import Browser, { ActivityLog } from 'webextension-polyfill';
 
 import {
     resetWalletLockTimer,
@@ -21,7 +21,6 @@ const LockWalletProvider = ({ children }: { children: ReactNode }) => {
         const { lockWalletOnTimestamp } = await Browser.storage.local.get(
             'lockWalletOnTimestamp'
         );
-        console.log('lockWalletOnTimestamp: ' + lockWalletOnTimestamp)
         if (lockWalletOnTimestamp > 0 && lockWalletOnTimestamp < Date.now()) {
             await lockWallet();
             resetWalletLockTimer();
