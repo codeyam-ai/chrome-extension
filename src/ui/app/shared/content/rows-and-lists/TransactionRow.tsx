@@ -19,10 +19,12 @@ import { getHumanReadable } from '_src/ui/app/helpers/transactions';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
 
-import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
+import { SuiAddress } from '@mysten/sui.js';
+import { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 
 interface TransactionRowProps {
-    txn: TxResultState;
+    txn: FormattedTransaction;
+    address: SuiAddress;
 }
 
 interface RowDataTypes extends SharedTypes {
@@ -41,9 +43,22 @@ interface SharedTypes {
     date: string;
 }
 
-const TransactionRow = ({ txn }: TransactionRowProps) => {
-    const { txType, txAction, nftImageUri, timeDisplay } =
-        getHumanReadable(txn);
+const TransactionRow = ({ txn, address }: TransactionRowProps) => {
+    const {
+        timeDisplay,
+        txType,
+        txAction,
+        txAmount,
+        txStatus,
+        txUsdAmount,
+        gasFeeInSui,
+        gasFeeInUsd,
+        txCommands,
+        preposition,
+        otherAddress,
+        otherAddressStr,
+        displayImage,
+    } = getHumanReadable(address, txn);
 
     const drilldownLink = `/transactions/receipt?${new URLSearchParams({
         txdigest: txn.txId,
