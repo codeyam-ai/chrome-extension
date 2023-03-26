@@ -19,16 +19,15 @@ import { getHumanReadable } from '_src/ui/app/helpers/transactions';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
 
-import { SuiAddress } from '@mysten/sui.js';
 import { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 
 interface TransactionRowProps {
     txn: FormattedTransaction;
-    address: SuiAddress;
+    address: string;
 }
 
 interface RowDataTypes extends SharedTypes {
-    header?: string;
+    header: string | null | undefined;
     typeIcon: JSX.Element;
     icon: JSX.Element;
 }
@@ -54,23 +53,20 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
         gasFeeInSui,
         gasFeeInUsd,
         txCommands,
-        preposition,
-        otherAddress,
-        otherAddressStr,
         displayImage,
     } = getHumanReadable(address, txn);
 
     const drilldownLink = `/transactions/receipt?${new URLSearchParams({
-        txdigest: txn.txId,
-        symbol: txn?.formatted?.coinSymbol || '',
+        txdigest: txn.digest,
+        symbol: 'SUI', // TODO: what to do with coins / multiple coins / batch txs
         isFunc: txType === 'func' ? 'yes' : 'no',
     }).toString()}`;
 
     const shared: SharedTypes = {
-        hasAmount: (txn.amount && txn.amount > 0) || false,
-        amount: txn?.amount || undefined,
-        coinType: txn?.coinType || '',
-        type: txAction || txn?.callFunctionName || '',
+        hasAmount: (txAmount && txAmount > 0) || false,
+        amount: txAmount || undefined,
+        coinType: '', // TODO: what to do with coins / multiple coins / batch txs
+        type: txAction || '',
         txDirText:
             txAction === 'send' && txn.to
                 ? `To ${truncateMiddle(txn.to)}`
@@ -101,13 +97,19 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 <IconContainer>
                     <SuiIcon width={14} height={20} color={'white'} />
                 </IconContainer>
-            ) : txn?.formatted?.coinIcon ? (
+            ) : (
+                // TODO: Should we handle icons for other coins?
+                // Is it worth making the required requests to getCoin
+                // Is there a better way, maybe a standard Icon
+
+                /* : txn?.formatted?.coinIcon ? (
                 <img
                     src={txn?.formatted?.coinIcon}
                     alt={`Icon for ${txn?.formatted?.coinSymbol}`}
                     className="w-10 h-10"
                 />
-            ) : (
+            )*/
+
                 <UnknownToken width={40} height={40} />
             )}
         </>
@@ -148,65 +150,65 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: (
                     <NftImg
-                        src={nftImageUri || ''}
-                        alt={txn.description || ''}
+                        src={displayImage || ''}
+                        alt={'NFT image display for transaction'}
                     />
                 ),
-                header: _.startCase(txn?.name),
+                header: txCommands || '',
             },
             receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: (
                     <NftImg
-                        src={nftImageUri || ''}
-                        alt={txn.description || ''}
+                        src={displayImage || ''}
+                        alt={'NFT image display for transaction'}
                     />
                 ),
-                header: _.startCase(txn?.name),
+                header: txCommands || '',
             },
             mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: (
                     <NftImg
-                        src={nftImageUri || ''}
-                        alt={txn.description || ''}
+                        src={displayImage || ''}
+                        alt={'NFT image display for transaction'}
                     />
                 ),
-                header: _.startCase(txn?.name),
+                header: txCommands || '',
             },
             clone: {
                 ...shared,
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
                 icon: (
                     <NftImg
-                        src={nftImageUri || ''}
-                        alt={txn.description || ''}
+                        src={displayImage || ''}
+                        alt={'NFT image display for transaction'}
                     />
                 ),
-                header: _.startCase(txn?.name),
+                header: txCommands || '',
             },
             register: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
-                icon: nftImageUri ? (
+                icon: displayImage ? (
                     <NftImg
-                        src={ipfs(nftImageUri)}
-                        alt={txn.description || ''}
+                        src={ipfs(displayImage)}
+                        alt={'NFT image display for transaction'}
                     />
                 ) : (
                     <></>
                 ),
-                header: _.startCase(txn?.name) || 'Register NFT',
+                header: txCommands || 'Register NFT',
             },
             default: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
-                icon: nftImageUri ? (
+                icon: displayImage ? (
                     <NftImg
-                        src={ipfs(nftImageUri)}
-                        alt={txn.description || ''}
+                        src={ipfs(displayImage)}
+                        alt={'NFT image display for transaction'}
                     />
                 ) : (
                     <></>
@@ -219,21 +221,19 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header:
-                    _.startCase(txn?.formatted?.coinSymbol) ||
-                    _.startCase(txn?.kind),
+                header: txCommands,
             },
             receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: _.startCase(txn?.formatted?.coinSymbol),
+                header: txCommands,
             },
             mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: _.startCase(txn?.formatted?.coinSymbol),
+                header: txCommands,
             },
             default: {
                 ...shared,
@@ -247,33 +247,25 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header:
-                    _.startCase(txn?.formatted?.coinSymbol) ||
-                    _.startCase(txn.callModuleName),
+                header: txCommands,
             },
             receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header:
-                    _.startCase(txn?.formatted?.coinSymbol) ||
-                    _.startCase(txn.callModuleName),
+                header: txCommands,
             },
             mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header:
-                    _.startCase(txn?.formatted?.coinSymbol) ||
-                    _.startCase(txn.callModuleName),
+                header: txCommands,
             },
             default: {
                 ...shared,
                 typeIcon: <CodeBracketSquareIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header:
-                    _.startCase(txn?.formatted?.coinSymbol) ||
-                    _.startCase(txn.callModuleName),
+                header: txCommands,
             },
         },
         func: {
@@ -281,31 +273,31 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 ...shared,
                 typeIcon: <PencilSquareIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: _.startCase(txn.callModuleName) || 'Sui Action',
+                header: txCommands || 'Sui Action',
             },
             burn: {
                 ...shared,
                 typeIcon: <FireIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: _.startCase(txn.callModuleName) || 'Sui Action',
+                header: txCommands || 'Sui Action',
             },
             transfer: {
                 ...shared,
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: _.startCase(txn.callModuleName) || 'Sui Action',
+                header: txCommands || 'Sui Action',
             },
             pool: {
                 ...shared,
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: _.startCase(txn.callFunctionName) || 'Sui Action',
+                header: txCommands || 'Sui Action',
             },
             default: {
                 ...shared,
                 typeIcon: <SuiIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: _.startCase(txn.callModuleName) || 'Sui Action',
+                header: txCommands || 'Sui Action',
             },
         },
     };
@@ -328,17 +320,17 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
 
     return (
         <ActivityRow
-            failed={txn.status === 'failure'}
+            failed={txStatus === 'failure'}
             typeIcon={rowData.typeIcon}
             type={rowData.type}
             date={rowData.date}
             icon={rowData.icon}
             link={rowData.link}
-            header={rowData.header}
+            header={rowData.header || ''}
             subheader={rowData.txDirText}
-            formattedAmount={txn?.formatted?.formattedBalance}
-            symbol={txn?.formatted?.coinSymbol}
-            dollars={txn?.formatted?.dollars}
+            formattedAmount={txAmount}
+            symbol={'SUI'} // TODO: handle coin symbols with ProgrammableTransactions
+            dollars={txUsdAmount}
         />
     );
 };
