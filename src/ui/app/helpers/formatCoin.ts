@@ -19,7 +19,7 @@ const dollarFormatter = new Intl.NumberFormat('en-US', {
     currency: 'USD',
 });
 
-const getFormattedBalance = (
+export const getFormattedBalance = (
     balance?: bigint | number | string,
     decimals?: number
 ): string | undefined => {
@@ -33,7 +33,9 @@ const getFormattedBalance = (
     }
 };
 
-const getDollars = (balance?: bigint | number | string): string | undefined => {
+export const getDollars = (
+    balance?: bigint | number | string
+): string | undefined => {
     if (!balance) {
         return undefined;
     }
