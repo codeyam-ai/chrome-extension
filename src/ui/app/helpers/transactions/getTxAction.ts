@@ -1,34 +1,55 @@
-import { type FormattedTxResultState } from '../../pages/home/transactions/FormattedTxResultState';
+import { FormattedTransaction } from './types';
 
-export type TxAction =
-    | 'mint'
-    | 'send'
-    | 'receive'
-    | 'transfer'
-    | 'pool'
-    | 'clone'
-    | 'modify'
-    | 'burn'
-    | undefined;
+export type TxAction = string;
 
-const getTxAction = (txn: FormattedTxResultState): TxAction => {
-    let type: TxAction;
-    if (txn.callFunctionName === 'mint' || txn.type === 'Mint') {
-        type = 'mint';
-    } else if (txn.callFunctionName === 'clone' || txn.type === 'clone') {
-        type = 'clone';
-    } else if (txn.callFunctionName === 'modify' || txn.type === 'modify') {
-        type = 'modify';
-    } else if (txn.callFunctionName === 'burn' || txn.type === 'burn') {
-        type = 'burn';
-    } else if (txn.callModuleName === 'pool') {
-        type = 'pool';
-    } else if (txn.isSender && !txn.callFunctionName) {
-        type = 'send';
-    } else if (!txn.isSender && !txn.callFunctionName) {
-        type = 'receive';
-        // } else if (txn.kind === 'TransferObject') {
-        //     type = 'transfer';
+const getTxAction = (txn: FormattedTransaction): TxAction => {
+    let type = 'function';
+
+    if ('commands' in txn.transaction.data.transaction) {
+        const totalCommands = txn.transaction.data.transaction.commands.length;
+
+        if (totalCommands > 1) {
+            // If there's more than one command it's a 'batch' transaction
+            // the ProgrammableTransaction type containing multiple commands
+            type = 'batch';
+        } else {
+            txn.transaction.data.transaction.commands.forEach((command) => {
+                // get command object key
+                const commandObj = command as any;
+                const commandKey = Object.keys(commandObj)[0];
+                const call = commandObj['MoveCall'];
+                const func = call.function.toLowerCase();
+
+                // Set type based on obj key or movecall obj contents
+                if (commandKey === 'TransferObjects') {
+                    type = 'transfer';
+                } else if (txn.isSender && !func) {
+                    type = 'send';
+                } else if (!txn.isSender && !func) {
+                    type = 'receive';
+                    // } else if (txn.kind === 'TransferObject') {
+                    //     type = 'transfer';
+                } else if (commandKey === 'MoveCall') {
+                    switch (func) {
+                        case 'mint':
+                            type = 'mint';
+                            break;
+                        case 'clone':
+                            type = 'clone';
+                            break;
+                        case 'modify':
+                            type = 'modify';
+                            break;
+                        case 'burn':
+                            type = 'burn';
+                            break;
+                        default:
+                            type = 'function';
+                            break;
+                    }
+                }
+            });
+        }
     }
 
     return type;
