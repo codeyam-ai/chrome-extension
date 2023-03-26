@@ -228,7 +228,7 @@ export function DappPreapprovalPage() {
                 id: preapproval.objectId,
                 options: { showContent: true },
             });
-            console.log('OBJECT', object);
+
             const nft = {
                 ...onchainInfo,
                 ...(object.details as SuiObject),

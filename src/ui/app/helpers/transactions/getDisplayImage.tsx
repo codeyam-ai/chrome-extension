@@ -1,4 +1,4 @@
-import { FormattedTransaction } from '../../types/transactions/FormattedTransaction';
+import { FormattedTransaction } from './types';
 
 export type TxType = string;
 

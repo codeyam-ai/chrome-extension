@@ -1,16 +1,21 @@
-import { type FormattedTxResultState } from '../../pages/home/transactions/FormattedTxResultState';
+import { FormattedTransaction } from './types';
+import getDisplayImage from './getDisplayImage';
 
-export type TxType = 'nft' | 'sui' | 'func' | 'coin';
+export type TxType = string;
 
-const getTxType = (txn: FormattedTxResultState): TxType => {
-    if (txn?.callFunctionName === 'transfer' || txn?.objectId?.length) {
+const getTxType = (txn: FormattedTransaction): string => {
+    const hasImg = getDisplayImage(txn);
+    const isSui = txn.balanceChanges.length === 1;
+    const isCoin = txn.balanceChanges.length > 1;
+
+    if (hasImg) {
         return 'nft';
-        // } else if (txn?.kind === 'PaySui' || txn?.kind === 'PayAllSui') {
-        //     return 'sui';
-    } else if (txn?.callFunctionName && txn?.callFunctionName !== 'mint') {
-        return 'func';
-    } else {
+    } else if (isSui) {
+        return 'sui';
+    } else if (isCoin) {
         return 'coin';
+    } else {
+        return 'func';
     }
 };
 

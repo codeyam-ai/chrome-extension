@@ -4,32 +4,28 @@ export type TxAction = string;
 
 const getTxAction = (txn: FormattedTransaction): TxAction => {
     let type = 'function';
+    const txDetails = txn.transaction.data.transaction;
 
-    if ('commands' in txn.transaction.data.transaction) {
-        const totalCommands = txn.transaction.data.transaction.commands.length;
+    if (txDetails && 'commands' in txDetails) {
+        const totalCommands = txDetails.commands.length;
 
         if (totalCommands > 1) {
             // If there's more than one command it's a 'batch' transaction
             // the ProgrammableTransaction type containing multiple commands
             type = 'batch';
         } else {
-            txn.transaction.data.transaction.commands.forEach((command) => {
+            txDetails.commands.forEach((command) => {
                 // get command object key
                 const commandObj = command as any;
                 const commandKey = Object.keys(commandObj)[0];
-                const call = commandObj['MoveCall'];
-                const func = call.function.toLowerCase();
 
                 // Set type based on obj key or movecall obj contents
                 if (commandKey === 'TransferObjects') {
                     type = 'transfer';
-                } else if (txn.isSender && !func) {
-                    type = 'send';
-                } else if (!txn.isSender && !func) {
-                    type = 'receive';
-                    // } else if (txn.kind === 'TransferObject') {
-                    //     type = 'transfer';
                 } else if (commandKey === 'MoveCall') {
+                    const call = commandObj['MoveCall'];
+                    const func = call.function.toLowerCase();
+
                     switch (func) {
                         case 'mint':
                             type = 'mint';
@@ -44,7 +40,13 @@ const getTxAction = (txn: FormattedTransaction): TxAction => {
                             type = 'burn';
                             break;
                         default:
-                            type = 'function';
+                            if (txn.isSender) {
+                                type = 'send';
+                            } else if (!txn.isSender) {
+                                type = 'receive';
+                            } else {
+                                type = 'function';
+                            }
                             break;
                     }
                 }

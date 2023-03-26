@@ -27,12 +27,12 @@ interface TransactionRowProps {
 }
 
 interface RowDataTypes extends SharedTypes {
-    header: string | null | undefined;
     typeIcon: JSX.Element;
     icon: JSX.Element;
 }
 
 interface SharedTypes {
+    header: string | null | undefined;
     hasAmount: boolean;
     amount?: number;
     coinType: string;
@@ -56,6 +56,8 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
         displayImage,
     } = getHumanReadable(address, txn);
 
+    console.log('txn: ', txn);
+
     const drilldownLink = `/transactions/receipt?${new URLSearchParams({
         txdigest: txn.digest,
         symbol: 'SUI', // TODO: what to do with coins / multiple coins / batch txs
@@ -63,8 +65,8 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
     }).toString()}`;
 
     const shared: SharedTypes = {
-        hasAmount: (txAmount && txAmount > 0) || false,
-        amount: txAmount || undefined,
+        hasAmount: (txAmount && parseFloat(txAmount) > 0) || false,
+        amount: parseFloat(txAmount as string),
         coinType: '', // TODO: what to do with coins / multiple coins / batch txs
         type: txAction || '',
         txDirText:
@@ -73,6 +75,7 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 : `From ${truncateMiddle(txn.from)}` || '',
         link: drilldownLink,
         date: timeDisplay,
+        header: txCommands || 'Sui Action',
     };
 
     const IconContainer = ({ children }: { children: JSX.Element }) => (
@@ -128,6 +131,13 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
             </IconContainer>
         );
 
+    const NftIcon = () => (
+        <NftImg
+            src={displayImage || ''}
+            alt={'NFT image display for transaction'}
+        />
+    );
+
     const iconProps = { color: '#74777C', width: 18, height: 18 };
 
     const dataMap: {
@@ -148,59 +158,27 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
             send: {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
-                icon: (
-                    <NftImg
-                        src={displayImage || ''}
-                        alt={'NFT image display for transaction'}
-                    />
-                ),
-                header: txCommands || '',
+                icon: <NftIcon />,
             },
             receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
-                icon: (
-                    <NftImg
-                        src={displayImage || ''}
-                        alt={'NFT image display for transaction'}
-                    />
-                ),
-                header: txCommands || '',
+                icon: <NftIcon />,
             },
             mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
-                icon: (
-                    <NftImg
-                        src={displayImage || ''}
-                        alt={'NFT image display for transaction'}
-                    />
-                ),
-                header: txCommands || '',
+                icon: <NftIcon />,
             },
             clone: {
                 ...shared,
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
-                icon: (
-                    <NftImg
-                        src={displayImage || ''}
-                        alt={'NFT image display for transaction'}
-                    />
-                ),
-                header: txCommands || '',
+                icon: <NftIcon />,
             },
             register: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
-                icon: displayImage ? (
-                    <NftImg
-                        src={ipfs(displayImage)}
-                        alt={'NFT image display for transaction'}
-                    />
-                ) : (
-                    <></>
-                ),
-                header: txCommands || 'Register NFT',
+                icon: displayImage ? <NftIcon /> : <></>,
             },
             default: {
                 ...shared,
@@ -213,7 +191,6 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 ) : (
                     <></>
                 ),
-                header: _.startCase(txType) || `NFT ${txAction}` || '',
             },
         },
         sui: {
@@ -221,25 +198,26 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txCommands,
+            },
+            transfer: {
+                ...shared,
+                typeIcon: <ArrowUpIcon {...iconProps} />,
+                icon: <CurrencyIcon />,
             },
             receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txCommands,
             },
             mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txCommands,
             },
             default: {
                 ...shared,
                 typeIcon: <CodeBracketSquareIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: _.startCase(txAction) || 'SUI',
             },
         },
         coin: {
@@ -247,25 +225,21 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txCommands,
             },
             receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txCommands,
             },
             mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txCommands,
             },
             default: {
                 ...shared,
                 typeIcon: <CodeBracketSquareIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
-                header: txCommands,
             },
         },
         func: {
@@ -273,31 +247,26 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 ...shared,
                 typeIcon: <PencilSquareIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: txCommands || 'Sui Action',
             },
             burn: {
                 ...shared,
                 typeIcon: <FireIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: txCommands || 'Sui Action',
             },
             transfer: {
                 ...shared,
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: txCommands || 'Sui Action',
             },
             pool: {
                 ...shared,
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: txCommands || 'Sui Action',
             },
             default: {
                 ...shared,
                 typeIcon: <SuiIcon {...iconProps} />,
                 icon: <FunctionIcon />,
-                header: txCommands || 'Sui Action',
             },
         },
     };
@@ -305,6 +274,9 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
     let rowData;
 
     if (!txType) return <></>;
+
+    console.log('txType: ', txType);
+    console.log('txAction: ', txAction);
 
     if (txType === 'nft') {
         rowData = dataMap.nft[txAction || 'default'];

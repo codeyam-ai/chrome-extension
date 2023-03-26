@@ -2,11 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useMemo } from 'react';
-import {
-    BalanceChange,
-    FormattedTransaction,
-} from 'src/types/transactions/FormattedTransaction';
-import { getFormattedBalance } from '../format/coin/formatCoin';
+import { BalanceChange, FormattedTransaction } from '../transactions/types';
+import { getFormattedBalance } from '../formatCoin';
 
 function isObjectOwner(value: unknown): value is { [key: string]: any } {
     return typeof value === 'object' && value !== null;
