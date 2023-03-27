@@ -6,6 +6,7 @@ import {
 import {
     ArrowDownIcon,
     ArrowUpIcon,
+    CircleStackIcon,
     FireIcon,
     PhotoIcon,
     SparklesIcon,
@@ -61,8 +62,6 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
         symbol: 'SUI', // TODO: what to do with coins / multiple coins / batch txs
         isFunc: txType === 'func' ? 'yes' : 'no',
     }).toString()}`;
-
-    console.log('drilldownLink', drilldownLink);
 
     const shared: SharedTypes = {
         hasAmount: (txAmount && parseFloat(txAmount) > 0) || false,
@@ -175,6 +174,11 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
                 icon: <NftIcon />,
             },
+            batch: {
+                ...shared,
+                typeIcon: <CircleStackIcon {...iconProps} />,
+                icon: <NftIcon />,
+            },
             register: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
@@ -199,14 +203,19 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
             },
+            receive: {
+                ...shared,
+                typeIcon: <ArrowDownIcon {...iconProps} />,
+                icon: <CurrencyIcon />,
+            },
             transfer: {
                 ...shared,
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
             },
-            receive: {
+            batch: {
                 ...shared,
-                typeIcon: <ArrowDownIcon {...iconProps} />,
+                typeIcon: <CircleStackIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
             },
             mint: {
@@ -236,6 +245,11 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
             },
+            batch: {
+                ...shared,
+                typeIcon: <CircleStackIcon {...iconProps} />,
+                icon: <CurrencyIcon />,
+            },
             mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
@@ -263,6 +277,11 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
                 icon: <FunctionIcon />,
             },
+            batch: {
+                ...shared,
+                typeIcon: <CircleStackIcon {...iconProps} />,
+                icon: <FunctionIcon />,
+            },
             pool: {
                 ...shared,
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
@@ -279,6 +298,9 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
     let rowData;
 
     if (!txType) return <></>;
+
+    console.log('txType', txType);
+    console.log('txAction', txAction);
 
     if (txType === 'nft') {
         rowData = dataMap.nft[txAction || 'default'];
