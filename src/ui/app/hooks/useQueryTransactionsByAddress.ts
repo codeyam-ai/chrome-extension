@@ -60,6 +60,6 @@ export function useQueryTransactionsByAddress(address: SuiAddress | null) {
                 (a, b) => (b.timestampMs || 0) - (a.timestampMs || 0)
             );
         },
-        { enabled: !!address, staleTime: 10 * 1000 }
+        { enabled: !!address, staleTime: 0, cacheTime: 0 }
     );
 }
