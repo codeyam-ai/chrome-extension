@@ -194,7 +194,7 @@ export function DappTxApprovalPage() {
                     effects: transactionEffects,
                     events: transactionEvents,
                 } = await signer.dryRunTransaction({ transaction });
-                
+
                 if (transactionEffects.status.status === 'failure') {
                     if (
                         transactionEffects?.status?.error?.includes(

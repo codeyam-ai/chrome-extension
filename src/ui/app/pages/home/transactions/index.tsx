@@ -1,11 +1,13 @@
 // import { QueueListIcon } from '@heroicons/react/24/solid';
 // import { type SuiTransactionResponse } from '@mysten/sui.js';
+import { QueueListIcon } from '@heroicons/react/24/solid';
 import { SuiTransactionResponse } from '@mysten/sui.js';
 import React, { memo, useEffect, useState } from 'react';
 
 import { useAppSelector } from '_hooks';
 // import { getFullTransactionDetails } from '_redux/slices/txresults';
 import { type TxResultState } from '_redux/slices/txresults';
+import { Icon } from '_src/ui/app/shared/icons/Icon';
 import Loading from '_src/ui/app/components/loading';
 import { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 // import deduplicate from '_src/ui/app/helpers/deduplicate';
@@ -17,6 +19,7 @@ import { useQueryTransactionsByAddress } from '_src/ui/app/hooks/useQueryTransac
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
+import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 // import { Icon } from '_src/ui/app/shared/icons/Icon';
 // import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
@@ -144,18 +147,18 @@ const TransactionsPage = () => {
                 {/*    </div>*/}
                 {/*)}*/}
 
-                {/*{formattedTxns && formattedTxns.length === 0 && (*/}
-                {/*    <EmptyPageState*/}
-                {/*        iconWithNoClasses={*/}
-                {/*            <Icon displayIcon={<QueueListIcon />} />*/}
-                {/*        }*/}
-                {/*        title="No transactions yet"*/}
-                {/*        subtitle="Set up DevNet SUI tokens to send coins."*/}
-                {/*        linkText="Get SUI"*/}
-                {/*        linkUrl="/tokens"*/}
-                {/*        internal={true}*/}
-                {/*    />*/}
-                {/*)}*/}
+                {formattedTxns && formattedTxns.length === 0 && (
+                    <EmptyPageState
+                        iconWithNoClasses={
+                            <Icon displayIcon={<QueueListIcon />} />
+                        }
+                        title="No transactions yet"
+                        subtitle="Set up DevNet SUI tokens to send coins."
+                        linkText="Get SUI"
+                        linkUrl="/tokens"
+                        internal={true}
+                    />
+                )}
             </Loading>
         </React.Fragment>
     );
