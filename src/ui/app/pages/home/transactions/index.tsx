@@ -2,7 +2,7 @@
 // import { type SuiTransactionResponse } from '@mysten/sui.js';
 import { QueueListIcon } from '@heroicons/react/24/solid';
 import { SuiTransactionResponse } from '@mysten/sui.js';
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 
 import { useAppSelector } from '_hooks';
 // import { getFullTransactionDetails } from '_redux/slices/txresults';
@@ -20,13 +20,16 @@ import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/Transacti
 import Alert from '_src/ui/app/shared/feedback/Alert';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
+import Button from '_src/ui/app/shared/button';
+import { api } from '_src/ui/app/redux/store/thunk-extras';
+import { getTxType } from '_src/ui/app/helpers/transactions';
 // import { Icon } from '_src/ui/app/shared/icons/Icon';
 // import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
-    const [currentPage] = useState(0);
-    // const [moreTxnsAvailable, setMoreTxnsAvailable] = useState(true);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [moreTxnsAvailable, setMoreTxnsAvailable] = useState(true);
     const [formattedTxns, setFormattedTxns] = useState<FormattedTransaction[]>(
         []
     );
@@ -37,11 +40,15 @@ const TransactionsPage = () => {
     const txPerPage = 5;
 
     // determine if more transactions are available
-    // useEffect(() => {
-    //     if (suiTxns.length > 0 && formattedTxns.length === suiTxns.length) {
-    //         setMoreTxnsAvailable(false);
-    //     }
-    // }, [suiTxns, formattedTxns]);
+    useEffect(() => {
+        if (
+            suiTxns &&
+            suiTxns?.length > 0 &&
+            formattedTxns.length === suiTxns?.length
+        ) {
+            setMoreTxnsAvailable(false);
+        }
+    }, [suiTxns, formattedTxns]);
 
     // load a page of "formatted transactions"
     useEffect(() => {
@@ -57,56 +64,53 @@ const TransactionsPage = () => {
             const transactionsToFormat = suiTxns.slice(start, end);
 
             setFormattedTxns(transactionsToFormat);
-            // const fullTransactionDetails = await getFullTransactionDetails(
-            //     transactionsToFormat,
-            //     address,
-            //     api
-            // );
-            // const newFormattedTransactions: TxResultState[] = await Promise.all(
-            //     fullTransactionDetails?.map(async (tx) => {
-            //         // TODO: fix type error for any
-            //         const txType = getTxType(tx);
-            //         if (txType === 'nft' || txType === 'func') {
-            //             return tx;
-            //         }
-            //         const {
-            //             formattedBalance,
-            //             coinSymbol,
-            //             dollars,
-            //             coinName,
-            //             coinIcon,
-            //         } = await formatCoin(
-            //             api.instance.fullNode,
-            //             tx.amount,
-            //             tx.objType
-            //         );
-            //         return {
-            //             ...tx,
-            //             formatted: {
-            //                 formattedBalance,
-            //                 coinSymbol,
-            //                 dollars,
-            //                 coinName,
-            //                 coinIcon,
-            //             },
-            //         };
-            //     })
-            // );
+            /*const fullTransactionDetails = await getFullTransactionDetails(
+                transactionsToFormat,
+                address,
+                api
+            );
+            const newFormattedTransactions: TxResultState[] = await Promise.all(
+                fullTransactionDetails?.map(async (tx) => {
+                    //TODO: fix type error for any
 
-            // if (newFormattedTransactions) {
-            //     setFormattedTxns((prev) => [
-            //         ...(prev || []),
-            //         ...newFormattedTransactions,
-            //     ]);
-            // }
+                    const {
+                        formattedBalance,
+                        coinSymbol,
+                        dollars,
+                        coinName,
+                        coinIcon,
+                    } = await formatCoin(
+                        api.instance.fullNode,
+                        tx.amount,
+                        tx.objType
+                    );
+                    return {
+                        ...tx,
+                        formatted: {
+                            formattedBalance,
+                            coinSymbol,
+                            dollars,
+                            coinName,
+                            coinIcon,
+                        },
+                    };
+                })
+            );
+
+            if (newFormattedTransactions) {
+                setFormattedTxns((prev) => [
+                    ...(prev || []),
+                    ...newFormattedTransactions,
+                ]);
+            }*/
         };
 
         loadFormattedTransactionsForCurrentPage();
     }, [address, currentPage, suiTxns]);
 
-    // const incrementPage = useCallback(() => {
-    //     setCurrentPage(currentPage + 1);
-    // }, [currentPage]);
+    const incrementPage = useCallback(() => {
+        setCurrentPage(currentPage + 1);
+    }, [currentPage]);
 
     if (error) {
         return (
@@ -120,32 +124,34 @@ const TransactionsPage = () => {
         );
     }
 
+    console.log('transactions: ', formattedTxns);
+
     return (
         <React.Fragment>
             <Loading loading={loadingTxns} big={true}>
                 {formattedTxns && formattedTxns.length > 0 && (
-                    <div className={'flex flex-col h-full'}>
+                    <div className={'flex flex-col'}>
                         <TextPageTitle title="Activity" />
                         <TransactionRows transactions={formattedTxns} />
                     </div>
                 )}
-                {/*        {moreTxnsAvailable && (*/}
-                {/*            <div*/}
-                {/*                className={*/}
-                {/*                    'w-full flex flex-row items-center justify-center'*/}
-                {/*                }*/}
-                {/*            >*/}
-                {/*                <Button*/}
-                {/*                    mode={'secondary'}*/}
-                {/*                    className={'mb-6'}*/}
-                {/*                    onClick={incrementPage}*/}
-                {/*                >*/}
-                {/*                    Load More*/}
-                {/*                </Button>*/}
-                {/*            </div>*/}
-                {/*        )}*/}
-                {/*    </div>*/}
-                {/*)}*/}
+                <div>
+                    {moreTxnsAvailable && (
+                        <div
+                            className={
+                                'w-full flex flex-row items-center justify-center'
+                            }
+                        >
+                            <Button
+                                mode={'secondary'}
+                                className={'mb-6'}
+                                onClick={incrementPage}
+                            >
+                                Load More
+                            </Button>
+                        </div>
+                    )}
+                </div>
 
                 {formattedTxns && formattedTxns.length === 0 && (
                     <EmptyPageState
