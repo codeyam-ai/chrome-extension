@@ -384,8 +384,8 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     header={'Details'}
                     keyNamesAndValues={[
                         {
-                            keyName: _.startCase(txAction),
-                            value: txAmount ? txAmount : '-',
+                            keyName: (txAmount && 'Amount') || '',
+                            value: (txAmount && txAmount + ' SUI') || '',
                         },
                         {
                             keyName: 'Transaction Fee',
