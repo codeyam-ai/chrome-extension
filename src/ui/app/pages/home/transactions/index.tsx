@@ -1,11 +1,13 @@
 // import { QueueListIcon } from '@heroicons/react/24/solid';
 // import { type SuiTransactionResponse } from '@mysten/sui.js';
+import { SuiTransactionResponse } from '@mysten/sui.js';
 import React, { memo, useEffect, useState } from 'react';
 
 import { useAppSelector } from '_hooks';
 // import { getFullTransactionDetails } from '_redux/slices/txresults';
 import { type TxResultState } from '_redux/slices/txresults';
 import Loading from '_src/ui/app/components/loading';
+import { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 // import deduplicate from '_src/ui/app/helpers/deduplicate';
 // import formatCoin from '_src/ui/app/helpers/formatCoin';
 // import { getTxType } from '_src/ui/app/helpers/transactions';
@@ -22,11 +24,12 @@ const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
     const [currentPage] = useState(0);
     // const [moreTxnsAvailable, setMoreTxnsAvailable] = useState(true);
-    const [formattedTxns, setFormattedTxns] = useState<TxResultState[]>([]);
+    const [formattedTxns, setFormattedTxns] = useState<FormattedTransaction[]>(
+        []
+    );
     const [error, setError] = useState<string | undefined>();
     const { isLoading: loadingTxns, data: suiTxns } =
         useQueryTransactionsByAddress(address);
-    // console.log('TRANSACTIONS', loadingTxns, suiTxns);
 
     const txPerPage = 5;
 
@@ -46,33 +49,11 @@ const TransactionsPage = () => {
         const loadFormattedTransactionsForCurrentPage = async () => {
             if (!suiTxns) return;
 
-            console.log('SUITXNS', suiTxns);
             const start = currentPage * txPerPage;
             const end = start + txPerPage;
             const transactionsToFormat = suiTxns.slice(start, end);
 
-            const formattedTxs: TxResultState[] = [];
-            for (const transactionToFormat of transactionsToFormat) {
-                console.log('transactionToFormat', transactionToFormat);
-                formattedTxs.push({
-                    ...transactionToFormat,
-                    txId: transactionToFormat.digest,
-                    objSymbol: 'NA',
-                    status: transactionToFormat.confirmedLocalExecution
-                        ? 'success'
-                        : 'failure',
-                    from:
-                        transactionToFormat.transaction?.data.sender ||
-                        'Unknown',
-                    kind: 'ProgrammableTransaction',
-                    type: '',
-                    txGas:
-                        transactionToFormat.transaction?.data.gasData.price ||
-                        0,
-                });
-            }
-
-            setFormattedTxns(formattedTxs);
+            setFormattedTxns(transactionsToFormat);
             // const fullTransactionDetails = await getFullTransactionDetails(
             //     transactionsToFormat,
             //     address,
@@ -116,6 +97,8 @@ const TransactionsPage = () => {
             //     ]);
             // }
         };
+
+        loadFormattedTransactionsForCurrentPage();
     }, [address, currentPage, suiTxns]);
 
     // const incrementPage = useCallback(() => {

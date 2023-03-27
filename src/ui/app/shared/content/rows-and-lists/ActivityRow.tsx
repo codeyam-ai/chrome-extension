@@ -10,7 +10,7 @@ type ActivityRowProps = {
     failed: boolean;
     icon: JSX.Element;
     typeIcon: JSX.Element;
-    type: string;
+    txAction: string;
     link: string;
     header?: string;
     subheader: string;
@@ -26,7 +26,7 @@ export const ActivityRow = ({
     icon,
     typeIcon,
     date,
-    type,
+    txAction,
     link,
     header,
     subheader,
@@ -45,7 +45,7 @@ export const ActivityRow = ({
                     </Body>
                 ) : (
                     <Body isTextColorMedium className={'flex flex-row gap-3'}>
-                        {typeIcon} {_.capitalize(type)}
+                        {typeIcon} {_.capitalize(txAction)}
                     </Body>
                 )}
                 <Body isTextColorMedium>{date}</Body>
@@ -66,12 +66,12 @@ export const ActivityRow = ({
                             <BodyLarge
                                 isSemibold
                                 className={
-                                    type === 'send'
+                                    txAction === 'send'
                                         ? 'text-[#CE3838]'
                                         : 'text-[#238044]'
                                 }
                             >
-                                {type === 'send'
+                                {txAction === 'send'
                                     ? `-${displayFormattedAmount}`
                                     : `+${displayFormattedAmount}`}{' '}
                                 {symbol}

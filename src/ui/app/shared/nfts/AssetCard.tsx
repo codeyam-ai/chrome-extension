@@ -1,19 +1,18 @@
 import ipfs from '../../helpers/ipfs';
+import FuncIcon from '../../pages/home/tokens/FuncIcon';
+import NftIcon from '../../pages/home/tokens/NftIcon';
 import UnknownToken from '../../pages/home/tokens/UnknownToken';
 import TxSui from '../svg/TxSui';
 
 export const AssetCard = ({
     theme,
-    isNft,
-    isFunc,
+    txType,
     imgUrl,
     name,
     icon,
-    coinType,
 }: {
     theme?: string;
-    isNft: boolean;
-    isFunc: boolean;
+    txType: string;
     imgUrl?: string;
     name: string;
     icon?: JSX.Element;
@@ -23,7 +22,7 @@ export const AssetCard = ({
     return (
         <div className={'w-full'}>
             <div className={'flex flex-row justify-center items-center mb-4'}>
-                {isNft && safeImageUrl ? (
+                {safeImageUrl && (
                     <img
                         className={
                             'object-cover rounded-2xl w-[56px] h-[56px] auto'
@@ -31,29 +30,26 @@ export const AssetCard = ({
                         src={safeImageUrl}
                         alt={name}
                     />
-                ) : (
-                    !isFunc && (
-                        <div className={'relative'} style={{ zIndex: 1 }}>
-                            {coinType !== 'SUI' ? (
-                                safeImageUrl ? (
-                                    <img
-                                        src={safeImageUrl}
-                                        alt={name}
-                                        className="w-[56px] h-[56px]"
-                                    />
-                                ) : (
-                                    <UnknownToken width={56} height={56} />
-                                )
-                            ) : (
-                                <TxSui
-                                    borderColor={
-                                        theme === 'light' ? 'white' : '#111111'
-                                    }
-                                />
-                            )}
-                        </div>
-                    )
                 )}
+
+                <div className={'relative'} style={{ zIndex: 1 }}>
+                    {txType === 'sui' && (
+                        <TxSui
+                            borderColor={
+                                theme === 'light' ? 'white' : '#111111'
+                            }
+                        />
+                    )}
+
+                    {txType === 'coin' && (
+                        <UnknownToken width={56} height={56} />
+                    )}
+
+                    {txType === 'nft' && <NftIcon width={56} height={56} />}
+
+                    {txType === 'func' && <FuncIcon width={56} height={56} />}
+                </div>
+
                 {icon && icon}
             </div>
         </div>
