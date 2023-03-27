@@ -61,10 +61,10 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
             })
             .map((anObj) => {
                 if (
-                    typeof anObj.details === 'object' &&
-                    'objectId' in anObj.details
+                    typeof anObj.data === 'object' &&
+                    'objectId' in anObj.data
                 ) {
-                    return anObj.details.objectId;
+                    return anObj.data.objectId;
                 } else {
                     return '';
                 }

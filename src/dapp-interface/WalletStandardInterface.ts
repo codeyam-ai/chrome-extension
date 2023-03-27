@@ -306,18 +306,13 @@ export class EthosWallet implements Wallet {
         });
     };
 
-    #signMessage: SuiSignMessageMethod = async ({
-        message,
-        account,
-        options,
-    }) => {
+    #signMessage: SuiSignMessageMethod = async ({ message, account }) => {
         return mapToPromise(
             this.#send<SignMessageRequest, SignMessageRequest>({
                 type: 'sign-message-request',
                 args: {
                     message: toB64(message),
                     accountAddress: account.address,
-                    options,
                 },
             }),
             (response) => {

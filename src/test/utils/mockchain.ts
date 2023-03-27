@@ -71,7 +71,7 @@ export class Mockchain {
             id: null,
         };
         this.mockBlockchainCall(
-            { method: 'sui_getCoinMetadata' },
+            { method: 'suix_getCoinMetadata' },
             coinMetadataResponse,
             true
         );
@@ -93,8 +93,7 @@ export class Mockchain {
                 id: objId,
             });
             const coinObjectInfo = {
-                status: 'Exists',
-                details: {
+                data: {
                     objectId: objId,
                     version: 0,
                     digest: '12Pe8JN96upsApMseeghANkkNMKUWA6Bz4JD5NTWko2q',
@@ -116,8 +115,7 @@ export class Mockchain {
             });
 
             const nftObjectInfo = {
-                status: 'Exists',
-                details: {
+                data: {
                     objectId:
                         '0x3c36fe1eca57222e087352959ab0edf83251fe0a5aa8a0ec87c4e3fa1714f367',
                     version: 10,
@@ -129,11 +127,13 @@ export class Mockchain {
         }
 
         this.mockBlockchainCall(
-            { method: 'sui_getOwnedObjects' },
+            { method: 'suix_getOwnedObjects' },
             {
                 data: objectInfos,
-                nextCursor:
-                    '0xe986888d31f35cf985a28155f4b4dea19fd324838107084107d42f0541be12c9',
+                nextCursor: {
+                    objectId:
+                        '0xe986888d31f35cf985a28155f4b4dea19fd324838107084107d42f0541be12c9',
+                },
                 hasNextPage: false,
             },
             true
@@ -143,8 +143,8 @@ export class Mockchain {
         fullObjects.forEach((fullObject) => {
             this.mockBlockchainCall(
                 {
-                    method: 'sui_getObject',
-                    params: [fullObject.details.objectId],
+                    method: 'suix_getObject',
+                    params: [fullObject.data.objectId],
                 },
                 fullObject,
                 true
@@ -235,7 +235,9 @@ export class Mockchain {
                 )} - Coming from ${new Error().stack}`
             );
             throw new Error(
-                `Found no match for method ${bodyAsRecord.method} with params ${bodyAsRecord.params}`
+                `Found no match for method ${
+                    bodyAsRecord.method
+                } with params ${JSON.stringify(bodyAsRecord.params, null, 2)}`
             );
         }
     }

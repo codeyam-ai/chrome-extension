@@ -89,11 +89,6 @@ const TabBar = () => {
                                 showOwner: true,
                             },
                         });
-                    const existingTicketProjectObjects =
-                        ticketProjectObjects.filter(
-                            (ticketProjectObject) =>
-                                ticketProjectObject.status === 'Exists'
-                        );
 
                     const ticketIndex2 = navItems.findIndex(
                         (navItem) => navItem.title === 'Tickets'
@@ -101,7 +96,7 @@ const TabBar = () => {
 
                     if (
                         ticketIndex2 === -1 &&
-                        existingTicketProjectObjects.length > 0
+                        ticketProjectObjects.length > 0
                     ) {
                         navItems.splice(2, 0, {
                             title: 'Tickets',

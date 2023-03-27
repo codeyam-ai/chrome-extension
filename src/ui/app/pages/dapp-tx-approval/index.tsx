@@ -53,7 +53,7 @@ import type {
     TransactionEvents,
 } from '@mysten/sui.js';
 // import type { ApprovalRequest } from '_payloads/transactions';
-import type { SuiSignAndExecuteTransactionOptions } from '@mysten/wallet-standard';
+import type { SuiSignAndExecuteTransactionInput } from '@mysten/wallet-standard';
 import type { RootState } from '_redux/RootReducer';
 import type { ReactElement, ReactNode } from 'react';
 
@@ -129,8 +129,8 @@ export function DappTxApprovalPage() {
 
     const gasUsed = effects?.gasUsed;
     const gas = gasUsed
-        ? gasUsed.computationCost +
-          (gasUsed.storageCost - gasUsed.storageRebate)
+        ? Number(gasUsed.computationCost) +
+          (Number(gasUsed.storageCost) - Number(gasUsed.storageRebate))
         : null;
 
     const { reading, mutating, creating, deleting, transferring, coinChanges } =
@@ -194,7 +194,7 @@ export function DappTxApprovalPage() {
                     effects: transactionEffects,
                     events: transactionEvents,
                 } = await signer.dryRunTransaction({ transaction });
-
+                
                 if (transactionEffects.status.status === 'failure') {
                     if (
                         transactionEffects?.status?.error?.includes(
@@ -266,6 +266,14 @@ export function DappTxApprovalPage() {
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
+            const options =
+                txRequest?.tx && 'options' in txRequest.tx
+                    ? txRequest.tx.options
+                    : undefined;
+            const requestType =
+                txRequest?.tx && 'requestType' in txRequest.tx
+                    ? txRequest.tx.requestType
+                    : undefined;
             await finishTransaction(
                 transaction,
                 txID,
@@ -273,7 +281,8 @@ export function DappTxApprovalPage() {
                 authentication,
                 address,
                 activeAccountIndex,
-                txRequest?.tx.options
+                options,
+                requestType
             );
             setDone(true);
         },
@@ -283,7 +292,7 @@ export function DappTxApprovalPage() {
             authentication,
             address,
             activeAccountIndex,
-            txRequest?.tx.options,
+            txRequest?.tx,
         ]
     );
 
@@ -530,7 +539,7 @@ export function DappTxApprovalPage() {
                 //     'gasPayment',
                 // ]) {
                 //     if (attribute in txInfo.data) {
-                //         transactionDetails.details.push({
+                //         transactionDetails.data.push({
                 //             label: attribute,
                 //             content: {
                 //                 type: 'small',
@@ -710,7 +719,8 @@ async function finishTransaction(
     authentication: string | null,
     address: string | null,
     activeAccountIndex: number,
-    options?: SuiSignAndExecuteTransactionOptions
+    options?: SuiSignAndExecuteTransactionInput['options'],
+    requestType?: SuiSignAndExecuteTransactionInput['requestType']
 ) {
     if (!transaction) {
         // TODO: delete? doesn't seem like we got have gotten this far without txRequest
@@ -735,8 +745,8 @@ async function finishTransaction(
         try {
             txResult = await signer.signAndExecuteTransaction({
                 transaction,
-                options: options?.contentOptions,
-                requestType: options?.requestType,
+                options,
+                requestType,
             });
         } catch (e) {
             tsResultError = (e as Error).message;

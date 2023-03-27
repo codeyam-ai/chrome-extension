@@ -95,7 +95,7 @@ export class Coin {
     //     );
     //     const txn = {
     //         packageObjectId: '0x2',
-    //         module: 'sui_system',
+    //         module: 'suix_system',
     //         function: 'request_add_delegation',
     //         typeArguments: [],
     //         arguments: [SUI_SYSTEM_STATE_OBJECT_ID, coin, validator],
@@ -178,7 +178,7 @@ export class Coin {
                 showContent: true,
             },
         });
-        const data = contents.details as SuiObjectData;
+        const data = contents.data as SuiObjectData;
         const validators = (data.content as SuiMoveObject).fields.validators;
         const active_validators = (validators as SuiMoveObject).fields
             .active_validators;

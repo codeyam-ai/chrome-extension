@@ -95,9 +95,9 @@ function TransferNFTRecipient() {
             });
 
             const gasFee =
-                signedTx.effects.gasUsed.computationCost +
-                (signedTx.effects.gasUsed.storageCost -
-                    signedTx.effects.gasUsed.storageRebate);
+                Number(signedTx.effects.gasUsed.computationCost) +
+                (Number(signedTx.effects.gasUsed.storageCost) -
+                    Number(signedTx.effects.gasUsed.storageRebate));
 
             setSendError(null);
 
