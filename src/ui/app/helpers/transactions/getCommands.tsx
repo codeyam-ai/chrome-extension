@@ -21,6 +21,10 @@ const getCommands = (txn: FormattedTransaction): string | null => {
             commandStr += `${val}${comma} `;
         };
 
+        const primaryObjName = _.startCase(
+            txn.objectChanges[0].objectType.split('::')[1].toLowerCase()
+        );
+
         txn.transaction.data.transaction.commands.forEach((command, idx) => {
             const commandObj = command as any;
             const commandKey = Object.keys(commandObj)[0];
@@ -28,7 +32,7 @@ const getCommands = (txn: FormattedTransaction): string | null => {
 
             switch (commandKey) {
                 case 'TransferObjects':
-                    appendCommandStr('Transfer', idx, comma);
+                    appendCommandStr(`Transfer ${primaryObjName}`, idx, comma);
                     break;
                 case 'SplitCoin':
                     appendCommandStr('Split Coin', idx, comma);
