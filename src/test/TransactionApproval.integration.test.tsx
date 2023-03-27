@@ -125,7 +125,7 @@ describe('The Transaction Approval popup', () => {
                 method: 'suix_getReferenceGasPrice',
                 params: [],
             },
-            "10"
+            '10'
         );
 
         mockchain.mockBlockchainCall(

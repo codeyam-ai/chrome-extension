@@ -32,7 +32,7 @@ describe('send coin flow', () => {
 
         mockchain.mockBlockchainCall(
             { method: 'suix_getReferenceGasPrice', params: [] },
-            "1",
+            '1',
             true
         );
 

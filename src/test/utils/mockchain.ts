@@ -131,7 +131,8 @@ export class Mockchain {
             {
                 data: objectInfos,
                 nextCursor: {
-                    objectId: '0xe986888d31f35cf985a28155f4b4dea19fd324838107084107d42f0541be12c9'
+                    objectId:
+                        '0xe986888d31f35cf985a28155f4b4dea19fd324838107084107d42f0541be12c9',
                 },
                 hasNextPage: false,
             },
@@ -234,11 +235,9 @@ export class Mockchain {
                 )} - Coming from ${new Error().stack}`
             );
             throw new Error(
-                `Found no match for method ${bodyAsRecord.method} with params ${JSON.stringify(
-                    bodyAsRecord.params,
-                    null,
-                    2
-                )}`
+                `Found no match for method ${
+                    bodyAsRecord.method
+                } with params ${JSON.stringify(bodyAsRecord.params, null, 2)}`
             );
         }
     }

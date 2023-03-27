@@ -61,7 +61,7 @@ describe('Creating and sending an NFT', () => {
 
         mockchain.mockBlockchainCall(
             { method: 'suix_getReferenceGasPrice', params: [] },
-            "1",
+            '1',
             true
         );
 
@@ -91,17 +91,17 @@ describe('Creating and sending an NFT', () => {
             {
                 method: 'sui_executeTransaction',
                 params: [
-                    "AAACAQD9nP+f1r76Dn1kgdDurgIFayykbgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfACCMF1mug0FubdgPzMY2gCPz+LFf+0RZwF43JzIjuWUa1wEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gEAAAAAAAAADAQAAAAAAAAA",
+                    'AAACAQD9nP+f1r76Dn1kgdDurgIFayykbgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfACCMF1mug0FubdgPzMY2gCPz+LFf+0RZwF43JzIjuWUa1wEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gEAAAAAAAAADAQAAAAAAAAA',
                     [
-                      "ACI05eYz2dGY1iXpJ9KPqW8LiOw4y6wfspi2sHyST5Nj/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4="
+                        'ACI05eYz2dGY1iXpJ9KPqW8LiOw4y6wfspi2sHyST5Nj/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4=',
                     ],
                     {
-                      "showEffects": true,
-                      "showEvents": true,
-                      "showInput": true
+                        showEffects: true,
+                        showEvents: true,
+                        showInput: true,
                     },
-                    null
-                  ],
+                    null,
+                ],
             },
             renderTemplate('executeTransaction', {})
         );
