@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
-import Browser from 'webextension-polyfill';
+import Browser, { ActivityLog } from 'webextension-polyfill';
 
 import {
     resetWalletLockTimer,

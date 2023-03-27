@@ -1,6 +1,7 @@
 import { Formik, Form, useField } from 'formik';
 import { useCallback } from 'react';
 import * as Yup from 'yup';
+import zxcvbn from 'zxcvbn';
 
 import Button from '../buttons/Button';
 import Input from '../inputs/Input';
@@ -68,6 +69,27 @@ const CustomFormikForm = () => {
     );
 };
 
+const passwordValidation = Yup.string()
+    .ensure()
+    .required('Enter a password')
+    .test({
+        name: 'password-strength',
+        test: (password: string) => {
+            return zxcvbn(password).score > 2;
+        },
+        message: ({ value }) => {
+            const {
+                feedback: { warning, suggestions },
+            } = zxcvbn(value);
+            const warn = (warning && `${warning}.`) || 'Password is not strong enough.'
+            return `${warn} ${suggestions.join(' ') }`;
+        },
+    });
+
+const passwordsMustMatch = Yup.string()
+    .required('Confirm your password')
+    .oneOf([Yup.ref('password'), null], 'Passwords must match');
+
 const CreatePasswordForm = ({ onSubmit }: CreatePasswordFormProps) => {
     const _onSubmit = useCallback(
         ({ password }: FormikValues) => {
@@ -75,6 +97,7 @@ const CreatePasswordForm = ({ onSubmit }: CreatePasswordFormProps) => {
         },
         [onSubmit]
     );
+
     return (
         <div>
             <Formik
@@ -83,13 +106,8 @@ const CreatePasswordForm = ({ onSubmit }: CreatePasswordFormProps) => {
                     confirmPassword: '',
                 }}
                 validationSchema={Yup.object({
-                    password: Yup.string().required('Enter a password'),
-                    confirmPassword: Yup.string()
-                        .required('Confirm your password')
-                        .oneOf(
-                            [Yup.ref('password'), null],
-                            'Passwords must match'
-                        ),
+                    password: passwordValidation,
+                    confirmPassword: passwordsMustMatch,
                 })}
                 onSubmit={_onSubmit}
             >
