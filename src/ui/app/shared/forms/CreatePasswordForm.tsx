@@ -81,8 +81,9 @@ const passwordValidation = Yup.string()
             const {
                 feedback: { warning, suggestions },
             } = zxcvbn(value);
-            const warn = (warning && `${warning}.`) || 'Password is not strong enough.'
-            return `${warn} ${suggestions.join(' ') }`;
+            const warn =
+                (warning && `${warning}.`) || 'Password is not strong enough.';
+            return `${warn} ${suggestions.join(' ')}`;
         },
     });
 
