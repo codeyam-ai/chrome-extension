@@ -37,6 +37,8 @@ import { useQuery } from '@tanstack/react-query';
 // import type { TxResultState } from '_redux/slices/txresults';
 
 import st from './ReceiptCard.module.scss';
+import { getHumanReadable } from '../../helpers/transactions';
+import { FormattedTransaction } from '../../helpers/transactions/types';
 
 type TxResponseProps = {
     txDigest: any;
@@ -143,23 +145,51 @@ const TxTransfer = ({
 );
 
 function ReceiptCard({ txDigest }: TxResponseProps) {
-    /*useEffect(() => {
-        const getTx = async () => {
-            const provider = new JsonRpcProvider();
-            const tx = await provider.getTransaction(txDigest);
-            console.log('tx', tx);
-        };
+    //const { accountInfos } = useAppSelector(({ account }) => account);
+    const address = useAppSelector(({ account }) => account.address) as string;
+    const { data } = useQuery(['transactions-by-address', address]);
+    const theme = getTheme();
 
-        getTx();
-    }, []);*/
+    const result = data as FormattedTransaction[];
 
-    const { accountInfos } = useAppSelector(({ account }) => account);
-    const address = useAppSelector(({ account }) => account.address);
-    const result = useQuery(['transactions-by-address', address]);
+    // find transaction details based on txDigest
+    const tx = result.find(
+        (tx) => tx.digest === txDigest
+    ) as FormattedTransaction;
 
-    console.log('check result => ', result.data);
+    const {
+        timeDisplay,
+        txType,
+        txAction,
+        txAmount,
+        txStatus,
+        txUsdAmount,
+        gasFeeInSui,
+        gasFeeInUsd,
+        txCommands,
+        preposition,
+        otherAddress,
+        otherAddressStr,
+        displayImage,
+    } = getHumanReadable(address, tx);
 
-    const getAccount = useCallback(
+    console.log('check => ', {
+        timeDisplay,
+        txType,
+        txAction,
+        txAmount,
+        txStatus,
+        txUsdAmount,
+        gasFeeInSui,
+        gasFeeInUsd,
+        txCommands,
+        preposition,
+        otherAddress,
+        otherAddressStr,
+        displayImage,
+    });
+
+    /*const getAccount = useCallback(
         (address: string) => {
             return accountInfos.find(
                 (accountInfo: AccountInfo) => accountInfo.address === address
@@ -283,42 +313,37 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             address: txDigest.from,
             failedMsg: '',
         },
-    };
+    };*/
 
     return (
         <>
             <div className={'pt-6 px-6 pb-8'}>
                 <AssetCard
                     theme={theme}
-                    isNft={isNft}
-                    isFunc={isFunc === 'yes'}
-                    coinType={coinType}
-                    imgUrl={imgUrl || icon || ''}
-                    name={txDigest?.name || 'NFT'}
-                    icon={
-                        txDigest.status === 'success' ? (
-                            transferMeta[transferType].txIcon
-                        ) : (
-                            <Icon
-                                displayIcon={<XMarkIcon />}
-                                isRound={isNft ? false : true}
-                            />
-                        )
-                    }
+                    txType={txType}
+                    coinType={'SUI'} // TODO: handle coin types
+                    imgUrl={displayImage || ''}
+                    name={txCommands || 'NFT'}
+                    icon={<></>} // TODO: handle success / failure icon
                 />
                 <Body className={'text-ethos-light-text-medium'}>
-                    {txDigest.status === 'success'
-                        ? transferMeta[transferType].txName
-                        : transferMeta[transferType].failedMsg}
+                    {txStatus === 'success'
+                        ? _.toUpper(txType)
+                        : 'Transaction Failed'}
                 </Body>
                 <Header className={'font-weight-ethos-subheader mb-3'}>
-                    {header}
+                    {txCommands}
                 </Header>
                 <Body className={'text-ethos-light-text-medium'}>
-                    {date && date.replace(' AM', 'am').replace(' PM', 'pm')}
+                    {timeDisplay}
                 </Body>
             </div>
-            {!isMinted && (
+            {/*
+            
+            TODO: Need to add this when we have the ability to check
+            if a transaction is minted, where the tx is from and to
+
+            !isMinted && (
                 <div className={'px-6 pb-6'}>
                     <TxTransfer
                         ToFrom={{
@@ -337,20 +362,21 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                         }}
                     />
                 </div>
-            )}
-            {isNft ? (
+            )*/}
+
+            {txType === 'nft' ? (
                 <KeyValueList
                     header={'Details'}
                     keyNamesAndValues={[
                         {
                             keyName: 'Transaction Fee',
-                            value: `${gas} SUI`,
+                            value: `${gasFeeInSui} SUI`,
                         },
-                        {
-                            keyName: 'Signature',
-                            value: txDigest.from,
-                            shortValue: fromAddrStr,
-                        },
+                        //{ TODO: get from addr
+                        //    keyName: 'Signature',
+                        //    value: txDigest.from,
+                        //    shortValue: fromAddrStr,
+                        //},
                     ]}
                 />
             ) : (
@@ -358,61 +384,51 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     header={'Details'}
                     keyNamesAndValues={[
                         {
-                            keyName:
-                                transferType === 'Sent'
-                                    ? 'You Sent'
-                                    : transferType === 'Received'
-                                    ? 'You Received'
-                                    : '',
-                            value: `${total} ${
-                                coinType === 'SUI' ? totalSymbol : ''
-                            }`,
+                            keyName: _.startCase(txAction),
+                            value: txAmount ? txAmount : '-',
                         },
                         {
                             keyName: 'Transaction Fee',
-                            value: `${gas} ${
-                                coinType === 'SUI' ? totalSymbol : ''
-                            }`,
+                            value: `${gasFeeInSui} SUI`,
                         },
                         {
-                            keyName: dollars ? 'Total' : '',
-                            value: dollars,
+                            keyName: 'Total (USD)',
+                            value: txUsdAmount as string,
                         },
                     ]}
                 />
             )}
-            {txDigest.txId && (
-                <div className={'px-6 pb-6'}>
-                    <div className={'flex flex-row justify-between'}>
-                        <BodyLarge>
-                            {isNft ? (
-                                <ExplorerLink
-                                    type={ExplorerLinkType.object}
-                                    objectID={txDigest.objectId || ''}
-                                    title="View on Sui Explorer"
-                                    className={st['explorer-link']}
-                                    showIcon={true}
-                                >
-                                    View NFT on Sui Explorer
-                                </ExplorerLink>
-                            ) : (
-                                <ExplorerLink
-                                    type={ExplorerLinkType.transaction}
-                                    transactionID={txDigest.txId}
-                                    title="View on Sui Explorer"
-                                    className={st['explorer-link']}
-                                    showIcon={true}
-                                >
-                                    View on Sui Explorer
-                                </ExplorerLink>
-                            )}
-                        </BodyLarge>
-                        <div className={'text-ethos-light-text-medium'}>
-                            <ArrowUpRightIcon width={16} height={16} />
-                        </div>
+
+            <div className={'px-6 pb-6'}>
+                <div className={'flex flex-row justify-between'}>
+                    <BodyLarge>
+                        {txType == 'nft' ? (
+                            <ExplorerLink
+                                type={ExplorerLinkType.object}
+                                objectID={txDigest.objectId || ''}
+                                title="View on Sui Explorer"
+                                className={st['explorer-link']}
+                                showIcon={true}
+                            >
+                                View NFT on Sui Explorer
+                            </ExplorerLink>
+                        ) : (
+                            <ExplorerLink
+                                type={ExplorerLinkType.transaction}
+                                transactionID={txDigest.txId}
+                                title="View on Sui Explorer"
+                                className={st['explorer-link']}
+                                showIcon={true}
+                            >
+                                View on Sui Explorer
+                            </ExplorerLink>
+                        )}
+                    </BodyLarge>
+                    <div className={'text-ethos-light-text-medium'}>
+                        <ArrowUpRightIcon width={16} height={16} />
                     </div>
                 </div>
-            )}
+            </div>
         </>
     );
 }
