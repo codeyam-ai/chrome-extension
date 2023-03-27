@@ -3,7 +3,7 @@ import { FormattedTransaction } from './types';
 export type TxAction = string;
 
 const getTxAction = (txn: FormattedTransaction): TxAction => {
-    let type = 'function';
+    let type = 'Unknown Action';
     const txDetails = txn.transaction.data.transaction;
 
     if (txDetails && 'commands' in txDetails) {
@@ -21,7 +21,11 @@ const getTxAction = (txn: FormattedTransaction): TxAction => {
 
                 // Set type based on obj key or movecall obj contents
                 if (commandKey === 'TransferObjects') {
-                    type = 'transfer';
+                    if (txn.isSender) {
+                        type = 'send';
+                    } else if (!txn.isSender) {
+                        type = 'receive';
+                    }
                 } else if (commandKey === 'MoveCall') {
                     const call = commandObj['MoveCall'];
                     const func = call.function.toLowerCase();
@@ -40,13 +44,6 @@ const getTxAction = (txn: FormattedTransaction): TxAction => {
                             type = 'burn';
                             break;
                         default:
-                            if (txn.isSender) {
-                                type = 'send';
-                            } else if (!txn.isSender) {
-                                type = 'receive';
-                            } else {
-                                type = 'function';
-                            }
                             break;
                     }
                 }
