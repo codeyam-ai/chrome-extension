@@ -96,6 +96,7 @@ describe('The Transaction Approval popup', () => {
                 type: 'transaction',
                 data: transaction.serialize(),
                 account: accountInfos[0].address,
+                chain: 'sui::devnet',
             },
         };
 

@@ -175,10 +175,9 @@ export const sendTokens = createAsyncThunk<
         const transaction = new Transaction();
         if (tokenTypeArg === SUI_TYPE_ARG) {
             const coin = transaction.add(
-                Transaction.Commands.SplitCoin(
-                    transaction.gas,
-                    transaction.pure(amount)
-                )
+                Transaction.Commands.SplitCoins(transaction.gas, [
+                    transaction.pure(amount),
+                ])
             );
             transaction.add(
                 Transaction.Commands.TransferObjects(
@@ -197,10 +196,9 @@ export const sendTokens = createAsyncThunk<
                 )
             );
             const coin = transaction.add(
-                Transaction.Commands.SplitCoin(
-                    primaryCoinInput,
-                    transaction.pure(amount)
-                )
+                Transaction.Commands.SplitCoins(primaryCoinInput, [
+                    transaction.pure(amount),
+                ])
             );
             transaction.add(
                 Transaction.Commands.TransferObjects(

@@ -231,7 +231,7 @@ export function DappPreapprovalPage() {
             console.log('OBJECT', object);
             const nft = {
                 ...onchainInfo,
-                ...(object.details as SuiObject),
+                ...(object.data as SuiObject),
             };
 
             setNft(nft);

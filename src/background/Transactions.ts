@@ -25,7 +25,7 @@ import type {
 } from '@mysten/sui.js';
 import type {
     IdentifierString,
-    SuiSignAndExecuteTransactionOptions,
+    SuiSignAndExecuteTransactionInput,
     SuiSignMessageOutput,
 } from '@mysten/wallet-standard';
 import type {
@@ -120,6 +120,7 @@ class Transactions {
                             tx.account,
                             tx.chain,
                             preapproval,
+                            tx?.requestType,
                             tx?.options
                         );
                         if (txResult) {
@@ -136,6 +137,7 @@ class Transactions {
                     justSign: true,
                     data: sign.transaction,
                     account: sign.account,
+                    chain: sign.chain,
                 },
                 false,
                 connection.origin,
@@ -198,7 +200,8 @@ class Transactions {
         address: SuiAddress,
         chain: IdentifierString | undefined,
         preapprovalRequest: PreapprovalRequest,
-        options?: SuiSignAndExecuteTransactionOptions
+        requestType?: SuiSignAndExecuteTransactionInput['requestType'],
+        options?: SuiSignAndExecuteTransactionInput['options']
     ) {
         try {
             const txDirectResult = await this.executeTransactionDirectly({
@@ -206,6 +209,7 @@ class Transactions {
                 address,
                 chain,
                 options,
+                requestType,
             });
 
             if (!txDirectResult?.effects) {
@@ -217,7 +221,9 @@ class Transactions {
 
             const { computationCost, storageCost, storageRebate } =
                 txDirectResult.effects.gasUsed;
-            const gasUsed = computationCost + (storageCost - storageRebate);
+            const gasUsed =
+                Number(computationCost) +
+                (Number(storageCost) - Number(storageRebate));
             preapproval.totalGasLimit -= gasUsed;
 
             if (
@@ -266,12 +272,14 @@ class Transactions {
         transaction,
         address,
         chain,
+        requestType,
         options,
     }: {
         transaction: Transaction;
         address: SuiAddress;
         chain?: IdentifierString;
-        options?: SuiSignAndExecuteTransactionOptions;
+        requestType?: SuiSignAndExecuteTransactionInput['requestType'];
+        options?: SuiSignAndExecuteTransactionInput['options'];
     }) {
         const activeAccount = await this.getAccount(address);
 
@@ -313,8 +321,8 @@ class Transactions {
         try {
             const txResponse = await signer.signAndExecuteTransaction({
                 transaction,
-                options: options?.contentOptions,
-                requestType: options?.requestType,
+                options,
+                requestType,
             });
 
             return txResponse;

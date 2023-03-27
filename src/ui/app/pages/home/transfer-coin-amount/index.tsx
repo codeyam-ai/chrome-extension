@@ -141,10 +141,9 @@ function TransferCoinAmountPage() {
             const transaction = new Transaction();
             if (coinType === SUI_TYPE_ARG) {
                 const coin = transaction.add(
-                    Transaction.Commands.SplitCoin(
-                        transaction.gas,
-                        transaction.pure(bigIntAmount)
-                    )
+                    Transaction.Commands.SplitCoins(transaction.gas, [
+                        transaction.pure(bigIntAmount),
+                    ])
                 );
                 transaction.add(
                     Transaction.Commands.TransferObjects(
@@ -165,10 +164,9 @@ function TransferCoinAmountPage() {
                     )
                 );
                 const coin = transaction.add(
-                    Transaction.Commands.SplitCoin(
-                        primaryCoinInput,
-                        transaction.pure(bigIntAmount)
-                    )
+                    Transaction.Commands.SplitCoins(primaryCoinInput, [
+                        transaction.pure(bigIntAmount),
+                    ])
                 );
                 transaction.add(
                     Transaction.Commands.TransferObjects(
@@ -185,7 +183,9 @@ function TransferCoinAmountPage() {
             const { computationCost, storageCost, storageRebate } =
                 signedTx.effects.gasUsed;
 
-            const gasFee = computationCost + (storageCost - storageRebate);
+            const gasFee =
+                Number(computationCost) +
+                (Number(storageCost) - Number(storageRebate));
 
             dispatch(
                 setSuiAmount({

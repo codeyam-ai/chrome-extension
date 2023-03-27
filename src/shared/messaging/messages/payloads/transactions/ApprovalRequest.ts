@@ -1,33 +1,31 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-    type SuiSignMessageOutput,
-    type SuiSignMessageOptions,
-    type SuiSignAndExecuteTransactionOptions,
-    type IdentifierString,
-} from '@mysten/wallet-standard';
-
 import type {
     SignedTransaction,
     SuiAddress,
     SuiTransactionResponse,
 } from '@mysten/sui.js';
+import type {
+    IdentifierString,
+    SuiSignAndExecuteTransactionInput,
+    SuiSignMessageOutput,
+} from '@mysten/wallet-standard';
 
 export type TransactionDataType = {
     type: 'transaction';
     data: string;
     account: SuiAddress;
-    chain?: IdentifierString;
+    chain: IdentifierString;
     justSign?: boolean;
-    options?: SuiSignAndExecuteTransactionOptions;
+    requestType?: SuiSignAndExecuteTransactionInput['requestType'];
+    options?: SuiSignAndExecuteTransactionInput['options'];
 };
 
 export type SignMessageDataType = {
     type: 'sign-message';
     message: string;
     accountAddress: SuiAddress;
-    options?: SuiSignMessageOptions;
 };
 
 export type ApprovalRequest = {

@@ -178,7 +178,7 @@ export class Coin {
                 showContent: true,
             },
         });
-        const data = contents.details as SuiObjectData;
+        const data = contents.data as SuiObjectData;
         const validators = (data.content as SuiMoveObject).fields.validators;
         const active_validators = (validators as SuiMoveObject).fields
             .active_validators;
