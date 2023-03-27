@@ -296,7 +296,7 @@ export const executeMoveCall = createAsyncThunk<
 //         );
 //         const first_validator = activeValidators[0];
 //         const metadata = (first_validator as SuiMoveObject).fields.metadata;
-//         const validatorAddress = (metadata as SuiMoveObject).fields.sui_address;
+//         const validatorAddress = (metadata as SuiMoveObject).fields.suix_address;
 //         const response = await Coin.stakeCoin(
 //             signer,
 //             coins,

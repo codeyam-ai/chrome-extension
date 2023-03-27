@@ -19,7 +19,7 @@ xdescribe('The Transaction History Page', () => {
         mockchain.mockSuiObjects();
         mockchain.mockBlockchainCall(
             {
-                method: 'sui_getTransactions',
+                method: 'suix_getTransactions',
                 params: [
                     {
                         ToAddress: '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
@@ -33,7 +33,7 @@ xdescribe('The Transaction History Page', () => {
         );
         mockchain.mockBlockchainCall(
             {
-                method: 'sui_getTransactions',
+                method: 'suix_getTransactions',
                 params: [
                     {
                         FromAddress:
@@ -94,7 +94,7 @@ xdescribe('The Transaction History Page', () => {
         const view = renderTemplate('transaction', {});
         mockchain.mockBlockchainCall(
             {
-                method: 'sui_getTransactions',
+                method: 'suix_getTransactions',
                 params: [
                     {
                         ToAddress: '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
@@ -108,7 +108,7 @@ xdescribe('The Transaction History Page', () => {
         );
         mockchain.mockBlockchainCall(
             {
-                method: 'sui_getTransactions',
+                method: 'suix_getTransactions',
                 params: [
                     {
                         FromAddress:
@@ -123,7 +123,7 @@ xdescribe('The Transaction History Page', () => {
         );
         mockchain.mockBlockchainCall(
             {
-                method: 'sui_getTransaction',
+                method: 'suix_getTransaction',
                 params: ['5VaudApwJSXRCcpzAeKuGsXatyYa1PBMAHhPEDJHEMNH'],
             },
             view
@@ -131,7 +131,7 @@ xdescribe('The Transaction History Page', () => {
 
         mockchain.mockBlockchainCall(
             {
-                method: 'sui_getObject',
+                method: 'suix_getObject',
                 params: ['0x12e502e444d75209e744cd0b8e29b01e7c3ebf96'],
             },
             renderTemplate('coinObject', {
@@ -143,7 +143,7 @@ xdescribe('The Transaction History Page', () => {
 
         mockchain.mockBlockchainCall(
             {
-                method: 'sui_getTransactions',
+                method: 'suix_getTransactions',
                 params: [
                     {
                         ToAddress: '0x434ffd2c55c39aa97f465eb4402ca949a263b868',
@@ -157,7 +157,7 @@ xdescribe('The Transaction History Page', () => {
         );
         mockchain.mockBlockchainCall(
             {
-                method: 'sui_getTransactions',
+                method: 'suix_getTransactions',
                 params: [
                     {
                         FromAddress:

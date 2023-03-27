@@ -122,10 +122,10 @@ describe('The Transaction Approval popup', () => {
 
         mockchain.mockBlockchainCall(
             {
-                method: 'sui_getReferenceGasPrice',
+                method: 'suix_getReferenceGasPrice',
                 params: [],
             },
-            10
+            "10"
         );
 
         mockchain.mockBlockchainCall(
@@ -142,7 +142,7 @@ describe('The Transaction Approval popup', () => {
             {
                 method: 'sui_dryRunTransaction',
                 params: [
-                    'AAACAQA5XFDGFMwiFWyd6NskFj9I5P9mrgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfABQc5QM+gq6aSOp0O1A9lrSbnFf+CwEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3goAAAAAAAAAdgMAAAAAAAAA',
+                    'AAACAQA5XFDGFMwiFWyd6NskFj9I5P9mrgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfABQc5QM+gq6aSOp0O1A9lrSbnFf+CwEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3goAAAAAAAAAZgQAAAAAAAAA',
                 ],
             },
             renderTemplate('dryRunTransaction', {})
@@ -150,7 +150,7 @@ describe('The Transaction Approval popup', () => {
 
         mockchain.mockBlockchainCall(
             {
-                method: 'sui_getCoins',
+                method: 'suix_getCoins',
                 params: [
                     '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de',
                     '0x2::sui::SUI',

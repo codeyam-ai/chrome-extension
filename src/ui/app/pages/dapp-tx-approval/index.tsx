@@ -539,7 +539,7 @@ export function DappTxApprovalPage() {
                 //     'gasPayment',
                 // ]) {
                 //     if (attribute in txInfo.data) {
-                //         transactionDetails.details.push({
+                //         transactionDetails.data.push({
                 //             label: attribute,
                 //             content: {
                 //                 type: 'small',

@@ -95,7 +95,7 @@ export class Coin {
     //     );
     //     const txn = {
     //         packageObjectId: '0x2',
-    //         module: 'sui_system',
+    //         module: 'suix_system',
     //         function: 'request_add_delegation',
     //         typeArguments: [],
     //         arguments: [SUI_SYSTEM_STATE_OBJECT_ID, coin, validator],
