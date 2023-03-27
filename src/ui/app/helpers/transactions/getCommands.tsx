@@ -9,13 +9,7 @@ const getCommands = (txn: FormattedTransaction): string | null => {
     if ('commands' in txn.transaction.data.transaction) {
         const totalCommands = txn.transaction.data.transaction.commands.length;
         let commandStr =
-            txn.effects?.status.status === 'failure'
-                ? `${
-                      totalCommands > 1
-                          ? `${totalCommands} Actions Failed: `
-                          : 'Failed: '
-                  }`
-                : `${totalCommands > 1 ? `${totalCommands} Actions: ` : ''}`;
+            txn.effects?.status.status === 'failure' ? `'Failed: ` : ``;
 
         const appendCommandStr = (val: string, idx: number, comma: string) => {
             commandStr += `${val}${comma} `;
