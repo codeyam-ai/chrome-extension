@@ -40,6 +40,7 @@ export interface FormattedTransaction {
     effects: TransactionEffects;
     transaction: SuiTransaction;
     balanceChanges: BalanceChange[];
+    objectChanges: any[];
     primaryObject?: TransactionObjectInfo;
     primaryCoin?: TransactionCoinInfo;
     timestampMs?: number;

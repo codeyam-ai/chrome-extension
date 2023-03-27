@@ -36,7 +36,7 @@ interface SharedTypes {
     hasAmount: boolean;
     amount?: number;
     coinType: string;
-    type: string;
+    action: string;
     txDirText: string;
     link: string;
     date: string;
@@ -68,7 +68,7 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
         hasAmount: (txAmount && parseFloat(txAmount) > 0) || false,
         amount: parseFloat(txAmount as string),
         coinType: '', // TODO: what to do with coins / multiple coins / batch txs
-        type: txAction || '',
+        action: txAction || '',
         txDirText:
             txAction === 'send' && txn.to
                 ? `To ${truncateMiddle(txn.to)}`
@@ -226,6 +226,11 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
             },
+            transfer: {
+                ...shared,
+                typeIcon: <ArrowUpIcon {...iconProps} />,
+                icon: <CurrencyIcon />,
+            },
             receive: {
                 ...shared,
                 typeIcon: <ArrowDownIcon {...iconProps} />,
@@ -275,9 +280,6 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
 
     if (!txType) return <></>;
 
-    console.log('txType: ', txType);
-    console.log('txAction: ', txAction);
-
     if (txType === 'nft') {
         rowData = dataMap.nft[txAction || 'default'];
     } else if (txType === 'sui') {
@@ -294,7 +296,7 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
         <ActivityRow
             failed={txStatus === 'failure'}
             typeIcon={rowData.typeIcon}
-            type={rowData.type}
+            txAction={rowData.action}
             date={rowData.date}
             icon={rowData.icon}
             link={rowData.link}
