@@ -12,7 +12,7 @@ import {
 } from '@heroicons/react/24/solid';
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import _ from 'lodash';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
@@ -31,6 +31,8 @@ import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { formatDate } from '_helpers';
 import { useAppSelector, useFormatCoin, useMiddleEllipsis } from '_hooks';
 import CopyBody from '_src/ui/app/shared/typography/CopyBody';
+import { JsonRpcProvider } from '@mysten/sui.js';
+import { useQuery } from '@tanstack/react-query';
 
 // import type { TxResultState } from '_redux/slices/txresults';
 
@@ -38,7 +40,7 @@ import st from './ReceiptCard.module.scss';
 
 type TxResponseProps = {
     txDigest: any;
-    transferType?: 'nft' | 'coin' | null;
+    trans?: 'nft' | 'coin' | 'func' | null;
 };
 
 const TRUNCATE_MAX_LENGTH = 8;
@@ -141,7 +143,21 @@ const TxTransfer = ({
 );
 
 function ReceiptCard({ txDigest }: TxResponseProps) {
+    /*useEffect(() => {
+        const getTx = async () => {
+            const provider = new JsonRpcProvider();
+            const tx = await provider.getTransaction(txDigest);
+            console.log('tx', tx);
+        };
+
+        getTx();
+    }, []);*/
+
     const { accountInfos } = useAppSelector(({ account }) => account);
+    const address = useAppSelector(({ account }) => account.address);
+    const result = useQuery(['transactions-by-address', address]);
+
+    console.log('check result => ', result.data);
 
     const getAccount = useCallback(
         (address: string) => {

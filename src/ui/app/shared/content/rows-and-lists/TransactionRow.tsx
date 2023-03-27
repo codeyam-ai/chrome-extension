@@ -56,13 +56,13 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
         displayImage,
     } = getHumanReadable(address, txn);
 
-    console.log('txn: ', txn);
-
     const drilldownLink = `/transactions/receipt?${new URLSearchParams({
         txdigest: txn.digest,
         symbol: 'SUI', // TODO: what to do with coins / multiple coins / batch txs
         isFunc: txType === 'func' ? 'yes' : 'no',
     }).toString()}`;
+
+    console.log('drilldownLink', drilldownLink);
 
     const shared: SharedTypes = {
         hasAmount: (txAmount && parseFloat(txAmount) > 0) || false,
