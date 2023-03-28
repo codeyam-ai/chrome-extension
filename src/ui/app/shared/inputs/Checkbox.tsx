@@ -3,7 +3,7 @@ interface CheckboxProps
         React.InputHTMLAttributes<HTMLInputElement>,
         HTMLInputElement
     > {
-    label: string;
+    label: string | React.ReactNode;
     id: string;
     onChange: React.ChangeEventHandler<HTMLInputElement>;
     checked: boolean;
@@ -24,6 +24,7 @@ const Checkbox = ({
             } flex items-center text-left mx-6 mb-6`}
         >
             <input
+                data-testid={id}
                 id={id}
                 aria-describedby={`${id}-description`}
                 name={id}

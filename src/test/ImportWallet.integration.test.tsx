@@ -70,6 +70,9 @@ describe('Importing a wallet using a seed phrase', () => {
             screen.getByTestId('confirmPassword'),
             goodPassword
         );
+
+        await userEvent.click(screen.getByTestId('terms-of-service'));
+
         await userEvent.click(screen.getByTestId('submit'));
         await screen.findByText('Wallet Set Up');
     }

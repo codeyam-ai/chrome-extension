@@ -56,7 +56,7 @@ xdescribe('The Transaction History Page', () => {
         mockchain.mockSuiObjects();
         mockTransactionHistory();
         renderApp({ initialRoute: '/transactions' });
-        await screen.findByText('$100.00', {}, { timeout: 2000 });
+        await screen.findByText('$1.00', {}, { timeout: 2000 });
 
         // this annoying code prevents async code from getting scheduled after the test is over. It would be good to
         // find a better pattern; see discussion here:
@@ -69,7 +69,7 @@ xdescribe('The Transaction History Page', () => {
         mockchain.mockSuiObjects();
         mockTransactionHistory();
         renderApp({ initialRoute: '/transactions' });
-        await screen.findByText('$100.00', {}, { timeout: 2000 });
+        await screen.findByText('$1.00', {}, { timeout: 2000 });
 
         let currentWallet = await screen.findByTestId('current-wallet');
         await within(currentWallet).findByText('Wallet 1');
