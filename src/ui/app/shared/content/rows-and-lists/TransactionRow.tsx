@@ -54,6 +54,7 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
         gasFeeInSui,
         gasFeeInUsd,
         txCommands,
+        isSender,
         displayImage,
     } = getHumanReadable(address, txn);
 
@@ -68,10 +69,9 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
         amount: parseFloat(txAmount),
         coinType: '', // TODO: what to do with coins / multiple coins / batch txs
         action: txAction || '',
-        txDirText:
-            txAction === 'send' && txn.to
-                ? `To ${truncateMiddle(txn.to)}`
-                : `From ${truncateMiddle(txn.from)}` || '',
+        txDirText: isSender
+            ? `To ${truncateMiddle(txn.to)}`
+            : `From ${truncateMiddle(txn.from)}` || '',
         link: drilldownLink,
         date: timeDisplay,
         header: txCommands || 'Sui Action',
