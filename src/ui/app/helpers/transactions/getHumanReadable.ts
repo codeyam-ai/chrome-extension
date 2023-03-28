@@ -20,6 +20,11 @@ import getIsSender from './getIsSender';
 import type { FormattedTransaction } from './types';
 
 const getHumanReadable = (ownerAddr: string, tx: FormattedTransaction) => {
+    const dollarFormatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    });
+
     const suiObj = getSuiObj(ownerAddr, tx);
     const timeDisplay = convertUnixTimeToLocalTime(tx.timestampMs || 0);
     const txType = getTxType(tx);
@@ -32,9 +37,9 @@ const getHumanReadable = (ownerAddr: string, tx: FormattedTransaction) => {
     const gasFeeInUsd = getDollars(totalGasCost);
     const txCommands = getCommands(tx);
     const displayImage = getDisplayImage(tx);
-    const txUsdAmount = getDollars(suiObj?.amount)
-        ? getDollars(suiObj?.amount)
-        : '$0.00';
+    const txUsdAmount = dollarFormatter.format(
+        parseInt(txAmount.replace(/,/g, '')) * 100
+    );
 
     const preposition = getTxPreposition(txType, txAction);
     const otherAddress = getTxOtherAddressDisplay(
@@ -57,6 +62,7 @@ const getHumanReadable = (ownerAddr: string, tx: FormattedTransaction) => {
         gasFeeInUsd,
         txCommands,
         preposition,
+        isSender,
         otherAddress,
         otherAddressStr,
         displayImage,
