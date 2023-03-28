@@ -29,26 +29,12 @@ import { getTxType } from '_src/ui/app/helpers/transactions';
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
     const [currentPage, setCurrentPage] = useState(0);
-    const [moreTxnsAvailable, setMoreTxnsAvailable] = useState(true);
     const [formattedTxns, setFormattedTxns] = useState<FormattedTransaction[]>(
         []
     );
     const [error, setError] = useState<string | undefined>();
     const { isLoading: loadingTxns, data: suiTxns } =
         useQueryTransactionsByAddress(address);
-
-    const txPerPage = 5;
-
-    // determine if more transactions are available
-    useEffect(() => {
-        if (
-            suiTxns &&
-            suiTxns?.length > 0 &&
-            formattedTxns.length === suiTxns?.length
-        ) {
-            setMoreTxnsAvailable(false);
-        }
-    }, [suiTxns, formattedTxns]);
 
     // load a page of "formatted transactions"
     useEffect(() => {
@@ -59,11 +45,7 @@ const TransactionsPage = () => {
         const loadFormattedTransactionsForCurrentPage = async () => {
             if (!suiTxns) return;
 
-            const start = currentPage * txPerPage;
-            const end = start + txPerPage;
-            const transactionsToFormat = suiTxns.slice(start, end);
-
-            setFormattedTxns(transactionsToFormat);
+            setFormattedTxns(suiTxns);
             /*const fullTransactionDetails = await getFullTransactionDetails(
                 transactionsToFormat,
                 address,
@@ -108,7 +90,7 @@ const TransactionsPage = () => {
         loadFormattedTransactionsForCurrentPage();
     }, [address, currentPage, suiTxns]);
 
-    const incrementPage = useCallback(() => {
+    /*const incrementPage = useCallback(() => {
         setCurrentPage(currentPage + 1);
     }, [currentPage]);
 
@@ -122,9 +104,7 @@ const TransactionsPage = () => {
                 />
             </div>
         );
-    }
-
-    console.log('transactions: ', formattedTxns);
+    }*/
 
     return (
         <React.Fragment>
@@ -135,7 +115,7 @@ const TransactionsPage = () => {
                         <TransactionRows transactions={formattedTxns} />
                     </div>
                 )}
-                <div>
+                {/*<div>
                     {moreTxnsAvailable && (
                         <div
                             className={
@@ -151,7 +131,7 @@ const TransactionsPage = () => {
                             </Button>
                         </div>
                     )}
-                </div>
+                        </div>*/}
 
                 {formattedTxns && formattedTxns.length === 0 && (
                     <EmptyPageState
