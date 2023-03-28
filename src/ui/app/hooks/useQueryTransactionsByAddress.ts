@@ -6,8 +6,6 @@ import { useQuery } from '@tanstack/react-query';
 
 import { api } from '_redux/store/thunk-extras';
 
-const dedupe = (arr: string[]) => Array.from(new Set(arr));
-
 export function useQueryTransactionsByAddress(address: SuiAddress | null) {
     const rpc = api.instance.fullNode;
 
@@ -15,7 +13,7 @@ export function useQueryTransactionsByAddress(address: SuiAddress | null) {
         ['transactions-by-address', address],
         async () => {
             // combine from and to transactions
-            const [txnIds, fromTxnIds] = await Promise.all([
+            const allTransactionBlocks = await Promise.all([
                 rpc.queryTransactionBlocks({
                     filter: {
                         ToAddress: address || '',
@@ -42,23 +40,22 @@ export function useQueryTransactionsByAddress(address: SuiAddress | null) {
                 }),
             ]);
 
-            const resp = await rpc.multiGetTransactionBlocks({
-                digests: dedupe(
-                    [...txnIds.data, ...fromTxnIds.data].map((x) => x.digest)
-                ),
-                options: {
-                    showInput: true,
-                    showEffects: true,
-                    showEvents: true,
-                    showObjectChanges: true,
-                    showBalanceChanges: true,
-                },
-            });
-
-            return resp.sort(
-                // timestamp could be null, so we need to handle
-                (a, b) => (b.timestampMs || 0) - (a.timestampMs || 0)
-            );
+            return allTransactionBlocks
+                .map((transcationBlocks) => transcationBlocks.data)
+                .flat()
+                .map((transactionBlock) => ({
+                    ...transactionBlock,
+                    transactionBlock: transactionBlock.transaction,
+                }))
+                .filter(
+                    (value, index, self) =>
+                        self.findIndex((tx) => tx.digest === value.digest) ===
+                        index
+                )
+                .sort(
+                    // timestamp could be null, so we need to handle
+                    (a, b) => (b.timestampMs || 0) - (a.timestampMs || 0)
+                );
         },
         { enabled: !!address, staleTime: 0, cacheTime: 0 }
     );
