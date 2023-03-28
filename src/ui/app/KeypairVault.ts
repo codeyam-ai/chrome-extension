@@ -1,12 +1,11 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { Ed25519Keypair } from '@mysten/sui.js';
+import { fromB64 } from '@mysten/bcs';
 
-import {
-    getKeypairFromMnemonics,
-    getSeedFromMnemonics,
-} from '_shared/cryptography/mnemonics';
+import { getKeypairFromMnemonics } from '_shared/cryptography/mnemonics';
+
+import type { Ed25519Keypair } from '@mysten/sui.js';
 
 export type AccountInfo = {
     index: number;
@@ -36,9 +35,7 @@ export default class KeypairVault {
         }
 
         const key = index.toString();
-        const keypair = new Ed25519Keypair(
-            getKeypairFromMnemonics(this._mnemonic, index)
-        );
+        const keypair = getKeypairFromMnemonics(this._mnemonic, index);
         this._keypairs[key] = keypair;
         return keypair;
     }
@@ -73,7 +70,9 @@ export default class KeypairVault {
             this._activeIndex = index;
         }
 
-        return getSeedFromMnemonics(this._mnemonic, index);
+        const b64Seed = getKeypairFromMnemonics(this._mnemonic, index).export()
+            .privateKey;
+        return fromB64(b64Seed);
     }
 
     public setActiveIndex(index: number): void {

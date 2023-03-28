@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-    getCertifiedTransaction,
     getExecutionStatusType,
+    getTransactionKind,
     getTransactionKindName,
-    getTransactions,
 } from '@mysten/sui.js';
 import clBind from 'classnames/bind';
 import { useMemo } from 'react';
@@ -18,7 +17,10 @@ import { useAppSelector } from '_hooks';
 import { txSelectors } from '_redux/slices/transactions';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 
-import type { TransactionKindName } from '@mysten/sui.js';
+import type {
+    TransactionKindName,
+    SuiTransactionBlockResponse,
+} from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 
 import st from './TransactionDetailsPage.module.scss';
@@ -26,14 +28,16 @@ import st from './TransactionDetailsPage.module.scss';
 const cl = clBind.bind(st);
 
 const txKindToTxt: Record<TransactionKindName, string> = {
-    TransferObject: 'Object transfer',
-    Call: 'Call',
-    Publish: 'Publish',
-    TransferSui: 'Sui transfer',
-    ChangeEpoch: 'Change epoch',
-    Pay: 'Pay',
-    PaySui: 'PaySui',
-    PayAllSui: 'PayAllSui',
+    // TransferObject: 'Object transfer',
+    // Call: 'Call',
+    // Publish: 'Publish',
+    // TransferSui: 'Sui transfer',
+    // ChangeEpoch: 'Change epoch',
+    // Pay: 'Pay',
+    // PaySui: 'PaySui',
+    // PayAllSui: 'PayAllSui',
+    ProgrammableTransaction: 'ProgrammableTransaction',
+    ChangeEpoch: 'ChangeEpoch',
     Genesis: 'Genesis',
     ConsensusCommitPrologue: 'ConsensusCommitPrologue',
 };
@@ -46,15 +50,12 @@ function TransactionDetailsPage() {
         [txDigest]
     );
     // TODO: load tx if not found locally
-    const txDetails = useAppSelector(txSelector);
+    const txDetails = useAppSelector(txSelector) as SuiTransactionBlockResponse;
     const status = txDetails && getExecutionStatusType(txDetails);
     const statusIcon = status === 'success' ? 'check2-circle' : 'x-circle';
-    const transferKind =
-        txDetails &&
-        getTransactionKindName(
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            getTransactions(getCertifiedTransaction(txDetails)!)[0]
-        );
+    const txnKind = getTransactionKind(txDetails);
+    const transferKind = txnKind ? getTransactionKindName(txnKind) : undefined;
+
     return (
         <div className={cl('container')}>
             {txDetails ? (

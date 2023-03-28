@@ -1,14 +1,13 @@
-import { GAS_TYPE_ARG } from '_src/ui/app/redux/slices/sui-objects/Coin';
+import { SUI_TYPE_ARG, type TransactionBlock } from '@mysten/sui.js';
 
 import type { Permission, DistilledEffect } from '..';
 import type { Detail } from '../DetailElement';
 import type { NumberedDetail } from '../NumberedValue';
 import type { Section } from '../SectionElement';
-import type { MoveCallTransaction, SignableTransaction } from '@mysten/sui.js';
 
 export type SummaryGeneratorArgs = {
     address?: string | null;
-    txInfo?: string | SignableTransaction | MoveCallTransaction;
+    transactionBlock?: TransactionBlock;
     reading: (DistilledEffect | null)[];
     mutating: DistilledEffect[];
     creating: DistilledEffect[];
@@ -27,7 +26,7 @@ export type SummaryGeneratorArgs = {
 };
 
 const standard = ({
-    txInfo,
+    transactionBlock,
     reading,
     mutating,
     creating,
@@ -83,19 +82,25 @@ const standard = ({
 
     let summary: Section[] = [];
 
-    if (txInfo && typeof txInfo !== 'string' && 'kind' in txInfo) {
-        if (txInfo.kind === 'moveCall') {
+    if (transactionBlock) {
+        const transactionData = transactionBlock.blockData;
+        const primaryCommand = transactionData.transactions.find(
+            (c) => c.kind === 'MoveCall'
+        );
+
+        if (primaryCommand?.kind === 'MoveCall') {
+            const [, module, fun] = primaryCommand.target.split('::');
             summary = [
                 {
                     title: 'Requesting Permission To Call',
                     details: [
                         {
                             label: 'Contract',
-                            content: txInfo.data.module,
+                            content: module,
                         },
                         {
                             label: 'Function',
-                            content: txInfo.data.function,
+                            content: fun,
                         },
                         {
                             label: 'Permissions',
@@ -104,7 +109,7 @@ const standard = ({
                     ],
                 } as Section,
             ];
-        } else if (txInfo.kind === 'transferObject') {
+        } else if (primaryCommand?.kind === 'TransferObjects') {
             summary = [
                 {
                     title: 'Transfer Asset',
@@ -113,77 +118,77 @@ const standard = ({
                             label: 'Asset',
                             content: transferring[0]?.name,
                         },
-                        {
-                            label: 'Recipient',
-                            content: txInfo.data.recipient,
-                        },
+                        // {
+                        //     label: 'Recipient',
+                        //     content: primaryCommand.address,
+                        // },
                     ],
                 },
             ];
-        } else if (txInfo.kind === 'transferSui') {
-            summary = [
-                {
-                    title: 'Transfer Asset',
-                    details: [
-                        {
-                            label: 'Amount',
-                            content: txInfo.data.amount || '---',
-                        },
-                        {
-                            label: 'Recipient',
-                            content: txInfo.data.recipient,
-                        },
-                    ],
-                },
-            ];
-        } else if (txInfo.kind === 'pay') {
-            summary = [
-                {
-                    title: 'Transfer Asset',
-                    details: [
-                        {
-                            label: 'Amount',
-                            content: txInfo.data.amounts,
-                        },
-                        {
-                            label: 'Recipient',
-                            content: txInfo.data.recipients,
-                        },
-                    ],
-                },
-            ];
-        } else if (txInfo.kind === 'paySui') {
-            summary = [
-                {
-                    title: 'Transfer Asset',
-                    details: [
-                        {
-                            label: 'Amount',
-                            content: txInfo.data.amounts,
-                        },
-                        {
-                            label: 'Recipient',
-                            content: txInfo.data.recipients,
-                        },
-                    ],
-                },
-            ];
-        } else if (txInfo.kind === 'payAllSui') {
-            summary = [
-                {
-                    title: 'Transfer Asset',
-                    details: [
-                        {
-                            label: 'Amount',
-                            content: `${txInfo.data.inputCoins.length} Coins`,
-                        },
-                        {
-                            label: 'Recipient',
-                            content: txInfo.data.recipient,
-                        },
-                    ],
-                },
-            ];
+            // } else if (txInfo.kind === 'transferSui') {
+            //     summary = [
+            //         {
+            //             title: 'Transfer Asset',
+            //             details: [
+            //                 {
+            //                     label: 'Amount',
+            //                     content: txInfo.data.amount || '---',
+            //                 },
+            //                 {
+            //                     label: 'Recipient',
+            //                     content: txInfo.data.recipient,
+            //                 },
+            //             ],
+            //         },
+            //     ];
+            // } else if (txInfo.kind === 'pay') {
+            //     summary = [
+            //         {
+            //             title: 'Transfer Asset',
+            //             details: [
+            //                 {
+            //                     label: 'Amount',
+            //                     content: txInfo.data.amounts,
+            //                 },
+            //                 {
+            //                     label: 'Recipient',
+            //                     content: txInfo.data.recipients,
+            //                 },
+            //             ],
+            //         },
+            //     ];
+            // } else if (txInfo.kind === 'paySui') {
+            //     summary = [
+            //         {
+            //             title: 'Transfer Asset',
+            //             details: [
+            //                 {
+            //                     label: 'Amount',
+            //                     content: txInfo.data.amounts,
+            //                 },
+            //                 {
+            //                     label: 'Recipient',
+            //                     content: txInfo.data.recipients,
+            //                 },
+            //             ],
+            //         },
+            //     ];
+            // } else if (txInfo.kind === 'payAllSui') {
+            //     summary = [
+            //         {
+            //             title: 'Transfer Asset',
+            //             details: [
+            //                 {
+            //                     label: 'Amount',
+            //                     content: `${txInfo.data.inputCoins.length} Coins`,
+            //                 },
+            //                 {
+            //                     label: 'Recipient',
+            //                     content: txInfo.data.recipient,
+            //                 },
+            //             ],
+            //         },
+            //     ];
         }
     }
 
@@ -271,7 +276,7 @@ const standard = ({
             effects.details.push({
                 label: 'Coins',
                 content: Object.keys(coinChanges)
-                    .filter((name) => name !== GAS_TYPE_ARG)
+                    .filter((name) => name !== SUI_TYPE_ARG)
                     .map(
                         (coinName) =>
                             ({

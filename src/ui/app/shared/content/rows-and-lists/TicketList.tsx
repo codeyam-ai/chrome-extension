@@ -1,8 +1,8 @@
 import TicketItem from './TicketItem';
 
-import type { SuiObject } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js';
 
-const TicketList = ({ tickets }: { tickets: SuiObject[] }) => {
+const TicketList = ({ tickets }: { tickets: SuiObjectData[] }) => {
     return (
         <div className="p-3 flex flex-col gap-3">
             {tickets.map((ticket, index) => (

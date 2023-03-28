@@ -7,18 +7,20 @@ const cleanRawObjType = (rawCoinType: string): string => {
 const getObjTypeFromObjId = async (
     objId: string
 ): Promise<string | undefined> => {
-    const obj = await api.instance.fullNode.getObject(objId);
+    const obj = await api.instance.fullNode.getObject({
+        id: objId,
+        options: { showType: true },
+    });
 
     if (
-        obj.status === 'Exists' &&
-        obj.details &&
-        typeof obj.details === 'object' &&
-        'data' in obj.details &&
-        'type' in obj.details.data
+        obj.data &&
+        typeof obj.data === 'object' &&
+        'data' in obj.data &&
+        'type' in obj.data
     ) {
         // Returns something like this: 0x2::coin::Coin<0xe881966c6a8b405485d014087a32d712c499d81b::af::AF>
         // But all we need is 0xe881966c6a8b405485d014087a32d712c499d81b::af::AF
-        const rawObjType = obj.details.data.type;
+        const rawObjType = obj.data.type as string;
         return cleanRawObjType(rawObjType);
     }
     return;

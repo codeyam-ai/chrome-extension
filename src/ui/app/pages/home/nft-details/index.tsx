@@ -18,27 +18,31 @@ import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 
-import type { SuiObject } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js';
 import type { ButtonHTMLAttributes } from 'react';
 
 function NFTdetailsContent({
     nft,
     onClick,
 }: {
-    nft: SuiObject;
+    nft: SuiObjectData;
     onClick?: ButtonHTMLAttributes<HTMLButtonElement>['onClick'];
 }) {
     const { filePath, nftObjectID, nftFields, fileExtentionType } =
         useNFTBasicData(nft);
 
     let address;
-    if (typeof nft.owner !== 'string' && 'AddressOwner' in nft.owner) {
+    if (
+        nft.owner &&
+        typeof nft.owner !== 'string' &&
+        'AddressOwner' in nft.owner
+    ) {
         address = nft.owner.AddressOwner;
     }
 
     let has_public_transfer: boolean | undefined;
-    if ('has_public_transfer' in nft.data) {
-        has_public_transfer = nft.data.has_public_transfer;
+    if (nft.content && 'has_public_transfer' in nft.content) {
+        has_public_transfer = nft.content.has_public_transfer as boolean;
     }
 
     return (
@@ -104,17 +108,13 @@ function NFTdetailsContent({
                                 },
                                 {
                                     keyName: 'Object ID',
-                                    value: nft.reference.objectId,
-                                    shortValue: truncateMiddle(
-                                        nft.reference.objectId
-                                    ),
+                                    value: nft.objectId,
+                                    shortValue: truncateMiddle(nft.objectId),
                                 },
                                 {
                                     keyName: 'Digest',
-                                    value: nft.reference.digest,
-                                    shortValue: truncateMiddle(
-                                        nft.reference.digest
-                                    ),
+                                    value: nft.digest,
+                                    shortValue: truncateMiddle(nft.digest),
                                 },
                             ]}
                         />
@@ -178,7 +178,7 @@ function NFTdetailsContent({
 
 function NFTDetailsPage() {
     const [searchParams] = useSearchParams();
-    const [selectedNFT, setSelectedNFT] = useState<SuiObject | null>(null);
+    const [selectedNFT, setSelectedNFT] = useState<SuiObjectData | null>(null);
     const navigate = useNavigate();
     const objectId = useMemo(
         () => searchParams.get('objectId'),
@@ -189,7 +189,7 @@ function NFTDetailsPage() {
 
     const activeNFT = useMemo(() => {
         const selectedNFT = nftCollections.filter(
-            (nftItem) => getObjectId(nftItem.reference) === objectId
+            (nftItem) => getObjectId(nftItem) === objectId
         )[0];
         setSelectedNFT(selectedNFT);
         return selectedNFT;

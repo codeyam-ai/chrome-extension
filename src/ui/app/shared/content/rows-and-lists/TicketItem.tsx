@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom';
 
 import { useTicketBasicData } from '_src/ui/app/hooks';
 
-import type { SuiObject } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js';
 
 interface TicketItemProps {
-    ticket: SuiObject;
+    ticket: SuiObjectData;
 }
 
 const TicketItem = ({ ticket }: TicketItemProps) => {

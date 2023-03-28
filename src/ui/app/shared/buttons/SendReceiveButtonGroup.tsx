@@ -1,5 +1,6 @@
 import { CreditCardIcon } from '@heroicons/react/24/outline';
 import { ArrowUpCircleIcon } from '@heroicons/react/24/solid';
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import InlineButtonGroup from './InlineButtonGroup';
@@ -7,10 +8,10 @@ import { API_ENV } from '../../ApiProvider';
 import LoadingIndicator from '../../components/loading/LoadingIndicator';
 import { useAppSelector } from '../../hooks';
 import { accountAggregateBalancesSelector } from '../../redux/slices/account';
-import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import TestnetFaucetModal from '../alerts/TestnetFaucetModal';
 import Alert from '../feedback/Alert';
 import SuiIcon from '../svg/SuiIcon';
+import { api } from '_redux/store/thunk-extras';
 
 interface SendReceiveButtonGroupProps {
     mistBalance: number | bigint;
@@ -34,7 +35,7 @@ const SendReceiveButtonGroup = ({
     const sendUrl = useMemo(
         () =>
             `/send/recipient?${new URLSearchParams({
-                type: GAS_TYPE_ARG,
+                type: SUI_TYPE_ARG,
             }).toString()}`,
         []
     );
@@ -57,7 +58,7 @@ const SendReceiveButtonGroup = ({
         }
         setIsFaucetInProgress(true);
         const faucet = async () => {
-            const result = await fetch('https://faucet.devnet.sui.io/gas', {
+            const result = await fetch(`${api.getEndPoints().faucet}gas`, {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -108,6 +109,7 @@ const SendReceiveButtonGroup = ({
                 <InlineButtonGroup
                     onClickButtonPrimary={_faucet}
                     isButtonPrimaryDisabled={isFaucetInProgress}
+                    buttonPrimaryTestId="faucet"
                     buttonPrimaryChildren={
                         <>
                             <SuiIcon width={11} height={16} />
@@ -120,6 +122,7 @@ const SendReceiveButtonGroup = ({
                         </>
                     }
                     buttonSecondaryTo={isBalanceZero ? '/receive' : sendUrl}
+                    buttonSecondaryTestId={isBalanceZero ? 'buy' : 'send'}
                     buttonSecondaryChildren={
                         <>
                             {isBalanceZero ? (

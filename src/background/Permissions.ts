@@ -10,6 +10,7 @@ import { BASE_URL } from '_src/shared/constants';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 
 import type { ContentScriptConnection } from './connections/ContentScriptConnection';
+import type { SuiAddress } from '@mysten/sui.js';
 import type {
     Permission,
     PermissionResponse,
@@ -101,7 +102,10 @@ class Permissions {
 
     public async getPermissions(): Promise<Record<string, Permission>> {
         const permissionString =
-            (await getEncrypted(PERMISSIONS_STORAGE_KEY)) || '{}';
+            (await getEncrypted({
+                key: PERMISSIONS_STORAGE_KEY,
+                session: false,
+            })) || '{}';
         return JSON.parse(permissionString);
     }
 
@@ -196,7 +200,8 @@ class Permissions {
     public async hasPermissions(
         origin: string,
         permissionTypes: readonly PermissionType[],
-        permission?: Permission | null
+        permission?: Permission | null,
+        address?: SuiAddress
     ): Promise<boolean> {
         const existingPermission = await this.getPermission(origin, permission);
         return Boolean(
@@ -204,7 +209,9 @@ class Permissions {
                 existingPermission.allowed &&
                 permissionTypes.every((permissionType) =>
                     existingPermission.permissions.includes(permissionType)
-                )
+                ) &&
+                (!address ||
+                    (address && existingPermission.accounts.includes(address)))
         );
     }
 
@@ -246,7 +253,11 @@ class Permissions {
         const permissions = await this.getPermissions();
         permissions[permission.origin] = permission;
         const permissionsString = JSON.stringify(permissions);
-        await setEncrypted(PERMISSIONS_STORAGE_KEY, permissionsString);
+        await setEncrypted({
+            key: PERMISSIONS_STORAGE_KEY,
+            value: permissionsString,
+            session: false,
+        });
     }
 }
 

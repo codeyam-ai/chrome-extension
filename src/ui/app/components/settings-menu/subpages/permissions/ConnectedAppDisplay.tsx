@@ -90,6 +90,7 @@ const ConnectedAppDisplay = ({
             )}
             {connectedApp.preappovals.map((preapprovalData, index) => {
                 const p = preapprovalData.preapproval;
+                const [packageObjectId, , fun] = p.target.split('::');
                 const items: KeyNameAndValue[] = [
                     {
                         keyName: 'Transactions Remaining',
@@ -101,12 +102,12 @@ const ConnectedAppDisplay = ({
                     },
                     {
                         keyName: 'Function',
-                        value: p.function,
+                        value: fun,
                     },
                     {
                         keyName: 'Package',
-                        value: p.packageObjectId,
-                        shortValue: truncateMiddle(p.packageObjectId, 6),
+                        value: packageObjectId,
+                        shortValue: truncateMiddle(packageObjectId, 6),
                     },
                 ];
                 return (

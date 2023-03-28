@@ -1,12 +1,12 @@
 import AlertWithErrorExpand from '_src/ui/app/shared/feedback/AlertWithErrorExpand';
 import Body from '_src/ui/app/shared/typography/Body';
 
-import type { TransactionRequest } from '_shared/messaging/messages/payloads/transactions/TransactionRequest';
+import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
 
 type WrongAddressProps = {
     errorMessage: string;
     txID?: string;
-    txRequest: TransactionRequest | null;
+    txRequest: ApprovalRequest | null;
 };
 
 const WrongAddress = ({ errorMessage, txID, txRequest }: WrongAddressProps) => {

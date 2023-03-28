@@ -1,4 +1,4 @@
-import { Ed25519PublicKey, fromB64, toB64 } from '@mysten/sui.js';
+import { toB64 } from '@mysten/bcs';
 
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
@@ -18,10 +18,11 @@ class Authentication {
 
         if (!force && this._accountInfos) return this._accountInfos;
 
-        const accountsString = await getEncrypted(
-            'accountInfos',
-            this._accessToken
-        );
+        const accountsString = await getEncrypted({
+            key: 'accountInfos',
+            session: false,
+            passphrase: this._accessToken,
+        });
 
         let accounts;
         if (!force && accountsString) {
@@ -31,7 +32,7 @@ class Authentication {
                 'wallet/accounts',
                 'POST',
                 this._accessToken || '',
-                { network: 'sui', chain: 'sui' }
+                { chain: 'sui' }
             );
 
             if (status !== 200) {
@@ -42,11 +43,12 @@ class Authentication {
         }
         this._accountInfos = accounts;
 
-        await setEncrypted(
-            'accountInfos',
-            JSON.stringify(accounts),
-            this._accessToken
-        );
+        await setEncrypted({
+            key: 'accountInfos',
+            value: JSON.stringify(accounts),
+            session: false,
+            passphrase: this._accessToken,
+        });
 
         return accounts;
     }
@@ -84,16 +86,13 @@ class Authentication {
         if (!this._accessToken) return;
 
         const { json, status } = await simpleApiCall(
-            'transaction/sign',
+            'transactions/sign',
             'POST',
             this._accessToken || '',
             {
                 network: 'sui',
                 walletAddress: address,
-                txOrMessage: {
-                    id: 0,
-                    transaction: toB64(dataToSign),
-                },
+                dataToSign: toB64(dataToSign),
             }
         );
 
@@ -101,13 +100,9 @@ class Authentication {
             return;
         }
 
-        const { signedTransaction } = json;
+        const { signature } = json;
 
-        return {
-            signatureScheme: 'ED25519',
-            signature: fromB64(signedTransaction.signature),
-            pubKey: new Ed25519PublicKey(fromB64(signedTransaction.pubKey)),
-        };
+        return signature;
     }
 }
 

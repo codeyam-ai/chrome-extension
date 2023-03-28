@@ -3,12 +3,13 @@
 
 import {
     getExecutionStatusType,
-    getObjectExistsResponse,
     getObjectId,
     getTimestampFromTransactionResponse,
     getTotalGasUsed,
     getTransactionDigest,
     getObjectVersion,
+    TransactionBlock,
+    getSuiObjectData,
 } from '@mysten/sui.js';
 import {
     createAsyncThunk,
@@ -16,23 +17,19 @@ import {
     createSlice,
 } from '@reduxjs/toolkit';
 
-import {
-    DEFAULT_NFT_TRANSFER_GAS_FEE,
-    SUI_SYSTEM_STATE_OBJECT_ID,
-} from './Coin';
+import { SUI_SYSTEM_STATE_OBJECT_ID } from './Coin';
 
-import type { SuiObject, SuiAddress, ObjectId } from '@mysten/sui.js';
+import type { SuiAddress, ObjectId, SuiObjectData } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
-const objectsAdapter = createEntityAdapter<SuiObject>({
-    selectId: ({ reference }) => reference.objectId,
-    sortComparer: (a, b) =>
-        a.reference.objectId.localeCompare(b.reference.objectId),
+const objectsAdapter = createEntityAdapter<SuiObjectData>({
+    selectId: (info) => info.objectId,
+    sortComparer: (a, b) => a.objectId.localeCompare(b.objectId),
 });
 
 export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
-    SuiObject[],
+    SuiObjectData[],
     void,
     AppThunkConfig
 >('sui-objects/fetch-all', async (_, { getState, extra: { api } }) => {
@@ -40,12 +37,13 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
     const {
         account: { address },
     } = state;
-    const allSuiObjects: SuiObject[] = [];
+    const allSuiObjects: SuiObjectData[] = [];
     if (address) {
-        const allObjectRefs =
-            await api.instance.fullNode.getObjectsOwnedByAddress(`${address}`);
+        const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
+            owner: address,
+        });
 
-        const objectIDs = allObjectRefs
+        const objectIDs = allObjectRefs.data
             .filter((anObj) => {
                 const fetchedVersion = getObjectVersion(anObj);
                 const storedObj = suiObjectsAdapterSelectors.selectById(
@@ -53,7 +51,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                     getObjectId(anObj)
                 );
                 const storedVersion = storedObj
-                    ? getObjectVersion(storedObj.reference)
+                    ? getObjectVersion(storedObj)
                     : null;
                 const objOutdated = fetchedVersion !== storedVersion;
                 if (!objOutdated && storedObj) {
@@ -61,30 +59,32 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                 }
                 return objOutdated;
             })
-            .map((anObj) => anObj.objectId);
-        objectIDs.push(SUI_SYSTEM_STATE_OBJECT_ID);
-        const allObjRes = await api.instance.fullNode.getObjectBatch(objectIDs);
-        for (const objRes of allObjRes) {
-            const suiObj = getObjectExistsResponse(objRes);
-            if (suiObj) {
-                allSuiObjects.push(suiObj);
-            }
-        }
-    }
-    return allSuiObjects;
-});
+            .map((anObj) => {
+                if (
+                    typeof anObj.data === 'object' &&
+                    'objectId' in anObj.data
+                ) {
+                    return anObj.data.objectId;
+                } else {
+                    return '';
+                }
+            })
+            .filter((objId) => objId.length > 0);
 
-export const batchFetchObject = createAsyncThunk<
-    SuiObject[],
-    ObjectId[],
-    AppThunkConfig
->('sui-objects/batch', async (objectIDs, { extra: { api } }) => {
-    const allSuiObjects: SuiObject[] = [];
-    const allObjRes = await api.instance.fullNode.getObjectBatch(objectIDs);
-    for (const objRes of allObjRes) {
-        const suiObj = getObjectExistsResponse(objRes);
-        if (suiObj) {
-            allSuiObjects.push(suiObj);
+        objectIDs.push(SUI_SYSTEM_STATE_OBJECT_ID);
+        const allObjRes = await api.instance.fullNode.multiGetObjects({
+            ids: objectIDs,
+            options: {
+                showOwner: true,
+                showContent: true,
+                showType: true,
+            },
+        });
+        for (const objRes of allObjRes) {
+            const suiObjectData = getSuiObjectData(objRes);
+            if (suiObjectData) {
+                allSuiObjects.push(suiObjectData);
+            }
         }
     }
     return allSuiObjects;
@@ -115,17 +115,33 @@ export const transferNFT = createAsyncThunk<
                 keypairVault.getKeyPair(activeAccountIndex)
             );
         }
-        const txn = await signer.transferObject({
-            objectId: data.nftId,
-            recipient: data.recipientAddress,
-            gasBudget: DEFAULT_NFT_TRANSFER_GAS_FEE,
-        });
+        const transactionBlock = new TransactionBlock();
+        transactionBlock.add(
+            TransactionBlock.Transactions.TransferObjects(
+                [transactionBlock.object(data.nftId)],
+                transactionBlock.pure(data.recipientAddress)
+            )
+        );
+        const executedTransaction = await signer.signAndExecuteTransactionBlock(
+            {
+                transactionBlock,
+                options: {
+                    showEffects: true,
+                    showEvents: true,
+                    showInput: true,
+                },
+            }
+        );
+
         await dispatch(fetchAllOwnedAndRequiredObjects());
         const txnResp = {
-            timestamp_ms: getTimestampFromTransactionResponse(txn),
-            status: getExecutionStatusType(txn),
-            gasFee: txn ? getTotalGasUsed(txn) : 0,
-            txId: getTransactionDigest(txn),
+            timestamp_ms:
+                getTimestampFromTransactionResponse(executedTransaction),
+            status: getExecutionStatusType(executedTransaction),
+            gasFee: executedTransaction
+                ? getTotalGasUsed(executedTransaction)
+                : 0,
+            txId: getTransactionDigest(executedTransaction),
         };
         return txnResp as NFTTxResponse;
     }

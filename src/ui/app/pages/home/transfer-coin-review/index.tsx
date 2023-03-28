@@ -72,8 +72,8 @@ function TransferCoinReviewPage() {
                 resetForm();
                 dispatch(resetSendSuiForm());
 
-                if ('certificate' in tx) {
-                    const txDigest = tx?.certificate?.transactionDigest;
+                if ('effects' in tx) {
+                    const txDigest = tx?.effects?.transactionDigest;
 
                     const navLink = `/transactions/receipt?${new URLSearchParams(
                         {

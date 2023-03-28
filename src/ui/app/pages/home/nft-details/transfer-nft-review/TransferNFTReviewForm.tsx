@@ -14,7 +14,7 @@ import Body from '_src/ui/app/shared/typography/Body';
 import Header from '_src/ui/app/shared/typography/Header';
 
 // import type { EnhancedSuiObject } from '../../../dapp-preapproval/index';
-import type { SuiObject } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -25,7 +25,7 @@ export type TransferNFTFormProps = {
         nftId: string;
         gasFee: string | undefined;
     };
-    nftobj: SuiObject;
+    nftobj: SuiObjectData;
     transferNft: () => void;
     submitted: boolean;
 };
@@ -48,9 +48,15 @@ function TransferNftReviewForm({
             )
     );
 
+    const onSubmit = useCallback(() => {
+        transferNft();
+    }, [transferNft]);
+
+    if (!nftobj) return <></>;
+
     let address;
     if (
-        nftobj &&
+        nftobj.owner &&
         typeof nftobj.owner !== 'string' &&
         'AddressOwner' in nftobj.owner
     ) {
@@ -58,13 +64,9 @@ function TransferNftReviewForm({
     }
 
     let fields;
-    if (nftobj && 'fields' in nftobj.data) {
-        fields = nftobj.data.fields;
+    if (nftobj.content && 'fields' in nftobj.content) {
+        fields = nftobj.content.fields;
     }
-
-    const onSubmit = useCallback(() => {
-        transferNft();
-    }, [transferNft]);
 
     return (
         <div>
@@ -74,8 +76,7 @@ function TransferNftReviewForm({
                         <div>
                             <div className={'pb-8 px-6 pt-6 text-center'}>
                                 <AssetCard
-                                    isFunc={false}
-                                    isNft={true}
+                                    txType="nft"
                                     imgUrl={fields?.url ? fields.url : ''}
                                     name={fields?.name}
                                 />

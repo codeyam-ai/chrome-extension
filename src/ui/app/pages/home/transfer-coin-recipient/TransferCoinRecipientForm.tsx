@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Field, Form, useFormikContext } from 'formik';
-import { memo, useCallback, useEffect, useRef } from 'react';
+import { memo, useCallback, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import AddressInput from '_components/address-input';
@@ -11,10 +11,10 @@ import Loading from '_src/ui/app/components/loading';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { CoinSelect } from '_src/ui/app/pages/home/tokens/CoinDropdown';
 import { setSuiRecipient } from '_src/ui/app/redux/slices/forms';
-import {
-    getTransactionsByAddress,
-    type TxResultState,
-} from '_src/ui/app/redux/slices/txresults';
+// import {
+//     getTransactionsByAddress,
+//     type TxResultState,
+// } from '_src/ui/app/redux/slices/txresults';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
@@ -42,23 +42,25 @@ function TransferCoinRecipientForm({
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
 
-    const txByAddress: TxResultState[] = useAppSelector(({ txresults }) =>
-        txresults.latestTx.filter((tx) => tx.isSender)
-    );
+    // const txByAddress: TxResultState[] = useAppSelector(({ txresults }) => {
+    //     console.log('txresults', txresults);
+    //     return txresults.latestTx.filter((tx) => tx.isSender);
+    // });
 
+    // console.log('txByAddress', txByAddress);
     const recentTxs: string[] = [];
-    txByAddress.forEach((tx) => {
-        if (tx.to) {
-            return recentTxs.push(tx.to);
-        }
-    });
+    // txByAddress.forEach((tx) => {
+    //     if (tx.to) {
+    //         return recentTxs.push(tx.to);
+    //     }
+    // });
 
-    const loading = useAppSelector(({ txresults }) => txresults.loading);
+    const loading = false; //useAppSelector(({ txresults }) => txresults.loading);
     const dispatch = useAppDispatch();
 
-    useEffect(() => {
-        dispatch(getTransactionsByAddress()).unwrap();
-    }, [dispatch]);
+    // useEffect(() => {
+    //     dispatch(getTransactionsByAddress()).unwrap();
+    // }, [dispatch]);
 
     const {
         isSubmitting,

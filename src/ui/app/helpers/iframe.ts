@@ -7,7 +7,7 @@ export interface IframeMessage {
 }
 
 export interface IframeData {
-    appId?: string;
+    apiKey?: string;
 }
 
 export interface IframeLoginData extends IframeData {
@@ -18,7 +18,7 @@ export interface IframeLoginData extends IframeData {
 
 export interface IframeLogOutData extends IframeData {
     email: string;
-    appId: string;
+    apiKey: string;
     wallet: boolean;
 }
 
@@ -51,12 +51,12 @@ export type EthosUser = {
 };
 
 export type EthosConnectApp = {
-    appId: string;
+    apiKey: string;
     user: EthosUser;
 };
 
 export type EthosTransaction = {
-    appId: string;
+    apiKey: string;
 };
 
 export interface IframeLoginMessage extends IframeMessage {
@@ -163,7 +163,7 @@ const messageWallet = (
     const iframe = get();
     if (!iframe) return;
 
-    message.data.appId = 'ethos';
+    message.data.apiKey = process.env.ETHOS_API_KEY;
 
     iframe.contentWindow?.postMessage(message, '*');
 };
@@ -213,7 +213,7 @@ const logOut = (email: string) => {
                 action: 'logout',
                 data: {
                     email,
-                    appId: 'ethos',
+                    apiKey: process.env.ETHOS_API_KEY,
                     wallet: true,
                 },
             });

@@ -5,32 +5,39 @@ import {
     Ed25519Keypair,
     JsonRpcProvider,
     RawSigner,
-    SIGNATURE_SCHEME_TO_FLAG,
-    fromB64,
-    toB64,
+    TransactionBlock,
 } from '@mysten/sui.js';
 import { filter, lastValueFrom, map, race, Subject, take } from 'rxjs';
-import nacl from 'tweetnacl';
 import { v4 as uuidV4 } from 'uuid';
 import Browser from 'webextension-polyfill';
 
 import Authentication from './Authentication';
 import { Window } from './Window';
-// import {
-//     GAS_TYPE_ARG,
-//     DEFAULT_GAS_BUDGET_FOR_PAY,
-// } from '../ui/app/redux/slices/sui-objects/Coin';
+import { API_ENV } from '../ui/app/ApiProvider';
+import { PREAPPROVAL_KEY, TX_STORE_KEY } from '_src/shared/constants';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
-import type { MoveCallTransaction } from '@mysten/sui.js';
-import type { SuiSignAndExecuteTransactionOptions } from '@mysten/wallet-standard';
-import type { TransactionDataType } from '_messages/payloads/transactions/ExecuteTransactionRequest';
+import type {
+    SignedTransaction,
+    SuiAddress,
+    SuiTransactionBlockResponse,
+} from '@mysten/sui.js';
+import type {
+    IdentifierString,
+    SuiSignAndExecuteTransactionBlockInput,
+    SuiSignMessageOutput,
+} from '@mysten/wallet-standard';
 import type {
     PreapprovalRequest,
     PreapprovalResponse,
-    TransactionRequest,
+    SignMessageRequest,
+    SuiSignTransactionSerialized,
 } from '_payloads/transactions';
+import type {
+    ApprovalRequest,
+    TransactionDataType,
+} from '_payloads/transactions/ApprovalRequest';
 import type { TransactionRequestResponse } from '_payloads/transactions/ui/TransactionRequestResponse';
 import type { ContentScriptConnection } from '_src/background/connections/ContentScriptConnection';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
@@ -42,14 +49,20 @@ import type { AccountInfo } from '_src/ui/app/KeypairVault';
 //     coinType: string;
 // };
 
-const TX_STORE_KEY = 'transactions';
-const PREAPPROVAL_KEY = 'preapprovals';
-
-function openTxWindow(txRequestID: string) {
+function openTxWindow(txRequestId: string) {
     return new Window({
         url:
             Browser.runtime.getURL('ui.html') +
-            `#/tx-approval/${encodeURIComponent(txRequestID)}`,
+            `#/tx-approval/${encodeURIComponent(txRequestId)}`,
+        height: 720,
+    });
+}
+
+function openSignMessageWindow(txRequestId: string) {
+    return new Window({
+        url:
+            Browser.runtime.getURL('ui.html') +
+            `#/sign-message-approval/${encodeURIComponent(txRequestId)}`,
         height: 720,
     });
 }
@@ -67,31 +80,114 @@ class Transactions {
     private _txResponseMessages = new Subject<TransactionRequestResponse>();
     private _preapprovalResponseMessages = new Subject<PreapprovalResponse>();
 
+    public async executeOrSignTransaction(
+        {
+            tx,
+            sign,
+        }:
+            | { tx: TransactionDataType; sign?: undefined }
+            | {
+                  tx?: undefined;
+                  sign: SuiSignTransactionSerialized;
+              },
+        connection: ContentScriptConnection
+    ): Promise<SuiTransactionBlockResponse | SignedTransaction> {
+        if (tx) {
+            const transactionBlock = TransactionBlock.from(tx.data);
+            for (const command of transactionBlock.blockData.transactions) {
+                if (command.kind === 'MoveCall') {
+                    const objectIds: string[] = [];
+                    for (const argument of command.arguments) {
+                        if (
+                            argument.kind === 'Input' &&
+                            argument.type === 'object' &&
+                            !!argument.value
+                        ) {
+                            objectIds.push(`${argument.value}`);
+                        }
+                    }
+
+                    const preapproval = await this.findPreapprovalRequest({
+                        target: command.target,
+                        objectIds,
+                        address: tx.account,
+                        chain: tx.chain,
+                    });
+
+                    if (preapproval?.approved) {
+                        const txResult = await this.tryDirectExecution(
+                            transactionBlock,
+                            tx.account,
+                            tx.chain,
+                            preapproval,
+                            tx?.requestType,
+                            tx?.options
+                        );
+                        if (txResult) {
+                            return txResult;
+                        }
+                    }
+                }
+            }
+        }
+        const { txResultError, txResult, txSigned } =
+            await this.requestApproval(
+                tx ?? {
+                    type: 'transaction',
+                    justSign: true,
+                    data: sign.transaction,
+                    account: sign.account,
+                    chain: sign.chain,
+                },
+                false,
+                connection.origin,
+                connection.originFavIcon
+            );
+
+        if (txResultError) {
+            throw new Error(
+                `Transaction failed with the following error. ${txResultError}`
+            );
+        }
+        if (tx) {
+            if (!txResult || !('digest' in txResult)) {
+                throw new Error(`Transaction result is empty ${txResult}`);
+            }
+            return txResult;
+        }
+        if (!txSigned) {
+            throw new Error('Transaction signature is empty');
+        }
+        return txSigned;
+    }
+
     private async findPreapprovalRequest({
-        moveCall,
+        target,
+        objectIds,
+        address,
+        chain,
         preapproval,
     }: {
-        moveCall?: MoveCallTransaction;
+        target?: `${string}::${string}::${string}`;
+        objectIds?: string[];
+        address?: SuiAddress;
+        chain?: IdentifierString;
         preapproval?: Preapproval;
     }) {
-        const activeAccount = await this.getActiveAccount();
-
         const preapprovalRequests = await this.getPreapprovalRequests();
 
         for (const preapprovalRequest of Object.values(preapprovalRequests)) {
             const { preapproval: existingPreapproval } = preapprovalRequest;
 
-            if (existingPreapproval.address !== activeAccount.address) continue;
-
-            const found = moveCall
-                ? moveCall.packageObjectId ===
-                      existingPreapproval.packageObjectId &&
-                  moveCall.function === existingPreapproval.function &&
-                  moveCall.arguments.indexOf(existingPreapproval.objectId) > -1
-                : preapproval?.packageObjectId ===
-                      existingPreapproval.packageObjectId &&
-                  preapproval?.function === existingPreapproval.function &&
-                  preapproval?.objectId === existingPreapproval.objectId;
+            const found = target
+                ? target === existingPreapproval.target &&
+                  objectIds?.includes(existingPreapproval.objectId) &&
+                  address === existingPreapproval.address &&
+                  chain === existingPreapproval.chain
+                : preapproval?.target === existingPreapproval.target &&
+                  preapproval?.objectId === existingPreapproval.objectId &&
+                  preapproval?.address === existingPreapproval.address &&
+                  preapproval?.chain === existingPreapproval.chain;
 
             if (found) {
                 return preapprovalRequest;
@@ -100,29 +196,34 @@ class Transactions {
     }
 
     private async tryDirectExecution(
-        tx: MoveCallTransaction,
+        tx: TransactionBlock,
+        address: SuiAddress,
+        chain: IdentifierString | undefined,
         preapprovalRequest: PreapprovalRequest,
-        options?: SuiSignAndExecuteTransactionOptions
+        requestType?: SuiSignAndExecuteTransactionBlockInput['requestType'],
+        options?: SuiSignAndExecuteTransactionBlockInput['options']
     ) {
         try {
-            const txDirectResult =
-                await this.executeMoveCallTransactionDirectly({
-                    tx,
-                    options,
-                });
+            const txDirectResult = await this.executeTransactionDirectly({
+                transactionBlock: tx,
+                address,
+                chain,
+                options,
+                requestType,
+            });
 
-            const { result, error } = txDirectResult;
-
-            if (error) {
-                return { error, effects: null };
+            if (!txDirectResult?.effects) {
+                return txDirectResult;
             }
 
             const { preapproval } = preapprovalRequest;
             preapproval.maxTransactionCount -= 1;
-            const { effects } = result.EffectsCert || result;
+
             const { computationCost, storageCost, storageRebate } =
-                effects.effects.gasUsed;
-            const gasUsed = computationCost + (storageCost - storageRebate);
+                txDirectResult.effects.gasUsed;
+            const gasUsed =
+                Number(computationCost) +
+                (Number(storageCost) - Number(storageRebate));
             preapproval.totalGasLimit -= gasUsed;
 
             if (
@@ -134,221 +235,106 @@ class Transactions {
                 this.removePreapprovalRequest(preapprovalRequest.id as string);
             }
 
-            return { effects, error: null };
+            return txDirectResult;
         } catch (e) {
-            return { error: e, effects: null };
+            return null;
         }
     }
 
-    public async executeTransaction(
-        tx: TransactionDataType,
+    public async signMessage(
+        {
+            accountAddress,
+            message,
+        }: Required<Pick<SignMessageRequest, 'args'>>['args'],
         connection: ContentScriptConnection
-    ) {
-        if (tx.type === 'v2' || tx.type === 'move-call') {
-            let moveCall: MoveCallTransaction | undefined;
-            if (tx.type === 'v2') {
-                if (tx.data.kind === 'moveCall') {
-                    moveCall = tx.data.data;
-                }
-            } else {
-                moveCall = tx.data;
-            }
-
-            if (moveCall) {
-                const permissionRequest = await this.findPreapprovalRequest({
-                    moveCall,
-                });
-
-                if (permissionRequest) {
-                    let options;
-                    if ('options' in tx) {
-                        options = tx.options;
-                    }
-                    const { effects, error } = await this.tryDirectExecution(
-                        moveCall,
-                        permissionRequest,
-                        options
-                    );
-                    if (effects) {
-                        return effects;
-                    }
-
-                    if (error) {
-                        throw new Error(error.message);
-                    }
-                }
-            }
-        }
-
-        const txRequest = this.createTransactionRequest(
-            tx,
+    ): Promise<SuiSignMessageOutput> {
+        const { txResult, txResultError } = await this.requestApproval(
+            { type: 'sign-message', accountAddress, message },
+            true,
             connection.origin,
             connection.originFavIcon
         );
-        await this.storeTransactionRequest(txRequest);
-        const popUp = openTxWindow(txRequest.id);
-        const popUpClose = (await popUp.show()).pipe(
-            take(1),
-            map<number, false>(() => false)
-        );
-        const txResponseMessage = this._txResponseMessages.pipe(
-            filter((msg) => msg.txID === txRequest.id),
-            take(1)
-        );
-        return lastValueFrom(
-            race(popUpClose, txResponseMessage).pipe(
-                take(1),
-                map(async (response) => {
-                    if (response) {
-                        const { approved, txResult, tsResultError } = response;
-                        if (approved) {
-                            txRequest.txResult = txResult;
-                            txRequest.txResultError = tsResultError;
-                            await this.storeTransactionRequest(txRequest);
-                            if (tsResultError) {
-                                throw new Error(
-                                    `Transaction failed with the following error. ${tsResultError}`
-                                );
-                            }
-                            if (!txResult) {
-                                throw new Error(`Transaction result is empty`);
-                            }
-                            return txResult;
-                        }
-                    }
-                    await this.removeTransactionRequest(txRequest.id);
-                    throw new Error('Transaction rejected from user');
-                })
-            )
-        );
-    }
-
-    private async executeMoveCallTransactionDirectly({
-        tx,
-        options,
-    }: {
-        tx: MoveCallTransaction;
-        options?: SuiSignAndExecuteTransactionOptions;
-    }) {
-        const activeAccount = await this.getActiveAccount();
-
-        const callData = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                jsonrpc: '2.0',
-                method: 'sui_moveCall',
-                params: [
-                    activeAccount.address,
-                    tx.packageObjectId,
-                    tx.module,
-                    tx.function,
-                    tx.typeArguments,
-                    tx.arguments,
-                    tx.gasPayment,
-                    tx.gasBudget,
-                ],
-                id: 1,
-            }),
-        };
-
-        return this.executeTransactionDirectly({ callData, options });
+        if (txResultError) {
+            throw new Error(
+                `Signing message failed with the following error ${txResultError}`
+            );
+        }
+        if (!txResult) {
+            throw new Error('Sign message result is empty');
+        }
+        if (!('messageBytes' in txResult)) {
+            throw new Error('Sign message error, unknown result');
+        }
+        return txResult;
     }
 
     private async executeTransactionDirectly({
-        callData,
+        transactionBlock,
+        address,
+        chain,
+        requestType,
         options,
     }: {
-        callData: RequestInit;
-        options?: SuiSignAndExecuteTransactionOptions;
+        transactionBlock: TransactionBlock;
+        address: SuiAddress;
+        chain?: IdentifierString;
+        requestType?: SuiSignAndExecuteTransactionBlockInput['requestType'];
+        options?: SuiSignAndExecuteTransactionBlockInput['options'];
     }) {
-        const activeAccount = await this.getActiveAccount();
+        const activeAccount = await this.getAccount(address);
 
-        const { sui_Env } = await Browser.storage.local.get('sui_Env');
-        const endpoint = api.getEndPoints(sui_Env).fullNode;
-        const response = await fetch(endpoint, callData);
-        const json = await response.json();
+        let env;
+        switch (chain) {
+            case 'sui::devnet':
+                env = API_ENV.devNet;
+                break;
+            case 'sui::testnet':
+                env = API_ENV.testNet;
+                break;
+            case 'sui::local':
+                env = API_ENV.local;
+                break;
+            case 'sui::custom':
+                env = API_ENV.customRPC;
+                break;
+            default: {
+                const envInfo = await Browser.storage.local.get([
+                    'sui_Env',
+                    'sui_Env_RPC',
+                ]);
 
-        if (json.error) {
-            throw new Error(json.error.message);
+                env =
+                    envInfo?.sui_Env === API_ENV.customRPC
+                        ? envInfo.sui_Env_RPC
+                        : API_ENV[envInfo.sui_Env as keyof typeof API_ENV];
+            }
         }
+        const connection = api.getEndPoints(env);
 
-        const {
-            result: { txBytes },
-        } = json;
-
-        const message = fromB64(txBytes);
-
-        const intent = [0, 0, 0];
-        const intentMessage = new Uint8Array(intent.length + message.length);
-        intentMessage.set(intent);
-        intentMessage.set(message, intent.length);
-
-        let signature;
-        let publicKey;
-        if (activeAccount.seed) {
-            const seed = Uint8Array.from(
-                activeAccount.seed.split(',').map((s) => parseInt(s))
-            );
-
-            const keypair = new Ed25519Keypair(
-                nacl.sign.keyPair.fromSeed(new Uint8Array(seed))
-            );
-
-            const provider = new JsonRpcProvider(endpoint);
-            const signer = new RawSigner(keypair, provider);
-
-            const signed = await signer.signData(intentMessage);
-
-            signature = signed.signature;
-            publicKey = signed.pubKey;
-        } else {
-            const signed = await Authentication.sign(
-                activeAccount.address,
-                intentMessage
-            );
-            publicKey = signed?.pubKey;
-            signature = signed?.signature;
-        }
-
-        if (!signature || !publicKey) return;
-
-        const serializedSig = new Uint8Array(
-            1 + signature.length + publicKey.toBytes().length
+        const provider = new JsonRpcProvider(connection);
+        const secretKey = Uint8Array.from(
+            activeAccount.seed.split(',').map((n) => parseInt(n))
         );
-        serializedSig.set([SIGNATURE_SCHEME_TO_FLAG['ED25519']]);
-        serializedSig.set(signature, 1);
-        serializedSig.set(publicKey.toBytes(), 1 + signature.length);
+        const keypair = Ed25519Keypair.fromSecretKey(secretKey);
+        const signer = new RawSigner(keypair, provider);
 
-        const data = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                jsonrpc: '2.0',
-                method: 'sui_executeTransactionSerializedSig',
-                params: [
-                    toB64(message),
-                    toB64(serializedSig),
-                    options?.requestType || 'WaitForLocalExecution',
-                ],
-                id: 1,
-            }),
-        };
+        try {
+            const txResponse = await signer.signAndExecuteTransactionBlock({
+                transactionBlock,
+                options,
+                requestType,
+            });
 
-        const executeResponse = await fetch(endpoint, data);
-
-        const txResponse = await executeResponse.json();
-
-        return txResponse;
+            return txResponse;
+        } catch (e) {
+            return null;
+        }
     }
 
     public async requestPreapproval(
         preapproval: Preapproval,
         connection: ContentScriptConnection
     ): Promise<PreapprovalResponse> {
-        const activeAccount = await this.getActiveAccount();
-        preapproval.address = activeAccount.address;
-
         const existingPreapprovalRequest = await this.findPreapprovalRequest({
             preapproval,
         });
@@ -411,22 +397,25 @@ class Transactions {
     }
 
     public async getTransactionRequests(): Promise<
-        Record<string, TransactionRequest>
+        Record<string, ApprovalRequest>
     > {
-        const requestsString = await getEncrypted(TX_STORE_KEY);
-        return JSON.parse(requestsString || '{}');
+        return (await Browser.storage.local.get({ [TX_STORE_KEY]: {} }))[
+            TX_STORE_KEY
+        ];
     }
-
     public async getPreapprovalRequests(): Promise<
         Record<string, PreapprovalRequest>
     > {
-        const resultsString = await getEncrypted(PREAPPROVAL_KEY);
+        const resultsString = await getEncrypted({
+            key: PREAPPROVAL_KEY,
+            session: true,
+        });
         return JSON.parse(resultsString || '{}');
     }
 
     public async getTransactionRequest(
         txRequestID: string
-    ): Promise<TransactionRequest | null> {
+    ): Promise<ApprovalRequest | null> {
         return (await this.getTransactionRequests())[txRequestID] || null;
     }
 
@@ -438,42 +427,47 @@ class Transactions {
         this._preapprovalResponseMessages.next(msg);
     }
 
-    private async getActiveAccount(): Promise<AccountInfo> {
-        const locked = await getEncrypted('locked');
-        if (locked) {
-            throw new Error('Wallet is locked');
+    private async getAccount(address: SuiAddress): Promise<AccountInfo> {
+        const locked = await getEncrypted({ key: 'locked', session: false });
+        const passphrase = await getEncrypted({
+            key: 'passphrase',
+            session: true,
+        });
+        const authentication = await getEncrypted({
+            key: 'authentication',
+            session: true,
+        });
+        if (locked || (!passphrase && !authentication)) {
+            throw new Error(
+                `Wallet is locked: ${locked} ${passphrase} ${authentication}`
+            );
         }
-        const passphrase = await getEncrypted('passphrase');
-        const authentication = await getEncrypted('authentication');
-        const activeAccountIndex = await getEncrypted(
-            'activeAccountIndex',
-            (passphrase || authentication) as string
-        );
         let accountInfos;
         if (authentication) {
             Authentication.set(authentication);
             accountInfos = await Authentication.getAccountInfos();
         } else {
-            const accountInfosString = await getEncrypted(
-                'accountInfos',
-                (passphrase || authentication) as string
-            );
+            const accountInfosString = await getEncrypted({
+                key: 'accountInfos',
+                session: false,
+                passphrase: (passphrase || authentication) as string,
+            });
             accountInfos = JSON.parse(accountInfosString || '[]');
         }
 
         return accountInfos.find(
-            (accountInfo: AccountInfo) =>
-                (accountInfo.index || 0) === parseInt(activeAccountIndex || '0')
+            (accountInfo: AccountInfo) => accountInfo.address === address
         );
     }
 
     private createTransactionRequest(
-        tx: TransactionDataType,
+        tx: ApprovalRequest['tx'],
         origin: string,
         originFavIcon?: string
-    ): TransactionRequest {
+    ): ApprovalRequest {
         return {
             id: uuidV4(),
+            approved: null,
             origin,
             originFavIcon,
             createdDate: new Date().toISOString(),
@@ -499,24 +493,23 @@ class Transactions {
     }
 
     private async saveTransactionRequests(
-        txRequests: Record<string, TransactionRequest>
+        txRequests: Record<string, ApprovalRequest>
     ) {
-        await setEncrypted(TX_STORE_KEY, JSON.stringify(txRequests));
+        await Browser.storage.local.set({ [TX_STORE_KEY]: txRequests });
     }
 
     private async savePreapprovalRequests(
         requests: Record<string, PreapprovalRequest>
     ) {
-        await setEncrypted(PREAPPROVAL_KEY, JSON.stringify(requests));
+        await setEncrypted({
+            key: PREAPPROVAL_KEY,
+            value: JSON.stringify(requests),
+            session: true,
+        });
     }
 
-    private async storeTransactionRequest(txRequest: TransactionRequest) {
+    private async storeTransactionRequest(txRequest: ApprovalRequest) {
         const txs = await this.getTransactionRequests();
-
-        for (const id of Object.keys(txs)) {
-            if (txs[id].txResult) delete txs[id];
-        }
-
         txs[txRequest.id] = txRequest;
         await this.saveTransactionRequests(txs);
     }
@@ -545,6 +538,52 @@ class Transactions {
 
         requests[request.id as string] = request;
         await this.savePreapprovalRequests(requests);
+    }
+
+    private async requestApproval(
+        request: ApprovalRequest['tx'],
+        sign: boolean,
+        origin: string,
+        favIcon?: string
+    ) {
+        const txRequest = this.createTransactionRequest(
+            request,
+            origin,
+            favIcon
+        );
+        await this.storeTransactionRequest(txRequest);
+        const popUp = sign
+            ? openSignMessageWindow(txRequest.id)
+            : openTxWindow(txRequest.id);
+        const popUpClose = (await popUp.show()).pipe(
+            take(1),
+            map<number, false>(() => false)
+        );
+        const txResponseMessage = this._txResponseMessages.pipe(
+            filter((msg) => msg.txID === txRequest.id),
+            take(1)
+        );
+        return lastValueFrom(
+            race(popUpClose, txResponseMessage).pipe(
+                take(1),
+                map(async (response) => {
+                    if (response) {
+                        const { approved, txResult, txSigned, txResultError } =
+                            response;
+                        if (approved) {
+                            txRequest.approved = approved;
+                            txRequest.txResult = txResult;
+                            txRequest.txResultError = txResultError;
+                            txRequest.txSigned = txSigned;
+                            await this.storeTransactionRequest(txRequest);
+                            return txRequest;
+                        }
+                    }
+                    await this.removeTransactionRequest(txRequest.id);
+                    throw new Error('Rejected from user');
+                })
+            )
+        );
     }
 }
 

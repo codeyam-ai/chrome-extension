@@ -1,68 +1,40 @@
+// import { QueueListIcon } from '@heroicons/react/24/solid';
+// import { type SuiTransactionResponse } from '@mysten/sui.js';
 import { QueueListIcon } from '@heroicons/react/24/solid';
-import { type SuiTransactionResponse } from '@mysten/sui.js';
+import { SuiTransactionBlockResponse } from '@mysten/sui.js';
 import React, { memo, useCallback, useEffect, useState } from 'react';
 
 import { useAppSelector } from '_hooks';
-import { getFullTransactionDetails } from '_redux/slices/txresults';
+// import { getFullTransactionDetails } from '_redux/slices/txresults';
 import { type TxResultState } from '_redux/slices/txresults';
+import { Icon } from '_src/ui/app/shared/icons/Icon';
 import Loading from '_src/ui/app/components/loading';
-import deduplicate from '_src/ui/app/helpers/deduplicate';
-import formatCoin from '_src/ui/app/helpers/formatCoin';
-import { getTxType } from '_src/ui/app/helpers/transactions';
-import { api } from '_src/ui/app/redux/store/thunk-extras';
-import Button from '_src/ui/app/shared/button';
+import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
+// import deduplicate from '_src/ui/app/helpers/deduplicate';
+// import formatCoin from '_src/ui/app/helpers/formatCoin';
+// import { getTxType } from '_src/ui/app/helpers/transactions';
+import { useQueryTransactionsByAddress } from '_src/ui/app/hooks/useQueryTransactionsByAddress';
+// import { api } from '_src/ui/app/redux/store/thunk-extras';
+// import Button from '_src/ui/app/shared/button';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
-import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
+import Button from '_src/ui/app/shared/button';
+import { api } from '_src/ui/app/redux/store/thunk-extras';
+import { getTxType } from '_src/ui/app/helpers/transactions';
+// import { Icon } from '_src/ui/app/shared/icons/Icon';
+// import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
     const [currentPage, setCurrentPage] = useState(0);
-    const [loadingTxns, setLoadingTxns] = useState(true);
-    const [moreTxnsAvailable, setMoreTxnsAvailable] = useState(true);
-    const [suiTxns, setSuiTxns] = useState<SuiTransactionResponse[]>([]);
-    const [formattedTxns, setFormattedTxns] = useState<TxResultState[]>([]);
+    const [formattedTxns, setFormattedTxns] = useState<FormattedTransaction[]>(
+        []
+    );
     const [error, setError] = useState<string | undefined>();
-
-    const txPerPage = 5;
-
-    // fetch all transactions from the blockchain
-    useEffect(() => {
-        if (!address) {
-            return;
-        }
-        async function fetchSuiTransactions() {
-            try {
-                const transactionIds: string[] =
-                    await api.instance.fullNode.getTransactionsForAddress(
-                        address as string,
-                        true
-                    );
-
-                const newTransactions =
-                    await api.instance.fullNode.getTransactionWithEffectsBatch(
-                        deduplicate(transactionIds)
-                    );
-
-                setSuiTxns(newTransactions);
-                if (newTransactions.length === 0) {
-                    setLoadingTxns(false);
-                }
-            } catch (e) {
-                setError(`${e}`);
-            }
-        }
-        fetchSuiTransactions();
-    }, [address]);
-
-    // determine if ore transactions are available
-    useEffect(() => {
-        if (suiTxns.length > 0 && formattedTxns.length === suiTxns.length) {
-            setMoreTxnsAvailable(false);
-        }
-    }, [formattedTxns, suiTxns]);
+    const { isLoading: loadingTxns, data: suiTxns } =
+        useQueryTransactionsByAddress(address);
 
     // load a page of "formatted transactions"
     useEffect(() => {
@@ -71,21 +43,18 @@ const TransactionsPage = () => {
         }
 
         const loadFormattedTransactionsForCurrentPage = async () => {
-            const start = currentPage * txPerPage;
-            const end = start + txPerPage;
-            const transactionsToFormat = suiTxns.slice(start, end);
-            const fullTransactionDetails = await getFullTransactionDetails(
+            if (!suiTxns) return;
+
+            setFormattedTxns(suiTxns);
+            /*const fullTransactionDetails = await getFullTransactionDetails(
                 transactionsToFormat,
                 address,
                 api
             );
             const newFormattedTransactions: TxResultState[] = await Promise.all(
                 fullTransactionDetails?.map(async (tx) => {
-                    // TODO: fix type error for any
-                    const txType = getTxType(tx);
-                    if (txType === 'nft' || txType === 'func') {
-                        return tx;
-                    }
+                    //TODO: fix type error for any
+
                     const {
                         formattedBalance,
                         coinSymbol,
@@ -115,16 +84,13 @@ const TransactionsPage = () => {
                     ...(prev || []),
                     ...newFormattedTransactions,
                 ]);
-            }
+            }*/
         };
-        if (suiTxns.length > 0) {
-            loadFormattedTransactionsForCurrentPage().then(() => {
-                setLoadingTxns(false);
-            });
-        }
+
+        loadFormattedTransactionsForCurrentPage();
     }, [address, currentPage, suiTxns]);
 
-    const incrementPage = useCallback(() => {
+    /*const incrementPage = useCallback(() => {
         setCurrentPage(currentPage + 1);
     }, [currentPage]);
 
@@ -138,32 +104,34 @@ const TransactionsPage = () => {
                 />
             </div>
         );
-    }
+    }*/
 
     return (
         <React.Fragment>
             <Loading loading={loadingTxns} big={true}>
                 {formattedTxns && formattedTxns.length > 0 && (
-                    <div className={'flex flex-col h-full'}>
+                    <div className={'flex flex-col'}>
                         <TextPageTitle title="Activity" />
                         <TransactionRows transactions={formattedTxns} />
-                        {moreTxnsAvailable && (
-                            <div
-                                className={
-                                    'w-full flex flex-row items-center justify-center'
-                                }
-                            >
-                                <Button
-                                    mode={'secondary'}
-                                    className={'mb-6'}
-                                    onClick={incrementPage}
-                                >
-                                    Load More
-                                </Button>
-                            </div>
-                        )}
                     </div>
                 )}
+                {/*<div>
+                    {moreTxnsAvailable && (
+                        <div
+                            className={
+                                'w-full flex flex-row items-center justify-center'
+                            }
+                        >
+                            <Button
+                                mode={'secondary'}
+                                className={'mb-6'}
+                                onClick={incrementPage}
+                            >
+                                Load More
+                            </Button>
+                        </div>
+                    )}
+                        </div>*/}
 
                 {formattedTxns && formattedTxns.length === 0 && (
                     <EmptyPageState

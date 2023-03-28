@@ -5,14 +5,6 @@ import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import Tooltip from '../../components/Tooltip';
-import { AppState } from '../../hooks/useInitializedGuard';
-import { api } from '../../redux/store/thunk-extras';
-import Accordion from '../../shared/content/Accordion';
-import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
-import Alert from '../../shared/feedback/Alert';
-import Input from '../../shared/inputs/Input';
-import Body from '../../shared/typography/Body';
 import Loading from '_components/loading';
 import {
     useAppDispatch,
@@ -24,10 +16,18 @@ import {
     preapprovalRequestsSelectors,
     respondToPreapprovalRequest,
 } from '_redux/slices/preapproval-requests';
+import Tooltip from '_src/ui/app/components/Tooltip';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
+import { AppState } from '_src/ui/app/hooks/useInitializedGuard';
+import { api } from '_src/ui/app/redux/store/thunk-extras';
+import Accordion from '_src/ui/app/shared/content/Accordion';
+import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
+import Alert from '_src/ui/app/shared/feedback/Alert';
+import Input from '_src/ui/app/shared/inputs/Input';
+import Body from '_src/ui/app/shared/typography/Body';
 
 import type { KeyNameAndValue } from '../../shared/content/rows-and-lists/KeyValueList';
-import type { SuiObject } from '@mysten/sui.js';
+import type { SuiObjectData as SuiObject } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 
 const truncateMiddle = (s = '', length = 6) =>
@@ -144,16 +144,6 @@ export function DappPreapprovalPage() {
     const preapprovalRequest = useAppSelector(preapprovalRequestSelector);
     const preapproval = preapprovalRequest?.preapproval;
 
-    // const nfts = useAppSelector(accountNftsSelector);
-    // console.log('NFTS', nfts);
-    // const nft = useMemo(() => {
-    //     const selectedNFT = nfts.filter(
-    //         (nftItem) =>
-    //             getObjectId(nftItem.reference) === preapproval?.objectId
-    //     )[0];
-    //     return selectedNFT;
-    // }, [nfts, preapproval?.objectId]);
-
     const loading = guardLoading || preapprovalRequestsLoading;
 
     const [changes, setChanges] = useState<Record<string, string>>({});
@@ -190,12 +180,14 @@ export function DappPreapprovalPage() {
         if (!preapproval) return;
 
         const retrieveDetails = async () => {
+            const [packageObjectId, module, fun] =
+                preapproval.target.split('::');
             const provider = api.instance.fullNode;
-            const functionDetails = await provider.getNormalizedMoveFunction(
-                preapproval.packageObjectId,
-                preapproval.module,
-                preapproval.function
-            );
+            const functionDetails = await provider.getNormalizedMoveFunction({
+                package: packageObjectId,
+                module,
+                function: fun,
+            });
 
             const onchainInfo = {
                 action: '',
@@ -218,8 +210,8 @@ export function DappPreapprovalPage() {
                 }
 
                 const affectsObject =
-                    struct?.address === preapproval.packageObjectId &&
-                    struct?.module === preapproval.module;
+                    struct?.address === packageObjectId &&
+                    struct?.module === module;
 
                 if (affectsObject) {
                     onchainInfo.action = key || '';
@@ -232,10 +224,14 @@ export function DappPreapprovalPage() {
                 return;
             }
 
-            const object = await provider.getObject(preapproval.objectId);
+            const object = await provider.getObject({
+                id: preapproval.objectId,
+                options: { showContent: true },
+            });
+
             const nft = {
                 ...onchainInfo,
-                ...(object.details as SuiObject),
+                ...(object.data as SuiObject),
             };
 
             setNft(nft);
@@ -267,10 +263,13 @@ export function DappPreapprovalPage() {
     );
 
     const Details = () => {
+        const [packageObjectId, module, fun] = (
+            preapproval?.target || ''
+        ).split('::');
         const keyValueListItems: KeyNameAndValue[] = [
             {
-                keyName: 'Module',
-                value: preapproval?.module || '',
+                keyName: 'Target',
+                value: module || '',
             },
             {
                 keyName: 'Object',
@@ -278,11 +277,11 @@ export function DappPreapprovalPage() {
             },
             {
                 keyName: 'Function',
-                value: preapproval?.function || '',
+                value: fun || '',
             },
             {
                 keyName: 'Package',
-                value: truncateMiddle(preapproval?.packageObjectId || '', 6),
+                value: truncateMiddle(packageObjectId || '', 6),
             },
         ];
 

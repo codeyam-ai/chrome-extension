@@ -1,4 +1,5 @@
 import { Coin, type JsonRpcProvider } from '@mysten/sui.js';
+import BigNumber from 'bignumber.js';
 
 import { formatBalance } from './formatBalance';
 
@@ -39,8 +40,7 @@ export const getDollars = (
     if (!balance) {
         return undefined;
     }
-
-    return dollarFormatter.format(parseFloat(formatBalance(balance, 6)));
+    return dollarFormatter.format(parseFloat(formatBalance(balance, 7)));
 };
 
 const formatCoin = async (
@@ -61,7 +61,7 @@ const formatCoin = async (
             decimals,
             iconUrl,
             name,
-        } = await provider.getCoinMetadata(coinType || ''));
+        } = await provider.getCoinMetadata({ coinType: coinType || '' }));
     } catch (error) {
         // eslint-disable-next-line no-console
         console.log('error getting coin metadata :>> ', error);

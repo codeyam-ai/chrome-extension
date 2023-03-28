@@ -6,6 +6,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import useAppSelector from './useAppSelector';
 import { AUTHENTICATION_REQUESTED } from '../pages/initialize/hosted';
+import { AccountType } from '_redux/slices/account';
 import { openInNewTab } from '_src/shared/utils';
 
 export enum AppState {
@@ -26,6 +27,8 @@ export default function useInitializedGuard(
     const params = useParams();
 
     let currentState = AppState.UNINITIALIZED;
+
+    const accountType = useAppSelector((state) => state.account.accountType);
     const loading = useAppSelector((state) => state.account.loading);
     if (loading) currentState = AppState.LOADING;
 
@@ -33,8 +36,6 @@ export default function useInitializedGuard(
     const mnemonicReady = useAppSelector((state) => !!state.account.mnemonic);
     if (passwordReady && mnemonicReady) {
         currentState = AppState.MNEMONIC;
-
-        // if (passwordReady) currentState = AppState.MNEMONIC;
     }
 
     const { authentication, accountInfos } = useAppSelector(
@@ -46,7 +47,7 @@ export default function useInitializedGuard(
     }
 
     const locked = useAppSelector(({ account: { locked } }) => locked);
-    if (locked) {
+    if (locked || (!passwordReady && accountType === AccountType.PASSWORD)) {
         currentState = AppState.LOCKED;
     }
 
@@ -103,7 +104,8 @@ export default function useInitializedGuard(
             if (
                 params?.requestID ||
                 params?.txID ||
-                params?.signMessageRequestID
+                params?.signMessageRequestID ||
+                params?.preapprovalRequestID
             ) {
                 destination = destination + pathname;
             }

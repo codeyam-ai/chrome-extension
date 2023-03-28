@@ -8,8 +8,8 @@ import { useCallback, useMemo, type ReactNode, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
 import ExploreButton from './ExploreButton';
-import { growthbook } from '_src/ui/app/experimentation/feature-gating';
-import { FEATURES } from '_src/ui/app/experimentation/features';
+import featureGating from '_src/background/FeatureGating';
+import { FEATURES } from '_src/shared/experimentation/features';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
@@ -66,28 +66,29 @@ const TabBar = () => {
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
 
     useEffect(() => {
-        if (!growthbook.isOn(FEATURES.USE_TICKETS)) return;
-
         const checkTickets = async () => {
+            const growthBook = await featureGating.getGrowthBook();
+
+            if (!growthBook.isOn(FEATURES.USE_TICKETS)) return;
+
             const ticketIndex = navItems.findIndex(
                 (navItem) => navItem.title === 'Tickets'
             );
             if (ticketIndex === -1) {
                 try {
-                    const ticketProjectIds = await growthbook.getFeatureValue(
-                        'ticket-projects',
-                        []
-                    );
+                    const ticketProjectIds: string[] =
+                        await growthBook.getFeatureValue('ticket-projects', []);
 
                     const ticketProjectObjects =
-                        await api.instance.fullNode.getObjectBatch(
-                            ticketProjectIds
-                        );
-                    const existingTicketProjectObjects =
-                        ticketProjectObjects.filter(
-                            (ticketProjectObject) =>
-                                ticketProjectObject.status === 'Exists'
-                        );
+                        await api.instance.fullNode.multiGetObjects({
+                            ids: ticketProjectIds,
+                            options: {
+                                showContent: true,
+                                showType: true,
+                                showDisplay: true,
+                                showOwner: true,
+                            },
+                        });
 
                     const ticketIndex2 = navItems.findIndex(
                         (navItem) => navItem.title === 'Tickets'
@@ -95,7 +96,7 @@ const TabBar = () => {
 
                     if (
                         ticketIndex2 === -1 &&
-                        existingTicketProjectObjects.length > 0
+                        ticketProjectObjects.length > 0
                     ) {
                         navItems.splice(2, 0, {
                             title: 'Tickets',

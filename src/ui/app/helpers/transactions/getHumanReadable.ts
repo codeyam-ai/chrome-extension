@@ -2,37 +2,47 @@ import {
     getTxAction,
     getTxOtherAddressDisplay,
     getTxPreposition,
-    getTxSubject,
     getTxType,
-    getTxVerb,
-} from '.';
-import { type FormattedTxResultState } from '../../pages/home/transactions/FormattedTxResultState';
+} from './';
+import getCommands from './getCommands';
+import getDisplayImage from './getDisplayImage';
+import {
+    getFormattedGasFee,
+    getGasFee,
+    getSuiObj,
+    getSuiTransferAmount,
+} from './getSuiTransferAmount';
 import convertUnixTimeToLocalTime from '../convertUnixTimeToLocalTime';
-import ipfs from '../ipfs';
+import { getDollars } from '../formatCoin';
 import truncateMiddle from '../truncate-middle';
+import getIsSender from './getIsSender';
 
-const getHumanReadable = (tx: FormattedTxResultState) => {
+import type { FormattedTransaction } from './types';
+
+const getHumanReadable = (ownerAddr: string, tx: FormattedTransaction) => {
+    const suiObj = getSuiObj(ownerAddr, tx);
     const timeDisplay = convertUnixTimeToLocalTime(tx.timestampMs || 0);
     const txType = getTxType(tx);
-    const txAction = getTxAction(tx);
-    const verb = getTxVerb(txAction);
-    const subject = getTxSubject(
-        txType,
-        tx.objSymbol,
-        tx.formatted?.formattedBalance,
-        tx.name,
-        tx.callModuleName,
-        tx.callFunctionName
-    );
+    const txStatus = tx.effects?.status.status;
+    const isSender = getIsSender(ownerAddr, tx);
+    const txAction = getTxAction(isSender, tx);
+    const txAmount = getSuiTransferAmount(ownerAddr, tx);
+    const totalGasCost = getGasFee(tx);
+    const gasFeeInSui = getFormattedGasFee(totalGasCost);
+    const gasFeeInUsd = getDollars(totalGasCost);
+    const txCommands = getCommands(tx);
+    const displayImage = getDisplayImage(tx);
+    const txUsdAmount = getDollars(suiObj?.amount)
+        ? getDollars(suiObj?.amount)
+        : '$0.00';
+
     const preposition = getTxPreposition(txType, txAction);
     const otherAddress = getTxOtherAddressDisplay(
         txType,
         txAction,
-        tx.from,
+        tx.from || '',
         tx.to
     );
-
-    const nftImageUri = tx.url ? ipfs(tx.url) : undefined;
 
     const otherAddressStr = truncateMiddle(otherAddress || '', 4);
 
@@ -40,12 +50,16 @@ const getHumanReadable = (tx: FormattedTxResultState) => {
         timeDisplay,
         txType,
         txAction,
-        verb,
-        subject,
+        txAmount,
+        txStatus,
+        txUsdAmount,
+        gasFeeInSui,
+        gasFeeInUsd,
+        txCommands,
         preposition,
         otherAddress,
-        nftImageUri,
         otherAddressStr,
+        displayImage,
     };
 };
 

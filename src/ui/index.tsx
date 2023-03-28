@@ -9,8 +9,8 @@ import { Provider } from 'react-redux';
 import { HashRouter } from 'react-router-dom';
 
 import App from './app';
-import { growthbook, loadFeatures } from './app/experimentation/feature-gating';
 import { queryClient } from './app/helpers/queryClient';
+import { growthbook } from '_app/experimentation/feature-gating';
 import { initAppType, initNetworkFromStorage } from '_redux/slices/app';
 import { getFromLocationSearch } from '_redux/slices/app/AppType';
 import { DependenciesContext } from '_shared/utils/dependenciesContext';
@@ -28,7 +28,6 @@ async function init() {
     if (process.env.NODE_ENV === 'development') {
         Object.defineProperty(window, 'store', { value: store });
     }
-    await loadFeatures();
     store.dispatch(initAppType(getFromLocationSearch(window.location.search)));
     await store.dispatch(initNetworkFromStorage()).unwrap();
     await thunkExtras.background.init(store.dispatch);

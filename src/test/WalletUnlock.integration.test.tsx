@@ -5,7 +5,7 @@ import {
     password as correctPassword,
     simulateMnemonicUser,
     simulateLogout,
-} from '_src/test/utils/fake-local-storage';
+} from '_src/test/utils/storage';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 

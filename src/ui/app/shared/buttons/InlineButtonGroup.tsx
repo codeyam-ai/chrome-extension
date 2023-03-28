@@ -7,11 +7,13 @@ type InlineButtonGroupProps = {
     onClickButtonPrimary?: MouseEventHandler<HTMLButtonElement>;
     buttonPrimaryTo?: string;
     buttonPrimaryType?: 'button' | 'submit' | 'reset' | undefined;
+    buttonPrimaryTestId?: string;
     buttonPrimaryChildren?: React.ReactNode;
     isButtonPrimaryDisabled?: boolean;
     onClickButtonSecondary?: MouseEventHandler<HTMLButtonElement>;
     buttonSecondaryTo?: string;
     buttonSecondaryType?: 'button' | 'submit' | 'reset' | undefined;
+    buttonSecondaryTestId?: string;
     buttonSecondaryChildren?: React.ReactNode;
     isButtonSecondaryDisabled?: boolean;
     isDanger?: boolean;
@@ -22,11 +24,13 @@ const InlineButtonGroup = ({
     onClickButtonPrimary,
     buttonPrimaryTo,
     buttonPrimaryType,
+    buttonPrimaryTestId,
     buttonPrimaryChildren,
     isButtonPrimaryDisabled,
     onClickButtonSecondary,
     buttonSecondaryTo,
     buttonSecondaryType,
+    buttonSecondaryTestId,
     buttonSecondaryChildren,
     isButtonSecondaryDisabled,
     isDanger,
@@ -41,6 +45,7 @@ const InlineButtonGroup = ({
                 isInline={true}
                 disabled={isButtonSecondaryDisabled}
                 isDanger={isDanger}
+                data-testid={buttonSecondaryTestId}
             >
                 {buttonSecondaryChildren}
             </Button>
@@ -52,6 +57,7 @@ const InlineButtonGroup = ({
                 isInline={true}
                 disabled={isButtonPrimaryDisabled}
                 isDanger={isDanger}
+                data-testid={buttonPrimaryTestId}
             >
                 {buttonPrimaryChildren}
             </Button>

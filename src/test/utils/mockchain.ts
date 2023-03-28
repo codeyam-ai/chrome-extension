@@ -5,7 +5,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { renderTemplate } from './json-templates';
 import { suiSystemStateObject } from '_src/test/utils/mockchain-templates/sui-system-state';
 
-import type { SuiObjectInfo } from '@mysten/sui.js';
+import type { SuiObjectData, SuiObjectInfo } from '@mysten/sui.js';
 
 interface ExpectedCall {
     method: string;
@@ -71,14 +71,18 @@ export class Mockchain {
             id: null,
         };
         this.mockBlockchainCall(
-            { method: 'sui_getCoinMetadata' },
+            { method: 'suix_getCoinMetadata' },
             coinMetadataResponse,
             true
         );
     }
 
     mockSuiObjects(
-        options: { suiBalance?: number; nftDetails?: { name: string } } = {}
+        options: {
+            suiBalance?: number;
+            nftDetails?: { name: string };
+            logObjects?: boolean;
+        } = {}
     ) {
         const fullObjects = [];
         const objectInfos = [];
@@ -88,16 +92,19 @@ export class Mockchain {
                 balance: options.suiBalance,
                 id: objId,
             });
-            const coinObjectInfo: SuiObjectInfo = {
-                objectId: objId,
-                version: 0,
-                digest: '12Pe8JN96upsApMseeghANkkNMKUWA6Bz4JD5NTWko2q',
-                type: '0x2::coin::Coin<0x2::sui::SUI>',
-                owner: {
-                    AddressOwner: '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+            const coinObjectInfo = {
+                data: {
+                    objectId: objId,
+                    version: 0,
+                    digest: '12Pe8JN96upsApMseeghANkkNMKUWA6Bz4JD5NTWko2q',
+                    type: '0x2::coin::Coin<0x2::sui::SUI>',
+                    owner: {
+                        AddressOwner:
+                            '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+                    },
+                    previousTransaction:
+                        '2joDzF1sDVAVv9ej7j8197ZwiZ1hX73kSFW48c1nNxv3',
                 },
-                previousTransaction:
-                    '2joDzF1sDVAVv9ej7j8197ZwiZ1hX73kSFW48c1nNxv3',
             };
             objectInfos.push(coinObjectInfo);
             fullObjects.push(coinObject);
@@ -107,25 +114,28 @@ export class Mockchain {
                 name: options.nftDetails.name,
             });
 
-            const objId = '0xc157dc52d54697f53329520499500de0ec6fcf70';
-            const nftObjectInfo: SuiObjectInfo = {
-                objectId: objId,
-                version: 11,
-                digest: 'QfLsnpIr0FkDxZ8nRjtZFQHB8WyyMqSb5XrNjRPbhJ4=',
-                type: '0x2::devnet_nft::DevNetNFT',
-                owner: {
-                    AddressOwner: '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+            const nftObjectInfo = {
+                data: {
+                    objectId:
+                        '0x3c36fe1eca57222e087352959ab0edf83251fe0a5aa8a0ec87c4e3fa1714f367',
+                    version: 10,
+                    digest: '3LrFiM2niq5to7XJ466L7b9oVkQtXqTvNhfiLWCNCTTN',
                 },
-                previousTransaction:
-                    '9eYRTpu476zfPVbXbkCDUKbdpp6yYKnEQXworrzKDdrM',
             };
             objectInfos.push(nftObjectInfo);
             fullObjects.push(renderedNftResult);
         }
 
         this.mockBlockchainCall(
-            { method: 'sui_getObjectsOwnedByAddress' },
-            objectInfos,
+            { method: 'suix_getOwnedObjects' },
+            {
+                data: objectInfos,
+                nextCursor: {
+                    objectId:
+                        '0xe986888d31f35cf985a28155f4b4dea19fd324838107084107d42f0541be12c9',
+                },
+                hasNextPage: false,
+            },
             true
         );
 
@@ -133,13 +143,24 @@ export class Mockchain {
         fullObjects.forEach((fullObject) => {
             this.mockBlockchainCall(
                 {
-                    method: 'sui_getObject',
-                    params: [fullObject.details.reference.objectId],
+                    method: 'suix_getObject',
+                    params: [fullObject.data.objectId],
                 },
                 fullObject,
                 true
             );
         });
+
+        this.mockBlockchainCall(
+            { method: 'sui_multiGetObjects' },
+            fullObjects,
+            true
+        );
+
+        if (options.logObjects) {
+            console.log('fullObjects: ', JSON.stringify(fullObjects, null, 2));
+            console.log('objectInfos: ', JSON.stringify(objectInfos, null, 2));
+        }
     }
 
     matchIncomingRequest(uri: string, requestBody: nock.Body) {
@@ -203,8 +224,20 @@ export class Mockchain {
             }
         } else {
             const bodyAsRecord = requestBody as Record<string, unknown>;
+            // eslint-disable-next-line no-console
+            console.log(
+                `Found no match for method ${
+                    bodyAsRecord.method
+                } with params ${JSON.stringify(
+                    bodyAsRecord.params,
+                    null,
+                    2
+                )} - Coming from ${new Error().stack}`
+            );
             throw new Error(
-                `Found no match for method ${bodyAsRecord.method} with params ${bodyAsRecord.params}!`
+                `Found no match for method ${
+                    bodyAsRecord.method
+                } with params ${JSON.stringify(bodyAsRecord.params, null, 2)}`
             );
         }
     }

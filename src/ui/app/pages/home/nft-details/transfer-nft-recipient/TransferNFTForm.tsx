@@ -8,15 +8,15 @@ import { Content } from '_app/shared/bottom-menu-layout';
 import AddressInput from '_components/address-input';
 import NFTDisplayCard from '_components/nft-display';
 import { DEFAULT_NFT_TRANSFER_GAS_FEE } from '_redux/slices/sui-objects/Coin';
-import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
-import { getTransactionsByAddress } from '_src/ui/app/redux/slices/txresults';
+import { useAppSelector } from '_src/ui/app/hooks';
+// import { getTransactionsByAddress } from '_src/ui/app/redux/slices/txresults';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
 
 import type { FormValues } from '.';
-import type { SuiObject } from '@mysten/sui.js';
-import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
+import type { SuiObjectData } from '@mysten/sui.js';
+// import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
 import st from './TransferNFTForm.module.scss';
 import 'react-toastify/dist/ReactToastify.css';
@@ -24,7 +24,7 @@ import 'react-toastify/dist/ReactToastify.css';
 export type TransferNFTFormProps = {
     submitError: string | null;
     gasBalance: string;
-    nftobj: SuiObject;
+    nftobj: SuiObjectData;
     onClearSubmitError: () => void;
 };
 
@@ -40,22 +40,22 @@ function TransferNFTForm({
         ({ account: { activeAccountIndex } }) => activeAccountIndex
     );
 
-    const txByAddress: TxResultState[] = useAppSelector(({ txresults }) =>
-        txresults.latestTx.filter((tx) => tx.isSender)
-    );
+    // const txByAddress: TxResultState[] = useAppSelector(({ txresults }) =>
+    //     txresults.latestTx.filter((tx) => tx.isSender)
+    // );
 
     const recentTxs: string[] = [];
-    txByAddress.forEach((tx) => {
-        if (tx.to) {
-            return recentTxs.push(tx.to);
-        }
-    });
+    // txByAddress.forEach((tx) => {
+    //     if (tx.to) {
+    //         return recentTxs.push(tx.to);
+    //     }
+    // });
 
-    const dispatch = useAppDispatch();
+    // const dispatch = useAppDispatch();
 
-    useEffect(() => {
-        dispatch(getTransactionsByAddress()).unwrap();
-    }, [dispatch]);
+    // useEffect(() => {
+    //     dispatch(getTransactionsByAddress()).unwrap();
+    // }, [dispatch]);
     const {
         isSubmitting,
         isValid,

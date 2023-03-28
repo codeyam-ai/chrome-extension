@@ -1,25 +1,25 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import cl from 'classnames';
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
 
 import ipfs from '../../helpers/ipfs';
-import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import Divider from '../../shared/Divider';
 import Icon, { SuiIcons } from '_components/icon';
 import { formatDate } from '_helpers';
 import { useFormatCoin, useMiddleEllipsis } from '_hooks';
 
-import type { TxResultState } from '_redux/slices/txresults';
+// import type { TxResultState } from '_redux/slices/txresults';
 
 import st from './TransactionsCard.module.scss';
 
 const TRUNCATE_MAX_LENGTH = 8;
 const TRUNCATE_PREFIX_LENGTH = 4;
 
-function TransactionCard({ txn }: { txn: TxResultState }) {
+function TransactionCard({ txn }: { txn: any }) {
     const toAddrStr = useMiddleEllipsis(
         txn.to || '',
         TRUNCATE_MAX_LENGTH,
@@ -51,7 +51,7 @@ function TransactionCard({ txn }: { txn: TxResultState }) {
 
     const [formattedAmount] = useFormatCoin(
         txn.amount,
-        txn.coinType || GAS_TYPE_ARG
+        txn.coinType || SUI_TYPE_ARG
     );
 
     return (

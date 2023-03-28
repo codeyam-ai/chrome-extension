@@ -1,9 +1,9 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-// import { getTransactionDigest } from '@mysten/sui.js';
+// import { getTransactionDigest, Transaction, SUI_TYPE_ARG } from '@mysten/sui.js';
 
-import { Coin as CoinAPI } from '@mysten/sui.js';
+import { SUI_TYPE_ARG, TransactionBlock } from '@mysten/sui.js';
 import BigNumber from 'bignumber.js';
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
@@ -16,11 +16,7 @@ import {
     accountAggregateBalancesSelector,
     accountCoinsSelector,
 } from '_redux/slices/account';
-import {
-    Coin,
-    DEFAULT_GAS_BUDGET_FOR_PAY,
-    GAS_TYPE_ARG,
-} from '_redux/slices/sui-objects/Coin';
+import { Coin } from '_redux/slices/sui-objects/Coin';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 import {
     useCoinDecimals,
@@ -55,11 +51,11 @@ function TransferCoinAmountPage() {
     );
     const [formattedBalance] = useFormatCoin(
         coinBalance,
-        coinType || GAS_TYPE_ARG
+        coinType || SUI_TYPE_ARG
     );
 
     const gasAggregateBalance = useMemo(
-        () => aggregateBalances[GAS_TYPE_ARG] || BigInt(0),
+        () => aggregateBalances[SUI_TYPE_ARG] || BigInt(0),
         [aggregateBalances]
     );
 
@@ -71,7 +67,7 @@ function TransferCoinAmountPage() {
     const [sendError, setSendError] = useState<string | null>(null);
 
     const [coinDecimals] = useCoinDecimals(coinType);
-    const [gasDecimals] = useCoinDecimals(GAS_TYPE_ARG);
+    const [gasDecimals] = useCoinDecimals(SUI_TYPE_ARG);
     const allCoins = useAppSelector(accountCoinsSelector);
 
     const allCoinsOfSelectedTypeArg = useMemo(
@@ -137,20 +133,60 @@ function TransferCoinAmountPage() {
                 activeAccountIndex
             );
 
-            const coins: SuiMoveObject[] = accountCoinsSelector(state);
-            const tx = await CoinAPI.newPayTransaction(
-                coins,
-                coinType,
-                bigIntAmount,
-                formState.to,
-                DEFAULT_GAS_BUDGET_FOR_PAY
+            const allCoins: SuiMoveObject[] = accountCoinsSelector(state);
+            const [primaryCoin, ...coins] = allCoins.filter(
+                (coin) => coin.type === `0x2::coin::Coin<${coinType}>`
             );
 
-            const signedTx = await signer.dryRunTransaction(tx);
+            const transactionBlock = new TransactionBlock();
+            if (coinType === SUI_TYPE_ARG) {
+                const coin = transactionBlock.add(
+                    TransactionBlock.Transactions.SplitCoins(
+                        transactionBlock.gas,
+                        [transactionBlock.pure(bigIntAmount)]
+                    )
+                );
+                transactionBlock.add(
+                    TransactionBlock.Transactions.TransferObjects(
+                        [coin],
+                        transactionBlock.pure(formState.to)
+                    )
+                );
+            } else {
+                const primaryCoinInput = transactionBlock.object(
+                    Coin.getID(primaryCoin)
+                );
+                transactionBlock.add(
+                    TransactionBlock.Transactions.MergeCoins(
+                        primaryCoinInput,
+                        coins.map((coin) =>
+                            transactionBlock.object(Coin.getID(coin))
+                        )
+                    )
+                );
+                const coin = transactionBlock.add(
+                    TransactionBlock.Transactions.SplitCoins(primaryCoinInput, [
+                        transactionBlock.pure(bigIntAmount),
+                    ])
+                );
+                transactionBlock.add(
+                    TransactionBlock.Transactions.TransferObjects(
+                        [coin],
+                        transactionBlock.pure(formState.to)
+                    )
+                );
+            }
+
+            const signedTx = await signer.devInspectTransactionBlock({
+                transactionBlock,
+            });
+
+            const { computationCost, storageCost, storageRebate } =
+                signedTx.effects.gasUsed;
 
             const gasFee =
-                signedTx.gasUsed.computationCost +
-                (signedTx.gasUsed.storageCost - signedTx.gasUsed.storageRebate);
+                Number(computationCost) +
+                (Number(storageCost) - Number(storageRebate));
 
             dispatch(
                 setSuiAmount({

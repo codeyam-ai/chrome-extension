@@ -1,6 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { SUI_TYPE_ARG, TransactionBlock } from '@mysten/sui.js';
 import { Formik } from 'formik';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -13,10 +14,7 @@ import {
     accountAggregateBalancesSelector,
     accountNftsSelector,
 } from '_redux/slices/account';
-import {
-    DEFAULT_NFT_TRANSFER_GAS_FEE,
-    GAS_TYPE_ARG,
-} from '_redux/slices/sui-objects/Coin';
+import { DEFAULT_NFT_TRANSFER_GAS_FEE } from '_redux/slices/sui-objects/Coin';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 import { setNftDetails } from '_src/ui/app/redux/slices/forms';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
@@ -47,7 +45,7 @@ function TransferNFTRecipient() {
     const selectedNFTObj = useMemo(
         () =>
             nftCollections.filter(
-                (nftItems) => nftItems.reference.objectId === objectId
+                (nftItems) => nftItems.objectId === objectId
             )[0],
         [nftCollections, objectId]
     );
@@ -55,7 +53,7 @@ function TransferNFTRecipient() {
     const aggregateBalances = useAppSelector(accountAggregateBalancesSelector);
 
     const gasAggregateBalance = useMemo(
-        () => aggregateBalances[GAS_TYPE_ARG] || BigInt(0),
+        () => aggregateBalances[SUI_TYPE_ARG] || BigInt(0),
         [aggregateBalances]
     );
 
@@ -84,18 +82,22 @@ function TransferNFTRecipient() {
                 activeAccountIndex
             );
 
-            const signedTx = await signer.dryRunTransaction({
-                kind: 'transferObject',
-                data: {
-                    objectId: objectId,
-                    recipient: to,
-                    gasBudget: DEFAULT_NFT_TRANSFER_GAS_FEE,
-                },
+            const transactionBlock = new TransactionBlock();
+            transactionBlock.add(
+                TransactionBlock.Transactions.TransferObjects(
+                    [transactionBlock.object(objectId)],
+                    transactionBlock.pure(to)
+                )
+            );
+
+            const signedTx = await signer.dryRunTransactionBlock({
+                transactionBlock: transactionBlock,
             });
 
             const gasFee =
-                signedTx.gasUsed.computationCost +
-                (signedTx.gasUsed.storageCost - signedTx.gasUsed.storageRebate);
+                Number(signedTx.effects.gasUsed.computationCost) +
+                (Number(signedTx.effects.gasUsed.storageCost) -
+                    Number(signedTx.effects.gasUsed.storageRebate));
 
             setSendError(null);
 

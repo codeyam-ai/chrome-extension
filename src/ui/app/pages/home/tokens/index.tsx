@@ -1,13 +1,14 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
+
 import CoinList from './CoinList';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
-import { useAppSelector, useExplorerPermission } from '_hooks';
+import { useAppSelector, useExplorerPermission, useFormatCoin } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
-import { getDollars } from '_src/ui/app/helpers/formatCoin';
 import { sumCoinBalances } from '_src/ui/app/helpers/sumCoinBalances';
 import SendReceiveButtonGroup from '_src/ui/app/shared/buttons/SendReceiveButtonGroup';
 import Body from '_src/ui/app/shared/typography/Body';
@@ -21,15 +22,7 @@ function TokensPage() {
     const setExplorerPermission = useExplorerPermission();
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const mistBalance = sumCoinBalances(balances) || 0;
-
-    const sumCoinTotal = Object.keys(balances).reduce((acc, key) => {
-        const coinAmt = balances[key];
-        const dollars = getDollars(coinAmt);
-
-        if (!dollars) return acc;
-
-        return acc + parseFloat(dollars?.replace(/[$,]/g, '') as string);
-    }, 0);
+    const [, , usdAmount] = useFormatCoin(mistBalance, SUI_TYPE_ARG);
 
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex } }) =>
@@ -43,7 +36,7 @@ function TokensPage() {
         <>
             <WalletBalanceAndIconHomeView
                 accountInfo={accountInfo}
-                dollarValue={`$${sumCoinTotal}`}
+                dollarValue={usdAmount}
             />
 
             <SendReceiveButtonGroup mistBalance={mistBalance} />

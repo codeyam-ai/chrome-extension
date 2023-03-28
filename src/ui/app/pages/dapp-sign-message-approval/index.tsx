@@ -1,17 +1,16 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { fromB64 } from '@mysten/bcs';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { AppState } from '../../hooks/useInitializedGuard';
+import { respondToTransactionRequest } from '../../redux/slices/transaction-requests';
 import Loading from '_components/loading';
 import UserApproveContainer from '_components/user-approve-container';
 import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
-import {
-    respondToSignMessageRequest,
-    signMessageRequestsSelectors,
-} from '_redux/slices/sign-message-requests';
+import { signMessageRequestsSelectors } from '_redux/slices/sign-message-requests';
 
 import type { RootState } from '_redux/RootReducer';
 
@@ -22,7 +21,7 @@ export function DappSignMessageApprovalPage() {
         AppState.HOSTED,
     ]);
     const signMessageRequestLoading = useAppSelector(
-        ({ signMessageRequests }) => !signMessageRequests.initialized
+        ({ transactionRequests }) => !transactionRequests.initialized
     );
     const signMessageRequestSelector = useMemo(
         () => (state: RootState) =>
@@ -38,16 +37,23 @@ export function DappSignMessageApprovalPage() {
     const loading = guardLoading || signMessageRequestLoading;
     const dispatch = useAppDispatch();
 
+    const message = useMemo(() => {
+        if (signMessageRequest?.tx?.type !== 'sign-message') return null;
+        return new TextDecoder().decode(fromB64(signMessageRequest.tx.message));
+    }, [signMessageRequest]);
+
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
-            if (signMessageRequest) {
+            if (signMessageRequest?.tx?.type === 'sign-message') {
                 await dispatch(
-                    respondToSignMessageRequest({
+                    respondToTransactionRequest({
+                        txRequestID: signMessageRequest.id,
                         approved,
-                        id: signMessageRequest.id,
+                        addressForTransaction:
+                            signMessageRequest.tx.accountAddress,
                     })
                 );
-                // window.close();
+                window.close();
             }
         },
         [dispatch, signMessageRequest]
@@ -88,18 +94,16 @@ export function DappSignMessageApprovalPage() {
                                 <div>has requested you sign a message</div>
                             </div>
                         </div>
-                        <div className="flex flex-col gap-1 px-6 w-full">
-                            <div className="text-sm px-1">Message To Sign</div>
-                            <div className="bg-gray-200 text-slate-800 rounded-lg p-3">
-                                <div>
-                                    {signMessageRequest.messageString ||
-                                        signMessageRequest.messageData}
-                                    {!signMessageRequest.messageString && (
-                                        <small>{' (base64)'}</small>
-                                    )}
+                        {message && (
+                            <div className="flex flex-col gap-1 px-6 w-full">
+                                <div className="text-sm px-1">
+                                    Message To Sign
+                                </div>
+                                <div className="bg-gray-200 text-slate-800 rounded-lg p-3">
+                                    <div>{message}</div>
                                 </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </UserApproveContainer>
             )}

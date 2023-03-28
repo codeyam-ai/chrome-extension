@@ -13,14 +13,16 @@ import TicketList from '_src/ui/app/shared/content/rows-and-lists/TicketList';
 import TicketProjectList from '_src/ui/app/shared/content/rows-and-lists/TicketProjectList';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 
-import type { SuiObject } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js';
 
 function TicketsPage() {
     const navigate = useNavigate();
     const params = useParams();
     const address = useAppSelector(({ account }) => account.address);
     const tickets = useAppSelector(accountTicketsSelector);
-    const [validTickets, setValidTickets] = useState<SuiObject[] | undefined>();
+    const [validTickets, setValidTickets] = useState<
+        SuiObjectData[] | undefined
+    >();
     const myTickets = useMemo(() => params['*'] === 'my_tickets', [params]);
 
     useEffect(() => {
@@ -28,14 +30,18 @@ function TicketsPage() {
 
         const checkTickets = async () => {
             const provider = api.instance.fullNode;
-            const validTickets: SuiObject[] = [];
+            const validTickets: SuiObjectData[] = [];
             for (const ticket of tickets) {
-                if ('type' in ticket.data) {
+                if (
+                    ticket.content &&
+                    'type' in ticket &&
+                    'fields' in ticket.content
+                ) {
                     const isValid = await isValidTicket(
                         provider,
-                        ticket.data,
+                        ticket.content,
                         address || '',
-                        ticket.data.fields.ticket_agent_id
+                        ticket.content?.fields.ticket_agent_id
                     );
 
                     if (isValid) {

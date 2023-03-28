@@ -1,18 +1,13 @@
-import {
-    Ed25519PublicKey,
-    SignerWithProvider,
-    toB64,
-    fromB64,
-} from '@mysten/sui.js';
+import { toB64 } from '@mysten/bcs';
+import { SignerWithProvider } from '@mysten/sui.js';
 
 import { deleteEncrypted } from '../storagex/store';
 import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
 
 import type {
-    SignaturePubkeyPair,
+    SerializedSignature,
     SuiAddress,
-    Provider,
-    TxnDataSerializer,
+    JsonRpcProvider,
 } from '@mysten/sui.js';
 
 export class EthosSigner extends SignerWithProvider {
@@ -22,10 +17,9 @@ export class EthosSigner extends SignerWithProvider {
     constructor(
         address: SuiAddress,
         accessToken: string,
-        provider?: Provider,
-        serializer?: TxnDataSerializer
+        provider: JsonRpcProvider
     ) {
-        super(provider, serializer);
+        super(provider);
         this.address = address;
         this.accessToken = accessToken;
     }
@@ -34,36 +28,29 @@ export class EthosSigner extends SignerWithProvider {
         return this.address;
     }
 
-    async signData(data: Uint8Array): Promise<SignaturePubkeyPair> {
+    async signData(data: Uint8Array): Promise<SerializedSignature> {
         const { json, status } = await simpleApiCall(
-            'transaction/sign',
+            'transactions/sign',
             'POST',
             this.accessToken || '',
             {
                 network: 'sui',
                 walletAddress: this.address,
-                txOrMessage: {
-                    id: 0,
-                    transaction: toB64(data),
-                },
+                dataToSign: toB64(data),
             }
         );
 
         if (status !== 200) {
-            await deleteEncrypted('authentication');
+            await deleteEncrypted({ key: 'authentication', session: true });
             throw new Error(`Signing error: ${status}`);
         }
 
-        const { signedTransaction } = json;
+        const { signature } = json;
 
-        return {
-            signatureScheme: 'ED25519',
-            signature: fromB64(signedTransaction.signature),
-            pubKey: new Ed25519PublicKey(fromB64(signedTransaction.pubKey)),
-        };
+        return signature;
     }
 
-    connect(provider: Provider): SignerWithProvider {
+    connect(provider: JsonRpcProvider): SignerWithProvider {
         return new EthosSigner(this.address, this.accessToken, provider);
     }
 }

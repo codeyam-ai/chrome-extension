@@ -1,10 +1,11 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+// import { fromB64 } from '@mysten/bcs';
 import {
-    fromB64,
-    getCertifiedTransaction,
-    getTransactionEffects,
+    // getTransactionEffects,
+    SUI_TYPE_ARG,
+    TransactionBlock,
 } from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -14,22 +15,21 @@ import FormattedCoin from './FormattedCoin';
 import SectionElement from './SectionElement';
 import TabElement from './TabElement';
 import IncorrectSigner from './errors/IncorrectSigner';
-import MissingObject from './errors/MissingObject';
-import NotEnoughGas from './errors/NotEnoughGas';
+// import MissingObject from './errors/MissingObject';
+// import NotEnoughGas from './errors/NotEnoughGas';
 import {
-    isErrorCausedByIncorrectSigner,
-    isErrorCausedByMissingObject,
-    isErrorCausedByUserNotHavingEnoughSuiToPayForGas,
+    // isErrorCausedByIncorrectSigner,
+    // isErrorCausedByMissingObject,
+    // isErrorCausedByUserNotHavingEnoughSuiToPayForGas,
     isErrorObjectVersionUnavailable,
-    useCategorizedEffects,
+    useCategorizedEvents,
     useCustomSummary,
-    useNormalizedFunction,
+    // useNormalizedFunction,
 } from './lib';
-import { getGasDataFromError } from './lib/extractGasData';
+// import { getGasDataFromError } from './lib/extractGasData';
 import * as summaries from './summaries';
 import truncateMiddle from '../../helpers/truncate-middle';
 import { AppState } from '../../hooks/useInitializedGuard';
-import { GAS_TYPE_ARG } from '../../redux/slices/sui-objects/Coin';
 import Alert from '../../shared/feedback/Alert';
 import AlertWithErrorExpand from '../../shared/feedback/AlertWithErrorExpand';
 import Body from '../../shared/typography/Body';
@@ -46,13 +46,14 @@ import UserApproveContainer from '_src/ui/app/components/user-approve-container'
 import type { Detail } from './DetailElement';
 import type { Section } from './SectionElement';
 import type { SmallDetail } from './SmallValue';
-import type { SuiMoveNormalizedType, TransactionEffects } from '@mysten/sui.js';
 import type {
-    SignableTransaction,
-    SuiExecuteTransactionResponse,
-    SuiTransactionResponse,
-} from '@mysten/sui.js/src';
-import type { TransactionRequest } from '_payloads/transactions';
+    SuiMoveNormalizedType,
+    SuiTransactionBlockResponse,
+    TransactionEffects,
+    TransactionEvents,
+} from '@mysten/sui.js';
+// import type { ApprovalRequest } from '_payloads/transactions';
+import type { SuiSignAndExecuteTransactionBlockInput } from '@mysten/wallet-standard';
 import type { RootState } from '_redux/RootReducer';
 import type { ReactElement, ReactNode } from 'react';
 
@@ -101,12 +102,20 @@ export function DappTxApprovalPage() {
         [txID]
     );
     const txRequest = useAppSelector(txRequestSelector);
+    const transactionBlock = useMemo(() => {
+        if (!txRequest || !('data' in txRequest.tx)) return null;
+        return TransactionBlock.from(txRequest.tx.data);
+    }, [txRequest]);
+
     const [done, setDone] = useState<boolean>(false);
 
-    const normalizedFunction = useNormalizedFunction(txRequest);
+    // const normalizedFunction = useNormalizedFunction(txRequest);
 
     const [effects, setEffects] = useState<
         TransactionEffects | undefined | null
+    >();
+    const [events, setEvents] = useState<
+        TransactionEvents | undefined | null
     >();
     const [dryRunError, setDryRunError] = useState<string | undefined>();
     const [explicitError, setExplicitError] = useState<ReactNode | undefined>();
@@ -114,34 +123,38 @@ export function DappTxApprovalPage() {
     const loading =
         guardLoading ||
         txRequestsLoading ||
-        (effects === undefined && !dryRunError && !explicitError);
+        (events === undefined && !dryRunError && !explicitError);
 
     const summaryKey = useCustomSummary(txRequest);
 
     const gasUsed = effects?.gasUsed;
     const gas = gasUsed
-        ? gasUsed.computationCost +
-          (gasUsed.storageCost - gasUsed.storageRebate)
+        ? Number(gasUsed.computationCost) +
+          (Number(gasUsed.storageCost) - Number(gasUsed.storageRebate))
         : null;
 
     const { reading, mutating, creating, deleting, transferring, coinChanges } =
-        useCategorizedEffects({ normalizedFunction, effects, address });
+        useCategorizedEvents({
+            normalizedFunction: undefined,
+            events,
+            address,
+        });
 
     const charges = useMemo(
-        () => (coinChanges[GAS_TYPE_ARG] || 0) - (gas || 0),
+        () => (coinChanges[SUI_TYPE_ARG] || 0) - (gas || 0),
         [coinChanges, gas]
     );
     const [formattedCharges, chargesSymbol, chargeDollars] = useFormatCoin(
         charges,
-        GAS_TYPE_ARG
+        SUI_TYPE_ARG
     );
     const [formattedGas, gasSymbol, gasDollars] = useFormatCoin(
         gas,
-        GAS_TYPE_ARG
+        SUI_TYPE_ARG
     );
     const [formattedTotal, totalSymbol, totalDollars] = useFormatCoin(
-        coinChanges[GAS_TYPE_ARG],
-        GAS_TYPE_ARG
+        coinChanges[SUI_TYPE_ARG],
+        SUI_TYPE_ARG
     );
 
     useEffect(() => {
@@ -156,41 +169,33 @@ export function DappTxApprovalPage() {
         };
     }, []);
 
-    const transaction = txRequest?.tx;
     useEffect(() => {
-        if (!accountInfos || accountInfos.length === 0) return;
+        if (!transactionBlock || !accountInfos || accountInfos.length === 0)
+            return;
 
-        const getEffects = async () => {
-            try {
-                if (
-                    !transaction ||
-                    transaction.type === 'move-call' ||
-                    (typeof transaction.data === 'object' &&
-                        transaction.data.kind === 'bytes')
-                ) {
-                    setEffects(null);
-                    return;
-                }
-
-                let signer;
-                if (authentication) {
-                    signer = thunkExtras.api.getEthosSignerInstance(
-                        address || '',
-                        authentication
-                    );
-                } else {
-                    signer = thunkExtras.api.getSignerInstance(
-                        thunkExtras.keypairVault.getKeyPair(activeAccountIndex),
-                        true
-                    );
-                }
-
-                setDryRunError(undefined);
-                setExplicitError(undefined);
-
-                const transactionEffects = await signer.dryRunTransaction(
-                    transaction.data
+        const getTransactionInfo = async () => {
+            let signer;
+            if (authentication) {
+                signer = thunkExtras.api.getEthosSignerInstance(
+                    address || '',
+                    authentication
                 );
+            } else {
+                signer = thunkExtras.api.getSignerInstance(
+                    thunkExtras.keypairVault.getKeyPair(activeAccountIndex),
+                    true
+                );
+            }
+
+            setDryRunError(undefined);
+            setExplicitError(undefined);
+
+            try {
+                console.log('DRY RUN!');
+                const {
+                    effects: transactionEffects,
+                    events: transactionEvents,
+                } = await signer.dryRunTransactionBlock({ transactionBlock });
 
                 if (transactionEffects.status.status === 'failure') {
                     if (
@@ -234,134 +239,24 @@ export function DappTxApprovalPage() {
                             <IncorrectSigner correctAddress={gasAddress} />
                         );
                     } else {
+                        setEvents(transactionEvents);
                         setEffects(transactionEffects);
                     }
                 } else {
+                    setEvents(transactionEvents);
                     setEffects(transactionEffects);
                 }
-            } catch (e) {
-                const errorMessage = (e as Error).message;
-
-                if (errorMessage === 'Account mnemonic is not set') {
-                    // this is expected; it happens the first time we render because the redux state is not in good
-                    // shape yet. we basically ingore it and expect the next re-render to work.
-                    // TODO: this seems weird - it would be good to find a better way.
-                } else {
-                    if (
-                        errorMessage.includes('Error: Unknown call arg type') ||
-                        errorMessage.includes('remaining input') ||
-                        errorMessage.includes('byte deserialization failed') ||
-                        errorMessage.includes('expected an byte array') ||
-                        errorMessage.includes('serialization error') ||
-                        errorMessage.includes(
-                            'RangeError: Offset is outside the bounds of the DataView'
-                        ) ||
-                        errorMessage.includes(
-                            'Expected SuiObjectRef to be an Object, got: undefined'
-                        )
-                    ) {
-                        setEffects(null);
-                        return;
-                    }
-
-                    if (isErrorCausedByIncorrectSigner(errorMessage)) {
-                        const errorAddress = errorMessage
-                            .match(
-                                /is owned by account address (.*), but signer address is/
-                            )?.[1]
-                            .split(',')[0];
-
-                        if (errorAddress === address) {
-                            setEffects(null);
-                            return;
-                        } else {
-                            setExplicitError(
-                                <IncorrectSigner
-                                    correctAddress={errorAddress}
-                                    errorMessage={errorMessage}
-                                    txID={txID}
-                                    txRequest={txRequest}
-                                />
-                            );
-                        }
-                    } else if (isErrorCausedByMissingObject(errorMessage)) {
-                        setExplicitError(
-                            <MissingObject
-                                selectedApiEnv={selectedApiEnv}
-                                errorMessage={errorMessage}
-                                txID={txID}
-                                txRequest={txRequest}
-                            />
-                        );
-                    } else if (
-                        isErrorCausedByUserNotHavingEnoughSuiToPayForGas(
-                            errorMessage
-                        )
-                    ) {
-                        const gasData = getGasDataFromError(errorMessage);
-                        if (gasData) {
-                            setExplicitError(
-                                <NotEnoughGas
-                                    gasData={gasData}
-                                    errorMessage={errorMessage}
-                                    txID={txID}
-                                    txRequest={txRequest}
-                                />
-                            );
-                        } else {
-                            setExplicitError(
-                                <div className="flex flex-col gap-6">
-                                    <AlertWithErrorExpand
-                                        title="You don't have enough SUI"
-                                        body={
-                                            <Body>
-                                                It looks like your wallet
-                                                doesn&apos;t have enough SUI to
-                                                pay for the gas for this
-                                                transaction.
-                                            </Body>
-                                        }
-                                        fullErrorText={errorMessage}
-                                        txInfo={{
-                                            dAppUrl: txRequest?.origin || '',
-                                            txId: txID || '',
-                                            txRequest,
-                                        }}
-                                    />
-                                </div>
-                            );
-                        }
-                    } else if (isErrorObjectVersionUnavailable(errorMessage)) {
-                        setExplicitError(
-                            <div className="flex flex-col gap-6">
-                                <AlertWithErrorExpand
-                                    title="Object or Coin In Use"
-                                    body={
-                                        <Body>
-                                            One of the objects or coins in this
-                                            transaction is already in use.
-                                            Please wait a moment and try again.
-                                        </Body>
-                                    }
-                                    fullErrorText={errorMessage}
-                                    txInfo={{
-                                        dAppUrl: txRequest?.origin || '',
-                                        txId: txID || '',
-                                        txRequest,
-                                    }}
-                                />
-                            </div>
-                        );
-                    } else {
-                        setDryRunError(errorMessage);
-                    }
-                }
+            } catch (e: unknown) {
+                console.log('HI', e);
+                // setDryRunError(`${e}`);
+                setEvents(null);
+                setEffects(null);
             }
         };
 
-        getEffects();
+        getTransactionInfo();
     }, [
-        transaction,
+        transactionBlock,
         activeAccountIndex,
         address,
         authentication,
@@ -374,17 +269,34 @@ export function DappTxApprovalPage() {
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
+            const options =
+                txRequest?.tx && 'options' in txRequest.tx
+                    ? txRequest.tx.options
+                    : undefined;
+            const requestType =
+                txRequest?.tx && 'requestType' in txRequest.tx
+                    ? txRequest.tx.requestType
+                    : undefined;
             await finishTransaction(
-                txRequest,
+                transactionBlock,
                 txID,
                 approved,
                 authentication,
                 address,
-                activeAccountIndex
+                activeAccountIndex,
+                options,
+                requestType
             );
             setDone(true);
         },
-        [txRequest, activeAccountIndex, address, authentication, txID]
+        [
+            transactionBlock,
+            txID,
+            authentication,
+            address,
+            activeAccountIndex,
+            txRequest?.tx,
+        ]
     );
 
     const closeWindow = useDependencies().closeWindow;
@@ -396,11 +308,13 @@ export function DappTxApprovalPage() {
     }, [closeWindow, done]);
 
     const content: TabSections = useMemo(() => {
-        const txInfo = txRequest?.tx.data;
+        if (txRequest?.tx.type !== 'transaction') return [] as TabSections;
+
+        const transactionBlock = TransactionBlock.from(txRequest?.tx.data);
 
         const data = {
             address,
-            txInfo,
+            transactionBlock,
             reading,
             mutating,
             creating,
@@ -418,33 +332,33 @@ export function DappTxApprovalPage() {
             totalDollars,
         };
 
-        let summary;
-        switch (summaryKey) {
-            case 'redeem-ticket':
-                summary = [
-                    <summaries.RedeemTicket
-                        key="redeem-ticket-summary"
-                        {...data}
-                    />,
-                ];
-                break;
-            case 'capy-vote':
-                summary = [
-                    <summaries.CapyVote key="capy-vote-summary" {...data} />,
-                ];
-                break;
-            case 'capy-nominate':
-                summary = [
-                    <summaries.CapyNominate
-                        key="capy-nominate-summary"
-                        {...data}
-                    />,
-                ];
-                break;
-            default:
-                summary = summaries.standard(data);
-        }
-
+        // let summary;
+        // switch (summaryKey) {
+        //     case 'redeem-ticket':
+        //         summary = [
+        //             <summaries.RedeemTicket
+        //                 key="redeem-ticket-summary"
+        //                 {...data}
+        //             />,
+        //         ];
+        //         break;
+        //     case 'capy-vote':
+        //         summary = [
+        //             <summaries.CapyVote key="capy-vote-summary" {...data} />,
+        //         ];
+        //         break;
+        //     case 'capy-nominate':
+        //         summary = [
+        //             <summaries.CapyNominate
+        //                 key="capy-nominate-summary"
+        //                 {...data}
+        //             />,
+        //         ];
+        //         break;
+        //     default:
+        //         summary = summaries.standard(data);
+        // }
+        const summary = summaries.standard(data);
         const anyPermissionsRequested =
             reading.length > 0 ||
             mutating.length > 0 ||
@@ -474,32 +388,32 @@ export function DappTxApprovalPage() {
                                   <CopyAsset key={`reading-${i}`} {...r} />
                               )),
                           },
-                          {
-                              label: 'Modifying',
-                              content: `${mutating.length} Assets`,
-                              detail: mutating.map((m, i) => (
-                                  <CopyAsset key={`modifying-${i}`} {...m} />
-                              )),
-                          },
-                          {
-                              label: 'Transferring',
-                              content: `${transferring.length} Assets`,
-                              detail: transferring.map((t, i) => (
-                                  <CopyAsset key={`transferring-${i}`} {...t} />
-                              )),
-                          },
-                          {
-                              label: 'Full Access',
-                              content: `${deleting.length} Assets`,
-                              detail: deleting.map((d, i) => (
-                                  <CopyBody
-                                      key={`deleting-${i}`}
-                                      txt={d?.name || ''}
-                                  >
-                                      {truncateMiddle(d?.name)}
-                                  </CopyBody>
-                              )),
-                          },
+                          //   {
+                          //       label: 'Modifying',
+                          //       content: `${mutating.length} Assets`,
+                          //       detail: mutating.map((m, i) => (
+                          //           <CopyAsset key={`modifying-${i}`} {...m} />
+                          //       )),
+                          //   },
+                          //   {
+                          //       label: 'Transferring',
+                          //       content: `${transferring.length} Assets`,
+                          //       detail: transferring.map((t, i) => (
+                          //           <CopyAsset key={`transferring-${i}`} {...t} />
+                          //       )),
+                          //   },
+                          //   {
+                          //       label: 'Full Access',
+                          //       content: `${deleting.length} Assets`,
+                          //       detail: deleting.map((d, i) => (
+                          //           <CopyBody
+                          //               key={`deleting-${i}`}
+                          //               txt={d?.name || ''}
+                          //           >
+                          //               {truncateMiddle(d?.name)}
+                          //           </CopyBody>
+                          //       )),
+                          //   },
                           {
                               label: 'Coins',
                               content: `${
@@ -535,48 +449,48 @@ export function DappTxApprovalPage() {
                     : null,
                 details: anyAssetEffects
                     ? [
-                          {
-                              label: 'Creating',
-                              content: `${creating.length} Assets`,
-                              detail: creating.map((c, i) => (
-                                  <CopyAsset
-                                      key={`asset-creating-${i}`}
-                                      {...c}
-                                  />
-                              )),
-                          },
-                          {
-                              label: 'Modifying',
-                              content: `${mutating.length} Assets`,
-                              detail: mutating.map((m, i) => (
-                                  <CopyAsset
-                                      key={`asset-modifying-${i}`}
-                                      {...m}
-                                  />
-                              )),
-                          },
-                          {
-                              label: 'Transferring',
-                              content: `${transferring.length} Assets`,
-                              detail: transferring.map((t, i) => (
-                                  <CopyAsset
-                                      key={`asset-transferring-${i}`}
-                                      {...t}
-                                  />
-                              )),
-                          },
-                          {
-                              label: 'Deleting',
-                              content: `${deleting.length} Assets`,
-                              detail: deleting.map((d, i) => (
-                                  <CopyBody
-                                      key={`asset-deleting-${i}`}
-                                      txt={d?.name || ''}
-                                  >
-                                      {truncateMiddle(d?.name)}
-                                  </CopyBody>
-                              )),
-                          },
+                          // {
+                          //     label: 'Creating',
+                          //     content: `${creating.length} Assets`,
+                          //     detail: creating.map((c, i) => (
+                          //         <CopyAsset
+                          //             key={`asset-creating-${i}`}
+                          //             {...c}
+                          //         />
+                          //     )),
+                          // },
+                          // {
+                          //     label: 'Modifying',
+                          //     content: `${mutating.length} Assets`,
+                          //     detail: mutating.map((m, i) => (
+                          //         <CopyAsset
+                          //             key={`asset-modifying-${i}`}
+                          //             {...m}
+                          //         />
+                          //     )),
+                          // },
+                          // {
+                          //     label: 'Transferring',
+                          //     content: `${transferring.length} Assets`,
+                          //     detail: transferring.map((t, i) => (
+                          //         <CopyAsset
+                          //             key={`asset-transferring-${i}`}
+                          //             {...t}
+                          //         />
+                          //     )),
+                          // },
+                          // {
+                          //     label: 'Deleting',
+                          //     content: `${deleting.length} Assets`,
+                          //     detail: deleting.map((d, i) => (
+                          //         <CopyBody
+                          //             key={`asset-deleting-${i}`}
+                          //             txt={d?.name || ''}
+                          //         >
+                          //             {truncateMiddle(d?.name)}
+                          //         </CopyBody>
+                          //     )),
+                          // },
                           {
                               label: 'Balances',
                               content: `${
@@ -608,43 +522,37 @@ export function DappTxApprovalPage() {
 
         const details = [];
 
-        if (txInfo && typeof txInfo !== 'string' && 'kind' in txInfo) {
-            if (txInfo.kind === 'bytes') {
-                details.push({
-                    title: 'Transaction',
-                    details: [
-                        {
-                            label: 'Bytes',
-                            content: {
-                                type: 'small',
-                                content: txInfo.data.toLocaleString(),
-                            } as SmallDetail,
-                        },
-                    ],
-                } as Section);
-            } else {
-                const parsedData = JSON.parse(JSON.stringify(txInfo.data));
-                for (const attribute of [
-                    'packageObjectId',
-                    'module',
-                    'function',
-                    'arguments',
-                    'gasBudget',
-                    'gasPayment',
-                ]) {
-                    if (attribute in txInfo.data) {
-                        transactionDetails.details.push({
-                            label: attribute,
-                            content: {
-                                type: 'small',
-                                content: parsedData[attribute],
-                                coinType: ['gasBudget'].includes(attribute)
-                                    ? GAS_TYPE_ARG
-                                    : null,
-                            } as SmallDetail,
-                        });
-                    }
-                }
+        if (transactionBlock?.blockData) {
+            if (transactionBlock.blockData.gasConfig.budget) {
+                transactionDetails.details.push({
+                    label: 'Gas Budget',
+                    content: {
+                        type: 'small',
+                        content: transactionBlock.blockData.gasConfig.budget,
+                        coinType: SUI_TYPE_ARG,
+                    } as SmallDetail,
+                });
+                // } else if (transaction.transactionData.commands.)
+                // for (const attribute of [
+                //     'packageObjectId',
+                //     'module',
+                //     'function',
+                //     'arguments',
+                //     'gasBudget',
+                //     'gasPayment',
+                // ]) {
+                //     if (attribute in txInfo.data) {
+                //         transactionDetails.data.push({
+                //             label: attribute,
+                //             content: {
+                //                 type: 'small',
+                //                 content: parsedData[attribute],
+                //                 coinType: ['gasBudget'].includes(attribute)
+                //                     ? SUI_TYPE_ARG
+                //                     : null,
+                //             } as SmallDetail,
+                //         });
+                //     }
             }
         }
 
@@ -658,7 +566,7 @@ export function DappTxApprovalPage() {
                     content: {
                         type: 'small',
                         content: gasUsed?.computationCost || '---',
-                        coinType: GAS_TYPE_ARG,
+                        coinType: SUI_TYPE_ARG,
                     } as SmallDetail,
                 },
                 {
@@ -666,7 +574,7 @@ export function DappTxApprovalPage() {
                     content: {
                         type: 'small',
                         content: gasUsed?.storageCost || '---',
-                        coinType: GAS_TYPE_ARG,
+                        coinType: SUI_TYPE_ARG,
                     } as SmallDetail,
                 },
                 {
@@ -674,7 +582,7 @@ export function DappTxApprovalPage() {
                     content: {
                         type: 'small',
                         content: gasUsed?.storageRebate || '---',
-                        coinType: GAS_TYPE_ARG,
+                        coinType: SUI_TYPE_ARG,
                     } as SmallDetail,
                 },
                 {
@@ -685,7 +593,7 @@ export function DappTxApprovalPage() {
                     content: {
                         type: 'small',
                         content: gas,
-                        coinType: GAS_TYPE_ARG,
+                        coinType: SUI_TYPE_ARG,
                     } as SmallDetail,
                 },
             ],
@@ -716,7 +624,7 @@ export function DappTxApprovalPage() {
         gasUsed,
         coinChanges,
         address,
-        summaryKey,
+        // summaryKey,
     ]);
 
     const errorElement = useMemo(() => {
@@ -808,19 +716,21 @@ export function DappTxApprovalPage() {
 }
 
 async function finishTransaction(
-    txRequest: TransactionRequest | null,
+    transactionBlock: TransactionBlock | null,
     txID: string | undefined,
     approved: boolean,
     authentication: string | null,
     address: string | null,
-    activeAccountIndex: number
+    activeAccountIndex: number,
+    options?: SuiSignAndExecuteTransactionBlockInput['options'],
+    requestType?: SuiSignAndExecuteTransactionBlockInput['requestType']
 ) {
-    if (!txRequest) {
+    if (!transactionBlock) {
         // TODO: delete? doesn't seem like we got have gotten this far without txRequest
-        throw new Error(`TransactionRequest ${txID} not found`);
+        throw new Error(`Transaction ${txID} not found`);
     }
 
-    let txResult: SuiTransactionResponse | undefined = undefined;
+    let txResult: SuiTransactionBlockResponse | undefined = undefined;
     let tsResultError: string | undefined;
     if (approved) {
         let signer;
@@ -836,35 +746,12 @@ async function finishTransaction(
         }
 
         try {
-            let response: SuiExecuteTransactionResponse;
-            if (
-                txRequest.tx.type === 'v2' ||
-                txRequest.tx.type === 'move-call'
-            ) {
-                const txn: SignableTransaction =
-                    txRequest.tx.type === 'move-call'
-                        ? {
-                              kind: 'moveCall',
-                              data: txRequest.tx.data,
-                          }
-                        : txRequest.tx.data;
-
-                response = await signer.signAndExecuteTransaction(txn);
-            } else if (txRequest.tx.type === 'serialized-move-call') {
-                const txBytes = fromB64(txRequest.tx.data);
-                response = await signer.signAndExecuteTransaction(txBytes);
-            } else {
-                throw new Error(`Either tx or txBytes needs to be defined.`);
-            }
-
-            txResult = {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                certificate: getCertifiedTransaction(response)!,
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                effects: getTransactionEffects(response)!,
-                timestamp_ms: null,
-                parsed_data: null,
-            };
+            txResult = await signer.signAndExecuteTransactionBlock({
+                transactionBlock,
+                options,
+                requestType,
+            });
+            console.log('txResult', txResult);
         } catch (e) {
             tsResultError = (e as Error).message;
         }

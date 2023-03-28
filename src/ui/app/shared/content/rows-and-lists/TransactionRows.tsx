@@ -1,17 +1,30 @@
 import TransactionRow from './TransactionRow';
 
-import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
+import { useAppSelector } from '_src/ui/app/hooks';
 
-interface TransactionRowsProps {
-    transactions: TxResultState[] | undefined;
-}
+import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 
-const TransactionRows = ({ transactions }: TransactionRowsProps) => {
+// interface TransactionRowsProps {
+//     transactions: TxResultState[] | undefined;
+// }
+
+const TransactionRows = ({
+    transactions,
+}: {
+    transactions: FormattedTransaction[];
+}) => {
+    const address = useAppSelector(({ account }) => account.address);
     return (
         <div className="px-6 pb-6 divide-ethos-light-text-stroke">
             {transactions &&
-                transactions.map((txn) => {
-                    return <TransactionRow txn={txn} key={txn.txId} />;
+                transactions.map((txn: FormattedTransaction, index: number) => {
+                    return (
+                        <TransactionRow
+                            txn={txn}
+                            address={address || ''}
+                            key={`txn-${index}-${txn.digest}`}
+                        />
+                    );
                 })}
         </div>
     );
