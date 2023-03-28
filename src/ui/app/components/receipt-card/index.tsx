@@ -1,148 +1,152 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline';
+// import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline';
 import {
-    ArrowDownCircleIcon,
-    ArrowUpCircleIcon,
+    // ArrowDownCircleIcon,
+    // ArrowUpCircleIcon,
     ArrowUpRightIcon,
-    CogIcon,
-    SparklesIcon,
-    XMarkIcon,
+    // CogIcon,
+    // SparklesIcon,
+    // XMarkIcon,
 } from '@heroicons/react/24/solid';
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+// import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
-import { useCallback, useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+// import { useCallback, useEffect, useMemo } from 'react';
+// import { useSearchParams } from 'react-router-dom';
 
-import { type AccountInfo } from '../../KeypairVault';
+// import { type AccountInfo } from '../../KeypairVault';
 import { getTheme } from '../../helpers/getTheme';
-import ipfs from '../../helpers/ipfs';
-import truncateMiddle from '../../helpers/truncate-middle';
-import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
+// import ipfs from '../../helpers/ipfs';
+import { getHumanReadable } from '../../helpers/transactions';
+// import truncateMiddle from '../../helpers/truncate-middle';
+// import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
-import { Icon } from '../../shared/icons/Icon';
+// import { Icon } from '../../shared/icons/Icon';
 import { AssetCard } from '../../shared/nfts/AssetCard';
 import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Header from '../../shared/typography/Header';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
-import { formatDate } from '_helpers';
-import { useAppSelector, useFormatCoin, useMiddleEllipsis } from '_hooks';
-import CopyBody from '_src/ui/app/shared/typography/CopyBody';
-import { JsonRpcProvider } from '@mysten/sui.js';
-import { useQuery } from '@tanstack/react-query';
+// import { formatDate } from '_helpers';
+import {
+    useAppSelector,
+    // useFormatCoin,
+    // useMiddleEllipsis
+} from '_hooks';
+// import CopyBody from '_src/ui/app/shared/typography/CopyBody';
 
 // import type { TxResultState } from '_redux/slices/txresults';
 
+import type { FormattedTransaction } from '../../helpers/transactions/types';
+
 import st from './ReceiptCard.module.scss';
-import { getHumanReadable } from '../../helpers/transactions';
-import { FormattedTransaction } from '../../helpers/transactions/types';
 
 type TxResponseProps = {
     txDigest: any;
     trans?: 'nft' | 'coin' | 'func' | null;
 };
 
-const TRUNCATE_MAX_LENGTH = 8;
-const TRUNCATE_PREFIX_LENGTH = 4;
+// const TRUNCATE_MAX_LENGTH = 8;
+// const TRUNCATE_PREFIX_LENGTH = 4;
 
 // Truncate text after one line (~ 35 characters)
-const TRUNCATE_MAX_CHAR = 40;
+// const TRUNCATE_MAX_CHAR = 40;
 
-const AvatarItem = ({
-    bgColor,
-    header,
-    subheader,
-    emoji,
-}: {
-    bgColor?: string;
-    header?: string;
-    subheader?: string;
-    emoji?: string;
-}) => (
-    <div
-        className={
-            'p-[10px] flex flex-row space-around items-center align-center gap-4'
-        }
-    >
-        <WalletColorAndEmojiCircle
-            emojiSizeInPx={20}
-            circleSizeClasses={'w-[40px] h-[40px] auto'}
-            color={bgColor || '#7E23CA'}
-            emoji={emoji}
-        />
-        <div className={'flex flex-col items-left'}>
-            {(header || '').length > 15 ? (
-                <CopyBody
-                    txt={header || ''}
-                    large
-                    isSemibold
-                    className={'text-left'}
-                >
-                    {truncateMiddle(header)}
-                </CopyBody>
-            ) : (
-                <BodyLarge isSemibold className={'text-left'}>
-                    {header}
-                </BodyLarge>
-            )}
+// const AvatarItem = ({
+//     bgColor,
+//     header,
+//     subheader,
+//     emoji,
+// }: {
+//     bgColor?: string;
+//     header?: string;
+//     subheader?: string;
+//     emoji?: string;
+// }) => (
+//     <div
+//         className={
+//             'p-[10px] flex flex-row space-around items-center align-center gap-4'
+//         }
+//     >
+//         <WalletColorAndEmojiCircle
+//             emojiSizeInPx={20}
+//             circleSizeClasses={'w-[40px] h-[40px] auto'}
+//             color={bgColor || '#7E23CA'}
+//             emoji={emoji}
+//         />
+//         <div className={'flex flex-col items-left'}>
+//             {(header || '').length > 15 ? (
+//                 <CopyBody
+//                     txt={header || ''}
+//                     large
+//                     isSemibold
+//                     className={'text-left'}
+//                 >
+//                     {truncateMiddle(header)}
+//                 </CopyBody>
+//             ) : (
+//                 <BodyLarge isSemibold className={'text-left'}>
+//                     {header}
+//                 </BodyLarge>
+//             )}
 
-            <CopyBody
-                txt={subheader || ''}
-                className={'text-ethos-light-text-medium text-left'}
-            >
-                {truncateMiddle(subheader)}
-            </CopyBody>
-        </div>
-    </div>
-);
+//             <CopyBody
+//                 txt={subheader || ''}
+//                 className={'text-ethos-light-text-medium text-left'}
+//             >
+//                 {truncateMiddle(subheader)}
+//             </CopyBody>
+//         </div>
+//     </div>
+// );
 
-const TxTransfer = ({
-    ToFrom,
-}: {
-    ToFrom: {
-        from: {
-            emoji: string | undefined;
-            bgColor: string | undefined;
-            header: string | undefined;
-            subheader?: string;
-        };
-        to: {
-            emoji: string | undefined;
-            bgColor: string | undefined;
-            header: string | undefined;
-            subheader?: string;
-        };
-    };
-}) => (
-    <div className={'flex flex-col'}>
-        <AvatarItem
-            bgColor={ToFrom.from.bgColor}
-            header={ToFrom.from.header}
-            subheader={ToFrom.from.subheader}
-            emoji={ToFrom.from.emoji}
-        />
-        {ToFrom.to.header && (
-            <>
-                <div
-                    className={
-                        'py-1 pl-[18px] text-left text-ethos-light-text-medium'
-                    }
-                >
-                    <ChevronDoubleDownIcon width={25} height={23} />
-                </div>
-                <AvatarItem
-                    bgColor={ToFrom.to.bgColor}
-                    header={ToFrom.to.header}
-                    subheader={ToFrom.to.subheader}
-                    emoji={ToFrom.to.emoji}
-                />
-            </>
-        )}
-    </div>
-);
+// const TxTransfer = ({
+//     ToFrom,
+// }: {
+//     ToFrom: {
+//         from: {
+//             emoji: string | undefined;
+//             bgColor: string | undefined;
+//             header: string | undefined;
+//             subheader?: string;
+//         };
+//         to: {
+//             emoji: string | undefined;
+//             bgColor: string | undefined;
+//             header: string | undefined;
+//             subheader?: string;
+//         };
+//     };
+// }) => (
+//     <div className={'flex flex-col'}>
+//         <AvatarItem
+//             bgColor={ToFrom.from.bgColor}
+//             header={ToFrom.from.header}
+//             subheader={ToFrom.from.subheader}
+//             emoji={ToFrom.from.emoji}
+//         />
+//         {ToFrom.to.header && (
+//             <>
+//                 <div
+//                     className={
+//                         'py-1 pl-[18px] text-left text-ethos-light-text-medium'
+//                     }
+//                 >
+//                     <ChevronDoubleDownIcon width={25} height={23} />
+//                 </div>
+//                 <AvatarItem
+//                     bgColor={ToFrom.to.bgColor}
+//                     header={ToFrom.to.header}
+//                     subheader={ToFrom.to.subheader}
+//                     emoji={ToFrom.to.emoji}
+//                 />
+//             </>
+//         )}
+//     </div>
+// );
 
 function ReceiptCard({ txDigest }: TxResponseProps) {
     //const { accountInfos } = useAppSelector(({ account }) => account);
@@ -160,34 +164,18 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     const {
         timeDisplay,
         txType,
-        txAction,
+        // txAction,
         txAmount,
         txStatus,
         txUsdAmount,
         gasFeeInSui,
-        gasFeeInUsd,
+        // gasFeeInUsd,
         txCommands,
-        preposition,
-        otherAddress,
-        otherAddressStr,
+        // preposition,
+        // otherAddress,
+        // otherAddressStr,
         displayImage,
     } = getHumanReadable(address, tx);
-
-    console.log('check => ', {
-        timeDisplay,
-        txType,
-        txAction,
-        txAmount,
-        txStatus,
-        txUsdAmount,
-        gasFeeInSui,
-        gasFeeInUsd,
-        txCommands,
-        preposition,
-        otherAddress,
-        otherAddressStr,
-        displayImage,
-    });
 
     /*const getAccount = useCallback(
         (address: string) => {
@@ -402,7 +390,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             <div className={'px-6 pb-6'}>
                 <div className={'flex flex-row justify-between'}>
                     <BodyLarge>
-                        {txType == 'nft' ? (
+                        {txType === 'nft' ? (
                             <ExplorerLink
                                 type={ExplorerLinkType.object}
                                 objectID={txDigest.objectId || ''}

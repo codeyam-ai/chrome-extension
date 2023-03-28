@@ -9,7 +9,7 @@ import { useAppSelector } from '_hooks';
 import { type TxResultState } from '_redux/slices/txresults';
 import { Icon } from '_src/ui/app/shared/icons/Icon';
 import Loading from '_src/ui/app/components/loading';
-import { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
+import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 // import deduplicate from '_src/ui/app/helpers/deduplicate';
 // import formatCoin from '_src/ui/app/helpers/formatCoin';
 // import { getTxType } from '_src/ui/app/helpers/transactions';

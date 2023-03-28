@@ -2,8 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useMemo } from 'react';
-import { BalanceChange, FormattedTransaction } from '../transactions/types';
+
 import { getFormattedBalance } from '../formatCoin';
+
+import type {
+    BalanceChange,
+    FormattedTransaction,
+} from '../transactions/types';
 
 function isObjectOwner(value: unknown): value is { [key: string]: any } {
     return typeof value === 'object' && value !== null;
@@ -13,6 +18,8 @@ export const getSuiObj = (
     ownerAddr: string,
     txn: FormattedTransaction
 ): BalanceChange | undefined => {
+    if (!txn.balanceChanges) return;
+
     return txn.balanceChanges.find((obj) => {
         const { owner, coinType } = obj;
         return (
@@ -25,9 +32,12 @@ export const getSuiObj = (
 };
 
 export const getGasFee = (txn: FormattedTransaction): number => {
+    if (!txn.effects) return 0;
     const gasObj = txn.effects.gasUsed;
     const totalGasCost =
-        gasObj.computationCost + gasObj.storageCost - gasObj.storageRebate;
+        Number(gasObj.computationCost) +
+        Number(gasObj.storageCost) -
+        Number(gasObj.storageRebate);
     return totalGasCost;
 };
 
@@ -41,32 +51,28 @@ export function getSuiTransferAmount(
     ownerAddr: string,
     txn: FormattedTransaction
 ) {
-    const suiTransfer = useMemo(() => {
-        let mistAmt = 0;
+    let mistAmt = 0;
 
-        // Get the first amount in the balanceChanges array
-        if (Array(txn.balanceChanges)) {
-            // locate the object containing Sui coin from the balanceChanges array
-            // where the coinType = "0x2::sui::SUI" an return the amount
-            const suiObj = getSuiObj(ownerAddr, txn);
-            const totalGasCost = getGasFee(txn);
+    // Get the first amount in the balanceChanges array
+    if (Array(txn.balanceChanges)) {
+        // locate the object containing Sui coin from the balanceChanges array
+        // where the coinType = "0x2::sui::SUI" an return the amount
+        const suiObj = getSuiObj(ownerAddr, txn);
+        const totalGasCost = getGasFee(txn);
 
-            // if the Sui object is found, get the amount
-            if (suiObj) {
-                mistAmt = parseFloat(suiObj.amount) + totalGasCost;
+        // if the Sui object is found, get the amount
+        if (suiObj) {
+            mistAmt = parseFloat(suiObj.amount) + totalGasCost;
 
-                if (mistAmt)
-                    if (!(mistAmt > 1 || mistAmt < -1)) {
-                        mistAmt = 0;
-                    }
-            }
+            if (mistAmt)
+                if (!(mistAmt > 1 || mistAmt < -1)) {
+                    mistAmt = 0;
+                }
         }
+    }
 
-        // convert MIST to SUI where 1 SUI = 1**9 MIST
-        const transferAmount = getFormattedBalance(mistAmt, 9) as string;
+    // convert MIST to SUI where 1 SUI = 1**9 MIST
+    const transferAmount = getFormattedBalance(mistAmt, 9) as string;
 
-        return transferAmount;
-    }, [txn]);
-
-    return suiTransfer;
+    return transferAmount;
 }

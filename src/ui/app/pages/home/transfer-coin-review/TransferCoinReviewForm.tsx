@@ -70,8 +70,7 @@ function TransferCoinForm({
                     {coinSymbol && (
                         <AssetCard
                             theme={theme}
-                            isNft={false}
-                            isFunc={false}
+                            txType="coin"
                             coinType={coinSymbol}
                             name={coinSymbol}
                             imgUrl={icon || ''}

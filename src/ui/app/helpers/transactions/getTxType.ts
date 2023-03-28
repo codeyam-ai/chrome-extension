@@ -1,4 +1,4 @@
-import { FormattedTransaction } from './types';
+import type { FormattedTransaction } from './types';
 
 export type TxType = string;
 
@@ -9,7 +9,7 @@ const getTxType = (txn: FormattedTransaction): string => {
     // and determine the type from the object. This will need
     // to be tested against all transaction types and assumes
     // The key is always the first object in the list.
-    if (txn.objectChanges.length > 0) {
+    if (!!txn.objectChanges && txn.objectChanges.length > 0) {
         const val = txn.objectChanges[0].objectType.split('::');
         const objType = val[1].toLowerCase();
 

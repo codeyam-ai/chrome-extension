@@ -1,4 +1,4 @@
-import { FormattedTransaction } from './types';
+import type { FormattedTransaction } from './types';
 
 export type TxType = string;
 
@@ -9,6 +9,8 @@ const getDisplayImage = (txn: FormattedTransaction): string | null => {
 
     // If there's no image val is falsy
     let response = null;
+
+    if (!txn?.transaction?.data?.transaction) return response;
 
     if ('commands' in txn.transaction.data.transaction) {
         // input arguments for the movecall transaction

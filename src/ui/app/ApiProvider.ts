@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { RawSigner, JsonRpcProvider, Connection } from '@mysten/sui.js';
-import Browser from 'webextension-polyfill';
 
 import { growthbook } from './experimentation/feature-gating';
 import { queryClient } from './helpers/queryClient';

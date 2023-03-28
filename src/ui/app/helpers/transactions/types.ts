@@ -1,4 +1,8 @@
-import { SuiAddress, SuiTransaction, TransactionEffects } from '@mysten/sui.js';
+import type {
+    SuiAddress,
+    SuiTransaction,
+    TransactionEffects,
+} from '@mysten/sui.js';
 
 export interface TransactionCoinInfo {
     type: string;
@@ -35,16 +39,16 @@ export interface BalanceChange {
 }
 
 export interface FormattedTransaction {
-    digest: string;
-    type: string;
-    effects: TransactionEffects;
-    transaction: SuiTransaction;
-    balanceChanges: BalanceChange[];
-    objectChanges: any[];
+    digest?: string;
+    type?: string;
+    effects?: TransactionEffects;
+    transaction?: SuiTransaction;
+    balanceChanges?: BalanceChange[];
+    objectChanges?: any[];
     primaryObject?: TransactionObjectInfo;
     primaryCoin?: TransactionCoinInfo;
     timestampMs?: number;
-    isSender: boolean;
-    from: SuiAddress;
+    isSender?: boolean;
+    from?: SuiAddress;
     to?: SuiAddress;
 }
