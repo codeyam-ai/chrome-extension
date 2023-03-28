@@ -8,22 +8,15 @@ function getType(objectChanges: SuiObjectChange[]) {
 
     for (const obj of objectChanges) {
         if ('objectType' in obj) {
-            const objectType = obj.objectType;
-            combinedTypes = combinedTypes.concat(objectType);
+            const objectType = obj.objectType.split('::');
+            combinedTypes = combinedTypes.concat(objectType[1]);
         }
     }
 
     if (combinedTypes.includes('nft')) {
         return 'nft';
-    } else if (
-        combinedTypes.includes('coin') &&
-        combinedTypes.includes('sui')
-    ) {
-        return 'sui';
     } else if (combinedTypes.includes('coin')) {
         return 'coin';
-    } else {
-        return 'func';
     }
 }
 
@@ -34,7 +27,6 @@ const getTxType = (txn: FormattedTransaction): string => {
         type = getType(txn.objectChanges) || 'func';
     }
 
-    console.log('type: ', type);
     return type;
 };
 
