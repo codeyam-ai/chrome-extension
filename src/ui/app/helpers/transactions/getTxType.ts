@@ -1,30 +1,40 @@
+import { SuiObjectChange } from '@mysten/sui.js';
 import type { FormattedTransaction } from './types';
 
 export type TxType = string;
 
-const getTxType = (txn: FormattedTransaction): string => {
-    let type = 'func';
+function getType(objectChanges: SuiObjectChange[]) {
+    let combinedTypes = '';
 
-    // Get the first object in the list of object changes and
-    // and determine the type from the object. This will need
-    // to be tested against all transaction types and assumes
-    // The key is always the first object in the list.
-    if (!!txn.objectChanges && txn.objectChanges.length > 0) {
-        const val = txn.objectChanges[0].objectType.split('::');
-        const objType = val[1].toLowerCase();
-
-        if (objType !== 'coin') {
-            type = 'nft';
-        } else if (
-            objType === 'coin' &&
-            txn.objectChanges[0].objectType.toLowerCase().includes('sui')
-        ) {
-            type = 'sui';
-        } else if (objType === 'coin') {
-            type = 'coin';
+    for (const obj of objectChanges) {
+        if ('objectType' in obj) {
+            const objectType = obj.objectType;
+            combinedTypes = combinedTypes.concat(objectType);
         }
     }
 
+    if (combinedTypes.includes('nft')) {
+        return 'nft';
+    } else if (
+        combinedTypes.includes('coin') &&
+        combinedTypes.includes('sui')
+    ) {
+        return 'sui';
+    } else if (combinedTypes.includes('coin')) {
+        return 'coin';
+    } else {
+        return 'func';
+    }
+}
+
+const getTxType = (txn: FormattedTransaction): string => {
+    let type = 'func';
+
+    if (txn.objectChanges && txn.objectChanges.length > 0) {
+        type = getType(txn.objectChanges) || 'func';
+    }
+
+    console.log('type: ', type);
     return type;
 };
 

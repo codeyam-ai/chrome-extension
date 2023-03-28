@@ -6,7 +6,7 @@ const getTxAction = (
     isSender: boolean,
     txn: FormattedTransaction
 ): TxAction => {
-    let type = 'Unknown Action';
+    let type = 'default';
 
     const txDetails = txn?.transactionBlock?.data?.transaction;
     if (!txDetails) return type;
@@ -25,14 +25,12 @@ const getTxAction = (
 
             // Set type based on obj key or movecall obj contents
             if (commandKey === 'TransferObjects') {
-                console.log('is sender: ', isSender);
                 if (isSender) {
                     type = 'send';
                 } else {
                     type = 'receive';
                 }
             } else if (commandKey === 'MoveCall') {
-                console.log('HI!!!!');
                 const call = commandObj['MoveCall'];
                 const func = call.function.toLowerCase();
 
@@ -56,7 +54,6 @@ const getTxAction = (
         });
     }
 
-    console.log('TYPE', type);
     return type;
 };
 
