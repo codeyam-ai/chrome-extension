@@ -1,8 +1,9 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-export const BASE_URL = "https://ethoswallet.xyz"//process.env.ETHOS_BASE_URL || 'http://localhost:3000';
-export const SECURE_URL = "https://secure.ethoswallet.xyz"//process.env.ETHOS_SECURE_URL || 'http://localhost:3000';
+export const BASE_URL = process.env.ETHOS_BASE_URL || 'http://localhost:3000';
+export const SECURE_URL =
+    process.env.ETHOS_SECURE_URL || 'http://localhost:3000';
 export const LINK_URL = BASE_URL;
 
 // const queryParamFrom = '?from=ethos-extension';

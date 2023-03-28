@@ -38,7 +38,7 @@ const getHumanReadable = (ownerAddr: string, tx: FormattedTransaction) => {
     const txCommands = getCommands(tx);
     const displayImage = getDisplayImage(tx);
     const txUsdAmount = dollarFormatter.format(
-        parseInt(txAmount.replace(/,/g, '')) * 100
+        parseInt((txAmount || '0').replace(/,/g, '')) * 100
     );
 
     const preposition = getTxPreposition(txType, txAction);

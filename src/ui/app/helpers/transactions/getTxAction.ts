@@ -11,8 +11,14 @@ const getTxAction = (
     const txDetails = txn?.transactionBlock?.data?.transaction;
     if (!txDetails) return type;
 
-    if (txDetails && 'transactions' in txDetails) {
-        txDetails.transactions.forEach((command) => {
+    let commands;
+    if ('transactions' in txDetails) {
+        commands = txDetails.transactions;
+    } else if ('commands' in txDetails) {
+        commands = txDetails.commands as any[];
+    }
+    if (txDetails && commands) {
+        commands.forEach((command) => {
             // get command object key
             const commandObj = command as any;
             const commandKey = Object.keys(commandObj)[0];
@@ -26,6 +32,7 @@ const getTxAction = (
                     type = 'receive';
                 }
             } else if (commandKey === 'MoveCall') {
+                console.log('HI!!!!');
                 const call = commandObj['MoveCall'];
                 const func = call.function.toLowerCase();
 
@@ -49,6 +56,7 @@ const getTxAction = (
         });
     }
 
+    console.log('TYPE', type);
     return type;
 };
 
