@@ -9,8 +9,9 @@ import truncateString from '_src/ui/app/helpers/truncate-string';
 type ActivityRowProps = {
     failed: boolean;
     icon: JSX.Element;
-    typeIcon: JSX.Element;
     txAction: string;
+    typeIcon: JSX.Element;
+    type: string;
     link: string;
     header?: string;
     subheader: string;
@@ -24,9 +25,10 @@ type ActivityRowProps = {
 export const ActivityRow = ({
     failed,
     icon,
+    txAction,
     typeIcon,
     date,
-    txAction,
+    type,
     link,
     header,
     subheader,
@@ -34,9 +36,7 @@ export const ActivityRow = ({
     symbol,
     dollars,
 }: ActivityRowProps) => {
-    const amt = parseFloat(formattedAmount as string);
-    const isDebit = formattedAmount && amt < 0;
-    const displayFormattedAmount = truncateString(formattedAmount || '', 8);
+    const displayFormattedAmount = truncateString(formattedAmount || '', 6);
     return (
         <Link to={link} className="flex flex-col">
             <div className={'flex flex-row justify-between mb-4 items-center'}>
@@ -68,7 +68,7 @@ export const ActivityRow = ({
                             <BodyLarge
                                 isSemibold
                                 className={
-                                    isDebit
+                                    txAction === 'send'
                                         ? 'text-[#CE3838]'
                                         : 'text-[#238044]'
                                 }

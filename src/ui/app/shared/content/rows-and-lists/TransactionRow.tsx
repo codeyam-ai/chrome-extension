@@ -69,9 +69,7 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
         amount: parseFloat(txAmount),
         coinType: '', // TODO: what to do with coins / multiple coins / batch txs
         action: txAction || '',
-        txDirText: isSender
-            ? `To ${truncateMiddle(txn.to)}`
-            : `From ${truncateMiddle(txn.from)}` || '',
+        txDirText: `From ${truncateMiddle(txn.transactionBlock?.data.sender)}`,
         link: drilldownLink,
         date: timeDisplay,
         header: txCommands || 'Sui Action',
@@ -280,9 +278,6 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
 
     let rowData;
 
-    console.log('txType', txType);
-    console.log('txAction', txAction);
-
     if (!txType) return <></>;
 
     if (txType === 'nft') {
@@ -302,6 +297,7 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
             failed={txStatus === 'failure'}
             typeIcon={rowData.typeIcon}
             txAction={rowData.action}
+            type={txType}
             date={rowData.date}
             icon={rowData.icon}
             link={rowData.link}
