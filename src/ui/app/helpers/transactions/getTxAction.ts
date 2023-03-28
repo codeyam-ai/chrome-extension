@@ -34,21 +34,17 @@ const getTxAction = (
                 const call = commandObj['MoveCall'];
                 const func = call.function.toLowerCase();
 
-                switch (func) {
-                    case 'mint':
-                        type = 'mint';
-                        break;
-                    case 'clone':
-                        type = 'clone';
-                        break;
-                    case 'modify':
-                        type = 'modify';
-                        break;
-                    case 'burn':
-                        type = 'burn';
-                        break;
-                    default:
-                        break;
+                if (func.includes('mint')) {
+                    type = 'mint';
+                }
+                if (func.includes('clone')) {
+                    type = 'clone';
+                }
+                if (func.includes('modify')) {
+                    type = 'modify';
+                }
+                if (func.includes('burn')) {
+                    type = 'burn';
                 }
             }
         });
