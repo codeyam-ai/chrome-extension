@@ -18,14 +18,9 @@ import truncateMiddle from '../truncate-middle';
 import getIsSender from './getIsSender';
 
 import type { FormattedTransaction } from './types';
+import getUsdAmount from './getUsdAmount';
 
 const getHumanReadable = (ownerAddr: string, tx: FormattedTransaction) => {
-    const dollarFormatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    });
-
-    const suiObj = getSuiObj(ownerAddr, tx);
     const timeDisplay = convertUnixTimeToLocalTime(tx.timestampMs || 0);
     const txType = getTxType(tx);
     const txStatus = tx.effects?.status.status;
@@ -38,13 +33,7 @@ const getHumanReadable = (ownerAddr: string, tx: FormattedTransaction) => {
     const txCommands = getCommands(tx);
     const displayImage = getDisplayImage(tx);
     const amt = parseFloat(txAmount.replace(/,/g, ''));
-
-    const txUsdAmount =
-        Math.abs(amt) <= 0.0001
-            ? '< 1¢'
-            : dollarFormatter.format(
-                  parseFloat(txAmount.replace(/,/g, '')) * 100
-              );
+    const txUsdAmount = getUsdAmount(amt);
 
     const preposition = getTxPreposition(txType, txAction);
     const otherAddress = getTxOtherAddressDisplay(
