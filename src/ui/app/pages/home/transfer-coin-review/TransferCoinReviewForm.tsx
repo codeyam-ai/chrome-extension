@@ -70,7 +70,7 @@ function TransferCoinForm({
                     {coinSymbol && (
                         <AssetCard
                             theme={theme}
-                            txType="coin"
+                            txType={'transfer'}
                             coinType={coinSymbol}
                             name={coinSymbol}
                             imgUrl={icon || ''}
