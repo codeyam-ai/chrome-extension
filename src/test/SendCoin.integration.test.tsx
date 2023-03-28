@@ -26,7 +26,7 @@ describe('send coin flow', () => {
         );
 
         mockchain.mockBlockchainCall(
-            { method: 'sui_devInspectTransaction' },
+            { method: 'sui_devInspectTransactionBlock' },
             renderTemplate('devInspectTransaction', {})
         );
 
