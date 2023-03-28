@@ -46,36 +46,41 @@ function NetworkPage() {
 
     const networkOptions = useMemo(() => {
         const options: SegmentedControlItem[] = [];
-        networks.forEach((network) => {
-            // if (network.networkName === 'local') {
-            //     return;
-            // }
-            const changeToThisNetwork = () => {
-                const name = network.networkName;
-                setShowCustomRPCInput(name === API_ENV.customRPC);
-                const isEmptyCustomRpc =
-                    name === API_ENV.customRPC && !customRPC;
-
-                setSelectedNetworkName(name && !isEmptyCustomRpc ? name : '');
-
-                if (isEmptyCustomRpc) {
-                    setShowCustomRPCInput(true);
+        console.log('networks', networks);
+        [...networks, { name: 'Custom RPC', networkName: 'customRPC' }].forEach(
+            (network) => {
+                if (network.networkName === 'local') {
                     return;
                 }
-                const apiEnv = API_ENV[name as keyof typeof API_ENV];
-                dispatch(changeRPCNetwork(apiEnv));
-            };
-            const isCustomRpc = network.name === 'Custom RPC URL';
-            const isCustomRpcSelected =
-                selectedNetworkName === '' && isCustomRpc;
-            options.push({
-                text: isCustomRpc ? 'Custom' : network.name,
-                isActive:
-                    selectedNetworkName === network.networkName ||
-                    isCustomRpcSelected,
-                onClick: changeToThisNetwork,
-            });
-        });
+                const changeToThisNetwork = () => {
+                    const name = network.networkName;
+                    setShowCustomRPCInput(name === API_ENV.customRPC);
+                    const isEmptyCustomRpc =
+                        name === API_ENV.customRPC && !customRPC;
+
+                    setSelectedNetworkName(
+                        name && !isEmptyCustomRpc ? name : ''
+                    );
+
+                    if (isEmptyCustomRpc) {
+                        setShowCustomRPCInput(true);
+                        return;
+                    }
+                    const apiEnv = API_ENV[name as keyof typeof API_ENV];
+                    dispatch(changeRPCNetwork(apiEnv));
+                };
+                const isCustomRpc = network.name === 'Custom RPC URL';
+                const isCustomRpcSelected =
+                    selectedNetworkName === '' && isCustomRpc;
+                options.push({
+                    text: isCustomRpc ? 'Custom' : network.name,
+                    isActive:
+                        selectedNetworkName === network.networkName ||
+                        isCustomRpcSelected,
+                    onClick: changeToThisNetwork,
+                });
+            }
+        );
         return options;
     }, [networks, selectedNetworkName, customRPC, dispatch]);
 
