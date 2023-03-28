@@ -307,7 +307,7 @@ export function DappTxApprovalPage() {
 
     useEffect(() => {
         if (done) {
-            // closeWindow();
+            closeWindow();
         }
     }, [closeWindow, done]);
 
