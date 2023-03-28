@@ -227,4 +227,22 @@ export class Mockchain {
             throw new Error(message);
         }
     }
+
+    /**
+     * Mocks of common rpc calls
+     *
+     * Use the returned object to build up one or more mocks
+     * you know you need specifically.
+     */
+    rpcMocks() {
+        return {
+            sui_getNormalizedMoveFunction: () => {
+                this.mockBlockchainCall(
+                    { method: 'sui_getNormalizedMoveFunction' },
+                    renderTemplate('getNormalizedMoveFunction', {}),
+                    true
+                );
+            },
+        };
+    }
 }
