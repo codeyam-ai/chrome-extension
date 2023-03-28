@@ -65,7 +65,7 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
 
     const shared: SharedTypes = {
         hasAmount: (txAmount && parseFloat(txAmount) > 0) || false,
-        amount: parseFloat(txAmount as string),
+        amount: parseFloat(txAmount),
         coinType: '', // TODO: what to do with coins / multiple coins / batch txs
         action: txAction || '',
         txDirText:
@@ -298,9 +298,6 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
     let rowData;
 
     if (!txType) return <></>;
-
-    console.log('txType', txType);
-    console.log('txAction', txAction);
 
     if (txType === 'nft') {
         rowData = dataMap.nft[txAction || 'default'];

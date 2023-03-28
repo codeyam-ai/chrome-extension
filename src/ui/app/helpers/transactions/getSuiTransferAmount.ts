@@ -63,7 +63,7 @@ export function getSuiTransferAmount(
         }
 
         // convert MIST to SUI where 1 SUI = 1**9 MIST
-        const transferAmount = getFormattedBalance(mistAmt, 9);
+        const transferAmount = getFormattedBalance(mistAmt, 9) as string;
 
         return transferAmount;
     }, [txn]);

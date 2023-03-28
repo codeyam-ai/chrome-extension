@@ -34,7 +34,9 @@ export const ActivityRow = ({
     symbol,
     dollars,
 }: ActivityRowProps) => {
-    const displayFormattedAmount = truncateString(formattedAmount || '', 6);
+    const amt = parseFloat(formattedAmount as string);
+    const isDebit = formattedAmount && amt < 0;
+    const displayFormattedAmount = truncateString(formattedAmount || '', 8);
     return (
         <Link to={link} className="flex flex-col">
             <div className={'flex flex-row justify-between mb-4 items-center'}>
@@ -66,15 +68,12 @@ export const ActivityRow = ({
                             <BodyLarge
                                 isSemibold
                                 className={
-                                    txAction === 'send'
+                                    isDebit
                                         ? 'text-[#CE3838]'
                                         : 'text-[#238044]'
                                 }
                             >
-                                {txAction === 'send'
-                                    ? `-${displayFormattedAmount}`
-                                    : `+${displayFormattedAmount}`}{' '}
-                                {symbol}
+                                {displayFormattedAmount} {symbol}
                             </BodyLarge>
                             <Body
                                 isTextColorMedium
