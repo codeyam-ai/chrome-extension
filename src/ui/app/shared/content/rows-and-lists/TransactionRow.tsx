@@ -174,11 +174,6 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
                 icon: <NftIcon />,
             },
-            batch: {
-                ...shared,
-                typeIcon: <CircleStackIcon {...iconProps} />,
-                icon: <NftIcon />,
-            },
             register: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
@@ -213,11 +208,7 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 typeIcon: <ArrowUpIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
             },
-            batch: {
-                ...shared,
-                typeIcon: <CircleStackIcon {...iconProps} />,
-                icon: <CurrencyIcon />,
-            },
+
             mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
@@ -245,11 +236,7 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 typeIcon: <ArrowDownIcon {...iconProps} />,
                 icon: <CurrencyIcon />,
             },
-            batch: {
-                ...shared,
-                typeIcon: <CircleStackIcon {...iconProps} />,
-                icon: <CurrencyIcon />,
-            },
+
             mint: {
                 ...shared,
                 typeIcon: <SparklesIcon {...iconProps} />,
@@ -277,11 +264,7 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
                 icon: <FunctionIcon />,
             },
-            batch: {
-                ...shared,
-                typeIcon: <CircleStackIcon {...iconProps} />,
-                icon: <FunctionIcon />,
-            },
+
             pool: {
                 ...shared,
                 typeIcon: <ArrowsRightLeftIcon {...iconProps} />,
@@ -296,6 +279,9 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
     };
 
     let rowData;
+
+    console.log('txType', txType);
+    console.log('txAction', txAction);
 
     if (!txType) return <></>;
 

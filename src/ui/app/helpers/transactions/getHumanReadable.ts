@@ -15,6 +15,7 @@ import {
 import convertUnixTimeToLocalTime from '../convertUnixTimeToLocalTime';
 import { getDollars } from '../formatCoin';
 import truncateMiddle from '../truncate-middle';
+import getIsSender from './getIsSender';
 
 import type { FormattedTransaction } from './types';
 
@@ -23,7 +24,8 @@ const getHumanReadable = (ownerAddr: string, tx: FormattedTransaction) => {
     const timeDisplay = convertUnixTimeToLocalTime(tx.timestampMs || 0);
     const txType = getTxType(tx);
     const txStatus = tx.effects?.status.status;
-    const txAction = getTxAction(tx);
+    const isSender = getIsSender(ownerAddr, tx);
+    const txAction = getTxAction(isSender, tx);
     const txAmount = getSuiTransferAmount(ownerAddr, tx);
     const totalGasCost = getGasFee(tx);
     const gasFeeInSui = getFormattedGasFee(totalGasCost);
