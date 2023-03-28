@@ -76,8 +76,7 @@ function TransferNftReviewForm({
                         <div>
                             <div className={'pb-8 px-6 pt-6 text-center'}>
                                 <AssetCard
-                                    isFunc={false}
-                                    isNft={true}
+                                    txType="nft"
                                     imgUrl={fields?.url ? fields.url : ''}
                                     name={fields?.name}
                                 />

@@ -190,6 +190,7 @@ export function DappTxApprovalPage() {
             setExplicitError(undefined);
 
             try {
+                console.log('DRY RUN!');
                 const {
                     effects: transactionEffects,
                     events: transactionEvents,
@@ -245,7 +246,8 @@ export function DappTxApprovalPage() {
                     setEffects(transactionEffects);
                 }
             } catch (e: unknown) {
-                setDryRunError(`${e}`);
+                console.log('HI', e);
+                // setDryRunError(`${e}`);
                 setEvents(null);
                 setEffects(null);
             }
@@ -748,6 +750,7 @@ async function finishTransaction(
                 options,
                 requestType,
             });
+            console.log('txResult', txResult);
         } catch (e) {
             tsResultError = (e as Error).message;
         }

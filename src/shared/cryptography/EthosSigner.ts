@@ -30,16 +30,13 @@ export class EthosSigner extends SignerWithProvider {
 
     async signData(data: Uint8Array): Promise<SerializedSignature> {
         const { json, status } = await simpleApiCall(
-            'transaction/sign',
+            'transactions/sign',
             'POST',
             this.accessToken || '',
             {
                 network: 'sui',
                 walletAddress: this.address,
-                txOrMessage: {
-                    id: 0,
-                    transaction: toB64(data),
-                },
+                dataToSign: toB64(data),
             }
         );
 
@@ -48,9 +45,9 @@ export class EthosSigner extends SignerWithProvider {
             throw new Error(`Signing error: ${status}`);
         }
 
-        const { serializedSignature } = json;
+        const { signature } = json;
 
-        return serializedSignature;
+        return signature;
     }
 
     connect(provider: JsonRpcProvider): SignerWithProvider {

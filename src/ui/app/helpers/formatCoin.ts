@@ -1,7 +1,7 @@
 import { Coin, type JsonRpcProvider } from '@mysten/sui.js';
 import BigNumber from 'bignumber.js';
 
-import { formatBalance } from '../hooks/useFormatCoin';
+import { formatBalance } from './formatBalance';
 
 export interface FormattedCoin {
     formattedBalance?: string;
@@ -40,10 +40,7 @@ export const getDollars = (
     if (!balance) {
         return undefined;
     }
-
-    return dollarFormatter.format(
-        new BigNumber(balance.toString()).shiftedBy(-7).toNumber()
-    );
+    return dollarFormatter.format(parseFloat(formatBalance(balance, 7)));
 };
 
 const formatCoin = async (
@@ -71,7 +68,6 @@ const formatCoin = async (
     }
 
     const formattedBalance = getFormattedBalance(balance, decimals);
-
     const dollars = getDollars(balance);
 
     return {

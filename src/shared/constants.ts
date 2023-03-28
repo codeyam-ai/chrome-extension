@@ -8,9 +8,10 @@ export const LINK_URL = process.env.ETHOS_BETA_URL || BASE_URL;
 
 // const queryParamFrom = '?from=ethos-extension';
 
-export const ToS_LINK = BASE_URL + '/terms';
+export const ToS_LINK = BASE_URL + '/terms-of-service';
 export const DASHBOARD_LINK = LINK_URL + '/dashboard'; // + queryParamFrom;
-export const IFRAME_URL = BASE_URL + '/wallet?appId=ethos';
+export const IFRAME_URL =
+    BASE_URL + '/wallet?apiKey=' + process.env.ETHOS_API_KEY;
 export const NFT_EXPERIMENT_LINK = BASE_URL + '/dashboard/experiment'; //+ queryParamFrom;
 export const LOGIN_URL = BASE_URL + '/logged_in';
 export const MAILTO_SUPPORT_URL = 'mailto:support@ethoswallet.xyz';

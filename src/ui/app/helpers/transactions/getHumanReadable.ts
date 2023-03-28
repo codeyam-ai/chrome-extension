@@ -1,13 +1,9 @@
-import truncateMiddle from '../truncate-middle';
-import convertUnixTimeToLocalTime from '../convertUnixTimeToLocalTime';
 import {
     getTxAction,
     getTxOtherAddressDisplay,
     getTxPreposition,
     getTxType,
 } from './';
-import { FormattedTransaction } from './types';
-import { getDollars } from '../formatCoin';
 import getCommands from './getCommands';
 import getDisplayImage from './getDisplayImage';
 import {
@@ -16,6 +12,11 @@ import {
     getSuiObj,
     getSuiTransferAmount,
 } from './getSuiTransferAmount';
+import convertUnixTimeToLocalTime from '../convertUnixTimeToLocalTime';
+import { getDollars } from '../formatCoin';
+import truncateMiddle from '../truncate-middle';
+
+import type { FormattedTransaction } from './types';
 
 const getHumanReadable = (ownerAddr: string, tx: FormattedTransaction) => {
     const suiObj = getSuiObj(ownerAddr, tx);
@@ -37,7 +38,7 @@ const getHumanReadable = (ownerAddr: string, tx: FormattedTransaction) => {
     const otherAddress = getTxOtherAddressDisplay(
         txType,
         txAction,
-        tx.from,
+        tx.from || '',
         tx.to
     );
 

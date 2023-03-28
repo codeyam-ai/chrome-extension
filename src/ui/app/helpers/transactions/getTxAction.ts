@@ -1,9 +1,11 @@
-import { FormattedTransaction } from './types';
+import type { FormattedTransaction } from './types';
 
 export type TxAction = string;
 
 const getTxAction = (txn: FormattedTransaction): TxAction => {
     let type = 'Unknown Action';
+    if (!txn?.transaction?.data?.transaction) return type;
+
     const txDetails = txn.transaction.data.transaction;
 
     if (txDetails && 'commands' in txDetails) {

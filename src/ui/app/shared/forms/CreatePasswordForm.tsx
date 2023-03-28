@@ -1,10 +1,12 @@
 import { Formik, Form, useField } from 'formik';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 import zxcvbn from 'zxcvbn';
 
 import Button from '../buttons/Button';
+import Checkbox from '../inputs/Checkbox';
 import Input from '../inputs/Input';
+import { BASE_URL } from '_src/shared/constants';
 
 import type { FormikValues } from 'formik';
 
@@ -15,8 +17,14 @@ type CreatePasswordFormProps = {
 const CustomFormikForm = () => {
     // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
     // which we can spread on <input> and alse replace ErrorMessage entirely.
+    const [checked, setChecked] = useState(false);
     const [field, meta] = useField('password');
     const [confirmField, confirmMeta] = useField('confirmPassword');
+
+    const isChecked = useCallback(() => {
+        setChecked(!checked);
+    }, [checked]);
+
     return (
         <>
             <Input
@@ -32,6 +40,7 @@ const CustomFormikForm = () => {
                 forceLightTheme
                 autoFocus
             />
+
             <Input
                 {...confirmField}
                 placeholder="Re-enter your password"
@@ -49,6 +58,28 @@ const CustomFormikForm = () => {
                 forceLightTheme
             />
 
+            <Checkbox
+                className="px-6"
+                data-testid="terms-of-service"
+                label={
+                    <div>
+                        I agree to the{' '}
+                        <a
+                            target={'_blank'}
+                            href={`${BASE_URL}/terms-of-service`}
+                            className={'text-ethos-light-primary-light'}
+                            rel="noreferrer"
+                        >
+                            Terms of Service.
+                        </a>
+                    </div>
+                }
+                id="terms-of-service"
+                name="termsOfService"
+                onChange={isChecked}
+                checked={checked}
+            />
+
             <div className="px-6 sm:px-10 pb-6 sm:pb-10">
                 <Button
                     buttonStyle="primary"
@@ -58,7 +89,8 @@ const CustomFormikForm = () => {
                         !meta.value ||
                         !!meta.error ||
                         !confirmMeta.value ||
-                        !!confirmMeta.error
+                        !!confirmMeta.error ||
+                        !checked
                     }
                     removeContainerPadding
                 >
@@ -105,6 +137,7 @@ const CreatePasswordForm = ({ onSubmit }: CreatePasswordFormProps) => {
                 initialValues={{
                     password: '',
                     confirmPassword: '',
+                    termsOfService: false,
                 }}
                 validationSchema={Yup.object({
                     password: passwordValidation,

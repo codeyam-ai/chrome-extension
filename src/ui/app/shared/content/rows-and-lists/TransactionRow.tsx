@@ -20,7 +20,7 @@ import { getHumanReadable } from '_src/ui/app/helpers/transactions';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
 
-import { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
+import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 
 interface TransactionRowProps {
     txn: FormattedTransaction;
@@ -58,7 +58,7 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
     } = getHumanReadable(address, txn);
 
     const drilldownLink = `/transactions/receipt?${new URLSearchParams({
-        txdigest: txn.digest,
+        txdigest: txn.digest || '',
         symbol: 'SUI', // TODO: what to do with coins / multiple coins / batch txs
         isFunc: txType === 'func' ? 'yes' : 'no',
     }).toString()}`;

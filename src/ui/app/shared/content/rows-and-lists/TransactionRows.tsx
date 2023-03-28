@@ -1,7 +1,8 @@
 import TransactionRow from './TransactionRow';
 
-import { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 import { useAppSelector } from '_src/ui/app/hooks';
+
+import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 
 // interface TransactionRowsProps {
 //     transactions: TxResultState[] | undefined;

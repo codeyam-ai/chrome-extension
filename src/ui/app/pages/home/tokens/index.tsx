@@ -5,8 +5,7 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import CoinList from './CoinList';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
-import { useFormatCoin } from '../../../hooks/useFormatCoin';
-import { useAppSelector, useExplorerPermission } from '_hooks';
+import { useAppSelector, useExplorerPermission, useFormatCoin } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
