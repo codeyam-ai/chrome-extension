@@ -1,7 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { type SuiAddress, toB64, Transaction } from '@mysten/sui.js';
+import { type SuiAddress, toB64, TransactionBlock } from '@mysten/sui.js';
 import {
     SUI_CHAINS,
     ReadonlyWalletAccount,
@@ -9,14 +9,14 @@ import {
     SUI_TESTNET_CHAIN,
     SUI_LOCALNET_CHAIN,
     type SuiFeatures,
-    type SuiSignAndExecuteTransactionMethod,
+    type SuiSignAndExecuteTransactionBlockMethod,
     type StandardConnectFeature,
     type StandardConnectMethod,
     type Wallet,
     type StandardEventsFeature,
     type StandardEventsOnMethod,
     type StandardEventsListeners,
-    type SuiSignTransactionMethod,
+    type SuiSignTransactionBlockMethod,
     type SuiSignMessageMethod,
     type StandardDisconnectFeature,
     type StandardDisconnectMethod,
@@ -123,13 +123,14 @@ export class EthosWallet implements Wallet {
                 version: '1.0.0',
                 on: this.#on,
             },
-            'sui:signTransaction': {
-                version: '2.0.0',
-                signTransaction: this.#signTransaction,
+            'sui:signTransactionBlock': {
+                version: '1.0.0',
+                signTransactionBlock: this.#signTransactionBlock,
             },
-            'sui:signAndExecuteTransaction': {
-                version: '2.0.0',
-                signAndExecuteTransaction: this.#signAndExecuteTransaction,
+            'sui:signAndExecuteTransactionBlock': {
+                version: '1.0.0',
+                signAndExecuteTransactionBlock:
+                    this.#signAndExecuteTransactionBlock,
             },
             'suiWallet:stake': {
                 version: '0.0.1',
@@ -154,7 +155,14 @@ export class EthosWallet implements Wallet {
                     // TODO: Expose public key instead of address:
                     publicKey: new Uint8Array(),
                     chains: this.#activeChain ? [this.#activeChain] : [],
-                    features: ['sui:signAndExecuteTransaction'],
+                    features: [
+                        'standard:connect',
+                        'standard:disconnect',
+                        'standard:events',
+                        'sui:signMessage',
+                        'sui:signTransactionBlock',
+                        'sui:signAndExecuteTransactionBlock',
+                    ],
                 })
         );
     }
@@ -245,8 +253,8 @@ export class EthosWallet implements Wallet {
         this.#events.emit('change', { accounts: this.accounts });
     };
 
-    #signTransaction: SuiSignTransactionMethod = async (input) => {
-        if (!Transaction.is(input.transaction)) {
+    #signTransactionBlock: SuiSignTransactionBlockMethod = async (input) => {
+        if (!TransactionBlock.is(input.transactionBlock)) {
             throw new Error(
                 'Unexpect transaction format found. Ensure that you are using the `Transaction` class.'
             );
@@ -263,41 +271,45 @@ export class EthosWallet implements Wallet {
                         input.account?.address ||
                         this.#accounts[0]?.address ||
                         '',
-                    transaction: input.transaction.serialize(),
+                    transaction: input.transactionBlock.serialize(),
                 },
             }),
             (response) => response.result
         );
     };
 
-    #signAndExecuteTransaction: SuiSignAndExecuteTransactionMethod = async (
-        input
-    ) => {
-        const { transaction, account, chain, options } = input;
+    #signAndExecuteTransactionBlock: SuiSignAndExecuteTransactionBlockMethod =
+        async (input) => {
+            const { transactionBlock, account, chain, options } = input;
 
-        if (!Transaction.is(transaction)) {
-            throw new Error(
-                'Unexpect transaction format found. Ensure that you are using the `Transaction` class.'
+            if (!TransactionBlock.is(transactionBlock)) {
+                throw new Error(
+                    'Unexpect transaction format found. Ensure that you are using the `Transaction` class.'
+                );
+            }
+
+            return mapToPromise(
+                this.#send<
+                    ExecuteTransactionRequest,
+                    ExecuteTransactionResponse
+                >({
+                    type: 'execute-transaction-request',
+                    transaction: {
+                        type: 'transaction',
+                        data: transactionBlock.serialize(),
+                        options,
+                        // account might be undefined if previous version of adapters is used
+                        // in that case use the first account address
+                        account:
+                            account?.address ||
+                            this.#accounts[0]?.address ||
+                            '',
+                        chain,
+                    },
+                }),
+                (response) => response.result
             );
-        }
-
-        return mapToPromise(
-            this.#send<ExecuteTransactionRequest, ExecuteTransactionResponse>({
-                type: 'execute-transaction-request',
-                transaction: {
-                    type: 'transaction',
-                    data: transaction.serialize(),
-                    options,
-                    // account might be undefined if previous version of adapters is used
-                    // in that case use the first account address
-                    account:
-                        account?.address || this.#accounts[0]?.address || '',
-                    chain,
-                },
-            }),
-            (response) => response.result
-        );
-    };
+        };
 
     #stake = async (input: StakeInput) => {
         this.#send<StakeRequest, void>({

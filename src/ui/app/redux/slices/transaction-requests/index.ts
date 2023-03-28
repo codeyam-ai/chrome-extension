@@ -1,7 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { fromB64, Transaction } from '@mysten/sui.js';
+import { fromB64, TransactionBlock } from '@mysten/sui.js';
 import {
     createAsyncThunk,
     createEntityAdapter,
@@ -12,7 +12,7 @@ import type {
     SignedMessage,
     SignedTransaction,
     SuiAddress,
-    SuiTransactionResponse,
+    SuiTransactionBlockResponse,
 } from '@mysten/sui.js';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { ApprovalRequest } from '_payloads/transactions/ApprovalRequest';
@@ -31,7 +31,7 @@ export const respondToTransactionRequest = createAsyncThunk<
     {
         txRequestID: string;
         approved: boolean;
-        txResponse: SuiTransactionResponse | null;
+        txResponse: SuiTransactionBlockResponse | null;
     },
     {
         txRequestID: string;
@@ -52,7 +52,7 @@ export const respondToTransactionRequest = createAsyncThunk<
         }
 
         let txSigned: SignedTransaction | undefined = undefined;
-        let txResult: SuiTransactionResponse | SignedMessage | undefined =
+        let txResult: SuiTransactionBlockResponse | SignedMessage | undefined =
             undefined;
         let txResultError: string | undefined;
         if (approved) {
@@ -79,15 +79,17 @@ export const respondToTransactionRequest = createAsyncThunk<
                         message: fromB64(txRequest.tx.message),
                     });
                 } else if (txRequest.tx.type === 'transaction') {
-                    const tx = Transaction.from(txRequest.tx.data);
+                    const transactionBlock = TransactionBlock.from(
+                        txRequest.tx.data
+                    );
                     if (txRequest.tx.justSign) {
                         // Just a signing request, do not submit
-                        txSigned = await signer.signTransaction({
-                            transaction: tx,
+                        txSigned = await signer.signTransactionBlock({
+                            transactionBlock,
                         });
                     } else {
-                        txResult = await signer.signAndExecuteTransaction({
-                            transaction: tx,
+                        txResult = await signer.signAndExecuteTransactionBlock({
+                            transactionBlock,
                             options: txRequest.tx.options,
                             requestType: txRequest.tx.requestType,
                         });

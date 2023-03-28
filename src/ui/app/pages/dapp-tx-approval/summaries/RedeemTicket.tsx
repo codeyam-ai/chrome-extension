@@ -8,7 +8,7 @@
 import type { SummaryGeneratorArgs } from './standard';
 
 const RedeemTicket = ({
-    transaction,
+    transactionBlock,
     formattedGas,
     gasSymbol,
     gasDollars,

@@ -10,14 +10,14 @@ const getDisplayImage = (txn: FormattedTransaction): string | null => {
     // If there's no image val is falsy
     let response = null;
 
-    if (!txn?.transaction?.data?.transaction) return response;
+    const transaction = txn?.transactionBlock?.data?.transaction;
 
-    if ('commands' in txn.transaction.data.transaction) {
+    if (transaction && 'transactions' in transaction) {
         // input arguments for the movecall transaction
-        const inputs = txn.transaction.data.transaction.inputs;
+        const inputs = transaction.inputs;
 
         // iterate through the commands to check if it's a mint func
-        txn.transaction.data.transaction.commands.forEach((command) => {
+        transaction.transactions.forEach((command) => {
             const commandObj = command as any;
             const commandKey = Object.keys(commandObj)[0];
 

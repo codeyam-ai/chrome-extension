@@ -4,11 +4,11 @@
 import type {
     SignedTransaction,
     SuiAddress,
-    SuiTransactionResponse,
+    SuiTransactionBlockResponse,
 } from '@mysten/sui.js';
 import type {
     IdentifierString,
-    SuiSignAndExecuteTransactionInput,
+    SuiSignAndExecuteTransactionBlockInput,
     SuiSignMessageOutput,
 } from '@mysten/wallet-standard';
 
@@ -18,8 +18,8 @@ export type TransactionDataType = {
     account: SuiAddress;
     chain: IdentifierString;
     justSign?: boolean;
-    requestType?: SuiSignAndExecuteTransactionInput['requestType'];
-    options?: SuiSignAndExecuteTransactionInput['options'];
+    requestType?: SuiSignAndExecuteTransactionBlockInput['requestType'];
+    options?: SuiSignAndExecuteTransactionBlockInput['options'];
 };
 
 export type SignMessageDataType = {
@@ -33,7 +33,7 @@ export type ApprovalRequest = {
     approved: boolean | null;
     origin: string;
     originFavIcon?: string;
-    txResult?: SuiTransactionResponse | SuiSignMessageOutput;
+    txResult?: SuiTransactionBlockResponse | SuiSignMessageOutput;
     txResultError?: string;
     txSigned?: SignedTransaction;
     createdDate: string;
@@ -49,7 +49,7 @@ export interface SignMessageApprovalRequest
 export interface TransactionApprovalRequest
     extends Omit<ApprovalRequest, 'txResult' | 'tx'> {
     tx: TransactionDataType;
-    txResult?: SuiTransactionResponse;
+    txResult?: SuiTransactionBlockResponse;
 }
 
 export function isSignMessageApprovalRequest(

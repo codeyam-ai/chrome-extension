@@ -6,7 +6,7 @@
 import type { SummaryGeneratorArgs } from './standard';
 
 const CapyVote = ({
-    transaction,
+    transactionBlock,
     formattedGas,
     gasSymbol,
     gasDollars,

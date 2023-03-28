@@ -35,7 +35,7 @@ import { openInNewTab } from '_src/shared/utils';
 import { type AccountCustomization } from '_src/types/AccountCustomization';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 
-import type { SuiAddress, SuiTransactionResponse } from '@mysten/sui.js';
+import type { SuiAddress, SuiTransactionBlockResponse } from '@mysten/sui.js';
 import type { Message } from '_messages';
 import type { PortChannelName } from '_messaging/PortChannelName';
 import type { ErrorPayload } from '_payloads';
@@ -160,7 +160,7 @@ export class ContentScriptConnection extends Connection {
                 createMessage<ExecuteTransactionResponse>(
                     {
                         type: 'execute-transaction-response',
-                        result: result as SuiTransactionResponse,
+                        result: result as SuiTransactionBlockResponse,
                     },
                     msg.id
                 )

@@ -1,4 +1,4 @@
-import { Transaction } from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -78,10 +78,14 @@ describe('The Transaction Approval popup', () => {
     function simulateReduxStateWithTransaction() {
         const txRequestId = '95ae4a0d-0b7b-478b-ab70-bc3fe291540e';
 
-        const transaction = new Transaction();
-        transaction.transferObjects(
-            [transaction.object('0x19fe0d83a3e3cb15570b6edc1160a15cc894e690')],
-            transaction.pure('0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b')
+        const transactionBlock = new TransactionBlock();
+        transactionBlock.transferObjects(
+            [
+                transactionBlock.object(
+                    '0x19fe0d83a3e3cb15570b6edc1160a15cc894e690'
+                ),
+            ],
+            transactionBlock.pure('0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b')
         );
         const txRequest: ApprovalRequest = {
             id: txRequestId,
@@ -91,7 +95,7 @@ describe('The Transaction Approval popup', () => {
             approved: true,
             tx: {
                 type: 'transaction',
-                data: transaction.serialize(),
+                data: transactionBlock.serialize(),
                 account: accountInfos[0].address,
                 chain: 'sui::devnet',
             },

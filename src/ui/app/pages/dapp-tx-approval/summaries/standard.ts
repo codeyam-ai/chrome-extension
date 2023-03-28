@@ -1,4 +1,4 @@
-import { SUI_TYPE_ARG, type Transaction } from '@mysten/sui.js';
+import { SUI_TYPE_ARG, type TransactionBlock } from '@mysten/sui.js';
 
 import type { Permission, DistilledEffect } from '..';
 import type { Detail } from '../DetailElement';
@@ -7,7 +7,7 @@ import type { Section } from '../SectionElement';
 
 export type SummaryGeneratorArgs = {
     address?: string | null;
-    transaction?: Transaction;
+    transactionBlock?: TransactionBlock;
     reading: (DistilledEffect | null)[];
     mutating: DistilledEffect[];
     creating: DistilledEffect[];
@@ -26,7 +26,7 @@ export type SummaryGeneratorArgs = {
 };
 
 const standard = ({
-    transaction,
+    transactionBlock,
     reading,
     mutating,
     creating,
@@ -82,9 +82,9 @@ const standard = ({
 
     let summary: Section[] = [];
 
-    if (transaction) {
-        const transactionData = transaction.transactionData;
-        const primaryCommand = transactionData.commands.find(
+    if (transactionBlock) {
+        const transactionData = transactionBlock.blockData;
+        const primaryCommand = transactionData.transactions.find(
             (c) => c.kind === 'MoveCall'
         );
 

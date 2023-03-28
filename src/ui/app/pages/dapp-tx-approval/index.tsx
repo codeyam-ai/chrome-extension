@@ -5,7 +5,7 @@
 import {
     // getTransactionEffects,
     SUI_TYPE_ARG,
-    Transaction,
+    TransactionBlock,
 } from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -48,12 +48,12 @@ import type { Section } from './SectionElement';
 import type { SmallDetail } from './SmallValue';
 import type {
     SuiMoveNormalizedType,
-    SuiTransactionResponse,
+    SuiTransactionBlockResponse,
     TransactionEffects,
     TransactionEvents,
 } from '@mysten/sui.js';
 // import type { ApprovalRequest } from '_payloads/transactions';
-import type { SuiSignAndExecuteTransactionInput } from '@mysten/wallet-standard';
+import type { SuiSignAndExecuteTransactionBlockInput } from '@mysten/wallet-standard';
 import type { RootState } from '_redux/RootReducer';
 import type { ReactElement, ReactNode } from 'react';
 
@@ -102,9 +102,9 @@ export function DappTxApprovalPage() {
         [txID]
     );
     const txRequest = useAppSelector(txRequestSelector);
-    const transaction = useMemo(() => {
+    const transactionBlock = useMemo(() => {
         if (!txRequest || !('data' in txRequest.tx)) return null;
-        return Transaction.from(txRequest.tx.data);
+        return TransactionBlock.from(txRequest.tx.data);
     }, [txRequest]);
 
     const [done, setDone] = useState<boolean>(false);
@@ -170,7 +170,8 @@ export function DappTxApprovalPage() {
     }, []);
 
     useEffect(() => {
-        if (!transaction || !accountInfos || accountInfos.length === 0) return;
+        if (!transactionBlock || !accountInfos || accountInfos.length === 0)
+            return;
 
         const getTransactionInfo = async () => {
             let signer;
@@ -194,7 +195,7 @@ export function DappTxApprovalPage() {
                 const {
                     effects: transactionEffects,
                     events: transactionEvents,
-                } = await signer.dryRunTransaction({ transaction });
+                } = await signer.dryRunTransactionBlock({ transactionBlock });
 
                 if (transactionEffects.status.status === 'failure') {
                     if (
@@ -255,7 +256,7 @@ export function DappTxApprovalPage() {
 
         getTransactionInfo();
     }, [
-        transaction,
+        transactionBlock,
         activeAccountIndex,
         address,
         authentication,
@@ -277,7 +278,7 @@ export function DappTxApprovalPage() {
                     ? txRequest.tx.requestType
                     : undefined;
             await finishTransaction(
-                transaction,
+                transactionBlock,
                 txID,
                 approved,
                 authentication,
@@ -289,7 +290,7 @@ export function DappTxApprovalPage() {
             setDone(true);
         },
         [
-            transaction,
+            transactionBlock,
             txID,
             authentication,
             address,
@@ -309,11 +310,11 @@ export function DappTxApprovalPage() {
     const content: TabSections = useMemo(() => {
         if (txRequest?.tx.type !== 'transaction') return [] as TabSections;
 
-        const transaction = Transaction.from(txRequest?.tx.data);
+        const transactionBlock = TransactionBlock.from(txRequest?.tx.data);
 
         const data = {
             address,
-            transaction,
+            transactionBlock,
             reading,
             mutating,
             creating,
@@ -521,13 +522,13 @@ export function DappTxApprovalPage() {
 
         const details = [];
 
-        if (transaction?.transactionData) {
-            if (transaction.transactionData.gasConfig.budget) {
+        if (transactionBlock?.blockData) {
+            if (transactionBlock.blockData.gasConfig.budget) {
                 transactionDetails.details.push({
                     label: 'Gas Budget',
                     content: {
                         type: 'small',
-                        content: transaction.transactionData.gasConfig.budget,
+                        content: transactionBlock.blockData.gasConfig.budget,
                         coinType: SUI_TYPE_ARG,
                     } as SmallDetail,
                 });
@@ -715,21 +716,21 @@ export function DappTxApprovalPage() {
 }
 
 async function finishTransaction(
-    transaction: Transaction | null,
+    transactionBlock: TransactionBlock | null,
     txID: string | undefined,
     approved: boolean,
     authentication: string | null,
     address: string | null,
     activeAccountIndex: number,
-    options?: SuiSignAndExecuteTransactionInput['options'],
-    requestType?: SuiSignAndExecuteTransactionInput['requestType']
+    options?: SuiSignAndExecuteTransactionBlockInput['options'],
+    requestType?: SuiSignAndExecuteTransactionBlockInput['requestType']
 ) {
-    if (!transaction) {
+    if (!transactionBlock) {
         // TODO: delete? doesn't seem like we got have gotten this far without txRequest
         throw new Error(`Transaction ${txID} not found`);
     }
 
-    let txResult: SuiTransactionResponse | undefined = undefined;
+    let txResult: SuiTransactionBlockResponse | undefined = undefined;
     let tsResultError: string | undefined;
     if (approved) {
         let signer;
@@ -745,8 +746,8 @@ async function finishTransaction(
         }
 
         try {
-            txResult = await signer.signAndExecuteTransaction({
-                transaction,
+            txResult = await signer.signAndExecuteTransactionBlock({
+                transactionBlock,
                 options,
                 requestType,
             });

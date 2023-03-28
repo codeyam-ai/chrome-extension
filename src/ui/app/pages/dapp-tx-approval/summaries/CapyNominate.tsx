@@ -7,7 +7,7 @@
 import type { SummaryGeneratorArgs } from './standard';
 
 const CapyNominate = ({
-    transaction,
+    transactionBlock,
     formattedGas,
     gasSymbol,
     gasDollars,

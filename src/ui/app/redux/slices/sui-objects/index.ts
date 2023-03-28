@@ -8,7 +8,7 @@ import {
     getTotalGasUsed,
     getTransactionDigest,
     getObjectVersion,
-    Transaction,
+    TransactionBlock,
     getSuiObjectData,
 } from '@mysten/sui.js';
 import {
@@ -115,17 +115,23 @@ export const transferNFT = createAsyncThunk<
                 keypairVault.getKeyPair(activeAccountIndex)
             );
         }
-        const tx = new Transaction();
-        tx.add(
-            Transaction.Commands.TransferObjects(
-                [tx.object(data.nftId)],
-                tx.pure(data.recipientAddress)
+        const transactionBlock = new TransactionBlock();
+        transactionBlock.add(
+            TransactionBlock.Transactions.TransferObjects(
+                [transactionBlock.object(data.nftId)],
+                transactionBlock.pure(data.recipientAddress)
             )
         );
-        const executedTransaction = await signer.signAndExecuteTransaction({
-            transaction: tx,
-            options: { showEffects: true, showEvents: true, showInput: true },
-        });
+        const executedTransaction = await signer.signAndExecuteTransactionBlock(
+            {
+                transactionBlock,
+                options: {
+                    showEffects: true,
+                    showEvents: true,
+                    showInput: true,
+                },
+            }
+        );
 
         await dispatch(fetchAllOwnedAndRequiredObjects());
         const txnResp = {

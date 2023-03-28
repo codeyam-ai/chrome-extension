@@ -1,7 +1,7 @@
 // import { QueueListIcon } from '@heroicons/react/24/solid';
 // import { type SuiTransactionResponse } from '@mysten/sui.js';
 import { QueueListIcon } from '@heroicons/react/24/solid';
-import { SuiTransactionResponse } from '@mysten/sui.js';
+import { SuiTransactionBlockResponse } from '@mysten/sui.js';
 import React, { memo, useCallback, useEffect, useState } from 'react';
 
 import { useAppSelector } from '_hooks';

@@ -4,19 +4,19 @@ export type TxAction = string;
 
 const getTxAction = (txn: FormattedTransaction): TxAction => {
     let type = 'Unknown Action';
-    if (!txn?.transaction?.data?.transaction) return type;
 
-    const txDetails = txn.transaction.data.transaction;
+    const txDetails = txn?.transactionBlock?.data?.transaction;
+    if (!txDetails) return type;
 
-    if (txDetails && 'commands' in txDetails) {
-        const totalCommands = txDetails.commands.length;
+    if (txDetails && 'transactions' in txDetails) {
+        const totalCommands = txDetails.transactions.length;
 
         if (totalCommands > 1) {
             // If there's more than one command it's a 'batch' transaction
             // the ProgrammableTransaction type containing multiple commands
             type = 'batch';
         } else {
-            txDetails.commands.forEach((command) => {
+            txDetails.transactions.forEach((command) => {
                 // get command object key
                 const commandObj = command as any;
                 const commandKey = Object.keys(commandObj)[0];

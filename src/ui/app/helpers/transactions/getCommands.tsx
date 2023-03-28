@@ -7,10 +7,9 @@ export type TxType = string;
 const getCommands = (txn: FormattedTransaction): string | null => {
     let response = null;
 
-    if (!txn?.transaction?.data?.transaction) return response;
-
-    if ('commands' in txn.transaction.data.transaction) {
-        const totalCommands = txn.transaction.data.transaction.commands.length;
+    const transaction = txn?.transactionBlock?.data?.transaction;
+    if (!!transaction && 'transactions' in transaction) {
+        const totalCommands = transaction.transactions.length;
         let commandStr =
             txn.effects?.status.status === 'failure' ? `'Failed: ` : ``;
 
@@ -24,7 +23,7 @@ const getCommands = (txn: FormattedTransaction): string | null => {
               )
             : 'Unknown Object';
 
-        txn.transaction.data.transaction.commands.forEach((command, idx) => {
+        transaction.transactions.forEach((command, idx) => {
             const commandObj = command as any;
             const commandKey = Object.keys(commandObj)[0];
             const comma = idx + 1 < totalCommands ? ',' : '';

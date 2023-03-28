@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { SUI_TYPE_ARG, Transaction } from '@mysten/sui.js';
+import { SUI_TYPE_ARG, TransactionBlock } from '@mysten/sui.js';
 import { Formik } from 'formik';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -82,16 +82,16 @@ function TransferNFTRecipient() {
                 activeAccountIndex
             );
 
-            const transaction = new Transaction();
-            transaction.add(
-                Transaction.Commands.TransferObjects(
-                    [transaction.object(objectId)],
-                    transaction.pure(to)
+            const transactionBlock = new TransactionBlock();
+            transactionBlock.add(
+                TransactionBlock.Transactions.TransferObjects(
+                    [transactionBlock.object(objectId)],
+                    transactionBlock.pure(to)
                 )
             );
 
-            const signedTx = await signer.dryRunTransaction({
-                transaction: transaction,
+            const signedTx = await signer.dryRunTransactionBlock({
+                transactionBlock: transactionBlock,
             });
 
             const gasFee =

@@ -19,7 +19,7 @@ import Alert from '_src/ui/app/shared/feedback/Alert';
 
 import type {
     TransactionKindName,
-    SuiTransactionResponse,
+    SuiTransactionBlockResponse,
 } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 
@@ -50,7 +50,7 @@ function TransactionDetailsPage() {
         [txDigest]
     );
     // TODO: load tx if not found locally
-    const txDetails = useAppSelector(txSelector) as SuiTransactionResponse;
+    const txDetails = useAppSelector(txSelector) as SuiTransactionBlockResponse;
     const status = txDetails && getExecutionStatusType(txDetails);
     const statusIcon = status === 'success' ? 'check2-circle' : 'x-circle';
     const txnKind = getTransactionKind(txDetails);

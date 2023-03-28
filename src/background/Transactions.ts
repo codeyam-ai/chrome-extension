@@ -5,7 +5,7 @@ import {
     Ed25519Keypair,
     JsonRpcProvider,
     RawSigner,
-    Transaction,
+    TransactionBlock,
 } from '@mysten/sui.js';
 import { filter, lastValueFrom, map, race, Subject, take } from 'rxjs';
 import { v4 as uuidV4 } from 'uuid';
@@ -21,11 +21,11 @@ import { api } from '_src/ui/app/redux/store/thunk-extras';
 import type {
     SignedTransaction,
     SuiAddress,
-    SuiTransactionResponse,
+    SuiTransactionBlockResponse,
 } from '@mysten/sui.js';
 import type {
     IdentifierString,
-    SuiSignAndExecuteTransactionInput,
+    SuiSignAndExecuteTransactionBlockInput,
     SuiSignMessageOutput,
 } from '@mysten/wallet-standard';
 import type {
@@ -91,10 +91,10 @@ class Transactions {
                   sign: SuiSignTransactionSerialized;
               },
         connection: ContentScriptConnection
-    ): Promise<SuiTransactionResponse | SignedTransaction> {
+    ): Promise<SuiTransactionBlockResponse | SignedTransaction> {
         if (tx) {
-            const transaction = Transaction.from(tx.data);
-            for (const command of transaction.transactionData.commands) {
+            const transactionBlock = TransactionBlock.from(tx.data);
+            for (const command of transactionBlock.blockData.transactions) {
                 if (command.kind === 'MoveCall') {
                     const objectIds: string[] = [];
                     for (const argument of command.arguments) {
@@ -116,7 +116,7 @@ class Transactions {
 
                     if (preapproval?.approved) {
                         const txResult = await this.tryDirectExecution(
-                            transaction,
+                            transactionBlock,
                             tx.account,
                             tx.chain,
                             preapproval,
@@ -196,16 +196,16 @@ class Transactions {
     }
 
     private async tryDirectExecution(
-        tx: Transaction,
+        tx: TransactionBlock,
         address: SuiAddress,
         chain: IdentifierString | undefined,
         preapprovalRequest: PreapprovalRequest,
-        requestType?: SuiSignAndExecuteTransactionInput['requestType'],
-        options?: SuiSignAndExecuteTransactionInput['options']
+        requestType?: SuiSignAndExecuteTransactionBlockInput['requestType'],
+        options?: SuiSignAndExecuteTransactionBlockInput['options']
     ) {
         try {
             const txDirectResult = await this.executeTransactionDirectly({
-                transaction: tx,
+                transactionBlock: tx,
                 address,
                 chain,
                 options,
@@ -269,17 +269,17 @@ class Transactions {
     }
 
     private async executeTransactionDirectly({
-        transaction,
+        transactionBlock,
         address,
         chain,
         requestType,
         options,
     }: {
-        transaction: Transaction;
+        transactionBlock: TransactionBlock;
         address: SuiAddress;
         chain?: IdentifierString;
-        requestType?: SuiSignAndExecuteTransactionInput['requestType'];
-        options?: SuiSignAndExecuteTransactionInput['options'];
+        requestType?: SuiSignAndExecuteTransactionBlockInput['requestType'];
+        options?: SuiSignAndExecuteTransactionBlockInput['options'];
     }) {
         const activeAccount = await this.getAccount(address);
 
@@ -319,8 +319,8 @@ class Transactions {
         const signer = new RawSigner(keypair, provider);
 
         try {
-            const txResponse = await signer.signAndExecuteTransaction({
-                transaction,
+            const txResponse = await signer.signAndExecuteTransactionBlock({
+                transactionBlock,
                 options,
                 requestType,
             });

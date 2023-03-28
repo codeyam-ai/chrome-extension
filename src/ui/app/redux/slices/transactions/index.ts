@@ -5,7 +5,7 @@ import {
     getTransactionDigest,
     // Coin as CoinAPI,
     SUI_TYPE_ARG,
-    Transaction,
+    TransactionBlock,
 } from '@mysten/sui.js';
 import {
     createAsyncThunk,
@@ -24,7 +24,7 @@ import type {
     SuiAddress,
     SuiMoveObject,
     // SuiObjectData,
-    SuiTransactionResponse,
+    SuiTransactionBlockResponse,
 } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
@@ -36,7 +36,7 @@ type SendTokensTXArgs = {
 };
 
 // TODO: why alias this here?
-type TransactionResult = SuiTransactionResponse;
+type TransactionBlockResult = SuiTransactionBlockResponse;
 
 // type GasCoinResponse = {
 //     gasCoinObjectId?: SuiAddress;
@@ -144,7 +144,7 @@ type TransactionResult = SuiTransactionResponse;
 // );
 
 export const sendTokens = createAsyncThunk<
-    TransactionResult,
+    TransactionBlockResult,
     SendTokensTXArgs,
     AppThunkConfig
 >(
@@ -152,7 +152,7 @@ export const sendTokens = createAsyncThunk<
     async (
         { tokenTypeArg, amount, recipientAddress },
         { getState, extra: { api, keypairVault }, dispatch }
-    ): Promise<TransactionResult> => {
+    ): Promise<TransactionBlockResult> => {
         const state = getState();
         const {
             account: { authentication, address, activeAccountIndex },
@@ -172,44 +172,46 @@ export const sendTokens = createAsyncThunk<
             (coin) => coin.type === `0x2::coin::Coin<${tokenTypeArg}>`
         );
 
-        const transaction = new Transaction();
+        const transactionBlock = new TransactionBlock();
         if (tokenTypeArg === SUI_TYPE_ARG) {
-            const coin = transaction.add(
-                Transaction.Commands.SplitCoins(transaction.gas, [
-                    transaction.pure(amount),
+            const coin = transactionBlock.add(
+                TransactionBlock.Transactions.SplitCoins(transactionBlock.gas, [
+                    transactionBlock.pure(amount),
                 ])
             );
-            transaction.add(
-                Transaction.Commands.TransferObjects(
+            transactionBlock.add(
+                TransactionBlock.Transactions.TransferObjects(
                     [coin],
-                    transaction.pure(recipientAddress)
+                    transactionBlock.pure(recipientAddress)
                 )
             );
         } else {
-            const primaryCoinInput = transaction.object(
+            const primaryCoinInput = transactionBlock.object(
                 Coin.getID(primaryCoin)
             );
-            transaction.add(
-                Transaction.Commands.MergeCoins(
+            transactionBlock.add(
+                TransactionBlock.Transactions.MergeCoins(
                     primaryCoinInput,
-                    coins.map((coin) => transaction.object(Coin.getID(coin)))
+                    coins.map((coin) =>
+                        transactionBlock.object(Coin.getID(coin))
+                    )
                 )
             );
-            const coin = transaction.add(
-                Transaction.Commands.SplitCoins(primaryCoinInput, [
-                    transaction.pure(amount),
+            const coin = transactionBlock.add(
+                TransactionBlock.Transactions.SplitCoins(primaryCoinInput, [
+                    transactionBlock.pure(amount),
                 ])
             );
-            transaction.add(
-                Transaction.Commands.TransferObjects(
+            transactionBlock.add(
+                TransactionBlock.Transactions.TransferObjects(
                     [coin],
-                    transaction.pure(recipientAddress)
+                    transactionBlock.pure(recipientAddress)
                 )
             );
         }
 
-        const response = await signer.signAndExecuteTransaction({
-            transaction: transaction,
+        const response = await signer.signAndExecuteTransactionBlock({
+            transactionBlock,
         });
 
         // TODO: better way to sync latest objects
@@ -219,15 +221,15 @@ export const sendTokens = createAsyncThunk<
 );
 
 export const executeMoveCall = createAsyncThunk<
-    TransactionResult,
-    Transaction,
+    TransactionBlockResult,
+    TransactionBlock,
     AppThunkConfig
 >(
     'sui-objects/execute-move-call',
     async (
         moveCall,
         { getState, extra: { api, keypairVault }, dispatch }
-    ): Promise<TransactionResult> => {
+    ): Promise<TransactionBlockResult> => {
         const state = getState();
         const {
             account: { authentication, address, activeAccountIndex },
@@ -242,8 +244,8 @@ export const executeMoveCall = createAsyncThunk<
             );
         }
 
-        const response = await signer.signAndExecuteTransaction({
-            transaction: moveCall,
+        const response = await signer.signAndExecuteTransactionBlock({
+            transactionBlock: moveCall,
         });
 
         return response;
@@ -308,7 +310,7 @@ export const executeMoveCall = createAsyncThunk<
 //     }
 // );
 
-const txAdapter = createEntityAdapter<TransactionResult>({
+const txAdapter = createEntityAdapter<TransactionBlockResult>({
     selectId: (tx) => getTransactionDigest(tx),
 });
 

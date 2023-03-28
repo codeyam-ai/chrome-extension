@@ -3,7 +3,7 @@
 
 // import { getTransactionDigest, Transaction, SUI_TYPE_ARG } from '@mysten/sui.js';
 
-import { SUI_TYPE_ARG, Transaction } from '@mysten/sui.js';
+import { SUI_TYPE_ARG, TransactionBlock } from '@mysten/sui.js';
 import BigNumber from 'bignumber.js';
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
@@ -138,46 +138,47 @@ function TransferCoinAmountPage() {
                 (coin) => coin.type === `0x2::coin::Coin<${coinType}>`
             );
 
-            const transaction = new Transaction();
+            const transactionBlock = new TransactionBlock();
             if (coinType === SUI_TYPE_ARG) {
-                const coin = transaction.add(
-                    Transaction.Commands.SplitCoins(transaction.gas, [
-                        transaction.pure(bigIntAmount),
-                    ])
+                const coin = transactionBlock.add(
+                    TransactionBlock.Transactions.SplitCoins(
+                        transactionBlock.gas,
+                        [transactionBlock.pure(bigIntAmount)]
+                    )
                 );
-                transaction.add(
-                    Transaction.Commands.TransferObjects(
+                transactionBlock.add(
+                    TransactionBlock.Transactions.TransferObjects(
                         [coin],
-                        transaction.pure(formState.to)
+                        transactionBlock.pure(formState.to)
                     )
                 );
             } else {
-                const primaryCoinInput = transaction.object(
+                const primaryCoinInput = transactionBlock.object(
                     Coin.getID(primaryCoin)
                 );
-                transaction.add(
-                    Transaction.Commands.MergeCoins(
+                transactionBlock.add(
+                    TransactionBlock.Transactions.MergeCoins(
                         primaryCoinInput,
                         coins.map((coin) =>
-                            transaction.object(Coin.getID(coin))
+                            transactionBlock.object(Coin.getID(coin))
                         )
                     )
                 );
-                const coin = transaction.add(
-                    Transaction.Commands.SplitCoins(primaryCoinInput, [
-                        transaction.pure(bigIntAmount),
+                const coin = transactionBlock.add(
+                    TransactionBlock.Transactions.SplitCoins(primaryCoinInput, [
+                        transactionBlock.pure(bigIntAmount),
                     ])
                 );
-                transaction.add(
-                    Transaction.Commands.TransferObjects(
+                transactionBlock.add(
+                    TransactionBlock.Transactions.TransferObjects(
                         [coin],
-                        transaction.pure(formState.to)
+                        transactionBlock.pure(formState.to)
                     )
                 );
             }
 
-            const signedTx = await signer.devInspectTransaction({
-                transaction,
+            const signedTx = await signer.devInspectTransactionBlock({
+                transactionBlock,
             });
 
             const { computationCost, storageCost, storageRebate } =

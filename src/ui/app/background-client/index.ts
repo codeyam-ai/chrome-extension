@@ -16,7 +16,7 @@ import type {
     SignedMessage,
     SignedTransaction,
     SuiAddress,
-    SuiTransactionResponse,
+    SuiTransactionBlockResponse,
 } from '@mysten/sui.js';
 import type { Message } from '_messages';
 import type {
@@ -79,7 +79,7 @@ export class BackgroundClient {
     public sendTransactionRequestResponse(
         txID: string,
         approved: boolean,
-        txResult?: SuiTransactionResponse | SignedMessage,
+        txResult?: SuiTransactionBlockResponse | SignedMessage,
         txResultError?: string,
         txSigned?: SignedTransaction
     ) {
