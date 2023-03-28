@@ -32,12 +32,12 @@ function NumberInput<FormValues>({
         forcedDisabled !== undefined ? forcedDisabled : isSubmitting;
     const { groupDelimiter, decimalDelimiter } = useNumberDelimiters();
 
-    const handleOnValueChange = useCallback(
-        (values: NumberFormatValues) => {
-            setFieldValue(name, values.formattedValue);
-        },
-        [name, setFieldValue]
-    );
+    // const handleOnValueChange = useCallback(
+    //     (values: NumberFormatValues) => {
+    //         setFieldValue(name, values.value);
+    //     },
+    //     [name, setFieldValue]
+    // );
     return (
         <NumericFormat
             type="text"
@@ -54,7 +54,7 @@ function NumberInput<FormValues>({
                 decimalSeparator: decimalDelimiter || '.',
                 thousandSeparator: groupDelimiter || ',',
                 onBlur,
-                onValueChange: handleOnValueChange,
+                // onValueChange: handleOnValueChange,
             }}
         />
     );

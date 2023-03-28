@@ -116,8 +116,12 @@ export function useFormatCoin(
             currency: 'USD',
         });
 
-        return dollarFormatter.format(parseFloat(formatBalance(balance, 6)));
-    }, [balance]);
+        return dollarFormatter.format(
+            new BigNumber(balance.toString())
+                .shiftedBy(-1 * (decimals - 2))
+                .toNumber()
+        );
+    }, [balance, decimals]);
 
     return [
         formatted,

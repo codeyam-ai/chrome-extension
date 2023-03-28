@@ -1,15 +1,18 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
+import BigNumber from 'bignumber.js';
 import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
 import { useEffect, useMemo, useRef, memo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
+import useNumberDelimiters from '../../../hooks/useNumberDelimiters';
 import Sui from '../tokens/Sui';
 import UnknownToken from '../tokens/UnknownToken';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import NumberInput from '_components/number-input';
 import WalletTo from '_src/ui/app/components/wallet-to';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
+import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
 import { CoinSelect } from '_src/ui/app/pages/home/tokens/CoinDropdown';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
@@ -119,14 +122,15 @@ function TransferCoinForm({
     const onClearRef = useRef(onClearSubmitError);
     onClearRef.current = onClearSubmitError;
 
+    const [decimals] = useCoinDecimals(coinType);
+    const [, , dollars] = useFormatCoin(
+        new BigNumber(amount).shiftedBy(decimals).toString(),
+        coinType
+    );
+
     useEffect(() => {
         onClearRef.current();
     }, [amount]);
-
-    const dollars = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    }).format(parseFloat(amount) * 100);
 
     const inputClasses =
         'flex flex-row w-full py-[16px] px-[20px] focus:py-[15px] focus:px-[19px] resize-none shadow-sm rounded-[16px] bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary font-weight-ethos-body-large text-size-ethos-body-large leading-line-height-ethos-body-large tracking-letter-spacing-ethos-body-large bg-ethos-light-background-default dark:bg-ethos-dark-background-default border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke focus:ring-0 focus:border-2 focus:border-ethos-light-primary-light focus:dark:border-ethos-dark-primary-dark focus:shadow-ethos-light-stroke-focused dark:focus:shadow-ethos-dark-stroke-focused';
