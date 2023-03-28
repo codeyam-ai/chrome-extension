@@ -32,7 +32,7 @@ class Authentication {
                 'wallet/accounts',
                 'POST',
                 this._accessToken || '',
-                { network: 'sui', chain: 'sui' }
+                { chain: 'sui' }
             );
 
             if (status !== 200) {
@@ -86,16 +86,13 @@ class Authentication {
         if (!this._accessToken) return;
 
         const { json, status } = await simpleApiCall(
-            'transaction/sign',
+            'transactions/sign',
             'POST',
             this._accessToken || '',
             {
                 network: 'sui',
                 walletAddress: address,
-                txOrMessage: {
-                    id: 0,
-                    transaction: toB64(dataToSign),
-                },
+                dataToSign: toB64(dataToSign),
             }
         );
 
@@ -103,9 +100,9 @@ class Authentication {
             return;
         }
 
-        const { serializedSig } = json;
+        const { signature } = json;
 
-        return serializedSig;
+        return signature;
     }
 }
 
