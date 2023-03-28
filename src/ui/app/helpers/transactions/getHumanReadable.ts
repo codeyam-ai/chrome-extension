@@ -37,9 +37,13 @@ const getHumanReadable = (ownerAddr: string, tx: FormattedTransaction) => {
     const gasFeeInUsd = getDollars(totalGasCost);
     const txCommands = getCommands(tx);
     const displayImage = getDisplayImage(tx);
-    const txUsdAmount = dollarFormatter.format(
-        parseInt(txAmount.replace(/,/g, '')) * 100
-    );
+    const amt = parseInt(txAmount.replace(/,/g, ''));
+    const txUsdAmount =
+        amt <= 0.001
+            ? '< 1¢'
+            : dollarFormatter.format(
+                  parseInt(txAmount.replace(/,/g, '')) * 100
+              );
 
     const preposition = getTxPreposition(txType, txAction);
     const otherAddress = getTxOtherAddressDisplay(
