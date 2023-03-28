@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react';
 
-import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
+import { simulateMnemonicUser } from '_src/test/utils/storage';
 
 describe('Rendering the Tokens page', () => {
     let mockchain: Mockchain;
@@ -23,6 +23,6 @@ describe('Rendering the Tokens page', () => {
             suiBalance: 40000000000,
         });
         renderApp();
-        await screen.findByText('$40');
+        await screen.findByText('$4,000');
     });
 });

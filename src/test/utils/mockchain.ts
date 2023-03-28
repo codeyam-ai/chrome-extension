@@ -5,8 +5,6 @@ import { v4 as uuidV4 } from 'uuid';
 import { renderTemplate } from './json-templates';
 import { suiSystemStateObject } from '_src/test/utils/mockchain-templates/sui-system-state';
 
-import type { SuiObjectData, SuiObjectInfo } from '@mysten/sui.js';
-
 interface ExpectedCall {
     method: string;
     params?: unknown[];
@@ -156,11 +154,6 @@ export class Mockchain {
             fullObjects,
             true
         );
-
-        if (options.logObjects) {
-            console.log('fullObjects: ', JSON.stringify(fullObjects, null, 2));
-            console.log('objectInfos: ', JSON.stringify(objectInfos, null, 2));
-        }
     }
 
     matchIncomingRequest(uri: string, requestBody: nock.Body) {
