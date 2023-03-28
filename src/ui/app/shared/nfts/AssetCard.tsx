@@ -3,6 +3,8 @@ import FuncIcon from '../../pages/home/tokens/FuncIcon';
 import NftIcon from '../../pages/home/tokens/NftIcon';
 import UnknownToken from '../../pages/home/tokens/UnknownToken';
 import TxSui from '../svg/TxSui';
+import { Icon } from '../icons/Icon';
+import { ArrowUpRightIcon } from '@heroicons/react/24/solid';
 
 export const AssetCard = ({
     theme,
@@ -48,6 +50,10 @@ export const AssetCard = ({
                     {txType === 'nft' && <NftIcon width={56} height={56} />}
 
                     {txType === 'func' && <FuncIcon width={56} height={56} />}
+
+                    {txType === 'transfer' && (
+                        <Icon displayIcon={<ArrowUpRightIcon />} />
+                    )}
                 </div>
 
                 {icon && icon}
