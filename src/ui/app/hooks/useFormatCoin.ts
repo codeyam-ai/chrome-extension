@@ -32,17 +32,17 @@ export function formatBalance(
 
     if (bn.gte(1_000_000_000)) {
         bn = bn.shiftedBy(-9);
-        postfix = ' B';
+        postfix = 'B';
     } else if (bn.gte(1_000_000)) {
         bn = bn.shiftedBy(-6);
-        postfix = ' M';
+        postfix = 'M';
     } else if (bn.gte(10_000)) {
         bn = bn.shiftedBy(-3);
-        postfix = ' K';
+        postfix = 'K';
     }
 
     if (bn.gte(1)) {
-        bn = bn.decimalPlaces(3, BigNumber.ROUND_DOWN);
+        bn = bn.decimalPlaces(2, BigNumber.ROUND_DOWN);
     }
 
     return bn.toFormat() + postfix;

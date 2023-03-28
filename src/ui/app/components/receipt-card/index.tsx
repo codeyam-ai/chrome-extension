@@ -12,7 +12,7 @@ import {
 } from '@heroicons/react/24/solid';
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import _ from 'lodash';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
@@ -31,14 +31,18 @@ import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { formatDate } from '_helpers';
 import { useAppSelector, useFormatCoin, useMiddleEllipsis } from '_hooks';
 import CopyBody from '_src/ui/app/shared/typography/CopyBody';
+import { JsonRpcProvider } from '@mysten/sui.js';
+import { useQuery } from '@tanstack/react-query';
 
 // import type { TxResultState } from '_redux/slices/txresults';
 
 import st from './ReceiptCard.module.scss';
+import { getHumanReadable } from '../../helpers/transactions';
+import { FormattedTransaction } from '../../helpers/transactions/types';
 
 type TxResponseProps = {
     txDigest: any;
-    transferType?: 'nft' | 'coin' | null;
+    trans?: 'nft' | 'coin' | 'func' | null;
 };
 
 const TRUNCATE_MAX_LENGTH = 8;
@@ -141,9 +145,51 @@ const TxTransfer = ({
 );
 
 function ReceiptCard({ txDigest }: TxResponseProps) {
-    const { accountInfos } = useAppSelector(({ account }) => account);
+    //const { accountInfos } = useAppSelector(({ account }) => account);
+    const address = useAppSelector(({ account }) => account.address) as string;
+    const { data } = useQuery(['transactions-by-address', address]);
+    const theme = getTheme();
 
-    const getAccount = useCallback(
+    const result = data as FormattedTransaction[];
+
+    // find transaction details based on txDigest
+    const tx = result.find(
+        (tx) => tx.digest === txDigest
+    ) as FormattedTransaction;
+
+    const {
+        timeDisplay,
+        txType,
+        txAction,
+        txAmount,
+        txStatus,
+        txUsdAmount,
+        gasFeeInSui,
+        gasFeeInUsd,
+        txCommands,
+        preposition,
+        otherAddress,
+        otherAddressStr,
+        displayImage,
+    } = getHumanReadable(address, tx);
+
+    console.log('check => ', {
+        timeDisplay,
+        txType,
+        txAction,
+        txAmount,
+        txStatus,
+        txUsdAmount,
+        gasFeeInSui,
+        gasFeeInUsd,
+        txCommands,
+        preposition,
+        otherAddress,
+        otherAddressStr,
+        displayImage,
+    });
+
+    /*const getAccount = useCallback(
         (address: string) => {
             return accountInfos.find(
                 (accountInfo: AccountInfo) => accountInfo.address === address
@@ -267,42 +313,37 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             address: txDigest.from,
             failedMsg: '',
         },
-    };
+    };*/
 
     return (
         <>
             <div className={'pt-6 px-6 pb-8'}>
                 <AssetCard
                     theme={theme}
-                    isNft={isNft}
-                    isFunc={isFunc === 'yes'}
-                    coinType={coinType}
-                    imgUrl={imgUrl || icon || ''}
-                    name={txDigest?.name || 'NFT'}
-                    icon={
-                        txDigest.status === 'success' ? (
-                            transferMeta[transferType].txIcon
-                        ) : (
-                            <Icon
-                                displayIcon={<XMarkIcon />}
-                                isRound={isNft ? false : true}
-                            />
-                        )
-                    }
+                    txType={txType}
+                    coinType={'SUI'} // TODO: handle coin types
+                    imgUrl={displayImage || ''}
+                    name={txCommands || 'NFT'}
+                    icon={<></>} // TODO: handle success / failure icon
                 />
                 <Body className={'text-ethos-light-text-medium'}>
-                    {txDigest.status === 'success'
-                        ? transferMeta[transferType].txName
-                        : transferMeta[transferType].failedMsg}
+                    {txStatus === 'success'
+                        ? _.toUpper(txType)
+                        : 'Transaction Failed'}
                 </Body>
                 <Header className={'font-weight-ethos-subheader mb-3'}>
-                    {header}
+                    {txCommands}
                 </Header>
                 <Body className={'text-ethos-light-text-medium'}>
-                    {date && date.replace(' AM', 'am').replace(' PM', 'pm')}
+                    {timeDisplay}
                 </Body>
             </div>
-            {!isMinted && (
+            {/*
+            
+            TODO: Need to add this when we have the ability to check
+            if a transaction is minted, where the tx is from and to
+
+            !isMinted && (
                 <div className={'px-6 pb-6'}>
                     <TxTransfer
                         ToFrom={{
@@ -321,20 +362,21 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                         }}
                     />
                 </div>
-            )}
-            {isNft ? (
+            )*/}
+
+            {txType === 'nft' ? (
                 <KeyValueList
                     header={'Details'}
                     keyNamesAndValues={[
                         {
                             keyName: 'Transaction Fee',
-                            value: `${gas} SUI`,
+                            value: `${gasFeeInSui} SUI`,
                         },
-                        {
-                            keyName: 'Signature',
-                            value: txDigest.from,
-                            shortValue: fromAddrStr,
-                        },
+                        //{ TODO: get from addr
+                        //    keyName: 'Signature',
+                        //    value: txDigest.from,
+                        //    shortValue: fromAddrStr,
+                        //},
                     ]}
                 />
             ) : (
@@ -342,61 +384,51 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     header={'Details'}
                     keyNamesAndValues={[
                         {
-                            keyName:
-                                transferType === 'Sent'
-                                    ? 'You Sent'
-                                    : transferType === 'Received'
-                                    ? 'You Received'
-                                    : '',
-                            value: `${total} ${
-                                coinType === 'SUI' ? totalSymbol : ''
-                            }`,
+                            keyName: (txAmount && 'Amount') || '',
+                            value: (txAmount && txAmount + ' SUI') || '',
                         },
                         {
                             keyName: 'Transaction Fee',
-                            value: `${gas} ${
-                                coinType === 'SUI' ? totalSymbol : ''
-                            }`,
+                            value: `${gasFeeInSui} SUI`,
                         },
                         {
-                            keyName: dollars ? 'Total' : '',
-                            value: dollars,
+                            keyName: 'Total (USD)',
+                            value: txUsdAmount as string,
                         },
                     ]}
                 />
             )}
-            {txDigest.txId && (
-                <div className={'px-6 pb-6'}>
-                    <div className={'flex flex-row justify-between'}>
-                        <BodyLarge>
-                            {isNft ? (
-                                <ExplorerLink
-                                    type={ExplorerLinkType.object}
-                                    objectID={txDigest.objectId || ''}
-                                    title="View on Sui Explorer"
-                                    className={st['explorer-link']}
-                                    showIcon={true}
-                                >
-                                    View NFT on Sui Explorer
-                                </ExplorerLink>
-                            ) : (
-                                <ExplorerLink
-                                    type={ExplorerLinkType.transaction}
-                                    transactionID={txDigest.txId}
-                                    title="View on Sui Explorer"
-                                    className={st['explorer-link']}
-                                    showIcon={true}
-                                >
-                                    View on Sui Explorer
-                                </ExplorerLink>
-                            )}
-                        </BodyLarge>
-                        <div className={'text-ethos-light-text-medium'}>
-                            <ArrowUpRightIcon width={16} height={16} />
-                        </div>
+
+            <div className={'px-6 pb-6'}>
+                <div className={'flex flex-row justify-between'}>
+                    <BodyLarge>
+                        {txType == 'nft' ? (
+                            <ExplorerLink
+                                type={ExplorerLinkType.object}
+                                objectID={txDigest.objectId || ''}
+                                title="View on Sui Explorer"
+                                className={st['explorer-link']}
+                                showIcon={true}
+                            >
+                                View NFT on Sui Explorer
+                            </ExplorerLink>
+                        ) : (
+                            <ExplorerLink
+                                type={ExplorerLinkType.transaction}
+                                transactionID={txDigest.txId}
+                                title="View on Sui Explorer"
+                                className={st['explorer-link']}
+                                showIcon={true}
+                            >
+                                View on Sui Explorer
+                            </ExplorerLink>
+                        )}
+                    </BodyLarge>
+                    <div className={'text-ethos-light-text-medium'}>
+                        <ArrowUpRightIcon width={16} height={16} />
                     </div>
                 </div>
-            )}
+            </div>
         </>
     );
 }

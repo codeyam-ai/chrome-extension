@@ -10,7 +10,7 @@ type ActivityRowProps = {
     failed: boolean;
     icon: JSX.Element;
     typeIcon: JSX.Element;
-    type: string;
+    txAction: string;
     link: string;
     header?: string;
     subheader: string;
@@ -26,7 +26,7 @@ export const ActivityRow = ({
     icon,
     typeIcon,
     date,
-    type,
+    txAction,
     link,
     header,
     subheader,
@@ -34,7 +34,9 @@ export const ActivityRow = ({
     symbol,
     dollars,
 }: ActivityRowProps) => {
-    const displayFormattedAmount = truncateString(formattedAmount || '', 6);
+    const amt = parseFloat(formattedAmount as string);
+    const isDebit = formattedAmount && amt < 0;
+    const displayFormattedAmount = truncateString(formattedAmount || '', 8);
     return (
         <Link to={link} className="flex flex-col">
             <div className={'flex flex-row justify-between mb-4 items-center'}>
@@ -45,7 +47,7 @@ export const ActivityRow = ({
                     </Body>
                 ) : (
                     <Body isTextColorMedium className={'flex flex-row gap-3'}>
-                        {typeIcon} {_.capitalize(type)}
+                        {typeIcon} {_.capitalize(txAction)}
                     </Body>
                 )}
                 <Body isTextColorMedium>{date}</Body>
@@ -66,15 +68,12 @@ export const ActivityRow = ({
                             <BodyLarge
                                 isSemibold
                                 className={
-                                    type === 'send'
+                                    isDebit
                                         ? 'text-[#CE3838]'
                                         : 'text-[#238044]'
                                 }
                             >
-                                {type === 'send'
-                                    ? `-${displayFormattedAmount}`
-                                    : `+${displayFormattedAmount}`}{' '}
-                                {symbol}
+                                {displayFormattedAmount} {symbol}
                             </BodyLarge>
                             <Body
                                 isTextColorMedium
