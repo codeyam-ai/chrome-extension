@@ -32,8 +32,9 @@ const getHumanReadable = (ownerAddr: string, tx: FormattedTransaction) => {
     const gasFeeInUsd = getDollars(totalGasCost);
     const txCommands = getCommands(tx);
     const displayImage = getDisplayImage(tx);
-    const amt = parseFloat(txAmount.replace(/,/g, ''));
-    const txUsdAmount = getUsdAmount(amt);
+
+    const amt = txAmount ? parseFloat(txAmount.replace(/,/g, '')) : undefined;
+    const txUsdAmount = amt ? getUsdAmount(amt) : undefined;
 
     const preposition = getTxPreposition(txType, txAction);
     const otherAddress = getTxOtherAddressDisplay(
