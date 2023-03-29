@@ -50,7 +50,7 @@ export const getFormattedGasFee = (gasFee: number): string | undefined => {
 export function getSuiTransferAmount(
     ownerAddr: string,
     txn: FormattedTransaction
-) {
+): string {
     let mistAmt = 0;
 
     // Get the first amount in the balanceChanges array

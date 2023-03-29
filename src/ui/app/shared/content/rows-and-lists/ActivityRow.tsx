@@ -17,7 +17,7 @@ type ActivityRowProps = {
     subheader: string;
     formattedAmount?: string;
     symbol?: string;
-    dollars?: string;
+    dollars?: string | number;
     amountSubtext?: string;
     date: string;
 };

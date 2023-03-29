@@ -4,6 +4,8 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 
 import { BASE_URL } from '_src/shared/constants';
+import { Mockchain } from '_src/test/utils/mockchain';
+import { renderApp } from '_src/test/utils/react-rendering';
 import {
     fakeAccessToken,
     accountInfos,
@@ -12,8 +14,6 @@ import {
     simulateMnemonicUser,
     simulateEmailUser,
 } from '_src/test/utils/storage';
-import { Mockchain } from '_src/test/utils/mockchain';
-import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('The Security Settings page', () => {
     let mockchain: Mockchain;

@@ -6,19 +6,19 @@ import {
 } from './';
 import getCommands from './getCommands';
 import getDisplayImage from './getDisplayImage';
+import getIsSender from './getIsSender';
 import {
     getFormattedGasFee,
     getGasFee,
     getSuiObj,
     getSuiTransferAmount,
 } from './getSuiTransferAmount';
+import getUsdAmount from './getUsdAmount';
 import convertUnixTimeToLocalTime from '../convertUnixTimeToLocalTime';
 import { getDollars } from '../formatCoin';
 import truncateMiddle from '../truncate-middle';
-import getIsSender from './getIsSender';
 
 import type { FormattedTransaction } from './types';
-import getUsdAmount from './getUsdAmount';
 
 const getHumanReadable = (ownerAddr: string, tx: FormattedTransaction) => {
     const timeDisplay = convertUnixTimeToLocalTime(tx.timestampMs || 0);

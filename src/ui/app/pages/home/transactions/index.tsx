@@ -7,22 +7,24 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 import { useAppSelector } from '_hooks';
 // import { getFullTransactionDetails } from '_redux/slices/txresults';
 import { type TxResultState } from '_redux/slices/txresults';
-import { Icon } from '_src/ui/app/shared/icons/Icon';
 import Loading from '_src/ui/app/components/loading';
-import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
+import { getTxType } from '_src/ui/app/helpers/transactions';
+import { useQueryTransactionsByAddress } from '_src/ui/app/hooks/useQueryTransactionsByAddress';
+import { api } from '_src/ui/app/redux/store/thunk-extras';
+import Button from '_src/ui/app/shared/button';
+import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
+
 // import deduplicate from '_src/ui/app/helpers/deduplicate';
 // import formatCoin from '_src/ui/app/helpers/formatCoin';
 // import { getTxType } from '_src/ui/app/helpers/transactions';
-import { useQueryTransactionsByAddress } from '_src/ui/app/hooks/useQueryTransactionsByAddress';
 // import { api } from '_src/ui/app/redux/store/thunk-extras';
 // import Button from '_src/ui/app/shared/button';
-import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
+import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
-import Button from '_src/ui/app/shared/button';
-import { api } from '_src/ui/app/redux/store/thunk-extras';
-import { getTxType } from '_src/ui/app/helpers/transactions';
+
+import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 // import { Icon } from '_src/ui/app/shared/icons/Icon';
 // import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
@@ -32,7 +34,7 @@ const TransactionsPage = () => {
     const [formattedTxns, setFormattedTxns] = useState<FormattedTransaction[]>(
         []
     );
-    const [error, setError] = useState<string | undefined>();
+
     const { isLoading: loadingTxns, data: suiTxns } =
         useQueryTransactionsByAddress(address);
 

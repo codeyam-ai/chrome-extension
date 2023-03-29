@@ -5,10 +5,10 @@ import userEvent from '@testing-library/user-event';
 import KeypairVault from '_app/KeypairVault';
 import { BackgroundClient } from '_app/background-client';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
-import { accountInfos, simulateMnemonicUser } from '_src/test/utils/storage';
 import { renderTemplate } from '_src/test/utils/json-templates';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
+import { accountInfos, simulateMnemonicUser } from '_src/test/utils/storage';
 import { createStore } from '_store';
 import { thunkExtras } from '_store/thunk-extras';
 

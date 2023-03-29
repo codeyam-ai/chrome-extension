@@ -1,10 +1,11 @@
+import { ArrowUpRightIcon } from '@heroicons/react/24/solid';
+
 import ipfs from '../../helpers/ipfs';
 import FuncIcon from '../../pages/home/tokens/FuncIcon';
 import NftIcon from '../../pages/home/tokens/NftIcon';
 import UnknownToken from '../../pages/home/tokens/UnknownToken';
-import TxSui from '../svg/TxSui';
 import { Icon } from '../icons/Icon';
-import { ArrowUpRightIcon } from '@heroicons/react/24/solid';
+import TxSui from '../svg/TxSui';
 
 export const AssetCard = ({
     theme,

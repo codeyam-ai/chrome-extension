@@ -1,10 +1,10 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { renderTemplate } from '_src/test/utils/json-templates';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
+import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { preventActWarning } from '_src/test/utils/test-helpers';
 
 xdescribe('The Transaction History Page', () => {
