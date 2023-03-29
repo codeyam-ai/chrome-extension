@@ -55,12 +55,10 @@ export const changeRPCNetwork = createAsyncThunk<void, API_ENV, AppThunkConfig>(
             app?.customRPC && isCustomRPC ? app?.customRPC : null;
 
         // don't switch if customRPC and empty input //handle default
-        console.log('HIY', isCustomRPC, customRPCURL);
         if (isCustomRPC && !customRPCURL) return;
 
         dispatch(setApiEnv(networkName));
 
-        console.log('HIX', networkName, customRPCURL);
         api.setNewJsonRpcProvider(networkName, customRPCURL);
 
         // dispatch(getTransactionsByAddress());
