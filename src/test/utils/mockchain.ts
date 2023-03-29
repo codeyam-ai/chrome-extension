@@ -190,13 +190,7 @@ export class Mockchain {
                             callContext.expectedCall.result
                         );
                     } else {
-                        const message = `Found a match for method ${
-                            callContext.expectedCall.method
-                        } with params ${
-                            callContext.expectedCall.params
-                        } but request already happened ${
-                            numExpectedCalls
-                        } times!\n Consider passing persist: true`;
+                        const message = `Found a match for method ${callContext.expectedCall.method} with params ${callContext.expectedCall.params} but request already happened ${numExpectedCalls} times!\n Consider passing persist: true`;
                         // eslint-disable-next-line no-console
                         console.warn(message);
                         throw new Error(message);
