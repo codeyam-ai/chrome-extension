@@ -17,11 +17,14 @@ import _ from 'lodash';
 // import { useSearchParams } from 'react-router-dom';
 
 // import { type AccountInfo } from '../../KeypairVault';
+import { useSearchParams } from 'react-router-dom';
+
 import { getTheme } from '../../helpers/getTheme';
 // import ipfs from '../../helpers/ipfs';
 import { getHumanReadable } from '../../helpers/transactions';
 // import truncateMiddle from '../../helpers/truncate-middle';
 // import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
+import { useQueryTransactionsByAddress } from '../../hooks/useQueryTransactionsByAddress';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
 // import { Icon } from '../../shared/icons/Icon';
 import { AssetCard } from '../../shared/nfts/AssetCard';
@@ -153,13 +156,28 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     const address = useAppSelector(({ account }) => account.address) as string;
     const { data } = useQuery(['transactions-by-address', address]);
     const theme = getTheme();
+    let result;
+    let tx;
 
-    const result = data as FormattedTransaction[];
+    // get the txdigest from the url
+    const [searchParams] = useSearchParams();
+    const txDigestFromUrl = searchParams.get('txdigest');
 
-    // find transaction details based on txDigest
-    const tx = result.find(
-        (tx) => tx.digest === txDigest
-    ) as FormattedTransaction;
+    if (data) {
+        // get result from transaction-by-address react query
+        result = data as FormattedTransaction[];
+
+        // find transaction details based on txDigest
+        tx = result.find(
+            (tx) => tx.digest === txDigest
+        ) as FormattedTransaction;
+    } else {
+        // TODO: get the individual transaction if the data is not available
+        // with the digest txDigestFromUrl
+
+        console.log('txDigestFromUrl', txDigestFromUrl);
+        return <div className={'p-12'}>Error Loading transaction...</div>;
+    }
 
     const {
         timeDisplay,

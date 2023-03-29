@@ -1,5 +1,5 @@
-import { SuiObjectChange } from '@mysten/sui.js';
 import type { FormattedTransaction } from './types';
+import type { SuiObjectChange } from '@mysten/sui.js';
 
 export type TxType = string;
 

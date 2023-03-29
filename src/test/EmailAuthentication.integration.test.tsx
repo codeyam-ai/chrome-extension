@@ -2,8 +2,8 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 
-import { fakeAccessToken } from './utils/storage';
 import { Mockchain } from './utils/mockchain';
+import { fakeAccessToken } from './utils/storage';
 import { BASE_URL } from '_src/shared/constants';
 import { renderApp } from '_src/test/utils/react-rendering';
 
