@@ -55,8 +55,14 @@ export const changeRPCNetwork = createAsyncThunk<void, API_ENV, AppThunkConfig>(
             app?.customRPC && isCustomRPC ? app?.customRPC : null;
 
         // don't switch if customRPC and empty input //handle default
+        console.log('HIY', isCustomRPC, customRPCURL);
+        if (isCustomRPC && !customRPCURL) return;
+
         dispatch(setApiEnv(networkName));
+
+        console.log('HIX', networkName, customRPCURL);
         api.setNewJsonRpcProvider(networkName, customRPCURL);
+
         // dispatch(getTransactionsByAddress());
         dispatch(fetchAllOwnedAndRequiredObjects());
         // Set persistent network state
@@ -94,19 +100,7 @@ export const initNetworkFromStorage = createAsyncThunk<
             : null;
 
     if (result.sui_Env_RPC && customRPCURL) {
-        dispatch(setCustomRPCURL(result.sui_Env_RPC));
-    }
-
-    // Deal with edge case where user has customRPC or testnet is disabled
-    const setDefaultNetwork =
-        network && generateActiveNetworkList().includes(network);
-
-    if (setDefaultNetwork) {
-        api.setNewJsonRpcProvider(network, customRPCURL);
-        await dispatch(setApiEnv(network));
-    } else {
-        api.setNewJsonRpcProvider(DEFAULT_API_ENV);
-        await dispatch(setApiEnv(DEFAULT_API_ENV));
+        dispatch(setCustomRPC(result.sui_Env_RPC));
     }
 });
 
