@@ -32,6 +32,7 @@ import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Header from '../../shared/typography/Header';
 import ExplorerLink from '_components/explorer-link';
+import { api } from '_store/thunk-extras';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 // import { formatDate } from '_helpers';
 import {
@@ -46,6 +47,7 @@ import {
 import type { FormattedTransaction } from '../../helpers/transactions/types';
 
 import st from './ReceiptCard.module.scss';
+import { useEffect, useState } from 'react';
 
 type TxResponseProps = {
     txDigest: any;
@@ -156,28 +158,52 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     const address = useAppSelector(({ account }) => account.address) as string;
     const { data } = useQuery(['transactions-by-address', address]);
     const theme = getTheme();
-    let result;
-    let tx;
+    const [transaction, setTransaction] = useState<FormattedTransaction>();
 
     // get the txdigest from the url
     const [searchParams] = useSearchParams();
     const txDigestFromUrl = searchParams.get('txdigest');
 
-    if (data) {
-        // get result from transaction-by-address react query
-        result = data as FormattedTransaction[];
+    let result: FormattedTransaction[] = [];
+    let tx: FormattedTransaction | undefined;
 
-        // find transaction details based on txDigest
-        tx = result.find(
-            (tx) => tx.digest === txDigest
-        ) as FormattedTransaction;
-    } else {
-        // TODO: get the individual transaction if the data is not available
-        // with the digest txDigestFromUrl
+    useEffect(() => {
+        if (data) {
+            // get result from transaction-by-address react query
+            result = data as FormattedTransaction[];
 
-        console.log('txDigestFromUrl', txDigestFromUrl);
-        return <div className={'p-12'}>Error Loading transaction...</div>;
-    }
+            // find transaction details based on txDigest
+            tx = result.find(
+                (tx) => tx.digest === txDigest
+            ) as FormattedTransaction;
+
+            setTransaction(tx);
+        } else {
+            // TODO: get the individual transaction if the data is not available
+            // with the digest txDigestFromUrl
+
+            const getTransaction = async () => {
+                const digest = txDigestFromUrl as string;
+                const tx = await api.instance.fullNode.getTransactionBlock({
+                    digest: digest,
+                    options: {
+                        showInput: true,
+                        showEvents: true,
+                        showEffects: true,
+                        showObjectChanges: true,
+                        showBalanceChanges: true,
+                    },
+                });
+
+                setTransaction(tx);
+            };
+
+            getTransaction();
+        }
+    }, []);
+
+    // TODO: improve the error state for the transaction
+    if (!transaction) return <div>Transaction not found.</div>;
 
     const {
         timeDisplay,
@@ -193,7 +219,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         // otherAddress,
         // otherAddressStr,
         displayImage,
-    } = getHumanReadable(address, tx);
+    } = getHumanReadable(address, transaction);
 
     /*const getAccount = useCallback(
         (address: string) => {

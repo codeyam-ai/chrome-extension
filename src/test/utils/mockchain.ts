@@ -190,10 +190,16 @@ export class Mockchain {
                             callContext.expectedCall.result
                         );
                     } else {
-                        const message = `Found a match for method ${callContext.expectedCall.method} with params ${callContext.expectedCall.params} but request already happened ${numExpectedCalls} times!\n Consider passing persist: true`;
+                        const message = `Found a match for method ${
+                            callContext.expectedCall.method
+                        } with params ${
+                            callContext.expectedCall.params
+                        } but request already happened ${
+                            numExpectedCalls
+                        } times!\n Consider passing persist: true`;
                         // eslint-disable-next-line no-console
                         console.warn(message);
-                        // throw new Error(message);
+                        throw new Error(message);
                     }
                 }
             });
@@ -219,16 +225,12 @@ export class Mockchain {
         } else {
             const bodyAsRecord = requestBody as Record<string, unknown>;
             // eslint-disable-next-line no-console
-            console.warn(
-                `Found no match for method ${
-                    bodyAsRecord.method
-                } with params ${JSON.stringify(bodyAsRecord.params, null, 2)}`
-            );
-            return {
-                jsonrpc: '2.0',
-                result: {},
-                id: uuidV4(),
-            };
+            const message = `Found no match for method ${
+                bodyAsRecord.method
+            } with params ${JSON.stringify(bodyAsRecord.params, null, 2)}`;
+            // eslint-disable-next-line no-console
+            console.warn(message);
+            throw new Error(message);
         }
     }
 }
