@@ -39,7 +39,7 @@ export function renderApp({
             store = createStore({
                 app: {
                     appType: AppType.fullscreen,
-                    apiEnv: API_ENV.devNet,
+                    apiEnv: API_ENV.testNet,
                 },
                 ...preloadedState,
             });

@@ -29,6 +29,7 @@ import Body from '_src/ui/app/shared/typography/Body';
 import type { KeyNameAndValue } from '../../shared/content/rows-and-lists/KeyValueList';
 import type { SuiObjectData as SuiObject } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
+import { useDependencies } from '_src/shared/utils/dependenciesContext';
 
 const truncateMiddle = (s = '', length = 6) =>
     s.length > length * 2.5
@@ -124,6 +125,8 @@ export function DappPreapprovalPage() {
         AppState.HOSTED,
     ]);
 
+    const { closeWindow } = useDependencies();
+
     const { preapprovalRequestID } = useParams();
 
     const dispatch = useAppDispatch();
@@ -170,7 +173,7 @@ export function DappPreapprovalPage() {
                         preapprovalRequestID: preapprovalRequest.id,
                     })
                 );
-                window.close();
+                closeWindow();
             }
         },
         [dispatch, preapprovalRequest, changes, showError]

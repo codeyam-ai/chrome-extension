@@ -22,7 +22,7 @@ export class Mockchain {
 
     constructor() {
         this.registeredCalls = [];
-        nock('http://devNet-fullnode.example.com')
+        nock('http://testNet-fullnode.example.com')
             .persist()
             .post('/')
             .reply(200, (uri: string, requestBody: nock.Body) => {
@@ -226,5 +226,86 @@ export class Mockchain {
             console.warn(message);
             throw new Error(message);
         }
+    }
+
+    /**
+     * Mocks of common rpc calls
+     *
+     * Use the returned object to build up one or more mocks
+     * you know you need specifically.
+     */
+    rpcMocks() {
+        return {
+            sui_getNormalizedMoveFunction: () => {
+                this.mockBlockchainCall(
+                    { method: 'sui_getNormalizedMoveFunction' },
+                    renderTemplate('getNormalizedMoveFunction', {}),
+                    true
+                );
+            },
+            suix_getNormalizedMoveFunction: () => {
+                this.mockBlockchainCall(
+                    { method: 'sui_getNormalizedMoveFunction' },
+                    renderTemplate('getNormalizedMoveFunction', {}),
+                    true
+                );
+            },
+            sui_devInspectTransactionBlock: () => {
+                this.mockBlockchainCall(
+                    { method: 'sui_devInspectTransactionBlock' },
+                    renderTemplate('devInspectTransaction', {})
+                );
+            },
+            suix_getReferenceGasPrice: () => {
+                this.mockBlockchainCall(
+                    { method: 'suix_getReferenceGasPrice', params: [] },
+                    '1',
+                    true
+                );
+            },
+            suix_getCoins: () => {
+                this.mockBlockchainCall(
+                    {
+                        method: 'suix_getCoins',
+                        params: [
+                            '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de',
+                            '0x2::sui::SUI',
+                            null,
+                            null,
+                        ],
+                    },
+                    renderTemplate('getCoins', {}),
+                    true
+                );
+            },
+            sui_dryRunTransactionBlock: () => {
+                this.mockBlockchainCall(
+                    {
+                        method: 'sui_dryRunTransactionBlock',
+                        params: [
+                            'AAACAAgAypo7AAAAAAAg7JbTIOl80QFG+VOnnPncBaizXEaz6EKPeF7Drhtvj6YCAgABAQAAAQECAAABAQD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gEAAAAAAAAAAMqaOwAAAAAA',
+                        ],
+                    },
+                    renderTemplate('dryRunTransaction', {}),
+                    true
+                );
+            },
+            sui_executeTransactionBlock: () => {
+                this.mockBlockchainCall(
+                    {
+                        method: 'sui_executeTransactionBlock',
+                        params: [
+                            'AAACAAgAypo7AAAAAAAg7JbTIOl80QFG+VOnnPncBaizXEaz6EKPeF7Drhtvj6YCAgABAQAAAQECAAABAQD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gH1G/x9mNhvvXXxnRbDdISw8Pc4LrbJv8rS/kqUviyIIgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwf/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4BAAAAAAAAAAwEAAAAAAAAAA==',
+                            [
+                                'ALtY0M5OdSte1NquP4pm5dLH9Co58+VeodZp4PZkXfjt/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4=',
+                            ],
+                            null,
+                            null,
+                        ],
+                    },
+                    renderTemplate('executeTransaction', {})
+                );
+            },
+        };
     }
 }
