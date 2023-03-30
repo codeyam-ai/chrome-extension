@@ -8,15 +8,14 @@ import ipfs from '../helpers/ipfs';
 import type { SuiObjectData } from '@mysten/sui.js';
 
 export default function useMediaUrl(objData: SuiObjectData, fieldName = 'url') {
-    const { fields } =
-        (objData?.content?.dataType === 'moveObject' && objData?.content) || {};
+    const { display, content } = objData ?? {};
+    const { fields } = (content?.dataType === 'moveObject' && content) || {};
     return useMemo(() => {
-        if (fields) {
-            const mediaUrl = fields[fieldName];
-            if (typeof mediaUrl === 'string') {
-                return ipfs(mediaUrl);
-            }
+        const displayFieldName = fieldName === 'url' ? 'image_url' : fieldName;
+        const mediaUrl = display?.[displayFieldName] || fields?.[fieldName];
+        if (typeof mediaUrl === 'string') {
+            return ipfs(mediaUrl);
         }
         return null;
-    }, [fields, fieldName]);
+    }, [fields, display, fieldName]);
 }

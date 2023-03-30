@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
+import truncateMiddle from '../ui/app/helpers/truncate-middle';
 
 describe('Importing a wallet using a seed phrase', () => {
     let mockchain: Mockchain;
@@ -57,7 +58,7 @@ describe('Importing a wallet using a seed phrase', () => {
     async function confirmAddress() {
         await screen.findByText('Confirm Wallet Import');
         const walletAddressFromSeed =
-            '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de';
+            truncateMiddle('0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de', 15);
         await screen.findByText(walletAddressFromSeed);
 
         await userEvent.click(screen.getByTestId('continue'));
