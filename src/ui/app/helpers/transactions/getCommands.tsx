@@ -32,9 +32,6 @@ const getCommands = (txn: FormattedTransaction): string | null => {
                 case 'TransferObjects':
                     appendCommandStr(`Transfer ${primaryObjName}`, idx, comma);
                     break;
-                case 'SplitCoins':
-                    appendCommandStr('Split Coin', idx, comma);
-                    break;
                 case 'MergeCoins':
                     appendCommandStr('Merge Coins', idx, comma);
                     break;
