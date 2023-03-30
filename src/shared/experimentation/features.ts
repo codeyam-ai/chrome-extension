@@ -13,11 +13,10 @@ import type { GrowthBook } from '@growthbook/growthbook';
  */
 export enum FEATURES {
     USE_LOCAL_TXN_SERIALIZER = 'use-local-txn-serializer',
-    USE_TEST_NET_ENDPOINT = 'testnet-selection',
+    USE_MAINNET_ENDPOINT = 'mainnet-selection',
     STAKING_ENABLED = 'wallet-staking-enabled',
     SUINS_REGISTRY = 'suins_registry',
     USE_CUSTOM_RPC_URL = 'custom-rpc-url',
-    USE_TESTNET_ENDPOINT = 'testnet-selection',
     USE_TICKETS = 'use-tickets',
 }
 

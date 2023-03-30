@@ -141,7 +141,7 @@ const TransactionsPage = () => {
                             <Icon displayIcon={<QueueListIcon />} />
                         }
                         title="No transactions yet"
-                        subtitle="Set up DevNet SUI tokens to send coins."
+                        subtitle="Set up SUI tokens to send coins."
                         linkText="Get SUI"
                         linkUrl="/tokens"
                         internal={true}

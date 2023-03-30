@@ -66,7 +66,7 @@ const HomePage = () => {
                             <div className="px-6 py-6">
                                 <Alert
                                     title="Something's wrong"
-                                    subtitle="You've lost connection with the network. Sui DevNet may be unstable. Please refresh or try again later."
+                                    subtitle="You've lost connection with the network. The network may be unstable. Please refresh or try again later."
                                 />
                             </div>
                         ) : (

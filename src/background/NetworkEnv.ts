@@ -54,7 +54,7 @@ class NetworkEnv {
         const growthBook = await FeatureGating.getGrowthBook();
         return (
             (apiEnv === API_ENV.testNet &&
-                growthBook.isOn(FEATURES.USE_TEST_NET_ENDPOINT)) ||
+                growthBook.isOn(FEATURES.USE_MAINNET_ENDPOINT)) ||
             apiEnv !== API_ENV.testNet
         );
     }

@@ -34,7 +34,7 @@ function ObjectsLayout({ children, emptyMsg, totalItems }: ObjectsLayoutProps) {
                     <div className="px-6 py-6">
                         <Alert
                             title="Something's wrong"
-                            subtitle="You've lost connection with the network. DevNet may be unstable. Please try again later."
+                            subtitle="You've lost connection with the network. It may be unstable. Please try again later."
                         />
                     </div>
                 ) : null}

@@ -48,12 +48,12 @@ export const ENV_TO_API: Record<string, Connection | null> = {
 function getDefaultApiEnv() {
     const apiEnv = growthbook.getFeatureValue(
         'default-api-env',
-        API_ENV.devNet
+        API_ENV.testNet
     );
     if (apiEnv && !Object.keys(API_ENV).includes(apiEnv)) {
         throw new Error(`Unknown environment variable API_ENV, ${apiEnv}`);
     }
-    return apiEnv ? API_ENV[apiEnv as keyof typeof API_ENV] : API_ENV.devNet;
+    return apiEnv ? API_ENV[apiEnv as keyof typeof API_ENV] : API_ENV.testNet;
 }
 
 function getDefaultAPI(env: API_ENV) {
@@ -100,14 +100,6 @@ type NetworkTypes = keyof typeof API_ENV;
 
 export const generateActiveNetworkList = (): NetworkTypes[] => {
     const excludedNetworks: NetworkTypes[] = [];
-
-    if (!growthbook.isOn(FEATURES.USE_TESTNET_ENDPOINT)) {
-        excludedNetworks.push(API_ENV.testNet);
-    }
-
-    if (!growthbook.isOn(FEATURES.USE_CUSTOM_RPC_URL)) {
-        excludedNetworks.push(API_ENV.customRPC);
-    }
 
     return Object.values(API_ENV).filter(
         (env) => !excludedNetworks.includes(env as keyof typeof API_ENV)

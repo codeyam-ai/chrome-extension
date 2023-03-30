@@ -99,6 +99,8 @@ export const initNetworkFromStorage = createAsyncThunk<
 
     if (result.sui_Env_RPC && customRPCURL) {
         dispatch(setCustomRPC(result.sui_Env_RPC));
+    } else if (result.sui_Env) {
+        dispatch(changeRPCNetwork(result.sui_Env));
     }
 });
 
