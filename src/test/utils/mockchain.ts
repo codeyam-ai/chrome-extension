@@ -22,7 +22,7 @@ export class Mockchain {
 
     constructor() {
         this.registeredCalls = [];
-        nock('http://devNet-fullnode.example.com')
+        nock('http://testNet-fullnode.example.com')
             .persist()
             .post('/')
             .reply(200, (uri: string, requestBody: nock.Body) => {
