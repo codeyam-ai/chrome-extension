@@ -8,7 +8,7 @@ const getTxAction = (
 ): TxAction => {
     let type = 'default';
 
-    const txDetails = txn?.transactionBlock?.data?.transaction;
+    const txDetails = txn?.data?.transaction;
     if (!txDetails) return type;
 
     let commands;
