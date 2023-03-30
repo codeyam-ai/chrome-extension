@@ -1,22 +1,34 @@
-import type { FormattedTransaction } from './types';
+import { FormattedTransaction } from './types';
 
 export type TxAction = string;
 
 const getTxAction = (
-    isSender: boolean,
+    ownerAddr: string,
     txn: FormattedTransaction
 ): TxAction => {
     let type = 'default';
 
-    const txDetails = txn?.data?.transaction;
-    if (!txDetails) return type;
+    const txDetails = txn?.transaction?.data;
+
+    if (!txDetails || !('inputs' in txDetails.transaction)) return type;
+
+    const addressInput = txDetails.transaction.inputs.find((input) => {
+        if ('valueType' in input) {
+            return input.valueType === 'address';
+        }
+    });
+
+    const isSender =
+        addressInput &&
+        'value' in addressInput &&
+        addressInput?.value !== ownerAddr;
 
     let commands;
-    if ('transactions' in txDetails) {
-        commands = txDetails.transactions;
-    } else if ('commands' in txDetails) {
-        commands = txDetails.commands as any[];
+
+    if ('transactions' in txDetails.transaction) {
+        commands = txDetails.transaction.transactions;
     }
+
     if (txDetails && commands) {
         commands.forEach((command) => {
             // get command object key

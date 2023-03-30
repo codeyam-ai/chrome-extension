@@ -1,5 +1,6 @@
-import type {
+import {
     SuiAddress,
+    SuiObjectChange,
     SuiTransactionBlock,
     TransactionEffects,
 } from '@mysten/sui.js';
@@ -42,13 +43,13 @@ export interface FormattedTransaction {
     digest?: string;
     type?: string;
     effects?: TransactionEffects;
-    transactionBlock?: SuiTransactionBlock;
+    objectChanges?: SuiObjectChange[];
     balanceChanges?: BalanceChange[];
-    objectChanges?: any[];
     primaryObject?: TransactionObjectInfo;
     primaryCoin?: TransactionCoinInfo;
+    transaction?: SuiTransactionBlock;
     timestampMs?: number;
-    isSender?: boolean;
-    from?: SuiAddress;
+    isSender: boolean;
+    from: SuiAddress;
     to?: SuiAddress;
 }
