@@ -140,7 +140,7 @@ export const transferNFT = createAsyncThunk<
             status: getExecutionStatusType(executedTransaction),
             gasFee: executedTransaction
                 ? getTotalGasUsed(executedTransaction)?.toString()
-                : "0",
+                : '0',
             txId: getTransactionDigest(executedTransaction),
         };
 
