@@ -5,6 +5,7 @@ import { useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Well from '_src/ui/app/shared/content/Well';
 import OnboardingCard from '_src/ui/app/shared/layouts/OnboardingCard';
+import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 
 const ConfirmImportPage = () => {
     const address = useAppSelector(({ account }) => account.address);
@@ -27,7 +28,7 @@ const ConfirmImportPage = () => {
             <div className="px-10 pb-[108px]">
                 <Well
                     header="Wallet address"
-                    subHeader={address || ''}
+                    subHeader={truncateMiddle(address || '', 15)}
                     forceLightMode
                 />
             </div>

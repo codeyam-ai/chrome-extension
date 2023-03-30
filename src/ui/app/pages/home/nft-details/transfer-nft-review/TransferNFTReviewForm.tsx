@@ -68,6 +68,12 @@ function TransferNftReviewForm({
         fields = nftobj.content.fields;
     }
 
+    const display = {
+        name: nftobj.display?.name ?? fields?.name,
+        description: nftobj.display?.description ?? fields?.description,
+        url: nftobj.display?.image_url ?? fields?.url,
+    };
+
     return (
         <div>
             <Content>
@@ -77,14 +83,14 @@ function TransferNftReviewForm({
                             <div className={'pb-8 px-6 pt-6 text-center'}>
                                 <AssetCard
                                     txType="nft"
-                                    imgUrl={fields?.url ? fields.url : ''}
-                                    name={fields?.name}
+                                    imgUrl={display.url ?? ''}
+                                    name={display.name ?? ''}
                                 />
                                 <Body isTextColorMedium>Transfer</Body>
                                 <Header
                                     className={'font-weight-ethos-subheader'}
                                 >
-                                    {fields?.name}
+                                    {display?.name}
                                 </Header>
                             </div>
 
@@ -115,7 +121,7 @@ function TransferNftReviewForm({
                                         },
                                         {
                                             keyName: 'NFT',
-                                            value: fields?.name,
+                                            value: display?.name,
                                         },
                                         {
                                             keyName: 'Transaction Fee',
