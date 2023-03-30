@@ -57,8 +57,10 @@ describe('Importing a wallet using a seed phrase', () => {
 
     async function confirmAddress() {
         await screen.findByText('Confirm Wallet Import');
-        const walletAddressFromSeed =
-            truncateMiddle('0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de', 15);
+        const walletAddressFromSeed = truncateMiddle(
+            '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de',
+            15
+        );
         await screen.findByText(walletAddressFromSeed);
 
         await userEvent.click(screen.getByTestId('continue'));
