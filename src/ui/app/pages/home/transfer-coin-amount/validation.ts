@@ -5,8 +5,8 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import BigNumber from 'bignumber.js';
 import * as Yup from 'yup';
 
-import { formatBalance } from '_app/hooks/useFormatCoin';
 import { SUI_SYMBOL } from '_redux/slices/sui-objects/Coin';
+import ns from '_shared/namespace';
 
 export function createTokenValidation(
     coinType: string,
@@ -55,7 +55,7 @@ export function createTokenValidation(
             )
             .test(
                 'max',
-                `Amount must be less than ${formatBalance(
+                `Amount must be less than ${ns.format.coinBalance(
                     coinBalance,
                     decimals
                 )} ${coinSymbol}`,
@@ -76,7 +76,7 @@ export function createTokenValidation(
             )
             .test(
                 'gas-balance-check',
-                `Insufficient ${SUI_SYMBOL} balance to cover gas fee (${formatBalance(
+                `Insufficient ${SUI_SYMBOL} balance to cover gas fee (${ns.format.coinBalance(
                     gasBudget,
                     gasDecimals
                 )} ${SUI_SYMBOL})`,
