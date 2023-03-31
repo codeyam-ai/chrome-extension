@@ -1,9 +1,10 @@
 import { TransactionBlock } from '@mysten/sui.js';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import analyzeChanges from './lib/analyzeChanges';
 import Base from './types/Base';
+import SimpleAssetTransfer from './types/SimpleAssetTransfer';
 import { AppState } from '../../hooks/useInitializedGuard';
 import Loading from '_components/loading';
 import { useAppSelector, useInitializedGuard } from '_hooks';
@@ -11,12 +12,11 @@ import { txRequestsSelectors } from '_redux/slices/transaction-requests';
 import { thunkExtras } from '_redux/store/thunk-extras';
 import { useDependencies } from '_shared/utils/dependenciesContext';
 
-import type {
-    SuiMoveNormalizedType,
-    SuiObjectChange,
-    TransactionEffects,
-} from '@mysten/sui.js';
+import type { AnalyzeChangesResult } from './lib/analyzeChanges';
+import type { SuiMoveNormalizedType } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
+import SimpleCoinTransfer from './types/SimpleCoinTransfer';
+import SimpleBase from './types/SimpleBase';
 
 export type Permission = {
     label: string;
@@ -61,11 +61,8 @@ export function DappTxApprovalPage() {
 
     // const normalizedFunction = useNormalizedFunction(txRequest);
 
-    const [effects, setEffects] = useState<
-        TransactionEffects | undefined | null
-    >();
-    const [objectChanges, setObjectChanges] = useState<
-        SuiObjectChange[] | undefined | null
+    const [analysis, setAnalysis] = useState<
+        AnalyzeChangesResult | undefined | null
     >();
 
     const loading =
@@ -73,7 +70,7 @@ export function DappTxApprovalPage() {
         txRequestsLoading ||
         !txRequest ||
         !address ||
-        effects === undefined;
+        analysis === undefined;
 
     useEffect(() => {
         window.onresize = () => {
@@ -106,16 +103,17 @@ export function DappTxApprovalPage() {
             }
 
             try {
-                const { effects, objectChanges } = await analyzeChanges({
+                const analysis = await analyzeChanges({
                     signer,
                     transactionBlock,
                 });
 
-                setEffects(effects);
-                setObjectChanges(objectChanges);
+                console.log('ANALYSIS', analysis);
+
+                setAnalysis(analysis);
             } catch (e: unknown) {
                 // setDryRunError(`${e}`);
-                setEffects(null);
+                setAnalysis(null);
             }
         };
 
@@ -136,14 +134,40 @@ export function DappTxApprovalPage() {
         }
     }, [closeWindow, done]);
 
+    const onComplete = useCallback((_accept: boolean) => {
+        setDone(true);
+    }, []);
+
     const content = useMemo(() => {
+        if (!analysis) return <></>;
+
+        if (
+            analysis.assetTransfers.length === 1 &&
+            analysis.balanceReductions.length === 0
+        ) {
+            return (
+                <SimpleBase onComplete={onComplete}>
+                    <SimpleAssetTransfer></SimpleAssetTransfer>
+                </SimpleBase>
+            );
+        } else if (
+            analysis.assetTransfers.length === 0 &&
+            analysis.balanceReductions.length === 1
+        ) {
+            return (
+                <SimpleBase onComplete={onComplete}>
+                    <SimpleCoinTransfer></SimpleCoinTransfer>
+                </SimpleBase>
+            );
+        }
+
         return (
             <Base
                 txID={txID}
                 address={address}
                 txRequest={txRequest}
-                objectChanges={objectChanges}
-                effects={effects}
+                objectChanges={analysis?.dryRunResponse?.objectChanges}
+                effects={analysis?.dryRunResponse?.effects}
                 authentication={authentication ?? null}
                 activeAccountIndex={activeAccountIndex}
                 transactionBlock={transactionBlock}
@@ -153,9 +177,9 @@ export function DappTxApprovalPage() {
     }, [
         activeAccountIndex,
         address,
+        analysis,
         authentication,
-        effects,
-        objectChanges,
+        onComplete,
         transactionBlock,
         txID,
         txRequest,

@@ -397,6 +397,13 @@ const Base = ({
         };
     }, [
         txRequest?.tx,
+        address,
+        reading,
+        mutating,
+        creating,
+        transferring,
+        deleting,
+        coinChanges,
         formattedCharges,
         chargesSymbol,
         chargeDollars,
@@ -406,16 +413,11 @@ const Base = ({
         formattedTotal,
         totalSymbol,
         totalDollars,
-        reading,
-        creating,
-        mutating,
-        deleting,
-        transferring,
+        summaryKey,
+        gasUsed?.computationCost,
+        gasUsed?.storageCost,
+        gasUsed?.storageRebate,
         gas,
-        gasUsed,
-        coinChanges,
-        address,
-        // summaryKey,
     ]);
 
     const errorElement = useMemo(() => {

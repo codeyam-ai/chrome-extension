@@ -1,10 +1,9 @@
-const Header = () => {
+import type { ReactElement } from 'react';
+
+const Header = ({ children }: { children: ReactElement }) => {
     return (
-        <div className="bg-[#F0EBFE] p-6 flex-col items-center gap-6">
-            <div>HEADER</div>
-            <div>HEADER</div>
-            <div>HEADER</div>
-            <div>HEADER</div>
+        <div className="w-full bg-[#F0EBFE] p-3 flex-col items-center gap-6">
+            {children}
         </div>
     );
 };
