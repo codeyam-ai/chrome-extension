@@ -185,7 +185,6 @@ export function DappTxApprovalPage() {
                 txRequest &&
                 objectChanges &&
                 effects &&
-                authentication &&
                 transactionBlock && (
                     <Base
                         txID={txID}
@@ -193,7 +192,7 @@ export function DappTxApprovalPage() {
                         txRequest={txRequest}
                         objectChanges={objectChanges}
                         effects={effects}
-                        authentication={authentication}
+                        authentication={authentication ?? null}
                         activeAccountIndex={activeAccountIndex}
                         transactionBlock={transactionBlock}
                         setDone={setDone}

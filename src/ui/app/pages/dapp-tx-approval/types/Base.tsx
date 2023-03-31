@@ -11,8 +11,8 @@ import FormattedCoin from '../FormattedCoin';
 import SectionElement from '../SectionElement';
 import TabElement from '../TabElement';
 import { useCategorizedEvents } from '../lib';
+import finishTransaction from '../lib/finishTransaction';
 import * as summaries from '../summaries';
-import Loading from '_components/loading';
 import { MAILTO_SUPPORT_URL } from '_src/shared/constants';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 import { useFormatCoin } from '_src/ui/app/hooks';
@@ -26,7 +26,6 @@ import type {
     TransactionEffects,
 } from '@mysten/sui.js';
 import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
-import finishTransaction from '../lib/finishTransaction';
 
 export enum TxApprovalTab {
     SUMMARY = 'Summary',
@@ -40,7 +39,7 @@ export type TabSections = {
 
 export type BaseProps = {
     txID: string;
-    authentication: string;
+    authentication: string | null;
     activeAccountIndex: number;
     txRequest: ApprovalRequest;
     transactionBlock: TransactionBlock;
@@ -448,7 +447,7 @@ const Base = ({
                     />
                 </div>
             );
-    }, [explicitError, dryRunError, txRequest]);
+    }, [explicitError, dryRunError, txRequest, txID]);
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
@@ -464,7 +463,7 @@ const Base = ({
                 transactionBlock,
                 txID,
                 approved,
-                authentication,
+                authentication ?? null,
                 address,
                 activeAccountIndex,
                 options,
@@ -473,12 +472,13 @@ const Base = ({
             setDone(true);
         },
         [
+            txRequest.tx,
             transactionBlock,
             txID,
             authentication,
             address,
             activeAccountIndex,
-            txRequest?.tx,
+            setDone,
         ]
     );
 
