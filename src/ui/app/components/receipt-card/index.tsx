@@ -161,7 +161,9 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     const address = useAppSelector(({ account }) => account.address) as string;
     const { data } = useQuery(['transactions-by-address', address]);
     const theme = getTheme();
-    let transaction;
+
+    const [transaction, setTransaction] =
+        useState<SuiTransactionBlockResponse>();
 
     // get the txdigest from the url
     const [searchParams] = useSearchParams();
@@ -180,7 +182,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                 (tx) => tx.transaction.digest === txDigest
             ) as FormattedTransaction;
 
-            transaction = tx;
+            setTransaction(tx.transaction);
         } else {
             // TODO: get the individual transaction if the data is not available
             // with the digest txDigestFromUrl
@@ -198,7 +200,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     },
                 });
 
-                transaction = tx;
+                setTransaction(tx);
             };
 
             getTransaction();
