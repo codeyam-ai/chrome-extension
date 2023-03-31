@@ -156,7 +156,9 @@ export function DappTxApprovalPage() {
         ) {
             return (
                 <SimpleBase onComplete={onComplete}>
-                    <SimpleCoinTransfer></SimpleCoinTransfer>
+                    <SimpleCoinTransfer
+                        reduction={analysis.balanceReductions[0]}
+                    ></SimpleCoinTransfer>
                 </SimpleBase>
             );
         }

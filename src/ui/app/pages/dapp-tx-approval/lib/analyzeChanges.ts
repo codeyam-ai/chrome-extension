@@ -25,6 +25,7 @@ export type GasCostSummary = {
 export type BalanceReduction = {
     type: string;
     amount: string;
+    recipient?: string;
 };
 
 export type AnalyzeChangesResult = {
@@ -64,6 +65,14 @@ const coinChanges = (
             balanceChange.owner.AddressOwner === address &&
             new BigNumber(balanceChange.amount).isNegative()
     );
+
+    const additionChanges = balanceChanges.filter(
+        (balanceChange) =>
+            typeof balanceChange.owner === 'object' &&
+            'AddressOwner' in balanceChange.owner &&
+            new BigNumber(balanceChange.amount).isPositive()
+    );
+
     if (gasUsed) {
         for (const reduction of reductionChanges) {
             if (reduction.coinType !== SUI_TYPE_ARG) continue;
@@ -72,12 +81,28 @@ const coinChanges = (
                 .toString();
         }
     }
-    const reductions: BalanceReduction[] = reductionChanges.map(
-        (reduction) => ({
+    const reductions: BalanceReduction[] = reductionChanges.map((reduction) => {
+        const recipientChange = additionChanges.find(
+            (addition) =>
+                addition.coinType === reduction.coinType &&
+                new BigNumber(addition.amount).eq(
+                    new BigNumber(reduction.amount).abs()
+                )
+        );
+
+        const recipient =
+            (recipientChange &&
+                typeof recipientChange.owner === 'object' &&
+                'AddressOwner' in recipientChange.owner &&
+                recipientChange.owner.AddressOwner) ||
+            undefined;
+
+        return {
             type: reduction.coinType,
             amount: reduction.amount,
-        })
-    );
+            recipient,
+        };
+    });
 
     return {
         reductions,
