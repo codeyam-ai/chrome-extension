@@ -10,7 +10,7 @@ import CopyAsset from '../CopyAsset';
 import FormattedCoin from '../FormattedCoin';
 import SectionElement from '../SectionElement';
 import TabElement from '../TabElement';
-import { useCategorizedEvents } from '../lib';
+import { useCategorizedEvents, useCustomSummary } from '../lib';
 import finishTransaction from '../lib/finishTransaction';
 import * as summaries from '../summaries';
 import { MAILTO_SUPPORT_URL } from '_src/shared/constants';
@@ -38,14 +38,14 @@ export type TabSections = {
 };
 
 export type BaseProps = {
-    txID: string;
+    txID?: string;
     authentication: string | null;
     activeAccountIndex: number;
-    txRequest: ApprovalRequest;
-    transactionBlock: TransactionBlock;
-    objectChanges: SuiObjectChange[];
-    effects: TransactionEffects;
-    address: SuiAddress;
+    txRequest: ApprovalRequest | null;
+    transactionBlock: TransactionBlock | null;
+    objectChanges?: SuiObjectChange[] | null;
+    effects?: TransactionEffects | null;
+    address: SuiAddress | null;
     setDone: (done: boolean) => void;
 };
 
@@ -65,6 +65,8 @@ const Base = ({
     const [explicitError, setExplicitError] = useState<
         ReactElement | undefined
     >();
+
+    const summaryKey = useCustomSummary(txRequest);
 
     const { reading, mutating, creating, deleting, transferring, coinChanges } =
         useCategorizedEvents({
@@ -121,33 +123,33 @@ const Base = ({
             totalDollars,
         };
 
-        // let summary;
-        // switch (summaryKey) {
-        //     case 'redeem-ticket':
-        //         summary = [
-        //             <summaries.RedeemTicket
-        //                 key="redeem-ticket-summary"
-        //                 {...data}
-        //             />,
-        //         ];
-        //         break;
-        //     case 'capy-vote':
-        //         summary = [
-        //             <summaries.CapyVote key="capy-vote-summary" {...data} />,
-        //         ];
-        //         break;
-        //     case 'capy-nominate':
-        //         summary = [
-        //             <summaries.CapyNominate
-        //                 key="capy-nominate-summary"
-        //                 {...data}
-        //             />,
-        //         ];
-        //         break;
-        //     default:
-        //         summary = summaries.standard(data);
-        // }
-        const summary = summaries.standard(data);
+        let summary;
+        switch (summaryKey) {
+            // case 'redeem-ticket':
+            //     summary = [
+            //         <summaries.RedeemTicket
+            //             key="redeem-ticket-summary"
+            //             {...data}
+            //         />,
+            //     ];
+            //     break;
+            // case 'capy-vote':
+            //     summary = [
+            //         <summaries.CapyVote key="capy-vote-summary" {...data} />,
+            //     ];
+            //     break;
+            // case 'capy-nominate':
+            //     summary = [
+            //         <summaries.CapyNominate
+            //             key="capy-nominate-summary"
+            //             {...data}
+            //         />,
+            //     ];
+            //     break;
+            default:
+                summary = summaries.standard(data);
+        }
+        // const summary = summaries.standard(data);
         const anyPermissionsRequested =
             reading.length > 0 ||
             mutating.length > 0 ||
@@ -442,7 +444,7 @@ const Base = ({
                         txInfo={{
                             dAppUrl: txRequest?.origin || '',
                             txId: txID || '',
-                            txRequest,
+                            txRequest: txRequest ?? null,
                         }}
                     />
                 </div>
@@ -460,7 +462,7 @@ const Base = ({
                     ? txRequest.tx.requestType
                     : undefined;
             await finishTransaction(
-                transactionBlock,
+                transactionBlock ?? null,
                 txID,
                 approved,
                 authentication ?? null,
@@ -472,7 +474,7 @@ const Base = ({
             setDone(true);
         },
         [
-            txRequest.tx,
+            txRequest?.tx,
             transactionBlock,
             txID,
             authentication,
