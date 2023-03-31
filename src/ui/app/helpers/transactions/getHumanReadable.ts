@@ -25,7 +25,7 @@ const getHumanReadable = (ownerAddr: string, tx: FormattedTransaction) => {
     const txType = getTxType(tx);
     const txStatus = tx.effects?.status.status;
     const isSender = getIsSender(ownerAddr, tx);
-    const txAction = getTxAction(isSender, tx);
+    const txAction = getTxAction(ownerAddr, tx);
     const txAmount = getSuiTransferAmount(ownerAddr, tx);
     const totalGasCost = getGasFee(tx);
     const gasFeeInSui = getFormattedGasFee(totalGasCost);

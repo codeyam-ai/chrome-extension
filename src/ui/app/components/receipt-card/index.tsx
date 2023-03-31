@@ -48,6 +48,10 @@ import type { FormattedTransaction } from '../../helpers/transactions/types';
 
 import st from './ReceiptCard.module.scss';
 import { useEffect, useState } from 'react';
+import {
+    SuiTransactionBlock,
+    SuiTransactionBlockResponse,
+} from '@mysten/sui.js';
 
 type TxResponseProps = {
     txDigest: any;
@@ -158,7 +162,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     const address = useAppSelector(({ account }) => account.address) as string;
     const { data } = useQuery(['transactions-by-address', address]);
     const theme = getTheme();
-    const [transaction, setTransaction] = useState<FormattedTransaction>();
+    let transaction;
 
     // get the txdigest from the url
     const [searchParams] = useSearchParams();
@@ -177,7 +181,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                 (tx) => tx.digest === txDigest
             ) as FormattedTransaction;
 
-            setTransaction(tx);
+            transaction = tx;
         } else {
             // TODO: get the individual transaction if the data is not available
             // with the digest txDigestFromUrl
@@ -195,7 +199,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     },
                 });
 
-                setTransaction(tx);
+                transaction = tx;
             };
 
             getTransaction();

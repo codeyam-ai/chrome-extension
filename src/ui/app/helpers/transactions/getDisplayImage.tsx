@@ -10,7 +10,7 @@ const getDisplayImage = (txn: FormattedTransaction): string | null => {
     // If there's no image val is falsy
     let response = null;
 
-    const transaction = txn?.transactionBlock?.data?.transaction;
+    const transaction = txn?.transaction?.data?.transaction;
 
     if (transaction && 'transactions' in transaction) {
         // input arguments for the movecall transaction

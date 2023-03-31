@@ -7,7 +7,7 @@ export type TxType = string;
 const getCommands = (txn: FormattedTransaction): string | null => {
     let response = null;
 
-    const transaction = txn?.transactionBlock?.data?.transaction;
+    const transaction = txn?.transaction?.data?.transaction;
     if (!!transaction && 'transactions' in transaction) {
         const totalCommands = transaction.transactions.length;
         let commandStr =
@@ -17,11 +17,17 @@ const getCommands = (txn: FormattedTransaction): string | null => {
             commandStr += `${val}${comma} `;
         };
 
-        const primaryObjName = txn?.objectChanges?.[0]
-            ? _.startCase(
-                  txn.objectChanges[0].objectType.split('::')[1].toLowerCase()
-              )
-            : 'Unknown Object';
+        const getPrimaryObjName = () => {
+            if (txn.objectChanges && 'objectType' in txn.objectChanges[0]) {
+                return _.startCase(
+                    txn.objectChanges[0].objectType.split('::')[1].toLowerCase()
+                );
+            } else {
+                return 'Unknown Object';
+            }
+        };
+
+        const primaryObjName = getPrimaryObjName();
 
         transaction.transactions.forEach((command, idx) => {
             const commandObj = command as any;

@@ -69,7 +69,7 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
         amount: parseFloat(txAmount),
         coinType: '', // TODO: what to do with coins / multiple coins / batch txs
         action: txAction || '',
-        txDirText: `From ${truncateMiddle(txn.transactionBlock?.data.sender)}`,
+        txDirText: `From ${truncateMiddle(txn?.transaction?.data.sender)}`,
         link: drilldownLink,
         date: timeDisplay,
         header: txCommands || 'Sui Action',
