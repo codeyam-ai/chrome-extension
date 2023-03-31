@@ -1,5 +1,4 @@
 import { Coin, type JsonRpcProvider } from '@mysten/sui.js';
-import BigNumber from 'bignumber.js';
 
 import { formatBalance } from './formatBalance';
 

@@ -173,7 +173,7 @@ const CompletePage = () => {
                     <div className="pb-4">
                         <Alert
                             title="The faucet isn't working"
-                            subtitle="There could be an issue with Sui DevNet or the Sui faucet. Please try again later."
+                            subtitle="There could be an issue with the Sui network or the Sui faucet. Please try again later."
                             borderRadius={16}
                             forceLightMode
                         />
