@@ -47,10 +47,7 @@ import type { FormattedTransaction } from '../../helpers/transactions/types';
 
 import st from './ReceiptCard.module.scss';
 import { useEffect, useState } from 'react';
-import {
-    SuiTransactionBlock,
-    SuiTransactionBlockResponse,
-} from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 type TxResponseProps = {
     txDigest: any;
