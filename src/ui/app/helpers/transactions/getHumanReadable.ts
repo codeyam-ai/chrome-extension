@@ -18,9 +18,12 @@ import convertUnixTimeToLocalTime from '../convertUnixTimeToLocalTime';
 import { getDollars } from '../formatCoin';
 import truncateMiddle from '../truncate-middle';
 
-import type { FormattedTransaction } from './types';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
-const getHumanReadable = (ownerAddr: string, tx: FormattedTransaction) => {
+const getHumanReadable = (
+    ownerAddr: string,
+    tx: SuiTransactionBlockResponse
+) => {
     const timeDisplay = convertUnixTimeToLocalTime(tx.timestampMs || 0);
     const txType = getTxType(tx);
     const txStatus = tx.effects?.status.status;
@@ -40,8 +43,8 @@ const getHumanReadable = (ownerAddr: string, tx: FormattedTransaction) => {
     const otherAddress = getTxOtherAddressDisplay(
         txType,
         txAction,
-        tx.from || '',
-        tx.to
+        'test-address',
+        'to-test-address'
     );
 
     const otherAddressStr = truncateMiddle(otherAddress || '', 4);

@@ -1,10 +1,10 @@
-import { FormattedTransaction } from './types';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 export type TxAction = string;
 
 const getTxAction = (
     ownerAddr: string,
-    txn: FormattedTransaction
+    txn: SuiTransactionBlockResponse
 ): TxAction => {
     let type = 'default';
 

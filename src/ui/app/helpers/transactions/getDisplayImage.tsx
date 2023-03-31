@@ -1,8 +1,8 @@
-import type { FormattedTransaction } from './types';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 export type TxType = string;
 
-const getDisplayImage = (txn: FormattedTransaction): string | null => {
+const getDisplayImage = (txn: SuiTransactionBlockResponse): string | null => {
     // Iterate through the inputs for a transaction and check if
     // each value in the input is a url and that url contains in image
     // if so return the url, if not return null

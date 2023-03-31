@@ -1,10 +1,9 @@
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 import _ from 'lodash';
-
-import type { FormattedTransaction } from './types';
 
 export type TxType = string;
 
-const getCommands = (txn: FormattedTransaction): string | null => {
+const getCommands = (txn: SuiTransactionBlockResponse): string | null => {
     let response = null;
 
     const transaction = txn?.transaction?.data?.transaction;

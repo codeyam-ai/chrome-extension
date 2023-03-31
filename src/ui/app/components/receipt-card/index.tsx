@@ -24,7 +24,6 @@ import { getTheme } from '../../helpers/getTheme';
 import { getHumanReadable } from '../../helpers/transactions';
 // import truncateMiddle from '../../helpers/truncate-middle';
 // import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
-import { useQueryTransactionsByAddress } from '../../hooks/useQueryTransactionsByAddress';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
 // import { Icon } from '../../shared/icons/Icon';
 import { AssetCard } from '../../shared/nfts/AssetCard';
@@ -178,7 +177,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
 
             // find transaction details based on txDigest
             tx = result.find(
-                (tx) => tx.digest === txDigest
+                (tx) => tx.transaction.digest === txDigest
             ) as FormattedTransaction;
 
             transaction = tx;

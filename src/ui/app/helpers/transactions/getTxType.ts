@@ -1,5 +1,7 @@
-import type { FormattedTransaction } from './types';
-import type { SuiObjectChange } from '@mysten/sui.js';
+import type {
+    SuiObjectChange,
+    SuiTransactionBlockResponse,
+} from '@mysten/sui.js';
 
 export type TxType = string;
 
@@ -20,7 +22,7 @@ function getType(objectChanges: SuiObjectChange[]) {
     }
 }
 
-const getTxType = (txn: FormattedTransaction): string => {
+const getTxType = (txn: SuiTransactionBlockResponse): string => {
     let type = 'func';
 
     if (txn.objectChanges && txn.objectChanges.length > 0) {
