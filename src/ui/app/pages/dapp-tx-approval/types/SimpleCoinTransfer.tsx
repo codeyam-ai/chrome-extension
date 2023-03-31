@@ -2,9 +2,9 @@ import { ArrowRightCircleIcon } from '@heroicons/react/20/solid';
 import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 
-import Continue from './NextStep';
 import FromTo from './FromTo';
 import Header from './Header';
+import NextStep from './NextStep';
 import Steps from './Steps';
 import TransactionBody from './TransactionBody';
 import Warning from './Warning';
@@ -17,50 +17,28 @@ import type { BalanceReduction } from '../lib/analyzeChanges';
 import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
-const SimpleCoinTransfer = ({
-    signer,
-    reduction,
-}: {
-    signer: RawSigner | EthosSigner;
-    reduction: BalanceReduction;
-}) => {
-    const to = reduction.recipient;
-    const [balance, setBalance] = useState<string>('0');
+export type StepInformation = {
+    name: string;
+    formatted: string;
+    formattedRemainder: string;
+    iconUrl: string | null;
+    symbol: string;
+    dollars: string;
+    to: string;
+};
 
-    const loading = useMemo(() => balance === '0', [balance]);
-
-    const absReduction = useMemo(
-        () => new BigNumber(reduction.amount).abs(),
-        [reduction]
-    );
-    const [formatted, symbol, dollars, name, iconUrl] = useFormatCoin(
-        absReduction.toString(),
-        reduction.type
-    );
-
-    const [formattedRemainder] = useFormatCoin(
-        new BigNumber(balance).plus(absReduction).toString(),
-        reduction.type
-    );
-
-    useEffect(() => {
-        const getBalance = async () => {
-            if (!signer) return;
-            const owner = await signer.getAddress();
-            const balance = await signer.provider.getBalance({
-                owner,
-                coinType: reduction.type,
-            });
-            setBalance(balance.totalBalance.toString());
-        };
-
-        getBalance();
-    }, [signer, reduction]);
-
-    if (!to) return <></>;
-
+const StepOne = ({ stepInformation }: { stepInformation: StepInformation }) => {
+    const {
+        name,
+        formatted,
+        formattedRemainder,
+        iconUrl,
+        symbol,
+        dollars,
+        to,
+    } = stepInformation;
     return (
-        <Loading loading={loading} big={true} resize={true}>
+        <>
             <Header>
                 <Warning>
                     This transaction will reduce your {name} balance by{' '}
@@ -106,8 +84,67 @@ const SimpleCoinTransfer = ({
                 </div>
             </TransactionBody>
             <FromTo to={to}></FromTo>
-            <Continue />
+            <NextStep />
             <Steps activeStep={0} stepCount={2} />
+        </>
+    );
+};
+
+const SimpleCoinTransfer = ({
+    signer,
+    reduction,
+}: {
+    signer: RawSigner | EthosSigner;
+    reduction: BalanceReduction;
+}) => {
+    const to = reduction.recipient;
+    const [balance, setBalance] = useState<string>('0');
+
+    const loading = useMemo(() => balance === '0', [balance]);
+
+    const absReduction = useMemo(
+        () => new BigNumber(reduction.amount).abs(),
+        [reduction]
+    );
+    const [formatted, symbol, dollars, name, iconUrl] = useFormatCoin(
+        absReduction.toString(),
+        reduction.type
+    );
+
+    const [formattedRemainder] = useFormatCoin(
+        new BigNumber(balance).plus(absReduction).toString(),
+        reduction.type
+    );
+
+    useEffect(() => {
+        const getBalance = async () => {
+            if (!signer) return;
+            const owner = await signer.getAddress();
+            const balance = await signer.provider.getBalance({
+                owner,
+                coinType: reduction.type,
+            });
+            setBalance(balance.totalBalance.toString());
+        };
+
+        getBalance();
+    }, [signer, reduction]);
+
+    if (!to) return <></>;
+
+    const stepInformation = {
+        name,
+        formatted,
+        formattedRemainder,
+        iconUrl,
+        symbol,
+        dollars,
+        to,
+    };
+
+    return (
+        <Loading loading={loading} big={true} resize={true}>
+            <StepOne stepInformation={stepInformation} />
         </Loading>
     );
 };
