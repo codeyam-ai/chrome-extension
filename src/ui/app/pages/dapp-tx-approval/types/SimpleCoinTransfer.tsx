@@ -1,6 +1,6 @@
 import { ArrowRightCircleIcon } from '@heroicons/react/20/solid';
 import BigNumber from 'bignumber.js';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import FromTo from './FromTo';
 import Header from './Header';
@@ -27,7 +27,13 @@ export type StepInformation = {
     to: string;
 };
 
-const StepOne = ({ stepInformation }: { stepInformation: StepInformation }) => {
+const StepOne = ({
+    stepInformation,
+    onNextStep,
+}: {
+    stepInformation: StepInformation;
+    onNextStep: () => void;
+}) => {
     const {
         name,
         formatted,
@@ -84,7 +90,7 @@ const StepOne = ({ stepInformation }: { stepInformation: StepInformation }) => {
                 </div>
             </TransactionBody>
             <FromTo to={to}></FromTo>
-            <NextStep />
+            <NextStep onNextStep={onNextStep} />
             <Steps activeStep={0} stepCount={2} />
         </>
     );
@@ -97,7 +103,8 @@ const SimpleCoinTransfer = ({
     signer: RawSigner | EthosSigner;
     reduction: BalanceReduction;
 }) => {
-    const to = reduction.recipient;
+    const to = reduction.recipient || '';
+    const [step, setStep] = useState<number>(0);
     const [balance, setBalance] = useState<string>('0');
 
     const loading = useMemo(() => balance === '0', [balance]);
@@ -130,21 +137,39 @@ const SimpleCoinTransfer = ({
         getBalance();
     }, [signer, reduction]);
 
-    if (!to) return <></>;
+    const onNextStep = useCallback(() => {
+        setStep((step) => step + 1);
+    }, []);
 
-    const stepInformation = {
-        name,
-        formatted,
-        formattedRemainder,
-        iconUrl,
-        symbol,
-        dollars,
-        to,
-    };
+    const stepInformation = useMemo(
+        () => ({
+            name,
+            formatted,
+            formattedRemainder,
+            iconUrl,
+            symbol,
+            dollars,
+            to,
+        }),
+        [dollars, formatted, formattedRemainder, iconUrl, name, symbol, to]
+    );
+
+    const stepNode = useMemo(() => {
+        if (step === 0) {
+            return (
+                <StepOne
+                    stepInformation={stepInformation}
+                    onNextStep={onNextStep}
+                />
+            );
+        } else {
+            return <></>;
+        }
+    }, [step, stepInformation, onNextStep]);
 
     return (
         <Loading loading={loading} big={true} resize={true}>
-            <StepOne stepInformation={stepInformation} />
+            {stepNode}
         </Loading>
     );
 };

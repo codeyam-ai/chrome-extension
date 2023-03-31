@@ -1,10 +1,11 @@
-import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
 import { useCallback } from 'react';
 
-const NextStep = () => {
+import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
+
+const NextStep = ({ onNextStep }: { onNextStep: () => void }) => {
     const approve = useCallback(() => {
-        console.log('NextStep!');
-    }, []);
+        onNextStep && onNextStep();
+    }, [onNextStep]);
 
     const reject = useCallback(() => {
         console.log('REJECT!');
