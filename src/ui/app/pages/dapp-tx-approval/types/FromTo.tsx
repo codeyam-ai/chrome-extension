@@ -18,7 +18,7 @@ const FromTo = ({ to }: { to: string }) => {
             <div className="bg-[#F8F5FF] border border-[#F0EBFE] rounded-xl overflow-hidden flex flex-col">
                 <div className="flex flex-row justify-between items-center border-b border-[#F0EBFE] p-3">
                     <Body>From</Body>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1">
                         <WalletColorAndEmojiCircle
                             color={accountInfo?.color}
                             emoji={accountInfo?.emoji}

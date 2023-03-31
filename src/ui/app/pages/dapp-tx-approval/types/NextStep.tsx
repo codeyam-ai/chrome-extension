@@ -1,9 +1,9 @@
 import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
 import { useCallback } from 'react';
 
-const Continue = () => {
+const NextStep = () => {
     const approve = useCallback(() => {
-        console.log('CONTINUE!');
+        console.log('NextStep!');
     }, []);
 
     const reject = useCallback(() => {
@@ -14,7 +14,7 @@ const Continue = () => {
         <InlineButtonGroup
             onClickButtonPrimary={approve}
             buttonPrimaryTestId="approve"
-            buttonPrimaryChildren={<>Continue</>}
+            buttonPrimaryChildren={<>Next Step</>}
             onClickButtonSecondary={reject}
             buttonSecondaryTestId="reject"
             buttonSecondaryChildren={<>Cancel</>}
@@ -22,4 +22,4 @@ const Continue = () => {
     );
 };
 
-export default Continue;
+export default NextStep;

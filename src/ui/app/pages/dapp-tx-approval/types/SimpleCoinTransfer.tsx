@@ -1,11 +1,15 @@
+import { ArrowRightCircleIcon } from '@heroicons/react/20/solid';
 import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 
-import Continue from './Continue';
+import Continue from './NextStep';
 import FromTo from './FromTo';
 import Header from './Header';
+import Steps from './Steps';
 import TransactionBody from './TransactionBody';
 import Warning from './Warning';
+import Sui from '../../home/tokens/Sui';
+import UnknownToken from '../../home/tokens/UnknownToken';
 import Loading from '_src/ui/app/components/loading';
 import { useFormatCoin } from '_src/ui/app/hooks';
 
@@ -59,20 +63,41 @@ const SimpleCoinTransfer = ({
         <Loading loading={loading} big={true} resize={true}>
             <Header>
                 <Warning>
-                    <div className="flex flex-col gap-1">
-                        <div>
-                            This transaction will reduce your {symbol} balance
-                            by {formatted}
-                        </div>
-                        <div>
-                            Your remaining balance will be {formattedRemainder}{' '}
-                            {symbol}
-                        </div>
-                    </div>
+                    This transaction will reduce your {name} balance by{' '}
+                    {formatted}. Your remaining balance will be{' '}
+                    {formattedRemainder} {name}.
                 </Warning>
             </Header>
             <TransactionBody>
                 <div className="flex flex-col items-center gap-1 text-lg">
+                    <div
+                        className="relative"
+                        style={{ height: '60px', width: '60px' }}
+                    >
+                        <div
+                            className="absolute bottom-0 left-0 bg-black rounded-full"
+                            style={{ height: '60px', width: '60px' }}
+                        />
+                        <div className="absolute bottom-1 left-0">
+                            {iconUrl ? (
+                                <img
+                                    src={iconUrl}
+                                    alt={`coin-${symbol}`}
+                                    height={60}
+                                    width={60}
+                                />
+                            ) : symbol === 'SUI' ? (
+                                <Sui width={60} />
+                            ) : (
+                                <UnknownToken />
+                            )}
+                        </div>
+                        <ArrowRightCircleIcon
+                            color="#9040F5"
+                            className="bg-white absolute -bottom-1 left-10 rounded-full"
+                            height={30}
+                        />
+                    </div>
                     <div className="font-light">Confirm your want to send</div>
                     <div className="font-semibold">
                         {formatted} {symbol.toUpperCase()}
@@ -82,6 +107,7 @@ const SimpleCoinTransfer = ({
             </TransactionBody>
             <FromTo to={to}></FromTo>
             <Continue />
+            <Steps activeStep={0} stepCount={2} />
         </Loading>
     );
 };

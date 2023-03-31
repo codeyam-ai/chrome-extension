@@ -4,9 +4,8 @@ import type { ReactNode } from 'react';
 
 const Warning = ({ children }: { children: ReactNode }) => {
     return (
-        <div className="text-[#9040F5] flex gap-3 items-start">
-            <ShieldExclamationIcon height={30} />
-
+        <div className="text-[#9040F5] flex gap-2 items-center text-sm">
+            <ShieldExclamationIcon height={45} />
             {children}
         </div>
     );
