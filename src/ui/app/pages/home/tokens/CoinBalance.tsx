@@ -40,8 +40,6 @@ function CoinBalance({ type, balance, replaceUrl }: CoinProps) {
         navigate(sendUrl, { replace: replaceUrl });
     }, [navigate, sendUrl, replaceUrl]);
 
-    if (symbol !== 'SUI' && !icon) return <></>;
-
     return (
         <button
             onClick={updateUrl}
