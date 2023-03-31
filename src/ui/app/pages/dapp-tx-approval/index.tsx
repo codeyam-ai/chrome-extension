@@ -5,6 +5,8 @@ import { useParams } from 'react-router-dom';
 import analyzeChanges from './lib/analyzeChanges';
 import Base from './types/Base';
 import SimpleAssetTransfer from './types/SimpleAssetTransfer';
+import SimpleBase from './types/SimpleBase';
+import SimpleCoinTransfer from './types/SimpleCoinTransfer';
 import { AppState } from '../../hooks/useInitializedGuard';
 import Loading from '_components/loading';
 import { useAppSelector, useInitializedGuard } from '_hooks';
@@ -13,10 +15,9 @@ import { thunkExtras } from '_redux/store/thunk-extras';
 import { useDependencies } from '_shared/utils/dependenciesContext';
 
 import type { AnalyzeChangesResult } from './lib/analyzeChanges';
-import type { SuiMoveNormalizedType } from '@mysten/sui.js';
+import type { RawSigner, SuiMoveNormalizedType } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
-import SimpleCoinTransfer from './types/SimpleCoinTransfer';
-import SimpleBase from './types/SimpleBase';
+import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
 export type Permission = {
     label: string;
@@ -32,6 +33,7 @@ export type DistilledEffect = {
 
 export function DappTxApprovalPage() {
     // const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+    const [signer, setSigner] = useState<RawSigner | EthosSigner | undefined>();
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
 
     const { txID } = useParams();
@@ -45,6 +47,7 @@ export function DappTxApprovalPage() {
     const { activeAccountIndex, address, authentication } = useAppSelector(
         ({ account }) => account
     );
+
     const txRequestSelector = useMemo(
         () => (state: RootState) =>
             (txID && txRequestsSelectors.selectById(state, txID)) || null,
@@ -69,6 +72,7 @@ export function DappTxApprovalPage() {
         guardLoading ||
         txRequestsLoading ||
         !txRequest ||
+        !signer ||
         !address ||
         analysis === undefined;
 
@@ -85,36 +89,49 @@ export function DappTxApprovalPage() {
     }, []);
 
     useEffect(() => {
-        if (!transactionBlock || !accountInfos || accountInfos.length === 0)
+        if (!accountInfos || accountInfos.length === 0) return;
+
+        let signer;
+        if (authentication) {
+            signer = thunkExtras.api.getEthosSignerInstance(
+                address || '',
+                authentication
+            );
+        } else {
+            signer = thunkExtras.api.getSignerInstance(
+                thunkExtras.keypairVault.getKeyPair(activeAccountIndex),
+                true
+            );
+        }
+        setSigner(signer);
+    }, [accountInfos, activeAccountIndex, address, authentication]);
+
+    useEffect(() => {
+        if (
+            !signer ||
+            !transactionBlock ||
+            !accountInfos ||
+            accountInfos.length === 0
+        )
             return;
 
         const getTransactionInfo = async () => {
-            let signer;
-            if (authentication) {
-                signer = thunkExtras.api.getEthosSignerInstance(
-                    address || '',
-                    authentication
-                );
-            } else {
-                signer = thunkExtras.api.getSignerInstance(
-                    thunkExtras.keypairVault.getKeyPair(activeAccountIndex),
-                    true
-                );
-            }
+            if (!accountInfos || accountInfos.length === 0) return;
 
-            try {
-                const analysis = await analyzeChanges({
-                    signer,
-                    transactionBlock,
-                });
+            // try {
+            const analysis = await analyzeChanges({
+                signer,
+                transactionBlock,
+            });
 
-                console.log('ANALYSIS', analysis);
+            console.log('ANALYSIS', analysis);
 
-                setAnalysis(analysis);
-            } catch (e: unknown) {
-                // setDryRunError(`${e}`);
-                setAnalysis(null);
-            }
+            setAnalysis(analysis);
+            // } catch (e: unknown) {
+            //     console.log('ANALSYIS ERROR', e);
+            //     // setDryRunError(`${e}`);
+            //     setAnalysis(null);
+            // }
         };
 
         getTransactionInfo();
@@ -123,6 +140,7 @@ export function DappTxApprovalPage() {
         activeAccountIndex,
         address,
         authentication,
+        signer,
         transactionBlock,
     ]);
 
@@ -139,7 +157,7 @@ export function DappTxApprovalPage() {
     }, []);
 
     const content = useMemo(() => {
-        if (!analysis) return <></>;
+        if (!signer || !analysis) return <></>;
 
         if (
             analysis.assetTransfers.length === 1 &&
@@ -157,6 +175,7 @@ export function DappTxApprovalPage() {
             return (
                 <SimpleBase onComplete={onComplete}>
                     <SimpleCoinTransfer
+                        signer={signer}
                         reduction={analysis.balanceReductions[0]}
                     ></SimpleCoinTransfer>
                 </SimpleBase>
@@ -182,6 +201,7 @@ export function DappTxApprovalPage() {
         analysis,
         authentication,
         onComplete,
+        signer,
         transactionBlock,
         txID,
         txRequest,

@@ -120,10 +120,6 @@ const analyzeChanges = async ({
 
     const { effects, balanceChanges, objectChanges } = dryRunResponse;
 
-    console.log('effects', effects);
-    console.log('balanceChanges', balanceChanges);
-    console.log('objectChanges', objectChanges);
-
     const gas = effects.gasUsed;
 
     const { transfers: assetTransfers } = assetChanges(address, objectChanges);
