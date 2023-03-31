@@ -35,10 +35,10 @@ function NumberInput<FormValues>({
     const handleOnValueChange = useCallback(
         (values: NumberFormatValues) => {
             setFieldValue(name, values.value);
-            // setFieldValue(name, values.formattedValue);
         },
         [name, setFieldValue]
     );
+
     return (
         <NumericFormat
             type="text"

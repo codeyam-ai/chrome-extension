@@ -1,4 +1,5 @@
 import * as format from './format';
+import * as parse from './parse'
 
 /**
  * namespace, or ns, aims to be where _all_ pure js/ts functionality within our
@@ -16,6 +17,7 @@ import * as format from './format';
  */
 const namespace = {
     format,
+    parse
 };
 
 export default namespace;

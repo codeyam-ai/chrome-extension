@@ -1,0 +1,112 @@
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import * as Yup from 'yup';
+
+import ns from '_shared/namespace';
+import { SUI_SYMBOL } from '_src/ui/app/redux/slices/sui-objects/Coin';
+
+import type BigNumber from 'bignumber.js';
+
+export interface BuildValidationSchema {
+    coin: {
+        type: string | null;
+        symbol: string;
+        balance: bigint;
+        decimals: number;
+    };
+    gas: {
+        aggregateBalance: bigint;
+        decimals: number;
+        budget: number;
+    };
+}
+
+export function buildValidationSchema({ coin, gas }: BuildValidationSchema) {
+    return Yup.object().shape({
+        amount: Yup.mixed()
+            .transform((value, originalValue) => {
+                // let v;
+
+                // if (original.includes(',')) {
+                //     v = original.replace(',', '.');
+                // } else {
+                //     v = original;
+                // }
+
+                // return new BigNumber(parseFloat(v));
+                return ns.parse.numberString({
+                    language: 'de',
+                    numberString: value as string,
+                });
+            })
+            .test('required', `\${path} is a required field`, (value) => {
+                return !!value;
+            })
+            .test(
+                'max',
+                `You have no ${coin.symbol}. Please use the faucet to get more.`,
+                () => coin.balance >= 0
+            )
+            .test(
+                'valid',
+                'The value provided is not valid.',
+                (value?: BigNumber) => {
+                    if (!value || value.isNaN() || !value.isFinite()) {
+                        return false;
+                    }
+                    return true;
+                }
+            )
+            .test(
+                'min',
+                `Amount must be greater than 0 ${coin.symbol}`,
+                (amount?: BigNumber) => (amount ? amount.gt(0) : false)
+            )
+            .test(
+                'max',
+                `Amount must be less than ${ns.format.coinBalance(
+                    coin.balance,
+                    coin.decimals
+                )} ${coin.symbol}`,
+                (amount?: BigNumber) => {
+                    return amount && coin.balance >= 0
+                        ? amount
+                              .shiftedBy(coin.decimals)
+                              .lte(coin.balance.toString())
+                        : false;
+                }
+            )
+            .test(
+                'max-decimals',
+                `The value exeeds the maximum decimals (${coin.decimals}).`,
+                (amount?: BigNumber) => {
+                    return amount
+                        ? amount.shiftedBy(coin.decimals).isInteger()
+                        : false;
+                }
+            )
+            .test(
+                'gas-balance-check',
+                `Insufficient ${SUI_SYMBOL} balance to cover gas fee (${ns.format.coinBalance(
+                    gas.budget,
+                    gas.decimals
+                )} ${SUI_SYMBOL})`,
+                (amount?: BigNumber) => {
+                    if (!amount) {
+                        return false;
+                    }
+                    try {
+                        let availableGas = gas.aggregateBalance;
+                        if (coin.type === SUI_TYPE_ARG) {
+                            availableGas -= BigInt(
+                                amount.shiftedBy(coin.decimals).toString()
+                            );
+                        }
+                        return availableGas >= gas.budget;
+                    } catch (e) {
+                        return false;
+                    }
+                }
+            )
+            .label('amount'),
+    });
+}
