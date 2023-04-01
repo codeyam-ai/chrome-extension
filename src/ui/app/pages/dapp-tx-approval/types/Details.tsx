@@ -37,17 +37,41 @@ const Section = ({
 };
 
 const BalanceChanges = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
+    if (analysis.dryRunResponse.balanceChanges.length === 0) return null;
+
     return (
         <Section title="Balance Changes">
-            {analysis.balanceReductions.map((balanceChange, index) => {
-                return (
-                    <Row
-                        key={`row-${index}`}
-                        title={balanceChange.type}
-                        value={balanceChange.amount}
-                    />
-                );
-            })}
+            {analysis.dryRunResponse.balanceChanges.map(
+                (balanceChange, index) => {
+                    return (
+                        <Row
+                            key={`row-${index}`}
+                            title={balanceChange.coinType}
+                            value={balanceChange.amount}
+                        />
+                    );
+                }
+            )}
+        </Section>
+    );
+};
+
+const AssetChanges = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
+    if (analysis.dryRunResponse.objectChanges.length === 0) return null;
+
+    return (
+        <Section title="Asset (NFT) Changes">
+            {analysis.dryRunResponse.objectChanges.map(
+                (objectChange, index) => {
+                    return (
+                        <Row
+                            key={`row-${index}`}
+                            title={objectChange.type}
+                            value={objectChange.type}
+                        />
+                    );
+                }
+            )}
         </Section>
     );
 };
@@ -73,11 +97,7 @@ const Details = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
             {details && (
                 <div className="flex flex-col gap-6 divider-y divider-color-[#F0EBFE]">
                     <BalanceChanges analysis={analysis} />
-                    <Section title="Asset Changes">
-                        <Row title="AAA" value="BBB" />
-                        <Row title="AAA" value="BBB" />
-                        <Row title="AAA" value="BBB" />
-                    </Section>
+                    <AssetChanges analysis={analysis} />
                     <Section title="Move Calls">
                         <Row title="CCC" value="DDD" />
                         <Row title="CCC" value="DDD" />
