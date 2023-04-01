@@ -53,7 +53,7 @@ const StepOne = ({
                 <Warning>
                     This transaction will reduce your {name} balance by{' '}
                     {formatted}. Your remaining balance will be{' '}
-                    {formattedRemainder} {name}.
+                    {formattedRemainder} {symbol}.
                 </Warning>
             </Header>
             <TransactionBody>
