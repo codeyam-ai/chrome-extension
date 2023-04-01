@@ -14,13 +14,13 @@ const Total = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
     );
 
     return (
-        <CardRow style={{ backgroundColor: '#F0EBFE', padding: '12px 3px' }}>
-            <Body isSemibold>Total</Body>
+        <CardRow style={{ backgroundColor: '#F0EBFE', padding: '24px 12px' }}>
+            <BodyLarge isSemibold>Total</BodyLarge>
             <div className="text-right flex flex-col gap-1">
                 <BodyLarge isSemibold className="text-2xl">
                     {dollars} USD
                 </BodyLarge>
-                <Body className="text-xs text-[#74777C]">
+                <Body className="text-sm text-[#74777C]">
                     {formatted} {symbol}
                 </Body>
             </div>

@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import Approve from './Approve';
 import FromToCard from './FromToCard';
 import Header from './Header';
 import NextStep from './NextStep';
@@ -18,7 +19,6 @@ import type {
 } from '../lib/analyzeChanges';
 import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import Approve from './Approve';
 
 export type StepInformation = {
     name: string;
@@ -84,10 +84,20 @@ const StepTwo = ({
     onApprove: () => void;
     onCancel: () => void;
 }) => {
+    const [disabled, setDisabled] = useState<boolean>(true);
+
+    useEffect(() => {
+        setTimeout(() => setDisabled(false), 500);
+    }, []);
+
     return (
         <div className="h-full flex flex-col w-full py-3">
             <TransactionCard stepInformation={stepInformation} />
-            <Approve onApprove={onApprove} onCancel={onCancel} />
+            <Approve
+                disabled={disabled}
+                onApprove={onApprove}
+                onCancel={onCancel}
+            />
             <Steps activeStep={1} stepCount={2} />
         </div>
     );
@@ -185,7 +195,7 @@ const SimpleCoinTransfer = ({
                 />
             );
         }
-    }, [step, stepInformation, onNextStep, onCancel]);
+    }, [step, stepInformation, onNextStep, onCancel, onApprove]);
 
     return (
         <Loading loading={loading} big={true} resize={true}>

@@ -2,9 +2,9 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import CardRow from './CardRow';
 import { useFormatCoin } from '_src/ui/app/hooks';
+import Body from '_src/ui/app/shared/typography/Body';
 
 import type { GasCostSummary } from '../lib/analyzeChanges';
-import Body from '_src/ui/app/shared/typography/Body';
 
 const Gas = ({ gasSummary }: { gasSummary: GasCostSummary }) => {
     const [formatted, symbol, dollars] = useFormatCoin(
@@ -20,7 +20,7 @@ const Gas = ({ gasSummary }: { gasSummary: GasCostSummary }) => {
                     <Body className="font-light">USD</Body>
                     <Body>{dollars}</Body>
                 </div>
-                <Body className="text-xs text-[#74777C]">
+                <Body className="text-size-ethos-small text-[#74777C]">
                     {formatted} {symbol}
                 </Body>
             </div>

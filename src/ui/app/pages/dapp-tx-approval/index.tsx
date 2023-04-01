@@ -241,6 +241,7 @@ export function DappTxApprovalPage() {
         address,
         analysis,
         authentication,
+        onApprove,
         onComplete,
         signer,
         transactionBlock,
