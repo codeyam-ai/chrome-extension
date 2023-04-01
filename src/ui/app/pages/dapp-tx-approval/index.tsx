@@ -18,6 +18,7 @@ import type { AnalyzeChangesResult } from './lib/analyzeChanges';
 import type { RawSigner, SuiMoveNormalizedType } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import finishTransaction from './lib/finishTransaction';
 
 export type Permission = {
     label: string;
@@ -152,9 +153,46 @@ export function DappTxApprovalPage() {
         }
     }, [closeWindow, done]);
 
-    const onComplete = useCallback((_accept: boolean) => {
-        setDone(true);
-    }, []);
+    const handleOnSubmit = useCallback(
+        async (approved: boolean) => {
+            const options =
+                txRequest?.tx && 'options' in txRequest.tx
+                    ? txRequest.tx.options
+                    : undefined;
+            const requestType =
+                txRequest?.tx && 'requestType' in txRequest.tx
+                    ? txRequest.tx.requestType
+                    : undefined;
+            await finishTransaction(
+                transactionBlock ?? null,
+                txID,
+                approved,
+                authentication ?? null,
+                address,
+                activeAccountIndex,
+                options,
+                requestType
+            );
+            setDone(true);
+        },
+        [
+            txRequest?.tx,
+            transactionBlock,
+            txID,
+            authentication,
+            address,
+            activeAccountIndex,
+            setDone,
+        ]
+    );
+
+    const onApprove = useCallback(() => {
+        handleOnSubmit(true);
+    }, [handleOnSubmit]);
+
+    const onComplete = useCallback(() => {
+        handleOnSubmit(false);
+    }, [handleOnSubmit]);
 
     const content = useMemo(() => {
         if (!signer || !analysis) return <></>;
@@ -177,7 +215,9 @@ export function DappTxApprovalPage() {
                     <SimpleCoinTransfer
                         signer={signer}
                         reduction={analysis.balanceReductions[0]}
-                        gas={analysis.gas}
+                        analysis={analysis}
+                        onCancel={onComplete}
+                        onApprove={onApprove}
                     ></SimpleCoinTransfer>
                 </SimpleBase>
             );

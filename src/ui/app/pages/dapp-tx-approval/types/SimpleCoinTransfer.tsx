@@ -1,4 +1,3 @@
-import { ArrowRightCircleIcon } from '@heroicons/react/20/solid';
 import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -8,13 +7,15 @@ import NextStep from './NextStep';
 import Steps from './Steps';
 import TransactionBody from './TransactionBody';
 import TransactionCard from './TransactionCard';
+import TransactionImage from './TransactionImage';
 import Warning from './Warning';
-import Sui from '../../home/tokens/Sui';
-import UnknownToken from '../../home/tokens/UnknownToken';
 import Loading from '_src/ui/app/components/loading';
 import { useFormatCoin } from '_src/ui/app/hooks';
 
-import type { BalanceReduction, GasCostSummary } from '../lib/analyzeChanges';
+import type {
+    AnalyzeChangesResult,
+    BalanceReduction,
+} from '../lib/analyzeChanges';
 import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
@@ -26,7 +27,7 @@ export type StepInformation = {
     symbol: string;
     dollars: string;
     to: string;
-    gas: GasCostSummary;
+    analysis: AnalyzeChangesResult;
 };
 
 const StepOne = ({
@@ -57,35 +58,8 @@ const StepOne = ({
                 </Warning>
             </Header>
             <TransactionBody>
+                <TransactionImage iconUrl={iconUrl} symbol={symbol} />
                 <div className="flex flex-col items-center gap-1 text-lg">
-                    <div
-                        className="relative"
-                        style={{ height: '60px', width: '60px' }}
-                    >
-                        <div
-                            className="absolute bottom-0 left-0 bg-black rounded-full"
-                            style={{ height: '60px', width: '60px' }}
-                        />
-                        <div className="absolute bottom-1 left-0">
-                            {iconUrl ? (
-                                <img
-                                    src={iconUrl}
-                                    alt={`coin-${symbol}`}
-                                    height={60}
-                                    width={60}
-                                />
-                            ) : symbol === 'SUI' ? (
-                                <Sui width={60} />
-                            ) : (
-                                <UnknownToken />
-                            )}
-                        </div>
-                        <ArrowRightCircleIcon
-                            color="#9040F5"
-                            className="bg-white absolute -bottom-1 left-10 rounded-full"
-                            height={30}
-                        />
-                    </div>
                     <div className="font-light">Confirm your want to send</div>
                     <div className="font-semibold">
                         {formatted} {symbol.toUpperCase()}
@@ -102,17 +76,17 @@ const StepOne = ({
 
 const StepTwo = ({
     stepInformation,
-    onNextStep,
+    onApprove,
     onCancel,
 }: {
     stepInformation: StepInformation;
-    onNextStep: () => void;
+    onApprove: () => void;
     onCancel: () => void;
 }) => {
     return (
         <div className="h-full flex flex-col w-full py-3">
             <TransactionCard stepInformation={stepInformation} />
-            <NextStep onNextStep={onNextStep} onCancel={onCancel} />
+            <NextStep onNextStep={onApprove} onCancel={onCancel} />
             <Steps activeStep={1} stepCount={2} />
         </div>
     );
@@ -121,11 +95,15 @@ const StepTwo = ({
 const SimpleCoinTransfer = ({
     signer,
     reduction,
-    gas,
+    analysis,
+    onApprove,
+    onCancel,
 }: {
     signer: RawSigner | EthosSigner;
     reduction: BalanceReduction;
-    gas: GasCostSummary;
+    analysis: AnalyzeChangesResult;
+    onApprove: () => void;
+    onCancel: () => void;
 }) => {
     const to = reduction.recipient || '';
     const [step, setStep] = useState<number>(1);
@@ -165,10 +143,6 @@ const SimpleCoinTransfer = ({
         setStep((step) => step + 1);
     }, []);
 
-    const onCancel = useCallback(() => {
-        window.close();
-    }, []);
-
     const stepInformation = useMemo(
         () => ({
             name,
@@ -178,9 +152,18 @@ const SimpleCoinTransfer = ({
             symbol,
             dollars,
             to,
-            gas,
+            analysis,
         }),
-        [dollars, formatted, formattedRemainder, iconUrl, name, symbol, to, gas]
+        [
+            dollars,
+            formatted,
+            formattedRemainder,
+            iconUrl,
+            name,
+            symbol,
+            to,
+            analysis,
+        ]
     );
 
     const stepNode = useMemo(() => {
@@ -196,7 +179,7 @@ const SimpleCoinTransfer = ({
             return (
                 <StepTwo
                     stepInformation={stepInformation}
-                    onNextStep={onNextStep}
+                    onApprove={onApprove}
                     onCancel={onCancel}
                 />
             );

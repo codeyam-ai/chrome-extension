@@ -7,7 +7,7 @@ export type NextStepProps = {
     onCancel: () => void;
 };
 
-const NextStep = ({ onNextStep, onCancel }: NextStepProps) => {
+const Approve = ({ onNextStep, onCancel }: NextStepProps) => {
     const nextStep = useCallback(() => {
         onNextStep && onNextStep();
     }, [onNextStep]);
@@ -20,7 +20,7 @@ const NextStep = ({ onNextStep, onCancel }: NextStepProps) => {
         <InlineButtonGroup
             onClickButtonPrimary={nextStep}
             buttonPrimaryTestId="approve"
-            buttonPrimaryChildren={<>Next Step</>}
+            buttonPrimaryChildren={<>Approve</>}
             onClickButtonSecondary={cancel}
             buttonSecondaryTestId="reject"
             buttonSecondaryChildren={<>Cancel</>}
@@ -28,4 +28,4 @@ const NextStep = ({ onNextStep, onCancel }: NextStepProps) => {
     );
 };
 
-export default NextStep;
+export default Approve;
