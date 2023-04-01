@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Approve from './Approve';
+import Details from './Details';
 import FromToCard from './FromToCard';
 import Header from './Header';
 import NextStep from './NextStep';
@@ -35,10 +36,12 @@ const StepOne = ({
     stepInformation,
     onNextStep,
     onCancel,
+    onSelectStep,
 }: {
     stepInformation: StepInformation;
     onNextStep: () => void;
     onCancel: () => void;
+    onSelectStep: (index: number) => void;
 }) => {
     const {
         name,
@@ -70,7 +73,7 @@ const StepOne = ({
             </TransactionBody>
             <FromToCard to={to}></FromToCard>
             <NextStep onNextStep={onNextStep} onCancel={onCancel} />
-            <Steps activeStep={0} stepCount={2} />
+            <Steps activeStep={0} stepCount={2} onClick={onSelectStep} />
         </>
     );
 };
@@ -79,10 +82,12 @@ const StepTwo = ({
     stepInformation,
     onApprove,
     onCancel,
+    onSelectStep,
 }: {
     stepInformation: StepInformation;
     onApprove: () => void;
     onCancel: () => void;
+    onSelectStep: (index: number) => void;
 }) => {
     const [disabled, setDisabled] = useState<boolean>(true);
 
@@ -93,12 +98,13 @@ const StepTwo = ({
     return (
         <div className="h-full flex flex-col w-full py-3">
             <TransactionCard stepInformation={stepInformation} />
+            <Details />
             <Approve
                 disabled={disabled}
                 onApprove={onApprove}
                 onCancel={onCancel}
             />
-            <Steps activeStep={1} stepCount={2} />
+            <Steps activeStep={1} stepCount={2} onClick={onSelectStep} />
         </div>
     );
 };
@@ -117,7 +123,7 @@ const SimpleCoinTransfer = ({
     onCancel: () => void;
 }) => {
     const to = reduction.recipient || '';
-    const [step, setStep] = useState<number>(0);
+    const [step, setStep] = useState<number>(1);
     const [balance, setBalance] = useState<string>('0');
 
     const loading = useMemo(() => balance === '0', [balance]);
@@ -184,6 +190,7 @@ const SimpleCoinTransfer = ({
                     stepInformation={stepInformation}
                     onNextStep={onNextStep}
                     onCancel={onCancel}
+                    onSelectStep={setStep}
                 />
             );
         } else {
@@ -192,6 +199,7 @@ const SimpleCoinTransfer = ({
                     stepInformation={stepInformation}
                     onApprove={onApprove}
                     onCancel={onCancel}
+                    onSelectStep={setStep}
                 />
             );
         }
