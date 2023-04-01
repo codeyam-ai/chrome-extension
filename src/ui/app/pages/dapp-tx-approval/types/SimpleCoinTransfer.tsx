@@ -2,22 +2,21 @@ import { ArrowRightCircleIcon } from '@heroicons/react/20/solid';
 import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import FromTo from './FromTo';
+import FromToCard from './FromToCard';
 import Header from './Header';
 import NextStep from './NextStep';
 import Steps from './Steps';
 import TransactionBody from './TransactionBody';
+import TransactionCard from './TransactionCard';
 import Warning from './Warning';
 import Sui from '../../home/tokens/Sui';
 import UnknownToken from '../../home/tokens/UnknownToken';
 import Loading from '_src/ui/app/components/loading';
 import { useFormatCoin } from '_src/ui/app/hooks';
 
-import type { BalanceReduction } from '../lib/analyzeChanges';
+import type { BalanceReduction, GasCostSummary } from '../lib/analyzeChanges';
 import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import Body from '_src/ui/app/shared/typography/Body';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 export type StepInformation = {
     name: string;
@@ -27,6 +26,7 @@ export type StepInformation = {
     symbol: string;
     dollars: string;
     to: string;
+    gas: GasCostSummary;
 };
 
 const StepOne = ({
@@ -93,7 +93,7 @@ const StepOne = ({
                     <div className="text-[#74777C] text-base">≈ {dollars}</div>
                 </div>
             </TransactionBody>
-            <FromTo to={to}></FromTo>
+            <FromToCard to={to}></FromToCard>
             <NextStep onNextStep={onNextStep} onCancel={onCancel} />
             <Steps activeStep={0} stepCount={2} />
         </>
@@ -109,40 +109,9 @@ const StepTwo = ({
     onNextStep: () => void;
     onCancel: () => void;
 }) => {
-    const {
-        name,
-        formatted,
-        formattedRemainder,
-        iconUrl,
-        symbol,
-        dollars,
-        to,
-    } = stepInformation;
-
     return (
         <div className="h-full flex flex-col w-full py-3">
-            <TransactionBody>
-                <div className="w-full rounded-xl bg-[#F8F5FF] flex flex-col divide-y divide-ethos-dark-text-medium">
-                    <div className="p-6 flex-col items-center text-center">
-                        <BodyLarge>You are about to send</BodyLarge>
-                        <div className="text-lg flex justify-center gap-3">
-                            <BodyLarge isSemibold>
-                                {formatted} {name}
-                            </BodyLarge>
-                            <BodyLarge>≈</BodyLarge>
-                            <BodyLarge
-                                isSemibold
-                                className="text-[#74777C] text-xl"
-                            >
-                                {dollars}
-                            </BodyLarge>
-                        </div>
-                    </div>
-                    <div>HI</div>
-                    <div>HI</div>
-                    <div>HI</div>
-                </div>
-            </TransactionBody>
+            <TransactionCard stepInformation={stepInformation} />
             <NextStep onNextStep={onNextStep} onCancel={onCancel} />
             <Steps activeStep={1} stepCount={2} />
         </div>
@@ -152,12 +121,14 @@ const StepTwo = ({
 const SimpleCoinTransfer = ({
     signer,
     reduction,
+    gas,
 }: {
     signer: RawSigner | EthosSigner;
     reduction: BalanceReduction;
+    gas: GasCostSummary;
 }) => {
     const to = reduction.recipient || '';
-    const [step, setStep] = useState<number>(0);
+    const [step, setStep] = useState<number>(1);
     const [balance, setBalance] = useState<string>('0');
 
     const loading = useMemo(() => balance === '0', [balance]);
@@ -207,8 +178,9 @@ const SimpleCoinTransfer = ({
             symbol,
             dollars,
             to,
+            gas,
         }),
-        [dollars, formatted, formattedRemainder, iconUrl, name, symbol, to]
+        [dollars, formatted, formattedRemainder, iconUrl, name, symbol, to, gas]
     );
 
     const stepNode = useMemo(() => {

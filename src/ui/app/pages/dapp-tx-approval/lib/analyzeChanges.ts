@@ -20,6 +20,7 @@ export type GasCostSummary = {
     storageCost: string;
     storageRebate: string;
     nonRefundableStorageFee: string;
+    total: string;
 };
 
 export type BalanceReduction = {
@@ -120,7 +121,10 @@ const analyzeChanges = async ({
 
     const { effects, balanceChanges, objectChanges } = dryRunResponse;
 
-    const gas = effects.gasUsed;
+    const gas = {
+        ...effects.gasUsed,
+        total: (getTotalGasUsed(effects) ?? 0).toString(),
+    };
 
     const { transfers: assetTransfers } = assetChanges(address, objectChanges);
     const { reductions: balanceReductions } = coinChanges(

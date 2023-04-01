@@ -177,6 +177,7 @@ export function DappTxApprovalPage() {
                     <SimpleCoinTransfer
                         signer={signer}
                         reduction={analysis.balanceReductions[0]}
+                        gas={analysis.gas}
                     ></SimpleCoinTransfer>
                 </SimpleBase>
             );
