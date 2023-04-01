@@ -5,6 +5,7 @@ import { type SuiAddress } from '@mysten/sui.js';
 import { useQuery } from '@tanstack/react-query';
 
 import { api } from '_redux/store/thunk-extras';
+import { getHumanReadable } from '../helpers/transactions';
 
 export function useQueryTransactionsByAddress(address: SuiAddress | null) {
     const rpc = api.instance.fullNode;
@@ -40,7 +41,7 @@ export function useQueryTransactionsByAddress(address: SuiAddress | null) {
                 }),
             ]);
 
-            return allTransactionBlocks
+            const txBlocks = allTransactionBlocks
                 .map((transcationBlocks) => transcationBlocks.data)
                 .flat()
                 .map((transactionBlock) => ({
@@ -56,6 +57,16 @@ export function useQueryTransactionsByAddress(address: SuiAddress | null) {
                     // timestamp could be null, so we need to handle
                     (a, b) => (b.timestampMs || 0) - (a.timestampMs || 0)
                 );
+
+            const formattedTxBlocks = txBlocks.map((txBlock) => {
+                const humanReadable = getHumanReadable(address || '', txBlock);
+                return {
+                    transaction: txBlock,
+                    humanReadable: humanReadable,
+                };
+            });
+
+            return formattedTxBlocks;
         },
         { enabled: !!address, staleTime: 0, cacheTime: 0 }
     );

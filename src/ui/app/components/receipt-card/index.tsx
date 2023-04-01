@@ -24,7 +24,6 @@ import { getTheme } from '../../helpers/getTheme';
 import { getHumanReadable } from '../../helpers/transactions';
 // import truncateMiddle from '../../helpers/truncate-middle';
 // import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
-import { useQueryTransactionsByAddress } from '../../hooks/useQueryTransactionsByAddress';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
 // import { Icon } from '../../shared/icons/Icon';
 import { AssetCard } from '../../shared/nfts/AssetCard';
@@ -48,6 +47,7 @@ import type { FormattedTransaction } from '../../helpers/transactions/types';
 
 import st from './ReceiptCard.module.scss';
 import { useEffect, useState } from 'react';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 type TxResponseProps = {
     txDigest: any;
@@ -158,7 +158,9 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     const address = useAppSelector(({ account }) => account.address) as string;
     const { data } = useQuery(['transactions-by-address', address]);
     const theme = getTheme();
-    const [transaction, setTransaction] = useState<FormattedTransaction>();
+
+    const [transaction, setTransaction] =
+        useState<SuiTransactionBlockResponse>();
 
     // get the txdigest from the url
     const [searchParams] = useSearchParams();
@@ -174,10 +176,10 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
 
             // find transaction details based on txDigest
             tx = result.find(
-                (tx) => tx.digest === txDigest
+                (tx) => tx.transaction.digest === txDigest
             ) as FormattedTransaction;
 
-            setTransaction(tx);
+            setTransaction(tx.transaction);
         } else {
             // TODO: get the individual transaction if the data is not available
             // with the digest txDigestFromUrl

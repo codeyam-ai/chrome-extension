@@ -6,7 +6,6 @@ import {
 import {
     ArrowDownIcon,
     ArrowUpIcon,
-    CircleStackIcon,
     FireIcon,
     PhotoIcon,
     SparklesIcon,
@@ -16,7 +15,6 @@ import _ from 'lodash';
 import { ActivityRow } from './ActivityRow';
 import SuiIcon from '../../svg/SuiIcon';
 import ipfs from '_src/ui/app/helpers/ipfs';
-import { getHumanReadable } from '_src/ui/app/helpers/transactions';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
 
@@ -24,7 +22,6 @@ import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/type
 
 interface TransactionRowProps {
     txn: FormattedTransaction;
-    address: string;
 }
 
 interface RowDataTypes extends SharedTypes {
@@ -43,7 +40,7 @@ interface SharedTypes {
     date: string;
 }
 
-const TransactionRow = ({ txn, address }: TransactionRowProps) => {
+const TransactionRow = ({ txn }: TransactionRowProps) => {
     const {
         timeDisplay,
         txType,
@@ -56,10 +53,10 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
         txCommands,
         isSender,
         displayImage,
-    } = getHumanReadable(address, txn);
+    } = txn.humanReadable;
 
     const drilldownLink = `/transactions/receipt?${new URLSearchParams({
-        txdigest: txn.digest || '',
+        txdigest: txn.transaction.digest || '',
         symbol: 'SUI', // TODO: what to do with coins / multiple coins / batch txs
         isFunc: txType === 'func' ? 'yes' : 'no',
     }).toString()}`;
@@ -69,7 +66,9 @@ const TransactionRow = ({ txn, address }: TransactionRowProps) => {
         amount: parseFloat(txAmount),
         coinType: '', // TODO: what to do with coins / multiple coins / batch txs
         action: txAction || '',
-        txDirText: `From ${truncateMiddle(txn.transactionBlock?.data.sender)}`,
+        txDirText: `From ${truncateMiddle(
+            txn?.transaction?.transaction?.data.sender
+        )}`,
         link: drilldownLink,
         date: timeDisplay,
         header: txCommands || 'Sui Action',

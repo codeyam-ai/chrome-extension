@@ -1,14 +1,9 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useMemo } from 'react';
-
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 import { getFormattedBalance } from '../formatCoin';
-
-import type {
-    BalanceChange,
-    FormattedTransaction,
-} from '../transactions/types';
+import type { BalanceChange } from '../transactions/types';
 
 function isObjectOwner(value: unknown): value is { [key: string]: any } {
     return typeof value === 'object' && value !== null;
@@ -16,7 +11,7 @@ function isObjectOwner(value: unknown): value is { [key: string]: any } {
 
 export const getSuiObj = (
     ownerAddr: string,
-    txn: FormattedTransaction
+    txn: SuiTransactionBlockResponse
 ): BalanceChange | undefined => {
     if (!txn.balanceChanges) return;
 
@@ -31,7 +26,7 @@ export const getSuiObj = (
     });
 };
 
-export const getGasFee = (txn: FormattedTransaction): number => {
+export const getGasFee = (txn: SuiTransactionBlockResponse): number => {
     if (!txn.effects) return 0;
     const gasObj = txn.effects.gasUsed;
     const totalGasCost =
@@ -49,7 +44,7 @@ export const getFormattedGasFee = (gasFee: number): string | undefined => {
 
 export function getSuiTransferAmount(
     ownerAddr: string,
-    txn: FormattedTransaction
+    txn: SuiTransactionBlockResponse
 ): string {
     let mistAmt = 0;
 

@@ -1,22 +1,34 @@
-import type { FormattedTransaction } from './types';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 export type TxAction = string;
 
 const getTxAction = (
-    isSender: boolean,
-    txn: FormattedTransaction
+    ownerAddr: string,
+    txn: SuiTransactionBlockResponse
 ): TxAction => {
     let type = 'default';
 
-    const txDetails = txn?.transactionBlock?.data?.transaction;
-    if (!txDetails) return type;
+    const txDetails = txn?.transaction?.data;
+
+    if (!txDetails || !('inputs' in txDetails.transaction)) return type;
+
+    const addressInput = txDetails.transaction.inputs.find((input) => {
+        if ('valueType' in input) {
+            return input.valueType === 'address';
+        }
+    });
+
+    const isSender =
+        addressInput &&
+        'value' in addressInput &&
+        addressInput?.value !== ownerAddr;
 
     let commands;
-    if ('transactions' in txDetails) {
-        commands = txDetails.transactions;
-    } else if ('commands' in txDetails) {
-        commands = txDetails.commands as any[];
+
+    if ('transactions' in txDetails.transaction) {
+        commands = txDetails.transaction.transactions;
     }
+
     if (txDetails && commands) {
         commands.forEach((command) => {
             // get command object key

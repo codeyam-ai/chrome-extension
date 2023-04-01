@@ -1,8 +1,4 @@
-import type {
-    SuiAddress,
-    SuiTransactionBlock,
-    TransactionEffects,
-} from '@mysten/sui.js';
+import { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 export interface TransactionCoinInfo {
     type: string;
@@ -38,17 +34,24 @@ export interface BalanceChange {
     amount: string;
 }
 
+export interface humanReadableDetails {
+    timeDisplay: string;
+    txType: string;
+    txAction: string;
+    txAmount: string;
+    txStatus: 'success' | 'failure' | undefined;
+    txUsdAmount: string | number | undefined;
+    gasFeeInSui: string | undefined;
+    gasFeeInUsd: string | undefined;
+    txCommands: string | null;
+    preposition: string;
+    isSender: boolean;
+    otherAddress: string;
+    otherAddressStr: string;
+    displayImage: string | null;
+}
+
 export interface FormattedTransaction {
-    digest?: string;
-    type?: string;
-    effects?: TransactionEffects;
-    transactionBlock?: SuiTransactionBlock;
-    balanceChanges?: BalanceChange[];
-    objectChanges?: any[];
-    primaryObject?: TransactionObjectInfo;
-    primaryCoin?: TransactionCoinInfo;
-    timestampMs?: number;
-    isSender?: boolean;
-    from?: SuiAddress;
-    to?: SuiAddress;
+    transaction: SuiTransactionBlockResponse;
+    humanReadable: humanReadableDetails;
 }
