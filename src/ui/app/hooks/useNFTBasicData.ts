@@ -26,9 +26,9 @@ export default function useNFTBasicData(nftObj: SuiObjectData) {
         if (nftObj.display) {
             setNftFields({
                 ...nftObj.display,
-                url: nftObj.display.img_url,
+                url: nftObj.display.image_url,
             });
-            setFilePath(nftObj.display.img_url);
+            setFilePath(nftObj.display.image_url);
             return;
         }
 
