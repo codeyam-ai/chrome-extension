@@ -8,6 +8,7 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 
 const Total = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
+    console.log(analysis.totalFee);
     const [formatted, symbol, dollars] = useFormatCoin(
         analysis.totalFee,
         SUI_TYPE_ARG

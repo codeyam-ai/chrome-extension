@@ -34,6 +34,7 @@ export type AnalyzeChangesResult = {
     gas: GasCostSummary;
     balanceReductions: BalanceReduction[];
     assetTransfers: SuiObjectChange[];
+    rawAmount: string;
     totalFee: string;
 };
 
@@ -132,7 +133,7 @@ const analyzeChanges = async ({
         dryRunResponse
     );
 
-    const totalFee = balanceChanges
+    const totalReductions = balanceChanges
         .filter(
             (balanceChange) =>
                 typeof balanceChange.owner === 'object' &&
@@ -144,14 +145,17 @@ const analyzeChanges = async ({
                 new BigNumber(total).plus(new BigNumber(reduction.amount)),
             new BigNumber(0)
         )
-        .multipliedBy(-1)
-        .toString();
+        .multipliedBy(-1);
+
+    const rawAmount = totalReductions.plus(gas.total).toString();
+    const totalFee = totalReductions.toString();
 
     return {
         dryRunResponse,
         gas,
         balanceReductions,
         assetTransfers,
+        rawAmount,
         totalFee,
     };
 };

@@ -1,20 +1,13 @@
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
-
 import CardRow from './CardRow';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 
-import type { GasCostSummary } from '../lib/analyzeChanges';
-
-const Gas = ({ gasSummary }: { gasSummary: GasCostSummary }) => {
-    const [formatted, symbol, dollars] = useFormatCoin(
-        gasSummary.total,
-        SUI_TYPE_ARG
-    );
+const Amount = ({ amount, coinType }: { amount: string; coinType: string }) => {
+    const [formatted, symbol, dollars] = useFormatCoin(amount, coinType);
 
     return (
         <CardRow>
-            <Body>Gas Fee</Body>
+            <Body>Amount</Body>
             <div className="text-right">
                 <div className="flex items-center gap-1 text-base">
                     <Body className="font-light">USD</Body>
@@ -28,4 +21,4 @@ const Gas = ({ gasSummary }: { gasSummary: GasCostSummary }) => {
     );
 };
 
-export default Gas;
+export default Amount;
