@@ -71,7 +71,7 @@ function TransferNftReviewForm({
     const display = {
         name: nftobj.display?.name ?? fields?.name,
         description: nftobj.display?.description ?? fields?.description,
-        url: nftobj.display?.img_url ?? fields?.url,
+        url: nftobj.display?.image_url ?? fields?.url,
     };
 
     return (
