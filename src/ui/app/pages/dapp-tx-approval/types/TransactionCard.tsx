@@ -26,7 +26,7 @@ const TransactionCard = ({
                     <BodyLarge>You are about to send</BodyLarge>
                     <div className="text-lg flex justify-center gap-6">
                         <BodyLarge isSemibold>
-                            {formatted} {name}
+                            {formatted} {symbol}
                         </BodyLarge>
                         <BodyLarge
                             isSemibold
