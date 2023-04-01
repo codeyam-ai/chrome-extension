@@ -1,10 +1,58 @@
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-
 import { useCallback, useState } from 'react';
 
+import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
-const Details = () => {
+import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
+import type { ReactNode } from 'react';
+
+const Row = ({ title, value }: { title: string; value: string }) => {
+    return (
+        <div className="flex flex-row items-center justify-between">
+            <Body>{title}</Body>
+            <Body isSemibold>{value}</Body>
+        </div>
+    );
+};
+
+const Section = ({
+    title,
+    children,
+}: {
+    title: string;
+    children: ReactNode;
+}) => {
+    return (
+        <div className="flex flex-col gap-3">
+            <BodyLarge
+                isSemibold
+                className="text-size-ethos-subheader text-[#9040F5]"
+            >
+                {title}
+            </BodyLarge>
+            {children}
+        </div>
+    );
+};
+
+const BalanceChanges = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
+    return (
+        <Section title="Balance Changes">
+            {analysis.balanceReductions.map((balanceChange, index) => {
+                return (
+                    <Row
+                        key={`row-${index}`}
+                        title={balanceChange.type}
+                        value={balanceChange.amount}
+                    />
+                );
+            })}
+        </Section>
+    );
+};
+
+const Details = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
     const [details, setDetails] = useState(false);
 
     const toggleDetails = useCallback(() => {
@@ -12,7 +60,7 @@ const Details = () => {
     }, []);
 
     return (
-        <div className="flex flex-col gap-6 pb-6 px-12">
+        <div className="flex flex-col gap-6 pb-6 px-6">
             <div
                 className="flex flex-row justify-between items-center cursor-pointer"
                 onClick={toggleDetails}
@@ -23,19 +71,18 @@ const Details = () => {
                 <ChevronDownIcon color="#9040F5" width={20} />
             </div>
             {details && (
-                <div className="flex flex-col gap-6 py-96 divider-y divider-color-[#F0EBFE]">
-                    <div>
-                        <BodyLarge isSemibold className="text-[#9040F5]">
-                            Asset Changes
-                        </BodyLarge>
-                        <div>ASSET CHANGES</div>
-                    </div>
-                    <div>
-                        <BodyLarge isSemibold className="text-[#9040F5]">
-                            Asset Changes
-                        </BodyLarge>
-                        <div>ASSET CHANGES</div>
-                    </div>
+                <div className="flex flex-col gap-6 divider-y divider-color-[#F0EBFE]">
+                    <BalanceChanges analysis={analysis} />
+                    <Section title="Asset Changes">
+                        <Row title="AAA" value="BBB" />
+                        <Row title="AAA" value="BBB" />
+                        <Row title="AAA" value="BBB" />
+                    </Section>
+                    <Section title="Move Calls">
+                        <Row title="CCC" value="DDD" />
+                        <Row title="CCC" value="DDD" />
+                        <Row title="CCC" value="DDD" />
+                    </Section>
                 </div>
             )}
         </div>

@@ -98,7 +98,7 @@ const StepTwo = ({
     return (
         <div className="h-full flex flex-col w-full py-3">
             <TransactionCard stepInformation={stepInformation} />
-            <Details />
+            <Details analysis={stepInformation.analysis} />
             <Approve
                 disabled={disabled}
                 onApprove={onApprove}
