@@ -16,6 +16,8 @@ import { useFormatCoin } from '_src/ui/app/hooks';
 import type { BalanceReduction } from '../lib/analyzeChanges';
 import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import Body from '_src/ui/app/shared/typography/Body';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 export type StepInformation = {
     name: string;
@@ -98,6 +100,55 @@ const StepOne = ({
     );
 };
 
+const StepTwo = ({
+    stepInformation,
+    onNextStep,
+    onCancel,
+}: {
+    stepInformation: StepInformation;
+    onNextStep: () => void;
+    onCancel: () => void;
+}) => {
+    const {
+        name,
+        formatted,
+        formattedRemainder,
+        iconUrl,
+        symbol,
+        dollars,
+        to,
+    } = stepInformation;
+
+    return (
+        <div className="h-full flex flex-col w-full py-3">
+            <TransactionBody>
+                <div className="w-full rounded-xl bg-[#F8F5FF] flex flex-col divide-y divide-ethos-dark-text-medium">
+                    <div className="p-6 flex-col items-center text-center">
+                        <BodyLarge>You are about to send</BodyLarge>
+                        <div className="text-lg flex justify-center gap-3">
+                            <BodyLarge isSemibold>
+                                {formatted} {name}
+                            </BodyLarge>
+                            <BodyLarge>≈</BodyLarge>
+                            <BodyLarge
+                                isSemibold
+                                className="text-[#74777C] text-xl"
+                            >
+                                {dollars}
+                            </BodyLarge>
+                        </div>
+                    </div>
+                    <div>HI</div>
+                    <div>HI</div>
+                    <div>HI</div>
+                </div>
+            </TransactionBody>
+            <NextStep onNextStep={onNextStep} onCancel={onCancel} />
+            <Steps activeStep={1} stepCount={2} />
+        </div>
+    );
+};
+
 const SimpleCoinTransfer = ({
     signer,
     reduction,
@@ -170,9 +221,15 @@ const SimpleCoinTransfer = ({
                 />
             );
         } else {
-            return <></>;
+            return (
+                <StepTwo
+                    stepInformation={stepInformation}
+                    onNextStep={onNextStep}
+                    onCancel={onCancel}
+                />
+            );
         }
-    }, [step, stepInformation, onNextStep]);
+    }, [step, stepInformation, onNextStep, onCancel]);
 
     return (
         <Loading loading={loading} big={true} resize={true}>
