@@ -16,12 +16,12 @@ const From = () => {
     return (
         <CardRow>
             <Body>From</Body>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
                 <WalletColorAndEmojiCircle
                     color={accountInfo?.color}
                     emoji={accountInfo?.emoji}
-                    circleSizeClasses="h-5 w-5"
-                    emojiSizeInPx={9}
+                    circleSizeClasses="h-6 w-6"
+                    emojiSizeInPx={12}
                 />
                 <Body isSemibold>{shortenedName}</Body>
             </div>

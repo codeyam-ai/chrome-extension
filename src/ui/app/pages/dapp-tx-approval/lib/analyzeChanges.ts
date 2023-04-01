@@ -34,6 +34,7 @@ export type AnalyzeChangesResult = {
     gas: GasCostSummary;
     balanceReductions: BalanceReduction[];
     assetTransfers: SuiObjectChange[];
+    totalFee: string;
 };
 
 const assetChanges = (
@@ -74,20 +75,19 @@ const coinChanges = (
             new BigNumber(balanceChange.amount).isPositive()
     );
 
-    if (gasUsed) {
-        for (const reduction of reductionChanges) {
-            if (reduction.coinType !== SUI_TYPE_ARG) continue;
-            reduction.amount = new BigNumber(reduction.amount)
+    const reductions: BalanceReduction[] = reductionChanges.map((reduction) => {
+        let amount = reduction.amount;
+        if (gasUsed && reduction.coinType === SUI_TYPE_ARG) {
+            amount = new BigNumber(reduction.amount)
                 .plus(new BigNumber(gasUsed.toString()))
                 .toString();
         }
-    }
-    const reductions: BalanceReduction[] = reductionChanges.map((reduction) => {
+
         const recipientChange = additionChanges.find(
             (addition) =>
                 addition.coinType === reduction.coinType &&
                 new BigNumber(addition.amount).eq(
-                    new BigNumber(reduction.amount).abs()
+                    new BigNumber(amount).multipliedBy(-1)
                 )
         );
 
@@ -100,7 +100,7 @@ const coinChanges = (
 
         return {
             type: reduction.coinType,
-            amount: reduction.amount,
+            amount,
             recipient,
         };
     });
@@ -132,11 +132,27 @@ const analyzeChanges = async ({
         dryRunResponse
     );
 
+    const totalFee = balanceChanges
+        .filter(
+            (balanceChange) =>
+                typeof balanceChange.owner === 'object' &&
+                'AddressOwner' in balanceChange.owner &&
+                balanceChange.owner.AddressOwner === address
+        )
+        .reduce(
+            (total, reduction) =>
+                new BigNumber(total).plus(new BigNumber(reduction.amount)),
+            new BigNumber(0)
+        )
+        .multipliedBy(-1)
+        .toString();
+
     return {
         dryRunResponse,
         gas,
         balanceReductions,
         assetTransfers,
+        totalFee,
     };
 };
 

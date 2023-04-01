@@ -40,7 +40,7 @@ const TransactionCard = ({
                 <CardRow title="To" value={to} />
                 <CardRow title="Amount" value={dollars} />
                 <Gas gasSummary={analysis.gas} />
-                <Total />
+                <Total analysis={analysis} />
             </div>
         </TransactionBody>
     );

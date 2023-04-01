@@ -1,23 +1,23 @@
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import Body from '_src/ui/app/shared/typography/Body';
 
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 const CardRow = ({
     title,
     value,
-    color,
+    style,
     children,
 }: {
     title?: string;
     value?: string;
-    color?: string;
+    style?: CSSProperties;
     children?: ReactNode;
 }) => {
     return (
         <div
             className="flex flex-row justify-between items-center p-3"
-            style={{ backgroundColor: color }}
+            style={style}
         >
             {title && value ? (
                 <>

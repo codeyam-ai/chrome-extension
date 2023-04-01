@@ -3,14 +3,14 @@ import { useCallback } from 'react';
 import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
 
 export type NextStepProps = {
-    onNextStep: () => void;
+    onApprove: () => void;
     onCancel: () => void;
 };
 
-const Approve = ({ onNextStep, onCancel }: NextStepProps) => {
-    const nextStep = useCallback(() => {
-        onNextStep && onNextStep();
-    }, [onNextStep]);
+const Approve = ({ onApprove, onCancel }: NextStepProps) => {
+    const approve = useCallback(() => {
+        onApprove && onApprove();
+    }, [onApprove]);
 
     const cancel = useCallback(() => {
         onCancel && onCancel();
@@ -18,7 +18,7 @@ const Approve = ({ onNextStep, onCancel }: NextStepProps) => {
 
     return (
         <InlineButtonGroup
-            onClickButtonPrimary={nextStep}
+            onClickButtonPrimary={approve}
             buttonPrimaryTestId="approve"
             buttonPrimaryChildren={<>Approve</>}
             onClickButtonSecondary={cancel}

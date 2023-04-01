@@ -17,12 +17,12 @@ const Gas = ({ gasSummary }: { gasSummary: GasCostSummary }) => {
             <Body>Gas Fee</Body>
             <div className="text-right">
                 <div className="flex items-center gap-1 text-base">
-                    <div className="font-light">USD</div>
-                    <div>{dollars}</div>
+                    <Body className="font-light">USD</Body>
+                    <Body>{dollars}</Body>
                 </div>
-                <div className="text-xs text-[#74777C]">
+                <Body className="text-xs text-[#74777C]">
                     {formatted} {symbol}
-                </div>
+                </Body>
             </div>
         </CardRow>
     );

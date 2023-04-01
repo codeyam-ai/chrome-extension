@@ -2,14 +2,28 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import CardRow from './CardRow';
 import { useFormatCoin } from '_src/ui/app/hooks';
-
 import Body from '_src/ui/app/shared/typography/Body';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
-const Total = () => {
+import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
+
+const Total = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
+    const [formatted, symbol, dollars] = useFormatCoin(
+        analysis.totalFee,
+        SUI_TYPE_ARG
+    );
+
     return (
-        <CardRow color="#F0EBFE">
-            <Body>Total</Body>
-            <div className="text-right">TOTAL</div>
+        <CardRow style={{ backgroundColor: '#F0EBFE', padding: '12px 3px' }}>
+            <Body isSemibold>Total</Body>
+            <div className="text-right flex flex-col gap-1">
+                <BodyLarge isSemibold className="text-2xl">
+                    {dollars} USD
+                </BodyLarge>
+                <Body className="text-xs text-[#74777C]">
+                    {formatted} {symbol}
+                </Body>
+            </div>
         </CardRow>
     );
 };

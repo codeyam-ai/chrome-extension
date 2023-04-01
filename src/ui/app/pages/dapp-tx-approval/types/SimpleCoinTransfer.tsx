@@ -18,6 +18,7 @@ import type {
 } from '../lib/analyzeChanges';
 import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import Approve from './Approve';
 
 export type StepInformation = {
     name: string;
@@ -86,7 +87,7 @@ const StepTwo = ({
     return (
         <div className="h-full flex flex-col w-full py-3">
             <TransactionCard stepInformation={stepInformation} />
-            <NextStep onNextStep={onApprove} onCancel={onCancel} />
+            <Approve onApprove={onApprove} onCancel={onCancel} />
             <Steps activeStep={1} stepCount={2} />
         </div>
     );
