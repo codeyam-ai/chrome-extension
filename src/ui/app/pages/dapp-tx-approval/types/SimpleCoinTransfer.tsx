@@ -30,9 +30,11 @@ export type StepInformation = {
 const StepOne = ({
     stepInformation,
     onNextStep,
+    onCancel,
 }: {
     stepInformation: StepInformation;
     onNextStep: () => void;
+    onCancel: () => void;
 }) => {
     const {
         name,
@@ -90,7 +92,7 @@ const StepOne = ({
                 </div>
             </TransactionBody>
             <FromTo to={to}></FromTo>
-            <NextStep onNextStep={onNextStep} />
+            <NextStep onNextStep={onNextStep} onCancel={onCancel} />
             <Steps activeStep={0} stepCount={2} />
         </>
     );
@@ -141,6 +143,10 @@ const SimpleCoinTransfer = ({
         setStep((step) => step + 1);
     }, []);
 
+    const onCancel = useCallback(() => {
+        window.close();
+    }, []);
+
     const stepInformation = useMemo(
         () => ({
             name,
@@ -160,6 +166,7 @@ const SimpleCoinTransfer = ({
                 <StepOne
                     stepInformation={stepInformation}
                     onNextStep={onNextStep}
+                    onCancel={onCancel}
                 />
             );
         } else {

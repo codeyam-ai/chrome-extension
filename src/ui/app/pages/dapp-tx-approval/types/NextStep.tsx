@@ -2,21 +2,26 @@ import { useCallback } from 'react';
 
 import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
 
-const NextStep = ({ onNextStep }: { onNextStep: () => void }) => {
-    const approve = useCallback(() => {
+export type NextStepProps = {
+    onNextStep: () => void;
+    onCancel: () => void;
+};
+
+const NextStep = ({ onNextStep, onCancel }: NextStepProps) => {
+    const nextStep = useCallback(() => {
         onNextStep && onNextStep();
     }, [onNextStep]);
 
-    const reject = useCallback(() => {
+    const cancel = useCallback(() => {
         console.log('REJECT!');
     }, []);
 
     return (
         <InlineButtonGroup
-            onClickButtonPrimary={approve}
+            onClickButtonPrimary={nextStep}
             buttonPrimaryTestId="approve"
             buttonPrimaryChildren={<>Next Step</>}
-            onClickButtonSecondary={reject}
+            onClickButtonSecondary={cancel}
             buttonSecondaryTestId="reject"
             buttonSecondaryChildren={<>Cancel</>}
         />
