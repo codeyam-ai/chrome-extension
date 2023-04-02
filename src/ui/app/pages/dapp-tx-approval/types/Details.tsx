@@ -16,10 +16,12 @@ const Row = ({
     title,
     value,
     subvalue,
+    truncate = true,
 }: {
     title: string;
     value?: string;
     subvalue?: string;
+    truncate?: boolean;
 }) => {
     return (
         <div className="flex flex-row items-center justify-between">
@@ -27,13 +29,13 @@ const Row = ({
             <div className="text-right">
                 {value && (
                     <div title={value}>
-                        <Body>{truncateMiddle(value)}</Body>
+                        <Body>{truncate ? truncateMiddle(value) : value}</Body>
                     </div>
                 )}
                 {subvalue && (
                     <div title={subvalue}>
                         <Body className="text-size-ethos-small text-[#74777C]">
-                            {truncateMiddle(subvalue, 18)}
+                            {truncate ? truncateMiddle(subvalue, 18) : subvalue}
                         </Body>
                     </div>
                 )}
@@ -127,6 +129,7 @@ const AssetChanges = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
             <Row
                 title="Transfer"
                 value={`${truncateMiddle(from)} -> ${truncateMiddle(to)}`}
+                truncate={false}
             />
         );
     };
