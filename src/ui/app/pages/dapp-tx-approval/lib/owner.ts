@@ -22,6 +22,7 @@ const owner = (owner?: Owner, you?: SuiAddress) => {
         return owner.AddressOwner;
     }
     if ('ObjectOwner' in owner) return owner.ObjectOwner;
+    if ('Shared' in owner) return 'Shared';
     return 'Immutable';
 };
 

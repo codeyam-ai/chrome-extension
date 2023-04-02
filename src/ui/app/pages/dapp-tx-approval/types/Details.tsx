@@ -20,7 +20,7 @@ const Row = ({
 }: {
     title: string;
     value?: string;
-    subvalue?: string;
+    subvalue?: ReactNode;
     truncate?: boolean;
 }) => {
     return (
@@ -32,12 +32,14 @@ const Row = ({
                         <Body>{truncate ? truncateMiddle(value) : value}</Body>
                     </div>
                 )}
-                {subvalue && (
+                {typeof subvalue === 'string' ? (
                     <div title={subvalue}>
                         <Body className="text-size-ethos-small text-[#74777C]">
                             {truncate ? truncateMiddle(subvalue, 18) : subvalue}
                         </Body>
                     </div>
+                ) : (
+                    subvalue
                 )}
             </div>
         </div>
@@ -124,11 +126,26 @@ const AssetChanges = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
 
     if (assetChanges.length === 0) return <></>;
 
-    const Transfer = ({ from, to }: { from: string; to: string }) => {
+    const Transfer = ({
+        from,
+        to,
+        objectType,
+    }: {
+        from: string;
+        to: string;
+        objectType: string;
+    }) => {
         return (
             <Row
                 title="Transfer"
                 value={`${truncateMiddle(from)} -> ${truncateMiddle(to)}`}
+                subvalue={
+                    <div title={objectType}>
+                        <Body className="text-size-ethos-small text-[#74777C]">
+                            {truncateMiddle(objectType, 18)}
+                        </Body>
+                    </div>
+                }
                 truncate={false}
             />
         );
@@ -145,12 +162,24 @@ const AssetChanges = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
             const to = owner(objectChange.owner);
             const from = objectChange.sender;
             if (from !== to) {
-                types.push(<Transfer from={from} to={to} />);
+                types.push(
+                    <Transfer
+                        key={`asset-change-type-${types.length}`}
+                        from={from}
+                        to={to}
+                        objectType={objectChange.objectType}
+                    />
+                );
             }
         }
 
         if (objectChange.type === 'created') {
-            types.push(<Mint type={objectChange.objectType} />);
+            types.push(
+                <Mint
+                    key={`asset-change-type-${types.length}`}
+                    type={objectChange.objectType}
+                />
+            );
         }
         return types;
     };

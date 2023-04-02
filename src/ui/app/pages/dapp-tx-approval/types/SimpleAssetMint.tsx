@@ -36,14 +36,12 @@ const SimpleAssetMint = ({
                     : assetMint.packageId,
             type:
                 'objectType' in assetMint
-                    ? assetMint.objectType.split('::')[2]
+                    ? assetMint.objectType
                     : assetMint.packageId,
             analysis,
         }),
         [assetMint, analysis]
     );
-
-    console.log('stepInformation', stepInformation);
 
     return (
         <div className="h-full flex flex-col w-full py-3">
