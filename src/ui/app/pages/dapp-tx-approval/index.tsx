@@ -197,7 +197,7 @@ export function DappTxApprovalPage() {
     const content = useMemo(() => {
         if (!signer || !analysis) return <></>;
 
-        // console.log('analysis', analysis);
+        console.log('analysis', analysis);
 
         try {
             if (

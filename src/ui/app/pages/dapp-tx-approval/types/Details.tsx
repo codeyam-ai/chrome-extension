@@ -3,17 +3,20 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useCallback, useEffect, useState } from 'react';
 
 import owner from '../lib/owner';
+import { TooltipDirection } from '_src/ui/app/components/Tooltip';
+import CopyToClipboard from '_src/ui/app/components/copy-to-clipboard';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
-import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
+import type {
+    AnalyzeChangesResult,
+    GasCostSummary,
+} from '../lib/analyzeChanges';
 import type { RawSigner, SuiAddress, SuiObjectChange } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { ReactNode } from 'react';
-import CopyToClipboard from '_src/ui/app/components/copy-to-clipboard';
-import { TooltipDirection } from '_src/ui/app/components/Tooltip';
 
 const Row = ({
     title,
@@ -122,7 +125,13 @@ const BalanceChanges = ({
     );
 };
 
-const AssetChanges = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
+const AssetChanges = ({
+    analysis,
+    address,
+}: {
+    analysis: AnalyzeChangesResult;
+    address?: SuiAddress;
+}) => {
     if (analysis.dryRunResponse.objectChanges.length === 0) return <></>;
 
     const assetChanges = analysis.dryRunResponse.objectChanges.filter(
@@ -168,8 +177,9 @@ const AssetChanges = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
     const changeTypes = (objectChange: SuiObjectChange) => {
         const types = [];
         if ('owner' in objectChange) {
-            const to = owner(objectChange.owner);
-            const from = objectChange.sender;
+            const to = owner(objectChange.owner, address);
+            const from =
+                objectChange.sender === address ? 'You' : objectChange.sender;
             if (from !== to) {
                 types.push(
                     <Transfer
@@ -207,6 +217,21 @@ const AssetChanges = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
                     </div>
                 );
             })}
+        </Section>
+    );
+};
+
+const GasDetails = ({ gas }: { gas: GasCostSummary }) => {
+    return (
+        <Section title="Gas Details">
+            <Row title="Computation" value={`${gas.computationCost} MIST`} />
+            <Row title="Storage Cost" value={`${gas.storageCost} MIST`} />
+            <Row title="Storage Rebate" value={`${gas.storageRebate} MIST`} />
+            <Row
+                title="Non-Refundable Storage Cost"
+                value={`${gas.nonRefundableStorageFee} MIST`}
+            />
+            <Row title="Total Cost" value={`${gas.total} MIST`} />
         </Section>
     );
 };
@@ -259,7 +284,8 @@ const Details = ({
             {details && (
                 <div className="flex flex-col gap-6 divider-y divider-color-[#F0EBFE]">
                     <BalanceChanges analysis={analysis} address={address} />
-                    <AssetChanges analysis={analysis} />
+                    <AssetChanges analysis={analysis} address={address} />
+                    <GasDetails gas={analysis.gas} />
                     <RawOutput analysis={analysis} />
                 </div>
             )}
