@@ -103,6 +103,31 @@ describe('The Transaction Approval popup', () => {
         expect(executeScope.actualCalls).toEqual(1);
     });
 
+    test('mint coin transaction displays properly', async () => {
+        const { txRequestId } = simulateReduxStateWithMintCoinTransaction();
+        const executeScope = mockBlockchainTransactionExecution();
+
+        const mockWindowCloser = jest.fn();
+        renderApp({
+            store: store,
+            initialRoute: `/tx-approval/${txRequestId}`,
+            dependencies: { closeWindow: mockWindowCloser },
+        });
+
+        const approveButton = await screen.findByText('Approve');
+
+        await screen.findByText('You are about to mint');
+        await screen.findByText('ETHOS_EXAMPLE_COIN');
+        await screen.findByText('Gain');
+
+        await userEvent.click(approveButton);
+        await waitFor(() =>
+            expect(mockWindowCloser.mock.calls.length).toEqual(1)
+        );
+
+        expect(executeScope.actualCalls).toEqual(1);
+    });
+
     function simulateReduxStateWithTransaction() {
         const txRequestId = '95ae4a0d-0b7b-478b-ab70-bc3fe291540e';
 
@@ -137,6 +162,29 @@ describe('The Transaction Approval popup', () => {
         const txRequestId = '65ae4a0d-0b7b-478b-ab70-bc3fe291540e';
 
         const data = `{"version":1,"gasConfig":{"budget":"30000"},"inputs":[{"kind":"Input","value":"0x091737ffb68786c34e84e4953823f29f4816422cf0b91a410276af5d92eceec7","index":0,"type":"object"},{"kind":"Input","value":"0x51a29d5019372256d29a591c18d5a986210b901997134ed9333dfae662ab130d","index":1,"type":"object"},{"kind":"Input","value":"0x6633f163516a0d06949f03f22a35ec65796164ddcb2bf63e849d4cbbbd3e3f4e","index":2,"type":"object"},{"kind":"Input","value":"0x84cef0c22b560577473172a24f388b4a4ff6091725beb109cee696f5299ac194","index":3,"type":"object"},{"kind":"Input","value":"50000000000","index":4,"type":"pure"},{"kind":"Input","value":"58264350776","index":5,"type":"pure"},{"kind":"Input","value":"0xce06dadf062062d551c86379e37bdef20da55835fa440e011e5beb4a333f1f62","index":6,"type":"object"},{"kind":"Input","value":"0","index":7,"type":"pure"},{"kind":"Input","value":"0","index":8,"type":"pure"}],"transactions":[{"kind":"MergeCoins","destination":{"kind":"Input","value":"0x091737ffb68786c34e84e4953823f29f4816422cf0b91a410276af5d92eceec7","index":0,"type":"object"},"sources":[{"kind":"Input","value":"0x51a29d5019372256d29a591c18d5a986210b901997134ed9333dfae662ab130d","index":1,"type":"object"}]},{"kind":"MergeCoins","destination":{"kind":"Input","value":"0x6633f163516a0d06949f03f22a35ec65796164ddcb2bf63e849d4cbbbd3e3f4e","index":2,"type":"object"},"sources":[{"kind":"Input","value":"0x84cef0c22b560577473172a24f388b4a4ff6091725beb109cee696f5299ac194","index":3,"type":"object"}]},{"kind":"SplitCoins","coin":{"kind":"Input","value":"0x091737ffb68786c34e84e4953823f29f4816422cf0b91a410276af5d92eceec7","index":0,"type":"object"},"amounts":[{"kind":"Input","value":"50000000000","index":4,"type":"pure"}]},{"kind":"SplitCoins","coin":{"kind":"Input","value":"0x6633f163516a0d06949f03f22a35ec65796164ddcb2bf63e849d4cbbbd3e3f4e","index":2,"type":"object"},"amounts":[{"kind":"Input","value":"58264350776","index":5,"type":"pure"}]},{"kind":"MoveCall","target":"0xb01f7d11da6c2d04b5225f43770d42d2cbbe52aaf5c27ec29d1188d78090e719::entry::add_liquidity","arguments":[{"kind":"Input","value":"0xce06dadf062062d551c86379e37bdef20da55835fa440e011e5beb4a333f1f62","index":6,"type":"object"},{"kind":"NestedResult","index":2,"resultIndex":0},{"kind":"Input","value":"0","index":7,"type":"pure"},{"kind":"NestedResult","index":3,"resultIndex":0},{"kind":"Input","value":"0","index":8,"type":"pure"}],"typeArguments":["0x229f4b94633cc25a68666d355a3eee5e2766ca9850349c48eca82387d378cac8::bnb::BNB","0x229f4b94633cc25a68666d355a3eee5e2766ca9850349c48eca82387d378cac8::dai::DAI","0xb01f7d11da6c2d04b5225f43770d42d2cbbe52aaf5c27ec29d1188d78090e719::curves::Uncorrelated"]}]}`;
+
+        const txRequest: ApprovalRequest = {
+            id: txRequestId,
+            origin: 'https://ethoswallet.xyz',
+            originFavIcon: 'https://ethoswallet.xyz/favicon.ico',
+            createdDate: '2022-11-29T23:33:53.084Z',
+            approved: true,
+            tx: {
+                type: 'transaction',
+                data,
+                account: accountInfos[0].address,
+                chain: 'sui::devnet',
+            },
+        };
+
+        store.dispatch(setTransactionRequests([txRequest]));
+        return { txRequestId };
+    }
+
+    function simulateReduxStateWithMintCoinTransaction() {
+        const txRequestId = '61ae4a0d-0b7b-478b-ab70-bc3fe291540e';
+
+        const data = `{"version":1,"gasConfig":{},"inputs":[{"kind":"Input","value":"0x986b14a24acd0c8bb2b08d166069d6a2361f48e76f34151efc773e5cb98da53b","index":0,"type":"object"},{"kind":"Input","value":"100000","index":1,"type":"pure"}],"transactions":[{"kind":"MoveCall","target":"0x1cbfdf7de5004f887705fa53bb345d4372e5004bd8b04a6f8868f5e1ca1af9c7::ethos_example_coin::mint","arguments":[{"kind":"Input","value":"0x986b14a24acd0c8bb2b08d166069d6a2361f48e76f34151efc773e5cb98da53b","index":0,"type":"object"},{"kind":"Input","value":"100000","index":1,"type":"pure"}],"typeArguments":[]}]}`;
 
         const txRequest: ApprovalRequest = {
             id: txRequestId,
@@ -196,6 +244,21 @@ describe('The Transaction Approval popup', () => {
 
         mockchain.mockBlockchainCall(
             {
+                method: 'sui_multiGetObjects',
+                params: [
+                    [
+                        "0x986b14a24acd0c8bb2b08d166069d6a2361f48e76f34151efc773e5cb98da53b"
+                    ],
+                    {
+                        showOwner: true,
+                    },
+                ],
+            },
+            renderTemplate('mintCoinMultiGetObjects', {})
+        );
+
+        mockchain.mockBlockchainCall(
+            {
                 method: 'suix_getReferenceGasPrice',
                 params: [],
             },
@@ -234,6 +297,26 @@ describe('The Transaction Approval popup', () => {
 
         mockchain.mockBlockchainCall(
             {
+                method: 'sui_dryRunTransactionBlock',
+                params: [
+                    'AAACAQGYaxSiSs0Mi7KwjRZgadaiNh9I5280FR78dz5cuY2lO98AAAAAAAAAAQAIoIYBAAAAAAABABy/333lAE+IdwX6U7s0XUNy5QBL2LBKb4ho9eHKGvnHEmV0aG9zX2V4YW1wbGVfY29pbgRtaW50AAIBAAABAQD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3goAAAAAAAAAAMqaOwAAAAAA',
+                ],
+            },
+            renderTemplate('multiCoinDryRunTransaction1', {})
+        );
+
+        mockchain.mockBlockchainCall(
+            {
+                method: 'sui_dryRunTransactionBlock',
+                params: [
+                    'AAACAQGYaxSiSs0Mi7KwjRZgadaiNh9I5280FR78dz5cuY2lO98AAAAAAAAAAQAIoIYBAAAAAAABABy/333lAE+IdwX6U7s0XUNy5QBL2LBKb4ho9eHKGvnHEmV0aG9zX2V4YW1wbGVfY29pbgRtaW50AAIBAAABAQD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gH1G/x9mNhvvXXxnRbDdISw8Pc4LrbJv8rS/kqUviyIIgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwf/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4KAAAAAAAAAIYEAAAAAAAAAA==',
+                ],
+            },
+            renderTemplate('multiCoinDryRunTransaction2', {})
+        );
+
+        mockchain.mockBlockchainCall(
+            {
                 method: 'suix_getCoins',
                 params: [
                     '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de',
@@ -255,6 +338,18 @@ describe('The Transaction Approval popup', () => {
                 ],
             },
             renderTemplate('liquidityNormalizedMoveFunction', {})
+        );
+
+        mockchain.mockBlockchainCall(
+            {
+                method: 'sui_getNormalizedMoveFunction',
+                params: [
+                    "0x1cbfdf7de5004f887705fa53bb345d4372e5004bd8b04a6f8868f5e1ca1af9c7",
+                    "ethos_example_coin",
+                    "mint",
+                ],
+            },
+            renderTemplate('mintCoinNormalizedMoveFunction', {})
         );
 
         return mockchain.mockBlockchainCall(

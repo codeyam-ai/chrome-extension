@@ -4,9 +4,9 @@
 import { memo, useEffect } from 'react';
 
 import LoadingIndicator from './LoadingIndicator';
+import resizeWindow from '../../pages/dapp-tx-approval/lib/resizeWindow';
 
 import type { ReactNode } from 'react';
-import resizeWindow from '../../pages/dapp-tx-approval/lib/resizeWindow';
 
 type LoadingProps = {
     loading: boolean;

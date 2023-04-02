@@ -6,7 +6,6 @@ import { RawSigner, JsonRpcProvider, Connection } from '@mysten/sui.js';
 import { growthbook } from './experimentation/feature-gating';
 import { queryClient } from './helpers/queryClient';
 import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import { FEATURES } from '_src/shared/experimentation/features';
 
 import type { Keypair, SuiAddress } from '@mysten/sui.js';
 

@@ -4,8 +4,8 @@
 import { type SuiAddress } from '@mysten/sui.js';
 import { useQuery } from '@tanstack/react-query';
 
-import { api } from '_redux/store/thunk-extras';
 import { getHumanReadable } from '../helpers/transactions';
+import { api } from '_redux/store/thunk-extras';
 
 export function useQueryTransactionsByAddress(address: SuiAddress | null) {
     const rpc = api.instance.fullNode;

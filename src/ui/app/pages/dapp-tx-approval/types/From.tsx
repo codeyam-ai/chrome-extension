@@ -1,8 +1,8 @@
+import CardRow from './CardRow';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector } from '_src/ui/app/hooks';
 import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
 import Body from '_src/ui/app/shared/typography/Body';
-import CardRow from './CardRow';
 
 const From = () => {
     const accountInfo = useAppSelector(

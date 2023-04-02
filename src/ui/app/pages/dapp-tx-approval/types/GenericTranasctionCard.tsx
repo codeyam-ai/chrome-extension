@@ -2,14 +2,13 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useMemo } from 'react';
 
 import Amount from './Amount';
-import CardRow from './CardRow';
 import Gas from './Gas';
+import MoveCall from './MoveCall';
 import Total from './Total';
 import TransactionBody from './TransactionBody';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { StepInformation } from './ComplexMoveCall';
-import MoveCall from './MoveCall';
 
 const GenericTransactionCard = ({
     stepInformation,

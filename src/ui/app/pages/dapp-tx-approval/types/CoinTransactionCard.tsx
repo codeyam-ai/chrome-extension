@@ -16,7 +16,7 @@ const CoinTransactionCard = ({
 }: {
     stepInformation: StepInformation;
 }) => {
-    const { name, formatted, iconUrl, symbol, dollars, to, analysis } =
+    const { formatted, iconUrl, symbol, dollars, to, analysis } =
         stepInformation;
 
     return (

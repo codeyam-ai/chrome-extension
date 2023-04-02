@@ -3,12 +3,12 @@ import { useMemo } from 'react';
 import Approve from './Approve';
 import Details from './Details';
 import GenericTransactionCard from './GenericTranasctionCard';
+import Header from './Header';
+import Warning from './Warning';
 
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import Warning from './Warning';
-import Header from './Header';
 
 export type StepInformation = {
     analysis: AnalyzeChangesResult;
