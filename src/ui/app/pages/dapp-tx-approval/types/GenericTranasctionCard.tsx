@@ -9,6 +9,7 @@ import TransactionBody from './TransactionBody';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { StepInformation } from './ComplexMoveCall';
+import MoveCall from './MoveCall';
 
 const GenericTransactionCard = ({
     stepInformation,
@@ -21,20 +22,13 @@ const GenericTransactionCard = ({
         if (!analysis.blockData) return;
         return analysis.blockData.transactions
             .filter((tx) => tx.kind === 'MoveCall')
-            .map((tx, index) => {
-                if (tx.kind !== 'MoveCall') return <></>;
-
-                const [packageId, moduleName, functionName] =
-                    tx.target.split('::');
-                return (
-                    <CardRow
-                        key={`move-call-${index}`}
-                        title="Function"
-                        value={functionName}
-                        subvalue={`${packageId}::${moduleName}`}
-                    />
-                );
-            });
+            .map((tx, index) =>
+                tx.kind === 'MoveCall' ? (
+                    <MoveCall key={`move-call-${index}`} {...tx} />
+                ) : (
+                    <></>
+                )
+            );
     }, [analysis]);
 
     return (

@@ -12,6 +12,8 @@ import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 import type { RawSigner, SuiAddress, SuiObjectChange } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { ReactNode } from 'react';
+import CopyToClipboard from '_src/ui/app/components/copy-to-clipboard';
+import { TooltipDirection } from '_src/ui/app/components/Tooltip';
 
 const Row = ({
     title,
@@ -209,6 +211,18 @@ const AssetChanges = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
     );
 };
 
+const RawOutput = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
+    const jsonDryRun = JSON.stringify(analysis.dryRunResponse, null, 4);
+
+    return (
+        <Section title="Raw Output">
+            <CopyToClipboard txt={jsonDryRun} direction={TooltipDirection.DOWN}>
+                <textarea className="rounded-lg text-sm">{jsonDryRun}</textarea>
+            </CopyToClipboard>
+        </Section>
+    );
+};
+
 const Details = ({
     analysis,
     signer,
@@ -246,6 +260,7 @@ const Details = ({
                 <div className="flex flex-col gap-6 divider-y divider-color-[#F0EBFE]">
                     <BalanceChanges analysis={analysis} address={address} />
                     <AssetChanges analysis={analysis} />
+                    <RawOutput analysis={analysis} />
                 </div>
             )}
         </div>
