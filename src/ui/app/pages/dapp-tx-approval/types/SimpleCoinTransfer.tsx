@@ -123,7 +123,7 @@ const SimpleCoinTransfer = ({
     onCancel: () => void;
 }) => {
     const to = reduction.recipient || '';
-    const [step, setStep] = useState<number>(1);
+    const [step, setStep] = useState<number>(0);
     const [balance, setBalance] = useState<string>('0');
 
     const loading = useMemo(() => balance === '0', [balance]);
