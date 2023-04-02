@@ -6,11 +6,13 @@ import type { CSSProperties, ReactNode } from 'react';
 const CardRow = ({
     title,
     value,
+    subvalue,
     style,
     children,
 }: {
     title?: string;
     value?: string;
+    subvalue?: string;
     style?: CSSProperties;
     children?: ReactNode;
 }) => {
@@ -22,7 +24,14 @@ const CardRow = ({
             {title && value ? (
                 <>
                     <Body>{title}</Body>
-                    <Body isSemibold={true}>{truncateMiddle(value)}</Body>
+                    <div className="text-right">
+                        <Body isSemibold>{truncateMiddle(value, 9)}</Body>
+                        {subvalue && (
+                            <Body className="text-size-ethos-small">
+                                {truncateMiddle(subvalue, 12)}
+                            </Body>
+                        )}
+                    </div>
                 </>
             ) : (
                 children

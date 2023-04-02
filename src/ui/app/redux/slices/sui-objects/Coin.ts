@@ -1,7 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-// import { Coin as CoinAPI, SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import type {
     ObjectId,
@@ -27,7 +27,11 @@ export const SUI_SYSTEM_STATE_OBJECT_ID =
 // TODO use sdk
 export class Coin {
     public static isCoin(data: SuiObjectData) {
-        return !!data.type && data.type.startsWith(COIN_TYPE);
+        return !!data.type && this.isCoinType(data.type);
+    }
+
+    public static isCoinType(coinType: string) {
+        return !!coinType.startsWith(COIN_TYPE);
     }
 
     public static getCoinTypeArg(obj: SuiMoveObject) {
@@ -41,7 +45,18 @@ export class Coin {
     }
 
     public static getCoinSymbol(coinTypeArg: string) {
-        return coinTypeArg.substring(coinTypeArg.lastIndexOf(':') + 1);
+        const coinTypeParts = coinTypeArg.replace('>', '').split('<');
+        const primaryType = coinTypeParts[0];
+        const internalType = coinTypeParts[1];
+        if (!internalType || primaryType !== SUI_TYPE_ARG) {
+            return primaryType.split('::')[2];
+        }
+
+        const multipleTypes = internalType
+            .split(',')
+            .map((type) => type.split('::')[2]);
+        if (multipleTypes.length === 1) return multipleTypes[0];
+        return `<${multipleTypes.join('|')}>`;
     }
 
     public static getBalance(obj: SuiMoveObject): bigint {

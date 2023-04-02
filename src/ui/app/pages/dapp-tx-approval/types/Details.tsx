@@ -1,4 +1,5 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useCallback, useEffect, useState } from 'react';
 
 import owner from '../lib/owner';
@@ -88,7 +89,13 @@ const BalanceChanges = ({
     }) => {
         const [formatted, symbol] = useFormatCoin(amount, coinType);
 
-        return <Row title={symbol ?? coinType} value={formatted} />;
+        return (
+            <Row
+                title={symbol ?? coinType}
+                value={formatted}
+                subvalue={coinType === SUI_TYPE_ARG ? undefined : coinType}
+            />
+        );
     };
 
     return (
@@ -221,7 +228,7 @@ const Details = ({
     }, []);
 
     return (
-        <div className="flex flex-col gap-6 pb-6 px-6">
+        <div className="flex flex-col gap-6 pb-12 px-6">
             <div
                 className="flex flex-row justify-between items-center cursor-pointer"
                 onClick={toggleDetails}

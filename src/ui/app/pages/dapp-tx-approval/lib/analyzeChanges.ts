@@ -12,7 +12,7 @@ import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
 export type AnalyzeChangesArgs = {
     signer: RawSigner | EthosSigner;
-    transactionBlock: TransactionBlock;
+    transactionBlock: string | TransactionBlock | Uint8Array;
 };
 
 export type GasCostSummary = {
@@ -30,6 +30,7 @@ export type BalanceReduction = {
 };
 
 export type AnalyzeChangesResult = {
+    blockData?: TransactionBlock['blockData'];
     dryRunResponse: DryRunTransactionBlockResponse;
     gas: GasCostSummary;
     balanceReductions: BalanceReduction[];
@@ -167,6 +168,11 @@ const analyzeChanges = async ({
     const totalFee = totalReductions.toString();
 
     return {
+        blockData:
+            typeof transactionBlock === 'object' &&
+            'blockData' in transactionBlock
+                ? transactionBlock.blockData
+                : undefined,
         dryRunResponse,
         gas,
         balanceReductions,

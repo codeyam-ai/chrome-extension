@@ -20,6 +20,7 @@ import type { RootState } from '_redux/RootReducer';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import finishTransaction from './lib/finishTransaction';
 import SimpleAssetMint from './types/SimpleAssetMint';
+import ComplexMoveCall from './types/ComplexMoveCall';
 
 export type Permission = {
     label: string;
@@ -200,53 +201,69 @@ export function DappTxApprovalPage() {
 
         console.log('analysis', analysis);
 
-        if (
-            analysis.assetMints.length === 1 &&
-            analysis.assetTransfers.length === 0
-        ) {
-            return (
-                <SimpleBase onComplete={onComplete}>
-                    <SimpleAssetMint
-                        signer={signer}
-                        assetMint={analysis.assetMints[0]}
-                        analysis={analysis}
-                        onCancel={onComplete}
-                        onApprove={onApprove}
-                    />
-                </SimpleBase>
-            );
-        } else if (
-            analysis.assetMints.length === 0 &&
-            analysis.assetTransfers.length === 1 &&
-            analysis.balanceReductions.length === 0
-        ) {
-            return (
-                <SimpleBase onComplete={onComplete}>
-                    <SimpleAssetTransfer
-                        signer={signer}
-                        assetTransfer={analysis.assetTransfers[0]}
-                        analysis={analysis}
-                        onCancel={onComplete}
-                        onApprove={onApprove}
-                    />
-                </SimpleBase>
-            );
-        } else if (
-            analysis.assetMints.length === 0 &&
-            analysis.assetTransfers.length === 0 &&
-            analysis.balanceReductions.length === 1
-        ) {
-            return (
-                <SimpleBase onComplete={onComplete}>
-                    <SimpleCoinTransfer
-                        signer={signer}
-                        reduction={analysis.balanceReductions[0]}
-                        analysis={analysis}
-                        onCancel={onComplete}
-                        onApprove={onApprove}
-                    />
-                </SimpleBase>
-            );
+        try {
+            if (
+                analysis.assetMints.length === 1 &&
+                analysis.assetTransfers.length === 0
+            ) {
+                return (
+                    <SimpleBase onComplete={onComplete}>
+                        <SimpleAssetMint
+                            signer={signer}
+                            assetMint={analysis.assetMints[0]}
+                            analysis={analysis}
+                            onCancel={onComplete}
+                            onApprove={onApprove}
+                        />
+                    </SimpleBase>
+                );
+            } else if (
+                analysis.assetMints.length === 0 &&
+                analysis.assetTransfers.length === 1 &&
+                analysis.balanceReductions.length === 0
+            ) {
+                return (
+                    <SimpleBase onComplete={onComplete}>
+                        <SimpleAssetTransfer
+                            signer={signer}
+                            assetTransfer={analysis.assetTransfers[0]}
+                            analysis={analysis}
+                            onCancel={onComplete}
+                            onApprove={onApprove}
+                        />
+                    </SimpleBase>
+                );
+            } else if (
+                analysis.assetMints.length === 0 &&
+                analysis.assetTransfers.length === 0 &&
+                analysis.balanceReductions.length === 1
+            ) {
+                return (
+                    <SimpleBase onComplete={onComplete}>
+                        <SimpleCoinTransfer
+                            signer={signer}
+                            reduction={analysis.balanceReductions[0]}
+                            analysis={analysis}
+                            onCancel={onComplete}
+                            onApprove={onApprove}
+                        />
+                    </SimpleBase>
+                );
+            } else {
+                return (
+                    <SimpleBase onComplete={onComplete}>
+                        <ComplexMoveCall
+                            signer={signer}
+                            analysis={analysis}
+                            onCancel={onComplete}
+                            onApprove={onApprove}
+                        />
+                    </SimpleBase>
+                );
+            }
+        } catch (e: unknown) {
+            // eslint-disable-next-line no-console
+            console.log('Error displaying transaction', e);
         }
 
         return (
