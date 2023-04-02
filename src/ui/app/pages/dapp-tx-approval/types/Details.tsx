@@ -1,14 +1,15 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { useCallback, useState } from 'react';
 
+import owner from '../lib/owner';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
+import type { SuiObjectChange } from '@mysten/sui.js';
 import type { ReactNode } from 'react';
-import owner from '../lib/owner';
 
 const Row = ({ title, value }: { title: string; value?: string }) => {
     return (
@@ -96,15 +97,39 @@ const AssetChanges = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
 
     if (assetChanges.length === 0) return <></>;
 
+    const Transfer = ({ from, to }: { from: string; to: string }) => {
+        return (
+            <Row
+                title="Transfer"
+                value={`${truncateMiddle(from)} -> ${truncateMiddle(to)}`}
+            />
+        );
+    };
+
+    const changeTypes = (objectChange: SuiObjectChange) => {
+        const types = [];
+        if ('owner' in objectChange) {
+            const to = owner(objectChange.owner);
+            const from = objectChange.sender;
+            if (from !== to) {
+                types.push(<Transfer from={from} to={to} />);
+            }
+        }
+        return types;
+    };
+
     return (
         <Section title="Asset (NFT) Changes">
             {assetChanges.map((objectChange, index) => {
+                const id =
+                    'objectId' in objectChange
+                        ? objectChange.objectId
+                        : objectChange.packageId;
                 return (
-                    <Row
-                        key={`row-${index}`}
-                        title={objectChange.type}
-                        value={objectChange.type}
-                    />
+                    <div key={`asset-change-${index}`}>
+                        <Row key={`row-${index}`} title={truncateMiddle(id)} />
+                        {changeTypes(objectChange)}
+                    </div>
                 );
             })}
         </Section>
