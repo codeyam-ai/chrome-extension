@@ -42,7 +42,7 @@ describe('The Transaction Approval popup', () => {
             dependencies: { closeWindow: mockWindowCloser },
         });
 
-        await screen.findByText('Costs');
+        await screen.findByText('Gain');
         const approveButton = await screen.findByText('Approve');
 
         await userEvent.click(approveButton);
@@ -53,27 +53,55 @@ describe('The Transaction Approval popup', () => {
         expect(executeScope.actualCalls).toEqual(1);
     });
 
-    // test('the user can reject the transaction', async () => {
-    //     const { txRequestId } = simulateReduxStateWithTransaction();
-    //     const executeScope = mockBlockchainTransactionExecution();
+    test('the user can reject the transaction', async () => {
+        const { txRequestId } = simulateReduxStateWithTransaction();
+        const executeScope = mockBlockchainTransactionExecution();
 
-    //     const mockWindowCloser = jest.fn();
-    //     renderApp({
-    //         store: store,
-    //         initialRoute: `/tx-approval/${txRequestId}`,
-    //         dependencies: { closeWindow: mockWindowCloser },
-    //     });
+        const mockWindowCloser = jest.fn();
+        renderApp({
+            store: store,
+            initialRoute: `/tx-approval/${txRequestId}`,
+            dependencies: { closeWindow: mockWindowCloser },
+        });
 
-    //     await screen.findByText('Costs');
-    //     const rejectButton = await screen.findByText('Reject');
+        await screen.findByText('Gain');
+        const cancelButton = await screen.findByText('Cancel');
 
-    //     await userEvent.click(rejectButton);
-    //     await waitFor(() =>
-    //         expect(mockWindowCloser.mock.calls.length).toEqual(1)
-    //     );
+        await userEvent.click(cancelButton);
+        await waitFor(() =>
+            expect(mockWindowCloser.mock.calls.length).toEqual(1)
+        );
 
-    //     expect(executeScope.actualCalls).toEqual(0);
-    // });
+        expect(executeScope.actualCalls).toEqual(0);
+    });
+
+    test('complex transaction displays properly', async () => {
+        const { txRequestId } = simulateReduxStateWithComplexTransaction();
+        const executeScope = mockBlockchainTransactionExecution();
+
+        const mockWindowCloser = jest.fn();
+        renderApp({
+            store: store,
+            initialRoute: `/tx-approval/${txRequestId}`,
+            dependencies: { closeWindow: mockWindowCloser },
+        });
+
+        const approveButton = await screen.findByText('Approve');
+
+        // screen.debug(undefined, 9999);
+        await screen.findByText(
+            'This is a complex transaction. Please view the details below to ensure everything is expected.'
+        );
+        await screen.findByText('add_liquidity');
+        await screen.findByText('Cost');
+
+        await userEvent.click(approveButton);
+        await waitFor(() =>
+            expect(mockWindowCloser.mock.calls.length).toEqual(1)
+        );
+
+        expect(executeScope.actualCalls).toEqual(1);
+    });
 
     function simulateReduxStateWithTransaction() {
         const txRequestId = '95ae4a0d-0b7b-478b-ab70-bc3fe291540e';
@@ -105,6 +133,29 @@ describe('The Transaction Approval popup', () => {
         return { txRequestId };
     }
 
+    function simulateReduxStateWithComplexTransaction() {
+        const txRequestId = '65ae4a0d-0b7b-478b-ab70-bc3fe291540e';
+
+        const data = `{"version":1,"gasConfig":{"budget":"30000"},"inputs":[{"kind":"Input","value":"0x091737ffb68786c34e84e4953823f29f4816422cf0b91a410276af5d92eceec7","index":0,"type":"object"},{"kind":"Input","value":"0x51a29d5019372256d29a591c18d5a986210b901997134ed9333dfae662ab130d","index":1,"type":"object"},{"kind":"Input","value":"0x6633f163516a0d06949f03f22a35ec65796164ddcb2bf63e849d4cbbbd3e3f4e","index":2,"type":"object"},{"kind":"Input","value":"0x84cef0c22b560577473172a24f388b4a4ff6091725beb109cee696f5299ac194","index":3,"type":"object"},{"kind":"Input","value":"50000000000","index":4,"type":"pure"},{"kind":"Input","value":"58264350776","index":5,"type":"pure"},{"kind":"Input","value":"0xce06dadf062062d551c86379e37bdef20da55835fa440e011e5beb4a333f1f62","index":6,"type":"object"},{"kind":"Input","value":"0","index":7,"type":"pure"},{"kind":"Input","value":"0","index":8,"type":"pure"}],"transactions":[{"kind":"MergeCoins","destination":{"kind":"Input","value":"0x091737ffb68786c34e84e4953823f29f4816422cf0b91a410276af5d92eceec7","index":0,"type":"object"},"sources":[{"kind":"Input","value":"0x51a29d5019372256d29a591c18d5a986210b901997134ed9333dfae662ab130d","index":1,"type":"object"}]},{"kind":"MergeCoins","destination":{"kind":"Input","value":"0x6633f163516a0d06949f03f22a35ec65796164ddcb2bf63e849d4cbbbd3e3f4e","index":2,"type":"object"},"sources":[{"kind":"Input","value":"0x84cef0c22b560577473172a24f388b4a4ff6091725beb109cee696f5299ac194","index":3,"type":"object"}]},{"kind":"SplitCoins","coin":{"kind":"Input","value":"0x091737ffb68786c34e84e4953823f29f4816422cf0b91a410276af5d92eceec7","index":0,"type":"object"},"amounts":[{"kind":"Input","value":"50000000000","index":4,"type":"pure"}]},{"kind":"SplitCoins","coin":{"kind":"Input","value":"0x6633f163516a0d06949f03f22a35ec65796164ddcb2bf63e849d4cbbbd3e3f4e","index":2,"type":"object"},"amounts":[{"kind":"Input","value":"58264350776","index":5,"type":"pure"}]},{"kind":"MoveCall","target":"0xb01f7d11da6c2d04b5225f43770d42d2cbbe52aaf5c27ec29d1188d78090e719::entry::add_liquidity","arguments":[{"kind":"Input","value":"0xce06dadf062062d551c86379e37bdef20da55835fa440e011e5beb4a333f1f62","index":6,"type":"object"},{"kind":"NestedResult","index":2,"resultIndex":0},{"kind":"Input","value":"0","index":7,"type":"pure"},{"kind":"NestedResult","index":3,"resultIndex":0},{"kind":"Input","value":"0","index":8,"type":"pure"}],"typeArguments":["0x229f4b94633cc25a68666d355a3eee5e2766ca9850349c48eca82387d378cac8::bnb::BNB","0x229f4b94633cc25a68666d355a3eee5e2766ca9850349c48eca82387d378cac8::dai::DAI","0xb01f7d11da6c2d04b5225f43770d42d2cbbe52aaf5c27ec29d1188d78090e719::curves::Uncorrelated"]}]}`;
+
+        const txRequest: ApprovalRequest = {
+            id: txRequestId,
+            origin: 'https://ethoswallet.xyz',
+            originFavIcon: 'https://ethoswallet.xyz/favicon.ico',
+            createdDate: '2022-11-29T23:33:53.084Z',
+            approved: true,
+            tx: {
+                type: 'transaction',
+                data,
+                account: accountInfos[0].address,
+                chain: 'sui::devnet',
+            },
+        };
+
+        store.dispatch(setTransactionRequests([txRequest]));
+        return { txRequestId };
+    }
+
     function mockBlockchainTransactionExecution() {
         mockchain.mockBlockchainCall(
             {
@@ -122,6 +173,25 @@ describe('The Transaction Approval popup', () => {
                     id: '0x395c50c614cc22156c9de8db24163f48e4ff66ae',
                 }),
             ]
+        );
+
+        mockchain.mockBlockchainCall(
+            {
+                method: 'sui_multiGetObjects',
+                params: [
+                    [
+                        '0x091737ffb68786c34e84e4953823f29f4816422cf0b91a410276af5d92eceec7',
+                        '0x51a29d5019372256d29a591c18d5a986210b901997134ed9333dfae662ab130d',
+                        '0x6633f163516a0d06949f03f22a35ec65796164ddcb2bf63e849d4cbbbd3e3f4e',
+                        '0x84cef0c22b560577473172a24f388b4a4ff6091725beb109cee696f5299ac194',
+                        '0xce06dadf062062d551c86379e37bdef20da55835fa440e011e5beb4a333f1f62',
+                    ],
+                    {
+                        showOwner: true,
+                    },
+                ],
+            },
+            renderTemplate('liquidityMultiGetObjects', {})
         );
 
         mockchain.mockBlockchainCall(
@@ -154,6 +224,16 @@ describe('The Transaction Approval popup', () => {
 
         mockchain.mockBlockchainCall(
             {
+                method: 'sui_dryRunTransactionBlock',
+                params: [
+                    'AAAJAQAJFzf/toeGw06E5JU4I/KfSBZCLPC5GkECdq9dkuzuxx4dBAAAAAAAIIHb51suMkInG/9uvR7He2p9hKkWagVlH2batkQfnjT0AQBRop1QGTciVtKaWRwY1amGIQuQGZcTTtkzPfrmYqsTDdiyBwAAAAAAINJ8ACKctJrv8NJ4mM6tVYOftQI8LuT+FnaxboQEweWOAQBmM/FjUWoNBpSfA/IqNexleWFk3csr9j6EnUy7vT4/TmjlBwAAAAAAIFzYX1Wr0DY67ubb0jZTSbr+k4OB+mAU/2E8m/k8AyukAQCEzvDCK1YFd0cxcqJPOItKT/YJFyW+sQnO5pb1KZrBlGjlBwAAAAAAIGV3X/mU+h+J2/qanFdtUQTdlD1mSFe1J2j2zaJwAfK7AAgAdDukCwAAAAAIOHDTkA0AAAABAc4G2t8GIGLVUchjeeN73vINpVg1+kQOAR5b60ozPx9iCEgCAAAAAAABAAgAAAAAAAAAAAAIAAAAAAAAAAAFAwEAAAEBAQADAQIAAQEDAAIBAAABAQQAAgECAAEBBQAAsB99EdpsLQS1Il9Ddw1C0su+Uqr1wn7CnRGI14CQ5xkFZW50cnkNYWRkX2xpcXVpZGl0eQMHIp9LlGM8wlpoZm01Wj7uXidmyphQNJxI7Kgjh9N4ysgDYm5iA0JOQgAHIp9LlGM8wlpoZm01Wj7uXidmyphQNJxI7Kgjh9N4ysgDZGFpA0RBSQAHsB99EdpsLQS1Il9Ddw1C0su+Uqr1wn7CnRGI14CQ5xkGY3VydmVzDFVuY29ycmVsYXRlZAAFAQYAAwIAAAABBwADAwAAAAEIAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3goAAAAAAAAAMHUAAAAAAAAA',
+                ],
+            },
+            renderTemplate('liquidityDryRunTransaction', {})
+        );
+
+        mockchain.mockBlockchainCall(
+            {
                 method: 'suix_getCoins',
                 params: [
                     '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de',
@@ -163,6 +243,18 @@ describe('The Transaction Approval popup', () => {
                 ],
             },
             renderTemplate('getCoins', {})
+        );
+
+        mockchain.mockBlockchainCall(
+            {
+                method: 'sui_getNormalizedMoveFunction',
+                params: [
+                    '0xb01f7d11da6c2d04b5225f43770d42d2cbbe52aaf5c27ec29d1188d78090e719',
+                    'entry',
+                    'add_liquidity',
+                ],
+            },
+            renderTemplate('liquidityNormalizedMoveFunction', {})
         );
 
         return mockchain.mockBlockchainCall(

@@ -116,11 +116,19 @@ export function useFormatCoin(
             currency: 'USD',
         });
 
-        return dollarFormatter.format(
-            new BigNumber(balance.toString())
-                .shiftedBy(-1 * (decimals - 2))
-                .toNumber()
+        const shifted = new BigNumber(balance.toString()).shiftedBy(
+            -1 * (decimals - 2)
         );
+
+        const dollars = dollarFormatter.format(shifted.toNumber());
+
+        if (dollars === dollarFormatter.format(0)) {
+            return `${dollars}${
+                shifted.shiftedBy(2).modulo(1).toString().split('.')[1] ?? ''
+            }`;
+        }
+
+        return dollars;
     }, [balance, decimals]);
 
     return [

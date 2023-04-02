@@ -4,18 +4,18 @@ import { useMemo } from 'react';
 
 import type {
     SuiMoveNormalizedFunction,
-    TransactionEvents,
+    SuiObjectChange,
 } from '@mysten/sui.js';
 
 export type useCategorizedEventsArgs = {
     normalizedFunction?: SuiMoveNormalizedFunction;
-    events?: TransactionEvents | null;
+    objectChanges?: SuiObjectChange[] | null;
     address?: string | null;
 };
 
 const useCategorizedEffects = ({
     normalizedFunction,
-    events,
+    objectChanges,
     address,
 }: useCategorizedEventsArgs) => {
     const reading = useMemo(() => {
@@ -41,7 +41,7 @@ const useCategorizedEffects = ({
     }, [normalizedFunction]);
 
     const creating = useMemo(() => {
-        if (!events) return [];
+        if (!objectChanges) return [];
 
         return [];
         // return events
@@ -63,10 +63,10 @@ const useCategorizedEffects = ({
         //         };
         //     })
         //     .filter((event) => !!event);
-    }, [events]);
+    }, [objectChanges]);
 
     const mutating = useMemo(() => {
-        if (!events) return [];
+        if (!objectChanges) return [];
 
         return [];
         // return events
@@ -89,10 +89,10 @@ const useCategorizedEffects = ({
         //         };
         //     })
         //     .filter((mutate) => !!mutate);
-    }, [events]);
+    }, [objectChanges]);
 
     const transferring = useMemo(() => {
-        if (!events) return [];
+        if (!objectChanges) return [];
 
         return [];
         // return events
@@ -114,10 +114,10 @@ const useCategorizedEffects = ({
         //         };
         //     })
         //     .filter((transfer) => !!transfer);
-    }, [events]);
+    }, [objectChanges]);
 
     const deleting = useMemo(() => {
-        if (!events) return [];
+        if (!objectChanges) return [];
 
         return [];
         // const deleting = events
@@ -132,12 +132,12 @@ const useCategorizedEffects = ({
         //     .filter((d) => !!d);
         //
         // return deleting;
-    }, [events]);
+    }, [objectChanges]);
 
     const coinChanges = useMemo(() => {
         const zero: Record<string, number> = {};
 
-        if (!events) return zero;
+        if (!objectChanges) return zero;
 
         return zero;
         // const coinBalanceChangeEvents = events.filter(
@@ -156,7 +156,7 @@ const useCategorizedEffects = ({
         //     totals[coinType] += amount * -1;
         //     return totals;
         // }, zero);
-    }, [events]);
+    }, [objectChanges]);
 
     return {
         reading,

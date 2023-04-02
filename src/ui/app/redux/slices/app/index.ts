@@ -5,11 +5,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import Browser from 'webextension-polyfill';
 
 import { AppType } from './AppType';
-import {
-    API_ENV,
-    DEFAULT_API_ENV,
-    generateActiveNetworkList,
-} from '_app/ApiProvider';
+import { API_ENV, DEFAULT_API_ENV } from '_app/ApiProvider';
 import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
 // import { getTransactionsByAddress } from '_redux/slices/txresults';
 

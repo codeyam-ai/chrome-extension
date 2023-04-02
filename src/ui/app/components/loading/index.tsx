@@ -6,6 +6,7 @@ import { memo, useEffect } from 'react';
 import LoadingIndicator from './LoadingIndicator';
 
 import type { ReactNode } from 'react';
+import resizeWindow from '../../pages/dapp-tx-approval/lib/resizeWindow';
 
 type LoadingProps = {
     loading: boolean;
@@ -25,11 +26,8 @@ const Loading = ({
     useEffect(() => {
         if (loading || !resize) return;
 
-        const resizeWindow = () => {
-            window.resizeTo(window.outerWidth, document.body.offsetHeight + 39);
-        };
-
         resizeWindow();
+
         Promise.all(
             Array.from(document.images)
                 .filter((img) => !img.complete)
