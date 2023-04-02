@@ -76,35 +76,37 @@ const coinChanges = (
             new BigNumber(balanceChange.amount).isPositive()
     );
 
-    const reductions: BalanceReduction[] = reductionChanges.map((reduction) => {
-        let amount = reduction.amount;
-        if (gasUsed && reduction.coinType === SUI_TYPE_ARG) {
-            amount = new BigNumber(reduction.amount)
-                .plus(new BigNumber(gasUsed.toString()))
-                .toString();
-        }
+    const reductions: BalanceReduction[] = reductionChanges
+        .map((reduction) => {
+            let amount = reduction.amount;
+            if (gasUsed && reduction.coinType === SUI_TYPE_ARG) {
+                amount = new BigNumber(reduction.amount)
+                    .plus(new BigNumber(gasUsed.toString()))
+                    .toString();
+            }
 
-        const recipientChange = additionChanges.find(
-            (addition) =>
-                addition.coinType === reduction.coinType &&
-                new BigNumber(addition.amount).eq(
-                    new BigNumber(amount).multipliedBy(-1)
-                )
-        );
+            const recipientChange = additionChanges.find(
+                (addition) =>
+                    addition.coinType === reduction.coinType &&
+                    new BigNumber(addition.amount).eq(
+                        new BigNumber(amount).multipliedBy(-1)
+                    )
+            );
 
-        const recipient =
-            (recipientChange &&
-                typeof recipientChange.owner === 'object' &&
-                'AddressOwner' in recipientChange.owner &&
-                recipientChange.owner.AddressOwner) ||
-            undefined;
+            const recipient =
+                (recipientChange &&
+                    typeof recipientChange.owner === 'object' &&
+                    'AddressOwner' in recipientChange.owner &&
+                    recipientChange.owner.AddressOwner) ||
+                undefined;
 
-        return {
-            type: reduction.coinType,
-            amount,
-            recipient,
-        };
-    });
+            return {
+                type: reduction.coinType,
+                amount,
+                recipient,
+            };
+        })
+        .filter((reduction) => new BigNumber(reduction.amount).abs().gt(0));
 
     return {
         reductions,

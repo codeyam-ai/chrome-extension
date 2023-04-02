@@ -197,13 +197,21 @@ export function DappTxApprovalPage() {
     const content = useMemo(() => {
         if (!signer || !analysis) return <></>;
 
+        console.log('analysis', analysis);
+
         if (
             analysis.assetTransfers.length === 1 &&
             analysis.balanceReductions.length === 0
         ) {
             return (
                 <SimpleBase onComplete={onComplete}>
-                    <SimpleAssetTransfer></SimpleAssetTransfer>
+                    <SimpleAssetTransfer
+                        signer={signer}
+                        assetTransfer={analysis.assetTransfers[0]}
+                        analysis={analysis}
+                        onCancel={onComplete}
+                        onApprove={onApprove}
+                    />
                 </SimpleBase>
             );
         } else if (
@@ -218,7 +226,7 @@ export function DappTxApprovalPage() {
                         analysis={analysis}
                         onCancel={onComplete}
                         onApprove={onApprove}
-                    ></SimpleCoinTransfer>
+                    />
                 </SimpleBase>
             );
         }
