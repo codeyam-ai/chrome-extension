@@ -2,6 +2,7 @@ import { TransactionBlock } from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import IncorrectSigner from './errors/IncorrectSigner';
 import analyzeChanges from './lib/analyzeChanges';
 import finishTransaction from './lib/finishTransaction';
 import Base from './types/Base';
@@ -123,20 +124,20 @@ export function DappTxApprovalPage() {
 
             // console.log('SERIALIZED', transactionBlock.serialize());
 
-            // try {
-            const analysis = await analyzeChanges({
-                signer,
-                transactionBlock,
-            });
+            try {
+                const analysis = await analyzeChanges({
+                    signer,
+                    transactionBlock,
+                });
 
-            // console.log('ANALYSIS', analysis);
+                // console.log('ANALYSIS', analysis);
 
-            setAnalysis(analysis);
-            // } catch (e: unknown) {
-            //     console.log('ANALSYIS ERROR', e);
-            //     // setDryRunError(`${e}`);
-            //     setAnalysis(null);
-            // }
+                setAnalysis(analysis);
+            } catch (e: unknown) {
+                console.log('ANALSYIS ERROR', e);
+                // setDryRunError(`${e}`);
+                setAnalysis(null);
+            }
         };
 
         getTransactionInfo();
@@ -291,6 +292,25 @@ export function DappTxApprovalPage() {
         txID,
         txRequest,
     ]);
+
+    if (
+        !loading &&
+        'account' in txRequest.tx &&
+        txRequest.tx.account &&
+        txRequest.tx.account !== address
+    ) {
+        return (
+            <SimpleBase onComplete={onComplete}>
+                <div className="py-12">
+                    <IncorrectSigner
+                        txID={txID}
+                        txRequest={txRequest}
+                        correctAddress={txRequest.tx.account}
+                    />
+                </div>
+            </SimpleBase>
+        );
+    }
 
     return (
         <Loading loading={loading} big={true} resize={true}>

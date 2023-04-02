@@ -247,7 +247,7 @@ describe('The Transaction Approval popup', () => {
                 method: 'sui_multiGetObjects',
                 params: [
                     [
-                        "0x986b14a24acd0c8bb2b08d166069d6a2361f48e76f34151efc773e5cb98da53b"
+                        '0x986b14a24acd0c8bb2b08d166069d6a2361f48e76f34151efc773e5cb98da53b',
                     ],
                     {
                         showOwner: true,
@@ -344,9 +344,9 @@ describe('The Transaction Approval popup', () => {
             {
                 method: 'sui_getNormalizedMoveFunction',
                 params: [
-                    "0x1cbfdf7de5004f887705fa53bb345d4372e5004bd8b04a6f8868f5e1ca1af9c7",
-                    "ethos_example_coin",
-                    "mint",
+                    '0x1cbfdf7de5004f887705fa53bb345d4372e5004bd8b04a6f8868f5e1ca1af9c7',
+                    'ethos_example_coin',
+                    'mint',
                 ],
             },
             renderTemplate('mintCoinNormalizedMoveFunction', {})
