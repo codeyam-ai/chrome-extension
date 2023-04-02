@@ -20,6 +20,7 @@ import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 import type { RawSigner, SuiObjectChange } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import resizeWindow from '../lib/resizeWindow';
 
 export type StepInformation = {
     objectId: string;
@@ -140,6 +141,10 @@ const SimpleAssetTransfer = ({
 
         getNFT();
     }, [signer, objectId]);
+
+    useEffect(() => {
+        resizeWindow();
+    }, [step]);
 
     const onNextStep = useCallback(() => {
         setStep((step) => step + 1);
