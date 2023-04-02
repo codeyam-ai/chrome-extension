@@ -1,6 +1,7 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
+import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 
 export type NextStepProps = {
     disabled?: boolean;
@@ -9,7 +10,10 @@ export type NextStepProps = {
 };
 
 const Approve = ({ disabled, onApprove, onCancel }: NextStepProps) => {
+    const [approving, setApproving] = useState(false);
+
     const approve = useCallback(() => {
+        setApproving(true);
         onApprove && onApprove();
     }, [onApprove]);
 
@@ -21,7 +25,9 @@ const Approve = ({ disabled, onApprove, onCancel }: NextStepProps) => {
         <InlineButtonGroup
             onClickButtonPrimary={approve}
             buttonPrimaryTestId="approve"
-            buttonPrimaryChildren={<>Approve</>}
+            buttonPrimaryChildren={
+                approving ? <LoadingIndicator /> : <>Approve</>
+            }
             isButtonPrimaryDisabled={disabled}
             onClickButtonSecondary={cancel}
             buttonSecondaryTestId="reject"
