@@ -27,11 +27,7 @@ export const SUI_SYSTEM_STATE_OBJECT_ID =
 // TODO use sdk
 export class Coin {
     public static isCoin(data: SuiObjectData) {
-        return !!data.type && this.isCoinType(data.type);
-    }
-
-    public static isCoinType(coinType: string) {
-        return !!coinType.startsWith(COIN_TYPE);
+        return !!data.type && data.type.startsWith(COIN_TYPE);
     }
 
     public static getCoinTypeArg(obj: SuiMoveObject) {

@@ -42,7 +42,7 @@ describe('The Transaction Approval popup', () => {
             dependencies: { closeWindow: mockWindowCloser },
         });
 
-        await screen.findByText('Costs');
+        await screen.findByText('Gain');
         const approveButton = await screen.findByText('Approve');
 
         await userEvent.click(approveButton);

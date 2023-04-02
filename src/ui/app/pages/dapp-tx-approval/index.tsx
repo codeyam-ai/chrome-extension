@@ -3,7 +3,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import analyzeChanges from './lib/analyzeChanges';
+import finishTransaction from './lib/finishTransaction';
 import Base from './types/Base';
+import ComplexMoveCall from './types/ComplexMoveCall';
+import SimpleAssetMint from './types/SimpleAssetMint';
 import SimpleAssetTransfer from './types/SimpleAssetTransfer';
 import SimpleBase from './types/SimpleBase';
 import SimpleCoinTransfer from './types/SimpleCoinTransfer';
@@ -18,9 +21,6 @@ import type { AnalyzeChangesResult } from './lib/analyzeChanges';
 import type { RawSigner, SuiMoveNormalizedType } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import finishTransaction from './lib/finishTransaction';
-import SimpleAssetMint from './types/SimpleAssetMint';
-import ComplexMoveCall from './types/ComplexMoveCall';
 
 export type Permission = {
     label: string;
@@ -127,8 +127,6 @@ export function DappTxApprovalPage() {
                 transactionBlock,
             });
 
-            console.log('ANALYSIS', analysis);
-
             setAnalysis(analysis);
             // } catch (e: unknown) {
             //     console.log('ANALSYIS ERROR', e);
@@ -199,7 +197,7 @@ export function DappTxApprovalPage() {
     const content = useMemo(() => {
         if (!signer || !analysis) return <></>;
 
-        console.log('analysis', analysis);
+        // console.log('analysis', analysis);
 
         try {
             if (
