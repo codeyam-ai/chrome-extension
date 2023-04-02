@@ -20,6 +20,7 @@ import type {
 } from '../lib/analyzeChanges';
 import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import resizeWindow from '../lib/resizeWindow';
 
 export type StepInformation = {
     name: string;
@@ -155,6 +156,10 @@ const SimpleCoinTransfer = ({
 
         getBalance();
     }, [signer, reduction]);
+
+    useEffect(() => {
+        resizeWindow();
+    }, [step]);
 
     const onNextStep = useCallback(() => {
         setStep((step) => step + 1);
