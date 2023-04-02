@@ -121,11 +121,15 @@ export function DappTxApprovalPage() {
         const getTransactionInfo = async () => {
             if (!accountInfos || accountInfos.length === 0) return;
 
+            // console.log('SERIALIZED', transactionBlock.serialize());
+
             // try {
             const analysis = await analyzeChanges({
                 signer,
                 transactionBlock,
             });
+
+            // console.log('ANALYSIS', analysis);
 
             setAnalysis(analysis);
             // } catch (e: unknown) {
@@ -196,8 +200,6 @@ export function DappTxApprovalPage() {
 
     const content = useMemo(() => {
         if (!signer || !analysis) return <></>;
-
-        console.log('analysis', analysis);
 
         try {
             if (
