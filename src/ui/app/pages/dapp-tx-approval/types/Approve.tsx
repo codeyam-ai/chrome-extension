@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 
-import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
+import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
 
 export type NextStepProps = {
     disabled?: boolean;

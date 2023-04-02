@@ -10,7 +10,6 @@ import {
     PhotoIcon,
     SparklesIcon,
 } from '@heroicons/react/24/solid';
-import _ from 'lodash';
 
 import { ActivityRow } from './ActivityRow';
 import SuiIcon from '../../svg/SuiIcon';
@@ -48,10 +47,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         txAmount,
         txStatus,
         txUsdAmount,
-        gasFeeInSui,
-        gasFeeInUsd,
         txCommands,
-        isSender,
         displayImage,
     } = txn.humanReadable;
 
