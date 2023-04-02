@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Approve from './Approve';
+import AssetTransactionCard from './AssetTransactionCard';
 import Details from './Details';
 import FromToCard from './FromToCard';
 import Header from './Header';
@@ -87,7 +88,7 @@ const StepTwo = ({
 
     return (
         <div className="h-full flex flex-col w-full py-3">
-            {/* <TransactionCard stepInformation={stepInformation} /> */}
+            <AssetTransactionCard stepInformation={stepInformation} />
             <Details analysis={stepInformation.analysis} />
             <Approve
                 disabled={disabled}

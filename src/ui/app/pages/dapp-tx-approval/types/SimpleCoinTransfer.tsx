@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Approve from './Approve';
+import CoinTransactionCard from './CoinTransactionCard';
 import Details from './Details';
 import FromToCard from './FromToCard';
 import Header from './Header';
@@ -9,7 +10,6 @@ import NextStep from './NextStep';
 import SendCoinImage from './SendCoinImage';
 import Steps from './Steps';
 import TransactionBody from './TransactionBody';
-import TransactionCard from './TransactionCard';
 import Warning from './Warning';
 import Loading from '_src/ui/app/components/loading';
 import { useFormatCoin } from '_src/ui/app/hooks';
@@ -97,7 +97,7 @@ const StepTwo = ({
 
     return (
         <div className="h-full flex flex-col w-full py-3">
-            <TransactionCard stepInformation={stepInformation} />
+            <CoinTransactionCard stepInformation={stepInformation} />
             <Details analysis={stepInformation.analysis} />
             <Approve
                 disabled={disabled}

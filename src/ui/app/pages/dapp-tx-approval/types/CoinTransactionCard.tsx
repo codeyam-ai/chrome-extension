@@ -4,14 +4,14 @@ import Amount from './Amount';
 import CardRow from './CardRow';
 import From from './From';
 import Gas from './Gas';
+import SendCoinImage from './SendCoinImage';
 import Total from './Total';
 import TransactionBody from './TransactionBody';
-import SendCoinImage from './SendCoinImage';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { StepInformation } from './SimpleCoinTransfer';
 
-const TransactionCard = ({
+const CoinTransactionCard = ({
     stepInformation,
 }: {
     stepInformation: StepInformation;
@@ -49,4 +49,4 @@ const TransactionCard = ({
     );
 };
 
-export default TransactionCard;
+export default CoinTransactionCard;
