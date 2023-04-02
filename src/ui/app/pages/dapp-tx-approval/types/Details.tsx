@@ -1,5 +1,5 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import owner from '../lib/owner';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
@@ -8,7 +8,8 @@ import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
-import type { SuiObjectChange } from '@mysten/sui.js';
+import type { RawSigner, SuiAddress, SuiObjectChange } from '@mysten/sui.js';
+import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { ReactNode } from 'react';
 
 const Row = ({ title, value }: { title: string; value?: string }) => {
@@ -40,7 +41,13 @@ const Section = ({
     );
 };
 
-const BalanceChanges = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
+const BalanceChanges = ({
+    analysis,
+    address,
+}: {
+    analysis: AnalyzeChangesResult;
+    address?: SuiAddress;
+}) => {
     if (analysis.dryRunResponse.balanceChanges.length === 0) return null;
 
     const ownerChanges = analysis.dryRunResponse.balanceChanges.sort((a, b) =>
@@ -62,22 +69,19 @@ const BalanceChanges = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
     return (
         <Section title="Balance Changes">
             {ownerChanges.map((balanceChange, index) => {
-                const o = owner(balanceChange.owner);
-                const previousOwner = owner(ownerChanges[index - 1]?.owner);
+                const o = owner(balanceChange.owner, address);
+                const previousOwner = owner(
+                    ownerChanges[index - 1]?.owner,
+                    address
+                );
 
                 return (
-                    <>
+                    <div key={`row-balance-${index}`}>
                         {(index === 0 || o !== previousOwner) && (
-                            <Row
-                                key={`row-balance-owner-${index}`}
-                                title={`Owner: ${truncateMiddle(o)}`}
-                            />
+                            <Row title={`Owner: ${truncateMiddle(o)}`} />
                         )}
-                        <BalanceRow
-                            key={`row-balance-${index}`}
-                            {...balanceChange}
-                        />
-                    </>
+                        <BalanceRow {...balanceChange} />
+                    </div>
                 );
             })}
         </Section>
@@ -136,8 +140,19 @@ const AssetChanges = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
     );
 };
 
-const Details = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
+const Details = ({
+    analysis,
+    signer,
+}: {
+    analysis: AnalyzeChangesResult;
+    signer: EthosSigner | RawSigner;
+}) => {
     const [details, setDetails] = useState(false);
+    const [address, setAddress] = useState<SuiAddress | undefined>(undefined);
+
+    useEffect(() => {
+        signer.getAddress().then(setAddress);
+    }, [signer]);
 
     const toggleDetails = useCallback(() => {
         setDetails((prev) => !prev);
@@ -160,7 +175,7 @@ const Details = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
             </div>
             {details && (
                 <div className="flex flex-col gap-6 divider-y divider-color-[#F0EBFE]">
-                    <BalanceChanges analysis={analysis} />
+                    <BalanceChanges analysis={analysis} address={address} />
                     <AssetChanges analysis={analysis} />
                 </div>
             )}

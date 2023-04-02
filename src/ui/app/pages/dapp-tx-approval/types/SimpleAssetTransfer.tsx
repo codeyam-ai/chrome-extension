@@ -9,18 +9,16 @@ import NextStep from './NextStep';
 import SendAssetImage from './SendAssetImage';
 import Steps from './Steps';
 import TransactionBody from './TransactionBody';
-// import TransactionCard from './TransactionCard';
-// import TransactionImage from './TransactionImage';
 import Warning from './Warning';
 import basicNftData, { type BasicNFtData } from '../lib/basicNftData';
 import owner from '../lib/owner';
+import resizeWindow from '../lib/resizeWindow';
 import Loading from '_src/ui/app/components/loading';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 import type { RawSigner, SuiObjectChange } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import resizeWindow from '../lib/resizeWindow';
 
 export type StepInformation = {
     objectId: string;
@@ -71,11 +69,13 @@ const StepOne = ({
 };
 
 const StepTwo = ({
+    signer,
     stepInformation,
     onApprove,
     onCancel,
     onSelectStep,
 }: {
+    signer: RawSigner | EthosSigner;
     stepInformation: StepInformation;
     onApprove: () => void;
     onCancel: () => void;
@@ -90,7 +90,7 @@ const StepTwo = ({
     return (
         <div className="h-full flex flex-col w-full py-3">
             <AssetTransactionCard stepInformation={stepInformation} />
-            <Details analysis={stepInformation.analysis} />
+            <Details analysis={stepInformation.analysis} signer={signer} />
             <Approve
                 disabled={disabled}
                 onApprove={onApprove}
@@ -173,6 +173,7 @@ const SimpleAssetTransfer = ({
         } else {
             return (
                 <StepTwo
+                    signer={signer}
                     stepInformation={stepInformation}
                     onApprove={onApprove}
                     onCancel={onCancel}
@@ -180,7 +181,7 @@ const SimpleAssetTransfer = ({
                 />
             );
         }
-    }, [step, stepInformation, onNextStep, onCancel, onApprove]);
+    }, [signer, step, stepInformation, onNextStep, onCancel, onApprove]);
 
     return (
         <Loading

@@ -11,6 +11,7 @@ import SendCoinImage from './SendCoinImage';
 import Steps from './Steps';
 import TransactionBody from './TransactionBody';
 import Warning from './Warning';
+import resizeWindow from '../lib/resizeWindow';
 import Loading from '_src/ui/app/components/loading';
 import { useFormatCoin } from '_src/ui/app/hooks';
 
@@ -20,7 +21,6 @@ import type {
 } from '../lib/analyzeChanges';
 import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import resizeWindow from '../lib/resizeWindow';
 
 export type StepInformation = {
     name: string;
@@ -80,11 +80,13 @@ const StepOne = ({
 };
 
 const StepTwo = ({
+    signer,
     stepInformation,
     onApprove,
     onCancel,
     onSelectStep,
 }: {
+    signer: RawSigner | EthosSigner;
     stepInformation: StepInformation;
     onApprove: () => void;
     onCancel: () => void;
@@ -99,7 +101,7 @@ const StepTwo = ({
     return (
         <div className="h-full flex flex-col w-full py-3">
             <CoinTransactionCard stepInformation={stepInformation} />
-            <Details analysis={stepInformation.analysis} />
+            <Details analysis={stepInformation.analysis} signer={signer} />
             <Approve
                 disabled={disabled}
                 onApprove={onApprove}
@@ -201,6 +203,7 @@ const SimpleCoinTransfer = ({
         } else {
             return (
                 <StepTwo
+                    signer={signer}
                     stepInformation={stepInformation}
                     onApprove={onApprove}
                     onCancel={onCancel}
@@ -208,7 +211,7 @@ const SimpleCoinTransfer = ({
                 />
             );
         }
-    }, [step, stepInformation, onNextStep, onCancel, onApprove]);
+    }, [signer, step, stepInformation, onNextStep, onCancel, onApprove]);
 
     return (
         <Loading

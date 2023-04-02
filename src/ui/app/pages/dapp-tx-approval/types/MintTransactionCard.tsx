@@ -1,35 +1,30 @@
-import CardRow from './CardRow';
-import From from './From';
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
+
+import Amount from './Amount';
 import Gas from './Gas';
-import SendAssetImage from './SendAssetImage';
 import Total from './Total';
 import TransactionBody from './TransactionBody';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
-import type { StepInformation } from './SimpleAssetTransfer';
+import type { StepInformation } from './SimpleAssetMint';
 
-const AssetTransactionCard = ({
+const MintTransactionCard = ({
     stepInformation,
 }: {
     stepInformation: StepInformation;
 }) => {
-    const { name, imageUrl, to, analysis } = stepInformation;
+    const { type, analysis } = stepInformation;
 
     return (
         <TransactionBody>
             <div className="w-full rounded-xl bg-[#F8F5FF] flex flex-col divide-y divide-color-[#F0EBFE] overflow-hidden">
                 <div className="p-6 flex-col justify-center items-center text-center">
-                    <div className="pb-1 inline-block">
-                        <SendAssetImage imageUrl={imageUrl} name={name} />
-                    </div>
-                    <BodyLarge>You are about to send</BodyLarge>
+                    <BodyLarge>You are about to mint</BodyLarge>
                     <div className="text-lg flex justify-center gap-6">
-                        <BodyLarge isSemibold>{name}</BodyLarge>
+                        <BodyLarge isSemibold>{type}</BodyLarge>
                     </div>
                 </div>
-                <From />
-                <CardRow title="To" value={to} />
-                {/* <Amount amount={analysis.rawAmount} coinType={SUI_TYPE_ARG} /> */}
+                <Amount amount={analysis.rawAmount} coinType={SUI_TYPE_ARG} />
                 <Gas gasSummary={analysis.gas} />
                 <Total analysis={analysis} />
             </div>
@@ -37,4 +32,4 @@ const AssetTransactionCard = ({
     );
 };
 
-export default AssetTransactionCard;
+export default MintTransactionCard;

@@ -34,6 +34,7 @@ export type AnalyzeChangesResult = {
     gas: GasCostSummary;
     balanceReductions: BalanceReduction[];
     assetTransfers: SuiObjectChange[];
+    assetMints: SuiObjectChange[];
     rawAmount: string;
     totalFee: string;
 };
@@ -51,8 +52,18 @@ const assetChanges = (
             objectChange.sender !== objectChange.owner.AddressOwner
     );
 
+    const mints = objectChanges.filter(
+        (objectChange) =>
+            objectChange.type === 'created' &&
+            objectChange.sender === address &&
+            typeof objectChange.owner !== 'string' &&
+            'AddressOwner' in objectChange.owner &&
+            objectChange.sender === objectChange.owner.AddressOwner
+    );
+
     return {
         transfers,
+        mints,
     };
 };
 
@@ -106,7 +117,7 @@ const coinChanges = (
                 recipient,
             };
         })
-        .filter((reduction) => new BigNumber(reduction.amount).abs().gt(0));
+        .filter((reduction) => new BigNumber(reduction.amount).abs().gt(1));
 
     return {
         reductions,
@@ -129,7 +140,10 @@ const analyzeChanges = async ({
         total: (getTotalGasUsed(effects) ?? 0).toString(),
     };
 
-    const { transfers: assetTransfers } = assetChanges(address, objectChanges);
+    const { mints: assetMints, transfers: assetTransfers } = assetChanges(
+        address,
+        objectChanges
+    );
     const { reductions: balanceReductions } = coinChanges(
         address,
         dryRunResponse
@@ -149,13 +163,14 @@ const analyzeChanges = async ({
         )
         .multipliedBy(-1);
 
-    const rawAmount = totalReductions.plus(gas.total).toString();
+    const rawAmount = totalReductions.minus(gas.total).toString();
     const totalFee = totalReductions.toString();
 
     return {
         dryRunResponse,
         gas,
         balanceReductions,
+        assetMints,
         assetTransfers,
         rawAmount,
         totalFee,

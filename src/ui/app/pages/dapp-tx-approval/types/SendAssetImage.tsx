@@ -15,14 +15,15 @@ const SendAssetImage = ({
                 className="absolute bottom-0 left-0 bg-black rounded-lg"
                 style={{ height: '90px', width: '90px' }}
             />
-            <div className="absolute bottom-1 left-1">
+            <div
+                className="absolute bottom-1 left-1 flex"
+                style={{ height: '90px', width: '90px' }}
+            >
                 {imageUrl ? (
                     <img
                         src={imageUrl}
                         alt={`Asset ${name}`}
-                        height={90}
-                        width={90}
-                        className="object-contain rounded-lg"
+                        className="object-cover rounded-lg"
                     />
                 ) : (
                     <UnknownToken />

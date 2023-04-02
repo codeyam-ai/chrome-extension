@@ -7,15 +7,21 @@ const Amount = ({ amount, coinType }: { amount: string; coinType: string }) => {
 
     return (
         <CardRow>
-            <Body>Amount</Body>
+            <Body>Cost</Body>
             <div className="text-right">
-                <div className="flex items-center gap-1 text-base">
-                    <Body className="font-light">USD</Body>
-                    <Body isSemibold>{dollars}</Body>
-                </div>
-                <Body className="text-size-ethos-small text-[#74777C]">
-                    {formatted} {symbol}
-                </Body>
+                {amount === '0' ? (
+                    <Body isSemibold>Free</Body>
+                ) : (
+                    <>
+                        <div className="flex items-center gap-1 text-base">
+                            <Body className="font-light">USD</Body>
+                            <Body isSemibold>{dollars}</Body>
+                        </div>
+                        <Body className="text-size-ethos-small text-[#74777C]">
+                            {formatted} {symbol}
+                        </Body>
+                    </>
+                )}
             </div>
         </CardRow>
     );

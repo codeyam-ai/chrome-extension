@@ -19,6 +19,7 @@ import type { RawSigner, SuiMoveNormalizedType } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import finishTransaction from './lib/finishTransaction';
+import SimpleAssetMint from './types/SimpleAssetMint';
 
 export type Permission = {
     label: string;
@@ -200,6 +201,22 @@ export function DappTxApprovalPage() {
         console.log('analysis', analysis);
 
         if (
+            analysis.assetMints.length === 1 &&
+            analysis.assetTransfers.length === 0
+        ) {
+            return (
+                <SimpleBase onComplete={onComplete}>
+                    <SimpleAssetMint
+                        signer={signer}
+                        assetMint={analysis.assetMints[0]}
+                        analysis={analysis}
+                        onCancel={onComplete}
+                        onApprove={onApprove}
+                    />
+                </SimpleBase>
+            );
+        } else if (
+            analysis.assetMints.length === 0 &&
             analysis.assetTransfers.length === 1 &&
             analysis.balanceReductions.length === 0
         ) {
@@ -215,6 +232,7 @@ export function DappTxApprovalPage() {
                 </SimpleBase>
             );
         } else if (
+            analysis.assetMints.length === 0 &&
             analysis.assetTransfers.length === 0 &&
             analysis.balanceReductions.length === 1
         ) {
