@@ -12,11 +12,32 @@ import type { RawSigner, SuiAddress, SuiObjectChange } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { ReactNode } from 'react';
 
-const Row = ({ title, value }: { title: string; value?: string }) => {
+const Row = ({
+    title,
+    value,
+    subvalue,
+}: {
+    title: string;
+    value?: string;
+    subvalue?: string;
+}) => {
     return (
         <div className="flex flex-row items-center justify-between">
             <Body isSemibold={!value}>{title}</Body>
-            <Body isSemibold>{value && value}</Body>
+            <div className="text-right">
+                {value && (
+                    <div title={value}>
+                        <Body>{truncateMiddle(value)}</Body>
+                    </div>
+                )}
+                {subvalue && (
+                    <div title={subvalue}>
+                        <Body className="text-size-ethos-small text-[#74777C]">
+                            {truncateMiddle(subvalue, 18)}
+                        </Body>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
@@ -110,6 +131,11 @@ const AssetChanges = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
         );
     };
 
+    const Mint = ({ type }: { type: string }) => {
+        const typeParts = type.split('::');
+        return <Row title="Mint" value={typeParts[2]} subvalue={type} />;
+    };
+
     const changeTypes = (objectChange: SuiObjectChange) => {
         const types = [];
         if ('owner' in objectChange) {
@@ -118,6 +144,10 @@ const AssetChanges = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
             if (from !== to) {
                 types.push(<Transfer from={from} to={to} />);
             }
+        }
+
+        if (objectChange.type === 'created') {
+            types.push(<Mint type={objectChange.objectType} />);
         }
         return types;
     };
