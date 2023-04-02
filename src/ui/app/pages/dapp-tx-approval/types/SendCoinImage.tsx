@@ -3,7 +3,7 @@ import { ArrowRightCircleIcon } from '@heroicons/react/20/solid';
 import Sui from '../../home/tokens/Sui';
 import UnknownToken from '../../home/tokens/UnknownToken';
 
-const TransactionImage = ({
+const SendCoinImage = ({
     iconUrl,
     symbol,
 }: {
@@ -39,4 +39,4 @@ const TransactionImage = ({
     );
 };
 
-export default TransactionImage;
+export default SendCoinImage;

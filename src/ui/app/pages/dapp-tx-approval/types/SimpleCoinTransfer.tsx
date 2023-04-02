@@ -6,10 +6,10 @@ import Details from './Details';
 import FromToCard from './FromToCard';
 import Header from './Header';
 import NextStep from './NextStep';
+import SendCoinImage from './SendCoinImage';
 import Steps from './Steps';
 import TransactionBody from './TransactionBody';
 import TransactionCard from './TransactionCard';
-import TransactionImage from './TransactionImage';
 import Warning from './Warning';
 import Loading from '_src/ui/app/components/loading';
 import { useFormatCoin } from '_src/ui/app/hooks';
@@ -62,7 +62,7 @@ const StepOne = ({
                 </Warning>
             </Header>
             <TransactionBody>
-                <TransactionImage iconUrl={iconUrl} symbol={symbol} />
+                <SendCoinImage iconUrl={iconUrl} symbol={symbol} />
                 <div className="flex flex-col items-center gap-1 text-lg">
                     <div className="font-light">Confirm your want to send</div>
                     <div className="font-semibold">
@@ -206,7 +206,12 @@ const SimpleCoinTransfer = ({
     }, [step, stepInformation, onNextStep, onCancel, onApprove]);
 
     return (
-        <Loading loading={loading} big={true} resize={true}>
+        <Loading
+            loading={loading}
+            big={true}
+            resize={true}
+            className="py-12 text-center"
+        >
             {stepNode}
         </Loading>
     );

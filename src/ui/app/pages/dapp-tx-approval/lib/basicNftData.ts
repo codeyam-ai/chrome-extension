@@ -2,8 +2,8 @@ import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
 export type BasicNFtData = {
-    name: string;
-    imageUrl: string;
+    name?: string;
+    imageUrl?: string;
 };
 
 const basicNftData = async ({
@@ -31,8 +31,8 @@ const basicNftData = async ({
     }
 
     return {
-        name: object?.display?.name ?? fields?.name ?? '',
-        imageUrl: object?.display?.image_url ?? fields?.url ?? '',
+        name: object?.display?.name ?? fields?.name,
+        imageUrl: object?.display?.image_url ?? fields?.url,
     };
 };
 

@@ -5,6 +5,7 @@ import Details from './Details';
 import FromToCard from './FromToCard';
 import Header from './Header';
 import NextStep from './NextStep';
+import SendAssetImage from './SendAssetImage';
 import Steps from './Steps';
 import TransactionBody from './TransactionBody';
 // import TransactionCard from './TransactionCard';
@@ -13,14 +14,16 @@ import Warning from './Warning';
 import basicNftData, { type BasicNFtData } from '../lib/basicNftData';
 import owner from '../lib/owner';
 import Loading from '_src/ui/app/components/loading';
+import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 import type { RawSigner, SuiObjectChange } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
 export type StepInformation = {
-    name: string;
-    imageUrl: string;
+    objectId: string;
+    name?: string;
+    imageUrl?: string;
     to: string;
     analysis: AnalyzeChangesResult;
 };
@@ -36,15 +39,28 @@ const StepOne = ({
     onCancel: () => void;
     onSelectStep: (index: number) => void;
 }) => {
-    const { name, to } = stepInformation;
+    const { objectId, name, imageUrl, to } = stepInformation;
     return (
         <>
             <Header>
                 <Warning>
-                    This transaction will transfer an asset out or your wallet.
+                    This transaction transfers
+                    {name ? ` ${name} ` : ' an asset '}
+                    to another owner.
                 </Warning>
             </Header>
-            <TransactionBody>NFT TRANSFER {name}</TransactionBody>
+            <TransactionBody>
+                <SendAssetImage imageUrl={imageUrl} name={name} />
+                <div className="flex flex-col items-center gap-1 text-lg">
+                    <div className="font-light">Confirm your want to send</div>
+                    <div className="font-semibold">
+                        {name ??
+                            (imageUrl
+                                ? 'This Asset'
+                                : truncateMiddle(objectId))}
+                    </div>
+                </div>
+            </TransactionBody>
             <FromToCard to={to} />
             <NextStep onNextStep={onNextStep} onCancel={onCancel} />
             <Steps activeStep={0} stepCount={2} onClick={onSelectStep} />
@@ -101,23 +117,28 @@ const SimpleAssetTransfer = ({
         to = owner(assetTransfer.owner);
     }
 
+    let objectId = 'Unknown';
+    if ('objectId' in assetTransfer) {
+        objectId = assetTransfer.objectId;
+    }
+
     const [step, setStep] = useState<number>(0);
     const [nft, setNFT] = useState<BasicNFtData | undefined>();
 
-    const loading = useMemo(() => !!nft, [nft]);
+    const loading = useMemo(() => !nft, [nft]);
 
     useEffect(() => {
         const getNFT = async () => {
-            if (!signer || !('objectId' in assetTransfer)) return;
+            if (!signer) return;
             const nft = await basicNftData({
                 signer,
-                objectId: assetTransfer.objectId,
+                objectId,
             });
             setNFT(nft);
         };
 
         getNFT();
-    }, [signer, assetTransfer]);
+    }, [signer, objectId]);
 
     const onNextStep = useCallback(() => {
         setStep((step) => step + 1);
@@ -125,11 +146,12 @@ const SimpleAssetTransfer = ({
 
     const stepInformation = useMemo(
         () => ({
-            ...(nft || { name: '', imageUrl: '' }),
+            objectId,
+            ...nft,
             to,
             analysis,
         }),
-        [nft, to, analysis]
+        [objectId, nft, to, analysis]
     );
 
     const stepNode = useMemo(() => {
@@ -155,7 +177,12 @@ const SimpleAssetTransfer = ({
     }, [step, stepInformation, onNextStep, onCancel, onApprove]);
 
     return (
-        <Loading loading={loading} big={true} resize={true}>
+        <Loading
+            loading={loading}
+            big={true}
+            resize={true}
+            className="py-12 text-center"
+        >
             {stepNode}
         </Loading>
     );
