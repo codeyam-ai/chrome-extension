@@ -29,7 +29,9 @@ const OnboardingButton = ({
 }: OnboardingButtonProps) => {
     const buttonContent = (
         <>
-            <BodyLarge isSemibold>{title}</BodyLarge>
+            <BodyLarge isSemibold forceLightMode>
+                {title}
+            </BodyLarge>
             <div
                 className="flex place-content-center place-items-center h-8 w-8 rounded-lg"
                 style={{ backgroundColor: iconBackgroundColor }}
