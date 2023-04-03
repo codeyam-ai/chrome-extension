@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import IncorrectChain from './errors/IncorrectChain';
 import IncorrectSigner from './errors/IncorrectSigner';
+import MissingObject from './errors/MissingObject';
 import analyzeChanges from './lib/analyzeChanges';
 import finishTransaction from './lib/finishTransaction';
 import resizeWindow from './lib/resizeWindow';
@@ -43,13 +44,13 @@ export function DappTxApprovalPage() {
     const activeChain = useMemo(() => {
         switch (selectedApiEnv) {
             case 'testNet':
-                return 'sui::testnet';
+                return 'sui:testnet';
             // case 'mainNet':
-            //     return 'sui::mainnet';
+            //     return 'sui:mainnet';
             case 'local':
-                return 'sui::local';
+                return 'sui:local';
             default:
-                return 'sui::devnet';
+                return 'sui:devnet';
         }
     }, [selectedApiEnv]);
 
@@ -80,6 +81,7 @@ export function DappTxApprovalPage() {
         return TransactionBlock.from(txRequest.tx.data);
     }, [txRequest]);
 
+    const [dryRunError, setDryRunError] = useState<string | undefined>();
     const [done, setDone] = useState<boolean>(false);
 
     // const normalizedFunction = useNormalizedFunction(txRequest);
@@ -164,7 +166,7 @@ export function DappTxApprovalPage() {
                 setAnalysis(analysis);
             } catch (e: unknown) {
                 console.log('ANALSYIS ERROR', e);
-                // setDryRunError(`${e}`);
+                setDryRunError(`${e}`);
                 setAnalysis(null);
             }
         };
@@ -257,18 +259,30 @@ export function DappTxApprovalPage() {
         ) {
             return (
                 <SimpleBase onComplete={onComplete}>
-                    <div className="py-12">
-                        <IncorrectChain
-                            txID={txID}
-                            txRequest={txRequest}
-                            correctChain={txRequest.tx.chain}
-                        />
-                    </div>
+                    <IncorrectChain
+                        txID={txID}
+                        txRequest={txRequest}
+                        correctChain={txRequest.tx.chain}
+                    />
                 </SimpleBase>
             );
         }
 
-        if (!signer || !analysis) return <></>;
+        if (!signer || analysis === undefined) return <></>;
+
+        if (analysis === null) {
+            console.log('dryRunError', dryRunError);
+            return (
+                <SimpleBase onComplete={onComplete}>
+                    <MissingObject
+                        selectedApiEnv={selectedApiEnv}
+                        errorMessage={dryRunError || 'Unknown Error'}
+                        txRequest={txRequest}
+                        txID={txID}
+                    />
+                </SimpleBase>
+            );
+        }
 
         try {
             if (
@@ -356,10 +370,12 @@ export function DappTxApprovalPage() {
         authentication,
         onApprove,
         onComplete,
+        selectedApiEnv,
         signer,
         transactionBlock,
         txID,
         txRequest,
+        dryRunError,
     ]);
 
     return (

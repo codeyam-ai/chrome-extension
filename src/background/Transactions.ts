@@ -285,16 +285,16 @@ class Transactions {
 
         let env;
         switch (chain) {
-            case 'sui::devnet':
+            case 'sui:devnet':
                 env = API_ENV.devNet;
                 break;
-            case 'sui::testnet':
+            case 'sui:testnet':
                 env = API_ENV.testNet;
                 break;
-            case 'sui::local':
+            case 'sui:local':
                 env = API_ENV.local;
                 break;
-            case 'sui::custom':
+            case 'sui:custom':
                 env = API_ENV.customRPC;
                 break;
             default: {

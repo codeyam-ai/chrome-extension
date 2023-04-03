@@ -150,7 +150,7 @@ describe('The Transaction Approval popup', () => {
                 type: 'transaction',
                 data: transactionBlock.serialize(),
                 account: accountInfos[0].address,
-                chain: 'sui::testnet',
+                chain: 'sui:testnet',
             },
         };
 
@@ -173,7 +173,7 @@ describe('The Transaction Approval popup', () => {
                 type: 'transaction',
                 data,
                 account: accountInfos[0].address,
-                chain: 'sui::testnet',
+                chain: 'sui:testnet',
             },
         };
 
@@ -196,7 +196,7 @@ describe('The Transaction Approval popup', () => {
                 type: 'transaction',
                 data,
                 account: accountInfos[0].address,
-                chain: 'sui::testnet',
+                chain: 'sui:testnet',
             },
         };
 
