@@ -259,13 +259,11 @@ export function DappTxApprovalPage() {
         ) {
             return (
                 <SimpleBase onComplete={onComplete}>
-                    <div className="py-12">
-                        <IncorrectChain
-                            txID={txID}
-                            txRequest={txRequest}
-                            correctChain={txRequest.tx.chain}
-                        />
-                    </div>
+                    <IncorrectChain
+                        txID={txID}
+                        txRequest={txRequest}
+                        correctChain={txRequest.tx.chain}
+                    />
                 </SimpleBase>
             );
         }
@@ -276,14 +274,12 @@ export function DappTxApprovalPage() {
             console.log('dryRunError', dryRunError);
             return (
                 <SimpleBase onComplete={onComplete}>
-                    <div className="p-12">
-                        <MissingObject
-                            selectedApiEnv={selectedApiEnv}
-                            errorMessage={dryRunError || 'Unknown Error'}
-                            txRequest={txRequest}
-                            txID={txID}
-                        />
-                    </div>
+                    <MissingObject
+                        selectedApiEnv={selectedApiEnv}
+                        errorMessage={dryRunError || 'Unknown Error'}
+                        txRequest={txRequest}
+                        txID={txID}
+                    />
                 </SimpleBase>
             );
         }
