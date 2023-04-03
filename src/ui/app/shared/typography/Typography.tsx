@@ -15,16 +15,22 @@ const Typography = ({
     forceLightMode,
     children,
 }: TypographyProps) => {
-    let textColorClasses = `text-black ${
+    let defaultTextColorClasses = `text-black ${
         forceLightMode ? '' : 'dark:text-white'
     }`;
     if (isTextColorMedium) {
-        textColorClasses =
+        defaultTextColorClasses =
             ' ' +
             `text-ethos-light-text-medium ${
                 forceLightMode ? '' : 'dark:text-ethos-dark-text-medium'
             }`;
     }
+
+    // Prioritize the text color specified in the className prop
+    const textColorClasses = className?.includes('text-')
+        ? ''
+        : defaultTextColorClasses;
+
     return (
         <ComponentType
             className={`${className || ''} ${textColorClasses} antialiased`}
@@ -33,5 +39,4 @@ const Typography = ({
         </ComponentType>
     );
 };
-
 export default Typography;
