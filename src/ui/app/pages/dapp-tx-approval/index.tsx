@@ -113,6 +113,7 @@ export function DappTxApprovalPage() {
     useEffect(() => {
         setSigner(undefined);
         setAnalysis(undefined);
+        setDryRunError(undefined);
         resizeWindow();
     }, [selectedApiEnv]);
 
@@ -142,6 +143,22 @@ export function DappTxApprovalPage() {
 
     useEffect(() => {
         if (
+            (txRequest &&
+                'account' in txRequest.tx &&
+                txRequest.tx.account &&
+                address &&
+                txRequest.tx.account !== address) ||
+            (txRequest &&
+                'chain' in txRequest.tx &&
+                txRequest.tx.chain &&
+                txRequest.tx.chain !== activeChain &&
+                ['sui:devnet', 'sui:testnet'].includes(txRequest.tx.chain))
+        ) {
+            setAnalysis(null);
+            return;
+        }
+
+        if (
             !signer ||
             !transactionBlock ||
             !accountInfos ||
@@ -155,7 +172,6 @@ export function DappTxApprovalPage() {
             // console.log('SERIALIZED', transactionBlock.serialize());
 
             try {
-                // console.log('ANALYZE!');
                 const analysis = await analyzeChanges({
                     signer,
                     transactionBlock,
@@ -179,6 +195,8 @@ export function DappTxApprovalPage() {
         signer,
         transactionBlock,
         selectedApiEnv,
+        txRequest,
+        activeChain,
     ]);
 
     const closeWindow = useDependencies().closeWindow;
@@ -254,7 +272,8 @@ export function DappTxApprovalPage() {
             txRequest &&
             'chain' in txRequest.tx &&
             txRequest.tx.chain &&
-            txRequest.tx.chain !== activeChain
+            txRequest.tx.chain !== activeChain &&
+            ['sui:devnet', 'sui:testnet'].includes(txRequest.tx.chain)
         ) {
             return (
                 <SimpleBase onComplete={onComplete}>

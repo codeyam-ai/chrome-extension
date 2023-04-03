@@ -73,7 +73,7 @@ const PhraseInput = ({
                 })}
             </div>
             {error && (
-                <Body className="pt-2 text-ethos-light-red">
+                <Body forceLightMode className="pt-2 text-ethos-light-red">
                     That&apos;s not your recovery phrase. Please try again.
                 </Body>
             )}
