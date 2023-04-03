@@ -51,7 +51,7 @@ const getCommands = (txn: SuiTransactionBlockResponse): string | null => {
                     const mod = _.startCase(call.module);
                     const func = _.startCase(call.function);
 
-                    commandStr += `${mod} (${func})${comma} `;
+                    commandStr += `${mod}${comma} `;
                     break;
                 }
                 default:
