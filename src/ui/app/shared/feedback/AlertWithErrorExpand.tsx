@@ -274,9 +274,9 @@ const AlertWithErrorExpand = ({
                                 />
                             </div>
                         )}
-                        <Button onClick={showReportForm} removeContainerPadding>
+                        {/* <Button onClick={showReportForm} removeContainerPadding>
                             Report Issue
-                        </Button>
+                        </Button> */}
                     </span>
                 </>
             )}
