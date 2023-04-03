@@ -1,5 +1,5 @@
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
-import { BalanceChange } from './types';
+import type { BalanceChange } from './types';
 
 export type TxType = string;
 
