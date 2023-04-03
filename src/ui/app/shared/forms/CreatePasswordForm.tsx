@@ -78,6 +78,7 @@ const CustomFormikForm = () => {
                 name="termsOfService"
                 onChange={isChecked}
                 checked={checked}
+                forceLightMode
             />
 
             <div className="px-6 sm:px-10 pb-6 sm:pb-10">
