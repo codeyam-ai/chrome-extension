@@ -25,7 +25,7 @@ const ApproveContainerNavBar = ({ reject }: ApproveContainerNavBarProps) => {
     }, [activeAccountIndex]);
 
     return (
-        <div className="relative flex flex-row items-center justify-between px-6 py-3 bg-[#F0EBFE]">
+        <div className="relative flex flex-row items-center justify-between px-6 py-3 bg-ethos-light-purple dark:bg-ethos-dark-background-secondary">
             <EthosLogo />
             <WalletProfile
                 inlineWalletPicker={true}
