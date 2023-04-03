@@ -165,7 +165,6 @@ export function DappTxApprovalPage() {
 
                 setAnalysis(analysis);
             } catch (e: unknown) {
-                console.log('ANALSYIS ERROR', e);
                 setDryRunError(`${e}`);
                 setAnalysis(null);
             }
@@ -271,7 +270,6 @@ export function DappTxApprovalPage() {
         if (!signer || analysis === undefined) return <></>;
 
         if (analysis === null) {
-            console.log('dryRunError', dryRunError);
             return (
                 <SimpleBase onComplete={onComplete}>
                     <MissingObject

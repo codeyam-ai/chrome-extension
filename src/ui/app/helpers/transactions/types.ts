@@ -1,4 +1,4 @@
-import { SuiTransactionBlockResponse } from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 export interface TransactionCoinInfo {
     type: string;

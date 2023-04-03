@@ -15,8 +15,8 @@ import { useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
 // import { useCallback, useEffect, useMemo } from 'react';
 // import { useSearchParams } from 'react-router-dom';
-
 // import { type AccountInfo } from '../../KeypairVault';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { getTheme } from '../../helpers/getTheme';
@@ -31,7 +31,6 @@ import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Header from '../../shared/typography/Header';
 import ExplorerLink from '_components/explorer-link';
-import { api } from '_store/thunk-extras';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 // import { formatDate } from '_helpers';
 import {
@@ -39,19 +38,17 @@ import {
     // useFormatCoin,
     // useMiddleEllipsis
 } from '_hooks';
+import { api } from '_store/thunk-extras';
 // import CopyBody from '_src/ui/app/shared/typography/CopyBody';
-
 // import type { TxResultState } from '_redux/slices/txresults';
-
 import type { FormattedTransaction } from '../../helpers/transactions/types';
-
-import st from './ReceiptCard.module.scss';
-import { useEffect, useState } from 'react';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
+import st from './ReceiptCard.module.scss';
+
 type TxResponseProps = {
-    txDigest: any;
-    trans?: 'nft' | 'coin' | 'func' | null;
+    txDigest: string | null;
+    trans?: 'nft' | 'coin' | 'func' | 'sui';
 };
 
 // const TRUNCATE_MAX_LENGTH = 8;
@@ -158,6 +155,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     const address = useAppSelector(({ account }) => account.address) as string;
     const { data } = useQuery(['transactions-by-address', address]);
     const theme = getTheme();
+    const txRef = useRef<FormattedTransaction>();
 
     const [transaction, setTransaction] =
         useState<SuiTransactionBlockResponse>();
@@ -166,20 +164,16 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     const [searchParams] = useSearchParams();
     const txDigestFromUrl = searchParams.get('txdigest');
 
-    let result: FormattedTransaction[] = [];
-    let tx: FormattedTransaction | undefined;
+    const result = data as FormattedTransaction[];
 
     useEffect(() => {
-        if (data) {
-            // get result from transaction-by-address react query
-            result = data as FormattedTransaction[];
-
+        if (result) {
             // find transaction details based on txDigest
-            tx = result.find(
+            txRef.current = result.find(
                 (tx) => tx.transaction.digest === txDigest
             ) as FormattedTransaction;
 
-            setTransaction(tx.transaction);
+            setTransaction(txRef.current.transaction);
         } else {
             // TODO: get the individual transaction if the data is not available
             // with the digest txDigestFromUrl
@@ -202,7 +196,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
 
             getTransaction();
         }
-    }, []);
+    }, [result, txDigest, txDigestFromUrl]);
 
     // TODO: improve the error state for the transaction
     if (!transaction) return <div>Transaction not found.</div>;
@@ -210,16 +204,11 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     const {
         timeDisplay,
         txType,
-        // txAction,
         txAmount,
         txStatus,
         txUsdAmount,
         gasFeeInSui,
-        // gasFeeInUsd,
         txCommands,
-        // preposition,
-        // otherAddress,
-        // otherAddressStr,
         displayImage,
     } = getHumanReadable(address, transaction);
 
@@ -436,27 +425,18 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             <div className={'px-6 pb-6'}>
                 <div className={'flex flex-row justify-between'}>
                     <BodyLarge>
-                        {txType === 'nft' ? (
-                            <ExplorerLink
-                                type={ExplorerLinkType.object}
-                                objectID={txDigest.objectId || ''}
-                                title="View on Sui Explorer"
-                                className={st['explorer-link']}
-                                showIcon={true}
-                            >
-                                View NFT on Sui Explorer
-                            </ExplorerLink>
-                        ) : (
-                            <ExplorerLink
-                                type={ExplorerLinkType.transaction}
-                                transactionID={txDigest.txId}
-                                title="View on Sui Explorer"
-                                className={st['explorer-link']}
-                                showIcon={true}
-                            >
-                                View on Sui Explorer
-                            </ExplorerLink>
-                        )}
+                        <ExplorerLink
+                            type={ExplorerLinkType.transaction}
+                            transactionID={
+                                txRef?.current?.transaction.effects
+                                    ?.transactionDigest || ''
+                            }
+                            title="View on Sui Explorer"
+                            className={st['explorer-link']}
+                            showIcon={true}
+                        >
+                            View on Sui Explorer
+                        </ExplorerLink>
                     </BodyLarge>
                     <div className={'text-ethos-light-text-medium'}>
                         <ArrowUpRightIcon width={16} height={16} />

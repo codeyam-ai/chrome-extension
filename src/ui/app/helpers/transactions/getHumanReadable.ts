@@ -10,7 +10,6 @@ import getIsSender from './getIsSender';
 import {
     getFormattedGasFee,
     getGasFee,
-    getSuiObj,
     getSuiTransferAmount,
 } from './getSuiTransferAmount';
 import getUsdAmount from './getUsdAmount';

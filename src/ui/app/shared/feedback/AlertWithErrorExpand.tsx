@@ -68,10 +68,6 @@ const AlertWithErrorExpand = ({
         setExpanded(!expanded);
     }, [expanded]);
 
-    const showReportForm = useCallback(() => {
-        setIsReportFormOpen(true);
-    }, []);
-
     const handleErrorCommentChange = useCallback(
         (event: React.ChangeEvent<HTMLTextAreaElement>) => {
             if (event.target.value.length > 1000) {
