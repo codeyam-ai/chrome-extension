@@ -133,7 +133,7 @@ const CompletePage = () => {
                 <SuiIcon width={50} height={50} color="black" />
             </div>
             <div className="flex flex-col gap-2 text-center">
-                <JumboTitle>
+                <JumboTitle forceLightMode>
                     {suiAmount === 0 && !error ? (
                         '0'
                     ) : (
@@ -150,7 +150,9 @@ const CompletePage = () => {
                         </div>
                     )}
                 </JumboTitle>
-                <Header isTextColorMedium>Sui Balance</Header>
+                <Header isTextColorMedium forceLightMode>
+                    Sui Balance
+                </Header>
             </div>
         </div>
     );

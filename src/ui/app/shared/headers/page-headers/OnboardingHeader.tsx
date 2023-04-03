@@ -11,8 +11,10 @@ const OnboardingHeader = () => {
                 </div>
             </div>
             <div className="flex flex-col gap-2">
-                <Title as="h1">Welcome to Ethos</Title>
-                <Subheader isTextColorMedium>
+                <Title as="h1" forceLightMode>
+                    Welcome to Ethos
+                </Title>
+                <Subheader isTextColorMedium forceLightMode>
                     A reimagined wallet for discovering apps, games, and NFTs on
                     Sui
                 </Subheader>

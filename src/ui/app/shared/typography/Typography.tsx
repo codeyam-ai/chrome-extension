@@ -15,7 +15,9 @@ const Typography = ({
     forceLightMode,
     children,
 }: TypographyProps) => {
-    let textColorClasses = 'text-black dark:text-white';
+    let textColorClasses = `text-black ${
+        forceLightMode ? '' : 'dark:text-white'
+    }`;
     if (isTextColorMedium) {
         textColorClasses =
             ' ' +

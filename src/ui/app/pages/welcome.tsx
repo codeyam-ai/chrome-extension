@@ -51,7 +51,7 @@ const WelcomePage = () => {
             <div className="flex flex-col w-[464px]">
                 <OnboardingHeader />
                 <div className="flex flex-col gap-8 text-center py-6 sm:py-10 px-6 sm:px-0 rounded-2xl bg-ethos-light-background-default">
-                    <Title className="px-10">
+                    <Title forceLightMode className="px-10">
                         Choose how you would like to setup your wallet.
                     </Title>
                     <div className="flex flex-col gap-3 px-10">
