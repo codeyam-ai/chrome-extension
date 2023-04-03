@@ -1,21 +1,32 @@
 import {
     ArrowDownLeftIcon,
     ArrowsRightLeftIcon,
+    ArrowsUpDownIcon,
     ArrowUpRightIcon,
+    CheckIcon,
+    CodeBracketIcon,
+    FireIcon,
     SparklesIcon,
 } from '@heroicons/react/24/solid';
 
-import type { TxAction } from './getTxAction';
-
-const getIcon = (txType: TxAction) => {
-    if (txType === 'send') {
-        return <ArrowUpRightIcon />;
-    } else if (txType === 'receive') {
-        return <ArrowDownLeftIcon />;
-    } else if (txType === 'mint') {
-        return <SparklesIcon />;
-    } else {
-        return <ArrowsRightLeftIcon />;
+const getIcon = (txAction: string): JSX.Element => {
+    switch (txAction) {
+        case 'mint':
+            return <SparklesIcon />;
+        case 'transfer':
+            return <ArrowsRightLeftIcon />;
+        case 'function':
+            return <CodeBracketIcon />;
+        case 'send':
+            return <ArrowUpRightIcon />;
+        case 'receive':
+            return <ArrowDownLeftIcon />;
+        case 'clone':
+            return <ArrowsUpDownIcon />;
+        case 'burn':
+            return <FireIcon />;
+        default:
+            return <CheckIcon />;
     }
 };
 
