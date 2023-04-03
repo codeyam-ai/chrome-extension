@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 
+import ChainIndicator from './ChainIndicator';
 import { startWalletLockTimer } from '_src/ui/app/helpers/lock-wallet';
+import { useAppSelector } from '_src/ui/app/hooks';
 import ApproveContainerNavBar from '_src/ui/app/shared/navigation/nav-bar/ApproveContainerNavBar';
 
 import type { ReactElement } from 'react';
@@ -12,6 +14,8 @@ const SimpleBase = ({
     onComplete: (accept: boolean) => void;
     children: ReactElement;
 }) => {
+    const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+
     const reject = useCallback(() => {
         startWalletLockTimer();
         onComplete(false);
@@ -20,6 +24,7 @@ const SimpleBase = ({
     return (
         <div className="w-full">
             <ApproveContainerNavBar reject={reject} />
+            <ChainIndicator apiEnv={selectedApiEnv} />
             {children}
         </div>
     );

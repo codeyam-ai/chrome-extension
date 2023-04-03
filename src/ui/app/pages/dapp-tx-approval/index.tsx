@@ -2,9 +2,11 @@ import { TransactionBlock } from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import IncorrectChain from './errors/IncorrectChain';
 import IncorrectSigner from './errors/IncorrectSigner';
 import analyzeChanges from './lib/analyzeChanges';
 import finishTransaction from './lib/finishTransaction';
+import resizeWindow from './lib/resizeWindow';
 import Base from './types/Base';
 import ComplexMoveCall from './types/ComplexMoveCall';
 import SimpleAssetMint from './types/SimpleAssetMint';
@@ -36,7 +38,21 @@ export type DistilledEffect = {
 };
 
 export function DappTxApprovalPage() {
-    // const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+    const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+
+    const activeChain = useMemo(() => {
+        switch (selectedApiEnv) {
+            case 'testNet':
+                return 'sui::testnet';
+            // case 'mainNet':
+            //     return 'sui::mainnet';
+            case 'local':
+                return 'sui::local';
+            default:
+                return 'sui::devnet';
+        }
+    }, [selectedApiEnv]);
+
     const [signer, setSigner] = useState<RawSigner | EthosSigner | undefined>();
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
 
@@ -93,6 +109,12 @@ export function DappTxApprovalPage() {
     }, []);
 
     useEffect(() => {
+        setSigner(undefined);
+        setAnalysis(undefined);
+        resizeWindow();
+    }, [selectedApiEnv]);
+
+    useEffect(() => {
         if (!accountInfos || accountInfos.length === 0) return;
 
         let signer;
@@ -108,7 +130,13 @@ export function DappTxApprovalPage() {
             );
         }
         setSigner(signer);
-    }, [accountInfos, activeAccountIndex, address, authentication]);
+    }, [
+        accountInfos,
+        activeAccountIndex,
+        address,
+        authentication,
+        selectedApiEnv,
+    ]);
 
     useEffect(() => {
         if (
@@ -125,6 +153,7 @@ export function DappTxApprovalPage() {
             // console.log('SERIALIZED', transactionBlock.serialize());
 
             try {
+                // console.log('ANALYZE!');
                 const analysis = await analyzeChanges({
                     signer,
                     transactionBlock,
@@ -148,6 +177,7 @@ export function DappTxApprovalPage() {
         authentication,
         signer,
         transactionBlock,
+        selectedApiEnv,
     ]);
 
     const closeWindow = useDependencies().closeWindow;
@@ -200,6 +230,44 @@ export function DappTxApprovalPage() {
     }, [handleOnSubmit]);
 
     const content = useMemo(() => {
+        if (
+            txRequest &&
+            'account' in txRequest.tx &&
+            txRequest.tx.account &&
+            txRequest.tx.account !== address
+        ) {
+            return (
+                <SimpleBase onComplete={onComplete}>
+                    <div className="py-12">
+                        <IncorrectSigner
+                            txID={txID}
+                            txRequest={txRequest}
+                            correctAddress={txRequest.tx.account}
+                        />
+                    </div>
+                </SimpleBase>
+            );
+        }
+
+        if (
+            txRequest &&
+            'chain' in txRequest.tx &&
+            txRequest.tx.chain &&
+            txRequest.tx.chain !== activeChain
+        ) {
+            return (
+                <SimpleBase onComplete={onComplete}>
+                    <div className="py-12">
+                        <IncorrectChain
+                            txID={txID}
+                            txRequest={txRequest}
+                            correctChain={txRequest.tx.chain}
+                        />
+                    </div>
+                </SimpleBase>
+            );
+        }
+
         if (!signer || !analysis) return <></>;
 
         try {
@@ -282,6 +350,7 @@ export function DappTxApprovalPage() {
         );
     }, [
         activeAccountIndex,
+        activeChain,
         address,
         analysis,
         authentication,
@@ -292,25 +361,6 @@ export function DappTxApprovalPage() {
         txID,
         txRequest,
     ]);
-
-    if (
-        !loading &&
-        'account' in txRequest.tx &&
-        txRequest.tx.account &&
-        txRequest.tx.account !== address
-    ) {
-        return (
-            <SimpleBase onComplete={onComplete}>
-                <div className="py-12">
-                    <IncorrectSigner
-                        txID={txID}
-                        txRequest={txRequest}
-                        correctAddress={txRequest.tx.account}
-                    />
-                </div>
-            </SimpleBase>
-        );
-    }
 
     return (
         <Loading loading={loading} big={true} resize={true}>
