@@ -5,3 +5,4 @@ dist/
 out/
 font-icons/output/
 src/ui/styles/tailwind.css
+src/ui/styles/toastify.css
