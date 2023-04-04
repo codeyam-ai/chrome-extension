@@ -1,6 +1,6 @@
 // src/ui/app/hooks/useUpdateCurrentAccountInfo.ts
 import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import useAppDispatch from './useAppDispatch';
 import { type AccountInfo } from '../KeypairVault';
@@ -48,7 +48,6 @@ export const useUpdateCurrentAccountInfo = () => {
     };
 
     const _saveAccountInfos = async (newAccountInfos: AccountInfo[]) => {
-        console.log('newAccountInfos :>> ', newAccountInfos);
         if (isHostedWallet) {
             await Authentication.updateAccountInfos(newAccountInfos);
             await dispatch(setAccountInfos(newAccountInfos));

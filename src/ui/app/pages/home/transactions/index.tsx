@@ -1,18 +1,8 @@
-// import { QueueListIcon } from '@heroicons/react/24/solid';
-// import { type SuiTransactionResponse } from '@mysten/sui.js';
 import { QueueListIcon } from '@heroicons/react/24/solid';
 //import { SuiTransactionBlockResponse } from '@mysten/sui.js';
-import React, {
-    memo,
-    useCallback,
-    useEffect,
-    useLayoutEffect,
-    useState,
-} from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 
 import { useAppSelector } from '_hooks';
-// import { getFullTransactionDetails } from '_redux/slices/txresults';
-//import { type TxResultState } from '_redux/slices/txresults';
 import Loading from '_src/ui/app/components/loading';
 import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 //import { getTxType } from '_src/ui/app/helpers/transactions';
@@ -33,21 +23,11 @@ import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle
 import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
-// import { Icon } from '_src/ui/app/shared/icons/Icon';
-// import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
-
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
     const [formattedTxns, setFormattedTxns] = useState<FormattedTransaction[]>(
         []
     );
-
-    const scrollX = window.scrollX;
-    const scrollY = window.scrollY;
-
-    useLayoutEffect(() => {
-        window.scrollTo(scrollX, scrollY);
-    });
 
     const [cursors, setCursors] = useState({
         fromCursor: '',

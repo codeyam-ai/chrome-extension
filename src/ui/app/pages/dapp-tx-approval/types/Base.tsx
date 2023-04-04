@@ -2,10 +2,7 @@ import { SUI_TYPE_ARG, TransactionBlock } from '@mysten/sui.js';
 import { type ReactElement, useMemo, useState, useCallback } from 'react';
 
 import truncateMiddle from '../../../helpers/truncate-middle';
-import AlertWithErrorExpand from '../../../shared/feedback/AlertWithErrorExpand';
-import Body from '../../../shared/typography/Body';
 import CopyBody from '../../../shared/typography/CopyBody';
-import EthosLink from '../../../shared/typography/EthosLink';
 import CopyAsset from '../CopyAsset';
 import FormattedCoin from '../FormattedCoin';
 import SectionElement from '../SectionElement';
@@ -13,7 +10,6 @@ import TabElement from '../TabElement';
 import { useCategorizedEvents, useCustomSummary } from '../lib';
 import finishTransaction from '../lib/finishTransaction';
 import * as summaries from '../summaries';
-import { MAILTO_SUPPORT_URL } from '_src/shared/constants';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 import { useFormatCoin } from '_src/ui/app/hooks';
 
@@ -61,10 +57,6 @@ const Base = ({
     setDone,
 }: BaseProps) => {
     const [tab, setTab] = useState(TxApprovalTab.SUMMARY);
-    const [dryRunError, setDryRunError] = useState<string | undefined>();
-    const [explicitError, setExplicitError] = useState<
-        ReactElement | undefined
-    >();
 
     const summaryKey = useCustomSummary(txRequest);
 
@@ -420,39 +412,6 @@ const Base = ({
         gas,
     ]);
 
-    const errorElement = useMemo(() => {
-        if (explicitError)
-            return <div className="px-6 pb-6">{explicitError}</div>;
-
-        if (dryRunError)
-            return (
-                <div className="px-6 pb-6 flex flex-col gap-6">
-                    <AlertWithErrorExpand
-                        title="Dry run error"
-                        body={
-                            <Body>
-                                Your transaction couldn&apos;t be estimated.
-                                Please try again later. If this issue persists,{' '}
-                                <EthosLink
-                                    type="external"
-                                    to={MAILTO_SUPPORT_URL}
-                                >
-                                    contact Ethos
-                                </EthosLink>
-                                .
-                            </Body>
-                        }
-                        fullErrorText={dryRunError}
-                        txInfo={{
-                            dAppUrl: txRequest?.origin || '',
-                            txId: txID || '',
-                            txRequest: txRequest ?? null,
-                        }}
-                    />
-                </div>
-            );
-    }, [explicitError, dryRunError, txRequest, txID]);
-
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
             const options =
@@ -494,42 +453,37 @@ const Base = ({
             approveTitle="Approve"
             rejectTitle="Reject"
             onSubmit={handleOnSubmit}
-            hasError={!!dryRunError || !!explicitError}
         >
-            {errorElement ? (
-                errorElement
-            ) : (
-                <div className="flex flex-col gap-6 pb-6">
-                    <div className="flex flex-row gap-2 justify-between items-baseline px-6">
-                        {[
-                            TxApprovalTab.SUMMARY,
-                            TxApprovalTab.ASSETS,
-                            TxApprovalTab.DETAILS,
-                        ]
-                            .filter((t) => content[t])
-                            .map((t, index) => (
-                                <TabElement
-                                    key={`tab-${index}`}
-                                    type={t}
-                                    isSelected={t === tab}
-                                    setTab={setTab}
-                                />
-                            ))}
-                    </div>
-
-                    <div
-                        id="content"
-                        className="flex flex-col gap-6 w-full px-6 overflow-auto"
-                    >
-                        {(content[tab] || []).map((section, sectionIndex) => (
-                            <SectionElement
-                                key={`section-${sectionIndex}`}
-                                section={section}
+            <div className="flex flex-col gap-6 pb-6">
+                <div className="flex flex-row gap-2 justify-between items-baseline px-6">
+                    {[
+                        TxApprovalTab.SUMMARY,
+                        TxApprovalTab.ASSETS,
+                        TxApprovalTab.DETAILS,
+                    ]
+                        .filter((t) => content[t])
+                        .map((t, index) => (
+                            <TabElement
+                                key={`tab-${index}`}
+                                type={t}
+                                isSelected={t === tab}
+                                setTab={setTab}
                             />
                         ))}
-                    </div>
                 </div>
-            )}
+
+                <div
+                    id="content"
+                    className="flex flex-col gap-6 w-full px-6 overflow-auto"
+                >
+                    {(content[tab] || []).map((section, sectionIndex) => (
+                        <SectionElement
+                            key={`section-${sectionIndex}`}
+                            section={section}
+                        />
+                    ))}
+                </div>
+            </div>
         </UserApproveContainer>
     ) : (
         <></>
