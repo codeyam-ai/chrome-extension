@@ -4,7 +4,7 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 
 import { useAppSelector } from '_hooks';
 import Loading from '_src/ui/app/components/loading';
-import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
+
 //import { getTxType } from '_src/ui/app/helpers/transactions';
 import { useQueryTransactionsByAddress } from '_src/ui/app/hooks/useQueryTransactionsByAddress';
 import Button from '_src/ui/app/shared/button';
@@ -22,6 +22,8 @@ import Alert from '_src/ui/app/shared/feedback/Alert';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
+
+import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
@@ -57,7 +59,7 @@ const TransactionsPage = () => {
         }
 
         loadPage();
-    }, [address, suiTxns]);
+    }, [address, suiTxns, loadPage]);
 
     const incrementPage = useCallback(() => {
         if (suiTxns?.toHasNext || suiTxns?.fromHasNext) {
@@ -66,7 +68,7 @@ const TransactionsPage = () => {
                 toCursor: suiTxns.toNextPageCursor || '',
             });
         }
-    }, [loadPage, suiTxns]);
+    }, [suiTxns]);
 
     if (txErr) {
         return (
