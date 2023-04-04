@@ -18,7 +18,7 @@ const getDisplayImage = (txn: SuiTransactionBlockResponse): string | null => {
 
         // iterate through the commands to check if it's a mint func
         transaction.transactions.forEach((command) => {
-            const commandObj = command as any;
+            const commandObj = command;
             const commandKey = Object.keys(commandObj)[0];
 
             // Check if the function has an input

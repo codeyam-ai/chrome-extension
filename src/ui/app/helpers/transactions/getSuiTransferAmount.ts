@@ -3,7 +3,7 @@ import { getFormattedBalance } from '../formatCoin';
 import type { BalanceChange } from '../transactions/types';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
-function isObjectOwner(value: unknown): value is { [key: string]: any } {
+function isObjectOwner(value: unknown): value is { [key: string]: string } {
     return typeof value === 'object' && value !== null;
 }
 

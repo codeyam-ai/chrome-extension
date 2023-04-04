@@ -30,7 +30,7 @@ const getCommands = (txn: SuiTransactionBlockResponse): string | null => {
         const primaryObjName = getPrimaryObjName();
 
         transaction.transactions.forEach((command, idx) => {
-            const commandObj = command as any;
+            const commandObj = command;
             const commandKey = Object.keys(commandObj)[0];
             const comma = idx + 1 < totalCommands ? ',' : '';
 
@@ -48,11 +48,12 @@ const getCommands = (txn: SuiTransactionBlockResponse): string | null => {
                     appendCommandStr('Make Move', idx, comma);
                     break;
                 case 'MoveCall': {
-                    const call = commandObj['MoveCall'];
-                    const mod = _.startCase(call.module);
-                    const func = _.startCase(call.function);
+                    if ('MoveCall' in commandObj) {
+                        const call = commandObj['MoveCall'];
+                        const mod = _.startCase(call.module);
 
-                    commandStr += `${mod}${comma} `;
+                        commandStr += `${mod}${comma} `;
+                    }
                     break;
                 }
                 default:

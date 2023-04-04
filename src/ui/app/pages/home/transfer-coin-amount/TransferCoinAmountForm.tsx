@@ -5,7 +5,6 @@ import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
 import { useEffect, useMemo, useRef, memo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import useNumberDelimiters from '../../../hooks/useNumberDelimiters';
 import Sui from '../tokens/Sui';
 import UnknownToken from '../tokens/UnknownToken';
 import LoadingIndicator from '_components/loading/LoadingIndicator';

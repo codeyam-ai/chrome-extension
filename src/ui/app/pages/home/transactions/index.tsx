@@ -1,17 +1,18 @@
 // import { QueueListIcon } from '@heroicons/react/24/solid';
 // import { type SuiTransactionResponse } from '@mysten/sui.js';
 import { QueueListIcon } from '@heroicons/react/24/solid';
-import { SuiTransactionBlockResponse } from '@mysten/sui.js';
-import React, { memo, useCallback, useEffect, useState } from 'react';
+//import { SuiTransactionBlockResponse } from '@mysten/sui.js';
+import React, { memo, useEffect, useState } from 'react';
 
 import { useAppSelector } from '_hooks';
 // import { getFullTransactionDetails } from '_redux/slices/txresults';
-import { type TxResultState } from '_redux/slices/txresults';
+//import { type TxResultState } from '_redux/slices/txresults';
 import Loading from '_src/ui/app/components/loading';
-import { getTxType } from '_src/ui/app/helpers/transactions';
+
+//import { getTxType } from '_src/ui/app/helpers/transactions';
 import { useQueryTransactionsByAddress } from '_src/ui/app/hooks/useQueryTransactionsByAddress';
-import { api } from '_src/ui/app/redux/store/thunk-extras';
-import Button from '_src/ui/app/shared/button';
+//import { api } from '_src/ui/app/redux/store/thunk-extras';
+//import Button from '_src/ui/app/shared/button';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 
 // import deduplicate from '_src/ui/app/helpers/deduplicate';
@@ -19,18 +20,21 @@ import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/Transacti
 // import { getTxType } from '_src/ui/app/helpers/transactions';
 // import { api } from '_src/ui/app/redux/store/thunk-extras';
 // import Button from '_src/ui/app/shared/button';
-import Alert from '_src/ui/app/shared/feedback/Alert';
+//import Alert from '_src/ui/app/shared/feedback/Alert';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
+
+import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 
 // import { Icon } from '_src/ui/app/shared/icons/Icon';
 // import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
 const TransactionsPage = () => {
     const address = useAppSelector(({ account }) => account.address);
-    const [currentPage, setCurrentPage] = useState(0);
-    const [formattedTxns, setFormattedTxns] = useState<any[]>([]);
+    const [formattedTxns, setFormattedTxns] = useState<FormattedTransaction[]>(
+        []
+    );
 
     const { isLoading: loadingTxns, data: suiTxns } =
         useQueryTransactionsByAddress(address);
@@ -87,7 +91,7 @@ const TransactionsPage = () => {
         };
 
         loadFormattedTransactionsForCurrentPage();
-    }, [address, currentPage, suiTxns]);
+    }, [address, suiTxns]);
 
     /*const incrementPage = useCallback(() => {
         setCurrentPage(currentPage + 1);
