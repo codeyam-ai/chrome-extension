@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import zxcvbn from 'zxcvbn';
 
 import Button from '../buttons/Button';
+import HideShowToggle from '../buttons/HideShowToggle';
 import Checkbox from '../inputs/Checkbox';
 import Input from '../inputs/Input';
 import { BASE_URL } from '_src/shared/constants';
@@ -20,43 +21,55 @@ const CustomFormikForm = () => {
     const [checked, setChecked] = useState(false);
     const [field, meta] = useField('password');
     const [confirmField, confirmMeta] = useField('confirmPassword');
+    const [passwordMode, setPasswordMode] = useState(true);
 
     const isChecked = useCallback(() => {
         setChecked(!checked);
     }, [checked]);
 
+    const togglePasswordMode = useCallback(() => {
+        setPasswordMode((prev) => !prev);
+    }, []);
+
     return (
         <>
-            <Input
-                {...field}
-                placeholder="Enter your password"
-                id="password"
-                data-testid="password"
-                name="password"
-                type="password"
-                required={true}
-                errorText={meta.touched && meta.error ? meta.error : undefined}
-                className="!px-6 sm:!px-10"
-                forceLightTheme
-                autoFocus
-            />
+            <div className="!px-6 sm:!px-10 pb-12">
+                <Input
+                    {...field}
+                    placeholder="Enter your password"
+                    id="password"
+                    data-testid="password"
+                    name="password"
+                    type={passwordMode ? 'password' : 'text'}
+                    required={true}
+                    errorText={
+                        meta.touched && meta.error ? meta.error : undefined
+                    }
+                    forceLightTheme
+                    autoFocus
+                />
 
-            <Input
-                {...confirmField}
-                placeholder="Re-enter your password"
-                id="confirmPassword"
-                data-testid="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                required={true}
-                errorText={
-                    confirmMeta.touched && confirmMeta.error
-                        ? confirmMeta.error
-                        : undefined
-                }
-                className="!px-6 sm:!px-10 !pb-[128px]"
-                forceLightTheme
-            />
+                <Input
+                    {...confirmField}
+                    placeholder="Re-enter your password"
+                    id="confirmPassword"
+                    data-testid="confirmPassword"
+                    name="confirmPassword"
+                    type={passwordMode ? 'password' : 'text'}
+                    required={true}
+                    errorText={
+                        confirmMeta.touched && confirmMeta.error
+                            ? confirmMeta.error
+                            : undefined
+                    }
+                    forceLightTheme
+                />
+                <HideShowToggle
+                    name="Password"
+                    hide={passwordMode}
+                    onToggle={togglePasswordMode}
+                />
+            </div>
 
             <Checkbox
                 className="px-6"

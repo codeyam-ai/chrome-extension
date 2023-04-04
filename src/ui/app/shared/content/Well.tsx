@@ -1,9 +1,11 @@
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 
+import type { ReactNode } from 'react';
+
 interface WellProps {
     header: string;
-    subHeader: string;
+    subHeader: ReactNode;
     forceLightMode?: boolean;
 }
 
