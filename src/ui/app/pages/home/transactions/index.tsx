@@ -2,18 +2,26 @@
 // import { type SuiTransactionResponse } from '@mysten/sui.js';
 import { QueueListIcon } from '@heroicons/react/24/solid';
 //import { SuiTransactionBlockResponse } from '@mysten/sui.js';
-import React, { memo, useEffect, useState } from 'react';
+import React, {
+    memo,
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useState,
+} from 'react';
 
 import { useAppSelector } from '_hooks';
 // import { getFullTransactionDetails } from '_redux/slices/txresults';
 //import { type TxResultState } from '_redux/slices/txresults';
 import Loading from '_src/ui/app/components/loading';
-
+import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 //import { getTxType } from '_src/ui/app/helpers/transactions';
 import { useQueryTransactionsByAddress } from '_src/ui/app/hooks/useQueryTransactionsByAddress';
+import Button from '_src/ui/app/shared/button';
 //import { api } from '_src/ui/app/redux/store/thunk-extras';
 //import Button from '_src/ui/app/shared/button';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
+import Alert from '_src/ui/app/shared/feedback/Alert';
 
 // import deduplicate from '_src/ui/app/helpers/deduplicate';
 // import formatCoin from '_src/ui/app/helpers/formatCoin';
@@ -25,8 +33,6 @@ import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle
 import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
-import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
-
 // import { Icon } from '_src/ui/app/shared/icons/Icon';
 // import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
@@ -36,8 +42,33 @@ const TransactionsPage = () => {
         []
     );
 
-    const { isLoading: loadingTxns, data: suiTxns } =
-        useQueryTransactionsByAddress(address);
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+
+    useLayoutEffect(() => {
+        window.scrollTo(scrollX, scrollY);
+    });
+
+    const [cursors, setCursors] = useState({
+        fromCursor: '',
+        toCursor: '',
+    });
+
+    const {
+        isLoading: loadingTxns,
+        data: suiTxns,
+        error: txErr,
+    } = useQueryTransactionsByAddress(
+        address || '',
+        cursors.toCursor || null,
+        cursors.fromCursor || null,
+        10
+    );
+
+    const loadPage = async () => {
+        if (!suiTxns) return;
+        setFormattedTxns((prev) => [...prev, ...suiTxns.blocks]);
+    };
 
     // load a page of "formatted transactions"
     useEffect(() => {
@@ -45,81 +76,41 @@ const TransactionsPage = () => {
             return;
         }
 
-        const loadFormattedTransactionsForCurrentPage = async () => {
-            if (!suiTxns) return;
-
-            setFormattedTxns(suiTxns);
-            /*const fullTransactionDetails = await getFullTransactionDetails(
-                transactionsToFormat,
-                address,
-                api
-            );
-            const newFormattedTransactions: TxResultState[] = await Promise.all(
-                fullTransactionDetails?.map(async (tx) => {
-                    //TODO: fix type error for any
-
-                    const {
-                        formattedBalance,
-                        coinSymbol,
-                        dollars,
-                        coinName,
-                        coinIcon,
-                    } = await formatCoin(
-                        api.instance.fullNode,
-                        tx.amount,
-                        tx.objType
-                    );
-                    return {
-                        ...tx,
-                        formatted: {
-                            formattedBalance,
-                            coinSymbol,
-                            dollars,
-                            coinName,
-                            coinIcon,
-                        },
-                    };
-                })
-            );
-
-            if (newFormattedTransactions) {
-                setFormattedTxns((prev) => [
-                    ...(prev || []),
-                    ...newFormattedTransactions,
-                ]);
-            }*/
-        };
-
-        loadFormattedTransactionsForCurrentPage();
+        loadPage();
     }, [address, suiTxns]);
 
-    /*const incrementPage = useCallback(() => {
-        setCurrentPage(currentPage + 1);
-    }, [currentPage]);
+    const incrementPage = useCallback(() => {
+        if (suiTxns?.toHasNext || suiTxns?.fromHasNext) {
+            setCursors({
+                fromCursor: suiTxns.fromPageCursor || '',
+                toCursor: suiTxns.toNextPageCursor || '',
+            });
+        }
+    }, [loadPage, suiTxns]);
 
-    if (error) {
+    if (txErr) {
         return (
             <div className="pb-4">
                 <Alert
                     title={'We could not retrieve your transactions'}
-                    subtitle={error}
+                    subtitle={'Please try again later.'}
                     borderRadius={16}
                 />
             </div>
         );
-    }*/
+    }
 
     return (
         <React.Fragment>
-            <Loading loading={loadingTxns} big={true}>
-                {formattedTxns && formattedTxns.length > 0 && (
+            <Loading loading={loadingTxns && !formattedTxns} big={true}>
+                {suiTxns && suiTxns.blocks.length > 0 && (
                     <div className={'flex flex-col'}>
                         <TextPageTitle title="Activity" />
                         <TransactionRows transactions={formattedTxns} />
                     </div>
                 )}
-                {/*<div>
-                    {moreTxnsAvailable && (
+                <div>
+                    {suiTxns?.toHasNext && (
                         <div
                             className={
                                 'w-full flex flex-row items-center justify-center'
@@ -134,9 +125,9 @@ const TransactionsPage = () => {
                             </Button>
                         </div>
                     )}
-                        </div>*/}
+                </div>
 
-                {formattedTxns && formattedTxns.length === 0 && (
+                {suiTxns && suiTxns.blocks.length === 0 && (
                     <EmptyPageState
                         iconWithNoClasses={
                             <Icon displayIcon={<QueueListIcon />} />
