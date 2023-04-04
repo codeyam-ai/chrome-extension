@@ -54,7 +54,7 @@ const StepOne = ({
         to,
     } = stepInformation;
     return (
-        <>
+        <div className="h-full flex flex-col w-full gap-3">
             <Header>
                 <Warning>
                     This transaction will reduce your {name} balance by{' '}
@@ -75,7 +75,7 @@ const StepOne = ({
             <FromToCard to={to}></FromToCard>
             <NextStep onNextStep={onNextStep} onCancel={onCancel} />
             <Steps activeStep={0} stepCount={2} onClick={onSelectStep} />
-        </>
+        </div>
     );
 };
 
@@ -99,7 +99,7 @@ const StepTwo = ({
     }, []);
 
     return (
-        <div className="h-full flex flex-col w-full py-3">
+        <div className="h-full flex flex-col w-full gap-3">
             <CoinTransactionCard stepInformation={stepInformation} />
             <Details analysis={stepInformation.analysis} signer={signer} />
             <Approve

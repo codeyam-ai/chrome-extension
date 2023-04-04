@@ -398,7 +398,7 @@ export function DappTxApprovalPage() {
     ]);
 
     return (
-        <Loading loading={loading} big={true} resize={true}>
+        <Loading loading={loading} big={true} resize={true} className="py-60">
             {content}
         </Loading>
     );

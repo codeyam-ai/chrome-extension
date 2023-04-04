@@ -41,7 +41,7 @@ const StepOne = ({
 }) => {
     const { objectId, name, imageUrl, to } = stepInformation;
     return (
-        <>
+        <div className="h-full flex flex-col w-full gap-3">
             <Header>
                 <Warning>
                     This transaction transfers
@@ -64,7 +64,7 @@ const StepOne = ({
             <FromToCard to={to} />
             <NextStep onNextStep={onNextStep} onCancel={onCancel} />
             <Steps activeStep={0} stepCount={2} onClick={onSelectStep} />
-        </>
+        </div>
     );
 };
 
@@ -88,7 +88,7 @@ const StepTwo = ({
     }, []);
 
     return (
-        <div className="h-full flex flex-col w-full py-3">
+        <div className="h-full flex flex-col w-full gap-3">
             <AssetTransactionCard stepInformation={stepInformation} />
             <Details analysis={stepInformation.analysis} signer={signer} />
             <Approve
