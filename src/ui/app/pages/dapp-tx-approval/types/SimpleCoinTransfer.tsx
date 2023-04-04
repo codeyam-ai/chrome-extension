@@ -14,6 +14,8 @@ import Warning from './Warning';
 import resizeWindow from '../lib/resizeWindow';
 import Loading from '_src/ui/app/components/loading';
 import { useFormatCoin } from '_src/ui/app/hooks';
+import Body from '_src/ui/app/shared/typography/Body';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type {
     AnalyzeChangesResult,
@@ -64,12 +66,18 @@ const StepOne = ({
             </Header>
             <TransactionBody>
                 <SendCoinImage iconUrl={iconUrl} symbol={symbol} />
-                <div className="flex flex-col items-center gap-1 text-lg">
-                    <div className="font-light">Confirm your want to send</div>
-                    <div className="font-semibold">
-                        {formatted} {symbol.toUpperCase()}
-                    </div>
-                    <div className="text-[#74777C] text-base">≈ {dollars}</div>
+                <div className="flex flex-col items-center gap-1 text-lg py-3">
+                    <BodyLarge className="font-light">
+                        Confirm your want to send
+                    </BodyLarge>
+                    {name && (
+                        <BodyLarge isSemibold>
+                            {formatted} {symbol.toUpperCase()}
+                        </BodyLarge>
+                    )}
+                    <Body className="text-ethos-light-text-medium text-sm">
+                        ≈ {dollars}
+                    </Body>
                 </div>
             </TransactionBody>
             <FromToCard to={to}></FromToCard>
