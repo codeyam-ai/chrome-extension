@@ -17,6 +17,7 @@ import _ from 'lodash';
 // import { useSearchParams } from 'react-router-dom';
 
 // import { type AccountInfo } from '../../KeypairVault';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { getTheme } from '../../helpers/getTheme';
@@ -31,7 +32,6 @@ import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Header from '../../shared/typography/Header';
 import ExplorerLink from '_components/explorer-link';
-import { api } from '_store/thunk-extras';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 // import { formatDate } from '_helpers';
 import {
@@ -39,15 +39,15 @@ import {
     // useFormatCoin,
     // useMiddleEllipsis
 } from '_hooks';
+import { api } from '_store/thunk-extras';
 // import CopyBody from '_src/ui/app/shared/typography/CopyBody';
 
 // import type { TxResultState } from '_redux/slices/txresults';
 
 import type { FormattedTransaction } from '../../helpers/transactions/types';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 import st from './ReceiptCard.module.scss';
-import { useEffect, useState } from 'react';
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 type TxResponseProps = {
     txDigest: any;
