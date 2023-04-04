@@ -91,6 +91,7 @@ const coinChanges = (
         (balanceChange) =>
             typeof balanceChange.owner === 'object' &&
             'AddressOwner' in balanceChange.owner &&
+            balanceChange.owner.AddressOwner === address &&
             new BigNumber(balanceChange.amount).isPositive()
     );
 
@@ -103,7 +104,7 @@ const coinChanges = (
                     .toString();
             }
 
-            const recipientChange = additionChanges.find(
+            const recipientChange = balanceChanges.find(
                 (addition) =>
                     addition.coinType === reduction.coinType &&
                     new BigNumber(addition.amount).eq(

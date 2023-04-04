@@ -1,4 +1,4 @@
-import { Costs } from './Amount';
+import { Costs, Gains } from './Amount';
 import CardRow from './CardRow';
 import From from './From';
 import Gas from './Gas';
@@ -38,8 +38,9 @@ const CoinTransactionCard = ({
                     </div>
                 </div>
                 <From />
-                <CardRow title="To" value={to} />
+                {to && <CardRow title="To" value={to} />}
                 <Costs balanceReductions={analysis.balanceReductions} />
+                <Gains balanceAdditions={analysis.balanceAdditions} />
                 <Gas gasSummary={analysis.gas} />
                 <Total analysis={analysis} />
             </div>

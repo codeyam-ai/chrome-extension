@@ -1,7 +1,7 @@
 import { Coin, SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useMemo } from 'react';
 
-import { Costs } from './Amount';
+import { Costs, Gains } from './Amount';
 import Gas from './Gas';
 import Total from './Total';
 import TransactionBody from './TransactionBody';
@@ -49,6 +49,7 @@ const MintTransactionCard = ({
                     </div>
                 </div>
                 <Costs balanceReductions={analysis.balanceReductions} />
+                <Gains balanceAdditions={analysis.balanceAdditions} />
                 <Gas gasSummary={analysis.gas} />
                 <Total analysis={analysis} />
             </div>
