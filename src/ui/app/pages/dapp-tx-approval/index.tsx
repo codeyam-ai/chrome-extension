@@ -177,11 +177,10 @@ export function DappTxApprovalPage() {
                     transactionBlock,
                 });
 
-                console.log('ANALYSIS', analysis);
+                // console.log('ANALYSIS', analysis);
 
                 setAnalysis(analysis);
             } catch (e: unknown) {
-                console.log('ANALSYIS ERROR', e);
                 setDryRunError(`${e}`);
                 setAnalysis(null);
             }
