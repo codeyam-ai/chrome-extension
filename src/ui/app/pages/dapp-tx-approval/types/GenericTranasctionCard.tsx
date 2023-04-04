@@ -31,7 +31,7 @@ const GenericTransactionCard = ({
 
     return (
         <TransactionBody>
-            <div className="w-full rounded-xl bg-[#F8F5FF] flex flex-col divide-y divide-color-ethos-light-purple overflow-hidden">
+            <div className="w-full rounded-xl bg-ethos-pale-purple dark:bg-ethos-dark-background-secondary flex flex-col divide-y divide-ethos-light-purple dark:divide-ethos-dark-text-stroke overflow-hidden">
                 <div className="p-6 flex-col justify-center items-center text-center">
                     <BodyLarge isSemibold>Transaction Information</BodyLarge>
                 </div>

@@ -1,5 +1,6 @@
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 import _ from 'lodash';
+
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 export type TxType = string;
 
