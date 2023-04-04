@@ -68,6 +68,11 @@ export function useQueryTransactionsByAddress(address: SuiAddress | null) {
 
             return formattedTxBlocks;
         },
-        { enabled: !!address, staleTime: 0, cacheTime: 0 }
+        {
+            enabled: !!address,
+            staleTime: 0,
+            cacheTime: 0,
+            refetchInterval: 3000,
+        }
     );
 }
