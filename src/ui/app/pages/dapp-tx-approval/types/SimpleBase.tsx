@@ -22,7 +22,7 @@ const SimpleBase = ({
     }, [onComplete]);
 
     return (
-        <div className="w-full">
+        <div className="w-full flex flex-col gap-3">
             <ApproveContainerNavBar reject={reject} />
             <ChainIndicator apiEnv={selectedApiEnv} />
             {children}

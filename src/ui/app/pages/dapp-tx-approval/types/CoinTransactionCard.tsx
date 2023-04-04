@@ -1,6 +1,4 @@
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
-
-import Amount from './Amount';
+import { Costs } from './Amount';
 import CardRow from './CardRow';
 import From from './From';
 import Gas from './Gas';
@@ -41,7 +39,7 @@ const CoinTransactionCard = ({
                 </div>
                 <From />
                 <CardRow title="To" value={to} />
-                <Amount amount={analysis.rawAmount} coinType={SUI_TYPE_ARG} />
+                <Costs balanceReductions={analysis.balanceReductions} />
                 <Gas gasSummary={analysis.gas} />
                 <Total analysis={analysis} />
             </div>

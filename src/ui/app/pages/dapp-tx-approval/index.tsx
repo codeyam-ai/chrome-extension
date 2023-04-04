@@ -292,12 +292,14 @@ export function DappTxApprovalPage() {
         if (analysis === null) {
             return (
                 <SimpleBase onComplete={onComplete}>
-                    <MissingObject
-                        selectedApiEnv={selectedApiEnv}
-                        errorMessage={dryRunError || 'Unknown Error'}
-                        txRequest={txRequest}
-                        txID={txID}
-                    />
+                    <div className="p-6">
+                        <MissingObject
+                            selectedApiEnv={selectedApiEnv}
+                            errorMessage={dryRunError || 'Unknown Error'}
+                            txRequest={txRequest}
+                            txID={txID}
+                        />
+                    </div>
                 </SimpleBase>
             );
         }

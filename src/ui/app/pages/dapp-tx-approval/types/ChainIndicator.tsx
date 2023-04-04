@@ -23,7 +23,7 @@ const ChainIndicator = ({ apiEnv }: { apiEnv: API_ENV }) => {
 
     return (
         <div className="flex justify-center">
-            <div className="my-3 flex gap-1 items-center">
+            <div className="flex gap-1 items-center">
                 <SignalIcon color="#9040F5" height={24} />
                 <Body>{chainName.toUpperCase()}</Body>
                 <Body isSemibold>{network.toUpperCase()}</Body>

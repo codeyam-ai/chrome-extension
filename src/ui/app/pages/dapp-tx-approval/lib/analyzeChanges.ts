@@ -29,11 +29,17 @@ export type BalanceReduction = {
     recipient?: string;
 };
 
+export type BalanceAddition = {
+    type: string;
+    amount: string;
+};
+
 export type AnalyzeChangesResult = {
     blockData?: TransactionBlock['blockData'];
     dryRunResponse: DryRunTransactionBlockResponse;
     gas: GasCostSummary;
     balanceReductions: BalanceReduction[];
+    balanceAdditions: BalanceAddition[];
     assetTransfers: SuiObjectChange[];
     assetMints: SuiObjectChange[];
     rawAmount: string;
@@ -120,8 +126,14 @@ const coinChanges = (
         })
         .filter((reduction) => new BigNumber(reduction.amount).abs().gt(1));
 
+    const additions: BalanceReduction[] = additionChanges.map((addition) => ({
+        type: addition.coinType,
+        amount: addition.amount,
+    }));
+
     return {
         reductions,
+        additions,
     };
 };
 
@@ -145,10 +157,8 @@ const analyzeChanges = async ({
         address,
         objectChanges
     );
-    const { reductions: balanceReductions } = coinChanges(
-        address,
-        dryRunResponse
-    );
+    const { reductions: balanceReductions, additions: balanceAdditions } =
+        coinChanges(address, dryRunResponse);
 
     const totalReductions = balanceChanges
         .filter(
@@ -176,6 +186,7 @@ const analyzeChanges = async ({
         dryRunResponse,
         gas,
         balanceReductions,
+        balanceAdditions,
         assetMints,
         assetTransfers,
         rawAmount,
