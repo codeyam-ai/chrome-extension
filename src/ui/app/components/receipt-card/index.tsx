@@ -20,27 +20,17 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { getTheme } from '../../helpers/getTheme';
-// import ipfs from '../../helpers/ipfs';
 import { getHumanReadable } from '../../helpers/transactions';
-// import truncateMiddle from '../../helpers/truncate-middle';
-// import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
-// import { Icon } from '../../shared/icons/Icon';
 import { AssetCard } from '../../shared/nfts/AssetCard';
 import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Header from '../../shared/typography/Header';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
-// import { formatDate } from '_helpers';
-import {
-    useAppSelector,
-    // useFormatCoin,
-    // useMiddleEllipsis
-} from '_hooks';
+import { useAppSelector } from '_hooks';
 import { api } from '_store/thunk-extras';
-// import CopyBody from '_src/ui/app/shared/typography/CopyBody';
-// import type { TxResultState } from '_redux/slices/txresults';
+
 import type { FormattedTransaction } from '../../helpers/transactions/types';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 

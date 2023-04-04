@@ -50,7 +50,7 @@ const AlertWithErrorExpand = ({
     txInfo,
 }: AlertWithErrorExpandProps) => {
     const [expanded, setExpanded] = useState(false);
-    const [isReportFormOpen, setIsReportFormOpen] = useState(false);
+    const [isReportFormOpen] = useState(false);
     const [comment, setComment] = useState('');
     const [reportId, setReportId] = useState('');
     const [isReportSent, setIsReportSent] = useState(false);
@@ -67,6 +67,10 @@ const AlertWithErrorExpand = ({
     const toggleExpanded = useCallback(() => {
         setExpanded(!expanded);
     }, [expanded]);
+
+    // const showReportForm = useCallback(() => {
+    //     setIsReportFormOpen(true);
+    // }, []);
 
     const handleErrorCommentChange = useCallback(
         (event: React.ChangeEvent<HTMLTextAreaElement>) => {

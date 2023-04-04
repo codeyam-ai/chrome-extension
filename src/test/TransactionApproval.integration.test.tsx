@@ -42,7 +42,7 @@ describe('The Transaction Approval popup', () => {
             dependencies: { closeWindow: mockWindowCloser },
         });
 
-        await screen.findByText('Gain');
+        await screen.findByText('Cost');
         const approveButton = await screen.findByText('Approve');
 
         await userEvent.click(approveButton);
@@ -64,9 +64,9 @@ describe('The Transaction Approval popup', () => {
             dependencies: { closeWindow: mockWindowCloser },
         });
 
-        await screen.findByText('Gain');
-        const cancelButton = await screen.findByText('Cancel');
+        await screen.findByText('Cost');
 
+        const cancelButton = await screen.findByText('Cancel');
         await userEvent.click(cancelButton);
         await waitFor(() =>
             expect(mockWindowCloser.mock.calls.length).toEqual(1)
@@ -88,12 +88,9 @@ describe('The Transaction Approval popup', () => {
 
         const approveButton = await screen.findByText('Approve');
 
-        // screen.debug(undefined, 9999);
-        await screen.findByText(
-            'This is a complex transaction. Please view the details below to ensure everything is expected.'
-        );
         await screen.findByText('add_liquidity');
-        await screen.findByText('Cost');
+        await screen.findByText('Costs');
+        await screen.findByText('Gains');
 
         await userEvent.click(approveButton);
         await waitFor(() =>
@@ -118,7 +115,7 @@ describe('The Transaction Approval popup', () => {
 
         await screen.findByText('You are about to mint');
         await screen.findByText('ETHOS_EXAMPLE_COIN');
-        await screen.findByText('Gain');
+        await screen.findByText('Gains');
 
         await userEvent.click(approveButton);
         await waitFor(() =>

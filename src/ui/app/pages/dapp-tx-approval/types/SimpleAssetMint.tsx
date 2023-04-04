@@ -44,7 +44,7 @@ const SimpleAssetMint = ({
     );
 
     return (
-        <div className="h-full flex flex-col w-full py-3">
+        <div className="h-full flex flex-col w-full gap-3">
             <MintTransactionCard stepInformation={stepInformation} />
             <Details analysis={analysis} signer={signer} />
             <Approve onApprove={onApprove} onCancel={onCancel} />

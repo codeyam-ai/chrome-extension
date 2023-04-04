@@ -3,8 +3,6 @@ import { useMemo } from 'react';
 import Approve from './Approve';
 import Details from './Details';
 import GenericTransactionCard from './GenericTranasctionCard';
-import Header from './Header';
-import Warning from './Warning';
 
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 import type { RawSigner } from '@mysten/sui.js';
@@ -28,13 +26,7 @@ const ComplexMoveCall = ({
     const stepInformation = useMemo(() => ({ analysis }), [analysis]);
 
     return (
-        <div className="h-full flex flex-col w-full py-3">
-            <Header>
-                <Warning>
-                    This is a complex transaction. Please view the details below
-                    to ensure everything is expected.
-                </Warning>
-            </Header>
+        <div className="h-full flex flex-col w-full gap-3">
             <GenericTransactionCard stepInformation={stepInformation} />
             <Details analysis={analysis} signer={signer} />
             <Approve onApprove={onApprove} onCancel={onCancel} />

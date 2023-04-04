@@ -2,10 +2,10 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import BigNumber from 'bignumber.js';
 
 import CardRow from './CardRow';
+import { getTheme } from '_src/ui/app/helpers/getTheme';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import { getTheme } from '_src/ui/app/helpers/getTheme';
 
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 
