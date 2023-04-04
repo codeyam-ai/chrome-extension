@@ -22,7 +22,7 @@ const SimpleBase = ({
     }, [onComplete]);
 
     return (
-        <div className="w-full">
+        <div className="w-full text-ethos-light-text-default dark:text-ethos-dark-text-default">
             <ApproveContainerNavBar reject={reject} />
             <ChainIndicator apiEnv={selectedApiEnv} />
             {children}

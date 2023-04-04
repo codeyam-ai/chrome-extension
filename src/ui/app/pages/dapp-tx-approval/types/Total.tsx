@@ -5,19 +5,25 @@ import CardRow from './CardRow';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import { getTheme } from '_src/ui/app/helpers/getTheme';
 
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 
 const Total = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
     const bnTotalFee = new BigNumber(analysis.totalFee);
-
+    const theme = getTheme();
     const [formatted, symbol, dollars] = useFormatCoin(
         bnTotalFee.abs().toString(),
         SUI_TYPE_ARG
     );
 
     return (
-        <CardRow style={{ backgroundColor: '#F0EBFE', padding: '24px 12px' }}>
+        <CardRow
+            style={{
+                backgroundColor: theme === 'light' ? '#F0EBFE' : '#1A1C26',
+                padding: '24px 12px',
+            }}
+        >
             <BodyLarge isSemibold>
                 Total
                 {bnTotalFee.lt(0) && ' (Gain)'}
