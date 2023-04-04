@@ -22,7 +22,10 @@ const config: Config.InitialOptions = {
     transform: { ...cssMappings },
     moduleNameMapper: { ...pathsMappings, ...cssMappings, ...esmMappings },
     testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-    setupFilesAfterEnv: ['./src/test/utils/setup-tests.ts'],
+    setupFilesAfterEnv: [
+        './src/test/utils/setup-tests.ts',
+        './src/background/index.ts',
+    ],
 };
 
 export default config;

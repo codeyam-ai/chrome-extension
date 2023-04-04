@@ -1,21 +1,37 @@
 export class FakeStorage {
-    records: Record<string, unknown> = {};
+    storedValues: Record<string, unknown> = {};
 
     get(
         dkeys?: null | string | string[] | Record<string, unknown>
     ): Promise<Record<string, unknown>> {
         return new Promise<Record<string, unknown>>((resolve, reject) => {
-            const returnVal: Record<string, unknown> = {};
-            if (typeof dkeys === 'string') {
-                returnVal[dkeys] = this.records[dkeys];
+            if (dkeys === null || typeof dkeys === 'undefined') {
+                resolve({ ...this.storedValues });
+            } else if (typeof dkeys === 'string') {
+                resolve({ [dkeys]: this.storedValues[dkeys] });
+            } else if (Array.isArray(dkeys)) {
+                const returnVal: Record<string, unknown> = {};
+                for (const dkey in dkeys) {
+                    returnVal[dkey] = this.storedValues[dkey];
+                }
+                resolve(returnVal);
+            } else if (typeof dkeys === 'object') {
+                const returnVal: Record<string, unknown> = {};
+                for (const dkey in dkeys) {
+                    if (this.storedValues[dkey]) {
+                        returnVal[dkey] = this.storedValues[dkey];
+                    } else {
+                        returnVal[dkey] = dkeys[dkey];
+                    }
+                }
+                resolve(returnVal);
             }
-            resolve(returnVal);
         });
     }
 
     async set(items: Record<string, unknown>): Promise<void> {
         for (const property in items) {
-            this.records[property] = items[property];
+            this.storedValues[property] = items[property];
         }
         return new Promise<void>((resolve, reject) => {
             resolve();
@@ -23,6 +39,6 @@ export class FakeStorage {
     }
 
     clear() {
-        this.records = {};
+        this.storedValues = {};
     }
 }

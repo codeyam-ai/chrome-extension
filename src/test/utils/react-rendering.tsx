@@ -17,6 +17,9 @@ import type { RootState } from '_redux/RootReducer';
 import type { Dependencies } from '_shared/utils/dependenciesContext';
 import type { AppStore } from '_store';
 import type { PropsWithChildren } from 'react';
+import { thunkExtras } from '_store/thunk-extras';
+import { BackgroundClient } from '_app/background-client';
+import KeypairVault from '_app/KeypairVault';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: PreloadedState<RootState>;
@@ -25,7 +28,7 @@ interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     dependencies?: Dependencies;
 }
 
-export function renderApp({
+export async function renderApp({
     preloadedState = {},
     store,
     initialRoute,
@@ -34,24 +37,27 @@ export function renderApp({
     },
     ...renderOptions
 }: ExtendedRenderOptions = {}) {
-    function Wrapper({ children }: PropsWithChildren<unknown>): JSX.Element {
-        if (!store) {
-            store = createStore({
-                app: {
-                    appType: AppType.fullscreen,
-                    apiEnv: API_ENV.testNet,
-                },
-                ...preloadedState,
-            });
-        }
+    const storeToUse: AppStore =
+        store ||
+        createStore({
+            app: {
+                appType: AppType.fullscreen,
+                apiEnv: API_ENV.testNet,
+            },
+            ...preloadedState,
+        });
+    thunkExtras.background = new BackgroundClient();
+    await thunkExtras.background.init(storeToUse.dispatch);
+    thunkExtras.keypairVault = new KeypairVault();
 
+    function Wrapper({ children }: PropsWithChildren<unknown>): JSX.Element {
         return (
             <MemoryRouter
                 // we start at '/tokens' because if we use the index route of '/' it will navigate to '/tokens'
                 // at some point after the initial render, which causes havoc in tests.
                 initialEntries={initialRoute ? [initialRoute] : ['/tokens']}
             >
-                <Provider store={store}>
+                <Provider store={storeToUse}>
                     <IntlProvider locale={'pt'}>
                         <QueryClientProvider client={queryClient}>
                             <DependenciesContext.Provider value={dependencies}>
