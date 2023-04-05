@@ -85,7 +85,7 @@ const TransactionsPage = () => {
 
     return (
         <React.Fragment>
-            <Loading loading={loadingTxns && !formattedTxns} big={true}>
+            <Loading loading={loadingTxns} big={true}>
                 {suiTxns && suiTxns.blocks.length > 0 && (
                     <div className={'flex flex-col'}>
                         <TextPageTitle title="Activity" />
