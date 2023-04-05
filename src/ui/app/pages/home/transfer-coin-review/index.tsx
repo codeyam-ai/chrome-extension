@@ -22,6 +22,8 @@ import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
+import { useIntl } from 'react-intl';
+import ns from '_shared/namespace';
 
 const initialValues = {
     to: '',
@@ -39,6 +41,7 @@ function TransferCoinReviewPage() {
     const [coinDecimals] = useCoinDecimals(coinType);
     const formData = useAppSelector(({ forms: { sendSui } }) => sendSui);
 
+    const { locale } = useIntl();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const onHandleSubmit = useCallback(
@@ -47,6 +50,10 @@ function TransferCoinReviewPage() {
             { resetForm }: FormikHelpers<FormValues>
         ) => {
             toast(<SuccessAlert text={'Transaction submitted.'} />);
+            const amountBigNumber = ns.parse.numberString({
+                numberString: amount,
+                locale,
+            });
 
             if (coinType === null) {
                 return;
@@ -55,7 +62,7 @@ function TransferCoinReviewPage() {
             setFormSubmitted(true);
             try {
                 const bigIntAmount = BigInt(
-                    new BigNumber(amount)
+                    amountBigNumber
                         .shiftedBy(coinDecimals)
                         .integerValue()
                         .toString()

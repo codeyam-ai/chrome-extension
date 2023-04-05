@@ -3,12 +3,12 @@ import BigNumber from 'bignumber.js';
 
 export function numberString({
     numberString,
-    language,
+    locale,
 }: {
     numberString: string;
-    language: string;
+    locale: string;
 }): BigNumber {
-    const parser = new NumberParser(language);
+    const parser = new NumberParser(locale);
     const n = parser.parse(numberString);
     return new BigNumber(n);
 }

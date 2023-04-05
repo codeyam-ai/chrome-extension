@@ -18,9 +18,14 @@ export interface BuildValidationSchema {
         decimals: number;
         budget: number;
     };
+    locale: string;
 }
 
-export function buildValidationSchema({ coin, gas }: BuildValidationSchema) {
+export function buildValidationSchema({
+    coin,
+    gas,
+    locale,
+}: BuildValidationSchema) {
     return Yup.object().shape({
         amount: Yup.mixed()
             .transform((value, originalValue) => {
@@ -34,7 +39,7 @@ export function buildValidationSchema({ coin, gas }: BuildValidationSchema) {
 
                 // return new BigNumber(parseFloat(v));
                 return ns.parse.numberString({
-                    language: 'de',
+                    locale,
                     numberString: value as string,
                 });
             })

@@ -1,7 +1,7 @@
 import * as parse from './parse';
 
 describe('parse.numberString', () => {
-    it('parses period decimal separator langs', () => {
+    it('parses period-decimal-separator langs', () => {
         const assertions: [string, number][] = [
             ['0.1', 0.1],
             ['1,234.567', 1234.567],
@@ -10,14 +10,14 @@ describe('parse.numberString', () => {
         for (const assertion of assertions) {
             const [numberString, number] = assertion;
             const bigNumber = parse.numberString({
-                language: 'en-US',
+                locale: 'en-US',
                 numberString,
             });
             expect(bigNumber.toNumber()).toBe(number);
         }
     });
 
-    it('parses comma decimal separator langs', () => {
+    it('parses comma-decimal-separator langs', () => {
         const assertions: [string, number][] = [
             ['0,1', 0.1],
             ['1.234,567', 1234.567],
@@ -26,7 +26,7 @@ describe('parse.numberString', () => {
         for (const assertion of assertions) {
             const [numberString, number] = assertion;
             const bigNumber = parse.numberString({
-                language: 'de',
+                locale: 'de',
                 numberString,
             });
             expect(bigNumber.toNumber()).toBe(number);

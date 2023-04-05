@@ -7,17 +7,18 @@ import { SUI_TYPE_ARG, TransactionBlock } from '@mysten/sui.js';
 import BigNumber from 'bignumber.js';
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
 import TransferCoinAmountForm from './TransferCoinAmountForm';
 import { buildValidationSchema } from './buildValidationSchema';
-import { createTokenValidation } from './validation';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import {
     accountAggregateBalancesSelector,
     accountCoinsSelector,
 } from '_redux/slices/account';
 import { Coin } from '_redux/slices/sui-objects/Coin';
+import ns from '_shared/namespace';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 import {
     useCoinDecimals,
@@ -30,7 +31,6 @@ import type { SerializedError } from '@reduxjs/toolkit';
 import type { RootState } from '_src/ui/app/redux/RootReducer';
 import type { FormikHelpers } from 'formik';
 
-
 const initialValues = {
     amount: '',
 };
@@ -39,11 +39,11 @@ export type FormValues = typeof initialValues;
 
 type AggregateBalances = Record<string, bigint>;
 
-interface UseCoin {
+interface UseCoinInputs {
     aggregateBalances: AggregateBalances;
 }
 
-function useCoin({ aggregateBalances }: UseCoin) {
+function useCoin({ aggregateBalances }: UseCoinInputs) {
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
 
@@ -67,12 +67,12 @@ function useCoin({ aggregateBalances }: UseCoin) {
     return coin;
 }
 
-interface UseGas {
+interface UseGasInputs {
     coin: ReturnType<typeof useCoin>;
     aggregateBalances: AggregateBalances;
 }
 
-function useGas({ coin, aggregateBalances }: UseGas) {
+function useGas({ coin, aggregateBalances }: UseGasInputs) {
     const gasAggregateBalance = useMemo(
         () => aggregateBalances[SUI_TYPE_ARG] || BigInt(0),
         [aggregateBalances]
@@ -123,6 +123,7 @@ function useOnHandleSubmit({
     const state = useAppSelector((state) => state);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const { locale } = useIntl();
 
     const onHandleSubmit = useCallback(
         async (
@@ -133,8 +134,13 @@ function useOnHandleSubmit({
                 return;
             }
 
+            const amountBigNumber = ns.parse.numberString({
+                numberString: amount,
+                locale,
+            });
+
             const bigIntAmount = BigInt(
-                new BigNumber(amount)
+                amountBigNumber
                     .shiftedBy(coin.decimals)
                     .integerValue()
                     .toString()
@@ -231,6 +237,7 @@ function useOnHandleSubmit({
             coin.decimals,
             state,
             setSendError,
+            locale,
         ]
     );
 
@@ -249,19 +256,16 @@ function TransferCoinAmountPage() {
         coin.balance,
         coin.type || SUI_TYPE_ARG
     );
+    const { locale } = useIntl();
 
-    const newValidationSchema = useMemo(
-        () => buildValidationSchema({ coin, gas }),
-        [coin, gas]
+    const validationSchema = useMemo(
+        () => buildValidationSchema({ coin, gas, locale }),
+        [coin, gas, locale]
     );
 
     const handleOnClearSubmitError = useCallback(() => {
         setSendError(null);
     }, []);
-
-    const initialValues = {
-        amount: formState.amount,
-    };
 
     if (formState.to === '') {
         return <Navigate to={'/tokens'} />;
@@ -269,9 +273,11 @@ function TransferCoinAmountPage() {
 
     return (
         <Formik
-            initialValues={initialValues}
+            initialValues={{
+                amount: formState.amount,
+            }}
             validateOnMount={true}
-            validationSchema={newValidationSchema}
+            validationSchema={validationSchema}
             onSubmit={onHandleSubmit}
         >
             <TransferCoinAmountForm

@@ -23,6 +23,7 @@ interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     store?: AppStore;
     initialRoute?: string;
     dependencies?: Dependencies;
+    locale?: string;
 }
 
 export function renderApp({
@@ -32,6 +33,7 @@ export function renderApp({
     dependencies = {
         closeWindow: jest.fn(),
     },
+    locale = 'en-US',
     ...renderOptions
 }: ExtendedRenderOptions = {}) {
     function Wrapper({ children }: PropsWithChildren<unknown>): JSX.Element {
@@ -52,7 +54,7 @@ export function renderApp({
                 initialEntries={initialRoute ? [initialRoute] : ['/tokens']}
             >
                 <Provider store={store}>
-                    <IntlProvider locale={'pt'}>
+                    <IntlProvider locale={locale}>
                         <QueryClientProvider client={queryClient}>
                             <DependenciesContext.Provider value={dependencies}>
                                 {children}
