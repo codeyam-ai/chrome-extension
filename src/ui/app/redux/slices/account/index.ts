@@ -10,6 +10,7 @@ import {
 import { api, type AppThunkConfig } from '../../store/thunk-extras';
 import { NFT } from '../sui-objects/NFT';
 import { Ticket } from '../sui-objects/Ticket';
+import { isLocked, setLocked, setUnlocked } from '_app/helpers/lock-wallet';
 import {
     clearForNetworkOrWalletSwitch,
     suiObjectsAdapterSelectors,
@@ -33,7 +34,6 @@ import type { SuiAddress, SuiMoveObject } from '@mysten/sui.js';
 import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-import { isLocked, setLocked, setUnlocked } from '_app/helpers/lock-wallet';
 
 export enum AccountType {
     EMAIL = 'EMAIL',

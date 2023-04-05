@@ -4,6 +4,7 @@
 import { Connection } from './Connection';
 import { DEFAULT_API_ENV } from '../../ui/app/ApiProvider';
 import Authentication from '../Authentication';
+import { isLocked } from '_app/helpers/lock-wallet';
 import { createMessage } from '_messages';
 import { isGetAccount } from '_payloads/account/GetAccount';
 import {
@@ -44,7 +45,7 @@ import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
 import type { Runtime } from 'webextension-polyfill';
-import { isLocked } from '_app/helpers/lock-wallet';
+
 
 export class ContentScriptConnection extends Connection {
     public static readonly CHANNEL: PortChannelName =

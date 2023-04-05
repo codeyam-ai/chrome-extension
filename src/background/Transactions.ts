@@ -17,6 +17,7 @@ import { Window } from './Window';
 import { API_ENV } from '../ui/app/ApiProvider';
 import { PREAPPROVAL_KEY, TX_STORE_KEY } from '_src/shared/constants';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
+import { isLocked } from '_src/ui/app/helpers/lock-wallet';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 import type {
@@ -43,7 +44,7 @@ import type { TransactionRequestResponse } from '_payloads/transactions/ui/Trans
 import type { ContentScriptConnection } from '_src/background/connections/ContentScriptConnection';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-import { isLocked } from '_src/ui/app/helpers/lock-wallet';
+
 
 // type SimpleCoin = {
 //     balance: number;
