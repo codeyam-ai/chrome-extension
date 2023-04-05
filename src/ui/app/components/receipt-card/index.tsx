@@ -293,7 +293,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                 />
                 <Body className={'text-ethos-light-text-medium'}>
                     {txStatus === 'success'
-                        ? `${_.capitalize(txAction)} ${_.toUpper(txType)}`
+                        ? `${_.capitalize(txAction)} ${_.capitalize(txType)}`
                         : 'Transaction Failed'}
                 </Body>
                 <Header className={'font-weight-ethos-subheader mb-3'}>
