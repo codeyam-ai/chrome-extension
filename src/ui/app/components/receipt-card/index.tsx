@@ -1,26 +1,17 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-// import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline';
 import {
     ArrowDownCircleIcon,
     ArrowUpCircleIcon,
-    // ArrowDownCircleIcon,
-    // ArrowUpCircleIcon,
     ArrowUpRightIcon,
+    ChevronDoubleDownIcon,
     CogIcon,
     SparklesIcon,
-    // CogIcon,
-    // SparklesIcon,
-    // XMarkIcon,
 } from '@heroicons/react/24/solid';
-// import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
-// import { useCallback, useEffect, useMemo } from 'react';
-// import { useSearchParams } from 'react-router-dom';
-// import { type AccountInfo } from '../../KeypairVault';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { getTheme } from '../../helpers/getTheme';
@@ -43,17 +34,13 @@ import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
 import CopyBody from '../../shared/typography/CopyBody';
 import truncateMiddle from '../../helpers/truncate-middle';
 import { Icon } from '../../shared/icons/Icon';
+import { AccountInfo } from '../../KeypairVault';
+import LoadingIndicator from '../loading/LoadingIndicator';
 
 type TxResponseProps = {
     txDigest: string | null;
     trans?: 'nft' | 'coin' | 'func' | 'sui';
 };
-
-// const TRUNCATE_MAX_LENGTH = 8;
-// const TRUNCATE_PREFIX_LENGTH = 4;
-
-// Truncate text after one line (~ 35 characters)
-// const TRUNCATE_MAX_CHAR = 40;
 
 const AvatarItem = ({
     bgColor,
@@ -103,53 +90,53 @@ const AvatarItem = ({
     </div>
 );
 
-// const TxTransfer = ({
-//     ToFrom,
-// }: {
-//     ToFrom: {
-//         from: {
-//             emoji: string | undefined;
-//             bgColor: string | undefined;
-//             header: string | undefined;
-//             subheader?: string;
-//         };
-//         to: {
-//             emoji: string | undefined;
-//             bgColor: string | undefined;
-//             header: string | undefined;
-//             subheader?: string;
-//         };
-//     };
-// }) => (
-//     <div className={'flex flex-col'}>
-//         <AvatarItem
-//             bgColor={ToFrom.from.bgColor}
-//             header={ToFrom.from.header}
-//             subheader={ToFrom.from.subheader}
-//             emoji={ToFrom.from.emoji}
-//         />
-//         {ToFrom.to.header && (
-//             <>
-//                 <div
-//                     className={
-//                         'py-1 pl-[18px] text-left text-ethos-light-text-medium'
-//                     }
-//                 >
-//                     <ChevronDoubleDownIcon width={25} height={23} />
-//                 </div>
-//                 <AvatarItem
-//                     bgColor={ToFrom.to.bgColor}
-//                     header={ToFrom.to.header}
-//                     subheader={ToFrom.to.subheader}
-//                     emoji={ToFrom.to.emoji}
-//                 />
-//             </>
-//         )}
-//     </div>
-// );
+const TxTransfer = ({
+    ToFrom,
+}: {
+    ToFrom: {
+        from: {
+            emoji: string | undefined;
+            bgColor: string | undefined;
+            header: string | undefined;
+            subheader?: string;
+        };
+        to: {
+            emoji: string | undefined;
+            bgColor: string | undefined;
+            header: string | undefined;
+            subheader?: string;
+        };
+    };
+}) => (
+    <div className={'flex flex-col'}>
+        <AvatarItem
+            bgColor={ToFrom.from.bgColor}
+            header={ToFrom.from.header}
+            subheader={ToFrom.from.subheader}
+            emoji={ToFrom.from.emoji}
+        />
+        {ToFrom.to.header && (
+            <>
+                <div
+                    className={
+                        'py-1 pl-[18px] text-left text-ethos-light-text-medium'
+                    }
+                >
+                    <ChevronDoubleDownIcon width={25} height={23} />
+                </div>
+                <AvatarItem
+                    bgColor={ToFrom.to.bgColor}
+                    header={ToFrom.to.header}
+                    subheader={ToFrom.to.subheader}
+                    emoji={ToFrom.to.emoji}
+                />
+            </>
+        )}
+    </div>
+);
 
 function ReceiptCard({ txDigest }: TxResponseProps) {
-    //const { accountInfos } = useAppSelector(({ account }) => account);
+    const { accountInfos } = useAppSelector(({ account }) => account);
     const address = useAppSelector(({ account }) => account.address) as string;
     const { data } = useQuery(['transactions-by-address', address]);
     const theme = getTheme();
@@ -173,9 +160,6 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
 
             setTransaction(txRef.current.transaction);
         } else {
-            // TODO: get the individual transaction if the data is not available
-            // with the digest txDigestFromUrl
-
             const getTransaction = async () => {
                 const digest = txDigestFromUrl as string;
                 const tx = await api.instance.fullNode.getTransactionBlock({
@@ -196,8 +180,21 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         }
     }, [result, txDigest, txDigestFromUrl]);
 
-    // TODO: improve the error state for the transaction
-    if (!transaction) return <div>Transaction not found.</div>;
+    const getAccount = useCallback(
+        (address: string) => {
+            return accountInfos.find(
+                (accountInfo: AccountInfo) => accountInfo.address === address
+            );
+        },
+        [accountInfos]
+    );
+
+    if (!transaction)
+        return (
+            <div className={'pt-10'}>
+                <LoadingIndicator big={true} />
+            </div>
+        );
 
     const {
         txAction,
@@ -210,49 +207,21 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         txCommands,
         displayImage,
         otherAddressStr,
+        addresses,
     } = getHumanReadable(address, transaction);
 
-    /*const getAccount = useCallback(
-        (address: string) => {
-            return accountInfos.find(
-                (accountInfo: AccountInfo) => accountInfo.address === address
-            );
-        },
-        [accountInfos]
-    );*/
+    /*
 
-    /*const fromWallet = useMemo(
-        () => (txDigest.from ? getAccount(txDigest.from) : null),
-        [getAccount, txDigest]
-    );
-
-    const toWallet = useMemo(
-        () => (txDigest.to ? getAccount(txDigest.to) : null),
-        [getAccount, txDigest]
-    );
-
-    const [searchParams] = useSearchParams();
-
-    const [gas] = useFormatCoin(txDigest.txGas, SUI_TYPE_ARG);
+    // TODO: Include support for coins other than SUI
 
     const [total, totalSymbol, dollars, , icon] = useFormatCoin(
         txDigest.amount ? txDigest.amount : null,
         txDigest.objType
     );
 
-    const imgUrl = txDigest?.url ? ipfs(txDigest.url) : false;
-
-    const date = txDigest?.timestampMs
-        ? formatDate(txDigest.timestampMs, [
-              'month',
-              'day',
-              'year',
-              'hour',
-              'minute',
-          ])
-        : false;
-
-    const coinType = txDigest?.kind === 'PaySui' ? 'SUI' : 'Coin';*/
+    const coinType = txDigest?.kind === 'PaySui' ? 'SUI' : 'Coin';
+    
+    */
 
     let transferObj;
     let transferAction = txAction;
@@ -308,7 +277,8 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             break;
     }
 
-    console.log('transaction', txRef);
+    const fromWallet = addresses?.from ? getAccount(addresses.from) : null;
+    const toWallet = addresses?.to ? getAccount(addresses.to) : null;
 
     return (
         <>
@@ -333,31 +303,26 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     {timeDisplay}
                 </Body>
             </div>
-            {/*
-            
-            TODO: Need to add this when we have the ability to check
-            if a transaction is minted, where the tx is from and to
-
-            !isMinted && (
+            {txAction !== 'mint' && (
                 <div className={'px-6 pb-6'}>
                     <TxTransfer
                         ToFrom={{
                             from: {
                                 emoji: fromWallet?.emoji || '',
                                 bgColor: fromWallet?.color || '#6D28D9',
-                                header: fromWallet?.name || txDigest.from,
-                                subheader: fromWallet ? txDigest.from : '',
+                                header: fromWallet?.name || 'From',
+                                subheader: addresses?.from || '',
                             },
                             to: {
                                 emoji: toWallet?.emoji || '',
                                 bgColor: toWallet?.color || '#6D28D9',
-                                header: toWallet?.name || txDigest.to,
-                                subheader: toWallet ? txDigest.to : '',
+                                header: toWallet?.name || 'To',
+                                subheader: addresses?.to || '',
                             },
                         }}
                     />
                 </div>
-            )*/}
+            )}
 
             {txType === 'nft' ? (
                 <KeyValueList
@@ -367,11 +332,10 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                             keyName: 'Transaction Fee',
                             value: `${gasFeeInSui} SUI`,
                         },
-                        //{ TODO: get from addr
-                        //    keyName: 'Signature',
-                        //    value: txDigest.from,
-                        //    shortValue: fromAddrStr,
-                        //},
+                        {
+                            keyName: 'Digest',
+                            value: truncateMiddle(transaction.digest, 5),
+                        },
                     ]}
                 />
             ) : (
