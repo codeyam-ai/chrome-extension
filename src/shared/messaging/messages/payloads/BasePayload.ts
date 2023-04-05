@@ -47,7 +47,9 @@ export type PayloadType =
     | 'get-features'
     | 'features-response'
     | 'get-network'
-    | 'set-network';
+    | 'set-network'
+    | 'heartbeat'
+    | 'wallet-locked';
 
 export interface BasePayload {
     type: PayloadType;

@@ -19,6 +19,7 @@ import type {
     SuiTransactionBlockResponse,
 } from '@mysten/sui.js';
 import type { Message } from '_messages';
+import type { HeartbeatPayload } from '_payloads/locking/HeartbeatPayload';
 import type {
     GetPermissionRequests,
     PermissionResponse,
@@ -29,6 +30,7 @@ import type { PreapprovalResponse } from '_src/shared/messaging/messages/payload
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { GetPreapprovalRequests } from '_src/shared/messaging/messages/payloads/transactions/ui/GetPreapprovalRequests';
 import type { AppDispatch } from '_store';
+import {isWalletLockedMessage} from "_payloads/locking/WalletLocked";
 
 export class BackgroundClient {
     private _portStream: PortStream | null = null;
@@ -130,6 +132,14 @@ export class BackgroundClient {
         );
     }
 
+    sendHeartbeat() {
+        this.sendMessage(
+            createMessage<HeartbeatPayload>({
+                type: 'heartbeat',
+            })
+        );
+    }
+
     private handleIncomingMessage(msg: Message) {
         if (!this._initialized || !this._dispatch) {
             throw new Error(
@@ -144,6 +154,8 @@ export class BackgroundClient {
             this._dispatch(setTransactionRequests(payload.txRequests));
         } else if (isGetPreapprovalResponse(payload)) {
             this._dispatch(setPreapprovalRequests(payload.preapprovalRequests));
+        } else if (isWalletLockedMessage(payload)) {
+            //
         }
     }
 

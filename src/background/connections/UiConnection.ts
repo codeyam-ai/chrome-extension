@@ -21,9 +21,16 @@ import type { PreapprovalRequest } from '_payloads/transactions';
 import type { GetTransactionRequestsResponse } from '_payloads/transactions/ui/GetTransactionRequestsResponse';
 import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions/ApprovalRequest';
 import type { GetPreapprovalResponse } from '_src/shared/messaging/messages/payloads/transactions/ui/GetPreapprovalResponse';
+import {WalletLocked} from "_payloads/locking/WalletLocked";
+import {isHeartbeatPayload} from "_payloads/locking/HeartbeatPayload";
+import {resetLockTimeout} from "_src/background/Locking";
 
 export class UiConnection extends Connection {
     public static readonly CHANNEL: PortChannelName = 'ethos_ui<->background';
+
+    public sendWalletLockedMessage() {
+        this.send(createMessage<WalletLocked>({type: 'wallet-locked'}))
+    }
 
     protected async handleMessage(msg: Message) {
         const { payload, id } = msg;
@@ -38,10 +45,9 @@ export class UiConnection extends Connection {
         } else if (isTransactionRequestResponse(payload)) {
             Transactions.handleTxMessage(payload);
         } else if (isGetTransactionRequests(payload)) {
-            this.sendTransactionRequests(
-                Object.values(await Transactions.getTransactionRequests()),
-                id
-            );
+            const approvalRequests =
+                await Transactions.getTransactionRequests();
+            this.sendTransactionRequests(Object.values(approvalRequests), id);
         } else if (isPreapprovalResponse(payload)) {
             Transactions.handlePreapprovalMessage(payload);
         } else if (isGetPreapprovalRequests(payload)) {
@@ -49,6 +55,8 @@ export class UiConnection extends Connection {
                 Object.values(await Transactions.getPreapprovalRequests()),
                 id
             );
+        } else if (isHeartbeatPayload(payload)) {
+            await resetLockTimeout();
         }
     }
 

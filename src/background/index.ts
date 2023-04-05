@@ -12,4 +12,4 @@ Browser.runtime.onInstalled.addListener((details) => {
     }
 });
 
-new Connections();
+export const connections = new Connections();

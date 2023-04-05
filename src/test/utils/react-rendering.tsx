@@ -33,8 +33,10 @@ export async function renderApp({
     preloadedState = {},
     store,
     initialRoute,
+    // TODO: find a way for tests to only pass the deps they want, not all of them
     dependencies = {
         closeWindow: jest.fn(),
+        heartbeat: { onBeat: jest.fn() },
     },
     locale = 'en-US',
     ...renderOptions
