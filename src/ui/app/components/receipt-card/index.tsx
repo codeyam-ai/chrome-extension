@@ -400,8 +400,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                         <ExplorerLink
                             type={ExplorerLinkType.transaction}
                             transactionID={
-                                txRef?.current?.transaction.effects
-                                    ?.transactionDigest || ''
+                                transaction?.effects?.transactionDigest || ''
                             }
                             title="View on Sui Explorer"
                             className={st['explorer-link']}
