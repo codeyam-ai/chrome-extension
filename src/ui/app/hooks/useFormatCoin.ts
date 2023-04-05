@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import BigNumber from 'bignumber.js';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 import { Coin } from '../redux/slices/sui-objects/Coin';
 import { api } from '../redux/store/thunk-extras';
+import ns from '_shared/namespace';
 
 type FormattedCoin = [
     formattedBalance: string,
@@ -17,36 +17,6 @@ type FormattedCoin = [
     coinIcon: string | null,
     queryResult: UseQueryResult
 ];
-
-/**
- * Formats a coin balance based on our standard coin display logic.
- * If the balance is less than 1, it will be displayed in its full decimal form.
- * For values greater than 1, it will be truncated to 3 decimal places.
- */
-export function formatBalance(
-    balance: bigint | number | string,
-    decimals: number
-) {
-    let postfix = '';
-    let bn = new BigNumber(balance.toString()).shiftedBy(-1 * decimals);
-
-    if (bn.gte(1_000_000_000)) {
-        bn = bn.shiftedBy(-9);
-        postfix = 'B';
-    } else if (bn.gte(1_000_000)) {
-        bn = bn.shiftedBy(-6);
-        postfix = 'M';
-    } else if (bn.gte(10_000)) {
-        bn = bn.shiftedBy(-3);
-        postfix = 'K';
-    }
-
-    if (bn.gte(1)) {
-        bn = bn.decimalPlaces(2, BigNumber.ROUND_DOWN);
-    }
-
-    return bn.toFormat() + postfix;
-}
 
 export function useCoinDecimals(coinType?: string | null) {
     const queryResult = useQuery(
@@ -105,30 +75,12 @@ export function useFormatCoin(
 
         if (!isFetched) return '...';
 
-        return formatBalance(balance, decimals);
+        return ns.format.coinBalance(balance, decimals);
     }, [decimals, isError, isFetched, intl, balance]);
 
     const dollars = useMemo(() => {
         if (typeof balance === 'undefined' || balance === null) return '';
-
-        const dollarFormatter = new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        });
-
-        const shifted = new BigNumber(balance.toString()).shiftedBy(
-            -1 * (decimals - 2)
-        );
-
-        const dollars = dollarFormatter.format(shifted.toNumber());
-
-        if (dollars === dollarFormatter.format(0)) {
-            return `${dollars}${
-                shifted.shiftedBy(2).modulo(1).toString().split('.')[1] ?? ''
-            }`;
-        }
-
-        return dollars;
+        return ns.format.dollars(balance, decimals);
     }, [balance, decimals]);
 
     return [

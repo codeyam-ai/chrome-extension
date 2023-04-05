@@ -4,19 +4,20 @@
 // import { getTransactionDigest, Transaction, SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import { SUI_TYPE_ARG, TransactionBlock } from '@mysten/sui.js';
-import BigNumber from 'bignumber.js';
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
 import TransferCoinAmountForm from './TransferCoinAmountForm';
-import { createTokenValidation } from './validation';
+import { buildValidationSchema } from './buildValidationSchema';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import {
     accountAggregateBalancesSelector,
     accountCoinsSelector,
 } from '_redux/slices/account';
 import { Coin } from '_redux/slices/sui-objects/Coin';
+import ns from '_shared/namespace';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 import {
     useCoinDecimals,
@@ -26,6 +27,7 @@ import { setSuiAmount } from '_src/ui/app/redux/slices/forms';
 
 import type { SuiMoveObject } from '@mysten/sui.js';
 import type { SerializedError } from '@reduxjs/toolkit';
+import type { RootState } from '_src/ui/app/redux/RootReducer';
 import type { FormikHelpers } from 'formik';
 
 const initialValues = {
@@ -34,48 +36,55 @@ const initialValues = {
 
 export type FormValues = typeof initialValues;
 
-// TODO: show out of sync when sui objects locally might be outdated
-function TransferCoinAmountPage() {
+type AggregateBalances = Record<string, bigint>;
+
+interface UseCoinInputs {
+    aggregateBalances: AggregateBalances;
+}
+
+function useCoin({ aggregateBalances }: UseCoinInputs) {
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
-    const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
-    const {
-        account: { authentication, address, activeAccountIndex },
-    } = useAppSelector((state) => state);
-    const state = useAppSelector((state) => state);
-    const aggregateBalances = useAppSelector(accountAggregateBalancesSelector);
 
     const coinBalance = useMemo(
         () => (coinType && aggregateBalances[coinType]) || BigInt(0),
         [coinType, aggregateBalances]
     );
-    const [formattedBalance] = useFormatCoin(
-        coinBalance,
-        coinType || SUI_TYPE_ARG
-    );
-
-    const gasAggregateBalance = useMemo(
-        () => aggregateBalances[SUI_TYPE_ARG] || BigInt(0),
-        [aggregateBalances]
-    );
-
     const coinSymbol = useMemo(
         () => (coinType && Coin.getCoinSymbol(coinType)) || '',
         [coinType]
     );
-
-    const [sendError, setSendError] = useState<string | null>(null);
-
     const [coinDecimals] = useCoinDecimals(coinType);
+
+    const coin = {
+        type: coinType,
+        balance: coinBalance,
+        symbol: coinSymbol,
+        decimals: coinDecimals,
+    };
+
+    return coin;
+}
+
+interface UseGasInputs {
+    coin: ReturnType<typeof useCoin>;
+    aggregateBalances: AggregateBalances;
+}
+
+function useGas({ coin, aggregateBalances }: UseGasInputs) {
+    const gasAggregateBalance = useMemo(
+        () => aggregateBalances[SUI_TYPE_ARG] || BigInt(0),
+        [aggregateBalances]
+    );
     const [gasDecimals] = useCoinDecimals(SUI_TYPE_ARG);
     const allCoins = useAppSelector(accountCoinsSelector);
 
     const allCoinsOfSelectedTypeArg = useMemo(
         () =>
             allCoins.filter(
-                (aCoin) => coinType && Coin.getCoinTypeArg(aCoin) === coinType
+                (aCoin) => coin.type && Coin.getCoinTypeArg(aCoin) === coin.type
             ),
-        [coinType, allCoins]
+        [coin.type, allCoins]
     );
     const [amountToSend] = useState(BigInt(0));
     const gasBudget = useMemo(
@@ -87,42 +96,51 @@ function TransferCoinAmountPage() {
         [allCoinsOfSelectedTypeArg, amountToSend]
     );
 
-    const validationSchema = useMemo(
-        () =>
-            createTokenValidation(
-                coinType || '',
-                coinBalance,
-                coinSymbol,
-                gasAggregateBalance,
-                coinDecimals,
-                gasDecimals,
-                gasBudget
-            ),
-        [
-            coinType,
-            coinBalance,
-            coinSymbol,
-            gasAggregateBalance,
-            coinDecimals,
-            gasDecimals,
-            gasBudget,
-        ]
-    );
+    const gas = {
+        aggregateBalance: gasAggregateBalance,
+        decimals: gasDecimals,
+        budget: gasBudget,
+    };
 
+    return gas;
+}
+
+interface UseOnHandleSubmit {
+    coin: ReturnType<typeof useCoin>;
+    setSendError: React.Dispatch<React.SetStateAction<string | null>>;
+    formState: RootState['forms']['sendSui'];
+}
+
+function useOnHandleSubmit({
+    coin,
+    setSendError,
+    formState,
+}: UseOnHandleSubmit) {
+    const {
+        account: { authentication, address, activeAccountIndex },
+    } = useAppSelector((state) => state);
+    const state = useAppSelector((state) => state);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const { locale } = useIntl();
+
     const onHandleSubmit = useCallback(
         async (
             { amount }: FormValues,
             { resetForm }: FormikHelpers<FormValues>
         ) => {
-            if (coinType === null) {
+            if (coin.type === null) {
                 return;
             }
 
+            const amountBigNumber = ns.parse.numberString({
+                numberString: amount,
+                locale,
+            });
+
             const bigIntAmount = BigInt(
-                new BigNumber(amount)
-                    .shiftedBy(coinDecimals)
+                amountBigNumber
+                    .shiftedBy(coin.decimals)
                     .integerValue()
                     .toString()
             );
@@ -135,11 +153,11 @@ function TransferCoinAmountPage() {
 
             const allCoins: SuiMoveObject[] = accountCoinsSelector(state);
             const [primaryCoin, ...coins] = allCoins.filter(
-                (coin) => coin.type === `0x2::coin::Coin<${coinType}>`
+                (coin) => coin.type === `0x2::coin::Coin<${coin.type}>`
             );
 
             const transactionBlock = new TransactionBlock();
-            if (coinType === SUI_TYPE_ARG) {
+            if (coin.type === SUI_TYPE_ARG) {
                 const coin = transactionBlock.add(
                     TransactionBlock.Transactions.SplitCoins(
                         transactionBlock.gas,
@@ -200,7 +218,7 @@ function TransferCoinAmountPage() {
             try {
                 resetForm();
                 const reviewUrl = `/send/review?${new URLSearchParams({
-                    type: coinType,
+                    type: coin.type,
                 }).toString()}`;
                 navigate(reviewUrl);
             } catch (e) {
@@ -210,44 +228,65 @@ function TransferCoinAmountPage() {
         [
             dispatch,
             navigate,
-            coinType,
+            coin.type,
             activeAccountIndex,
             address,
             authentication,
             formState.to,
-            coinDecimals,
+            coin.decimals,
             state,
+            setSendError,
+            locale,
         ]
     );
+
+    return onHandleSubmit;
+}
+
+// TODO: show out of sync when sui objects locally might be outdated
+function TransferCoinAmountPage() {
+    const aggregateBalances = useAppSelector(accountAggregateBalancesSelector);
+    const coin = useCoin({ aggregateBalances });
+    const gas = useGas({ coin, aggregateBalances });
+    const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
+    const [sendError, setSendError] = useState<string | null>(null);
+    const onHandleSubmit = useOnHandleSubmit({ coin, setSendError, formState });
+    const [formattedBalance] = useFormatCoin(
+        coin.balance,
+        coin.type || SUI_TYPE_ARG
+    );
+    const { locale } = useIntl();
+
+    const validationSchema = useMemo(
+        () => buildValidationSchema({ coin, gas, locale }),
+        [coin, gas, locale]
+    );
+
     const handleOnClearSubmitError = useCallback(() => {
         setSendError(null);
     }, []);
-
-    const initialValues = {
-        amount: formState.amount,
-    };
 
     if (formState.to === '') {
         return <Navigate to={'/tokens'} />;
     }
 
     return (
-        <>
-            <Formik
-                initialValues={initialValues}
-                validateOnMount={true}
-                validationSchema={validationSchema}
-                onSubmit={onHandleSubmit}
-            >
-                <TransferCoinAmountForm
-                    submitError={sendError}
-                    coinBalance={formattedBalance.toString()}
-                    coinSymbol={coinSymbol}
-                    gasBudget={gasBudget}
-                    onClearSubmitError={handleOnClearSubmitError}
-                />
-            </Formik>
-        </>
+        <Formik
+            initialValues={{
+                amount: formState.amount,
+            }}
+            validateOnMount={true}
+            validationSchema={validationSchema}
+            onSubmit={onHandleSubmit}
+        >
+            <TransferCoinAmountForm
+                submitError={sendError}
+                coinBalance={formattedBalance.toString()}
+                coinSymbol={coin.symbol}
+                gasBudget={gas.budget}
+                onClearSubmitError={handleOnClearSubmitError}
+            />
+        </Formik>
     );
 }
 
