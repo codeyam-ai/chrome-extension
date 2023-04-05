@@ -44,6 +44,7 @@ import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
 import type { Runtime } from 'webextension-polyfill';
+import { isLocked } from '_app/helpers/lock-wallet';
 
 export class ContentScriptConnection extends Connection {
     public static readonly CHANNEL: PortChannelName =
@@ -252,19 +253,14 @@ export class ContentScriptConnection extends Connection {
     }
 
     private async getAccountInfos(): Promise<AccountInfo[]> {
-        // TODO: this checked for the wallet being locked seems buggy. it doesn't pass
-        // the passphrase, so it will never pull the right value out of storage (it will
-        // always be null). But also the existence of the 'locked' key actually means the
-        // wallet is *unlocked*, so the logic here is backwards.
-        // linear ticket here: https://linear.app/ethoswallet/issue/ETHOS-630/preapprovals-should-not-go-through-once-wallet-is-locked
-        const locked = await getEncrypted({ key: 'locked', session: false });
-        if (locked) {
-            throw new Error('Wallet is locked');
-        }
         const passphrase = await getEncrypted({
             key: 'passphrase',
             session: true,
         });
+        const locked = passphrase && (await isLocked(passphrase));
+        if (locked) {
+            throw new Error('Wallet is locked');
+        }
         const authentication = await getEncrypted({
             key: 'authentication',
             session: true,

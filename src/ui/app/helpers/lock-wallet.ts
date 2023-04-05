@@ -25,19 +25,19 @@ export const setUnlocked = async (passphrase: string) => {
     await setEncrypted({
         key: LOCKED,
         value: `${LOCKED}${passphrase}`,
-        session: false,
+        session: true,
         passphrase,
     });
 };
 
 export const setLocked = async (passphrase: string) => {
-    await deleteEncrypted({ key: LOCKED, session: false, passphrase });
+    await deleteEncrypted({ key: LOCKED, session: true, passphrase });
 };
 
 export const isLocked = async (passphrase: string) => {
     const unlocked = await getEncrypted({
         key: LOCKED,
-        session: false,
+        session: true,
         passphrase,
     });
 
