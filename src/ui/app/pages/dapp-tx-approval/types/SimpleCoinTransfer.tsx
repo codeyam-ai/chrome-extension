@@ -149,7 +149,7 @@ const SimpleCoinTransfer = ({
     );
 
     const [formattedRemainder] = useFormatCoin(
-        new BigNumber(balance).plus(absReduction).toString(),
+        new BigNumber(balance).minus(absReduction).toString(),
         reduction.type
     );
 

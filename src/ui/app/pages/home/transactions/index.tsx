@@ -1,24 +1,12 @@
 import { QueueListIcon } from '@heroicons/react/24/solid';
-//import { SuiTransactionBlockResponse } from '@mysten/sui.js';
 import React, { memo, useCallback, useEffect, useState } from 'react';
 
 import { useAppSelector } from '_hooks';
 import Loading from '_src/ui/app/components/loading';
-
-//import { getTxType } from '_src/ui/app/helpers/transactions';
 import { useQueryTransactionsByAddress } from '_src/ui/app/hooks/useQueryTransactionsByAddress';
 import Button from '_src/ui/app/shared/button';
-//import { api } from '_src/ui/app/redux/store/thunk-extras';
-//import Button from '_src/ui/app/shared/button';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import Alert from '_src/ui/app/shared/feedback/Alert';
-
-// import deduplicate from '_src/ui/app/helpers/deduplicate';
-// import formatCoin from '_src/ui/app/helpers/formatCoin';
-// import { getTxType } from '_src/ui/app/helpers/transactions';
-// import { api } from '_src/ui/app/redux/store/thunk-extras';
-// import Button from '_src/ui/app/shared/button';
-//import Alert from '_src/ui/app/shared/feedback/Alert';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
@@ -69,7 +57,7 @@ const TransactionsPage = () => {
                 toCursor: suiTxns.toNextPageCursor || '',
             });
         }
-    }, []);
+    }, [suiTxns]);
 
     if (txErr) {
         return (

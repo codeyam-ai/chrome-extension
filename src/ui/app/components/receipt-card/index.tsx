@@ -37,7 +37,6 @@ import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 import st from './ReceiptCard.module.scss';
 
-
 type TxResponseProps = {
     txDigest: string | null;
     trans?: 'nft' | 'coin' | 'func' | 'sui';

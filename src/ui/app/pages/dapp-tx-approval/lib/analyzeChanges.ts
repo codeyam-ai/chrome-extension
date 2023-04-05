@@ -126,7 +126,7 @@ const coinChanges = (
                 recipient,
             };
         })
-        .filter((reduction) => new BigNumber(reduction.amount).abs().gt(1));
+        .filter((reduction) => new BigNumber(reduction.amount).abs().gt(5));
 
     const additions: BalanceReduction[] = additionChanges.map((addition) => ({
         type: addition.coinType,
