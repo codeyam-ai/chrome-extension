@@ -5,11 +5,14 @@ import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 
 import { API_ENV } from '../../ui/app/ApiProvider';
+import KeypairVault from '_app/KeypairVault';
+import { BackgroundClient } from '_app/background-client';
 import { queryClient } from '_app/helpers/queryClient';
 import App from '_app/index';
 import { AppType } from '_redux/slices/app/AppType';
 import { DependenciesContext } from '_shared/utils/dependenciesContext';
 import { createStore } from '_store';
+import { thunkExtras } from '_store/thunk-extras';
 
 import type { PreloadedState } from '@reduxjs/toolkit';
 import type { RenderOptions } from '@testing-library/react';
@@ -17,9 +20,6 @@ import type { RootState } from '_redux/RootReducer';
 import type { Dependencies } from '_shared/utils/dependenciesContext';
 import type { AppStore } from '_store';
 import type { PropsWithChildren } from 'react';
-import { thunkExtras } from '_store/thunk-extras';
-import { BackgroundClient } from '_app/background-client';
-import KeypairVault from '_app/KeypairVault';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: PreloadedState<RootState>;

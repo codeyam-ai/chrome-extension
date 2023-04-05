@@ -12,11 +12,12 @@ import {
     getGasFee,
     getSuiTransferAmount,
 } from './getSuiTransferAmount';
+import getToFromAddress from './getToFromAddress';
 import getUsdAmount from './getUsdAmount';
 import convertUnixTimeToLocalTime from '../convertUnixTimeToLocalTime';
 import { getDollars } from '../formatCoin';
 import truncateMiddle from '../truncate-middle';
-import getToFromAddress from './getToFromAddress';
+
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 const getHumanReadable = (

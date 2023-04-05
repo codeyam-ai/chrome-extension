@@ -1,15 +1,15 @@
 import { TransactionBlock } from '@mysten/sui.js';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import Browser from 'webextension-polyfill';
 
+import { TX_STORE_KEY } from '_shared/constants';
 import { renderTemplate } from '_src/test/utils/json-templates';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { accountInfos, simulateMnemonicUser } from '_src/test/utils/storage';
 
 import type { ApprovalRequest } from '_payloads/transactions';
-import { TX_STORE_KEY } from '_shared/constants';
-import Browser from 'webextension-polyfill';
 
 describe('The Transaction Approval popup', () => {
     const txRequestId = '95ae4a0d-0b7b-478b-ab70-bc3fe291540e';

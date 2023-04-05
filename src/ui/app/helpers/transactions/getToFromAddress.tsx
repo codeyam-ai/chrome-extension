@@ -1,4 +1,4 @@
-import { SuiTransactionBlockResponse } from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 type toFrom = {
     to: string | undefined;
@@ -18,6 +18,8 @@ const getToFromAddress = (
             const inputAddr = txnDetails?.inputs.find((input) => {
                 if ('valueType' in input) {
                     return input.valueType === 'address';
+                } else {
+                    return false;
                 }
             });
 

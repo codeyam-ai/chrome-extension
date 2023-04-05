@@ -11,31 +11,32 @@ import {
 } from '@heroicons/react/24/solid';
 import { useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { getTheme } from '../../helpers/getTheme';
 import { getHumanReadable } from '../../helpers/transactions';
+import truncateMiddle from '../../helpers/truncate-middle';
+import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
+import { Icon } from '../../shared/icons/Icon';
 import { AssetCard } from '../../shared/nfts/AssetCard';
 import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';
+import CopyBody from '../../shared/typography/CopyBody';
 import Header from '../../shared/typography/Header';
+import LoadingIndicator from '../loading/LoadingIndicator';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { useAppSelector } from '_hooks';
 import { api } from '_store/thunk-extras';
 
+import type { AccountInfo } from '../../KeypairVault';
 import type { FormattedTransaction } from '../../helpers/transactions/types';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 import st from './ReceiptCard.module.scss';
-import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
-import CopyBody from '../../shared/typography/CopyBody';
-import truncateMiddle from '../../helpers/truncate-middle';
-import { Icon } from '../../shared/icons/Icon';
-import { AccountInfo } from '../../KeypairVault';
-import LoadingIndicator from '../loading/LoadingIndicator';
+
 
 type TxResponseProps = {
     txDigest: string | null;
@@ -224,7 +225,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     */
 
     let transferObj;
-    let transferAction = txAction;
+    const transferAction = txAction;
 
     switch (transferAction) {
         case 'send':
