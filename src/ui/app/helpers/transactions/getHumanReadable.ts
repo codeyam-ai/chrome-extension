@@ -16,7 +16,7 @@ import getUsdAmount from './getUsdAmount';
 import convertUnixTimeToLocalTime from '../convertUnixTimeToLocalTime';
 import { getDollars } from '../formatCoin';
 import truncateMiddle from '../truncate-middle';
-
+import getToFromAddress from './getToFromAddress';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 const getHumanReadable = (
@@ -34,10 +34,9 @@ const getHumanReadable = (
     const gasFeeInUsd = getDollars(totalGasCost);
     const txCommands = getCommands(tx);
     const displayImage = getDisplayImage(tx);
-
     const amt = txAmount ? parseFloat(txAmount.replace(/,/g, '')) : undefined;
     const txUsdAmount = amt ? getUsdAmount(amt) : undefined;
-
+    const addresses = getToFromAddress(txAction, tx);
     const preposition = getTxPreposition(txType, txAction);
     const otherAddress = getTxOtherAddressDisplay(
         txType,
@@ -63,6 +62,7 @@ const getHumanReadable = (
         otherAddress,
         otherAddressStr,
         displayImage,
+        addresses,
     };
 };
 
