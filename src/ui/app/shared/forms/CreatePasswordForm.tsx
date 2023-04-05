@@ -73,6 +73,7 @@ const CustomFormikForm = () => {
 
             <Checkbox
                 className="px-6"
+                style={{ outline: '1px solid rgb(109 40 217)' }}
                 data-testid="terms-of-service"
                 label={
                     <div>
