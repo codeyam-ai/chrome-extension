@@ -1,6 +1,6 @@
-import type {BasePayload} from "_payloads";
-import {isBasePayload, Payload} from "_payloads";
-import {GetPreapprovalResponse} from "_payloads/transactions/ui/GetPreapprovalResponse";
+import {isBasePayload} from "_payloads";
+
+import type {BasePayload, Payload} from "_payloads";
 
 export interface WalletLocked extends BasePayload {
     type: 'wallet-locked';

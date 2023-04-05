@@ -17,7 +17,10 @@ import { DependenciesContext } from '_shared/utils/dependenciesContext';
 import store from '_store';
 import { thunkExtras } from '_store/thunk-extras';
 
-import type { Dependencies } from '_shared/utils/dependenciesContext';
+import type {
+    Dependencies,
+    Heartbeat,
+} from '_shared/utils/dependenciesContext';
 
 import './styles/global.scss';
 import './styles/tailwind.css';
@@ -34,17 +37,32 @@ async function init() {
     await thunkExtras.background.init(store.dispatch);
 }
 
+function makeHeartbeat() {
+    let heartbeatCallback: () => void;
+    const heartbeat: Heartbeat = {
+        onBeat: (callback: () => void) => {
+            heartbeatCallback = callback;
+        },
+    };
+    setInterval(() => {
+        if (heartbeatCallback) {
+            heartbeatCallback();
+        }
+    }, 5000);
+    return heartbeat;
+}
+
 function renderApp() {
     const rootDom = document.getElementById('root');
     if (!rootDom) {
         throw new Error('Root element not found');
     }
     const root = createRoot(rootDom);
-
     const appDependencies: Dependencies = {
         closeWindow: () => {
             window.close();
         },
+        heartbeat: makeHeartbeat(),
     };
 
     root.render(

@@ -5,6 +5,7 @@ import { lastValueFrom, take } from 'rxjs';
 
 import { createMessage } from '_messages';
 import { PortStream } from '_messaging/PortStream';
+import {isWalletLockedMessage} from "_payloads/locking/WalletLocked";
 import { isPermissionRequests } from '_payloads/permissions';
 import { isGetTransactionRequestsResponse } from '_payloads/transactions/ui/GetTransactionRequestsResponse';
 import { setPermissions } from '_redux/slices/permissions';
@@ -30,7 +31,7 @@ import type { PreapprovalResponse } from '_src/shared/messaging/messages/payload
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { GetPreapprovalRequests } from '_src/shared/messaging/messages/payloads/transactions/ui/GetPreapprovalRequests';
 import type { AppDispatch } from '_store';
-import {isWalletLockedMessage} from "_payloads/locking/WalletLocked";
+
 
 export class BackgroundClient {
     private _portStream: PortStream | null = null;

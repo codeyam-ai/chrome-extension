@@ -50,10 +50,12 @@ describe('Rendering the Tokens page', () => {
         fakeHeartbeat.capturedBeatCallback &&
         fakeHeartbeat.capturedBeatCallback();
 
+        // make sure alarm has been set
         expect(fakeAlarms.names).toContain('lockAlarm');
-        // TODO: then invoke the fake alarm
+
+        // then invoke the alarm
         fakeAlarms.onAlarm.listeners[0]({name: 'lockAlarm', periodInMinutes: 0, scheduledTime: 1})
-        // TODO: then see that the UI has updated to lock screen
+
         await screen.findByText('Unlock Wallet');
     });
 
