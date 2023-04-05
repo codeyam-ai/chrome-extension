@@ -8,6 +8,7 @@ import { PortStream } from '_messaging/PortStream';
 import {isWalletLockedMessage} from "_payloads/locking/WalletLocked";
 import { isPermissionRequests } from '_payloads/permissions';
 import { isGetTransactionRequestsResponse } from '_payloads/transactions/ui/GetTransactionRequestsResponse';
+import {logout} from "_redux/slices/account";
 import { setPermissions } from '_redux/slices/permissions';
 import { setPreapprovalRequests } from '_redux/slices/preapproval-requests';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
@@ -31,7 +32,6 @@ import type { PreapprovalResponse } from '_src/shared/messaging/messages/payload
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { GetPreapprovalRequests } from '_src/shared/messaging/messages/payloads/transactions/ui/GetPreapprovalRequests';
 import type { AppDispatch } from '_store';
-
 
 export class BackgroundClient {
     private _portStream: PortStream | null = null;
@@ -156,7 +156,7 @@ export class BackgroundClient {
         } else if (isGetPreapprovalResponse(payload)) {
             this._dispatch(setPreapprovalRequests(payload.preapprovalRequests));
         } else if (isWalletLockedMessage(payload)) {
-            //
+            this._dispatch(logout())
         }
     }
 

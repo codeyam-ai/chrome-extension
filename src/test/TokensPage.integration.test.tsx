@@ -56,7 +56,7 @@ describe('Rendering the Tokens page', () => {
         // then invoke the alarm
         fakeAlarms.onAlarm.listeners[0]({name: 'lockAlarm', periodInMinutes: 0, scheduledTime: 1})
 
-        await screen.findByText('Unlock Wallet');
+        await screen.findAllByText('Unlock Wallet');
     });
 
 });
