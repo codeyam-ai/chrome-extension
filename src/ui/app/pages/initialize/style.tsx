@@ -1,22 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import StylePreviewCard from '../../components/onboarding/StylePreviewCard';
 import getNextEmoji from '../../helpers/getNextEmoji';
 import getNextWalletColor from '../../helpers/getNextWalletColor';
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import {
-    saveAccountInfos,
-    saveActiveAccountIndex,
-    setAccountInfos,
-} from '../../redux/slices/account';
+import { useAppSelector } from '../../hooks';
+import { useUpdateCurrentAccountInfo } from '../../hooks/useUpdateCurrentAccountInfo';
 import EmojiDisplay from '../../shared/EmojiDisplay';
 import Button from '../../shared/buttons/Button';
 import ColorPickerMenu from '../../shared/inputs/colors/ColorPickerMenu';
 import EmojiPickerMenu from '../../shared/inputs/emojis/EmojiPickerMenu';
 import OnboardingCard from '../../shared/layouts/OnboardingCard';
 import BodyLarge from '../../shared/typography/BodyLarge';
-import Authentication from '_src/background/Authentication';
 import { getEncrypted } from '_src/shared/storagex/store';
 
 import type { AccountInfo } from '../../KeypairVault';
@@ -26,7 +21,7 @@ const StylePage = () => {
     const [isHostedWallet, setIsHostedWallet] = useState(false);
     const [isColorPickerMenuOpen, setIsColorPickerMenuOpen] = useState(false);
     const [isEmojiPickerMenuOpen, setIsEmojiPickerMenuOpen] = useState(false);
-    const dispatch = useAppDispatch();
+    const { updateCurrentAccountInfo } = useUpdateCurrentAccountInfo();
     const navigate = useNavigate();
 
     const accountInfo = useAppSelector(
@@ -36,11 +31,8 @@ const StylePage = () => {
                     (accountInfo.index || 0) === activeAccountIndex
             )
     );
-    const _accountInfos = useAppSelector(({ account }) => account.accountInfos);
 
     const address = useAppSelector(({ account }) => account.address);
-
-    const draftAccountInfos = useRef<AccountInfo[]>(_accountInfos);
 
     const [draftColor, setDraftColor] = useState<string>(
         accountInfo?.color || getNextWalletColor(0)
@@ -66,64 +58,22 @@ const StylePage = () => {
         setIsEmojiPickerMenuOpen(false);
     }, []);
 
-    const _saveAccountInfos = useCallback(async () => {
-        if (isHostedWallet) {
-            await Authentication.updateAccountInfos(draftAccountInfos.current);
-            await dispatch(setAccountInfos(draftAccountInfos.current));
-            await Authentication.getAccountInfos(true);
-        } else {
-            await dispatch(saveAccountInfos(draftAccountInfos.current));
-            await dispatch(
-                saveActiveAccountIndex(draftAccountInfos.current.length - 1)
-            );
-        }
-
+    const onContinue = useCallback(() => {
+        updateCurrentAccountInfo({ emoji: draftEmoji, color: draftColor });
         navigate('/initialize/theme');
-    }, [isHostedWallet, dispatch, navigate]);
+    }, [draftEmoji, draftColor, navigate, updateCurrentAccountInfo]);
 
-    const _handleChange = useCallback(
-        ({
-            name,
-            color,
-            emoji,
-        }: {
-            name?: string;
-            color?: string;
-            emoji?: string;
-        }) => {
-            draftAccountInfos.current = draftAccountInfos.current.map(
-                (accountInfo: AccountInfo) => {
-                    if (accountInfo.index === 0) {
-                        return {
-                            ...accountInfo,
-                            color: color || accountInfo.color,
-                            emoji: emoji || accountInfo.emoji,
-                        };
-                    } else {
-                        return accountInfo;
-                    }
-                }
-            );
-        },
-        []
-    );
-
-    const _handleColorChange = useCallback(
-        (color: string) => {
-            setDraftColor(color);
-            _handleChange({ color });
-            setIsColorPickerMenuOpen(false);
-        },
-        [_handleChange]
-    );
+    const _handleColorChange = useCallback((color: string) => {
+        setDraftColor(color);
+        setIsColorPickerMenuOpen(false);
+    }, []);
 
     const _handleEmojiChange = useCallback(
         (emojiPickerResult: EmojiPickerResult) => {
             setDraftEmoji(emojiPickerResult.shortcodes);
-            _handleChange({ emoji: emojiPickerResult.shortcodes });
             setIsEmojiPickerMenuOpen(false);
         },
-        [_handleChange]
+        []
     );
 
     useEffect(() => {
@@ -194,7 +144,7 @@ const StylePage = () => {
             </div>
 
             <div className="flex flex-col text-center gap-4 px-6 sm:px-10 pb-6 sm:pb-10">
-                <Button onClick={_saveAccountInfos} removeContainerPadding>
+                <Button onClick={onContinue} removeContainerPadding>
                     Continue
                 </Button>
                 <Link to={'/initialize/complete'}>

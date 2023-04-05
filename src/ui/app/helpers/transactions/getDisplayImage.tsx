@@ -1,8 +1,8 @@
-import type { FormattedTransaction } from './types';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 export type TxType = string;
 
-const getDisplayImage = (txn: FormattedTransaction): string | null => {
+const getDisplayImage = (txn: SuiTransactionBlockResponse): string | null => {
     // Iterate through the inputs for a transaction and check if
     // each value in the input is a url and that url contains in image
     // if so return the url, if not return null
@@ -10,7 +10,7 @@ const getDisplayImage = (txn: FormattedTransaction): string | null => {
     // If there's no image val is falsy
     let response = null;
 
-    const transaction = txn?.transactionBlock?.data?.transaction;
+    const transaction = txn?.transaction?.data?.transaction;
 
     if (transaction && 'transactions' in transaction) {
         // input arguments for the movecall transaction
@@ -18,7 +18,7 @@ const getDisplayImage = (txn: FormattedTransaction): string | null => {
 
         // iterate through the commands to check if it's a mint func
         transaction.transactions.forEach((command) => {
-            const commandObj = command as any;
+            const commandObj = command;
             const commandKey = Object.keys(commandObj)[0];
 
             // Check if the function has an input

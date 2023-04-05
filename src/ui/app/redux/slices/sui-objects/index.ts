@@ -93,7 +93,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
 type NFTTxResponse = {
     timestamp_ms?: number;
     status?: string;
-    gasFee?: number;
+    gasFee?: string;
     txId?: string;
 };
 
@@ -139,10 +139,11 @@ export const transferNFT = createAsyncThunk<
                 getTimestampFromTransactionResponse(executedTransaction),
             status: getExecutionStatusType(executedTransaction),
             gasFee: executedTransaction
-                ? getTotalGasUsed(executedTransaction)
-                : 0,
+                ? getTotalGasUsed(executedTransaction)?.toString()
+                : '0',
             txId: getTransactionDigest(executedTransaction),
         };
+
         return txnResp as NFTTxResponse;
     }
 );

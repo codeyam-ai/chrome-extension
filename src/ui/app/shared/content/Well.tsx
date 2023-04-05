@@ -1,9 +1,11 @@
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 
+import type { ReactNode } from 'react';
+
 interface WellProps {
     header: string;
-    subHeader: string;
+    subHeader: ReactNode;
     forceLightMode?: boolean;
 }
 
@@ -17,8 +19,12 @@ const Well = ({ header, subHeader, forceLightMode }: WellProps) => {
                         : 'dark:bg-ethos-dark-background-secondary'
                 }`}
             >
-                <BodyLarge isSemibold>{header}</BodyLarge>
-                <Body isTextColorMedium>{subHeader}</Body>
+                <BodyLarge isSemibold forceLightMode={forceLightMode}>
+                    {header}
+                </BodyLarge>
+                <Body isTextColorMedium forceLightMode={forceLightMode}>
+                    {subHeader}
+                </Body>
             </div>
         </div>
     );

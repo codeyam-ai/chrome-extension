@@ -19,7 +19,7 @@ const WrongAddress = ({ errorMessage, txID, txRequest }: WrongAddressProps) => {
                     the wrong wallet address.
                 </Body>
             }
-            fullErrorText={errorMessage}
+            fullErrorText={'TEST'}
             txInfo={{
                 dAppUrl: txRequest?.origin || '',
                 txId: txID || '',

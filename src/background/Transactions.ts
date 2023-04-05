@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
+    Connection,
     Ed25519Keypair,
     JsonRpcProvider,
     RawSigner,
@@ -284,17 +285,18 @@ class Transactions {
         const activeAccount = await this.getAccount(address);
 
         let env;
+        let envEndpoint;
         switch (chain) {
-            case 'sui::devnet':
+            case 'sui:devnet':
                 env = API_ENV.devNet;
                 break;
-            case 'sui::testnet':
+            case 'sui:testnet':
                 env = API_ENV.testNet;
                 break;
-            case 'sui::local':
+            case 'sui:local':
                 env = API_ENV.local;
                 break;
-            case 'sui::custom':
+            case 'sui:custom':
                 env = API_ENV.customRPC;
                 break;
             default: {
@@ -303,13 +305,25 @@ class Transactions {
                     'sui_Env_RPC',
                 ]);
 
-                env =
-                    envInfo?.sui_Env === API_ENV.customRPC
-                        ? envInfo.sui_Env_RPC
-                        : API_ENV[envInfo.sui_Env as keyof typeof API_ENV];
+                if (envInfo) {
+                    env = envInfo.sui_Env;
+                    envEndpoint = envInfo?.sui_Env_RPC;
+                }
             }
         }
-        const connection = api.getEndPoints(env);
+
+        let connection: Connection;
+        if (envEndpoint) {
+            connection = new Connection({ fullnode: envEndpoint });
+        } else if (env) {
+            connection = api.getEndPoints(env);
+        } else {
+            throw new Error('No connection found');
+        }
+
+        if (!connection) {
+            throw new Error('No connection found');
+        }
 
         const provider = new JsonRpcProvider(connection);
         const secretKey = Uint8Array.from(

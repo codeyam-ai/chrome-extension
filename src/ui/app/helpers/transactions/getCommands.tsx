@@ -1,13 +1,13 @@
 import _ from 'lodash';
 
-import type { FormattedTransaction } from './types';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 export type TxType = string;
 
-const getCommands = (txn: FormattedTransaction): string | null => {
+const getCommands = (txn: SuiTransactionBlockResponse): string | null => {
     let response = null;
 
-    const transaction = txn?.transactionBlock?.data?.transaction;
+    const transaction = txn?.transaction?.data?.transaction;
     if (!!transaction && 'transactions' in transaction) {
         const totalCommands = transaction.transactions.length;
         let commandStr =
@@ -17,23 +17,26 @@ const getCommands = (txn: FormattedTransaction): string | null => {
             commandStr += `${val}${comma} `;
         };
 
-        const primaryObjName = txn?.objectChanges?.[0]
-            ? _.startCase(
-                  txn.objectChanges[0].objectType.split('::')[1].toLowerCase()
-              )
-            : 'Unknown Object';
+        const getPrimaryObjName = () => {
+            if (txn.objectChanges && 'objectType' in txn.objectChanges[0]) {
+                return _.startCase(
+                    txn.objectChanges[0].objectType.split('::')[1].toLowerCase()
+                );
+            } else {
+                return 'Unknown Object';
+            }
+        };
+
+        const primaryObjName = getPrimaryObjName();
 
         transaction.transactions.forEach((command, idx) => {
-            const commandObj = command as any;
+            const commandObj = command;
             const commandKey = Object.keys(commandObj)[0];
             const comma = idx + 1 < totalCommands ? ',' : '';
 
             switch (commandKey) {
                 case 'TransferObjects':
                     appendCommandStr(`Transfer ${primaryObjName}`, idx, comma);
-                    break;
-                case 'SplitCoins':
-                    appendCommandStr('Split Coin', idx, comma);
                     break;
                 case 'MergeCoins':
                     appendCommandStr('Merge Coins', idx, comma);
@@ -45,11 +48,12 @@ const getCommands = (txn: FormattedTransaction): string | null => {
                     appendCommandStr('Make Move', idx, comma);
                     break;
                 case 'MoveCall': {
-                    const call = commandObj['MoveCall'];
-                    const mod = _.startCase(call.module);
-                    const func = _.startCase(call.function);
+                    if ('MoveCall' in commandObj) {
+                        const call = commandObj['MoveCall'];
+                        const mod = _.startCase(call.module);
 
-                    commandStr += `${mod} (${func})${comma} `;
+                        commandStr += `${mod}${comma} `;
+                    }
                     break;
                 }
                 default:

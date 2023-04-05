@@ -128,7 +128,7 @@ const OnboardingCard = ({
                                     Wallet Set Up
                                 </JumboTitle>
                             )}
-                            <JumboTitle>{title}</JumboTitle>
+                            <JumboTitle forceLightMode>{title}</JumboTitle>
                         </div>
                         <Subheader isTextColorMedium forceLightMode>
                             {subtitle}
@@ -167,7 +167,10 @@ const OnboardingCard = ({
                                             <span className="h-8 w-8">
                                                 <EthosLogo />
                                             </span>
-                                            <BodyLarge isSemibold>
+                                            <BodyLarge
+                                                isSemibold
+                                                forceLightMode
+                                            >
                                                 Ethos Sui Wallet
                                             </BodyLarge>
                                         </div>

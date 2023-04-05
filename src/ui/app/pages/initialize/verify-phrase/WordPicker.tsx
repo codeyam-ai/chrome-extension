@@ -22,7 +22,7 @@ const WordButton = ({ word, onClick }: WordButtonProps) => {
         <button
             onClick={handleClick}
             disabled={word.used}
-            className="py-1 px-2 rounded-full disabled:opacity-50 bg-ethos-light-primary-light/10"
+            className="py-1 px-2 rounded-full disabled:opacity-50 bg-ethos-light-primary-light/20"
         >
             <Body isSemibold className="text-ethos-light-primary-light">
                 {word.text}

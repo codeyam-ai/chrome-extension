@@ -78,7 +78,7 @@ const API_ENV_TO_CHAIN: Record<
     [API_ENV.local]: SUI_LOCALNET_CHAIN,
     [API_ENV.devNet]: SUI_DEVNET_CHAIN,
     [API_ENV.testNet]: SUI_TESTNET_CHAIN,
-    [API_ENV.mainNet]: 'sui::mainnet',
+    [API_ENV.mainNet]: 'sui:mainnet',
 };
 
 export class EthosWallet implements Wallet {

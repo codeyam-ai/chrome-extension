@@ -4,7 +4,6 @@
 // import { getTransactionDigest, Transaction, SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import { SUI_TYPE_ARG, TransactionBlock } from '@mysten/sui.js';
-import BigNumber from 'bignumber.js';
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';

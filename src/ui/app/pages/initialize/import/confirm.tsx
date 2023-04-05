@@ -5,9 +5,10 @@ import { useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Well from '_src/ui/app/shared/content/Well';
 import OnboardingCard from '_src/ui/app/shared/layouts/OnboardingCard';
+import Body from '_src/ui/app/shared/typography/Body';
 
 const ConfirmImportPage = () => {
-    const address = useAppSelector(({ account }) => account.address);
+    const address = useAppSelector(({ account }) => account.address) || '';
 
     useEffect(() => {
         if (address) {
@@ -24,10 +25,15 @@ const ConfirmImportPage = () => {
             progressCompleted={2}
             progressTotal={3}
         >
-            <div className="px-10 pb-[108px]">
+            <div className="px-10 pb-[90px]">
                 <Well
                     header="Wallet address"
-                    subHeader={address || ''}
+                    subHeader={
+                        <div>
+                            <Body>{address.slice(0, address.length / 2)}</Body>
+                            <Body>{address.slice(address.length / -2)}</Body>
+                        </div>
+                    }
                     forceLightMode
                 />
             </div>

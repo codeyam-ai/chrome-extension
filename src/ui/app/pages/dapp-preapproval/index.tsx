@@ -16,6 +16,7 @@ import {
     preapprovalRequestsSelectors,
     respondToPreapprovalRequest,
 } from '_redux/slices/preapproval-requests';
+import { useDependencies } from '_src/shared/utils/dependenciesContext';
 import Tooltip from '_src/ui/app/components/Tooltip';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 import { AppState } from '_src/ui/app/hooks/useInitializedGuard';
@@ -29,7 +30,6 @@ import Body from '_src/ui/app/shared/typography/Body';
 import type { KeyNameAndValue } from '../../shared/content/rows-and-lists/KeyValueList';
 import type { SuiObjectData as SuiObject } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
-import { useDependencies } from '_src/shared/utils/dependenciesContext';
 
 const truncateMiddle = (s = '', length = 6) =>
     s.length > length * 2.5
@@ -176,7 +176,7 @@ export function DappPreapprovalPage() {
                 closeWindow();
             }
         },
-        [dispatch, preapprovalRequest, changes, showError]
+        [showError, preapprovalRequest, dispatch, changes, closeWindow]
     );
 
     useEffect(() => {

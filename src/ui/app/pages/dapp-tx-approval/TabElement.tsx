@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import Subheader from '../../shared/typography/Subheader';
 
-import type { TxApprovalTab } from './index';
+import type { TxApprovalTab } from './types/Base';
 
 export type TabElementProps = {
     type: TxApprovalTab;

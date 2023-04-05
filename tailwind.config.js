@@ -27,6 +27,7 @@ module.exports = {
                 'size-ethos-subheader': '18px',
                 'size-ethos-body-large': '16px',
                 'size-ethos-body': '14px',
+                'size-ethos-small': '12px',
             },
             lineHeight: {
                 'line-height-ethos-ultra-jumbo': '55px',
@@ -81,6 +82,8 @@ module.exports = {
                 // Shared light and dark mode
                 // ==============================
                 'ethos-sui-blue': '#3D5FF2',
+                'ethos-light-purple': '#F0EBFE',
+                'ethos-pale-purple': '#F8F5FF',
 
                 // ==========
                 // Light mode

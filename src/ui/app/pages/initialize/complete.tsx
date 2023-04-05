@@ -133,7 +133,7 @@ const CompletePage = () => {
                 <SuiIcon width={50} height={50} color="black" />
             </div>
             <div className="flex flex-col gap-2 text-center">
-                <JumboTitle>
+                <JumboTitle forceLightMode>
                     {suiAmount === 0 && !error ? (
                         '0'
                     ) : (
@@ -150,7 +150,9 @@ const CompletePage = () => {
                         </div>
                     )}
                 </JumboTitle>
-                <Header isTextColorMedium>Sui Balance</Header>
+                <Header isTextColorMedium forceLightMode>
+                    Sui Balance
+                </Header>
             </div>
         </div>
     );
@@ -173,7 +175,7 @@ const CompletePage = () => {
                     <div className="pb-4">
                         <Alert
                             title="The faucet isn't working"
-                            subtitle="There could be an issue with Sui DevNet or the Sui faucet. Please try again later."
+                            subtitle="There could be an issue with the Sui network or the Sui faucet. Please try again later."
                             borderRadius={16}
                             forceLightMode
                         />

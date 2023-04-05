@@ -4,6 +4,7 @@ import { useCallback, useState, useEffect } from 'react';
 import WalletProfile from '../../content/rows-and-lists/WalletProfile';
 import WalletPicker from '_src/ui/app/components/wallet-picker/WalletPicker';
 import { useAppSelector } from '_src/ui/app/hooks';
+import EthosLogo from '_src/ui/app/shared/svg/EthosLogo';
 
 interface ApproveContainerNavBarProps {
     reject: () => void;
@@ -24,12 +25,8 @@ const ApproveContainerNavBar = ({ reject }: ApproveContainerNavBarProps) => {
     }, [activeAccountIndex]);
 
     return (
-        <div className="relative flex flex-row items-center justify-between px-6 py-4 border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
-            <div className="flex flex-row gap-4 items-center">
-                <button onClick={reject}>
-                    <XMarkIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
-                </button>
-            </div>
+        <div className="relative flex flex-row items-center justify-between px-6 py-3 bg-ethos-light-purple dark:bg-ethos-dark-background-secondary">
+            <EthosLogo />
             <WalletProfile
                 inlineWalletPicker={true}
                 onClick={toggleWalletPicker}
@@ -39,6 +36,11 @@ const ApproveContainerNavBar = ({ reject }: ApproveContainerNavBarProps) => {
                     <WalletPicker selectOnly={true} />
                 </div>
             )}
+            <div className="flex flex-row gap-4 items-center">
+                <button onClick={reject}>
+                    <XMarkIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                </button>
+            </div>
         </div>
     );
 };

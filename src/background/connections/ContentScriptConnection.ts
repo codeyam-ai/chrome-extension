@@ -90,18 +90,33 @@ export class ContentScriptConnection extends Connection {
                 )
             );
         } else if (isGetAccountCustomizations(payload)) {
-            const accountInfos = await this.getAccountInfos();
-            const accountCustomizations: AccountCustomization[] = [];
-            for (const accountInfo of accountInfos) {
-                accountCustomizations.push({
-                    address: accountInfo.address,
-                    nickname: accountInfo.name || '',
-                    color: accountInfo.color || '',
-                    emoji: accountInfo.emoji || '',
-                });
-            }
+            const existingPermission = await Permissions.getPermission(
+                this.origin
+            );
 
-            this.sendAccountCustomizations(accountCustomizations, msg.id);
+            if (
+                !(await Permissions.hasPermissions(
+                    this.origin,
+                    ['viewAccount'],
+                    existingPermission
+                )) ||
+                !existingPermission
+            ) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                const accountInfos = await this.getAccountInfos();
+                const accountCustomizations: AccountCustomization[] = [];
+                for (const accountInfo of accountInfos) {
+                    accountCustomizations.push({
+                        address: accountInfo.address,
+                        nickname: accountInfo.name || '',
+                        color: accountInfo.color || '',
+                        emoji: accountInfo.emoji || '',
+                    });
+                }
+
+                this.sendAccountCustomizations(accountCustomizations, msg.id);
+            }
         } else if (isGetNetwork(payload)) {
             const network = (await getLocal('sui_Env')) || DEFAULT_API_ENV;
             this.sendNetwork(network, msg.id);

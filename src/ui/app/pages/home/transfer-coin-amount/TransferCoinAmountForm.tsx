@@ -1,6 +1,5 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-import BigNumber from 'bignumber.js';
 import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
 import { memo, useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';

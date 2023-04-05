@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // import { getTransactionDigest } from '@mysten/sui.js';
-import BigNumber from 'bignumber.js';
 import { Formik } from 'formik';
 import { useCallback, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -16,14 +16,13 @@ import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { resetSendSuiForm } from '_redux/slices/forms';
 import { sendTokens } from '_redux/slices/transactions';
+import ns from '_shared/namespace';
 import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
-import { useIntl } from 'react-intl';
-import ns from '_shared/namespace';
 
 const initialValues = {
     to: '',
@@ -118,7 +117,7 @@ function TransferCoinReviewPage() {
                 setSendError((e as SerializedError).message || null);
             }
         },
-        [dispatch, navigate, coinType, coinDecimals]
+        [locale, coinType, coinDecimals, dispatch, navigate]
     );
     const handleOnClearSubmitError = useCallback(() => {
         setSendError(null);

@@ -1,67 +1,30 @@
-// Copyright (c) 2022, Mysten Labs, Inc.
-// SPDX-License-Identifier: Apache-2.0
-
-// import { fromB64 } from '@mysten/bcs';
-import {
-    // getTransactionEffects,
-    SUI_TYPE_ARG,
-    TransactionBlock,
-} from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import CopyAsset from './CopyAsset';
-import FormattedCoin from './FormattedCoin';
-import SectionElement from './SectionElement';
-import TabElement from './TabElement';
+import IncorrectChain from './errors/IncorrectChain';
 import IncorrectSigner from './errors/IncorrectSigner';
-// import MissingObject from './errors/MissingObject';
-// import NotEnoughGas from './errors/NotEnoughGas';
-import {
-    // isErrorCausedByIncorrectSigner,
-    // isErrorCausedByMissingObject,
-    // isErrorCausedByUserNotHavingEnoughSuiToPayForGas,
-    isErrorObjectVersionUnavailable,
-    useCategorizedEvents,
-    useCustomSummary,
-    // useNormalizedFunction,
-} from './lib';
-// import { getGasDataFromError } from './lib/extractGasData';
-import * as summaries from './summaries';
-import truncateMiddle from '../../helpers/truncate-middle';
+import MissingObject from './errors/MissingObject';
+import analyzeChanges from './lib/analyzeChanges';
+import finishTransaction from './lib/finishTransaction';
+import resizeWindow from './lib/resizeWindow';
+import Base from './types/Base';
+import ComplexMoveCall from './types/ComplexMoveCall';
+import SimpleAssetMint from './types/SimpleAssetMint';
+import SimpleAssetTransfer from './types/SimpleAssetTransfer';
+import SimpleBase from './types/SimpleBase';
+import SimpleCoinTransfer from './types/SimpleCoinTransfer';
 import { AppState } from '../../hooks/useInitializedGuard';
-import Alert from '../../shared/feedback/Alert';
-import AlertWithErrorExpand from '../../shared/feedback/AlertWithErrorExpand';
-import Body from '../../shared/typography/Body';
-import CopyBody from '../../shared/typography/CopyBody';
-import EthosLink from '../../shared/typography/EthosLink';
 import Loading from '_components/loading';
-import { useAppSelector, useFormatCoin, useInitializedGuard } from '_hooks';
+import { useAppSelector, useInitializedGuard } from '_hooks';
 import { txRequestsSelectors } from '_redux/slices/transaction-requests';
 import { thunkExtras } from '_redux/store/thunk-extras';
 import { useDependencies } from '_shared/utils/dependenciesContext';
-import { MAILTO_SUPPORT_URL } from '_src/shared/constants';
-import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
-import type { Detail } from './DetailElement';
-import type { Section } from './SectionElement';
-import type { SmallDetail } from './SmallValue';
-import type {
-    SuiMoveNormalizedType,
-    SuiTransactionBlockResponse,
-    TransactionEffects,
-    TransactionEvents,
-} from '@mysten/sui.js';
-// import type { ApprovalRequest } from '_payloads/transactions';
-import type { SuiSignAndExecuteTransactionBlockInput } from '@mysten/wallet-standard';
+import type { AnalyzeChangesResult } from './lib/analyzeChanges';
+import type { RawSigner, SuiMoveNormalizedType } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
-import type { ReactElement, ReactNode } from 'react';
-
-export enum TxApprovalTab {
-    SUMMARY = 'Summary',
-    ASSETS = 'Assets',
-    DETAILS = 'Details',
-}
+import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
 export type Permission = {
     label: string;
@@ -75,15 +38,24 @@ export type DistilledEffect = {
     type_arguments?: SuiMoveNormalizedType[];
 };
 
-export type TabSections = {
-    [key in TxApprovalTab]?: (Section | ReactElement)[];
-};
-
 export function DappTxApprovalPage() {
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
-    const accountInfos = useAppSelector(({ account }) => account.accountInfos);
 
-    const [tab, setTab] = useState(TxApprovalTab.SUMMARY);
+    const activeChain = useMemo(() => {
+        switch (selectedApiEnv) {
+            case 'testNet':
+                return 'sui:testnet';
+            // case 'mainNet':
+            //     return 'sui:mainnet';
+            case 'local':
+                return 'sui:local';
+            default:
+                return 'sui:devnet';
+        }
+    }, [selectedApiEnv]);
+
+    const [signer, setSigner] = useState<RawSigner | EthosSigner | undefined>();
+    const accountInfos = useAppSelector(({ account }) => account.accountInfos);
 
     const { txID } = useParams();
     const guardLoading = useInitializedGuard([
@@ -96,66 +68,35 @@ export function DappTxApprovalPage() {
     const { activeAccountIndex, address, authentication } = useAppSelector(
         ({ account }) => account
     );
+
     const txRequestSelector = useMemo(
         () => (state: RootState) =>
             (txID && txRequestsSelectors.selectById(state, txID)) || null,
         [txID]
     );
     const txRequest = useAppSelector(txRequestSelector);
+
     const transactionBlock = useMemo(() => {
         if (!txRequest || !('data' in txRequest.tx)) return null;
         return TransactionBlock.from(txRequest.tx.data);
     }, [txRequest]);
 
+    const [dryRunError, setDryRunError] = useState<string | undefined>();
     const [done, setDone] = useState<boolean>(false);
 
     // const normalizedFunction = useNormalizedFunction(txRequest);
 
-    const [effects, setEffects] = useState<
-        TransactionEffects | undefined | null
+    const [analysis, setAnalysis] = useState<
+        AnalyzeChangesResult | undefined | null
     >();
-    const [events, setEvents] = useState<
-        TransactionEvents | undefined | null
-    >();
-    const [dryRunError, setDryRunError] = useState<string | undefined>();
-    const [explicitError, setExplicitError] = useState<ReactNode | undefined>();
 
     const loading =
         guardLoading ||
         txRequestsLoading ||
-        (events === undefined && !dryRunError && !explicitError);
-
-    const summaryKey = useCustomSummary(txRequest);
-
-    const gasUsed = effects?.gasUsed;
-    const gas = gasUsed
-        ? Number(gasUsed.computationCost) +
-          (Number(gasUsed.storageCost) - Number(gasUsed.storageRebate))
-        : null;
-
-    const { reading, mutating, creating, deleting, transferring, coinChanges } =
-        useCategorizedEvents({
-            normalizedFunction: undefined,
-            events,
-            address,
-        });
-
-    const charges = useMemo(
-        () => (coinChanges[SUI_TYPE_ARG] || 0) - (gas || 0),
-        [coinChanges, gas]
-    );
-    const [formattedCharges, chargesSymbol, chargeDollars] = useFormatCoin(
-        charges,
-        SUI_TYPE_ARG
-    );
-    const [formattedGas, gasSymbol, gasDollars] = useFormatCoin(
-        gas,
-        SUI_TYPE_ARG
-    );
-    const [formattedTotal, totalSymbol, totalDollars] = useFormatCoin(
-        coinChanges[SUI_TYPE_ARG],
-        SUI_TYPE_ARG
-    );
+        !txRequest ||
+        !signer ||
+        !address ||
+        analysis === undefined;
 
     useEffect(() => {
         window.onresize = () => {
@@ -170,100 +111,102 @@ export function DappTxApprovalPage() {
     }, []);
 
     useEffect(() => {
-        if (!transactionBlock || !accountInfos || accountInfos.length === 0)
+        setSigner(undefined);
+        setAnalysis(undefined);
+        setDryRunError(undefined);
+        resizeWindow();
+    }, [selectedApiEnv]);
+
+    useEffect(() => {
+        if (!accountInfos || accountInfos.length === 0) return;
+
+        let signer;
+        if (authentication) {
+            signer = thunkExtras.api.getEthosSignerInstance(
+                address || '',
+                authentication
+            );
+        } else {
+            signer = thunkExtras.api.getSignerInstance(
+                thunkExtras.keypairVault.getKeyPair(activeAccountIndex),
+                true
+            );
+        }
+        setSigner(signer);
+    }, [
+        accountInfos,
+        activeAccountIndex,
+        address,
+        authentication,
+        selectedApiEnv,
+    ]);
+
+    useEffect(() => {
+        if (
+            (txRequest &&
+                'account' in txRequest.tx &&
+                txRequest.tx.account &&
+                address &&
+                txRequest.tx.account !== address) ||
+            (txRequest &&
+                'chain' in txRequest.tx &&
+                txRequest.tx.chain &&
+                ['sui:devnet', 'sui:testnet'].includes(txRequest.tx.chain) &&
+                ['sui:devnet', 'sui:testnet'].includes(activeChain) &&
+                txRequest.tx.chain !== activeChain)
+        ) {
+            setAnalysis(null);
+            return;
+        }
+
+        if (
+            !signer ||
+            !transactionBlock ||
+            !accountInfos ||
+            accountInfos.length === 0
+        )
             return;
 
         const getTransactionInfo = async () => {
-            let signer;
-            if (authentication) {
-                signer = thunkExtras.api.getEthosSignerInstance(
-                    address || '',
-                    authentication
-                );
-            } else {
-                signer = thunkExtras.api.getSignerInstance(
-                    thunkExtras.keypairVault.getKeyPair(activeAccountIndex),
-                    true
-                );
-            }
+            if (!accountInfos || accountInfos.length === 0) return;
 
-            setDryRunError(undefined);
-            setExplicitError(undefined);
+            // console.log('SERIALIZED', transactionBlock.serialize());
 
             try {
-                const {
-                    effects: transactionEffects,
-                    events: transactionEvents,
-                } = await signer.dryRunTransactionBlock({ transactionBlock });
+                const analysis = await analyzeChanges({
+                    signer,
+                    transactionBlock,
+                });
 
-                if (transactionEffects.status.status === 'failure') {
-                    if (
-                        transactionEffects?.status?.error?.includes(
-                            'quorum of validators'
-                        )
-                    ) {
-                        setDryRunError(
-                            'Sui Devnet is having technical issues. Please check back later when these issues are resolved.'
-                        );
-                    } else if (
-                        isErrorObjectVersionUnavailable(
-                            transactionEffects?.status?.error || ''
-                        )
-                    ) {
-                        setExplicitError(
-                            <div className="flex flex-col gap-6">
-                                <Alert
-                                    title="Object or Coin In Use"
-                                    subtitle="One of the objects or coins in this transaction is already in use. Please wait a moment and try again.    "
-                                />
-                                <Alert
-                                    title="Error Details"
-                                    subtitle={transactionEffects?.status?.error}
-                                />
-                            </div>
-                        );
-                    } else {
-                        setDryRunError(transactionEffects.status.error);
-                    }
-                } else if (
-                    typeof transactionEffects.gasObject.owner === 'object' &&
-                    'AddressOwner' in transactionEffects.gasObject.owner &&
-                    transactionEffects.gasObject.owner.AddressOwner !== address
-                ) {
-                    const gasAddress =
-                        transactionEffects.gasObject.owner.AddressOwner;
+                // console.log('ANALYSIS', analysis);
 
-                    if (gasAddress !== address) {
-                        setExplicitError(
-                            <IncorrectSigner correctAddress={gasAddress} />
-                        );
-                    } else {
-                        setEvents(transactionEvents);
-                        setEffects(transactionEffects);
-                    }
-                } else {
-                    setEvents(transactionEvents);
-                    setEffects(transactionEffects);
-                }
+                setAnalysis(analysis);
             } catch (e: unknown) {
-                // setDryRunError(`${e}`);
-                setEvents(null);
-                setEffects(null);
+                setDryRunError(`${e}`);
+                setAnalysis(null);
             }
         };
 
         getTransactionInfo();
     }, [
-        transactionBlock,
+        accountInfos,
         activeAccountIndex,
         address,
         authentication,
-        accountInfos,
+        signer,
+        transactionBlock,
         selectedApiEnv,
-        txID,
-        txRequest?.origin,
         txRequest,
+        activeChain,
     ]);
+
+    const closeWindow = useDependencies().closeWindow;
+
+    useEffect(() => {
+        if (done) {
+            closeWindow();
+        }
+    }, [closeWindow, done]);
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
@@ -276,10 +219,10 @@ export function DappTxApprovalPage() {
                     ? txRequest.tx.requestType
                     : undefined;
             await finishTransaction(
-                transactionBlock,
+                transactionBlock ?? null,
                 txID,
                 approved,
-                authentication,
+                authentication ?? null,
                 address,
                 activeAccountIndex,
                 options,
@@ -288,477 +231,180 @@ export function DappTxApprovalPage() {
             setDone(true);
         },
         [
+            txRequest?.tx,
             transactionBlock,
             txID,
             authentication,
             address,
             activeAccountIndex,
-            txRequest?.tx,
+            setDone,
         ]
     );
 
-    const closeWindow = useDependencies().closeWindow;
+    const onApprove = useCallback(() => {
+        handleOnSubmit(true);
+    }, [handleOnSubmit]);
 
-    useEffect(() => {
-        if (done) {
-            closeWindow();
-        }
-    }, [closeWindow, done]);
+    const onComplete = useCallback(() => {
+        handleOnSubmit(false);
+    }, [handleOnSubmit]);
 
-    const content: TabSections = useMemo(() => {
-        if (txRequest?.tx.type !== 'transaction') return [] as TabSections;
-
-        const transactionBlock = TransactionBlock.from(txRequest?.tx.data);
-
-        const data = {
-            address,
-            transactionBlock,
-            reading,
-            mutating,
-            creating,
-            transferring,
-            deleting,
-            coinChanges,
-            formattedCharges,
-            chargesSymbol,
-            chargeDollars,
-            formattedGas,
-            gasSymbol,
-            gasDollars,
-            formattedTotal,
-            totalSymbol,
-            totalDollars,
-        };
-
-        // let summary;
-        // switch (summaryKey) {
-        //     case 'redeem-ticket':
-        //         summary = [
-        //             <summaries.RedeemTicket
-        //                 key="redeem-ticket-summary"
-        //                 {...data}
-        //             />,
-        //         ];
-        //         break;
-        //     case 'capy-vote':
-        //         summary = [
-        //             <summaries.CapyVote key="capy-vote-summary" {...data} />,
-        //         ];
-        //         break;
-        //     case 'capy-nominate':
-        //         summary = [
-        //             <summaries.CapyNominate
-        //                 key="capy-nominate-summary"
-        //                 {...data}
-        //             />,
-        //         ];
-        //         break;
-        //     default:
-        //         summary = summaries.standard(data);
-        // }
-        const summary = summaries.standard(data);
-        const anyPermissionsRequested =
-            reading.length > 0 ||
-            mutating.length > 0 ||
-            transferring.length > 0 ||
-            deleting.length > 0 ||
-            Object.keys(coinChanges).length > 0;
-
-        const anyAssetEffects =
-            creating.length > 0 ||
-            mutating.length > 0 ||
-            transferring.length > 0 ||
-            deleting.length > 0 ||
-            Object.keys(coinChanges).length > 0;
-
-        const assets = [
-            {
-                title: 'Permissions Requested',
-                subtitle: anyPermissionsRequested
-                    ? 'This transaction has requested access to your assets:'
-                    : null,
-                details: anyPermissionsRequested
-                    ? [
-                          {
-                              label: 'Reading',
-                              content: `${reading.length} Assets`,
-                              detail: reading.map((r, i) => (
-                                  <CopyAsset key={`reading-${i}`} {...r} />
-                              )),
-                          },
-                          //   {
-                          //       label: 'Modifying',
-                          //       content: `${mutating.length} Assets`,
-                          //       detail: mutating.map((m, i) => (
-                          //           <CopyAsset key={`modifying-${i}`} {...m} />
-                          //       )),
-                          //   },
-                          //   {
-                          //       label: 'Transferring',
-                          //       content: `${transferring.length} Assets`,
-                          //       detail: transferring.map((t, i) => (
-                          //           <CopyAsset key={`transferring-${i}`} {...t} />
-                          //       )),
-                          //   },
-                          //   {
-                          //       label: 'Full Access',
-                          //       content: `${deleting.length} Assets`,
-                          //       detail: deleting.map((d, i) => (
-                          //           <CopyBody
-                          //               key={`deleting-${i}`}
-                          //               txt={d?.name || ''}
-                          //           >
-                          //               {truncateMiddle(d?.name)}
-                          //           </CopyBody>
-                          //       )),
-                          //   },
-                          {
-                              label: 'Coins',
-                              content: `${
-                                  Object.keys(coinChanges).length
-                              } Coins`,
-                              detail: Object.keys(coinChanges).map(
-                                  (c, index) => (
-                                      <div
-                                          key={`coin-detail-${index}`}
-                                          className="text-xs"
-                                      >
-                                          <CopyBody
-                                              key={`coins-${index}`}
-                                              txt={c}
-                                          >
-                                              {truncateMiddle(c, 15)}
-                                          </CopyBody>
-                                      </div>
-                                  )
-                              ),
-                          },
-                      ]
-                    : [
-                          {
-                              label: 'No access requested.',
-                          },
-                      ],
-            } as Section,
-            {
-                title: 'Asset Effects',
-                subtitle: anyAssetEffects
-                    ? 'This transaction have the following effects on your assets (including creating new assets):'
-                    : null,
-                details: anyAssetEffects
-                    ? [
-                          // {
-                          //     label: 'Creating',
-                          //     content: `${creating.length} Assets`,
-                          //     detail: creating.map((c, i) => (
-                          //         <CopyAsset
-                          //             key={`asset-creating-${i}`}
-                          //             {...c}
-                          //         />
-                          //     )),
-                          // },
-                          // {
-                          //     label: 'Modifying',
-                          //     content: `${mutating.length} Assets`,
-                          //     detail: mutating.map((m, i) => (
-                          //         <CopyAsset
-                          //             key={`asset-modifying-${i}`}
-                          //             {...m}
-                          //         />
-                          //     )),
-                          // },
-                          // {
-                          //     label: 'Transferring',
-                          //     content: `${transferring.length} Assets`,
-                          //     detail: transferring.map((t, i) => (
-                          //         <CopyAsset
-                          //             key={`asset-transferring-${i}`}
-                          //             {...t}
-                          //         />
-                          //     )),
-                          // },
-                          // {
-                          //     label: 'Deleting',
-                          //     content: `${deleting.length} Assets`,
-                          //     detail: deleting.map((d, i) => (
-                          //         <CopyBody
-                          //             key={`asset-deleting-${i}`}
-                          //             txt={d?.name || ''}
-                          //         >
-                          //             {truncateMiddle(d?.name)}
-                          //         </CopyBody>
-                          //     )),
-                          // },
-                          {
-                              label: 'Balances',
-                              content: `${
-                                  Object.keys(coinChanges).length
-                              } Coins`,
-                              detail: Object.keys(coinChanges).map(
-                                  (c, index) => (
-                                      <FormattedCoin
-                                          key={`coin-detail-${index}`}
-                                          type={c}
-                                          amount={coinChanges[c] * -1}
-                                      />
-                                  )
-                              ),
-                          },
-                      ]
-                    : [
-                          {
-                              label: 'No effects on any of your assets.',
-                          },
-                      ],
-            } as Section,
-        ];
-
-        const transactionDetails = {
-            title: 'Transaction',
-            details: [] as Detail[],
-        };
-
-        const details = [];
-
-        if (transactionBlock?.blockData) {
-            if (transactionBlock.blockData.gasConfig.budget) {
-                transactionDetails.details.push({
-                    label: 'Gas Budget',
-                    content: {
-                        type: 'small',
-                        content: transactionBlock.blockData.gasConfig.budget,
-                        coinType: SUI_TYPE_ARG,
-                    } as SmallDetail,
-                });
-                // } else if (transaction.transactionData.commands.)
-                // for (const attribute of [
-                //     'packageObjectId',
-                //     'module',
-                //     'function',
-                //     'arguments',
-                //     'gasBudget',
-                //     'gasPayment',
-                // ]) {
-                //     if (attribute in txInfo.data) {
-                //         transactionDetails.data.push({
-                //             label: attribute,
-                //             content: {
-                //                 type: 'small',
-                //                 content: parsedData[attribute],
-                //                 coinType: ['gasBudget'].includes(attribute)
-                //                     ? SUI_TYPE_ARG
-                //                     : null,
-                //             } as SmallDetail,
-                //         });
-                //     }
-            }
-        }
-
-        details.push(transactionDetails);
-
-        details.push({
-            title: 'Gas',
-            details: [
-                {
-                    label: 'Computation',
-                    content: {
-                        type: 'small',
-                        content: gasUsed?.computationCost || '---',
-                        coinType: SUI_TYPE_ARG,
-                    } as SmallDetail,
-                },
-                {
-                    label: 'Storage Cost',
-                    content: {
-                        type: 'small',
-                        content: gasUsed?.storageCost || '---',
-                        coinType: SUI_TYPE_ARG,
-                    } as SmallDetail,
-                },
-                {
-                    label: 'Storage Rebate',
-                    content: {
-                        type: 'small',
-                        content: gasUsed?.storageRebate || '---',
-                        coinType: SUI_TYPE_ARG,
-                    } as SmallDetail,
-                },
-                {
-                    break: true,
-                },
-                {
-                    label: 'Total',
-                    content: {
-                        type: 'small',
-                        content: gas,
-                        coinType: SUI_TYPE_ARG,
-                    } as SmallDetail,
-                },
-            ],
-        });
-
-        return {
-            [TxApprovalTab.SUMMARY]: summary,
-            [TxApprovalTab.ASSETS]: assets,
-            [TxApprovalTab.DETAILS]: details,
-        };
-    }, [
-        txRequest?.tx,
-        formattedCharges,
-        chargesSymbol,
-        chargeDollars,
-        formattedGas,
-        gasSymbol,
-        gasDollars,
-        formattedTotal,
-        totalSymbol,
-        totalDollars,
-        reading,
-        creating,
-        mutating,
-        deleting,
-        transferring,
-        gas,
-        gasUsed,
-        coinChanges,
-        address,
-        // summaryKey,
-    ]);
-
-    const errorElement = useMemo(() => {
-        if (explicitError)
-            return <div className="px-6 pb-6">{explicitError}</div>;
-
-        if (dryRunError)
+    const content = useMemo(() => {
+        if (
+            txRequest &&
+            'account' in txRequest.tx &&
+            txRequest.tx.account &&
+            txRequest.tx.account !== address
+        ) {
             return (
-                <div className="px-6 pb-6 flex flex-col gap-6">
-                    <AlertWithErrorExpand
-                        title="Dry run error"
-                        body={
-                            <Body>
-                                Your transaction couldn&apos;t be estimated.
-                                Please try again later. If this issue persists,{' '}
-                                <EthosLink
-                                    type="external"
-                                    to={MAILTO_SUPPORT_URL}
-                                >
-                                    contact Ethos
-                                </EthosLink>
-                                .
-                            </Body>
-                        }
-                        fullErrorText={dryRunError}
-                        txInfo={{
-                            dAppUrl: txRequest?.origin || '',
-                            txId: txID || '',
-                            txRequest,
-                        }}
+                <SimpleBase onComplete={onComplete}>
+                    <div className="py-12">
+                        <IncorrectSigner
+                            txID={txID}
+                            txRequest={txRequest}
+                            correctAddress={txRequest.tx.account}
+                        />
+                    </div>
+                </SimpleBase>
+            );
+        }
+
+        if (
+            txRequest &&
+            'chain' in txRequest.tx &&
+            txRequest.tx.chain &&
+            ['sui:devnet', 'sui:testnet'].includes(txRequest.tx.chain) &&
+            ['sui:devnet', 'sui:testnet'].includes(activeChain) &&
+            txRequest.tx.chain !== activeChain
+        ) {
+            return (
+                <SimpleBase onComplete={onComplete}>
+                    <IncorrectChain
+                        txID={txID}
+                        txRequest={txRequest}
+                        correctChain={txRequest.tx.chain}
                     />
-                </div>
+                </SimpleBase>
             );
-    }, [explicitError, dryRunError, txRequest, txID]);
+        }
 
-    return (
-        <Loading loading={loading} big={true} resize={true}>
-            {txRequest ? (
-                <UserApproveContainer
-                    title="Transaction Request"
-                    origin={txRequest.origin}
-                    originFavIcon={txRequest.originFavIcon}
-                    approveTitle="Approve"
-                    rejectTitle="Reject"
-                    onSubmit={handleOnSubmit}
-                    hasError={!!dryRunError || !!explicitError}
-                    hideHeader={summaryKey !== 'standard'}
-                >
-                    {errorElement ? (
-                        errorElement
-                    ) : (
-                        <div className="flex flex-col gap-6 pb-6">
-                            <div className="flex flex-row gap-2 justify-between items-baseline px-6">
-                                {[
-                                    TxApprovalTab.SUMMARY,
-                                    TxApprovalTab.ASSETS,
-                                    TxApprovalTab.DETAILS,
-                                ]
-                                    .filter((t) => content[t])
-                                    .map((t, index) => (
-                                        <TabElement
-                                            key={`tab-${index}`}
-                                            type={t}
-                                            isSelected={t === tab}
-                                            setTab={setTab}
-                                        />
-                                    ))}
-                            </div>
+        if (!signer || analysis === undefined) return <></>;
 
-                            <div
-                                id="content"
-                                className="flex flex-col gap-6 w-full px-6 overflow-auto"
-                            >
-                                {(content[tab] || []).map(
-                                    (section, sectionIndex) => (
-                                        <SectionElement
-                                            key={`section-${sectionIndex}`}
-                                            section={section}
-                                        />
-                                    )
-                                )}
-                            </div>
-                        </div>
-                    )}
-                </UserApproveContainer>
-            ) : null}
-        </Loading>
-    );
-}
-
-async function finishTransaction(
-    transactionBlock: TransactionBlock | null,
-    txID: string | undefined,
-    approved: boolean,
-    authentication: string | null,
-    address: string | null,
-    activeAccountIndex: number,
-    options?: SuiSignAndExecuteTransactionBlockInput['options'],
-    requestType?: SuiSignAndExecuteTransactionBlockInput['requestType']
-) {
-    if (!transactionBlock) {
-        // TODO: delete? doesn't seem like we got have gotten this far without txRequest
-        throw new Error(`Transaction ${txID} not found`);
-    }
-
-    let txResult: SuiTransactionBlockResponse | undefined = undefined;
-    let tsResultError: string | undefined;
-    if (approved) {
-        let signer;
-        if (authentication) {
-            signer = thunkExtras.api.getEthosSignerInstance(
-                address || '',
-                authentication
-            );
-        } else {
-            signer = thunkExtras.api.getSignerInstance(
-                thunkExtras.keypairVault.getKeyPair(activeAccountIndex)
+        if (analysis === null) {
+            return (
+                <SimpleBase onComplete={onComplete}>
+                    <div className="p-6">
+                        <MissingObject
+                            selectedApiEnv={selectedApiEnv}
+                            errorMessage={dryRunError || 'Unknown Error'}
+                            txRequest={txRequest}
+                            txID={txID}
+                        />
+                    </div>
+                </SimpleBase>
             );
         }
 
         try {
-            txResult = await signer.signAndExecuteTransactionBlock({
-                transactionBlock,
-                options,
-                requestType,
-            });
-        } catch (e) {
-            tsResultError = (e as Error).message;
+            if (
+                analysis.moveCalls.length === 1 &&
+                analysis.assetMints.length === 1 &&
+                analysis.assetTransfers.length === 0
+            ) {
+                return (
+                    <SimpleBase onComplete={onComplete}>
+                        <SimpleAssetMint
+                            signer={signer}
+                            assetMint={analysis.assetMints[0]}
+                            analysis={analysis}
+                            onCancel={onComplete}
+                            onApprove={onApprove}
+                        />
+                    </SimpleBase>
+                );
+            } else if (
+                analysis.moveCalls.length === 0 &&
+                analysis.assetMints.length === 0 &&
+                analysis.assetTransfers.length === 1 &&
+                analysis.balanceReductions.length === 0
+            ) {
+                return (
+                    <SimpleBase onComplete={onComplete}>
+                        <SimpleAssetTransfer
+                            signer={signer}
+                            assetTransfer={analysis.assetTransfers[0]}
+                            analysis={analysis}
+                            onCancel={onComplete}
+                            onApprove={onApprove}
+                        />
+                    </SimpleBase>
+                );
+            } else if (
+                analysis.moveCalls.length === 0 &&
+                analysis.assetMints.length === 0 &&
+                analysis.assetTransfers.length === 0 &&
+                analysis.balanceReductions.length === 1
+            ) {
+                return (
+                    <SimpleBase onComplete={onComplete}>
+                        <SimpleCoinTransfer
+                            signer={signer}
+                            reduction={analysis.balanceReductions[0]}
+                            analysis={analysis}
+                            onCancel={onComplete}
+                            onApprove={onApprove}
+                        />
+                    </SimpleBase>
+                );
+            } else {
+                return (
+                    <SimpleBase onComplete={onComplete}>
+                        <ComplexMoveCall
+                            signer={signer}
+                            analysis={analysis}
+                            onCancel={onComplete}
+                            onApprove={onApprove}
+                        />
+                    </SimpleBase>
+                );
+            }
+        } catch (e: unknown) {
+            // eslint-disable-next-line no-console
+            console.log('Error displaying transaction', e);
         }
-    }
 
-    thunkExtras.background.sendTransactionRequestResponse(
-        // TODO: find a way to ensure txID can't be null. none of this page would work if it was!
-        txID || '',
-        approved,
-        txResult,
-        tsResultError
+        return (
+            <Base
+                txID={txID}
+                address={address}
+                txRequest={txRequest}
+                objectChanges={analysis?.dryRunResponse?.objectChanges}
+                effects={analysis?.dryRunResponse?.effects}
+                authentication={authentication ?? null}
+                activeAccountIndex={activeAccountIndex}
+                transactionBlock={transactionBlock}
+                setDone={setDone}
+            />
+        );
+    }, [
+        activeAccountIndex,
+        activeChain,
+        address,
+        analysis,
+        authentication,
+        onApprove,
+        onComplete,
+        selectedApiEnv,
+        signer,
+        transactionBlock,
+        txID,
+        txRequest,
+        dryRunError,
+    ]);
+
+    return (
+        <Loading loading={loading} big={true} resize={true} className="py-60">
+            {content}
+        </Loading>
     );
 }
