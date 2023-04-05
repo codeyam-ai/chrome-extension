@@ -47,10 +47,11 @@ const TransactionsPage = () => {
         10
     );
 
-    const loadPage = async () => {
+    const loadPage = useCallback(async () => {
         if (!suiTxns) return;
+
         setFormattedTxns((prev) => [...prev, ...suiTxns.blocks]);
-    };
+    }, [suiTxns]);
 
     // load a page of "formatted transactions"
     useEffect(() => {
@@ -59,7 +60,7 @@ const TransactionsPage = () => {
         }
 
         loadPage();
-    }, [address, suiTxns, loadPage]);
+    }, [suiTxns, address, loadPage]);
 
     const incrementPage = useCallback(() => {
         if (suiTxns?.toHasNext || suiTxns?.fromHasNext) {
@@ -68,7 +69,7 @@ const TransactionsPage = () => {
                 toCursor: suiTxns.toNextPageCursor || '',
             });
         }
-    }, [suiTxns]);
+    }, []);
 
     if (txErr) {
         return (
