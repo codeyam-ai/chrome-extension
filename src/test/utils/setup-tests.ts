@@ -6,7 +6,7 @@ import {
     fakeBrowser,
     clearFakeStorages,
     fakeSessionStorage,
-} from './fake-browser';
+} from './fake-browser/fake-browser';
 import { accountInfos } from './storage';
 
 global.chrome = {

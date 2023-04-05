@@ -5,18 +5,10 @@ import { faker } from './utils/faker';
 import { Mockchain } from './utils/mockchain';
 import { renderApp } from './utils/react-rendering';
 import { simulateMnemonicUser } from './utils/storage';
-import KeypairVault from '_src/ui/app/KeypairVault';
-import { BackgroundClient } from '_src/ui/app/background-client';
-import { thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
-import { createStore } from '_store';
-
-import type { PreloadedState } from '@reduxjs/toolkit';
-import type { RootState } from '_src/ui/app/redux/RootReducer';
-import type { AppStore } from '_src/ui/app/redux/store';
+import { PREAPPROVAL_KEY } from '_shared/constants';
+import { setEncrypted } from '_shared/storagex/store';
 
 describe('transaction pre-approval flow', () => {
-    let store: AppStore;
-    let preloadedState: PreloadedState<RootState>;
     let mockchain: Mockchain;
     const id = '46987523-cadf-47c1-906a-baa0ce5b62c5';
 
@@ -25,27 +17,18 @@ describe('transaction pre-approval flow', () => {
         mockchain.mockCommonCalls();
         simulateMnemonicUser();
         mockchain.rpcMocks().sui_getNormalizedMoveFunction();
-        preloadedState = {
-            preapprovalRequests: {
-                ids: [id],
-                entities: {
-                    [id]: faker.preapprovalRequest({ id }),
-                },
-                initialized: true,
-            },
-        };
 
-        store = createStore(preloadedState);
-        thunkExtras.background = new BackgroundClient();
-        thunkExtras.background.init(store.dispatch);
-        thunkExtras.keypairVault = new KeypairVault();
+        await setEncrypted({
+            key: PREAPPROVAL_KEY,
+            value: JSON.stringify([faker.preapprovalRequest({ id })]),
+            session: true,
+        });
     });
 
     test('can accept transaction pre-approvals', async () => {
         const mockWindowCloser = jest.fn();
 
         renderApp({
-            store,
             initialRoute: `/preapproval/${id}`,
             dependencies: { closeWindow: mockWindowCloser },
         });
@@ -64,7 +47,6 @@ describe('transaction pre-approval flow', () => {
         const mockWindowCloser = jest.fn();
 
         renderApp({
-            store,
             initialRoute: `/preapproval/${id}`,
             dependencies: { closeWindow: mockWindowCloser },
         });
