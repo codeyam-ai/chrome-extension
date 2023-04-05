@@ -1,4 +1,4 @@
-import {Runtime, Tabs} from 'webextension-polyfill';
+import { Runtime, Tabs } from 'webextension-polyfill';
 
 import type { Events } from 'webextension-polyfill/namespaces/events';
 
@@ -12,13 +12,21 @@ export class FakeConnections {
         // by invoking the other's onMessage.
         const connectingSideOnMessage = new FakeEvent();
         const listeningSideOnMessage = new FakeEvent();
-        const name = info.name || 'nameless connection'
+        const name = info.name || 'nameless connection';
         this.onConnect.listeners.forEach((listener) => {
             listener(
-                new FakePort(name, listeningSideOnMessage, connectingSideOnMessage)
+                new FakePort(
+                    name,
+                    listeningSideOnMessage,
+                    connectingSideOnMessage
+                )
             );
         });
-        return new FakePort(name, connectingSideOnMessage, listeningSideOnMessage);
+        return new FakePort(
+            name,
+            connectingSideOnMessage,
+            listeningSideOnMessage
+        );
     }
 }
 

@@ -4,7 +4,11 @@
 import { Runtime } from 'webextension-polyfill';
 
 import { FakeStorage } from '_src/test/utils/fake-browser/fake-storage';
-import {FakeConnections, FakeEvent, FakePort} from '_src/test/utils/fake-browser/fake-runtime';
+import {
+    FakeConnections,
+    FakeEvent,
+    FakePort,
+} from '_src/test/utils/fake-browser/fake-runtime';
 
 const fakeLocalStorage = new FakeStorage();
 export const fakeSessionStorage = new FakeStorage();
