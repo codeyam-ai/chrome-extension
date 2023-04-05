@@ -1,12 +1,13 @@
 import Browser from 'webextension-polyfill';
 
-import { WALLET_LOCK_TIMEOUT_MS } from '_src/shared/constants';
 import {
     deleteEncrypted,
     getEncrypted,
     setEncrypted,
 } from '_shared/storagex/store';
-import { LOCKED } from '_redux/slices/account';
+import { WALLET_LOCK_TIMEOUT_MS } from '_src/shared/constants';
+
+const LOCKED = 'locked';
 
 export const resetWalletLockTimer = () => {
     Browser.storage.local.set({

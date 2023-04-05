@@ -442,6 +442,11 @@ class Transactions {
     }
 
     private async getAccount(address: SuiAddress): Promise<AccountInfo> {
+        // TODO: this checked for the wallet being locked seems buggy. it doesn't pass
+        // the passphrase, so it will never pull the right value out of storage (it will
+        // always be null). But also the existence of the 'locked' key actually means the
+        // wallet is *unlocked*, so the logic here is backwards.
+        // linear ticket here: https://linear.app/ethoswallet/issue/ETHOS-630/preapprovals-should-not-go-through-once-wallet-is-locked
         const locked = await getEncrypted({ key: 'locked', session: false });
         const passphrase = await getEncrypted({
             key: 'passphrase',
@@ -452,6 +457,7 @@ class Transactions {
             session: true,
         });
         if (locked || (!passphrase && !authentication)) {
+            // TODO: should we really throw an error with the passphrase printed out?
             throw new Error(
                 `Wallet is locked: ${locked} ${passphrase} ${authentication}`
             );

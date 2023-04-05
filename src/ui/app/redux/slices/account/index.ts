@@ -51,8 +51,6 @@ type InitialAccountInfo = {
     accountType: AccountType;
 };
 
-export const LOCKED = 'locked';
-
 export const loadAccountInformationFromStorage = createAsyncThunk(
     'account/loadAccountInformation',
     async (_args, { getState }): Promise<InitialAccountInfo> => {
