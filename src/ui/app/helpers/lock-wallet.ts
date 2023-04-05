@@ -7,7 +7,7 @@ import {
 } from '_shared/storagex/store';
 import { WALLET_LOCK_TIMEOUT_MS } from '_src/shared/constants';
 
-const LOCKED = 'locked';
+const UNLOCKED = 'unlocked';
 
 export const resetWalletLockTimer = () => {
     Browser.storage.local.set({
@@ -23,23 +23,23 @@ export const startWalletLockTimer = () => {
 
 export const setUnlocked = async (passphrase: string) => {
     await setEncrypted({
-        key: LOCKED,
-        value: `${LOCKED}${passphrase}`,
+        key: UNLOCKED,
+        value: `${UNLOCKED}${passphrase}`,
         session: true,
         passphrase,
     });
 };
 
 export const setLocked = async (passphrase: string) => {
-    await deleteEncrypted({ key: LOCKED, session: true, passphrase });
+    await deleteEncrypted({ key: UNLOCKED, session: true, passphrase });
 };
 
 export const isLocked = async (passphrase: string) => {
     const unlocked = await getEncrypted({
-        key: LOCKED,
+        key: UNLOCKED,
         session: true,
         passphrase,
     });
 
-    return !unlocked || unlocked !== `${LOCKED}${passphrase}`;
+    return !unlocked || unlocked !== `${UNLOCKED}${passphrase}`;
 };
