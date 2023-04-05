@@ -17,8 +17,8 @@ const GenericTransactionCard = ({
     const { analysis } = stepInformation;
 
     const moveCalls = useMemo(() => {
-        if (!analysis.blockData) return;
-        return analysis.blockData.transactions
+        if (!analysis.moveCalls) return;
+        return analysis.moveCalls
             .filter((tx) => tx.kind === 'MoveCall')
             .map((tx, index) =>
                 tx.kind === 'MoveCall' ? (

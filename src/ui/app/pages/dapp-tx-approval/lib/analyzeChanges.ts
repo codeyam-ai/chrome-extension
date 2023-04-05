@@ -36,6 +36,7 @@ export type BalanceAddition = {
 
 export type AnalyzeChangesResult = {
     blockData?: TransactionBlock['blockData'];
+    moveCalls: TransactionBlock['blockData']['transactions'];
     dryRunResponse: DryRunTransactionBlockResponse;
     gas: GasCostSummary;
     balanceReductions: BalanceReduction[];
@@ -178,12 +179,23 @@ const analyzeChanges = async ({
     const rawAmount = totalReductions.minus(gas.total).toString();
     const totalFee = totalReductions.toString();
 
+    let blockData;
+    let moveCalls: TransactionBlock['blockData']['transactions'] = [];
+    if (
+        typeof transactionBlock === 'object' &&
+        'blockData' in transactionBlock
+    ) {
+        blockData = transactionBlock.blockData;
+        if (blockData) {
+            moveCalls = blockData.transactions.filter(
+                (transaction) => transaction.kind === 'MoveCall'
+            );
+        }
+    }
+
     return {
-        blockData:
-            typeof transactionBlock === 'object' &&
-            'blockData' in transactionBlock
-                ? transactionBlock.blockData
-                : undefined,
+        blockData,
+        moveCalls,
         dryRunResponse,
         gas,
         balanceReductions,

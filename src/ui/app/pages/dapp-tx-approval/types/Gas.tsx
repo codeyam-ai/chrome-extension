@@ -15,7 +15,7 @@ const Gas = ({ gasSummary }: { gasSummary: GasCostSummary }) => {
     return (
         <CardRow>
             <Body>Gas Fee</Body>
-            <div className="text-right">
+            <div className="flex flex-col items-end text-right">
                 <div className="flex items-center gap-1 text-base">
                     <Body className="font-light">USD</Body>
                     <Body isSemibold>{dollars}</Body>

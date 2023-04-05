@@ -151,8 +151,9 @@ export function DappTxApprovalPage() {
             (txRequest &&
                 'chain' in txRequest.tx &&
                 txRequest.tx.chain &&
-                txRequest.tx.chain !== activeChain &&
-                ['sui:devnet', 'sui:testnet'].includes(txRequest.tx.chain))
+                ['sui:devnet', 'sui:testnet'].includes(txRequest.tx.chain) &&
+                ['sui:devnet', 'sui:testnet'].includes(activeChain) &&
+                txRequest.tx.chain !== activeChain)
         ) {
             setAnalysis(null);
             return;
@@ -272,8 +273,9 @@ export function DappTxApprovalPage() {
             txRequest &&
             'chain' in txRequest.tx &&
             txRequest.tx.chain &&
-            txRequest.tx.chain !== activeChain &&
-            ['sui:devnet', 'sui:testnet'].includes(txRequest.tx.chain)
+            ['sui:devnet', 'sui:testnet'].includes(txRequest.tx.chain) &&
+            ['sui:devnet', 'sui:testnet'].includes(activeChain) &&
+            txRequest.tx.chain !== activeChain
         ) {
             return (
                 <SimpleBase onComplete={onComplete}>
@@ -305,6 +307,7 @@ export function DappTxApprovalPage() {
 
         try {
             if (
+                analysis.moveCalls.length === 1 &&
                 analysis.assetMints.length === 1 &&
                 analysis.assetTransfers.length === 0
             ) {
@@ -320,6 +323,7 @@ export function DappTxApprovalPage() {
                     </SimpleBase>
                 );
             } else if (
+                analysis.moveCalls.length === 0 &&
                 analysis.assetMints.length === 0 &&
                 analysis.assetTransfers.length === 1 &&
                 analysis.balanceReductions.length === 0
@@ -336,6 +340,7 @@ export function DappTxApprovalPage() {
                     </SimpleBase>
                 );
             } else if (
+                analysis.moveCalls.length === 0 &&
                 analysis.assetMints.length === 0 &&
                 analysis.assetTransfers.length === 0 &&
                 analysis.balanceReductions.length === 1

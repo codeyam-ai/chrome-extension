@@ -22,6 +22,7 @@ export const Costs = ({
                         <Amount
                             key={`gain-${index}`}
                             balanceChange={balanceReduction}
+                            positive={false}
                         />
                     ))}
                 </div>
@@ -45,6 +46,7 @@ export const Gains = ({
                     <Amount
                         key={`gain-${index}`}
                         balanceChange={balanceAddition}
+                        positive={true}
                     />
                 ))}
             </div>
@@ -54,8 +56,10 @@ export const Gains = ({
 
 const Amount = ({
     balanceChange,
+    positive,
 }: {
     balanceChange: BalanceReduction | BalanceAddition;
+    positive: boolean;
 }) => {
     const bnAmount = new BigNumber(balanceChange.amount);
     const [formatted, symbol, dollars] = useFormatCoin(
@@ -64,10 +68,10 @@ const Amount = ({
     );
 
     return (
-        <div className="text-right">
+        <div className="flex flex-col items-end text-right">
             <div
                 className={`flex items-center gap-1 text-base ${
-                    bnAmount.gt(0) ? 'text-green-700' : ''
+                    positive ? 'text-green-700' : ''
                 }`}
             >
                 <Body className="font-light">USD</Body>
