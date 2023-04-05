@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // import { getTransactionDigest } from '@mysten/sui.js';
-import BigNumber from 'bignumber.js';
 import { Formik } from 'formik';
 import { useCallback, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -16,6 +16,7 @@ import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { resetSendSuiForm } from '_redux/slices/forms';
 import { sendTokens } from '_redux/slices/transactions';
+import ns from '_shared/namespace';
 import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
@@ -39,6 +40,7 @@ function TransferCoinReviewPage() {
     const [coinDecimals] = useCoinDecimals(coinType);
     const formData = useAppSelector(({ forms: { sendSui } }) => sendSui);
 
+    const { locale } = useIntl();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const onHandleSubmit = useCallback(
@@ -47,6 +49,10 @@ function TransferCoinReviewPage() {
             { resetForm }: FormikHelpers<FormValues>
         ) => {
             toast(<SuccessAlert text={'Transaction submitted.'} />);
+            const amountBigNumber = ns.parse.numberString({
+                numberString: amount,
+                locale,
+            });
 
             if (coinType === null) {
                 return;
@@ -55,7 +61,7 @@ function TransferCoinReviewPage() {
             setFormSubmitted(true);
             try {
                 const bigIntAmount = BigInt(
-                    new BigNumber(amount)
+                    amountBigNumber
                         .shiftedBy(coinDecimals)
                         .integerValue()
                         .toString()
@@ -111,7 +117,7 @@ function TransferCoinReviewPage() {
                 setSendError((e as SerializedError).message || null);
             }
         },
-        [dispatch, navigate, coinType, coinDecimals]
+        [locale, coinType, coinDecimals, dispatch, navigate]
     );
     const handleOnClearSubmitError = useCallback(() => {
         setSendError(null);

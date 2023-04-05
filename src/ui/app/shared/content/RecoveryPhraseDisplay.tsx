@@ -80,7 +80,9 @@ const RecoveryPhraseDisplay = ({
                                     : 'dark:text-ethos-dark-text-medium'
                             }`}
                         />
-                        <Body>Click above to copy recovery phrase</Body>
+                        <Body forceLightMode={forceLightTheme}>
+                            Click above to copy recovery phrase
+                        </Body>
                     </>
                 ) : (
                     <>
@@ -91,7 +93,9 @@ const RecoveryPhraseDisplay = ({
                                     : 'dark:text-ethos-dark-text-medium'
                             }`}
                         />
-                        <Body>Recovery phrase copied</Body>
+                        <Body forceLightMode={forceLightTheme}>
+                            Recovery phrase copied
+                        </Body>
                     </>
                 )}
             </div>

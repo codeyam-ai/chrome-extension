@@ -1,16 +1,10 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-import { useEffect, useMemo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-// import { useSearchParams } from 'react-router-dom';
+//import { useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { Content } from '_app/shared/bottom-menu-layout';
 import ReceiptCard from '_components/receipt-card';
-import { useAppDispatch, useAppSelector } from '_hooks';
-import {
-    //getTransactionsByAddress,
-    type TxResultState,
-} from '_redux/slices/txresults';
 import Loading from '_src/ui/app/components/loading';
 
 import st from './ReceiptPage.module.scss';
@@ -36,7 +30,7 @@ function ReceiptPage() {
 
     // get tx results from url params
     const txDigest = searchParams.get('txdigest');
-    const transferType = searchParams.get('transfer');
+    //const transferType = searchParams.get('transfer');
     /*const txResults: TxResultState[] = useAppSelector(
         ({ txresults }) => txresults.latestTx
     );*/

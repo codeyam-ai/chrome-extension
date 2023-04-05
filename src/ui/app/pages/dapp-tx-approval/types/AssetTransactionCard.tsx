@@ -17,7 +17,7 @@ const AssetTransactionCard = ({
 
     return (
         <TransactionBody>
-            <div className="w-full rounded-xl bg-[#F8F5FF] flex flex-col divide-y divide-color-[#F0EBFE] overflow-hidden">
+            <div className="w-full rounded-xl bg-ethos-pale-purple dark:bg-ethos-dark-background-secondary flex flex-col divide-y divide-color-ethos-light-purple overflow-hidden">
                 <div className="p-6 flex-col justify-center items-center text-center">
                     <div className="pb-1 inline-block">
                         <SendAssetImage imageUrl={imageUrl} name={name} />

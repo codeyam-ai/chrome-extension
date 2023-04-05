@@ -267,7 +267,7 @@ const Details = ({
     }, []);
 
     return (
-        <div className="flex flex-col gap-6 pb-12 px-6">
+        <div className="flex flex-col gap-6 pb-6 px-6">
             <div
                 className="flex flex-row justify-between items-center cursor-pointer"
                 onClick={toggleDetails}
@@ -282,7 +282,7 @@ const Details = ({
                 )}
             </div>
             {details && (
-                <div className="flex flex-col gap-6 divider-y divider-color-[#F0EBFE]">
+                <div className="flex flex-col gap-6 divider-y divider-color-ethos-light-purple">
                     <BalanceChanges analysis={analysis} address={address} />
                     <AssetChanges analysis={analysis} address={address} />
                     <GasDetails gas={analysis.gas} />

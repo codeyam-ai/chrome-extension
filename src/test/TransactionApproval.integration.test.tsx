@@ -1,48 +1,36 @@
 import { TransactionBlock } from '@mysten/sui.js';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import Browser from 'webextension-polyfill';
 
-import KeypairVault from '_app/KeypairVault';
-import { BackgroundClient } from '_app/background-client';
-import { setTransactionRequests } from '_redux/slices/transaction-requests';
+import { TX_STORE_KEY } from '_shared/constants';
 import { renderTemplate } from '_src/test/utils/json-templates';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { accountInfos, simulateMnemonicUser } from '_src/test/utils/storage';
-import { createStore } from '_store';
-import { thunkExtras } from '_store/thunk-extras';
 
 import type { ApprovalRequest } from '_payloads/transactions';
-import type { AppStore } from '_store';
 
 describe('The Transaction Approval popup', () => {
-    let store: AppStore;
+    const txRequestId = '95ae4a0d-0b7b-478b-ab70-bc3fe291540e';
     let mockchain: Mockchain;
     beforeEach(async () => {
         mockchain = new Mockchain();
         mockchain.mockCommonCalls();
         simulateMnemonicUser();
-        store = createStore({});
-
-        // TODO: consider moving this code to a common place. these objects hold state and every test should start
-        //  with a clean slate
-        thunkExtras.background = new BackgroundClient();
-        thunkExtras.background.init(store.dispatch);
-        thunkExtras.keypairVault = new KeypairVault();
     });
 
     test('shows the transaction and allows user to approve it', async () => {
-        const { txRequestId } = simulateReduxStateWithTransaction();
+        await simulateReduxStateWithTransaction(txRequestId);
         const executeScope = mockBlockchainTransactionExecution();
 
         const mockWindowCloser = jest.fn();
         renderApp({
-            store: store,
             initialRoute: `/tx-approval/${txRequestId}`,
             dependencies: { closeWindow: mockWindowCloser },
         });
 
-        await screen.findByText('Gain');
+        await screen.findByText('Cost');
         const approveButton = await screen.findByText('Approve');
 
         await userEvent.click(approveButton);
@@ -54,19 +42,18 @@ describe('The Transaction Approval popup', () => {
     });
 
     test('the user can reject the transaction', async () => {
-        const { txRequestId } = simulateReduxStateWithTransaction();
+        await simulateReduxStateWithTransaction(txRequestId);
         const executeScope = mockBlockchainTransactionExecution();
 
         const mockWindowCloser = jest.fn();
         renderApp({
-            store: store,
             initialRoute: `/tx-approval/${txRequestId}`,
             dependencies: { closeWindow: mockWindowCloser },
         });
 
-        await screen.findByText('Gain');
-        const cancelButton = await screen.findByText('Cancel');
+        await screen.findByText('Cost');
 
+        const cancelButton = await screen.findByText('Cancel');
         await userEvent.click(cancelButton);
         await waitFor(() =>
             expect(mockWindowCloser.mock.calls.length).toEqual(1)
@@ -76,24 +63,20 @@ describe('The Transaction Approval popup', () => {
     });
 
     test('complex transaction displays properly', async () => {
-        const { txRequestId } = simulateReduxStateWithComplexTransaction();
+        simulateReduxStateWithComplexTransaction(txRequestId);
         const executeScope = mockBlockchainTransactionExecution();
 
         const mockWindowCloser = jest.fn();
         renderApp({
-            store: store,
             initialRoute: `/tx-approval/${txRequestId}`,
             dependencies: { closeWindow: mockWindowCloser },
         });
 
         const approveButton = await screen.findByText('Approve');
 
-        // screen.debug(undefined, 9999);
-        await screen.findByText(
-            'This is a complex transaction. Please view the details below to ensure everything is expected.'
-        );
         await screen.findByText('add_liquidity');
-        await screen.findByText('Cost');
+        await screen.findByText('Costs');
+        await screen.findByText('Gains');
 
         await userEvent.click(approveButton);
         await waitFor(() =>
@@ -104,12 +87,11 @@ describe('The Transaction Approval popup', () => {
     });
 
     test('mint coin transaction displays properly', async () => {
-        const { txRequestId } = simulateReduxStateWithMintCoinTransaction();
+        await simulateReduxStateWithMintCoinTransaction(txRequestId);
         const executeScope = mockBlockchainTransactionExecution();
 
         const mockWindowCloser = jest.fn();
         renderApp({
-            store: store,
             initialRoute: `/tx-approval/${txRequestId}`,
             dependencies: { closeWindow: mockWindowCloser },
         });
@@ -118,7 +100,7 @@ describe('The Transaction Approval popup', () => {
 
         await screen.findByText('You are about to mint');
         await screen.findByText('ETHOS_EXAMPLE_COIN');
-        await screen.findByText('Gain');
+        await screen.findByText('Gains');
 
         await userEvent.click(approveButton);
         await waitFor(() =>
@@ -128,9 +110,16 @@ describe('The Transaction Approval popup', () => {
         expect(executeScope.actualCalls).toEqual(1);
     });
 
-    function simulateReduxStateWithTransaction() {
-        const txRequestId = '95ae4a0d-0b7b-478b-ab70-bc3fe291540e';
+    async function putApprovalRequestInLocalStorage(
+        txRequestId: string,
+        txRequest: ApprovalRequest
+    ) {
+        await Browser.storage.local.set({
+            [TX_STORE_KEY]: { [txRequestId]: txRequest },
+        });
+    }
 
+    async function simulateReduxStateWithTransaction(txRequestId: string) {
         const transactionBlock = new TransactionBlock();
         transactionBlock.transferObjects(
             [
@@ -150,17 +139,16 @@ describe('The Transaction Approval popup', () => {
                 type: 'transaction',
                 data: transactionBlock.serialize(),
                 account: accountInfos[0].address,
-                chain: 'sui::testnet',
+                chain: 'sui:testnet',
             },
         };
 
-        store.dispatch(setTransactionRequests([txRequest]));
-        return { txRequestId };
+        await putApprovalRequestInLocalStorage(txRequestId, txRequest);
     }
 
-    function simulateReduxStateWithComplexTransaction() {
-        const txRequestId = '65ae4a0d-0b7b-478b-ab70-bc3fe291540e';
-
+    async function simulateReduxStateWithComplexTransaction(
+        txRequestId: string
+    ) {
         const data = `{"version":1,"gasConfig":{"budget":"30000"},"inputs":[{"kind":"Input","value":"0x091737ffb68786c34e84e4953823f29f4816422cf0b91a410276af5d92eceec7","index":0,"type":"object"},{"kind":"Input","value":"0x51a29d5019372256d29a591c18d5a986210b901997134ed9333dfae662ab130d","index":1,"type":"object"},{"kind":"Input","value":"0x6633f163516a0d06949f03f22a35ec65796164ddcb2bf63e849d4cbbbd3e3f4e","index":2,"type":"object"},{"kind":"Input","value":"0x84cef0c22b560577473172a24f388b4a4ff6091725beb109cee696f5299ac194","index":3,"type":"object"},{"kind":"Input","value":"50000000000","index":4,"type":"pure"},{"kind":"Input","value":"58264350776","index":5,"type":"pure"},{"kind":"Input","value":"0xce06dadf062062d551c86379e37bdef20da55835fa440e011e5beb4a333f1f62","index":6,"type":"object"},{"kind":"Input","value":"0","index":7,"type":"pure"},{"kind":"Input","value":"0","index":8,"type":"pure"}],"transactions":[{"kind":"MergeCoins","destination":{"kind":"Input","value":"0x091737ffb68786c34e84e4953823f29f4816422cf0b91a410276af5d92eceec7","index":0,"type":"object"},"sources":[{"kind":"Input","value":"0x51a29d5019372256d29a591c18d5a986210b901997134ed9333dfae662ab130d","index":1,"type":"object"}]},{"kind":"MergeCoins","destination":{"kind":"Input","value":"0x6633f163516a0d06949f03f22a35ec65796164ddcb2bf63e849d4cbbbd3e3f4e","index":2,"type":"object"},"sources":[{"kind":"Input","value":"0x84cef0c22b560577473172a24f388b4a4ff6091725beb109cee696f5299ac194","index":3,"type":"object"}]},{"kind":"SplitCoins","coin":{"kind":"Input","value":"0x091737ffb68786c34e84e4953823f29f4816422cf0b91a410276af5d92eceec7","index":0,"type":"object"},"amounts":[{"kind":"Input","value":"50000000000","index":4,"type":"pure"}]},{"kind":"SplitCoins","coin":{"kind":"Input","value":"0x6633f163516a0d06949f03f22a35ec65796164ddcb2bf63e849d4cbbbd3e3f4e","index":2,"type":"object"},"amounts":[{"kind":"Input","value":"58264350776","index":5,"type":"pure"}]},{"kind":"MoveCall","target":"0xb01f7d11da6c2d04b5225f43770d42d2cbbe52aaf5c27ec29d1188d78090e719::entry::add_liquidity","arguments":[{"kind":"Input","value":"0xce06dadf062062d551c86379e37bdef20da55835fa440e011e5beb4a333f1f62","index":6,"type":"object"},{"kind":"NestedResult","index":2,"resultIndex":0},{"kind":"Input","value":"0","index":7,"type":"pure"},{"kind":"NestedResult","index":3,"resultIndex":0},{"kind":"Input","value":"0","index":8,"type":"pure"}],"typeArguments":["0x229f4b94633cc25a68666d355a3eee5e2766ca9850349c48eca82387d378cac8::bnb::BNB","0x229f4b94633cc25a68666d355a3eee5e2766ca9850349c48eca82387d378cac8::dai::DAI","0xb01f7d11da6c2d04b5225f43770d42d2cbbe52aaf5c27ec29d1188d78090e719::curves::Uncorrelated"]}]}`;
 
         const txRequest: ApprovalRequest = {
@@ -173,17 +161,16 @@ describe('The Transaction Approval popup', () => {
                 type: 'transaction',
                 data,
                 account: accountInfos[0].address,
-                chain: 'sui::testnet',
+                chain: 'sui:testnet',
             },
         };
 
-        store.dispatch(setTransactionRequests([txRequest]));
-        return { txRequestId };
+        await putApprovalRequestInLocalStorage(txRequestId, txRequest);
     }
 
-    function simulateReduxStateWithMintCoinTransaction() {
-        const txRequestId = '61ae4a0d-0b7b-478b-ab70-bc3fe291540e';
-
+    async function simulateReduxStateWithMintCoinTransaction(
+        txRequestId: string
+    ) {
         const data = `{"version":1,"gasConfig":{},"inputs":[{"kind":"Input","value":"0x986b14a24acd0c8bb2b08d166069d6a2361f48e76f34151efc773e5cb98da53b","index":0,"type":"object"},{"kind":"Input","value":"100000","index":1,"type":"pure"}],"transactions":[{"kind":"MoveCall","target":"0x1cbfdf7de5004f887705fa53bb345d4372e5004bd8b04a6f8868f5e1ca1af9c7::ethos_example_coin::mint","arguments":[{"kind":"Input","value":"0x986b14a24acd0c8bb2b08d166069d6a2361f48e76f34151efc773e5cb98da53b","index":0,"type":"object"},{"kind":"Input","value":"100000","index":1,"type":"pure"}],"typeArguments":[]}]}`;
 
         const txRequest: ApprovalRequest = {
@@ -196,12 +183,11 @@ describe('The Transaction Approval popup', () => {
                 type: 'transaction',
                 data,
                 account: accountInfos[0].address,
-                chain: 'sui::testnet',
+                chain: 'sui:testnet',
             },
         };
 
-        store.dispatch(setTransactionRequests([txRequest]));
-        return { txRequestId };
+        await putApprovalRequestInLocalStorage(txRequestId, txRequest);
     }
 
     function mockBlockchainTransactionExecution() {

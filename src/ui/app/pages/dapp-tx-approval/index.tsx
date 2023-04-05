@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import IncorrectChain from './errors/IncorrectChain';
 import IncorrectSigner from './errors/IncorrectSigner';
+import MissingObject from './errors/MissingObject';
 import analyzeChanges from './lib/analyzeChanges';
 import finishTransaction from './lib/finishTransaction';
 import resizeWindow from './lib/resizeWindow';
@@ -43,13 +44,13 @@ export function DappTxApprovalPage() {
     const activeChain = useMemo(() => {
         switch (selectedApiEnv) {
             case 'testNet':
-                return 'sui::testnet';
+                return 'sui:testnet';
             // case 'mainNet':
-            //     return 'sui::mainnet';
+            //     return 'sui:mainnet';
             case 'local':
-                return 'sui::local';
+                return 'sui:local';
             default:
-                return 'sui::devnet';
+                return 'sui:devnet';
         }
     }, [selectedApiEnv]);
 
@@ -80,6 +81,7 @@ export function DappTxApprovalPage() {
         return TransactionBlock.from(txRequest.tx.data);
     }, [txRequest]);
 
+    const [dryRunError, setDryRunError] = useState<string | undefined>();
     const [done, setDone] = useState<boolean>(false);
 
     // const normalizedFunction = useNormalizedFunction(txRequest);
@@ -111,6 +113,7 @@ export function DappTxApprovalPage() {
     useEffect(() => {
         setSigner(undefined);
         setAnalysis(undefined);
+        setDryRunError(undefined);
         resizeWindow();
     }, [selectedApiEnv]);
 
@@ -140,6 +143,23 @@ export function DappTxApprovalPage() {
 
     useEffect(() => {
         if (
+            (txRequest &&
+                'account' in txRequest.tx &&
+                txRequest.tx.account &&
+                address &&
+                txRequest.tx.account !== address) ||
+            (txRequest &&
+                'chain' in txRequest.tx &&
+                txRequest.tx.chain &&
+                ['sui:devnet', 'sui:testnet'].includes(txRequest.tx.chain) &&
+                ['sui:devnet', 'sui:testnet'].includes(activeChain) &&
+                txRequest.tx.chain !== activeChain)
+        ) {
+            setAnalysis(null);
+            return;
+        }
+
+        if (
             !signer ||
             !transactionBlock ||
             !accountInfos ||
@@ -153,7 +173,6 @@ export function DappTxApprovalPage() {
             // console.log('SERIALIZED', transactionBlock.serialize());
 
             try {
-                // console.log('ANALYZE!');
                 const analysis = await analyzeChanges({
                     signer,
                     transactionBlock,
@@ -163,8 +182,7 @@ export function DappTxApprovalPage() {
 
                 setAnalysis(analysis);
             } catch (e: unknown) {
-                console.log('ANALSYIS ERROR', e);
-                // setDryRunError(`${e}`);
+                setDryRunError(`${e}`);
                 setAnalysis(null);
             }
         };
@@ -178,6 +196,8 @@ export function DappTxApprovalPage() {
         signer,
         transactionBlock,
         selectedApiEnv,
+        txRequest,
+        activeChain,
     ]);
 
     const closeWindow = useDependencies().closeWindow;
@@ -253,25 +273,41 @@ export function DappTxApprovalPage() {
             txRequest &&
             'chain' in txRequest.tx &&
             txRequest.tx.chain &&
+            ['sui:devnet', 'sui:testnet'].includes(txRequest.tx.chain) &&
+            ['sui:devnet', 'sui:testnet'].includes(activeChain) &&
             txRequest.tx.chain !== activeChain
         ) {
             return (
                 <SimpleBase onComplete={onComplete}>
-                    <div className="py-12">
-                        <IncorrectChain
-                            txID={txID}
+                    <IncorrectChain
+                        txID={txID}
+                        txRequest={txRequest}
+                        correctChain={txRequest.tx.chain}
+                    />
+                </SimpleBase>
+            );
+        }
+
+        if (!signer || analysis === undefined) return <></>;
+
+        if (analysis === null) {
+            return (
+                <SimpleBase onComplete={onComplete}>
+                    <div className="p-6">
+                        <MissingObject
+                            selectedApiEnv={selectedApiEnv}
+                            errorMessage={dryRunError || 'Unknown Error'}
                             txRequest={txRequest}
-                            correctChain={txRequest.tx.chain}
+                            txID={txID}
                         />
                     </div>
                 </SimpleBase>
             );
         }
 
-        if (!signer || !analysis) return <></>;
-
         try {
             if (
+                analysis.moveCalls.length === 1 &&
                 analysis.assetMints.length === 1 &&
                 analysis.assetTransfers.length === 0
             ) {
@@ -287,6 +323,7 @@ export function DappTxApprovalPage() {
                     </SimpleBase>
                 );
             } else if (
+                analysis.moveCalls.length === 0 &&
                 analysis.assetMints.length === 0 &&
                 analysis.assetTransfers.length === 1 &&
                 analysis.balanceReductions.length === 0
@@ -303,6 +340,7 @@ export function DappTxApprovalPage() {
                     </SimpleBase>
                 );
             } else if (
+                analysis.moveCalls.length === 0 &&
                 analysis.assetMints.length === 0 &&
                 analysis.assetTransfers.length === 0 &&
                 analysis.balanceReductions.length === 1
@@ -356,14 +394,16 @@ export function DappTxApprovalPage() {
         authentication,
         onApprove,
         onComplete,
+        selectedApiEnv,
         signer,
         transactionBlock,
         txID,
         txRequest,
+        dryRunError,
     ]);
 
     return (
-        <Loading loading={loading} big={true} resize={true}>
+        <Loading loading={loading} big={true} resize={true} className="py-60">
             {content}
         </Loading>
     );

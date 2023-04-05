@@ -1,15 +1,14 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-import BigNumber from 'bignumber.js';
 import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
-import { useEffect, useMemo, useRef, memo } from 'react';
+import { memo, useEffect, useMemo, useRef } from 'react';
+import { useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 
-import useNumberDelimiters from '../../../hooks/useNumberDelimiters';
 import Sui from '../tokens/Sui';
 import UnknownToken from '../tokens/UnknownToken';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
-import NumberInput from '_components/number-input';
+import ns from '_shared/namespace';
 import WalletTo from '_src/ui/app/components/wallet-to';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
@@ -118,13 +117,18 @@ function TransferCoinForm({
         isValid,
         values: { amount },
     } = useFormikContext<FormValues>();
+    const { locale } = useIntl();
+    const amountBigNumber = ns.parse.numberString({
+        numberString: amount,
+        locale,
+    });
 
     const onClearRef = useRef(onClearSubmitError);
     onClearRef.current = onClearSubmitError;
 
     const [decimals] = useCoinDecimals(coinType);
     const [, , dollars] = useFormatCoin(
-        new BigNumber(amount).shiftedBy(decimals).toString(),
+        amountBigNumber.shiftedBy(decimals).toString(),
         coinType
     );
 
@@ -132,8 +136,7 @@ function TransferCoinForm({
         onClearRef.current();
     }, [amount]);
 
-    const inputClasses =
-        'flex flex-row w-full py-[16px] px-[20px] focus:py-[15px] focus:px-[19px] resize-none shadow-sm rounded-[16px] bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary font-weight-ethos-body-large text-size-ethos-body-large leading-line-height-ethos-body-large tracking-letter-spacing-ethos-body-large bg-ethos-light-background-default dark:bg-ethos-dark-background-default border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke focus:ring-0 focus:border-2 focus:border-ethos-light-primary-light focus:dark:border-ethos-dark-primary-dark focus:shadow-ethos-light-stroke-focused dark:focus:shadow-ethos-dark-stroke-focused';
+    const dollarDisplay = isValid && amountBigNumber.gte(0) ? dollars : '$0.00';
 
     return (
         <Form autoComplete="off" noValidate={false}>
@@ -150,19 +153,10 @@ function TransferCoinForm({
             </div>
             <div className="flex flex-col mb-8 px-6 text-left">
                 <div className={'mb-3'}>
-                    <Field
-                        autoFocus
-                        value={formState.amount}
-                        placeholder="Amount"
-                        component={NumberInput}
-                        allowNegative={false}
-                        name="amount"
-                        decimals
-                        className={inputClasses}
-                    />
+                    <AmountField />
                 </div>
                 <BodyLarge isSemibold isTextColorMedium>
-                    {parseInt(amount) >= 0 ? dollars : '$0.00'}
+                    {dollarDisplay}
                 </BodyLarge>
                 <ErrorMessage
                     className="mt-1 text-red-500 dark:text-red-400"
@@ -189,6 +183,24 @@ function TransferCoinForm({
                 </Button>
             </div>
         </Form>
+    );
+}
+
+function AmountField() {
+    const { isSubmitting } = useFormikContext();
+
+    const classes =
+        'flex flex-row w-full py-[16px] px-[20px] focus:py-[15px] focus:px-[19px] resize-none shadow-sm rounded-[16px] bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary font-weight-ethos-body-large text-size-ethos-body-large leading-line-height-ethos-body-large tracking-letter-spacing-ethos-body-large bg-ethos-light-background-default dark:bg-ethos-dark-background-default border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke focus:ring-0 focus:border-2 focus:border-ethos-light-primary-light focus:dark:border-ethos-dark-primary-dark focus:shadow-ethos-light-stroke-focused dark:focus:shadow-ethos-dark-stroke-focused';
+
+    return (
+        <Field
+            name="amount"
+            type="text"
+            className={classes}
+            placeholder="Amount"
+            autoFocus
+            disabled={isSubmitting}
+        />
     );
 }
 

@@ -1,6 +1,4 @@
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
-
-import Amount from './Amount';
+import { Costs, Gains } from './Amount';
 import CardRow from './CardRow';
 import From from './From';
 import Gas from './Gas';
@@ -21,7 +19,7 @@ const CoinTransactionCard = ({
 
     return (
         <TransactionBody>
-            <div className="w-full rounded-xl bg-[#F8F5FF] flex flex-col divide-y divide-color-[#F0EBFE] overflow-hidden">
+            <div className="w-full rounded-xl bg-ethos-pale-purple dark:bg-ethos-dark-background-secondary flex flex-col divide-y divide-color-ethos-light-purple overflow-hidden">
                 <div className="p-6 flex-col justify-center items-center text-center">
                     <div className="pb-1 inline-block">
                         <SendCoinImage iconUrl={iconUrl} symbol={symbol} />
@@ -40,8 +38,9 @@ const CoinTransactionCard = ({
                     </div>
                 </div>
                 <From />
-                <CardRow title="To" value={to} />
-                <Amount amount={analysis.rawAmount} coinType={SUI_TYPE_ARG} />
+                {to && <CardRow title="To" value={to} />}
+                <Costs balanceReductions={analysis.balanceReductions} />
+                <Gains balanceAdditions={analysis.balanceAdditions} />
                 <Gas gasSummary={analysis.gas} />
                 <Total analysis={analysis} />
             </div>

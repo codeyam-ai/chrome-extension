@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { API_ENV } from '_src/ui/app/ApiProvider';
 import { useAppDispatch } from '_src/ui/app/hooks';
 import { changeRPCNetwork } from '_src/ui/app/redux/slices/app';
 import Button from '_src/ui/app/shared/buttons/Button';
@@ -8,7 +9,6 @@ import Body from '_src/ui/app/shared/typography/Body';
 
 import type { IdentifierString } from '@wallet-standard/standard';
 import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
-import { API_ENV } from '_src/ui/app/ApiProvider';
 
 type IncorrectSignerProps = {
     correctChain: IdentifierString;

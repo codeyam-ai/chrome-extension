@@ -21,6 +21,7 @@ import type { Dependencies } from '_shared/utils/dependenciesContext';
 
 import './styles/global.scss';
 import './styles/tailwind.css';
+import './styles/toastify.css';
 import '_font-icons/output/sui-icons.scss';
 import 'bootstrap-icons/font/bootstrap-icons.scss';
 

@@ -7,15 +7,22 @@ import { useQuery } from '@tanstack/react-query';
 import { getHumanReadable } from '../helpers/transactions';
 import { api } from '_redux/store/thunk-extras';
 
-export function useQueryTransactionsByAddress(address: SuiAddress | null) {
+export function useQueryTransactionsByAddress(
+    address: SuiAddress,
+    cursorTo: string | null,
+    cursorFrom: string | null,
+    limit: number | null
+) {
     const rpc = api.instance.fullNode;
 
     return useQuery(
-        ['transactions-by-address', address],
+        ['transactions-by-address', address, cursorTo, cursorFrom],
         async () => {
             // combine from and to transactions
-            const allTransactionBlocks = await Promise.all([
+            const [toBlocks, fromBlocks] = await Promise.all([
                 rpc.queryTransactionBlocks({
+                    cursor: cursorTo,
+                    limit: limit,
                     filter: {
                         ToAddress: address || '',
                     },
@@ -28,6 +35,8 @@ export function useQueryTransactionsByAddress(address: SuiAddress | null) {
                     },
                 }),
                 rpc.queryTransactionBlocks({
+                    cursor: cursorFrom,
+                    limit: limit,
                     filter: {
                         FromAddress: address || '',
                     },
@@ -41,13 +50,7 @@ export function useQueryTransactionsByAddress(address: SuiAddress | null) {
                 }),
             ]);
 
-            const txBlocks = allTransactionBlocks
-                .map((transcationBlocks) => transcationBlocks.data)
-                .flat()
-                .map((transactionBlock) => ({
-                    ...transactionBlock,
-                    transactionBlock: transactionBlock.transaction,
-                }))
+            const txBlocks = [...toBlocks.data, ...fromBlocks.data]
                 .filter(
                     (value, index, self) =>
                         self.findIndex((tx) => tx.digest === value.digest) ===
@@ -59,15 +62,26 @@ export function useQueryTransactionsByAddress(address: SuiAddress | null) {
                 );
 
             const formattedTxBlocks = txBlocks.map((txBlock) => {
-                const humanReadable = getHumanReadable(address || '', txBlock);
+                const humanReadable = getHumanReadable(address, txBlock);
                 return {
                     transaction: txBlock,
                     humanReadable: humanReadable,
                 };
             });
 
-            return formattedTxBlocks;
+            return {
+                blocks: formattedTxBlocks,
+                toNextPageCursor: toBlocks.nextCursor,
+                fromPageCursor: fromBlocks.nextCursor,
+                toHasNext: toBlocks.hasNextPage,
+                fromHasNext: fromBlocks.hasNextPage,
+            };
         },
-        { enabled: !!address, staleTime: 0, cacheTime: 0 }
+        {
+            enabled: !!address,
+            staleTime: 0,
+            cacheTime: 0,
+            //refetchInterval: 3000,
+        }
     );
 }

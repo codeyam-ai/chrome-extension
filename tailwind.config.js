@@ -82,6 +82,8 @@ module.exports = {
                 // Shared light and dark mode
                 // ==============================
                 'ethos-sui-blue': '#3D5FF2',
+                'ethos-light-purple': '#F0EBFE',
+                'ethos-pale-purple': '#F8F5FF',
 
                 // ==========
                 // Light mode

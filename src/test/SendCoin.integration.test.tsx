@@ -50,9 +50,13 @@ describe('send coin flow', () => {
         await userEvent.click(continueButton);
     };
 
-    const shouldAddAmountAndClickReview = async () => {
+    const shouldAddAmountAndClickReview = async ({
+        amountString,
+    }: {
+        amountString: string;
+    }) => {
         const input = await screen.findByPlaceholderText('Amount');
-        await userEvent.type(input, '1');
+        await userEvent.type(input, amountString);
         const reviewButton = await screen.findByRole('button', {
             name: 'Review',
         });
@@ -73,7 +77,17 @@ describe('send coin flow', () => {
         await shouldSeeRootPageAndClickSend();
         await shouldSeeErrorForInvalidAddress();
         await shouldAddRecipientAndClickContinue();
-        await shouldAddAmountAndClickReview();
+        await shouldAddAmountAndClickReview({ amountString: '1' });
+        await shouldClickConfirmAndSeeTransactionSubmitted();
+    });
+
+    test('allows you to send Sui in a locale that uses comma-decimal-separator like german', async () => {
+        renderApp({ locale: 'de' });
+        await shouldSeeRootPageAndClickSend();
+        await shouldSeeErrorForInvalidAddress();
+        await shouldAddRecipientAndClickContinue();
+        // '1,0' in german is '1.0' in english
+        await shouldAddAmountAndClickReview({ amountString: '1,0' });
         await shouldClickConfirmAndSeeTransactionSubmitted();
     });
 

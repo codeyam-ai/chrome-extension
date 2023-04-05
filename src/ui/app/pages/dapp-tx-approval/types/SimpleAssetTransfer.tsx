@@ -15,6 +15,8 @@ import owner from '../lib/owner';
 import resizeWindow from '../lib/resizeWindow';
 import Loading from '_src/ui/app/components/loading';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
+import Body from '_src/ui/app/shared/typography/Body';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 import type { RawSigner, SuiObjectChange } from '@mysten/sui.js';
@@ -41,7 +43,7 @@ const StepOne = ({
 }) => {
     const { objectId, name, imageUrl, to } = stepInformation;
     return (
-        <>
+        <div className="h-full flex flex-col w-full gap-3">
             <Header>
                 <Warning>
                     This transaction transfers
@@ -51,20 +53,20 @@ const StepOne = ({
             </Header>
             <TransactionBody>
                 <SendAssetImage imageUrl={imageUrl} name={name} />
-                <div className="flex flex-col items-center gap-1 text-lg">
-                    <div className="font-light">Confirm your want to send</div>
-                    <div className="font-semibold">
-                        {name ??
-                            (imageUrl
-                                ? 'This Asset'
-                                : truncateMiddle(objectId))}
-                    </div>
+                <div className="flex flex-col items-center gap-1 text-lg py-3">
+                    <BodyLarge className="font-light">
+                        Confirm your want to send
+                    </BodyLarge>
+                    {name && <BodyLarge isSemibold>{name}</BodyLarge>}
+                    <Body className="text-ethos-light-text-medium text-sm">
+                        {truncateMiddle(objectId)}
+                    </Body>
                 </div>
             </TransactionBody>
             <FromToCard to={to} />
             <NextStep onNextStep={onNextStep} onCancel={onCancel} />
             <Steps activeStep={0} stepCount={2} onClick={onSelectStep} />
-        </>
+        </div>
     );
 };
 
@@ -88,7 +90,7 @@ const StepTwo = ({
     }, []);
 
     return (
-        <div className="h-full flex flex-col w-full py-3">
+        <div className="h-full flex flex-col w-full gap-3">
             <AssetTransactionCard stepInformation={stepInformation} />
             <Details analysis={stepInformation.analysis} signer={signer} />
             <Approve

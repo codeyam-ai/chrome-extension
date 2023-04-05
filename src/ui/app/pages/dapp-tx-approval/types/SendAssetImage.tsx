@@ -12,7 +12,7 @@ const SendAssetImage = ({
     return (
         <div className="relative" style={{ height: '90px', width: '90px' }}>
             <div
-                className="absolute bottom-0 left-0 bg-black rounded-lg"
+                className="absolute bottom-0 left-0 bg-ethos-dark-background-secondary dark:bg-ethos-light-background-secondary rounded-lg"
                 style={{ height: '90px', width: '90px' }}
             />
             <div

@@ -15,21 +15,23 @@ const Typography = ({
     forceLightMode,
     children,
 }: TypographyProps) => {
-    let textColorClasses = '';
+    let defaultTextColorClasses = '';
     if (isTextColorMedium) {
-        textColorClasses =
+        defaultTextColorClasses =
             ' ' +
             `text-ethos-light-text-medium ${
                 forceLightMode ? '' : 'dark:text-ethos-dark-text-medium'
             }`;
     }
+
     return (
         <ComponentType
-            className={`${className || ''} ${textColorClasses} antialiased`}
+            className={`${
+                className || ''
+            } ${defaultTextColorClasses} antialiased`}
         >
             {children}
         </ComponentType>
     );
 };
-
 export default Typography;

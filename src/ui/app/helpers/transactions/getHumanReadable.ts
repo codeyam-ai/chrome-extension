@@ -10,9 +10,9 @@ import getIsSender from './getIsSender';
 import {
     getFormattedGasFee,
     getGasFee,
-    getSuiObj,
     getSuiTransferAmount,
 } from './getSuiTransferAmount';
+import getToFromAddress from './getToFromAddress';
 import getUsdAmount from './getUsdAmount';
 import convertUnixTimeToLocalTime from '../convertUnixTimeToLocalTime';
 import { getDollars } from '../formatCoin';
@@ -35,10 +35,9 @@ const getHumanReadable = (
     const gasFeeInUsd = getDollars(totalGasCost);
     const txCommands = getCommands(tx);
     const displayImage = getDisplayImage(tx);
-
     const amt = txAmount ? parseFloat(txAmount.replace(/,/g, '')) : undefined;
     const txUsdAmount = amt ? getUsdAmount(amt) : undefined;
-
+    const addresses = getToFromAddress(txAction, tx);
     const preposition = getTxPreposition(txType, txAction);
     const otherAddress = getTxOtherAddressDisplay(
         txType,
@@ -64,6 +63,7 @@ const getHumanReadable = (
         otherAddress,
         otherAddressStr,
         displayImage,
+        addresses,
     };
 };
 

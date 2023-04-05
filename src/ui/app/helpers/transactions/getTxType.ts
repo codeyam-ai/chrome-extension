@@ -1,32 +1,40 @@
-import type {
-    SuiObjectChange,
-    SuiTransactionBlockResponse,
-} from '@mysten/sui.js';
+import type { BalanceChange } from './types';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 export type TxType = string;
 
-function getType(objectChanges: SuiObjectChange[]) {
-    let combinedTypes = '';
+// Check if the coinType property in balanceChanges
+// is ever not equal to sui if so return 'coin'
+const findCoinType = (balanceChanges: BalanceChange[]) => {
+    let coinType = 'sui';
 
-    for (const obj of objectChanges) {
-        if ('objectType' in obj) {
-            const objectType = obj.objectType.split('::');
-            combinedTypes = combinedTypes.concat(objectType[1]);
+    for (const coin in balanceChanges) {
+        if (balanceChanges[coin].coinType.split('::')[1] !== 'sui') {
+            coinType = 'coin';
         }
     }
 
-    if (combinedTypes.includes('nft')) {
-        return 'nft';
-    } else if (combinedTypes.includes('coin')) {
-        return 'coin';
-    }
-}
+    return coinType;
+};
 
+// Get the type for the transaction
 const getTxType = (txn: SuiTransactionBlockResponse): string => {
-    let type = 'func';
+    let type = 'coin';
 
-    if (txn.objectChanges && txn.objectChanges.length > 0) {
-        type = getType(txn.objectChanges) || 'func';
+    if (txn.objectChanges && txn.balanceChanges) {
+        for (const obj of txn.objectChanges) {
+            if ('objectType' in obj) {
+                const objectType = obj.objectType.split('::')[1];
+
+                if (objectType !== 'coin') {
+                    type = 'nft';
+                }
+            }
+        }
+
+        if (type === 'coin') {
+            type = findCoinType(txn.balanceChanges);
+        }
     }
 
     return type;

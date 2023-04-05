@@ -8,6 +8,7 @@ import {
 import { useAppDispatch } from '_src/ui/app/hooks';
 import { createMnemonic, setMnemonic } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
+import HideShowToggle from '_src/ui/app/shared/buttons/HideShowToggle';
 import OnboardingCard from '_src/ui/app/shared/layouts/OnboardingCard';
 import Body from '_src/ui/app/shared/typography/Body';
 
@@ -20,6 +21,7 @@ interface WordInputProps {
     defaultValue: string;
     updateWord: (index: number, newWord: string) => void;
     handlePaste: (e: ClipboardEvent<HTMLInputElement>) => void;
+    password?: boolean;
 }
 
 const WordInput = ({
@@ -27,6 +29,7 @@ const WordInput = ({
     defaultValue,
     updateWord,
     handlePaste,
+    password,
 }: WordInputProps) => {
     const focusOnThisInput = useCallback(() => {
         document.getElementById(idPrefix + index)?.focus();
@@ -49,7 +52,7 @@ const WordInput = ({
                 <code>{index + 1}</code>
             </Body>
             <input
-                type="password"
+                type={password ? 'password' : 'text'}
                 id={idPrefix + index}
                 data-testid={idPrefix + index}
                 className="w-full bg-ethos-light-background-secondary border-none focus:outline-none focus:ring-transparent p-0 m-0"
@@ -65,6 +68,7 @@ const WordInput = ({
 const ImportSeedPage = () => {
     const [words, setWords] = useState<string[]>([]);
     const [error, setError] = useState(false);
+    const [passwordMode, setPasswordMode] = useState(true);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
@@ -108,6 +112,10 @@ const ImportSeedPage = () => {
         [words]
     );
 
+    const togglePasswordMode = useCallback(() => {
+        setPasswordMode((prev) => !prev);
+    }, []);
+
     const handlePaste = useCallback(
         (e: ClipboardEvent<HTMLInputElement>) => {
             const clipboardData = e.clipboardData?.getData('Text');
@@ -140,8 +148,8 @@ const ImportSeedPage = () => {
             progressCompleted={1}
             progressTotal={3}
         >
-            <form onSubmit={onSubmit}>
-                <div className="flex flex-col gap-2 px-10 pb-10">
+            <form onSubmit={onSubmit} className="flex flex-col gap-6 px-6">
+                <div className="flex flex-col gap-3">
                     <div className="grid grid-cols-3 grid-rows-4 gap-3">
                         {[...Array(12)].map((_, index) => {
                             return (
@@ -151,6 +159,7 @@ const ImportSeedPage = () => {
                                     updateWord={updateWord}
                                     handlePaste={handlePaste}
                                     key={index}
+                                    password={passwordMode}
                                 />
                             );
                         })}
@@ -162,6 +171,11 @@ const ImportSeedPage = () => {
                         </Body>
                     )}
                 </div>
+                <HideShowToggle
+                    name="Phrase"
+                    hide={passwordMode}
+                    onToggle={togglePasswordMode}
+                />
                 <div className="px-10 pb-10">
                     <Button
                         id="continue"
