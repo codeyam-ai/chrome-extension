@@ -45,6 +45,9 @@ function TransferCoinForm({
     const walletTo = useAppSelector(({ account: { accountInfos } }) =>
         accountInfos.find((accountInfo) => accountInfo.address === formData.to)
     );
+    const contactTo = useAppSelector(({ contacts: { contacts } }) =>
+        contacts.find((contact) => contact.address === formData.to)
+    );
     const onClearRef = useRef(onClearSubmitError);
     onClearRef.current = onClearSubmitError;
 
@@ -100,7 +103,13 @@ function TransferCoinForm({
                             shortValue: (
                                 <WalletTo
                                     addressTo={formData.to}
-                                    walletTo={walletTo}
+                                    walletTo={
+                                        walletTo
+                                            ? walletTo
+                                            : contactTo
+                                            ? contactTo
+                                            : undefined
+                                    }
                                     noTo={true}
                                 />
                             ),

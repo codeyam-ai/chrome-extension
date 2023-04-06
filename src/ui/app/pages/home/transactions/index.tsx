@@ -4,7 +4,7 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 import { useAppSelector } from '_hooks';
 import Loading from '_src/ui/app/components/loading';
 import { useQueryTransactionsByAddress } from '_src/ui/app/hooks/useQueryTransactionsByAddress';
-import Button from '_src/ui/app/shared/button';
+import Button from '_src/ui/app/shared/buttons/Button';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
@@ -88,8 +88,7 @@ const TransactionsPage = () => {
                             }
                         >
                             <Button
-                                mode={'secondary'}
-                                className={'mb-6'}
+                                buttonStyle="secondary"
                                 onClick={incrementPage}
                             >
                                 Load More

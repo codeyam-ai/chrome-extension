@@ -12,6 +12,8 @@ import BuyPage from './pages/home/buy';
 import TransferNftRecipient from './pages/home/nft-details/transfer-nft-recipient';
 import TransferNftReview from './pages/home/nft-details/transfer-nft-review';
 import ReceivePage from './pages/home/receive';
+import AddressBookNavigation from './pages/home/tokens/dapp/dapps/AddressBook/AddressBookNavigation';
+import CustomizeNavigation from './pages/home/tokens/dapp/dapps/Customize/CustomizeNavigation';
 import TransferCoinAmountPage from './pages/home/transfer-coin-amount';
 import TransferCoinRecipientPage from './pages/home/transfer-coin-recipient';
 import TransferCoinReviewPage from './pages/home/transfer-coin-review';
@@ -29,6 +31,7 @@ import VerifyPhrasePage from './pages/initialize/verify-phrase';
 import LockedPage from './pages/locked';
 import PasswordPage from './pages/password';
 import { AppType } from './redux/slices/app/AppType';
+import { loadContactsStorage } from './redux/slices/contacts';
 import LockWalletProvider from './shared/LockWalletProvider';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { DappTxApprovalPage } from '_pages/dapp-tx-approval';
@@ -58,6 +61,7 @@ const App = () => {
 
     useEffect(() => {
         dispatch(loadAccountInformationFromStorage());
+        dispatch(loadContactsStorage());
     }, [dispatch]);
 
     const isPopup = useAppSelector(
@@ -78,6 +82,14 @@ const App = () => {
                     />
                     <Route path="/*" element={<HomePage />}>
                         <Route path="tokens" element={<TokensPage />} />
+                        <Route
+                            path="tokens/customize/*"
+                            element={<CustomizeNavigation />}
+                        />
+                        <Route
+                            path="tokens/address-book/*"
+                            element={<AddressBookNavigation />}
+                        />
                         <Route path="nfts">
                             <Route path={'*'} element={<NftsPage />} />
                             <Route

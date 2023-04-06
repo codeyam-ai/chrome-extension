@@ -9,7 +9,12 @@ const WalletTo = ({
     noTo,
 }: {
     addressTo?: string;
-    walletTo?: AccountInfo;
+    walletTo?: {
+        name?: string;
+        address: string;
+        emoji?: string;
+        color?: string;
+    };
     noTo?: boolean;
 }) => {
     if (!walletTo)

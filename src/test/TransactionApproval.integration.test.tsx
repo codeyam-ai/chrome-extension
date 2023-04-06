@@ -255,7 +255,7 @@ describe('The Transaction Approval popup', () => {
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
-                    'AAACAQA5XFDGFMwiFWyd6NskFj9I5P9mrgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfABQc5QM+gq6aSOp0O1A9lrSbnFf+CwEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeCgAAAAAAAAAAypo7AAAAAAA=',
+                    'AAACAQAAAAAAAAAAAAAAAAA5XFDGFMwiFWyd6NskFj9I5P9mrgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfABQc5QM+gq6aSOp0O1A9lrSbnFf+CwEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeCgAAAAAAAAAAypo7AAAAAAA=',
                 ],
             },
             renderTemplate('dryRunTransaction', {})
@@ -265,7 +265,7 @@ describe('The Transaction Approval popup', () => {
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
-                    'AAACAQA5XFDGFMwiFWyd6NskFj9I5P9mrgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfABQc5QM+gq6aSOp0O1A9lrSbnFf+CwEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3goAAAAAAAAAZgQAAAAAAAAA',
+                    'AAACAQAAAAAAAAAAAAAAAAA5XFDGFMwiFWyd6NskFj9I5P9mrgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfABQc5QM+gq6aSOp0O1A9lrSbnFf+CwEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3goAAAAAAAAAZgQAAAAAAAAA',
                 ],
             },
             renderTemplate('dryRunTransaction', {})

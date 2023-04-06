@@ -3,6 +3,7 @@
 
 import { useMemo } from 'react';
 
+import getDisplay from '../helpers/getDisplay';
 import ipfs from '../helpers/ipfs';
 
 import type { SuiObjectData } from '@mysten/sui.js';
@@ -12,7 +13,8 @@ export default function useMediaUrl(objData: SuiObjectData, fieldName = 'url') {
     const { fields } = (content?.dataType === 'moveObject' && content) || {};
     return useMemo(() => {
         const displayFieldName = fieldName === 'url' ? 'image_url' : fieldName;
-        const mediaUrl = display?.[displayFieldName] || fields?.[fieldName];
+        const objDisplay = getDisplay(display);
+        const mediaUrl = objDisplay?.[displayFieldName] ?? fields?.[fieldName];
         if (typeof mediaUrl === 'string') {
             return ipfs(mediaUrl);
         }

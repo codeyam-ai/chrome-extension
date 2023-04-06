@@ -6,11 +6,11 @@ import { Field, Formik, Form } from 'formik';
 import { useCallback } from 'react';
 import * as Yup from 'yup';
 
-import Button from '_app/shared/button';
 import InputWithAction from '_app/shared/input-with-action';
 import Alert from '_components/alert';
 import { useAppSelector, useAppDispatch } from '_hooks';
 import { setCustomRPC } from '_redux/slices/app';
+import Button from '_src/ui/app/shared/buttons/Button';
 
 import st from '../NetworkSelector.module.scss';
 
@@ -69,12 +69,6 @@ export function CustomRPCInput() {
                         <Button
                             type="submit"
                             disabled={!dirty || isSubmitting || !isValid}
-                            size="mini"
-                            className={cl(
-                                st.action,
-                                isValid && dirty && st.canSave,
-                                isValid && st.valid
-                            )}
                         >
                             Save
                         </Button>
