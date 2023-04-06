@@ -1,7 +1,11 @@
-import { setLocked, setUnlocked } from '_app/helpers/lock-wallet';
-import { deleteEncrypted, setEncrypted } from '_shared/storagex/store';
+import { setUnlocked } from '_app/helpers/lock-wallet';
+import { setEncrypted } from '_shared/storagex/store';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
-import { PASSPHRASE_TEST, PREAPPROVAL_KEY } from '_src/shared/constants';
+import {
+    AccountType,
+    PASSPHRASE_TEST,
+    PREAPPROVAL_KEY,
+} from '_src/shared/constants';
 import { type Permission } from '_src/shared/messaging/messages/payloads/permissions';
 
 export const password = 'Password';
@@ -31,13 +35,11 @@ export const accountInfos = [
 
 export const fakeAccessToken = 'ewhfbiuh3rh23d';
 
-export const simulateMnemonicUser = async function () {
+export const simulateMnemonicUser = async function (unlocked = true) {
+
+    // TODO: DRY up. There's actual app code (in the redux account slice) that sets this state up. we should find a way
+    //  to invoke that code.
     const accountInfosJson = JSON.stringify(accountInfos);
-    await setEncrypted({
-        key: 'passphrase',
-        value: password,
-        session: true,
-    });
     await setEncrypted({
         key: 'passphrase-test',
         value: PASSPHRASE_TEST,
@@ -56,7 +58,19 @@ export const simulateMnemonicUser = async function () {
         session: false,
         passphrase: password,
     });
-    await setUnlocked(password);
+    await setEncrypted({
+        key: 'account-type',
+        value: AccountType.PASSWORD,
+        session: false,
+    });
+    if (unlocked) {
+        await setEncrypted({
+            key: 'passphrase',
+            value: password,
+            session: true,
+        });
+        await setUnlocked(password);
+    }
 };
 
 export const simulateEmailUser = async function () {
@@ -72,13 +86,6 @@ export const simulateEmailUser = async function () {
         session: false,
         passphrase: fakeAccessToken,
     });
-};
-
-export const simulateLogout = async function () {
-    // TODO: this isn't really a realistic simulation of what happens when the wallet is locked. This removes the key that indicates
-    //  the wallet is unlocked from session storage, but in reality the entire sessions storage is cleared by the
-    //  background task.
-    await setLocked(password);
 };
 
 export const simulateConnectedApps = async function () {

@@ -19,11 +19,11 @@ import { Coin } from '_redux/slices/sui-objects/Coin';
 import { generateMnemonic } from '_shared/cryptography/mnemonics';
 import Authentication from '_src/background/Authentication';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
-import { PASSPHRASE_TEST } from '_src/shared/constants';
+import { AccountType, PASSPHRASE_TEST } from '_src/shared/constants';
 import {
+    deleteEncrypted,
     getEncrypted,
     setEncrypted,
-    deleteEncrypted,
 } from '_src/shared/storagex/store';
 import KeypairVault from '_src/ui/app/KeypairVault';
 import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
@@ -34,12 +34,6 @@ import type { SuiAddress, SuiMoveObject } from '@mysten/sui.js';
 import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-
-export enum AccountType {
-    EMAIL = 'EMAIL',
-    PASSWORD = 'PASSWORD',
-    UNINITIALIZED = 'UNINITIALIZED',
-}
 
 type InitialAccountInfo = {
     authentication: string | null;
@@ -176,6 +170,8 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             account: { locked: alreadyLocked },
         } = getState() as RootState;
 
+        // TODO: This seems unnecessary; if the redux state is locked, we shouldn't have to then delete the data.
+        //  Deleting the data happens first, and later the redux state is updated
         if (alreadyLocked) {
             await setLocked(passphrase);
         }
