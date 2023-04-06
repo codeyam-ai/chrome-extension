@@ -45,7 +45,6 @@ import type { ContentScriptConnection } from '_src/background/connections/Conten
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
-
 // type SimpleCoin = {
 //     balance: number;
 //     coinObjectId: string;

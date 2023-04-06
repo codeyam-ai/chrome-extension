@@ -46,7 +46,6 @@ import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
 import type { Runtime } from 'webextension-polyfill';
 
-
 export class ContentScriptConnection extends Connection {
     public static readonly CHANNEL: PortChannelName =
         'ethos_content<->background';
