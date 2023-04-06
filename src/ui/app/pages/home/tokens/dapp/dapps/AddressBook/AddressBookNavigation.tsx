@@ -3,7 +3,6 @@ import { Outlet, Route, Routes } from 'react-router-dom';
 import Add from './Add';
 import AddressHome from './AddressHome';
 import ContactPage from './ContactPage/ContactPage';
-
 import Edit from './Edit';
 import { DappWrapper } from '../../DappWrapper';
 

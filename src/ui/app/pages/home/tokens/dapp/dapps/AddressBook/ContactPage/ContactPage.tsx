@@ -13,7 +13,6 @@ import { useAppSelector } from '_src/ui/app/hooks';
 import { useUpdateContacts } from '_src/ui/app/hooks/useUpdateContacts';
 import EmojiDisplay from '_src/ui/app/shared/EmojiDisplay';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 const ContactPage = () => {
     const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] =
@@ -32,7 +31,7 @@ const ContactPage = () => {
 
     const handleRemoveContact = useCallback(() => {
         setIsConfirmDeleteModalOpen(true);
-    }, [contact?.address, removeContact]);
+    }, []);
 
     const handleEditContact = useCallback(() => {
         if (!contact?.address) {
@@ -47,7 +46,7 @@ const ContactPage = () => {
         }
         removeContact(contact?.address);
         navigate(-1);
-    }, [contact?.address, removeContact]);
+    }, [contact?.address, navigate, removeContact]);
 
     const handleSend = useCallback(() => {
         if (!contact?.address || !accountAddress) return;

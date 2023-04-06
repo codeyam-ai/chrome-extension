@@ -1,5 +1,3 @@
-import { UserPlusIcon } from '@heroicons/react/24/solid';
-
 import CustomizeNavigation from './dapps/Customize/CustomizeNavigation';
 import addressBookIcon from '_src/ui/assets/images/dappIcons/address-book.png';
 import customizeIcon from '_src/ui/assets/images/dappIcons/customize.png';

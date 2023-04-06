@@ -40,13 +40,11 @@ export const useUpdateContacts = () => {
         address: string,
         updatedInfo: Partial<Contact>
     ) => {
-        console.log('editContact :>> ', address, updatedInfo);
         const updatedContacts = contacts.map((contact: Contact) =>
             contact.address === address
                 ? { ...contact, ...updatedInfo }
                 : contact
         );
-        console.log('updatedContacts :>> ', updatedContacts);
         await _saveContacts(updatedContacts);
     };
 

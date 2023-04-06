@@ -2,9 +2,10 @@ import { Form, Formik } from 'formik';
 import { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 
-import type { FormikValues } from 'formik';
-import type { Contact } from './AddContactForm';
 import ContactForm from './ContactForm';
+
+import type { Contact } from './AddContactForm';
+import type { FormikValues } from 'formik';
 
 type EditContactFormProps = {
     onSubmit: (contact: Contact) => void;

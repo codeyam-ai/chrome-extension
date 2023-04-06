@@ -1,8 +1,8 @@
+import { setLocked, setUnlocked } from '_app/helpers/lock-wallet';
 import { deleteEncrypted, setEncrypted } from '_shared/storagex/store';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
 import { PASSPHRASE_TEST, PREAPPROVAL_KEY } from '_src/shared/constants';
 import { type Permission } from '_src/shared/messaging/messages/payloads/permissions';
-import { setLocked, setUnlocked } from '_app/helpers/lock-wallet';
 
 export const password = 'Password';
 export const recoveryPhrase =

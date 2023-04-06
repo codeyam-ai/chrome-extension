@@ -1,11 +1,10 @@
 import { type SuiAddress, isValidSuiAddress } from '@mysten/sui.js';
-import { Form, Formik, useField } from 'formik';
+import { Form, Formik } from 'formik';
 import { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 
-import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
-
 import ContactForm from './ContactForm';
+import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 
 import type { FormikValues } from 'formik';
 
