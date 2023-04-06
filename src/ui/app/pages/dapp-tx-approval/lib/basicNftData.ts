@@ -1,3 +1,5 @@
+import getDisplay from '_src/ui/app/helpers/getDisplay';
+
 import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
@@ -30,9 +32,10 @@ const basicNftData = async ({
         fields = object.content.fields;
     }
 
+    const nftDisplay = getDisplay(object?.display);
     return {
-        name: object?.display?.name ?? fields?.name,
-        imageUrl: object?.display?.image_url ?? fields?.url,
+        name: nftDisplay?.name ?? fields?.name,
+        imageUrl: nftDisplay?.image_url ?? fields?.url,
     };
 };
 

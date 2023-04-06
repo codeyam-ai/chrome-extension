@@ -5,6 +5,8 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import CoinList from './CoinList';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
+import { DappList } from './dapp/DappList';
+import { sampleData } from './dapp/dappData';
 import { useAppSelector, useExplorerPermission, useFormatCoin } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { LinkType } from '_src/enums/LinkType';
@@ -32,8 +34,11 @@ function TokensPage() {
             )
     );
 
+    const showDappList = false;
+
     return (
         <>
+            {showDappList && <DappList data={sampleData} />}
             <WalletBalanceAndIconHomeView
                 accountInfo={accountInfo}
                 dollarValue={usdAmount}

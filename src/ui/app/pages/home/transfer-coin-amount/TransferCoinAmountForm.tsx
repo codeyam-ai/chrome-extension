@@ -107,6 +107,9 @@ function TransferCoinForm({
     const walletTo = useAppSelector(({ account: { accountInfos } }) =>
         accountInfos.find((accountInfo) => accountInfo.address === formState.to)
     );
+    const contactTo = useAppSelector(({ contacts: { contacts } }) =>
+        contacts.find((contact) => contact.address === formState.to)
+    );
     const balances = useAppSelector(accountAggregateBalancesSelector);
 
     const [searchParams] = useSearchParams();
@@ -148,7 +151,16 @@ function TransferCoinForm({
                     <CoinSelect selectedCoinType={coinType} />
                 </div>
                 <CopyBody txt={formState.to} isTextColorMedium>
-                    <WalletTo addressTo={formState.to} walletTo={walletTo} />
+                    <WalletTo
+                        addressTo={formState.to}
+                        walletTo={
+                            walletTo
+                                ? walletTo
+                                : contactTo
+                                ? contactTo
+                                : undefined
+                        }
+                    />
                 </CopyBody>
             </div>
             <div className="flex flex-col mb-8 px-6 text-left">

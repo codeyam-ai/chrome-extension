@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Field, Form, useFormikContext } from 'formik';
-import { memo, useCallback, useRef } from 'react';
+import { memo, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import AddressInput from '_components/address-input';
@@ -15,7 +15,9 @@ import { setSuiRecipient } from '_src/ui/app/redux/slices/forms';
 //     getTransactionsByAddress,
 //     type TxResultState,
 // } from '_src/ui/app/redux/slices/txresults';
+import EmojiDisplay from '_src/ui/app/shared/EmojiDisplay';
 import Button from '_src/ui/app/shared/buttons/Button';
+import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
 
@@ -34,13 +36,20 @@ function TransferCoinRecipientForm({
     onClearSubmitError,
 }: TransferCoinRecipientFormProps) {
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
-
     const activeAccountIndex = useAppSelector(
         ({ account: { activeAccountIndex } }) => activeAccountIndex
     );
+    const { contacts } = useAppSelector(({ contacts }) => contacts);
 
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
+    const toAddress = searchParams.get('to');
+    const disableToInput =
+        searchParams.get('disableToInput') &&
+        searchParams.get('disableToInput') === 'true';
+    const hideWalletRecommendations =
+        searchParams.get('hideWalletRecommendations') &&
+        searchParams.get('hideWalletRecommendations') === 'true';
 
     // const txByAddress: TxResultState[] = useAppSelector(({ txresults }) => {
     //     console.log('txresults', txresults);
@@ -69,6 +78,10 @@ function TransferCoinRecipientForm({
         values: { to },
         setFieldValue,
     } = useFormikContext<FormValues>();
+
+    const contact = useMemo(() => {
+        return contacts.find((contact) => contact.address === toAddress || to);
+    }, [contacts, toAddress, to]);
 
     const onClearRef = useRef(onClearSubmitError);
     onClearRef.current = onClearSubmitError;
@@ -110,6 +123,7 @@ function TransferCoinRecipientForm({
                             id="to"
                             label={'Recipient'}
                             onBlur={handleOnblur}
+                            disabled={disableToInput}
                         />
                         <div
                             className={`absolute top-0 right-0 mt-1 text-red-500 dark:text-red-400 ${
@@ -120,8 +134,26 @@ function TransferCoinRecipientForm({
                         </div>
                     </div>
                 </div>
+
                 <div className={'pb-[80px] pt-[202px]'}>
-                    {recentWallets.length > 0 && (
+                    {contact && (
+                        <div className="flex flex-col gap-2 pb-6 items-center place-content-center">
+                            <div
+                                data-testid="emoji-picker"
+                                className="flex w-11 h-11 rounded-full items-center place-content-center"
+                                style={{ backgroundColor: contact.color }}
+                            >
+                                <EmojiDisplay
+                                    emoji={contact.emoji}
+                                    sizeInPx={22}
+                                />
+                            </div>
+                            <div className="flex flex-col text-left">
+                                <Body isSemibold>{contact.name}</Body>
+                            </div>
+                        </div>
+                    )}
+                    {!hideWalletRecommendations && recentWallets.length > 0 && (
                         <SuiTxWalletList
                             header={'Recent Wallets'}
                             wallets={accountInfos}
@@ -130,7 +162,7 @@ function TransferCoinRecipientForm({
                             setFieldValue={setFieldValue}
                         />
                     )}
-                    {accountInfos.length > 1 && (
+                    {!hideWalletRecommendations && accountInfos.length > 1 && (
                         <SuiTxWalletList
                             header={'Transfer Between My Wallets'}
                             wallets={accountInfos}

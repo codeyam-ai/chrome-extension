@@ -1,3 +1,4 @@
+import type { toFrom } from './getToFromAddress';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 export interface TransactionCoinInfo {
@@ -35,6 +36,7 @@ export interface BalanceChange {
 }
 
 export interface humanReadableDetails {
+    addresses?: toFrom;
     timeDisplay: string;
     txType: string;
     txAction: string;

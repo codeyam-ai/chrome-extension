@@ -15,13 +15,15 @@ import type { SerializedError } from '@reduxjs/toolkit';
 // TODO: show out of sync when sui objects locally might be outdated
 function TransferCoinRecipientPage() {
     const account = useAppSelector(({ account }) => account);
-    const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
     const activeAccountIndex = useAppSelector(
         ({ account: { activeAccountIndex } }) => activeAccountIndex
     );
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
+    const toAddress = searchParams.get('to');
+
     const [sendError, setSendError] = useState<string | null>(null);
+
     const validationSchema = useMemo(
         () => createValidationSchema(account.address || ''),
         [account.address]
@@ -62,7 +64,7 @@ function TransferCoinRecipientPage() {
     }, []);
 
     const initState = {
-        to: formState.to,
+        to: toAddress || '',
     };
 
     if (!coinType) {

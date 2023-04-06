@@ -51,6 +51,7 @@ module.exports = {
                 disallowTypeAnnotations: true,
             },
         ],
+        'react/prop-types': 'off',
         'no-console': ['warn'],
     },
 };

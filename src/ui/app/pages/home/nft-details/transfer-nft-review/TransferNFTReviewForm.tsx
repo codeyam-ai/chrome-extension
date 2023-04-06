@@ -6,6 +6,7 @@ import { memo, useCallback } from 'react';
 import { Content } from '_app/shared/bottom-menu-layout';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 import WalletTo from '_src/ui/app/components/wallet-to';
+import getDisplay from '_src/ui/app/helpers/getDisplay';
 import { useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
@@ -68,10 +69,11 @@ function TransferNftReviewForm({
         fields = nftobj.content.fields;
     }
 
+    const nftDisplay = getDisplay(nftobj.display);
     const display = {
-        name: nftobj.display?.name ?? fields?.name,
-        description: nftobj.display?.description ?? fields?.description,
-        url: nftobj.display?.image_url ?? fields?.url,
+        name: nftDisplay?.name ?? fields?.name,
+        description: nftDisplay?.description ?? fields?.description,
+        url: nftDisplay?.image_url ?? fields?.url,
     };
 
     return (

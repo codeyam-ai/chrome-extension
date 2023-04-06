@@ -68,7 +68,7 @@ function WalletPickerPage({
     }
 
     return (
-        <div className="absolute w-full h-full z-10">
+        <div className="absolute w-full h-full z-20">
             <div
                 className="absolute top-0 w-full h-[535px] sm:rounded-[20px] bg-black opacity-20 dark:opacity-80"
                 onClick={handleOnCloseMenu}
