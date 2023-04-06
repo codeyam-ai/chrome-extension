@@ -2,6 +2,7 @@ import { deleteEncrypted, setEncrypted } from '_shared/storagex/store';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
 import { PASSPHRASE_TEST, PREAPPROVAL_KEY } from '_src/shared/constants';
 import { type Permission } from '_src/shared/messaging/messages/payloads/permissions';
+import { setLocked, setUnlocked } from '_app/helpers/lock-wallet';
 
 export const password = 'Password';
 export const recoveryPhrase =
@@ -55,12 +56,7 @@ export const simulateMnemonicUser = async function () {
         session: false,
         passphrase: password,
     });
-    await setEncrypted({
-        key: 'locked',
-        value: `locked${password}`,
-        session: false,
-        passphrase: password,
-    });
+    await setUnlocked(password);
 };
 
 export const simulateEmailUser = async function () {
@@ -79,11 +75,7 @@ export const simulateEmailUser = async function () {
 };
 
 export const simulateLogout = async function () {
-    await deleteEncrypted({
-        key: 'locked',
-        session: false,
-        passphrase: password,
-    });
+    await setLocked(password);
 };
 
 export const simulateConnectedApps = async function () {

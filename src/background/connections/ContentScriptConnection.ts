@@ -4,6 +4,7 @@
 import { Connection } from './Connection';
 import { DEFAULT_API_ENV } from '../../ui/app/ApiProvider';
 import Authentication from '../Authentication';
+import { isLocked } from '_app/helpers/lock-wallet';
 import { createMessage } from '_messages';
 import { isGetAccount } from '_payloads/account/GetAccount';
 import {
@@ -44,6 +45,7 @@ import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
 import type { Runtime } from 'webextension-polyfill';
+
 
 export class ContentScriptConnection extends Connection {
     public static readonly CHANNEL: PortChannelName =
@@ -252,14 +254,14 @@ export class ContentScriptConnection extends Connection {
     }
 
     private async getAccountInfos(): Promise<AccountInfo[]> {
-        const locked = await getEncrypted({ key: 'locked', session: false });
-        if (locked) {
-            throw new Error('Wallet is locked');
-        }
         const passphrase = await getEncrypted({
             key: 'passphrase',
             session: true,
         });
+        const locked = passphrase && (await isLocked(passphrase));
+        if (locked) {
+            throw new Error('Wallet is locked');
+        }
         const authentication = await getEncrypted({
             key: 'authentication',
             session: true,
