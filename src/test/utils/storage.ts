@@ -75,6 +75,9 @@ export const simulateEmailUser = async function () {
 };
 
 export const simulateLogout = async function () {
+    // TODO: this isn't really a realistic simulation of what happens when the wallet is locked. This removes the key that indicates
+    //  the wallet is unlocked from session storage, but in reality the entire sessions storage is cleared by the
+    //  background task.
     await setLocked(password);
 };
 

@@ -8,7 +8,7 @@ import { PortStream } from '_messaging/PortStream';
 import {isWalletLockedMessage} from "_payloads/locking/WalletLocked";
 import { isPermissionRequests } from '_payloads/permissions';
 import { isGetTransactionRequestsResponse } from '_payloads/transactions/ui/GetTransactionRequestsResponse';
-import {logout} from "_redux/slices/account";
+import {lockWallet} from "_redux/slices/account";
 import { setPermissions } from '_redux/slices/permissions';
 import { setPreapprovalRequests } from '_redux/slices/preapproval-requests';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
@@ -141,6 +141,10 @@ export class BackgroundClient {
         );
     }
 
+    lockWallet() {
+        // TODO: implement and test
+    }
+
     private handleIncomingMessage(msg: Message) {
         if (!this._initialized || !this._dispatch) {
             throw new Error(
@@ -156,7 +160,7 @@ export class BackgroundClient {
         } else if (isGetPreapprovalResponse(payload)) {
             this._dispatch(setPreapprovalRequests(payload.preapprovalRequests));
         } else if (isWalletLockedMessage(payload)) {
-            this._dispatch(logout())
+            this._dispatch(lockWallet());
         }
     }
 

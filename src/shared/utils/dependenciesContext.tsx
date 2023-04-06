@@ -5,7 +5,7 @@ export interface WindowCloser {
 }
 
 export interface Heartbeat {
-    onBeat(callback: () => void): void;
+    onBeat(listener: () => void): void;
 }
 
 export interface Dependencies {

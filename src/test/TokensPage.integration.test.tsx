@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
@@ -28,9 +28,9 @@ describe('Rendering the Tokens page', () => {
     });
 
     class FakeHeartbeat {
-        capturedBeatCallback?: () => void;
-        onBeat(callback: () => void) {
-            this.capturedBeatCallback = callback;
+        capturedListener?: () => void;
+        onBeat(listener: () => void) {
+            this.capturedListener = listener;
         }
     }
 
@@ -45,18 +45,23 @@ describe('Rendering the Tokens page', () => {
         });
         await screen.findByText('Get started with Sui');
 
-        expect(fakeHeartbeat.capturedBeatCallback).not.toBeNull();
+        // at this point we expect the heartbeat listener to be registered but no alarm to be set yet
+        expect(fakeHeartbeat.capturedListener).not.toBeNull();
         expect(fakeAlarms.names).not.toContain('lockAlarm');
-        fakeHeartbeat.capturedBeatCallback &&
-        fakeHeartbeat.capturedBeatCallback();
 
-        // make sure alarm has been set
+        // this sends the heartbeat to the background task
+        fakeHeartbeat.capturedListener && fakeHeartbeat.capturedListener();
         expect(fakeAlarms.names).toContain('lockAlarm');
 
-        // then invoke the alarm
-        fakeAlarms.onAlarm.listeners[0]({name: 'lockAlarm', periodInMinutes: 0, scheduledTime: 1})
+        // now invoke the alarm, which should trigger the UI to lock
+        act(() => {
+            fakeAlarms.onAlarm.listeners[0]({
+                name: 'lockAlarm',
+                periodInMinutes: 0,
+                scheduledTime: 1,
+            });
+        });
 
         await screen.findAllByText('Unlock Wallet');
     });
-
 });

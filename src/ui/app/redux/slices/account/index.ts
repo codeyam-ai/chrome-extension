@@ -495,20 +495,6 @@ export const reset = createAsyncThunk(
     }
 );
 
-export const logout = createAsyncThunk(
-    'account/logout',
-    async (_args, { getState }): Promise<void> => {
-        const {
-            account: { authentication, passphrase },
-        } = getState() as RootState;
-        if (authentication) {
-            await deleteEncrypted({ key: 'authentication', session: true });
-        } else if (passphrase) {
-            await setLocked(passphrase);
-        }
-    }
-);
-
 const isPasswordCorrect = async (password: string) => {
     const passphraseTest = await getEncrypted({
         key: 'passphrase-test',
@@ -611,6 +597,9 @@ const accountSlice = createSlice({
         setEmail: (state, action: PayloadAction<string | null>) => {
             state.email = action.payload;
         },
+        lockWallet: (state, action: PayloadAction) => {
+            state.locked = true;
+        },
     },
     extraReducers: (builder) =>
         builder
@@ -670,17 +659,10 @@ const accountSlice = createSlice({
             .addCase(unlock.fulfilled, (state, action) => {
                 state.locked = !action.payload;
                 state.passphrase = action.payload;
-            })
-            .addCase(logout.fulfilled, (state) => {
-                if (state.authentication) {
-                    state.authentication = null;
-                } else {
-                    state.locked = true;
-                }
             }),
 });
 
-export const { setMnemonic, setAddress, setAccountInfos, setAuthentication } =
+export const { setMnemonic, setAddress, setAccountInfos, lockWallet } =
     accountSlice.actions;
 
 export default accountSlice.reducer;
