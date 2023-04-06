@@ -4,7 +4,7 @@ import { connections } from '_src/background/index';
 
 const alarmName = 'lockAlarm';
 
-function lockWallet() {
+export function lockWallet() {
     chrome.storage.session.clear();
     const uiConnection = connections.getUiConnection();
     if (uiConnection) {

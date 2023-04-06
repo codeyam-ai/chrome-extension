@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 
-import { useAppDispatch } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Well from '_src/ui/app/shared/content/Well';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
@@ -8,13 +7,10 @@ import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import Header from '_src/ui/app/shared/typography/Header';
 import { thunkExtras } from '_store/thunk-extras';
 
-// TODO: test
 const LockPage = () => {
-    const dispatch = useAppDispatch();
-
     const lockWallet = useCallback(async () => {
         thunkExtras.background.lockWallet();
-    }, [dispatch]);
+    }, []);
 
     return (
         <div className="flex flex-col">

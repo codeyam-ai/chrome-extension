@@ -597,7 +597,7 @@ const accountSlice = createSlice({
         setEmail: (state, action: PayloadAction<string | null>) => {
             state.email = action.payload;
         },
-        lockWallet: (state, action: PayloadAction) => {
+        lockWalletUI: (state, action: PayloadAction) => {
             state.locked = true;
         },
     },
@@ -662,7 +662,7 @@ const accountSlice = createSlice({
             }),
 });
 
-export const { setMnemonic, setAddress, setAccountInfos, lockWallet } =
+export const { setMnemonic, setAddress, setAccountInfos, lockWalletUI } =
     accountSlice.actions;
 
 export default accountSlice.reducer;

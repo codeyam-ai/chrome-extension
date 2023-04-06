@@ -4,6 +4,7 @@
 import { Connection } from './Connection';
 import { createMessage } from '_messages';
 import { isHeartbeatPayload } from '_payloads/locking/HeartbeatPayload';
+import { isLockWalletRequest } from '_payloads/locking/LockWalletRequest';
 import {
     isGetPermissionRequests,
     isPermissionResponse,
@@ -11,7 +12,7 @@ import {
 import { isPreapprovalResponse } from '_payloads/transactions';
 import { isGetTransactionRequests } from '_payloads/transactions/ui/GetTransactionRequests';
 import { isTransactionRequestResponse } from '_payloads/transactions/ui/TransactionRequestResponse';
-import { resetLockTimeout } from '_src/background/Locking';
+import { lockWallet, resetLockTimeout } from '_src/background/Locking';
 import Permissions from '_src/background/Permissions';
 import Transactions from '_src/background/Transactions';
 import { isGetPreapprovalRequests } from '_src/shared/messaging/messages/payloads/transactions/ui/GetPreapprovalRequests';
@@ -57,6 +58,8 @@ export class UiConnection extends Connection {
             );
         } else if (isHeartbeatPayload(payload)) {
             await resetLockTimeout();
+        } else if (isLockWalletRequest(payload)) {
+            await lockWallet();
         }
     }
 

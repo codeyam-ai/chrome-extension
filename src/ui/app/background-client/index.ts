@@ -8,7 +8,7 @@ import { PortStream } from '_messaging/PortStream';
 import { isWalletLockedMessage } from '_payloads/locking/WalletLocked';
 import { isPermissionRequests } from '_payloads/permissions';
 import { isGetTransactionRequestsResponse } from '_payloads/transactions/ui/GetTransactionRequestsResponse';
-import { lockWallet } from '_redux/slices/account';
+import { lockWalletUI } from '_redux/slices/account';
 import { setPermissions } from '_redux/slices/permissions';
 import { setPreapprovalRequests } from '_redux/slices/preapproval-requests';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
@@ -22,6 +22,7 @@ import type {
 } from '@mysten/sui.js';
 import type { Message } from '_messages';
 import type { HeartbeatPayload } from '_payloads/locking/HeartbeatPayload';
+import type { LockWalletRequest } from '_payloads/locking/LockWalletRequest';
 import type {
     GetPermissionRequests,
     PermissionResponse,
@@ -142,7 +143,11 @@ export class BackgroundClient {
     }
 
     lockWallet() {
-        // TODO: implement and test
+        this.sendMessage(
+            createMessage<LockWalletRequest>({
+                type: 'lock-wallet-request',
+            })
+        );
     }
 
     private handleIncomingMessage(msg: Message) {
@@ -160,7 +165,7 @@ export class BackgroundClient {
         } else if (isGetPreapprovalResponse(payload)) {
             this._dispatch(setPreapprovalRequests(payload.preapprovalRequests));
         } else if (isWalletLockedMessage(payload)) {
-            this._dispatch(lockWallet());
+            this._dispatch(lockWalletUI());
         }
     }
 
