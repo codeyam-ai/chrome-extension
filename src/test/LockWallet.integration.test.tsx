@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
-import {simulateMnemonicUser,} from '_src/test/utils/storage';
+import { simulateMnemonicUser } from '_src/test/utils/storage';
 
 describe('Lock Wallet Page', () => {
     let mockchain: Mockchain;

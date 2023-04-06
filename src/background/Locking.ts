@@ -19,5 +19,5 @@ Browser.alarms.onAlarm.addListener((alarm) => {
 });
 
 export const resetLockTimeout = async () => {
-    Browser.alarms.create(alarmName, { delayInMinutes: 1 });
+    Browser.alarms.create(alarmName, { delayInMinutes: 15 });
 };

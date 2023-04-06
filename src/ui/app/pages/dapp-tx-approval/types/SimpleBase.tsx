@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 
 import ChainIndicator from './ChainIndicator';
-import { startWalletLockTimer } from '_src/ui/app/helpers/lock-wallet';
 import { useAppSelector } from '_src/ui/app/hooks';
 import ApproveContainerNavBar from '_src/ui/app/shared/navigation/nav-bar/ApproveContainerNavBar';
 
@@ -17,7 +16,6 @@ const SimpleBase = ({
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
 
     const reject = useCallback(() => {
-        startWalletLockTimer();
         onComplete(false);
     }, [onComplete]);
 
