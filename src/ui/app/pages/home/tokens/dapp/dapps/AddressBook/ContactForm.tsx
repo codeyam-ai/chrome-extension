@@ -1,15 +1,16 @@
-import { SuiAddress } from '@mysten/sui.js';
+import { useField } from 'formik';
+import { useState, useCallback } from 'react';
+
 import EmojiDisplay from '_src/ui/app/shared/EmojiDisplay';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Input from '_src/ui/app/shared/inputs/Input';
 import ColorPickerMenu from '_src/ui/app/shared/inputs/colors/ColorPickerMenu';
-import EmojiPickerMenu, {
-    EmojiPickerResult,
-} from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
+import EmojiPickerMenu from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
-import { useField } from 'formik';
-import { useState, useCallback } from 'react';
+
+import type { SuiAddress } from '@mysten/sui.js';
+import type { EmojiPickerResult } from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
 
 interface ContactFormProps {
     name?: string;
