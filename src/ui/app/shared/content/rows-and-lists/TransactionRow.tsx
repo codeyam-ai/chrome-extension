@@ -11,6 +11,8 @@ import {
     SparklesIcon,
 } from '@heroicons/react/24/solid';
 
+import IconContainer from '../../icons/IconContainer';
+
 import { ActivityRow } from './ActivityRow';
 import SuiIcon from '../../svg/SuiIcon';
 import ipfs from '_src/ui/app/helpers/ipfs';
@@ -69,16 +71,6 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         date: timeDisplay,
         header: txCommands || 'Sui Action',
     };
-
-    const IconContainer = ({ children }: { children: JSX.Element }) => (
-        <div
-            className={
-                'flex w-[40px] h-[40px] justify-center items-center bg-[#3D5FF2] rounded-full'
-            }
-        >
-            {children}
-        </div>
-    );
 
     const FunctionIcon = () => (
         <IconContainer>
