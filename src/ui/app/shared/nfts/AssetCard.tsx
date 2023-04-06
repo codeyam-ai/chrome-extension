@@ -1,7 +1,8 @@
+import { PhotoIcon } from '@heroicons/react/24/solid';
+
 import ipfs from '../../helpers/ipfs';
 import UnknownToken from '../../pages/home/tokens/UnknownToken';
 import TxSui from '../svg/TxSui';
-import { PhotoIcon } from '@heroicons/react/24/solid';
 
 export const AssetCard = ({
     theme,
@@ -18,8 +19,6 @@ export const AssetCard = ({
     coinType?: string;
 }) => {
     const safeImageUrl = imgUrl ? ipfs(imgUrl) : null;
-
-    console.log('tx type: ', txType);
 
     return (
         <div className={'w-full'}>

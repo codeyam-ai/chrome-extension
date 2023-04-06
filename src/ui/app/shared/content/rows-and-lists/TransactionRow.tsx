@@ -11,9 +11,8 @@ import {
     SparklesIcon,
 } from '@heroicons/react/24/solid';
 
-import IconContainer from '../../icons/IconContainer';
-
 import { ActivityRow } from './ActivityRow';
+import IconContainer from '../../icons/IconContainer';
 import SuiIcon from '../../svg/SuiIcon';
 import ipfs from '_src/ui/app/helpers/ipfs';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
