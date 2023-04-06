@@ -7,7 +7,7 @@ import { renderApp } from './utils/react-rendering';
 import { simulateMnemonicUser } from './utils/storage';
 import { PREAPPROVAL_KEY } from '_shared/constants';
 import { setEncrypted } from '_shared/storagex/store';
-import {makeTestDeps} from "_src/test/utils/test-dependencies";
+import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
 describe('transaction pre-approval flow', () => {
     let mockchain: Mockchain;
@@ -32,7 +32,7 @@ describe('transaction pre-approval flow', () => {
 
         renderApp({
             initialRoute: `/preapproval/${id}`,
-            dependencies: testDeps
+            dependencies: testDeps,
         });
 
         await screen.findByText('Pre-Approve Transactions');

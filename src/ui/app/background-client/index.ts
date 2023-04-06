@@ -5,10 +5,10 @@ import { lastValueFrom, take } from 'rxjs';
 
 import { createMessage } from '_messages';
 import { PortStream } from '_messaging/PortStream';
-import {isWalletLockedMessage} from "_payloads/locking/WalletLocked";
+import { isWalletLockedMessage } from '_payloads/locking/WalletLocked';
 import { isPermissionRequests } from '_payloads/permissions';
 import { isGetTransactionRequestsResponse } from '_payloads/transactions/ui/GetTransactionRequestsResponse';
-import {lockWallet} from "_redux/slices/account";
+import { lockWallet } from '_redux/slices/account';
 import { setPermissions } from '_redux/slices/permissions';
 import { setPreapprovalRequests } from '_redux/slices/preapproval-requests';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';

@@ -1,6 +1,6 @@
-import {isBasePayload} from "_payloads";
+import { isBasePayload } from '_payloads';
 
-import type {BasePayload, Payload} from "_payloads";
+import type { BasePayload, Payload } from '_payloads';
 
 export interface WalletLocked extends BasePayload {
     type: 'wallet-locked';
@@ -9,8 +9,5 @@ export interface WalletLocked extends BasePayload {
 export function isWalletLockedMessage(
     payload: Payload
 ): payload is WalletLocked {
-    return (
-        isBasePayload(payload) && payload.type === 'wallet-locked'
-    );
+    return isBasePayload(payload) && payload.type === 'wallet-locked';
 }
-

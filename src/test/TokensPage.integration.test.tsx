@@ -3,7 +3,7 @@ import { act, screen } from '@testing-library/react';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
-import {fakeAlarms} from "_src/test/utils/fake-browser/fake-browser";
+import { fakeAlarms } from '_src/test/utils/fake-browser/fake-browser';
 
 describe('Rendering the Tokens page', () => {
     let mockchain: Mockchain;

@@ -1,6 +1,6 @@
 import Browser from 'webextension-polyfill';
 
-import {connections} from "_src/background/index";
+import { connections } from '_src/background/index';
 
 const alarmName = 'lockAlarm';
 

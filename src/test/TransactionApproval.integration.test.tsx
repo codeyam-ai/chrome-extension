@@ -8,7 +8,7 @@ import { renderTemplate } from '_src/test/utils/json-templates';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { accountInfos, simulateMnemonicUser } from '_src/test/utils/storage';
-import {makeTestDeps} from "_src/test/utils/test-dependencies";
+import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
 import type { ApprovalRequest } from '_payloads/transactions';
 

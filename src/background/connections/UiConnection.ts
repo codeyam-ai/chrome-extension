@@ -3,7 +3,7 @@
 
 import { Connection } from './Connection';
 import { createMessage } from '_messages';
-import {isHeartbeatPayload} from "_payloads/locking/HeartbeatPayload";
+import { isHeartbeatPayload } from '_payloads/locking/HeartbeatPayload';
 import {
     isGetPermissionRequests,
     isPermissionResponse,
@@ -11,26 +11,25 @@ import {
 import { isPreapprovalResponse } from '_payloads/transactions';
 import { isGetTransactionRequests } from '_payloads/transactions/ui/GetTransactionRequests';
 import { isTransactionRequestResponse } from '_payloads/transactions/ui/TransactionRequestResponse';
-import {resetLockTimeout} from "_src/background/Locking";
+import { resetLockTimeout } from '_src/background/Locking';
 import Permissions from '_src/background/Permissions';
 import Transactions from '_src/background/Transactions';
 import { isGetPreapprovalRequests } from '_src/shared/messaging/messages/payloads/transactions/ui/GetPreapprovalRequests';
 
 import type { Message } from '_messages';
 import type { PortChannelName } from '_messaging/PortChannelName';
-import type {WalletLocked} from "_payloads/locking/WalletLocked";
+import type { WalletLocked } from '_payloads/locking/WalletLocked';
 import type { Permission, PermissionRequests } from '_payloads/permissions';
 import type { PreapprovalRequest } from '_payloads/transactions';
 import type { GetTransactionRequestsResponse } from '_payloads/transactions/ui/GetTransactionRequestsResponse';
 import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions/ApprovalRequest';
 import type { GetPreapprovalResponse } from '_src/shared/messaging/messages/payloads/transactions/ui/GetPreapprovalResponse';
 
-
 export class UiConnection extends Connection {
     public static readonly CHANNEL: PortChannelName = 'ethos_ui<->background';
 
     public sendWalletLockedMessage() {
-        this.send(createMessage<WalletLocked>({type: 'wallet-locked'}))
+        this.send(createMessage<WalletLocked>({ type: 'wallet-locked' }));
     }
 
     protected async handleMessage(msg: Message) {

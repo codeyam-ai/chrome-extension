@@ -1,8 +1,7 @@
 // This module provides fake implementations of the webextension-polyfill Browser object
 // NOTE: this is incomplete and provides just enough implementation for tests to pass
 
-
-import {FakeAlarms} from "_src/test/utils/fake-browser/fake-alarms";
+import { FakeAlarms } from '_src/test/utils/fake-browser/fake-alarms';
 import {
     FakeConnections,
     FakeEvent,
@@ -26,7 +25,7 @@ export const fakeBrowser = {
     storage: {
         local: fakeLocalStorage,
     },
-    alarms: fakeAlarms
+    alarms: fakeAlarms,
 };
 
 export const clearFakeStorages = () => {
