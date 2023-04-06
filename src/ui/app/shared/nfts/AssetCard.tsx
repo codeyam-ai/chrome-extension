@@ -1,8 +1,6 @@
 import ipfs from '../../helpers/ipfs';
-import NftIcon from '../../pages/home/tokens/FuncIcon';
 import UnknownToken from '../../pages/home/tokens/UnknownToken';
 import TxSui from '../svg/TxSui';
-import IconContainer from '../icons/IconContainer';
 import { PhotoIcon } from '@heroicons/react/24/solid';
 
 export const AssetCard = ({
@@ -11,7 +9,6 @@ export const AssetCard = ({
     imgUrl,
     name,
     icon,
-    coinType,
 }: {
     theme?: string;
     txType: string;
@@ -21,6 +18,8 @@ export const AssetCard = ({
     coinType?: string;
 }) => {
     const safeImageUrl = imgUrl ? ipfs(imgUrl) : null;
+
+    console.log('tx type: ', txType);
 
     return (
         <div className={'w-full'}>
@@ -43,28 +42,22 @@ export const AssetCard = ({
                             <PhotoIcon width={28} height={28} />
                         </div>
                     )
+                ) : txType === 'sui' ? (
+                    <TxSui
+                        borderColor={theme === 'light' ? 'white' : '#111111'}
+                    />
+                ) : safeImageUrl ? (
+                    <img
+                        className={
+                            'object-cover rounded-full w-[56px] h-[56px] auto'
+                        }
+                        src={safeImageUrl}
+                        alt={name}
+                    />
                 ) : (
-                    txType !== 'func' && (
-                        <div className={'relative'} style={{ zIndex: 1 }}>
-                            {coinType !== 'SUI' ? (
-                                safeImageUrl ? (
-                                    <img
-                                        src={safeImageUrl}
-                                        alt={name}
-                                        className="w-[56px] h-[56px]"
-                                    />
-                                ) : (
-                                    <UnknownToken width={56} height={56} />
-                                )
-                            ) : (
-                                <TxSui
-                                    borderColor={
-                                        theme === 'light' ? 'white' : '#111111'
-                                    }
-                                />
-                            )}
-                        </div>
-                    )
+                    <div className={'z-10'}>
+                        <UnknownToken width={56} height={56} />
+                    </div>
                 )}
                 {icon && icon}
             </div>

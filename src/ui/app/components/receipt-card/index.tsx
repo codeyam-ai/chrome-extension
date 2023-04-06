@@ -286,7 +286,6 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                 <AssetCard
                     theme={theme}
                     txType={txType}
-                    coinType={'SUI'} // TODO: handle coin types
                     imgUrl={displayImage || ''}
                     name={txCommands || 'NFT'}
                     icon={transferObj.txIcon} // TODO: handle success / failure icon
