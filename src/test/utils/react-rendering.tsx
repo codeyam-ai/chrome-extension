@@ -20,6 +20,7 @@ import type { RootState } from '_redux/RootReducer';
 import type { Dependencies } from '_shared/utils/dependenciesContext';
 import type { AppStore } from '_store';
 import type { PropsWithChildren } from 'react';
+import {makeTestDeps} from "_src/test/utils/test-dependencies";
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: PreloadedState<RootState>;
@@ -33,11 +34,7 @@ export async function renderApp({
     preloadedState = {},
     store,
     initialRoute,
-    // TODO: find a way for tests to only pass the deps they want, not all of them
-    dependencies = {
-        closeWindow: jest.fn(),
-        heartbeat: { onBeat: jest.fn() },
-    },
+    dependencies = makeTestDeps(),
     locale = 'en-US',
     ...renderOptions
 }: ExtendedRenderOptions = {}) {
