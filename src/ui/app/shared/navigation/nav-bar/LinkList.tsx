@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import Body from '../../typography/Body';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
-import { useExplorerPermission } from '_src/ui/app/hooks';
 
 export type LinkItem = {
     iconWithNoClasses: React.ReactNode;
@@ -21,15 +20,9 @@ interface LinkListProps {
 }
 
 const LinkList = ({ linkItems }: LinkListProps) => {
-    const setExplorerPermission = useExplorerPermission();
-
     return (
         <div className="divide-y divide-ethos-light-text-stroke dark:divide-ethos-dark-text-stroke">
             {linkItems.map((item, key) => {
-                const handleDashboardLink =
-                    item.to === DASHBOARD_LINK
-                        ? setExplorerPermission
-                        : undefined;
                 const content = (
                     <div className="flex flex-row items-center gap-2 py-4">
                         <span className="h-6 w-6 text-ethos-light-text-medium dark:text-ethos-dark-text-medium">
@@ -55,7 +48,6 @@ const LinkList = ({ linkItems }: LinkListProps) => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 title={item.title}
-                                onMouseOver={handleDashboardLink}
                             >
                                 {content}
                             </a>

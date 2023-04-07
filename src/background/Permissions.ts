@@ -6,7 +6,7 @@ import { v4 as uuidV4 } from 'uuid';
 import Browser from 'webextension-polyfill';
 
 import { Window } from './Window';
-import { BASE_URL } from '_src/shared/constants';
+import { BASE_URL, LINK_URL } from '_src/shared/constants';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 
 import type { ContentScriptConnection } from './connections/ContentScriptConnection';
@@ -35,7 +35,7 @@ class Permissions {
         connection: ContentScriptConnection
     ): Promise<Permission> {
         const { origin } = connection;
-        const existingPermission = await this.getPermission(origin);
+        const existingPermission = await this.getPermission({ origin });
         // const hasPendingRequest = await this.hasPendingPermissionRequest(
         //     origin,
         //     existingPermission
@@ -109,10 +109,17 @@ class Permissions {
         return JSON.parse(permissionString);
     }
 
-    public async getPermission(
-        origin: string,
-        permission?: Permission | null
-    ): Promise<Permission | null> {
+    public async getPermission({
+        origin,
+        account,
+        permission,
+    }: {
+        origin: string;
+        account?: string;
+        permission?: Permission | null;
+    }): Promise<Permission | null> {
+        if (origin === LINK_URL && account)
+            return this.explorerPermission(account);
         if (permission && permission.origin !== origin) {
             throw new Error(
                 `Provided permission has different origin from the one provided. "${permission.origin} !== ${origin}"`
@@ -171,6 +178,11 @@ class Permissions {
     public async grantEthosDashboardBasicPermissionsForAccount(
         account: string
     ): Promise<void> {
+        const permission = this.explorerPermission(account);
+        await this.storePermission(permission);
+    }
+
+    explorerPermission(account: string) {
         const permission: Permission = {
             accounts: [account],
             allowed: true,
@@ -186,14 +198,17 @@ class Permissions {
             responseDate: Date.now().toString(),
             title: 'Ethos Wallet Dashboard',
         };
-        await this.storePermission(permission);
+        return permission;
     }
 
     public async hasPendingPermissionRequest(
         origin: string,
         permission?: Permission | null
     ): Promise<boolean> {
-        const existingPermission = await this.getPermission(origin, permission);
+        const existingPermission = await this.getPermission({
+            origin,
+            permission,
+        });
         return !!existingPermission && existingPermission.responseDate === null;
     }
 
@@ -203,7 +218,12 @@ class Permissions {
         permission?: Permission | null,
         address?: SuiAddress
     ): Promise<boolean> {
-        const existingPermission = await this.getPermission(origin, permission);
+        if (origin === LINK_URL) return true;
+
+        const existingPermission = await this.getPermission({
+            origin,
+            permission,
+        });
         return Boolean(
             existingPermission &&
                 existingPermission.allowed &&

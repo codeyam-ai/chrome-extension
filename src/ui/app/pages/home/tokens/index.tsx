@@ -7,7 +7,7 @@ import CoinList from './CoinList';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import { DappList } from './dapp/DappList';
 import { sampleData } from './dapp/dappData';
-import { useAppSelector, useExplorerPermission, useFormatCoin } from '_hooks';
+import { useAppSelector, useFormatCoin } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
@@ -21,9 +21,8 @@ import Subheader from '_src/ui/app/shared/typography/Subheader';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 function TokensPage() {
-    const setExplorerPermission = useExplorerPermission();
     const balances = useAppSelector(accountAggregateBalancesSelector);
-    const mistBalance = sumCoinBalances(balances) || 0;
+    const mistBalance = sumCoinBalances(balances);
     const [, , usdAmount] = useFormatCoin(mistBalance, SUI_TYPE_ARG);
 
     const accountInfo = useAppSelector(
@@ -59,7 +58,6 @@ function TokensPage() {
                                 <EthosLink
                                     type={LinkType.External}
                                     to={DASHBOARD_LINK}
-                                    onMouseOver={setExplorerPermission}
                                 >
                                     Discover New Apps →
                                 </EthosLink>

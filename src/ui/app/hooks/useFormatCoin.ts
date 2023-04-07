@@ -42,11 +42,7 @@ export function useCoinDecimals(coinType?: string | null) {
         }
     );
 
-    return [
-        queryResult.data?.decimals || 0,
-        queryResult.data,
-        queryResult,
-    ] as const;
+    return [queryResult.data?.decimals, queryResult.data, queryResult] as const;
 }
 
 // TODO: This handles undefined values to make it easier to integrate with the reset of the app as it is
@@ -75,11 +71,20 @@ export function useFormatCoin(
 
         if (!isFetched) return '...';
 
+        if (typeof decimals === 'undefined') {
+            return '...';
+        }
         return ns.format.coinBalance(balance, decimals);
     }, [decimals, isError, isFetched, intl, balance]);
 
     const dollars = useMemo(() => {
-        if (typeof balance === 'undefined' || balance === null) return '';
+        if (
+            typeof balance === 'undefined' ||
+            balance === null ||
+            typeof decimals === 'undefined'
+        ) {
+            return '...';
+        }
         return ns.format.dollars(balance, decimals);
     }, [balance, decimals]);
 

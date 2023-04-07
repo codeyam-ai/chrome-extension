@@ -7,15 +7,15 @@ import { SUI_SYMBOL } from '_src/ui/app/redux/slices/sui-objects/Coin';
 import type BigNumber from 'bignumber.js';
 
 export interface BuildValidationSchema {
-    coin: {
+    coin?: {
         type: string | null;
         symbol: string;
         balance: bigint;
-        decimals: number;
+        decimals?: number;
     };
-    gas: {
+    gas?: {
         aggregateBalance: bigint;
-        decimals: number;
+        decimals?: number;
         budget: number;
     };
     locale: string;
@@ -48,8 +48,8 @@ export function buildValidationSchema({
             })
             .test(
                 'max',
-                `You have no ${coin.symbol}. Please use the faucet to get more.`,
-                () => coin.balance >= 0
+                `You have no ${coin?.symbol}. Please use the faucet to get more.`,
+                () => !!coin?.balance && coin?.balance >= 0
             )
             .test(
                 'valid',
@@ -63,17 +63,21 @@ export function buildValidationSchema({
             )
             .test(
                 'min',
-                `Amount must be greater than 0 ${coin.symbol}`,
+                `Amount must be greater than 0 ${coin?.symbol}`,
                 (amount?: BigNumber) => (amount ? amount.gt(0) : false)
             )
             .test(
                 'max',
-                `Amount must be less than ${ns.format.coinBalance(
-                    coin.balance,
-                    coin.decimals
-                )} ${coin.symbol}`,
+                `Amount must be less than ${
+                    !!coin?.balance && !!coin?.decimals
+                        ? ns.format.coinBalance(coin?.balance, coin?.decimals)
+                        : '---'
+                } ${coin?.symbol}`,
                 (amount?: BigNumber) => {
-                    return amount && coin.balance >= 0
+                    return amount &&
+                        !!coin?.balance &&
+                        !!coin?.decimals &&
+                        coin.balance >= 0
                         ? amount
                               .shiftedBy(coin.decimals)
                               .lte(coin.balance.toString())
@@ -82,26 +86,31 @@ export function buildValidationSchema({
             )
             .test(
                 'max-decimals',
-                `The value exeeds the maximum decimals (${coin.decimals}).`,
+                `The value exeeds the maximum decimals (${coin?.decimals}).`,
                 (amount?: BigNumber) => {
-                    return amount
+                    return amount && !!coin?.decimals
                         ? amount.shiftedBy(coin.decimals).isInteger()
                         : false;
                 }
             )
             .test(
                 'gas-balance-check',
-                `Insufficient ${SUI_SYMBOL} balance to cover gas fee (${ns.format.coinBalance(
-                    gas.budget,
-                    gas.decimals
-                )} ${SUI_SYMBOL})`,
+                `Insufficient ${SUI_SYMBOL} balance to cover gas fee (${
+                    !!gas?.budget && !!gas?.decimals
+                        ? ns.format.coinBalance(gas.budget, gas.decimals)
+                        : '---'
+                } ${SUI_SYMBOL})`,
                 (amount?: BigNumber) => {
-                    if (!amount) {
+                    if (!amount || !gas) {
                         return false;
                     }
                     try {
                         let availableGas = gas.aggregateBalance;
-                        if (coin.type === SUI_TYPE_ARG) {
+                        if (
+                            availableGas &&
+                            !!coin?.decimals &&
+                            coin.type === SUI_TYPE_ARG
+                        ) {
                             availableGas -= BigInt(
                                 amount.shiftedBy(coin.decimals).toString()
                             );

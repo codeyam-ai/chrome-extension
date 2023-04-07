@@ -278,13 +278,11 @@ export class Mockchain {
                     true
                 );
             },
-            sui_dryRunTransactionBlock: () => {
+            sui_dryRunTransactionBlock: (digest: string) => {
                 this.mockBlockchainCall(
                     {
                         method: 'sui_dryRunTransactionBlock',
-                        params: [
-                            'AAACAAgAypo7AAAAAAAg7JbTIOl80QFG+VOnnPncBaizXEaz6EKPeF7Drhtvj6YCAgABAQAAAQECAAABAQD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gEAAAAAAAAAAMqaOwAAAAAA',
-                        ],
+                        params: [digest],
                     },
                     renderTemplate('dryRunTransaction', {}),
                     true

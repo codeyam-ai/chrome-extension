@@ -80,7 +80,7 @@ export const simulateLogout = async function () {
 
 export const simulateConnectedApps = async function () {
     const permissionsToEncrypt: Record<string, Permission> = {
-        'https://beta.ethoswallet.xyz': {
+        'https://ethoswallet.xyz': {
             id: 'ddca6998-d673-4bce-be3a-a1872293b847',
             title: 'Ethos Wallet Explorer',
             accounts: [
@@ -88,8 +88,8 @@ export const simulateConnectedApps = async function () {
             ],
             allowed: true,
             createdDate: '2023-03-21T23:20:16.540Z',
-            favIcon: 'https://beta.ethoswallet.xyz/favicon.ico',
-            origin: 'https://beta.ethoswallet.xyz',
+            favIcon: 'https://ethoswallet.xyz/favicon.ico',
+            origin: 'https://ethoswallet.xyz',
             permissions: [
                 'viewAccount',
                 'suggestTransactions',

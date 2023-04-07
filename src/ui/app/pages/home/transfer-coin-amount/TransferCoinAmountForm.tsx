@@ -131,7 +131,7 @@ function TransferCoinForm({
 
     const [decimals] = useCoinDecimals(coinType);
     const [, , dollars] = useFormatCoin(
-        amountBigNumber.shiftedBy(decimals).toString(),
+        amountBigNumber.shiftedBy(decimals || 9).toString(),
         coinType
     );
 
