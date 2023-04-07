@@ -8,8 +8,6 @@ import Body from '_src/ui/app/shared/typography/Body';
 import type { SuiAddress } from '@mysten/sui.js';
 import type { ReactNode } from 'react';
 
-
-
 interface AddressTooltipProps {
     address: SuiAddress;
     children: ReactNode;

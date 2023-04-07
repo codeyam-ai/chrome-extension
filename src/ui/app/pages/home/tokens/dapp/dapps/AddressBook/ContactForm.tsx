@@ -117,7 +117,7 @@ const ContactForm = ({
             )}
 
             <div className="flex flex-row justify-center mb-8">
-                <div className="flex flex-col justify-center items-center m-1">
+                <div className="relative flex flex-col justify-center items-center m-1">
                     <BodyLarge isSemibold className="mb-2">
                         Choose a Color
                     </BodyLarge>
@@ -130,12 +130,14 @@ const ContactForm = ({
                             style={{ backgroundColor: color }}
                         />
                     </div>
-                    <ColorPickerMenu
-                        isOpen={isColorPickerMenuOpen}
-                        selectedColor={color}
-                        setSelectedColor={_handleColorChange}
-                        closeColorPickerMenu={closeColorPickerMenu}
-                    />
+                    <div className="absolute -left-[6px] -top-[20px]">
+                        <ColorPickerMenu
+                            isOpen={isColorPickerMenuOpen}
+                            selectedColor={color}
+                            setSelectedColor={_handleColorChange}
+                            closeColorPickerMenu={closeColorPickerMenu}
+                        />
+                    </div>
                 </div>
                 <div className="m-1">
                     <BodyLarge isSemibold className="mb-2">

@@ -4,6 +4,7 @@ import {
     Square2StackIcon,
     TrashIcon,
 } from '@heroicons/react/24/outline';
+import { ArrowUpIcon } from '@heroicons/react/24/solid';
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -68,56 +69,57 @@ const ContactPage = () => {
     }
 
     return (
-        <div className="flex flex-col items-center place-content-center">
-            <div className="flex flex-col w-full items-center place-content-center p-6">
-                <div
-                    data-testid="emoji-picker"
-                    className="flex w-20 h-20 mb-2 rounded-full items-center place-content-center"
-                    style={{ backgroundColor: contact.color }}
-                >
-                    <EmojiDisplay emoji={contact.emoji} sizeInPx={44} />
-                </div>
-                <BodyLarge isSemibold>{contact.name}</BodyLarge>
-                <AddressTooltip address={contact.address}>
-                    <BodyLarge isTextColorMedium>
-                        {truncateMiddle(contact.address)}{' '}
-                        <Square2StackIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium inline" />
-                    </BodyLarge>
-                </AddressTooltip>
-                <div className="flex gap-2 mt-6">
-                    <button
-                        onClick={handleEditContact}
-                        className="flex items-center gap-2 rounded-xl py-3 px-5 bg-ethos-light-primary-light/20"
+        <div className="flex flex-col h-full items-center place-content-center bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
+            <div className="p-6 w-full">
+                <div className="flex flex-col w-full items-center place-content-center py-7 px-6 rounded-2xl border border-ethos-light-purple dark:border-ethos-dark-text-stroke bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
+                    <div
+                        className="flex w-20 h-20 mb-2 rounded-full items-center place-content-center"
+                        style={{ backgroundColor: contact.color }}
                     >
-                        <PencilIcon className="h-5 w-5 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
-                        <BodyLarge
-                            isSemibold
-                            className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark"
-                        >
-                            Edit
+                        <EmojiDisplay emoji={contact.emoji} sizeInPx={44} />
+                    </div>
+                    <BodyLarge isSemibold>{contact.name}</BodyLarge>
+                    <AddressTooltip address={contact.address}>
+                        <BodyLarge isTextColorMedium>
+                            {truncateMiddle(contact.address)}{' '}
+                            <Square2StackIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium inline" />
                         </BodyLarge>
-                    </button>
-                    <button
-                        onClick={handleRemoveContact}
-                        className="flex items-center gap-2 rounded-xl py-3 px-5 bg-ethos-light-primary-light/20"
-                    >
-                        <TrashIcon className="h-5 w-5 cursor-pointer text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />{' '}
-                        <BodyLarge
-                            isSemibold
-                            className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark"
-                        >
-                            Delete
-                        </BodyLarge>
-                    </button>
+                    </AddressTooltip>
                     <button
                         onClick={handleSend}
-                        className="flex items-center gap-2 rounded-xl py-2 px-4 bg-ethos-light-primary-light"
+                        className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-4 mt-6 mb-2 bg-ethos-light-primary-light"
                     >
-                        <ArrowRightIcon className="h-5 w-5 text-white" />
+                        <ArrowUpIcon className="h-5 w-5 text-white" />
                         <BodyLarge isSemibold className="text-white">
                             Send
                         </BodyLarge>
                     </button>
+                    <div className="flex gap-2 w-full">
+                        <button
+                            onClick={handleEditContact}
+                            className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-5 bg-ethos-light-primary-light/20"
+                        >
+                            <PencilIcon className="h-5 w-5 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
+                            <BodyLarge
+                                isSemibold
+                                className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark"
+                            >
+                                Edit
+                            </BodyLarge>
+                        </button>
+                        <button
+                            onClick={handleRemoveContact}
+                            className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-5 bg-ethos-light-primary-light/20"
+                        >
+                            <TrashIcon className="h-5 w-5 cursor-pointer text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />{' '}
+                            <BodyLarge
+                                isSemibold
+                                className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark"
+                            >
+                                Delete
+                            </BodyLarge>
+                        </button>
+                    </div>
                 </div>
             </div>
             <ContactTransactions contactAddress={contact.address} />

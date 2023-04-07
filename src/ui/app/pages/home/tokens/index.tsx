@@ -33,7 +33,7 @@ function TokensPage() {
             )
     );
 
-    const showDappList = false;
+    const showDappList = true;
 
     return (
         <>
