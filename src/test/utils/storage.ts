@@ -36,7 +36,6 @@ export const accountInfos = [
 export const fakeAccessToken = 'ewhfbiuh3rh23d';
 
 export const simulateMnemonicUser = async function (unlocked = true) {
-
     // TODO: DRY up. There's actual app code (in the redux account slice) that sets this state up. we should find a way
     //  to invoke that code.
     const accountInfosJson = JSON.stringify(accountInfos);

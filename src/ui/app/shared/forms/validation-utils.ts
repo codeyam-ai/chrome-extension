@@ -1,5 +1,5 @@
-import * as Yup from "yup";
-import zxcvbn from "zxcvbn";
+import * as Yup from 'yup';
+import zxcvbn from 'zxcvbn';
 
 export function passwordComplexityValidation(requiredText: string) {
     return Yup.string()
@@ -15,9 +15,9 @@ export function passwordComplexityValidation(requiredText: string) {
                     feedback: { warning, suggestions },
                 } = zxcvbn(value);
                 const warn =
-                    (warning && `${warning}.`) || 'Password is not strong enough.';
+                    (warning && `${warning}.`) ||
+                    'Password is not strong enough.';
                 return `${warn} ${suggestions.join(' ')}`;
             },
         });
-
 }
