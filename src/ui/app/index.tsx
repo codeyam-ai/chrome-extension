@@ -31,8 +31,8 @@ import VerifyPhrasePage from './pages/initialize/verify-phrase';
 import LockedPage from './pages/locked';
 import PasswordPage from './pages/password';
 import { AppType } from './redux/slices/app/AppType';
-import HeartbeatProvider from './shared/HeartbeatProvider';
 import { loadContactsStorage } from './redux/slices/contacts';
+import HeartbeatProvider from './shared/HeartbeatProvider';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { DappTxApprovalPage } from '_pages/dapp-tx-approval';
 import HomePage, {
