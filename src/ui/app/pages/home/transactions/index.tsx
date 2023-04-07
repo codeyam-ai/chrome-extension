@@ -24,7 +24,7 @@ const TransactionsPage = () => {
         []
     );
 
-    const fetchProjects = async ({ pageParam = '' }) => {
+    const fetchTransactions = async ({ pageParam = '' }) => {
         const response = await queryTransactionsByAddress(
             address || '', // address
             pageParam[0] || null, // cursor for the 'from' txs
@@ -40,7 +40,7 @@ const TransactionsPage = () => {
         error,
         fetchNextPage,
         isFetchingNextPage,
-    } = useInfiniteQuery(['query-transactions'], fetchProjects, {
+    } = useInfiniteQuery(['query-transactions'], fetchTransactions, {
         enabled: !!address,
         staleTime: 0,
         cacheTime: 0,
