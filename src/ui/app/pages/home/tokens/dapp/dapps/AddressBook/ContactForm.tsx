@@ -72,7 +72,7 @@ const ContactForm = ({
 
     return (
         <div className="flex flex-col place-content-center pt-6">
-            <Title className="pb-6">{formMode}</Title>
+            {/* <Title className="pb-6">{formMode}</Title> */}
 
             <Input
                 autoFocus
@@ -119,17 +119,40 @@ const ContactForm = ({
                 </div>
             )}
 
-            <div className="flex flex-row">
-                <div className="relative">
+            <div className="flex flex-row justify-center mb-12">
+                <div className="flex flex-col justify-center items-center m-1">
+                    <BodyLarge isSemibold className="mb-2">
+                        Choose a Color
+                    </BodyLarge>
+                    <div
+                        onClick={openColorPickerMenu}
+                        className="bg-ethos-light-background-secondary rounded-lg px-14 py-6 cursor-pointer"
+                    >
+                        <div
+                            className="w-10 h-10 mx-auto rounded-full outline outline-offset-4"
+                            style={{ backgroundColor: color }}
+                        />
+                    </div>
+                    <ColorPickerMenu
+                        isOpen={isColorPickerMenuOpen}
+                        selectedColor={color}
+                        setSelectedColor={_handleColorChange}
+                        closeColorPickerMenu={closeColorPickerMenu}
+                    />
+                </div>
+                <div className="relative m-1">
                     <BodyLarge isSemibold className="mb-2">
                         Choose an Emoji
                     </BodyLarge>
                     <div
                         data-testid="emoji-picker"
-                        className="flex h-20 w-20 px-6 mx-auto mb-6 rounded-lg bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke place-content-center items-center cursor-pointer"
+                        // className="px-14 py-6 rounded-lg bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke place-content-center items-center cursor-pointer"
+                        className="bg-ethos-light-background-secondary rounded-lg px-14 py-6 cursor-pointer"
                         onClick={openEmojiPickerMenu}
                     >
-                        <EmojiDisplay emoji={emoji} sizeInPx={32} />
+                        <div className="flex items-center justify-center w-10 h-10 bg-white rounded-full">
+                            <EmojiDisplay emoji={emoji} sizeInPx={20} />
+                        </div>
                     </div>
                     <div className="absolute top-0 z-50">
                         <EmojiPickerMenu
@@ -139,21 +162,6 @@ const ContactForm = ({
                         />
                     </div>
                 </div>
-
-                <BodyLarge isSemibold className="mb-2">
-                    Choose a Color
-                </BodyLarge>
-                <div
-                    className="w-20 h-20 mx-auto mb-6 rounded-md cursor-pointer"
-                    style={{ backgroundColor: color }}
-                    onClick={openColorPickerMenu}
-                />
-                <ColorPickerMenu
-                    isOpen={isColorPickerMenuOpen}
-                    selectedColor={color}
-                    setSelectedColor={_handleColorChange}
-                    closeColorPickerMenu={closeColorPickerMenu}
-                />
             </div>
 
             <Button
