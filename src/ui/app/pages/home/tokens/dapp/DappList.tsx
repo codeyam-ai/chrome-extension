@@ -45,8 +45,8 @@ export const DappList: React.FC<ScrollingListProps> = ({ data }) => {
     }, []);
 
     const closeDapp = useCallback(() => {
-        setSelectedDapp(null);
-    }, []);
+        navigate(-1);
+    }, [navigate]);
 
     useEffect(() => {
         const container = scrollContainerRef.current;

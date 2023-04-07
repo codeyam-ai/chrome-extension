@@ -7,7 +7,6 @@ import Input from '_src/ui/app/shared/inputs/Input';
 import ColorPickerMenu from '_src/ui/app/shared/inputs/colors/ColorPickerMenu';
 import EmojiPickerMenu from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import Title from '_src/ui/app/shared/typography/Title';
 
 import type { SuiAddress } from '@mysten/sui.js';
 import type { EmojiPickerResult } from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
@@ -71,12 +70,10 @@ const ContactForm = ({
     );
 
     return (
-        <div className="flex flex-col place-content-center pt-6">
-            <Title className="pb-6">{formMode}</Title>
-
+        <div className="relative flex flex-col place-content-center pt-6">
             <Input
                 autoFocus
-                label="Name"
+                label="Your Contact's Name"
                 {...nameField}
                 placeholder="Type a name"
                 id="name"
@@ -119,19 +116,44 @@ const ContactForm = ({
                 </div>
             )}
 
-            <div className="flex flex-row">
-                <div className="relative">
+            <div className="flex flex-row justify-center mb-8">
+                <div className="relative flex flex-col justify-center items-center m-1">
+                    <BodyLarge isSemibold className="mb-2">
+                        Choose a Color
+                    </BodyLarge>
+                    <div
+                        onClick={openColorPickerMenu}
+                        className="bg-ethos-light-background-secondary rounded-lg px-14 py-6 cursor-pointer"
+                    >
+                        <div
+                            className="w-10 h-10 mx-auto rounded-full outline outline-offset-4 outline-ethos-light-text-stroke dark:outline-ethos-dark-text-stroke"
+                            style={{ backgroundColor: color }}
+                        />
+                    </div>
+                    <div className="absolute -left-[6px] -top-[20px]">
+                        <ColorPickerMenu
+                            isOpen={isColorPickerMenuOpen}
+                            selectedColor={color}
+                            setSelectedColor={_handleColorChange}
+                            closeColorPickerMenu={closeColorPickerMenu}
+                        />
+                    </div>
+                </div>
+                <div className="m-1">
                     <BodyLarge isSemibold className="mb-2">
                         Choose an Emoji
                     </BodyLarge>
                     <div
                         data-testid="emoji-picker"
-                        className="flex h-20 w-20 px-6 mx-auto mb-6 rounded-lg bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke place-content-center items-center cursor-pointer"
+                        // className="px-14 py-6 rounded-lg bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke place-content-center items-center cursor-pointer"
+                        className="bg-ethos-light-background-secondary rounded-lg px-12 py-5 cursor-pointer"
                         onClick={openEmojiPickerMenu}
                     >
-                        <EmojiDisplay emoji={emoji} sizeInPx={32} />
+                        <div className="flex items-center justify-center w-12 h-12 bg-white rounded-full">
+                            <EmojiDisplay emoji={emoji} sizeInPx={28} />
+                        </div>
                     </div>
-                    <div className="absolute top-0 z-50">
+                    <div className="absolute top-0 left-0 z-50">
                         <EmojiPickerMenu
                             isOpen={emojiPickerOpen}
                             setSelectedEmoji={handleEmojiChange}
@@ -139,21 +161,6 @@ const ContactForm = ({
                         />
                     </div>
                 </div>
-
-                <BodyLarge isSemibold className="mb-2">
-                    Choose a Color
-                </BodyLarge>
-                <div
-                    className="w-20 h-20 mx-auto mb-6 rounded-md cursor-pointer"
-                    style={{ backgroundColor: color }}
-                    onClick={openColorPickerMenu}
-                />
-                <ColorPickerMenu
-                    isOpen={isColorPickerMenuOpen}
-                    selectedColor={color}
-                    setSelectedColor={_handleColorChange}
-                    closeColorPickerMenu={closeColorPickerMenu}
-                />
             </div>
 
             <Button

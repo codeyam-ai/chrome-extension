@@ -1,8 +1,9 @@
-import { StarIcon as StarIconOutline } from '@heroicons/react/24/outline';
-import {
-    ChevronLeftIcon,
-    StarIcon as StarIconSolid,
-} from '@heroicons/react/24/solid';
+// import { StarIcon as StarIconOutline } from '@heroicons/react/24/outline';
+// import {
+//     ChevronLeftIcon,
+//     StarIcon as StarIconSolid,
+// } from '@heroicons/react/24/solid';
+import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -36,7 +37,7 @@ export const DappWrapper: React.FC<DappWrapperProps> = ({
                 closeDapp={closeDapp ?? onClose}
                 isFavorite={isFavorite}
             />
-            {children}
+            <div>{children}</div>
         </div>
     );
 };
@@ -61,11 +62,13 @@ export const DappViewHeader: React.FC<DappViewHeaderProps> = ({
             <BodyLarge isSemibold className="truncate">
                 {title}
             </BodyLarge>
-            {isFavorite ? (
+            {/* Favorites currently not implemented */}
+            <div></div>
+            {/* {isFavorite ? (
                 <StarIconSolid className="h-5 w-5 text-ethos-dark-primary-light dark:text-ethos-dark-primary-dark" />
             ) : (
                 <StarIconOutline className="h-5 w-5 text-ethos-dark-primary-light dark:text-ethos-dark-primary-dark" />
-            )}
+            )} */}
         </div>
     );
 };

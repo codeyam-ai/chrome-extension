@@ -16,15 +16,16 @@ interface ContactTransactionsProps {
 const ContactTransactions: React.FC<ContactTransactionsProps> = ({
     contactAddress,
 }) => {
+    const [loading, setLoading] = useState(true);
     const userAddress = useAppSelector(({ account }) => account.address);
     const [formattedTxns, setFormattedTxns] = useState<FormattedTransaction[]>(
         []
     );
 
     const txnsBetweenUserAndContact = useMemo(() => {
-        return formattedTxns.filter((txn) => {
-            return txn.humanReadable.addresses?.to === contactAddress;
-        });
+        return formattedTxns.filter(
+            (txn) => txn.humanReadable.addresses?.to === contactAddress
+        );
     }, [formattedTxns, contactAddress]);
 
     const fetchTransactions = async () => {
@@ -58,19 +59,33 @@ const ContactTransactions: React.FC<ContactTransactionsProps> = ({
         loadPage();
     }, [suiTxns, userAddress, loadPage]);
 
+    useEffect(() => {
+        // The first time the transactions are loaded, set loading to false.
+        // All subsequent times, do not show loading indicator
+        if (!loadingTxns) {
+            setLoading(false);
+        }
+    }, [loadingTxns]);
+
     return (
-        <Loading loading={loadingTxns} big>
-            <div className="flex flex-col w-full h-full pt-8 gap-6 text-left bg-ethos-pale-purple dark:bg-ethos-dark-background-secondary border-t border-ethos-light-purple dark:border-ethos-dark-text-stroke">
-                <Subheader isTextColorMedium className="px-6">
-                    Transactions
-                </Subheader>
-                {formattedTxns.length > 0 ? (
-                    <TransactionRows transactions={txnsBetweenUserAndContact} />
+        <div className="flex w-full h-full items-center place-content-center">
+            <Loading loading={loading} big>
+                {txnsBetweenUserAndContact.length > 0 ? (
+                    <div className="flex flex-col gap-6">
+                        <Subheader isTextColorMedium>Transactions</Subheader>
+                        <TransactionRows
+                            transactions={txnsBetweenUserAndContact}
+                        />
+                    </div>
                 ) : (
-                    <div>None</div>
+                    <div className="h-full my-4">
+                        <Subheader isTextColorMedium>
+                            No Transactions Yet
+                        </Subheader>
+                    </div>
                 )}
-            </div>
-        </Loading>
+            </Loading>
+        </div>
     );
 };
 
