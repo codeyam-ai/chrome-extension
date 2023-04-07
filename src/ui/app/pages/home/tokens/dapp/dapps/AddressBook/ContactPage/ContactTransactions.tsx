@@ -1,8 +1,9 @@
+import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Loading from '_src/ui/app/components/loading';
 import { useAppSelector } from '_src/ui/app/hooks';
-import { useQueryTransactionsByAddress } from '_src/ui/app/hooks/useQueryTransactionsByAddress';
+import { queryTransactionsByAddress } from '_src/ui/app/hooks/useQueryTransactionsByAddress';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
@@ -25,11 +26,24 @@ const ContactTransactions: React.FC<ContactTransactionsProps> = ({
             return txn.humanReadable.addresses?.to === contactAddress;
         });
     }, [formattedTxns, contactAddress]);
+
+    const fetchTransactions = async () => {
+        const response = await queryTransactionsByAddress(
+            userAddress || ''
+        );
+        return response;
+    };
+
     const {
-        isLoading: loadingTxns,
+        isFetching: loadingTxns,
         data: suiTxns,
         // error: txErr,
-    } = useQueryTransactionsByAddress(userAddress || '', null, null, null);
+    } = useQuery(['contact-transactions'], fetchTransactions, {
+        enabled: !!userAddress,
+        staleTime: 0,
+        cacheTime: 0,
+        refetchInterval: 3000,
+    });
 
     const loadPage = useCallback(async () => {
         if (!suiTxns) return;
