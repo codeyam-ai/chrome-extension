@@ -1,4 +1,5 @@
 import { fromHEX, toB64 } from '@mysten/bcs';
+import { utils } from 'aes-js';
 import nock from 'nock';
 import * as util from 'util';
 
@@ -24,6 +25,21 @@ jest.mock('webextension-polyfill', () => {
 });
 
 jest.spyOn(window, 'resizeTo').mockImplementation();
+
+jest.mock('asmcrypto.js', () => {
+    const asmCrypto = jest.requireActual('asmcrypto.js');
+    return {
+        Pbkdf2HmacSha256: jest.fn((passphrase: string, salt: Uint8Array) => {
+            const passphraseBytes = utils.utf8.toBytes(passphrase);
+            return asmCrypto.Pbkdf2HmacSha256(
+                new Uint8Array(passphraseBytes),
+                new Uint8Array(salt),
+                10,
+                32
+            )
+        }),
+    }
+});
 
 jest.mock('animate.css/animate.min.css', () => '');
 jest.mock('react-toastify/dist/ReactToastify.css', () => '');
