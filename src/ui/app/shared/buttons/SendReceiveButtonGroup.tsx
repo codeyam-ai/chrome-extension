@@ -14,7 +14,7 @@ import SuiIcon from '../svg/SuiIcon';
 import { api } from '_redux/store/thunk-extras';
 
 interface SendReceiveButtonGroupProps {
-    mistBalance: number | bigint;
+    mistBalance?: number | bigint;
 }
 
 const SendReceiveButtonGroup = ({
@@ -29,7 +29,7 @@ const SendReceiveButtonGroup = ({
     //     app.customRPC,
     // ]);
     const isBalanceZero = useMemo(
-        () => mistBalance.toString() === '0',
+        () => (mistBalance || 0).toString() === '0',
         [mistBalance]
     );
     const sendUrl = useMemo(

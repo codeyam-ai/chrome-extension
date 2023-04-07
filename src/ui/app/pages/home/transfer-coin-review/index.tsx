@@ -57,6 +57,11 @@ function TransferCoinReviewPage() {
             if (coinType === null) {
                 return;
             }
+
+            if (coinDecimals === undefined) {
+                return;
+            }
+
             setSendError(null);
             setFormSubmitted(true);
             try {

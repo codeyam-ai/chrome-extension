@@ -6,7 +6,7 @@ import { v4 as uuidV4 } from 'uuid';
 import Browser from 'webextension-polyfill';
 
 import { Window } from './Window';
-import { BASE_URL } from '_src/shared/constants';
+import { BASE_URL, LINK_URL } from '_src/shared/constants';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 
 import type { ContentScriptConnection } from './connections/ContentScriptConnection';
@@ -203,6 +203,8 @@ class Permissions {
         permission?: Permission | null,
         address?: SuiAddress
     ): Promise<boolean> {
+        if (origin === LINK_URL) return true;
+
         const existingPermission = await this.getPermission(origin, permission);
         return Boolean(
             existingPermission &&

@@ -6,7 +6,7 @@ import { type ReactNode, useCallback, useState } from 'react';
 import AnimatedNumbers from 'react-animated-numbers';
 
 import ConfettiPop from '../../components/Confetti';
-import { useAppSelector, useExplorerPermission } from '../../hooks';
+import { useAppSelector } from '../../hooks';
 import OnboardingButton from '../../shared/buttons/OnboardingButton';
 import Alert from '../../shared/feedback/Alert';
 import OnboardingCard from '../../shared/layouts/OnboardingCard';
@@ -56,7 +56,6 @@ const SocialLink = ({ title, iconWithNoClasses, to }: SocialLinkProps) => {
 };
 
 const CompletePage = () => {
-    const setExplorerPermission = useExplorerPermission();
     const [error, setError] = useState(false);
     const [hasUsedFaucet, setHasUsedFaucet] = useState(false);
     const [faucetCompletedSuccessfully, setFaucetCompletedSuccessfully] =
@@ -123,7 +122,6 @@ const CompletePage = () => {
             iconWithNoClasses: <GlobeAltIcon />,
             iconBackgroundColor: '#6D28D9',
             buttonGradientColor: '#EFECF8',
-            onMouseOver: setExplorerPermission,
         },
     ];
 

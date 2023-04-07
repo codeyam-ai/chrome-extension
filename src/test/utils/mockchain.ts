@@ -282,7 +282,7 @@ export class Mockchain {
                 this.mockBlockchainCall(
                     {
                         method: 'sui_dryRunTransactionBlock',
-                        params: [digest]
+                        params: [digest],
                     },
                     renderTemplate('dryRunTransaction', {}),
                     true

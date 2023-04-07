@@ -133,6 +133,10 @@ function useOnHandleSubmit({
                 return;
             }
 
+            if (coin.decimals === undefined) {
+                return;
+            }
+
             const amountBigNumber = ns.parse.numberString({
                 numberString: amount,
                 locale,

@@ -1,15 +1,9 @@
 import exploreButtonSrc from '_assets/images/explore-button.png';
 import { DASHBOARD_LINK } from '_src/shared/constants';
-import { useExplorerPermission } from '_src/ui/app/hooks';
 
 const ExploreButton = () => {
-    const setExplorerPermission = useExplorerPermission();
-
     return (
-        <div
-            className="flex flex-row justify-center items-center"
-            onMouseOver={setExplorerPermission}
-        >
+        <div className="flex flex-row justify-center items-center">
             <a
                 href={DASHBOARD_LINK}
                 target="_blank"

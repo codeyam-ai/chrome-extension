@@ -15,8 +15,8 @@ import {
 import getToFromAddress from './getToFromAddress';
 import getUsdAmount from './getUsdAmount';
 import convertUnixTimeToLocalTime from '../convertUnixTimeToLocalTime';
-import { getDollars } from '../formatCoin';
 import truncateMiddle from '../truncate-middle';
+import ns from '_shared/namespace';
 
 import type { humanReadableDetails } from './types';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
@@ -33,7 +33,7 @@ const getHumanReadable = (
     const txAmount = getSuiTransferAmount(ownerAddr, tx);
     const totalGasCost = getGasFee(tx);
     const gasFeeInSui = getFormattedGasFee(totalGasCost);
-    const gasFeeInUsd = getDollars(totalGasCost);
+    const gasFeeInUsd = ns.format.dollars(totalGasCost, 9);
     const txCommands = getCommands(tx);
     const displayImage = getDisplayImage(tx);
     const amt = txAmount ? parseFloat(txAmount.replace(/,/g, '')) : undefined;
