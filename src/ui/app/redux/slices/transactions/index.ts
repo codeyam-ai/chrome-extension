@@ -168,45 +168,39 @@ export const sendTokens = createAsyncThunk<
         }
 
         const allCoins: SuiMoveObject[] = accountCoinsSelector(state);
-        const [primaryCoin, ...coins] = allCoins.filter(
+        const [primaryCoin, ...mergeCoins] = allCoins.filter(
             (coin) => coin.type === `0x2::coin::Coin<${tokenTypeArg}>`
         );
 
         const transactionBlock = new TransactionBlock();
         if (tokenTypeArg === SUI_TYPE_ARG) {
-            const coin = transactionBlock.add(
-                TransactionBlock.Transactions.SplitCoins(transactionBlock.gas, [
-                    transactionBlock.pure(amount),
-                ])
+            const coinToTransfer = transactionBlock.splitCoins(
+                transactionBlock.gas,
+                [transactionBlock.pure(amount)]
             );
-            transactionBlock.add(
-                TransactionBlock.Transactions.TransferObjects(
-                    [coin],
-                    transactionBlock.pure(recipientAddress)
-                )
+            transactionBlock.transferObjects(
+                [coinToTransfer],
+                transactionBlock.pure(recipientAddress)
             );
         } else {
             const primaryCoinInput = transactionBlock.object(
                 Coin.getID(primaryCoin)
             );
-            transactionBlock.add(
-                TransactionBlock.Transactions.MergeCoins(
+            if (mergeCoins.length > 0) {
+                transactionBlock.mergeCoins(
                     primaryCoinInput,
-                    coins.map((coin) =>
-                        transactionBlock.object(Coin.getID(coin))
+                    mergeCoins.map((mergeCoin) =>
+                        transactionBlock.object(Coin.getID(mergeCoin))
                     )
-                )
+                );
+            }
+            const coinToTransfer = transactionBlock.splitCoins(
+                primaryCoinInput,
+                [transactionBlock.pure(amount)]
             );
-            const coin = transactionBlock.add(
-                TransactionBlock.Transactions.SplitCoins(primaryCoinInput, [
-                    transactionBlock.pure(amount),
-                ])
-            );
-            transactionBlock.add(
-                TransactionBlock.Transactions.TransferObjects(
-                    [coin],
-                    transactionBlock.pure(recipientAddress)
-                )
+            transactionBlock.transferObjects(
+                [coinToTransfer],
+                transactionBlock.pure(recipientAddress)
             );
         }
 

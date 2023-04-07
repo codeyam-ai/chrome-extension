@@ -152,50 +152,42 @@ function useOnHandleSubmit({
             );
 
             const allCoins: SuiMoveObject[] = accountCoinsSelector(state);
-            const [primaryCoin, ...coins] = allCoins.filter(
-                (c) => coin.type && c.type.indexOf(coin.type) > -1
+            const [primaryCoin, ...mergeCoins] = allCoins.filter(
+                (c) => c.type === `0x2::coin::Coin<${coin.type}>`
             );
 
             const transactionBlock = new TransactionBlock();
             if (coin.type === SUI_TYPE_ARG) {
-                const coin = transactionBlock.add(
-                    TransactionBlock.Transactions.SplitCoins(
-                        transactionBlock.gas,
-                        [transactionBlock.pure(bigIntAmount)]
-                    )
-                );
-                transactionBlock.add(
-                    TransactionBlock.Transactions.TransferObjects(
-                        [coin],
-                        transactionBlock.pure(formState.to)
-                    )
+                const coin = transactionBlock.splitCoins(transactionBlock.gas, [
+                    transactionBlock.pure(bigIntAmount),
+                ]);
+                transactionBlock.transferObjects(
+                    [coin],
+                    transactionBlock.pure(formState.to)
                 );
             } else {
                 const primaryCoinInput = transactionBlock.object(
                     Coin.getID(primaryCoin)
                 );
-                transactionBlock.add(
-                    TransactionBlock.Transactions.MergeCoins(
+                if (mergeCoins.length) {
+                    transactionBlock.mergeCoins(
                         primaryCoinInput,
-                        coins.map((coin) =>
+                        mergeCoins.map((coin) =>
                             transactionBlock.object(Coin.getID(coin))
                         )
-                    )
+                    );
+                }
+                const coinToTransfer = transactionBlock.splitCoins(
+                    primaryCoinInput,
+                    [transactionBlock.pure(bigIntAmount)]
                 );
-                const coin = transactionBlock.add(
-                    TransactionBlock.Transactions.SplitCoins(primaryCoinInput, [
-                        transactionBlock.pure(bigIntAmount),
-                    ])
-                );
-                transactionBlock.add(
-                    TransactionBlock.Transactions.TransferObjects(
-                        [coin],
-                        transactionBlock.pure(formState.to)
-                    )
+                transactionBlock.transferObjects(
+                    [coinToTransfer],
+                    transactionBlock.pure(formState.to)
                 );
             }
 
-            const signedTx = await signer.devInspectTransactionBlock({
+            const signedTx = await signer.dryRunTransactionBlock({
                 transactionBlock,
             });
 
