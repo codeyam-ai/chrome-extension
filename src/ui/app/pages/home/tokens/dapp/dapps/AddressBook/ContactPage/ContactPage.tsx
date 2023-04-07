@@ -1,6 +1,7 @@
 import {
     ArrowRightIcon,
     PencilIcon,
+    Square2StackIcon,
     TrashIcon,
 } from '@heroicons/react/24/outline';
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
@@ -13,6 +14,8 @@ import { useAppSelector } from '_src/ui/app/hooks';
 import { useUpdateContacts } from '_src/ui/app/hooks/useUpdateContacts';
 import EmojiDisplay from '_src/ui/app/shared/EmojiDisplay';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
+import AddressTooltip from './AddressTooltip';
 
 const ContactPage = () => {
     const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] =
@@ -75,13 +78,13 @@ const ContactPage = () => {
                     <EmojiDisplay emoji={contact.emoji} sizeInPx={44} />
                 </div>
                 <BodyLarge isSemibold>{contact.name}</BodyLarge>
-                <BodyLarge
-                    isTextColorMedium
-                    className="break-words w-full pb-6"
-                >
-                    {contact.address}
-                </BodyLarge>
-                <div className="flex gap-2">
+                <AddressTooltip address={contact.address}>
+                    <BodyLarge isTextColorMedium>
+                        {truncateMiddle(contact.address)}{' '}
+                        <Square2StackIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium inline" />
+                    </BodyLarge>
+                </AddressTooltip>
+                <div className="flex gap-2 mt-6">
                     <button
                         onClick={handleEditContact}
                         className="flex items-center gap-2 rounded-xl py-3 px-5 bg-ethos-light-primary-light/20"
