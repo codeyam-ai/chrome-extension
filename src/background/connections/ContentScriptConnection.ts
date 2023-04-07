@@ -67,7 +67,7 @@ export class ContentScriptConnection extends Connection {
             const activeAccount = await this.getActiveAccount();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                account: activeAccount.address,
+                account: activeAccount?.address,
             });
             if (
                 !(await Permissions.hasPermissions(
