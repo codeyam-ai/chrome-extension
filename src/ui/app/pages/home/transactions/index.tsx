@@ -27,8 +27,8 @@ const TransactionsPage = () => {
     const fetchTransactions = async ({ pageParam = '' }) => {
         const response = await queryTransactionsByAddress(
             address || '', // address
-            pageParam[0] || null, // cursor for the 'from' txs
-            pageParam[1] || null, // cursor for the 'to' txs
+            pageParam[0] || undefined, // cursor for the 'from' txs
+            pageParam[1] || undefined, // cursor for the 'to' txs
             10 // page size limit
         );
 

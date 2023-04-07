@@ -8,9 +8,9 @@ import { api } from '_redux/store/thunk-extras';
 
 export const queryTransactionsByAddress = async (
     address: SuiAddress,
-    cursorTo: string | null,
-    cursorFrom: string | null,
-    limit: number | null
+    cursorTo?: string,
+    cursorFrom?: string,
+    limit?: number
 ) => {
     const rpc = api.instance.fullNode;
 
