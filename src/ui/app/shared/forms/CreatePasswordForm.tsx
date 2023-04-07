@@ -10,6 +10,7 @@ import Input from '../inputs/Input';
 import { BASE_URL } from '_src/shared/constants';
 
 import type { FormikValues } from 'formik';
+import {passwordComplexityValidation} from "_app/shared/forms/validation-utils";
 
 type CreatePasswordFormProps = {
     onSubmit: (passphrase: string) => void;
@@ -155,7 +156,7 @@ const CreatePasswordForm = ({ onSubmit }: CreatePasswordFormProps) => {
                     termsOfService: false,
                 }}
                 validationSchema={Yup.object({
-                    password: passwordValidation,
+                    password: passwordComplexityValidation('Enter a password'),
                     confirmPassword: passwordsMustMatch,
                 })}
                 onSubmit={_onSubmit}

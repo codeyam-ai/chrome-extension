@@ -14,6 +14,7 @@ import {
     simulateMnemonicUser,
     simulateEmailUser,
 } from '_src/test/utils/storage';
+import { getEncrypted } from '_shared/storagex/store';
 
 describe('The Security Settings page', () => {
     let mockchain: Mockchain;
@@ -157,6 +158,104 @@ describe('The Security Settings page', () => {
             await userEvent.click(submitPasswordButton);
 
             await screen.findByText(privateKey);
+        });
+
+        test('allows user to change password', async () => {
+            await init();
+            await navigateToSecurity();
+
+            const updatePasswordButton = await screen.findByText(
+                'Update Password'
+            );
+            await userEvent.click(updatePasswordButton);
+
+            await userEvent.type(
+                screen.getByPlaceholderText('Enter your current password'),
+                password
+            );
+            await userEvent.type(
+                screen.getByPlaceholderText('Enter your new password'),
+                'one two three'
+            );
+            await userEvent.type(
+                screen.getByPlaceholderText('Re-enter your new password'),
+                'one two three'
+            );
+
+            await userEvent.click(await screen.findByText('Save'));
+            await screen.findByText('Settings');
+
+            const passphrase = await getEncrypted({
+                key: 'passphrase',
+                session: true,
+            });
+            expect(passphrase).toEqual('one two three');
+        });
+
+        test('does not allow user to change password if they put wrong current password', async () => {
+            await init();
+            await navigateToSecurity();
+
+            const updatePasswordButton = await screen.findByText(
+                'Update Password'
+            );
+            await userEvent.click(updatePasswordButton);
+
+            await userEvent.type(
+                screen.getByPlaceholderText('Enter your current password'),
+                'Wrong'
+            );
+            await userEvent.type(
+                screen.getByPlaceholderText('Enter your new password'),
+                'one two three'
+            );
+            await userEvent.type(
+                screen.getByPlaceholderText('Re-enter your new password'),
+                'one two three'
+            );
+
+            await userEvent.click(await screen.findByText('Save'));
+            await screen.findByText('Password is incorrect');
+
+            const passphrase = await getEncrypted({
+                key: 'passphrase',
+                session: true,
+            });
+            expect(passphrase).toEqual(password);
+        });
+
+        test('does not allow user to change password if they put in a weak new password', async () => {
+            await init();
+            await navigateToSecurity();
+
+            const updatePasswordButton = await screen.findByText(
+                'Update Password'
+            );
+            await userEvent.click(updatePasswordButton);
+
+            await userEvent.type(
+                screen.getByPlaceholderText('Enter your current password'),
+                password
+            );
+
+            const badPassword = 'foo';
+            await userEvent.type(
+                screen.getByPlaceholderText('Enter your new password'),
+                badPassword
+            );
+            await userEvent.type(
+                screen.getByPlaceholderText('Re-enter your new password'),
+                badPassword
+            );
+
+            await userEvent.click(await screen.findByText('Save'));
+            await screen.findByText(/Password is not strong enough/);
+
+            const passphrase = await getEncrypted({
+                key: 'passphrase',
+                session: true,
+            });
+            expect(passphrase).toEqual(password);
         });
     });
 
