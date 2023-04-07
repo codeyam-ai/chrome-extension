@@ -4,6 +4,7 @@ import {
     Square2StackIcon,
     TrashIcon,
 } from '@heroicons/react/24/outline';
+import { ArrowUpIcon } from '@heroicons/react/24/solid';
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -16,7 +17,6 @@ import { useAppSelector } from '_src/ui/app/hooks';
 import { useUpdateContacts } from '_src/ui/app/hooks/useUpdateContacts';
 import EmojiDisplay from '_src/ui/app/shared/EmojiDisplay';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import { ArrowUpIcon } from '@heroicons/react/24/solid';
 
 const ContactPage = () => {
     const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] =
