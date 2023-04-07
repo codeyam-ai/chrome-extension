@@ -37,7 +37,7 @@ export const DappWrapper: React.FC<DappWrapperProps> = ({
                 closeDapp={closeDapp ?? onClose}
                 isFavorite={isFavorite}
             />
-            {children}
+            <div>{children}</div>
         </div>
     );
 };
