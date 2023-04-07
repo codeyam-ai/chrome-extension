@@ -1,7 +1,7 @@
 import { Counter, ModeOfOperation, utils } from 'aes-js';
 import { Pbkdf2HmacSha256 } from 'asmcrypto.js';
 
-const ITERATIONS = 600000;
+const ITERATIONS = 10000;
 const KEY_LENGTH = 32;
 
 export function encrypt(
