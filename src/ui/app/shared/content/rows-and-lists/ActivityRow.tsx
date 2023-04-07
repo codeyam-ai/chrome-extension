@@ -43,8 +43,8 @@ export const ActivityRow = ({
             <Transition
                 show={true}
                 appear={true}
-                enter="transition-transform duration-500"
-                enterFrom="opacity-0 transform -translate-y-8"
+                enter="transition-transform duration-350"
+                enterFrom="opacity-0 transform -translate-y-4"
                 enterTo="opacity-100 transform translate-y-0"
             >
                 <div
