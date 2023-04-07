@@ -4,7 +4,10 @@ import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 export type TxType = string;
 
-const getCommands = (txn: SuiTransactionBlockResponse): string | null => {
+const getTxHeader = (
+    txn: SuiTransactionBlockResponse,
+    type: string
+): string | null => {
     let response = null;
 
     const transaction = txn?.transaction?.data?.transaction;
@@ -24,7 +27,7 @@ const getCommands = (txn: SuiTransactionBlockResponse): string | null => {
 
             switch (commandKey) {
                 case 'TransferObjects':
-                    appendCommandStr(`Transfer`, idx, comma);
+                    appendCommandStr(`Transfer ${_.toUpper(type)}`, idx, comma);
                     break;
                 case 'MergeCoins':
                     appendCommandStr('Merge Coins', idx, comma);
@@ -55,4 +58,4 @@ const getCommands = (txn: SuiTransactionBlockResponse): string | null => {
     return response;
 };
 
-export default getCommands;
+export default getTxHeader;

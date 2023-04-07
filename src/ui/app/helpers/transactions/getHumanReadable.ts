@@ -4,7 +4,7 @@ import {
     getTxPreposition,
     getTxType,
 } from './';
-import getCommands from './getCommands';
+import getTxHeader from './getTxHeader';
 import getDisplayImage from './getDisplayImage';
 import getIsSender from './getIsSender';
 import {
@@ -34,7 +34,7 @@ const getHumanReadable = (
     const totalGasCost = getGasFee(tx);
     const gasFeeInSui = getFormattedGasFee(totalGasCost);
     const gasFeeInUsd = ns.format.dollars(totalGasCost, 9);
-    const txCommands = getCommands(tx);
+    const txCommands = getTxHeader(tx, txType);
     const displayImage = getDisplayImage(tx);
     const amt = txAmount ? parseFloat(txAmount.replace(/,/g, '')) : undefined;
     const txUsdAmount = amt ? getUsdAmount(amt) : undefined;
