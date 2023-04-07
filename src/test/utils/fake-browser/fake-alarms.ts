@@ -1,6 +1,7 @@
+import { FakeEvent } from '_src/test/utils/fake-browser/fake-runtime';
+
 import type { Alarms } from 'webextension-polyfill/namespaces/alarms';
 
-import { FakeEvent } from '_src/test/utils/fake-browser/fake-runtime';
 
 export class FakeAlarms {
     names: string[] = [];

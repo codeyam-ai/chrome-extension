@@ -3,6 +3,7 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 
+import { getEncrypted } from '_shared/storagex/store';
 import { BASE_URL } from '_src/shared/constants';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
@@ -14,7 +15,6 @@ import {
     simulateMnemonicUser,
     simulateEmailUser,
 } from '_src/test/utils/storage';
-import { getEncrypted } from '_shared/storagex/store';
 
 describe('The Security Settings page', () => {
     let mockchain: Mockchain;

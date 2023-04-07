@@ -8,14 +8,14 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import AddressTooltip from './AddressTooltip';
 import ContactTransactions from './ContactTransactions';
 import ConfirmDeleteContactModal from '../ConfirmDeleteContactModal';
+import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { useUpdateContacts } from '_src/ui/app/hooks/useUpdateContacts';
 import EmojiDisplay from '_src/ui/app/shared/EmojiDisplay';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
-import AddressTooltip from './AddressTooltip';
 
 const ContactPage = () => {
     const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] =

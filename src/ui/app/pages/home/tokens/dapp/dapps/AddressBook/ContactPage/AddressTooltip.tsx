@@ -1,11 +1,14 @@
+import classNames from 'classnames';
 import { useState, useRef, useCallback } from 'react';
+import { toast } from 'react-toastify';
+
+import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
+import Body from '_src/ui/app/shared/typography/Body';
 
 import type { SuiAddress } from '@mysten/sui.js';
 import type { ReactNode } from 'react';
-import classNames from 'classnames';
-import Body from '_src/ui/app/shared/typography/Body';
-import { toast } from 'react-toastify';
-import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
+
+
 
 interface AddressTooltipProps {
     address: SuiAddress;
