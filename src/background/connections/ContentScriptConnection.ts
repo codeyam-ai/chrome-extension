@@ -64,9 +64,11 @@ export class ContentScriptConnection extends Connection {
         const { payload } = msg;
 
         if (isGetAccount(payload)) {
-            const existingPermission = await Permissions.getPermission(
-                this.origin
-            );
+            const activeAccount = await this.getActiveAccount();
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+                account: activeAccount.address,
+            });
             if (
                 !(await Permissions.hasPermissions(
                     this.origin,
@@ -91,9 +93,9 @@ export class ContentScriptConnection extends Connection {
                 )
             );
         } else if (isGetAccountCustomizations(payload)) {
-            const existingPermission = await Permissions.getPermission(
-                this.origin
-            );
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+            });
 
             if (
                 !(await Permissions.hasPermissions(
@@ -281,6 +283,33 @@ export class ContentScriptConnection extends Connection {
         return accountInfos;
     }
 
+    private async getActiveAccount(): Promise<AccountInfo> {
+        const passphrase = await getEncrypted({
+            key: 'passphrase',
+            session: true,
+        });
+        const locked = passphrase && (await isLocked(passphrase));
+        if (locked) {
+            throw new Error('Wallet is locked');
+        }
+        const authentication = await getEncrypted({
+            key: 'authentication',
+            session: true,
+        });
+
+        const accountInfos = await this.getAccountInfos();
+
+        const activeAccountIndex = parseInt(
+            (await getEncrypted({
+                key: 'activeAccountIndex',
+                session: false,
+                passphrase: (passphrase || authentication) as string,
+            })) || '0'
+        );
+
+        return accountInfos[activeAccountIndex];
+    }
+
     private sendError<Error extends ErrorPayload>(
         error: Error,
         responseForID?: string
@@ -343,7 +372,10 @@ export class ContentScriptConnection extends Connection {
         permissions: PermissionType[],
         account?: SuiAddress
     ) {
-        const existingPermission = await Permissions.getPermission(this.origin);
+        const existingPermission = await Permissions.getPermission({
+            origin: this.origin,
+            account,
+        });
         const allowed = await Permissions.hasPermissions(
             this.origin,
             permissions,
