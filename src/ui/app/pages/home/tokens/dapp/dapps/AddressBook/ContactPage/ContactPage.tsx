@@ -1,5 +1,4 @@
 import {
-    ArrowRightIcon,
     PencilIcon,
     Square2StackIcon,
     TrashIcon,

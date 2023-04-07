@@ -36,9 +36,9 @@ jest.mock('asmcrypto.js', () => {
                 new Uint8Array(salt),
                 10,
                 32
-            )
+            );
         }),
-    }
+    };
 });
 
 jest.mock('animate.css/animate.min.css', () => '');
