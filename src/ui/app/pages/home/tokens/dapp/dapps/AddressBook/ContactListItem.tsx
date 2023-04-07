@@ -5,7 +5,7 @@ import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import EmojiDisplay from '_src/ui/app/shared/EmojiDisplay';
 import Body from '_src/ui/app/shared/typography/Body';
 
-import type { Contact } from './AddContactForm';
+import type { Contact } from '_src/ui/app/redux/slices/contacts';
 
 interface ContactListItemProps {
     contact: Contact;

@@ -4,9 +4,16 @@ import Authentication from '_src/background/Authentication';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { AUTHENTICATION_REQUESTED } from '_src/ui/app/pages/initialize/hosted';
 
+import type { SuiAddress } from '@mysten/sui.js';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
-import type { Contact } from '_src/ui/app/pages/home/tokens/dapp/dapps/AddressBook/AddContactForm';
+
+export interface Contact {
+    address: SuiAddress;
+    name: string;
+    emoji?: string;
+    color: string;
+}
 
 export const loadContactsStorage = createAsyncThunk(
     'account/loadContacts',

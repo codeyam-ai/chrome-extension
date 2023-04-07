@@ -6,7 +6,7 @@ import useAppSelector from './useAppSelector';
 import { saveContacts, setContacts } from '../redux/slices/contacts';
 import { getEncrypted } from '_src/shared/storagex/store';
 
-import type { Contact } from '../pages/home/tokens/dapp/dapps/AddressBook/AddContactForm';
+import type { Contact } from '../redux/slices/contacts';
 
 export const useUpdateContacts = () => {
     const [isHostedWallet, setIsHostedWallet] = useState<boolean>(false);
