@@ -3,6 +3,8 @@
 
 import { Connection } from './Connection';
 import { createMessage } from '_messages';
+import { isHeartbeatPayload } from '_payloads/locking/HeartbeatPayload';
+import { isLockWalletRequest } from '_payloads/locking/LockWalletRequest';
 import {
     isGetPermissionRequests,
     isPermissionResponse,
@@ -10,12 +12,14 @@ import {
 import { isPreapprovalResponse } from '_payloads/transactions';
 import { isGetTransactionRequests } from '_payloads/transactions/ui/GetTransactionRequests';
 import { isTransactionRequestResponse } from '_payloads/transactions/ui/TransactionRequestResponse';
+import { lockWallet, resetLockTimeout } from '_src/background/Locking';
 import Permissions from '_src/background/Permissions';
 import Transactions from '_src/background/Transactions';
 import { isGetPreapprovalRequests } from '_src/shared/messaging/messages/payloads/transactions/ui/GetPreapprovalRequests';
 
 import type { Message } from '_messages';
 import type { PortChannelName } from '_messaging/PortChannelName';
+import type { WalletLocked } from '_payloads/locking/WalletLocked';
 import type { Permission, PermissionRequests } from '_payloads/permissions';
 import type { PreapprovalRequest } from '_payloads/transactions';
 import type { GetTransactionRequestsResponse } from '_payloads/transactions/ui/GetTransactionRequestsResponse';
@@ -24,6 +28,10 @@ import type { GetPreapprovalResponse } from '_src/shared/messaging/messages/payl
 
 export class UiConnection extends Connection {
     public static readonly CHANNEL: PortChannelName = 'ethos_ui<->background';
+
+    public sendWalletLockedMessage() {
+        this.send(createMessage<WalletLocked>({ type: 'wallet-locked' }));
+    }
 
     protected async handleMessage(msg: Message) {
         const { payload, id } = msg;
@@ -38,10 +46,9 @@ export class UiConnection extends Connection {
         } else if (isTransactionRequestResponse(payload)) {
             Transactions.handleTxMessage(payload);
         } else if (isGetTransactionRequests(payload)) {
-            this.sendTransactionRequests(
-                Object.values(await Transactions.getTransactionRequests()),
-                id
-            );
+            const approvalRequests =
+                await Transactions.getTransactionRequests();
+            this.sendTransactionRequests(Object.values(approvalRequests), id);
         } else if (isPreapprovalResponse(payload)) {
             Transactions.handlePreapprovalMessage(payload);
         } else if (isGetPreapprovalRequests(payload)) {
@@ -49,6 +56,10 @@ export class UiConnection extends Connection {
                 Object.values(await Transactions.getPreapprovalRequests()),
                 id
             );
+        } else if (isHeartbeatPayload(payload)) {
+            await resetLockTimeout();
+        } else if (isLockWalletRequest(payload)) {
+            await lockWallet();
         }
     }
 

@@ -6,7 +6,6 @@ import { renderApp } from '_src/test/utils/react-rendering';
 import {
     password as correctPassword,
     simulateMnemonicUser,
-    simulateLogout,
 } from '_src/test/utils/storage';
 
 describe('Unlocking the wallet', () => {
@@ -33,8 +32,7 @@ describe('Unlocking the wallet', () => {
     });
 
     const createLockedWallet = async () => {
-        await simulateMnemonicUser();
-        await simulateLogout();
+        await simulateMnemonicUser(false);
         mockchain.mockSuiObjects();
         renderApp();
         await screen.findAllByText('Unlock Wallet');

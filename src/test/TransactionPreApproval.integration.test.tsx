@@ -7,6 +7,7 @@ import { renderApp } from './utils/react-rendering';
 import { simulateMnemonicUser } from './utils/storage';
 import { PREAPPROVAL_KEY } from '_shared/constants';
 import { setEncrypted } from '_shared/storagex/store';
+import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
 describe('transaction pre-approval flow', () => {
     let mockchain: Mockchain;
@@ -26,11 +27,12 @@ describe('transaction pre-approval flow', () => {
     });
 
     test('can accept transaction pre-approvals', async () => {
-        const mockWindowCloser = jest.fn();
+        const testDeps = makeTestDeps();
+        const mockWindowCloser = testDeps.closeWindow;
 
         renderApp({
             initialRoute: `/preapproval/${id}`,
-            dependencies: { closeWindow: mockWindowCloser },
+            dependencies: testDeps,
         });
 
         await screen.findByText('Pre-Approve Transactions');
@@ -44,11 +46,12 @@ describe('transaction pre-approval flow', () => {
     });
 
     test('can reject transaction pre-approvals', async () => {
-        const mockWindowCloser = jest.fn();
+        const testDeps = makeTestDeps();
+        const mockWindowCloser = testDeps.closeWindow;
 
         renderApp({
             initialRoute: `/preapproval/${id}`,
-            dependencies: { closeWindow: mockWindowCloser },
+            dependencies: testDeps,
         });
 
         await screen.findByText('Pre-Approve Transactions');

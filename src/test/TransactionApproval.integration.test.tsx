@@ -8,6 +8,7 @@ import { renderTemplate } from '_src/test/utils/json-templates';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { accountInfos, simulateMnemonicUser } from '_src/test/utils/storage';
+import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
 import type { ApprovalRequest } from '_payloads/transactions';
 
@@ -24,10 +25,11 @@ describe('The Transaction Approval popup', () => {
         await simulateReduxStateWithTransaction(txRequestId);
         const executeScope = mockBlockchainTransactionExecution();
 
-        const mockWindowCloser = jest.fn();
+        const testDeps = makeTestDeps();
+        const mockWindowCloser = testDeps.closeWindow;
         renderApp({
             initialRoute: `/tx-approval/${txRequestId}`,
-            dependencies: { closeWindow: mockWindowCloser },
+            dependencies: testDeps,
         });
 
         await screen.findByText('Cost');
@@ -45,10 +47,12 @@ describe('The Transaction Approval popup', () => {
         await simulateReduxStateWithTransaction(txRequestId);
         const executeScope = mockBlockchainTransactionExecution();
 
-        const mockWindowCloser = jest.fn();
+        const testDeps = makeTestDeps();
+        const mockWindowCloser = testDeps.closeWindow;
+
         renderApp({
             initialRoute: `/tx-approval/${txRequestId}`,
-            dependencies: { closeWindow: mockWindowCloser },
+            dependencies: testDeps,
         });
 
         await screen.findByText('Cost');
@@ -66,10 +70,11 @@ describe('The Transaction Approval popup', () => {
         simulateReduxStateWithComplexTransaction(txRequestId);
         const executeScope = mockBlockchainTransactionExecution();
 
-        const mockWindowCloser = jest.fn();
+        const testDeps = makeTestDeps();
+        const mockWindowCloser = testDeps.closeWindow;
         renderApp({
             initialRoute: `/tx-approval/${txRequestId}`,
-            dependencies: { closeWindow: mockWindowCloser },
+            dependencies: testDeps,
         });
 
         const approveButton = await screen.findByText('Approve');
@@ -90,10 +95,11 @@ describe('The Transaction Approval popup', () => {
         await simulateReduxStateWithMintCoinTransaction(txRequestId);
         const executeScope = mockBlockchainTransactionExecution();
 
-        const mockWindowCloser = jest.fn();
+        const testDeps = makeTestDeps();
+        const mockWindowCloser = testDeps.closeWindow;
         renderApp({
             initialRoute: `/tx-approval/${txRequestId}`,
-            dependencies: { closeWindow: mockWindowCloser },
+            dependencies: testDeps,
         });
 
         const approveButton = await screen.findByText('Approve');

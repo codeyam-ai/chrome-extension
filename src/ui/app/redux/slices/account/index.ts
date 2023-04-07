@@ -19,11 +19,11 @@ import { Coin } from '_redux/slices/sui-objects/Coin';
 import { generateMnemonic } from '_shared/cryptography/mnemonics';
 import Authentication from '_src/background/Authentication';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
-import { PASSPHRASE_TEST } from '_src/shared/constants';
+import { AccountType, PASSPHRASE_TEST } from '_src/shared/constants';
 import {
+    deleteEncrypted,
     getEncrypted,
     setEncrypted,
-    deleteEncrypted,
 } from '_src/shared/storagex/store';
 import KeypairVault from '_src/ui/app/KeypairVault';
 import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
@@ -34,12 +34,6 @@ import type { SuiAddress, SuiMoveObject } from '@mysten/sui.js';
 import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-
-export enum AccountType {
-    EMAIL = 'EMAIL',
-    PASSWORD = 'PASSWORD',
-    UNINITIALIZED = 'UNINITIALIZED',
-}
 
 type InitialAccountInfo = {
     authentication: string | null;
@@ -176,6 +170,8 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             account: { locked: alreadyLocked },
         } = getState() as RootState;
 
+        // TODO: This seems unnecessary; if the redux state is locked, we shouldn't have to then delete the data.
+        //  Deleting the data happens first, and later the redux state is updated
         if (alreadyLocked) {
             await setLocked(passphrase);
         }
@@ -495,20 +491,6 @@ export const reset = createAsyncThunk(
     }
 );
 
-export const logout = createAsyncThunk(
-    'account/logout',
-    async (_args, { getState }): Promise<void> => {
-        const {
-            account: { authentication, passphrase },
-        } = getState() as RootState;
-        if (authentication) {
-            await deleteEncrypted({ key: 'authentication', session: true });
-        } else if (passphrase) {
-            await setLocked(passphrase);
-        }
-    }
-);
-
 const isPasswordCorrect = async (password: string) => {
     const passphraseTest = await getEncrypted({
         key: 'passphrase-test',
@@ -611,6 +593,9 @@ const accountSlice = createSlice({
         setEmail: (state, action: PayloadAction<string | null>) => {
             state.email = action.payload;
         },
+        lockWalletUI: (state, action: PayloadAction) => {
+            state.locked = true;
+        },
     },
     extraReducers: (builder) =>
         builder
@@ -670,17 +655,10 @@ const accountSlice = createSlice({
             .addCase(unlock.fulfilled, (state, action) => {
                 state.locked = !action.payload;
                 state.passphrase = action.payload;
-            })
-            .addCase(logout.fulfilled, (state) => {
-                if (state.authentication) {
-                    state.authentication = null;
-                } else {
-                    state.locked = true;
-                }
             }),
 });
 
-export const { setMnemonic, setAddress, setAccountInfos, setAuthentication } =
+export const { setMnemonic, setAddress, setAccountInfos, lockWalletUI } =
     accountSlice.actions;
 
 export default accountSlice.reducer;

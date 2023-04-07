@@ -32,7 +32,7 @@ import LockedPage from './pages/locked';
 import PasswordPage from './pages/password';
 import { AppType } from './redux/slices/app/AppType';
 import { loadContactsStorage } from './redux/slices/contacts';
-import LockWalletProvider from './shared/LockWalletProvider';
+import HeartbeatProvider from './shared/HeartbeatProvider';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { DappTxApprovalPage } from '_pages/dapp-tx-approval';
 import HomePage, {
@@ -74,7 +74,7 @@ const App = () => {
 
     return (
         <ThemeProvider initialTheme={undefined}>
-            <LockWalletProvider>
+            <HeartbeatProvider>
                 <Routes>
                     <Route
                         path="/"
@@ -204,7 +204,7 @@ const App = () => {
                         element={<Navigate to="/tokens" replace={true} />}
                     />
                 </Routes>
-            </LockWalletProvider>
+            </HeartbeatProvider>
         </ThemeProvider>
     );
 };

@@ -3,7 +3,6 @@
 
 import { memo, useCallback, useState } from 'react';
 
-import { startWalletLockTimer } from '../helpers/lock-wallet';
 import InlineButtonGroup from '../shared/buttons/InlineButtonGroup';
 import UserApproveHeaderWithSiteIcon from '../shared/headers/page-headers/UserApproveHeaderWithSiteIcon';
 import ApproveContainerNavBar from '../shared/navigation/nav-bar/ApproveContainerNavBar';
@@ -42,13 +41,11 @@ function UserApproveContainer({
     const [submitting, setSubmitting] = useState(false);
 
     const approve = useCallback(() => {
-        startWalletLockTimer();
         setSubmitting(true);
         onSubmit(true);
     }, [onSubmit]);
 
     const reject = useCallback(() => {
-        startWalletLockTimer();
         onSubmit(false);
     }, [onSubmit]);
 

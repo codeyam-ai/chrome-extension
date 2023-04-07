@@ -5,8 +5,8 @@ import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import useAppSelector from './useAppSelector';
-import { AUTHENTICATION_REQUESTED } from '../pages/initialize/hosted';
-import { AccountType } from '_redux/slices/account';
+import { AUTHENTICATION_REQUESTED } from '_pages/initialize/hosted';
+import { AccountType } from '_shared/constants';
 import { openInNewTab } from '_src/shared/utils';
 
 export enum AppState {
