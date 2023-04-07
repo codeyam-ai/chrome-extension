@@ -17,18 +17,6 @@ const getCommands = (txn: SuiTransactionBlockResponse): string | null => {
             commandStr += `${val}${comma} `;
         };
 
-        const getPrimaryObjName = () => {
-            if (txn.objectChanges && 'objectType' in txn.objectChanges[0]) {
-                return _.startCase(
-                    txn.objectChanges[0].objectType.split('::')[1].toLowerCase()
-                );
-            } else {
-                return 'Unknown Object';
-            }
-        };
-
-        const primaryObjName = getPrimaryObjName();
-
         transaction.transactions.forEach((command, idx) => {
             const commandObj = command;
             const commandKey = Object.keys(commandObj)[0];
@@ -36,7 +24,7 @@ const getCommands = (txn: SuiTransactionBlockResponse): string | null => {
 
             switch (commandKey) {
                 case 'TransferObjects':
-                    appendCommandStr(`Transfer ${primaryObjName}`, idx, comma);
+                    appendCommandStr(`Transfer`, idx, comma);
                     break;
                 case 'MergeCoins':
                     appendCommandStr('Merge Coins', idx, comma);
