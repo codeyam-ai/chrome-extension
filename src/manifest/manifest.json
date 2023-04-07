@@ -3,6 +3,7 @@
     "description": "AUTO_UPDATED",
     "version": "AUTO_UPDATED",
     "manifest_version": 3,
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAi0I9A/aX1dxoxhaQJW6PVj1Li05Xv1Ef3jeWZI6BOg/Ie3ZX0rpFBLR+KzDyYNo+7NRqR/Q00S03Lgl15K7VEPRcZetrlf6KiXN1wt+nzXTc/ZK+miZ3vJFf9qRuhwf0P9U98Qx0TGRpr56QbagRpyd3cfq4oZqc+Iksz8zUuWTsKABgSgKJTTaia/Rh5BcVEFu+MUnw4C4fdUDoQWS36eGRQcFiMtSWConBXEMkNm/G7WoQ0/G28fqWFLVoQdWQJYfJcEwYNd/rDihch1DnGnKhgd1hDt3TL8v5YBneqzS9g4AQbjm2RUbv/Ke5S6sZs3dtWzIRgccP9RzGRw5FAQIDAQAB",
     "background": {
         "service_worker": "background.js"
     },

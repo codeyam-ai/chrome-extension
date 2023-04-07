@@ -5,6 +5,7 @@ import { combineReducers } from '@reduxjs/toolkit';
 
 import account from './slices/account';
 import app from './slices/app';
+import contacts from './slices/contacts';
 import forms from './slices/forms';
 import permissions from './slices/permissions';
 import preapprovalRequests from './slices/preapproval-requests';
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
     forms,
     transactionRequests,
     preapprovalRequests,
+    contacts,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

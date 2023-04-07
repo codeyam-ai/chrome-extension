@@ -17,6 +17,7 @@ import { Window } from './Window';
 import { API_ENV } from '../ui/app/ApiProvider';
 import { PREAPPROVAL_KEY, TX_STORE_KEY } from '_src/shared/constants';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
+import { isLocked } from '_src/ui/app/helpers/lock-wallet';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 import type {
@@ -442,19 +443,18 @@ class Transactions {
     }
 
     private async getAccount(address: SuiAddress): Promise<AccountInfo> {
-        const locked = await getEncrypted({ key: 'locked', session: false });
         const passphrase = await getEncrypted({
             key: 'passphrase',
             session: true,
         });
+        const locked = passphrase && (await isLocked(passphrase));
+
         const authentication = await getEncrypted({
             key: 'authentication',
             session: true,
         });
         if (locked || (!passphrase && !authentication)) {
-            throw new Error(
-                `Wallet is locked: ${locked} ${passphrase} ${authentication}`
-            );
+            throw new Error(`Wallet is locked`);
         }
         let accountInfos;
         if (authentication) {

@@ -23,7 +23,7 @@ export default function useNFTBasicData(nftObj: SuiObjectData) {
     const [nftFields, setNftFields] = useState(defaultNftFields);
 
     useEffect(() => {
-        if (nftObj.display) {
+        if (nftObj.display && 'image_url' in nftObj.display) {
             setNftFields({
                 ...nftObj.display,
                 url: nftObj.display.image_url,

@@ -10,6 +10,7 @@ import {
 import { api, type AppThunkConfig } from '../../store/thunk-extras';
 import { NFT } from '../sui-objects/NFT';
 import { Ticket } from '../sui-objects/Ticket';
+import { isLocked, setLocked, setUnlocked } from '_app/helpers/lock-wallet';
 import {
     clearForNetworkOrWalletSwitch,
     suiObjectsAdapterSelectors,
@@ -49,8 +50,6 @@ type InitialAccountInfo = {
     locked: boolean;
     accountType: AccountType;
 };
-
-export const LOCKED = 'locked';
 
 export const loadAccountInformationFromStorage = createAsyncThunk(
     'account/loadAccountInformation',
@@ -130,25 +129,35 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
-        if (accountInfos.length === 0 && mnemonic) {
+        if (mnemonic) {
             const keypairVault = new KeypairVault();
             keypairVault.mnemonic = mnemonic;
-            accountInfos = [
-                {
-                    index: 0,
-                    name: 'Wallet',
-                    color: getNextWalletColor(0),
-                    emoji: getNextEmoji(0),
-                    address: keypairVault.getAddress(0),
-                    seed: (keypairVault.getSeed(0) || '').toString(),
-                },
-            ];
-            await setEncrypted({
-                key: 'accountInfos',
-                value: JSON.stringify(accountInfos),
-                session: false,
-                passphrase,
-            });
+
+            if (accountInfos.length === 0) {
+                accountInfos = [
+                    {
+                        index: 0,
+                        name: 'Wallet',
+                        color: getNextWalletColor(0),
+                        emoji: getNextEmoji(0),
+                        address: keypairVault.getAddress(0),
+                        seed: (keypairVault.getSeed(0) || '').toString(),
+                    },
+                ];
+                await setEncrypted({
+                    key: 'accountInfos',
+                    value: JSON.stringify(accountInfos),
+                    session: false,
+                    passphrase,
+                });
+            } else {
+                for (let i = 0; i < accountInfos.length; i++) {
+                    accountInfos[i].address = keypairVault.getAddress(i);
+                    accountInfos[i].seed = (
+                        keypairVault.getSeed(i) || ''
+                    ).toString();
+                }
+            }
         }
 
         activeAccountIndex = parseInt(
@@ -168,15 +177,10 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
         } = getState() as RootState;
 
         if (alreadyLocked) {
-            await deleteEncrypted({ key: LOCKED, session: false, passphrase });
+            await setLocked(passphrase);
         }
 
-        const locked = await getEncrypted({
-            key: LOCKED,
-            session: false,
-            passphrase,
-        });
-        if (!locked || locked !== `${LOCKED}${passphrase}`) {
+        if (await isLocked(passphrase)) {
             return {
                 authentication: null,
                 passphrase: passphrase || null,
@@ -392,13 +396,8 @@ export const changePassword: AsyncThunk<
             session: true,
         });
 
-        await deleteEncrypted({ key: LOCKED, session: false });
-        await setEncrypted({
-            key: LOCKED,
-            value: `${LOCKED}${newPassword}`,
-            session: false,
-            passphrase: newPassword,
-        });
+        await setLocked(currentPassword);
+        await setUnlocked(newPassword);
 
         return true;
     }
@@ -435,12 +434,7 @@ export const savePassphrase: AsyncThunk<
             session: false,
         });
 
-        await setEncrypted({
-            key: LOCKED,
-            value: `${LOCKED}${passphrase}`,
-            session: false,
-            passphrase,
-        });
+        await setUnlocked(passphrase);
 
         const {
             account: { mnemonic },
@@ -510,7 +504,7 @@ export const logout = createAsyncThunk(
         if (authentication) {
             await deleteEncrypted({ key: 'authentication', session: true });
         } else if (passphrase) {
-            await deleteEncrypted({ key: LOCKED, session: false, passphrase });
+            await setLocked(passphrase);
         }
     }
 );
@@ -551,12 +545,7 @@ export const unlock: AsyncThunk<string | null, string | null, AppThunkConfig> =
                         session: true,
                     });
 
-                    await setEncrypted({
-                        key: LOCKED,
-                        value: `${LOCKED}${passphrase}`,
-                        session: false,
-                        passphrase,
-                    });
+                    setUnlocked(passphrase);
                     return passphrase;
                 }
             }

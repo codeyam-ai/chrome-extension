@@ -1,15 +1,18 @@
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
 
-import type { AccountInfo } from '../../KeypairVault';
-
 const WalletTo = ({
     addressTo,
     walletTo,
     noTo,
 }: {
     addressTo?: string;
-    walletTo?: AccountInfo;
+    walletTo?: {
+        name?: string;
+        address: string;
+        emoji?: string;
+        color?: string;
+    };
     noTo?: boolean;
 }) => {
     if (!walletTo)

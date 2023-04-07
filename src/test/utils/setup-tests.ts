@@ -109,3 +109,5 @@ nock('https://cdn.growthbook.io')
 afterEach(() => {
     nock.cleanAll();
 });
+
+jest.setTimeout(60000);

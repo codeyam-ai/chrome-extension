@@ -4,6 +4,7 @@
 import { Connection } from './Connection';
 import { DEFAULT_API_ENV } from '../../ui/app/ApiProvider';
 import Authentication from '../Authentication';
+import { isLocked } from '_app/helpers/lock-wallet';
 import { createMessage } from '_messages';
 import { isGetAccount } from '_payloads/account/GetAccount';
 import {
@@ -252,14 +253,14 @@ export class ContentScriptConnection extends Connection {
     }
 
     private async getAccountInfos(): Promise<AccountInfo[]> {
-        const locked = await getEncrypted({ key: 'locked', session: false });
-        if (locked) {
-            throw new Error('Wallet is locked');
-        }
         const passphrase = await getEncrypted({
             key: 'passphrase',
             session: true,
         });
+        const locked = passphrase && (await isLocked(passphrase));
+        if (locked) {
+            throw new Error('Wallet is locked');
+        }
         const authentication = await getEncrypted({
             key: 'authentication',
             session: true,

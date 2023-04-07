@@ -1,6 +1,6 @@
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
-type toFrom = {
+export type toFrom = {
     to: string | undefined;
     from: string | undefined;
 };
