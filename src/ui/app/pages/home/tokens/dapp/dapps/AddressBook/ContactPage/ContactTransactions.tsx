@@ -23,20 +23,9 @@ const ContactTransactions: React.FC<ContactTransactionsProps> = ({
     );
 
     const txnsBetweenUserAndContact = useMemo(() => {
-        return formattedTxns.filter((txn) => {
-            console.log(
-                'txn.humanReadable.addresses?.to :>> ',
-                txn.humanReadable.addresses?.to
-            );
-            console.log('contactAddress :>> ', contactAddress);
-            console.log(
-                'txn.humanReadable.addresses?.to === contactAddress :>> ',
-                txn.humanReadable.addresses?.to === contactAddress
-            );
-            console.log('=========');
-
-            return txn.humanReadable.addresses?.to === contactAddress;
-        });
+        return formattedTxns.filter(
+            (txn) => txn.humanReadable.addresses?.to === contactAddress
+        );
     }, [formattedTxns, contactAddress]);
 
     const fetchTransactions = async () => {
@@ -89,7 +78,7 @@ const ContactTransactions: React.FC<ContactTransactionsProps> = ({
                         />
                     </div>
                 ) : (
-                    <div className="h-full mb-8">
+                    <div className="h-full my-4">
                         <Subheader isTextColorMedium>
                             No Transactions Yet
                         </Subheader>

@@ -87,17 +87,17 @@ const ContactPage = () => {
                     </AddressTooltip>
                     <button
                         onClick={handleSend}
-                        className="flex items-center gap-2 rounded-xl py-2 px-4 bg-ethos-light-primary-light"
+                        className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-4 mt-6 mb-2 bg-ethos-light-primary-light"
                     >
                         <ArrowUpIcon className="h-5 w-5 text-white" />
                         <BodyLarge isSemibold className="text-white">
                             Send
                         </BodyLarge>
                     </button>
-                    <div className="flex gap-2 mt-6">
+                    <div className="flex gap-2 w-full">
                         <button
                             onClick={handleEditContact}
-                            className="flex items-center gap-2 rounded-xl py-3 px-5 bg-ethos-light-primary-light/20"
+                            className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-5 bg-ethos-light-primary-light/20"
                         >
                             <PencilIcon className="h-5 w-5 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
                             <BodyLarge
@@ -109,7 +109,7 @@ const ContactPage = () => {
                         </button>
                         <button
                             onClick={handleRemoveContact}
-                            className="flex items-center gap-2 rounded-xl py-3 px-5 bg-ethos-light-primary-light/20"
+                            className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-5 bg-ethos-light-primary-light/20"
                         >
                             <TrashIcon className="h-5 w-5 cursor-pointer text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />{' '}
                             <BodyLarge
