@@ -1,8 +1,6 @@
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
 
-import type { AccountInfo } from '../../KeypairVault';
-
 const WalletTo = ({
     addressTo,
     walletTo,
