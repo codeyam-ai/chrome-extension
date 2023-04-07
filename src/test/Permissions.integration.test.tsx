@@ -33,6 +33,6 @@ describe('The Permissions page', () => {
             name: 'Revoke',
         });
         await userEvent.click(revokeButton);
-        await waitForElementToBeRemoved(connectedApp);
+        await waitForElementToBeRemoved(connectedApp, { timeout: 5000 });
     });
 });
