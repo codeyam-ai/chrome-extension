@@ -7,7 +7,7 @@ import Input from '_src/ui/app/shared/inputs/Input';
 
 import type { FormikValues } from 'formik';
 import zxcvbn from 'zxcvbn';
-import {passwordComplexityValidation} from "_app/shared/forms/validation-utils";
+import { passwordComplexityValidation } from '_app/shared/forms/validation-utils';
 
 type ChangePassphraseFormProps = {
     onSubmit: (currentPassword: string, newPassword: string) => void;
@@ -112,7 +112,9 @@ const ChangePasswordForm = ({
                     currentPassword: Yup.string().required(
                         'Enter your current password'
                     ),
-                    newPassword: passwordComplexityValidation('Enter a new password'),
+                    newPassword: passwordComplexityValidation(
+                        'Enter a new password'
+                    ),
                     confirmNewPassword: Yup.string()
                         .required('Confirm your new password')
                         .oneOf(

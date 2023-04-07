@@ -28,9 +28,7 @@ const ContactTransactions: React.FC<ContactTransactionsProps> = ({
     }, [formattedTxns, contactAddress]);
 
     const fetchTransactions = async () => {
-        const response = await queryTransactionsByAddress(
-            userAddress || ''
-        );
+        const response = await queryTransactionsByAddress(userAddress || '');
         return response;
     };
 

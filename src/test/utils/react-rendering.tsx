@@ -20,7 +20,7 @@ import type { RootState } from '_redux/RootReducer';
 import type { Dependencies } from '_shared/utils/dependenciesContext';
 import type { AppStore } from '_store';
 import type { PropsWithChildren } from 'react';
-import {makeTestDeps} from "_src/test/utils/test-dependencies";
+import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: PreloadedState<RootState>;
