@@ -63,6 +63,7 @@ export const DappViewHeader: React.FC<DappViewHeaderProps> = ({
                 {title}
             </BodyLarge>
             {/* Favorites currently not implemented */}
+            <div></div>
             {/* {isFavorite ? (
                 <StarIconSolid className="h-5 w-5 text-ethos-dark-primary-light dark:text-ethos-dark-primary-dark" />
             ) : (

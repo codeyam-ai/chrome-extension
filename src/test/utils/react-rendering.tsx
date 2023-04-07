@@ -11,6 +11,7 @@ import { queryClient } from '_app/helpers/queryClient';
 import App from '_app/index';
 import { AppType } from '_redux/slices/app/AppType';
 import { DependenciesContext } from '_shared/utils/dependenciesContext';
+import { makeTestDeps } from '_src/test/utils/test-dependencies';
 import { createStore } from '_store';
 import { thunkExtras } from '_store/thunk-extras';
 
@@ -20,7 +21,6 @@ import type { RootState } from '_redux/RootReducer';
 import type { Dependencies } from '_shared/utils/dependenciesContext';
 import type { AppStore } from '_store';
 import type { PropsWithChildren } from 'react';
-import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: PreloadedState<RootState>;
