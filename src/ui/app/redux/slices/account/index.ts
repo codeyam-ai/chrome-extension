@@ -129,25 +129,35 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
-        if (accountInfos.length === 0 && mnemonic) {
+        if (mnemonic) {
             const keypairVault = new KeypairVault();
             keypairVault.mnemonic = mnemonic;
-            accountInfos = [
-                {
-                    index: 0,
-                    name: 'Wallet',
-                    color: getNextWalletColor(0),
-                    emoji: getNextEmoji(0),
-                    address: keypairVault.getAddress(0),
-                    seed: (keypairVault.getSeed(0) || '').toString(),
-                },
-            ];
-            await setEncrypted({
-                key: 'accountInfos',
-                value: JSON.stringify(accountInfos),
-                session: false,
-                passphrase,
-            });
+
+            if (accountInfos.length === 0) {
+                accountInfos = [
+                    {
+                        index: 0,
+                        name: 'Wallet',
+                        color: getNextWalletColor(0),
+                        emoji: getNextEmoji(0),
+                        address: keypairVault.getAddress(0),
+                        seed: (keypairVault.getSeed(0) || '').toString(),
+                    },
+                ];
+                await setEncrypted({
+                    key: 'accountInfos',
+                    value: JSON.stringify(accountInfos),
+                    session: false,
+                    passphrase,
+                });
+            } else {
+                for (let i = 0; i < accountInfos.length; i++) {
+                    accountInfos[i].address = keypairVault.getAddress(i);
+                    accountInfos[i].seed = (
+                        keypairVault.getSeed(i) || ''
+                    ).toString();
+                }
+            }
         }
 
         activeAccountIndex = parseInt(
