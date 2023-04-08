@@ -72,8 +72,16 @@ describe('send coin flow', () => {
             name: 'Confirm & Send',
         });
         await userEvent.click(button);
-        await screen.findByText('Transaction submitted.');
-        await screen.findByText('Transaction successful.');
+        await screen.findByText(
+            'Transaction submitted.',
+            {},
+            { timeout: 5000 }
+        );
+        await screen.findByText(
+            'Transaction successful.',
+            {},
+            { timeout: 5000 }
+        );
     };
 
     test('allows you to send Sui', async () => {

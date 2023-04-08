@@ -80,7 +80,9 @@ function TransferCoinRecipientForm({
     } = useFormikContext<FormValues>();
 
     const contact = useMemo(() => {
-        return contacts.find((contact) => contact.address === toAddress || to);
+        return contacts.find(
+            (contact) => contact.address === toAddress || contact.address === to
+        );
     }, [contacts, toAddress, to]);
 
     const onClearRef = useRef(onClearSubmitError);

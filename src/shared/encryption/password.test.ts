@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import { decrypt, encrypt } from './password';
+import * as password from './password';
 
 Object.defineProperty(global, 'crypto', {
     value: {
@@ -14,7 +14,7 @@ describe('password', () => {
         const text = 'this is some sample text';
         const passphrase = '123456passphrase654321';
 
-        const encryptedData = encrypt(text, passphrase);
+        const encryptedData = password.encrypt(text, passphrase);
         const { saltString, nonceString, encryptedText } =
             JSON.parse(encryptedData);
 
@@ -23,7 +23,7 @@ describe('password', () => {
         expect(encryptedText).toBeDefined();
         expect(encryptedText).not.toBe(text);
 
-        const decryptedText = decrypt(encryptedData, passphrase);
+        const decryptedText = password.decrypt(encryptedData, passphrase);
         expect(decryptedText).toBe(text);
     });
 });
