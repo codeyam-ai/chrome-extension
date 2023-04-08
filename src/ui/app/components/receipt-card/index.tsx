@@ -13,7 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-
+import getObjData from '../../helpers/getObjData';
 import { getTheme } from '../../helpers/getTheme';
 import { getHumanReadable } from '../../helpers/transactions';
 import truncateMiddle from '../../helpers/truncate-middle';
@@ -139,6 +139,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     const { accountInfos } = useAppSelector(({ account }) => account);
     const address = useAppSelector(({ account }) => account.address) as string;
     const { data } = useQuery(['transactions-by-address', address]);
+    const [img, setImg] = useState<string | undefined>();
     const theme = getTheme();
     const txRef = useRef<FormattedTransaction>();
 
@@ -172,6 +173,29 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                         showBalanceChanges: true,
                     },
                 });
+
+                const objectChanges = tx?.objectChanges;
+
+                const obj = objectChanges?.find((obj) => {
+                    if ('objectType' in obj) {
+                        return obj.objectType.split('::')[1] !== 'coin';
+                    } else {
+                        return false;
+                    }
+                });
+
+                if (obj && 'objectId' in obj) {
+                    const objData = await getObjData(obj?.objectId);
+                    const display = objData?.data?.display;
+                    const url =
+                        display && 'image_url' in display
+                            ? display.image_url
+                            : '';
+
+                    if (url) {
+                        setImg(url);
+                    }
+                }
 
                 setTransaction(tx);
             };
@@ -286,7 +310,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                 <AssetCard
                     theme={theme}
                     txType={txType}
-                    imgUrl={displayImage || ''}
+                    imgUrl={displayImage || img || ''}
                     name={txCommands || 'NFT'}
                     icon={transferObj.txIcon} // TODO: handle success / failure icon
                 />
