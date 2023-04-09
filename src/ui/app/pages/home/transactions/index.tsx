@@ -42,9 +42,8 @@ const TransactionsPage = () => {
         isFetchingNextPage,
     } = useInfiniteQuery(['query-transactions'], fetchTransactions, {
         enabled: !!address,
-        staleTime: 0,
-        cacheTime: 0,
         refetchInterval: 3000,
+        staleTime: 30000,
     });
 
     const loadPage = useCallback(async () => {
