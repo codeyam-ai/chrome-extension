@@ -4,7 +4,6 @@ import {
     getTxPreposition,
     getTxType,
 } from './';
-import getTxHeader from './getTxHeader';
 import getDisplayImage from './getDisplayImage';
 import getIsSender from './getIsSender';
 import {
@@ -13,6 +12,7 @@ import {
     getSuiTransferAmount,
 } from './getSuiTransferAmount';
 import getToFromAddress from './getToFromAddress';
+import getTxHeader from './getTxHeader';
 import getUsdAmount from './getUsdAmount';
 import convertUnixTimeToLocalTime from '../convertUnixTimeToLocalTime';
 import truncateMiddle from '../truncate-middle';
