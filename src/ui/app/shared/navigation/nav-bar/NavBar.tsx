@@ -217,9 +217,9 @@ const NavBar = () => {
 
     return (
         <div className="flex flex-row items-center justify-between px-6 py-4 border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
-            <div className="-mt-1">
+            <Link to={'/'} className="-mt-1">
                 <EthosLogo />
-            </div>
+            </Link>
             <WalletProfile />
             {isDetailsPage ? (
                 <button
