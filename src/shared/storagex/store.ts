@@ -91,12 +91,12 @@ export async function deleteEncrypted({
     key,
     session,
     passphrase = MASTER_PASSPHRASE,
-    strong = false,
+    strong,
 }: {
     key: string;
     session: boolean;
     passphrase?: string;
-    strong?: boolean;
+    strong: boolean;
 }) {
     const encryptedKey = encrypt({
         text: key,

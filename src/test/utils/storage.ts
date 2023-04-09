@@ -51,7 +51,6 @@ export const simulateMnemonicUser = async function (unlocked = true) {
         value: accountInfosJson,
         session: false,
         strong: false,
-        passphrase: password,
     });
     await setEncrypted({
         key: 'mnemonic',
@@ -90,7 +89,6 @@ export const simulateEmailUser = async function () {
         value: accountInfosJson,
         session: false,
         strong: false,
-        passphrase: fakeAccessToken,
     });
 };
 

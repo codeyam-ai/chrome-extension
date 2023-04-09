@@ -12,12 +12,10 @@ import { filter, lastValueFrom, map, race, Subject, take } from 'rxjs';
 import { v4 as uuidV4 } from 'uuid';
 import Browser from 'webextension-polyfill';
 
-import Authentication from './Authentication';
 import { Window } from './Window';
 import { API_ENV } from '../ui/app/ApiProvider';
 import { PREAPPROVAL_KEY, TX_STORE_KEY } from '_src/shared/constants';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
-import { isLocked } from '_src/ui/app/helpers/lock-wallet';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 import type {
@@ -444,34 +442,12 @@ class Transactions {
     }
 
     private async getAccount(address: SuiAddress): Promise<AccountInfo> {
-        const passphrase = await getEncrypted({
-            key: 'passphrase',
-            session: true,
+        const accountInfosString = await getEncrypted({
+            key: 'accountInfos',
+            session: false,
             strong: false,
         });
-        const locked = passphrase && (await isLocked(passphrase));
-
-        const authentication = await getEncrypted({
-            key: 'authentication',
-            session: true,
-            strong: false,
-        });
-        if (locked || (!passphrase && !authentication)) {
-            throw new Error(`Wallet is locked`);
-        }
-        let accountInfos;
-        if (authentication) {
-            Authentication.set(authentication);
-            accountInfos = await Authentication.getAccountInfos();
-        } else {
-            const accountInfosString = await getEncrypted({
-                key: 'accountInfos',
-                session: false,
-                passphrase: (passphrase || authentication) as string,
-                strong: false,
-            });
-            accountInfos = JSON.parse(accountInfosString || '[]');
-        }
+        const accountInfos = JSON.parse(accountInfosString || '[]');
 
         return accountInfos.find(
             (accountInfo: AccountInfo) => accountInfo.address === address
