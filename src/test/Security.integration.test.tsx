@@ -188,6 +188,7 @@ describe('The Security Settings page', () => {
             const passphrase = await getEncrypted({
                 key: 'passphrase',
                 session: true,
+                strong: false,
             });
             expect(passphrase).toEqual('one two three');
         });
@@ -220,6 +221,7 @@ describe('The Security Settings page', () => {
             const passphrase = await getEncrypted({
                 key: 'passphrase',
                 session: true,
+                strong: false,
             });
             expect(passphrase).toEqual(password);
         });
@@ -254,6 +256,7 @@ describe('The Security Settings page', () => {
             const passphrase = await getEncrypted({
                 key: 'passphrase',
                 session: true,
+                strong: false,
             });
             expect(passphrase).toEqual(password);
         });

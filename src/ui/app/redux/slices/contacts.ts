@@ -21,6 +21,7 @@ export const loadContactsStorage = createAsyncThunk(
         const authentication = await getEncrypted({
             key: 'authentication',
             session: true,
+            strong: false,
         });
 
         if (authentication) {
@@ -33,6 +34,7 @@ export const loadContactsStorage = createAsyncThunk(
                         key: 'contacts',
                         session: false,
                         passphrase: authentication,
+                        strong: false,
                     })) || '[]'
                 );
             }
@@ -43,6 +45,7 @@ export const loadContactsStorage = createAsyncThunk(
         const passphrase = await getEncrypted({
             key: 'passphrase',
             session: true,
+            strong: false,
         });
         if (!passphrase || passphrase.length === 0) {
             return [];
@@ -52,6 +55,7 @@ export const loadContactsStorage = createAsyncThunk(
                 key: 'contacts',
                 session: false,
                 passphrase,
+                strong: false,
             })) || '[]'
         );
 
@@ -71,6 +75,7 @@ export const saveContacts = createAsyncThunk(
                 key: 'contacts',
                 value: JSON.stringify(contacts),
                 session: false,
+                strong: false,
                 passphrase,
             });
         }

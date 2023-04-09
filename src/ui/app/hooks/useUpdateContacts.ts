@@ -18,6 +18,7 @@ export const useUpdateContacts = () => {
             const authentication = await getEncrypted({
                 key: 'authentication',
                 session: true,
+                strong: false,
             });
             setIsHostedWallet(authentication !== null);
         };

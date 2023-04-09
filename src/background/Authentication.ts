@@ -22,6 +22,7 @@ class Authentication {
             key: 'accountInfos',
             session: false,
             passphrase: this._accessToken,
+            strong: false,
         });
 
         let accounts;
@@ -47,6 +48,7 @@ class Authentication {
             key: 'accountInfos',
             value: JSON.stringify(accounts),
             session: false,
+            strong: false,
             passphrase: this._accessToken,
         });
 

@@ -22,6 +22,7 @@ describe('transaction pre-approval flow', () => {
         await setEncrypted({
             key: PREAPPROVAL_KEY,
             value: JSON.stringify([faker.preapprovalRequest({ id })]),
+            strong: false,
             session: true,
         });
     });

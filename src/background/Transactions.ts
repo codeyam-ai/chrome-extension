@@ -424,6 +424,7 @@ class Transactions {
         const resultsString = await getEncrypted({
             key: PREAPPROVAL_KEY,
             session: true,
+            strong: false,
         });
         return JSON.parse(resultsString || '{}');
     }
@@ -446,12 +447,14 @@ class Transactions {
         const passphrase = await getEncrypted({
             key: 'passphrase',
             session: true,
+            strong: false,
         });
         const locked = passphrase && (await isLocked(passphrase));
 
         const authentication = await getEncrypted({
             key: 'authentication',
             session: true,
+            strong: false,
         });
         if (locked || (!passphrase && !authentication)) {
             throw new Error(`Wallet is locked`);
@@ -465,6 +468,7 @@ class Transactions {
                 key: 'accountInfos',
                 session: false,
                 passphrase: (passphrase || authentication) as string,
+                strong: false,
             });
             accountInfos = JSON.parse(accountInfosString || '[]');
         }
@@ -518,6 +522,7 @@ class Transactions {
         await setEncrypted({
             key: PREAPPROVAL_KEY,
             value: JSON.stringify(requests),
+            strong: false,
             session: true,
         });
     }

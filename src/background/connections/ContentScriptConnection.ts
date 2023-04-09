@@ -258,6 +258,7 @@ export class ContentScriptConnection extends Connection {
         const passphrase = await getEncrypted({
             key: 'passphrase',
             session: true,
+            strong: false,
         });
         const locked = passphrase && (await isLocked(passphrase));
         if (locked) {
@@ -266,6 +267,7 @@ export class ContentScriptConnection extends Connection {
         const authentication = await getEncrypted({
             key: 'authentication',
             session: true,
+            strong: false,
         });
         let accountInfos;
         if (authentication) {
@@ -276,6 +278,7 @@ export class ContentScriptConnection extends Connection {
                 key: 'accountInfos',
                 session: false,
                 passphrase: (passphrase || authentication) as string,
+                strong: false,
             });
             accountInfos = JSON.parse(accountInfosString || '[]');
         }
@@ -287,6 +290,7 @@ export class ContentScriptConnection extends Connection {
         const passphrase = await getEncrypted({
             key: 'passphrase',
             session: true,
+            strong: false,
         });
         const locked = passphrase && (await isLocked(passphrase));
         if (locked) {
@@ -295,6 +299,7 @@ export class ContentScriptConnection extends Connection {
         const authentication = await getEncrypted({
             key: 'authentication',
             session: true,
+            strong: false,
         });
 
         const accountInfos = await this.getAccountInfos();
@@ -304,6 +309,7 @@ export class ContentScriptConnection extends Connection {
                 key: 'activeAccountIndex',
                 session: false,
                 passphrase: (passphrase || authentication) as string,
+                strong: false,
             })) || '0'
         );
 

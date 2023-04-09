@@ -53,12 +53,14 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
         const accountTypeString = ((await getEncrypted({
             key: 'account-type',
             session: false,
+            strong: false,
         })) || AccountType.UNINITIALIZED) as keyof typeof AccountType;
         const accountType = AccountType[accountTypeString];
 
         let authentication = await getEncrypted({
             key: 'authentication',
             session: true,
+            strong: false,
         });
 
         if (authentication) {
@@ -71,6 +73,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                         key: 'activeAccountIndex',
                         session: false,
                         passphrase: authentication,
+                        strong: false,
                     })) || '0'
                 );
 
@@ -97,6 +100,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
         const passphrase = await getEncrypted({
             key: 'passphrase',
             session: true,
+            strong: false,
         });
         if (!passphrase || passphrase.length === 0) {
             return {
@@ -114,12 +118,14 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             key: 'mnemonic',
             session: false,
             passphrase,
+            strong: true,
         });
         let accountInfos = JSON.parse(
             (await getEncrypted({
                 key: 'accountInfos',
                 session: false,
                 passphrase,
+                strong: false,
             })) || '[]'
         );
 
@@ -142,6 +148,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     key: 'accountInfos',
                     value: JSON.stringify(accountInfos),
                     session: false,
+                    strong: false,
                     passphrase,
                 });
             } else {
@@ -159,6 +166,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 key: 'activeAccountIndex',
                 session: false,
                 passphrase,
+                strong: false,
             })) || '0'
         );
 
@@ -203,7 +211,11 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
 export const getEmail = createAsyncThunk(
     'account/getEmail',
     async (): Promise<string | null> => {
-        return await getEncrypted({ key: 'email', session: false });
+        return await getEncrypted({
+            key: 'email',
+            session: false,
+            strong: false,
+        });
     }
 );
 
@@ -223,6 +235,7 @@ export const createMnemonic = createAsyncThunk(
                 key: 'mnemonic',
                 value: mnemonic,
                 session: false,
+                strong: true,
                 passphrase,
             });
         }
@@ -240,12 +253,14 @@ export const saveAuthentication = createAsyncThunk(
             await setEncrypted({
                 key: 'authentication',
                 value: authentication,
+                strong: false,
                 session: true,
             });
 
             await setEncrypted({
                 key: 'account-type',
                 value: AccountType.EMAIL,
+                strong: false,
                 session: false,
             });
         }
@@ -268,6 +283,7 @@ export const saveAccountInfos = createAsyncThunk(
                 key: 'accountInfos',
                 value: JSON.stringify(accountInfos),
                 session: false,
+                strong: false,
                 passphrase,
             });
         }
@@ -286,6 +302,7 @@ export const saveActiveAccountIndex = createAsyncThunk(
             key: 'activeAccountIndex',
             value: activeAccountIndex.toString(),
             session: false,
+            strong: false,
             passphrase: passphrase || authentication || undefined,
         });
         await clearForNetworkOrWalletSwitch();
@@ -300,7 +317,12 @@ export const saveEmail = createAsyncThunk(
         if (!email) {
             await deleteEncrypted({ key: 'email', session: false });
         } else {
-            await setEncrypted({ key: 'email', value: email, session: false });
+            await setEncrypted({
+                key: 'email',
+                value: email,
+                strong: false,
+                session: false,
+            });
         }
         return email;
     }
@@ -336,6 +358,7 @@ export const changePassword: AsyncThunk<
                 key: 'mnemonic',
                 value: mnemonic,
                 session: false,
+                strong: true,
                 passphrase: newPassword,
             });
         }
@@ -360,6 +383,7 @@ export const changePassword: AsyncThunk<
                 key: 'accountInfos',
                 session: false,
                 passphrase: currentPassword,
+                strong: false,
             })) || '[]'
         );
         await deleteEncrypted({ key: 'accountInfos', session: false });
@@ -367,6 +391,7 @@ export const changePassword: AsyncThunk<
             key: 'accountInfos',
             value: JSON.stringify(accountInfos),
             session: false,
+            strong: false,
             passphrase: newPassword,
         });
 
@@ -375,6 +400,7 @@ export const changePassword: AsyncThunk<
                 key: 'activeAccountIndex',
                 session: false,
                 passphrase: currentPassword,
+                strong: false,
             })) || '0'
         );
         await deleteEncrypted({ key: 'activeAccountIndex', session: false });
@@ -382,6 +408,7 @@ export const changePassword: AsyncThunk<
             key: 'activeAccountIndex',
             value: activeAccountIndex.toString(),
             session: false,
+            strong: false,
             passphrase: newPassword,
         });
 
@@ -389,6 +416,7 @@ export const changePassword: AsyncThunk<
         await setEncrypted({
             key: 'passphrase',
             value: newPassword,
+            strong: false,
             session: true,
         });
 
@@ -414,6 +442,7 @@ export const savePassphrase: AsyncThunk<
         await setEncrypted({
             key: 'passphrase',
             value: passphrase,
+            strong: false,
             session: true,
         });
 
@@ -421,12 +450,14 @@ export const savePassphrase: AsyncThunk<
             key: 'passphrase-test',
             value: PASSPHRASE_TEST,
             session: false,
+            strong: false,
             passphrase,
         });
 
         await setEncrypted({
             key: 'account-type',
             value: AccountType.PASSWORD,
+            strong: false,
             session: false,
         });
 
@@ -441,6 +472,7 @@ export const savePassphrase: AsyncThunk<
                 key: 'mnemonic',
                 value: mnemonic,
                 session: false,
+                strong: true,
                 passphrase,
             });
             await setEncrypted({
@@ -456,6 +488,7 @@ export const savePassphrase: AsyncThunk<
                     },
                 ]),
                 session: false,
+                strong: false,
                 passphrase,
             });
         }
@@ -496,6 +529,7 @@ const isPasswordCorrect = async (password: string) => {
         key: 'passphrase-test',
         session: false,
         passphrase: password,
+        strong: false,
     });
 
     if (passphraseTest !== PASSPHRASE_TEST) return false;
@@ -524,6 +558,7 @@ export const unlock: AsyncThunk<string | null, string | null, AppThunkConfig> =
                     await setEncrypted({
                         key: 'passphrase',
                         value: passphrase,
+                        strong: false,
                         session: true,
                     });
 

@@ -43,29 +43,34 @@ export const simulateMnemonicUser = async function (unlocked = true) {
         key: 'passphrase-test',
         value: PASSPHRASE_TEST,
         session: false,
+        strong: false,
         passphrase: password,
     });
     await setEncrypted({
         key: 'accountInfos',
         value: accountInfosJson,
         session: false,
+        strong: false,
         passphrase: password,
     });
     await setEncrypted({
         key: 'mnemonic',
         value: recoveryPhrase,
         session: false,
+        strong: true,
         passphrase: password,
     });
     await setEncrypted({
         key: 'account-type',
         value: AccountType.PASSWORD,
+        strong: false,
         session: false,
     });
     if (unlocked) {
         await setEncrypted({
             key: 'passphrase',
             value: password,
+            strong: false,
             session: true,
         });
         await setUnlocked(password);
@@ -77,12 +82,14 @@ export const simulateEmailUser = async function () {
     await setEncrypted({
         key: 'authentication',
         value: fakeAccessToken,
+        strong: false,
         session: true,
     });
     await setEncrypted({
         key: 'accountInfos',
         value: accountInfosJson,
         session: false,
+        strong: false,
         passphrase: fakeAccessToken,
     });
 };
@@ -110,12 +117,14 @@ export const simulateConnectedApps = async function () {
     await setEncrypted({
         key: PERMISSIONS_STORAGE_KEY,
         value: JSON.stringify(permissionsToEncrypt),
+        strong: false,
         session: false,
     });
 
     await setEncrypted({
         key: PREAPPROVAL_KEY,
         value: JSON.stringify({}),
+        strong: false,
         session: false,
     });
 };

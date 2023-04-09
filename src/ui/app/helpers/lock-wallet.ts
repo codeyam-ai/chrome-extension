@@ -11,6 +11,7 @@ export const setUnlocked = async (passphrase: string) => {
         key: UNLOCKED,
         value: `${UNLOCKED}${passphrase}`,
         session: true,
+        strong: false,
         passphrase,
     });
 };
@@ -23,6 +24,7 @@ export const isLocked = async (passphrase: string) => {
     const unlocked = await getEncrypted({
         key: UNLOCKED,
         session: true,
+        strong: false,
         passphrase,
     });
 
