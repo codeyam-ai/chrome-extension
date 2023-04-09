@@ -56,15 +56,13 @@ const ChangeColor: React.FC = () => {
                 style={{ backgroundColor: draftColor }}
                 onClick={openColorPickerMenu}
             />
-            <div className="absolute -left-[215px] top-[210px]">
-                <ColorPickerMenu
-                    isOpen={isColorPickerMenuOpen}
-                    selectedColor={draftColor}
-                    setSelectedColor={_handleColorChange}
-                    closeColorPickerMenu={closeColorPickerMenu}
-                    leftAbsoluteClassNames="left-0 sm:left-60"
-                />
-            </div>
+            <ColorPickerMenu
+                isOpen={isColorPickerMenuOpen}
+                selectedColor={draftColor}
+                setSelectedColor={_handleColorChange}
+                closeColorPickerMenu={closeColorPickerMenu}
+                leftAbsoluteClassNames="left-[24px] top-[180px]"
+            />
             <div className="flex mt-3 gap-3">
                 <Button
                     removeContainerPadding
