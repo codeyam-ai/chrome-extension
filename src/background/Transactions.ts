@@ -299,16 +299,17 @@ class Transactions {
                 env = API_ENV.customRPC;
                 break;
             default: {
-                const envInfo = await Browser.storage.local.get([
-                    'sui_Env',
-                    'sui_Env_RPC',
-                ]);
-
-                if (envInfo) {
-                    env = envInfo.sui_Env;
-                    envEndpoint = envInfo?.sui_Env_RPC;
-                }
+                env = API_ENV.testNet;
             }
+        }
+
+        const envInfo = await Browser.storage.local.get([
+            'sui_Env',
+            'sui_Env_RPC',
+        ]);
+
+        if (envInfo?.sui_Env === API_ENV.customRPC) {
+            envEndpoint = envInfo?.sui_Env_RPC;
         }
 
         let connection: Connection;
