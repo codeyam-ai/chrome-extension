@@ -682,6 +682,9 @@ const accountSlice = createSlice({
             })
             .addCase(unlock.fulfilled, (state, action) => {
                 state.locked = !action.payload;
+                if (!state.locked) {
+                    state.loading = true;
+                }
                 state.passphrase = action.payload;
             }),
 });
