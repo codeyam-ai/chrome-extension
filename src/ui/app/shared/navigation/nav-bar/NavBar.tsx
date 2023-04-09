@@ -217,14 +217,10 @@ const NavBar = () => {
 
     return (
         <div className="flex flex-row items-center justify-between px-6 py-4 border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
-            <Link to={'/'} className="-mt-1">
-                <EthosLogo />
-            </Link>
-            <WalletProfile />
             {isDetailsPage ? (
                 <button
                     onClick={goBack}
-                    className={'flex flex-row gap-3 items-center'}
+                    className={'flex flex-row gap-1 items-start'}
                 >
                     <ArrowLeftIcon className="h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />{' '}
                     <BodyLarge isTextColorMedium>Back</BodyLarge>
@@ -237,6 +233,13 @@ const NavBar = () => {
                     />
                 </Link>
             )}
+            <WalletProfile />
+            <Link to={'/settings/main'}>
+                <Cog6ToothIcon
+                    data-testid="settings-toggle"
+                    className="h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark"
+                />
+            </Link>
         </div>
     );
 };

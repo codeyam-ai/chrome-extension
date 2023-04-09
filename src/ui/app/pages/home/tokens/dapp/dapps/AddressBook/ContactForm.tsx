@@ -10,6 +10,7 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { SuiAddress } from '@mysten/sui.js';
 import type { EmojiPickerResult } from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
+import Body from '_src/ui/app/shared/typography/Body';
 
 interface ContactFormProps {
     name?: string;
@@ -110,9 +111,12 @@ const ContactForm = ({
                     <BodyLarge isSemibold className="mb-2 text-left">
                         Address
                     </BodyLarge>
-                    <BodyLarge isTextColorMedium className="w-full break-words">
+                    <Body
+                        isTextColorMedium
+                        className="w-full break-words !text-left"
+                    >
                         {address}
-                    </BodyLarge>
+                    </Body>
                 </div>
             )}
 

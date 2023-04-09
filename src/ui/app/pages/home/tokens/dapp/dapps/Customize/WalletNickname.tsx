@@ -53,16 +53,16 @@ const WalletNickname: React.FC = () => {
         <div className="flex flex-col items-center pt-6 px-6">
             <Title className="pb-6">Choose a nickname for your wallet</Title>
             <Input defaultValue={nickname} onChange={handleOnChange} />
-            <div className="flex flex-col gap-2">
-                <Button removeContainerPadding onClick={handleOnSave}>
-                    {buttonText}
-                </Button>
+            <div className="flex gap-3 mt-3">
                 <Button
                     removeContainerPadding
                     buttonStyle="secondary"
                     onClick={goBack}
                 >
                     Cancel
+                </Button>
+                <Button removeContainerPadding onClick={handleOnSave}>
+                    {buttonText}
                 </Button>
             </div>
         </div>

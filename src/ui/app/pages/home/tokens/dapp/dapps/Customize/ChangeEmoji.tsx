@@ -69,16 +69,16 @@ const ChangeEmoji: React.FC = () => {
                 setSelectedEmoji={_handleEmojiChange}
                 closeEmojiPickerMenu={closeEmojiPickerMenu}
             />
-            <div className="flex flex-col mt-6 gap-2">
-                <Button removeContainerPadding onClick={handleOnContinue}>
-                    Continue
-                </Button>
+            <div className="flex mt-3 gap-3">
                 <Button
                     removeContainerPadding
                     buttonStyle="secondary"
                     onClick={goBack}
                 >
                     Back
+                </Button>
+                <Button removeContainerPadding onClick={handleOnContinue}>
+                    Continue
                 </Button>
             </div>
         </div>

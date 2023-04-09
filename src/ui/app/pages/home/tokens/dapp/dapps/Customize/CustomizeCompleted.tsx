@@ -20,16 +20,16 @@ const CustomizeCompleted: React.FC = () => {
         <div className="flex flex-col gap-6 mt-6 items-center place-content-center">
             <CheckCircleIcon className="w-8 h-8 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
             <Title>Customization complete!</Title>
-            <div className="flex flex-col mt-6 gap-2">
-                <Button removeContainerPadding onClick={handleOnContinue}>
-                    Continue
-                </Button>
+            <div className="flex mt-3 gap-3">
                 <Button
                     removeContainerPadding
                     buttonStyle="secondary"
                     onClick={goBack}
                 >
                     Back
+                </Button>
+                <Button removeContainerPadding onClick={handleOnContinue}>
+                    Finish
                 </Button>
             </div>
         </div>
