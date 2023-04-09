@@ -226,11 +226,8 @@ const NavBar = () => {
                     <BodyLarge isTextColorMedium>Back</BodyLarge>
                 </button>
             ) : (
-                <Link to={'/settings/main'}>
-                    <Cog6ToothIcon
-                        data-testid="settings-toggle"
-                        className="h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark"
-                    />
+                <Link to={'/'} className="-mt-1">
+                    <EthosLogo />
                 </Link>
             )}
             <WalletProfile />

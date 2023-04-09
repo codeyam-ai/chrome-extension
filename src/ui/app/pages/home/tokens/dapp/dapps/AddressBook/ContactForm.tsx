@@ -6,11 +6,11 @@ import Button from '_src/ui/app/shared/buttons/Button';
 import Input from '_src/ui/app/shared/inputs/Input';
 import ColorPickerMenu from '_src/ui/app/shared/inputs/colors/ColorPickerMenu';
 import EmojiPickerMenu from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
+import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { SuiAddress } from '@mysten/sui.js';
 import type { EmojiPickerResult } from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
-import Body from '_src/ui/app/shared/typography/Body';
 
 interface ContactFormProps {
     name?: string;
