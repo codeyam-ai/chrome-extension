@@ -121,27 +121,26 @@ const ContactForm = ({
             )}
 
             <div className="flex flex-row justify-center mb-8">
-                <div className="relative flex flex-col justify-center items-center m-1">
+                <div className="relative flex flex-col justify-center items-center m-1 ">
                     <BodyLarge isSemibold className="mb-2">
                         Choose a Color
                     </BodyLarge>
                     <div
                         onClick={openColorPickerMenu}
-                        className="bg-ethos-light-background-secondary rounded-lg px-14 py-6 cursor-pointer"
+                        className="bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-lg px-14 py-6 cursor-pointer"
                     >
                         <div
                             className="w-10 h-10 mx-auto rounded-full outline outline-offset-4 outline-ethos-light-text-stroke dark:outline-ethos-dark-text-stroke"
                             style={{ backgroundColor: color }}
                         />
                     </div>
-                    <div className="absolute -left-[6px] -top-[20px]">
-                        <ColorPickerMenu
-                            isOpen={isColorPickerMenuOpen}
-                            selectedColor={color}
-                            setSelectedColor={_handleColorChange}
-                            closeColorPickerMenu={closeColorPickerMenu}
-                        />
-                    </div>
+                    <ColorPickerMenu
+                        isOpen={isColorPickerMenuOpen}
+                        selectedColor={color}
+                        setSelectedColor={_handleColorChange}
+                        closeColorPickerMenu={closeColorPickerMenu}
+                        leftAbsoluteClassNames="-left-[6px] -top-[20px]"
+                    />
                 </div>
                 <div className="m-1">
                     <BodyLarge isSemibold className="mb-2">
@@ -150,7 +149,7 @@ const ContactForm = ({
                     <div
                         data-testid="emoji-picker"
                         // className="px-14 py-6 rounded-lg bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke place-content-center items-center cursor-pointer"
-                        className="bg-ethos-light-background-secondary rounded-lg px-12 py-5 cursor-pointer"
+                        className="bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-lg px-12 py-5 cursor-pointer"
                         onClick={openEmojiPickerMenu}
                     >
                         <div className="flex items-center justify-center w-12 h-12 bg-white rounded-full">

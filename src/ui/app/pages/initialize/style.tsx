@@ -138,6 +138,7 @@ const StylePage = () => {
                             selectedColor={draftColor}
                             setSelectedColor={_handleColorChange}
                             closeColorPickerMenu={closeColorPickerMenu}
+                            leftAbsoluteClassNames="left-0 sm:left-[60px]"
                             forceLightMode
                         />
                     </div>

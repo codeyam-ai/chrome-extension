@@ -62,6 +62,7 @@ const ChangeColor: React.FC = () => {
                     selectedColor={draftColor}
                     setSelectedColor={_handleColorChange}
                     closeColorPickerMenu={closeColorPickerMenu}
+                    leftAbsoluteClassNames="left-0 sm:left-60"
                 />
             </div>
             <div className="flex mt-3 gap-3">

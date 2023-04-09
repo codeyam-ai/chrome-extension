@@ -173,7 +173,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
             <BasicSectionHeader text="Edit Wallet"></BasicSectionHeader>
             <div className="flex flex-col">
                 <Input value={draftName} onChange={_handleNameChange} />
-                <div className="flex justify-between items-center px-6 pb-6">
+                <div className="flex justify-between items-center px-6 pb-6 ">
                     <BodyLarge isSemibold>Choose a Color</BodyLarge>
                     <div className="p-1 rounded-md border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
                         <div
@@ -190,6 +190,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                         selectedColor={draftColor}
                         setSelectedColor={_handleColorChange}
                         closeColorPickerMenu={closeColorPickerMenu}
+                        leftAbsoluteClassNames="-left-[6px] -top-[20px]"
                     />
                 </div>
                 <div className="flex justify-between items-center px-6 pb-6">
