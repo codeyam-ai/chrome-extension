@@ -73,7 +73,7 @@ export async function getEncrypted({
         text: key,
         passphrase,
         masterSalt: MASTER_SALT,
-        strong,
+        strong: false,
     });
     const encryptedValue = await (session
         ? getSession(encryptedKey)

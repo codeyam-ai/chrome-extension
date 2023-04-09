@@ -101,6 +101,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             session: true,
             strong: false,
         });
+
         if (!passphrase || passphrase.length === 0) {
             return {
                 authentication: null,
@@ -240,6 +241,7 @@ export const createMnemonic = createAsyncThunk(
         const {
             account: { passphrase },
         } = getState() as RootState;
+
         if (passphrase) {
             await setEncrypted({
                 key: 'mnemonic',
@@ -442,6 +444,7 @@ export const savePassphrase: AsyncThunk<
                 strong: true,
                 passphrase,
             });
+
             await setEncrypted({
                 key: 'accountInfos',
                 value: JSON.stringify([
@@ -456,6 +459,7 @@ export const savePassphrase: AsyncThunk<
                 session: false,
                 strong: false,
             });
+
             await setEncrypted({
                 key: 'seeds',
                 value: JSON.stringify([
