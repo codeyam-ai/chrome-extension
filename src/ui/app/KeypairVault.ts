@@ -10,11 +10,15 @@ import type { Ed25519Keypair } from '@mysten/sui.js';
 export type AccountInfo = {
     index: number;
     address: string;
-    seed: string;
     name?: string;
     color?: string;
     emoji?: string;
     chain?: string;
+};
+
+export type SeedInfo = {
+    address: string;
+    seed: string;
 };
 
 export default class KeypairVault {

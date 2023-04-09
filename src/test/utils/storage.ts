@@ -33,6 +33,21 @@ export const accountInfos = [
     },
 ];
 
+export const privateKeys = [
+    {
+        address:
+            '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de',
+        privateKey:
+            '138,218,84,37,236,236,197,76,166,86,150,23,223,51,107,198,3,149,112,132,37,250,167,223,74,224,28,199,243,20,181,211',
+    },
+    {
+        address:
+            '0x4a3086b9f28f10a6e82b152581db1c792a4183723766b2b291fa49a13a9de3f7',
+        privateKey:
+            '39,152,242,153,62,243,130,133,194,63,255,73,56,234,127,189,45,66,228,56,187,248,98,49,146,17,246,230,110,0,222,26',
+    },
+];
+
 export const fakeAccessToken = 'ewhfbiuh3rh23d';
 
 export const simulateMnemonicUser = async function (unlocked = true) {

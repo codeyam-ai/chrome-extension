@@ -85,7 +85,6 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                 {
                     index: 0,
                     address: keypairVault.getAddress(0) || '',
-                    seed: (keypairVault.getSeed(0) || '').toString(),
                 },
             ];
         }

@@ -41,7 +41,7 @@ import type {
 import type { TransactionRequestResponse } from '_payloads/transactions/ui/TransactionRequestResponse';
 import type { ContentScriptConnection } from '_src/background/connections/ContentScriptConnection';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
-import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import type { SeedInfo } from '_src/ui/app/KeypairVault';
 
 // type SimpleCoin = {
 //     balance: number;
@@ -281,7 +281,7 @@ class Transactions {
         requestType?: SuiSignAndExecuteTransactionBlockInput['requestType'];
         options?: SuiSignAndExecuteTransactionBlockInput['options'];
     }) {
-        const activeAccount = await this.getAccount(address);
+        const activeSeed = await this.getSeedInfo(address);
 
         let env;
         let envEndpoint;
@@ -325,14 +325,14 @@ class Transactions {
             throw new Error('No connection found');
         }
 
-        const provider = new JsonRpcProvider(connection);
-        const secretKey = Uint8Array.from(
-            activeAccount.seed.split(',').map((n) => parseInt(n))
-        );
-        const keypair = Ed25519Keypair.fromSecretKey(secretKey);
-        const signer = new RawSigner(keypair, provider);
-
         try {
+            const provider = new JsonRpcProvider(connection);
+            const secretKey = Uint8Array.from(
+                activeSeed.seed.split(',').map((n) => parseInt(n))
+            );
+            const keypair = Ed25519Keypair.fromSecretKey(secretKey);
+            const signer = new RawSigner(keypair, provider);
+
             const txResponse = await signer.signAndExecuteTransactionBlock({
                 transactionBlock,
                 options,
@@ -442,16 +442,16 @@ class Transactions {
         this._preapprovalResponseMessages.next(msg);
     }
 
-    private async getAccount(address: SuiAddress): Promise<AccountInfo> {
-        const accountInfosString = await getEncrypted({
-            key: 'accountInfos',
-            session: false,
+    private async getSeedInfo(address: SuiAddress): Promise<SeedInfo> {
+        const seedInfoString = await getEncrypted({
+            key: 'seeds',
+            session: true,
             strong: false,
         });
-        const accountInfos = JSON.parse(accountInfosString || '[]');
+        const seedInfos = JSON.parse(seedInfoString || '[]');
 
-        return accountInfos.find(
-            (accountInfo: AccountInfo) => accountInfo.address === address
+        return seedInfos.find(
+            (seedInfo: SeedInfo) => seedInfo.address === address
         );
     }
 

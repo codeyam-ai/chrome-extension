@@ -49,7 +49,6 @@ const CreateWalletProvider = ({
                 {
                     index: 0,
                     address: keypairVault.getAddress(0) || '',
-                    seed: (keypairVault.getSeed(0) || '').toString(),
                 },
             ];
         }
@@ -120,9 +119,6 @@ const CreateWalletProvider = ({
                         emoji: getNextEmoji(nextAccountIndex),
                         address:
                             keypairVault.getAddress(nextAccountIndex) || '',
-                        seed: (
-                            keypairVault.getSeed(nextAccountIndex) || ''
-                        ).toString(),
                     },
                 ];
 

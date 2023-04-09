@@ -131,6 +131,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             const keypairVault = new KeypairVault();
             keypairVault.mnemonic = mnemonic;
 
+            let seeds = [];
             if (accountInfos.length === 0) {
                 accountInfos = [
                     {
@@ -139,23 +140,36 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                         color: getNextWalletColor(0),
                         emoji: getNextEmoji(0),
                         address: keypairVault.getAddress(0),
+                    },
+                ];
+                seeds = [
+                    {
+                        address: keypairVault.getAddress(0),
                         seed: (keypairVault.getSeed(0) || '').toString(),
                     },
                 ];
-                await setEncrypted({
-                    key: 'accountInfos',
-                    value: JSON.stringify(accountInfos),
-                    session: false,
-                    strong: false,
-                });
             } else {
                 for (let i = 0; i < accountInfos.length; i++) {
                     accountInfos[i].address = keypairVault.getAddress(i);
-                    accountInfos[i].seed = (
-                        keypairVault.getSeed(i) || ''
-                    ).toString();
+                    seeds.push({
+                        address: keypairVault.getAddress(i),
+                        seed: (keypairVault.getSeed(i) || '').toString(),
+                    });
                 }
             }
+
+            await setEncrypted({
+                key: 'accountInfos',
+                value: JSON.stringify(accountInfos),
+                session: false,
+                strong: false,
+            });
+            await setEncrypted({
+                key: 'seeds',
+                value: JSON.stringify(seeds),
+                session: true,
+                strong: false,
+            });
         }
 
         activeAccountIndex = parseInt(
@@ -437,10 +451,20 @@ export const savePassphrase: AsyncThunk<
                         color: getNextWalletColor(0),
                         emoji: getNextEmoji(0),
                         address: keypairVault.getAddress() || '',
-                        seed: (keypairVault.getSeed() || '').toString(),
                     },
                 ]),
                 session: false,
+                strong: false,
+            });
+            await setEncrypted({
+                key: 'seeds',
+                value: JSON.stringify([
+                    {
+                        address: keypairVault.getAddress() || '',
+                        seed: (keypairVault.getSeed() || '').toString(),
+                    },
+                ]),
+                session: true,
                 strong: false,
             });
         }

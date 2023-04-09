@@ -58,7 +58,7 @@ const HomePage = () => {
 
     return (
         <PageLayout>
-            <Loading loading={guardChecking} big={true}>
+            <Loading loading={guardChecking} big={true} className="p-36">
                 <BaseLayout>
                     <NavBar />
                     <main className="flex-grow h-[471px] overflow-scroll no-scrollbar">
