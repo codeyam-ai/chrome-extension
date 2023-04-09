@@ -53,7 +53,7 @@ export const DappViewHeader: React.FC<DappViewHeaderProps> = ({
     closeDapp,
 }) => {
     return (
-        <div className="flex items-center justify-between p-4 border-b border-ethos-pale-purple border-ethos-dark-text-stroke">
+        <div className="flex items-center justify-between p-4 border-b border-ethos-light-gray border-ethos-dark-text-stroke">
             <button onClick={closeDapp}>
                 <ChevronLeftIcon
                     className={`h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium`}

@@ -66,7 +66,7 @@ export const DappList: React.FC<ScrollingListProps> = ({ data }) => {
             <DappView dapp={selectedDapp} onClose={closeDapp} />
             <div
                 ref={scrollContainerRef}
-                className="flex overflow-x-auto whitespace-nowrap py-2 bg-ethos-pale-purple dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
+                className="flex overflow-x-auto whitespace-nowrap py-2 bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
             >
                 {listItems}
             </div>
