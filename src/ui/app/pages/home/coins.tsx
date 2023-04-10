@@ -4,28 +4,26 @@
 import { CircleStackIcon } from '@heroicons/react/24/solid';
 
 import { Icon } from '../../shared/icons/Icon';
-import { useAppSelector, useFormatCoin } from '_hooks';
-import {
-    accountAggregateBalancesSelector,
-    accountNftsSelector,
-} from '_redux/slices/account';
+import { useAppSelector } from '_hooks';
+import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 import CoinList from './tokens/CoinList';
-import { sumCoinBalances } from '../../helpers/sumCoinBalances';
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+
+import Loading from '../../components/loading';
+import { BASE_URL } from '_src/shared/constants';
 
 function CoinListPage() {
     const balances = useAppSelector(accountAggregateBalancesSelector);
-    const mistBalance = sumCoinBalances(balances);
-    const [, , usdAmount] = useFormatCoin(mistBalance, SUI_TYPE_ARG);
+    const balLength = Object.keys(balances).length || 0;
+    const empty = !balances || balLength === 0;
 
     console.log('balances', balances);
-    console.log('mistBalance', mistBalance);
+    console.log('balLength', balLength);
 
     return (
-        <div>
-            {balances.length <= 0 ? (
+        <>
+            {balances && balLength === 0 ? (
                 <EmptyPageState
                     iconWithNoClasses={
                         <Icon displayIcon={<CircleStackIcon />} />
@@ -33,15 +31,22 @@ function CoinListPage() {
                     title="You have no tokens yet"
                     subtitle="This is where your tokens will appear..."
                     linkText="Buy Tokens"
-                    linkUrl={'/tokens'}
+                    linkUrl="/tokens"
+                    internal={true}
                 />
             ) : (
-                <>
-                    <TextPageTitle title="Tokens" count={5} />
-                    <CoinList balances={balances} />
-                </>
+                <Loading
+                    className="py-3 mt-3 flex justify-center items-center"
+                    big={true}
+                    loading={empty}
+                >
+                    <TextPageTitle title="Tokens" count={balLength} />
+                    <div className={'px-6 pb-6'}>
+                        <CoinList balances={balances} />
+                    </div>
+                </Loading>
             )}
-        </div>
+        </>
     );
 }
 
