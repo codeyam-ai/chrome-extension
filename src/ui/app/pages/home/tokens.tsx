@@ -8,10 +8,9 @@ import { useAppSelector } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
-import CoinList from './tokens/CoinList';
+import CoinList from './home/CoinList';
 
 import Loading from '../../components/loading';
-import { BASE_URL } from '_src/shared/constants';
 
 function CoinListPage() {
     const balances = useAppSelector(accountAggregateBalancesSelector);
@@ -28,7 +27,7 @@ function CoinListPage() {
                     title="You have no tokens yet"
                     subtitle="This is where your tokens will appear..."
                     linkText="Buy Tokens"
-                    linkUrl="/tokens"
+                    linkUrl="/home"
                     internal={true}
                 />
             ) : (

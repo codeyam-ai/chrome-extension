@@ -8,7 +8,7 @@ import { LinkType } from '_src/enums/LinkType';
 export default function BuyPage() {
     return (
         <>
-            <NavBarWithBackAndTitle title="Buy SUI" backLink="/tokens" />
+            <NavBarWithBackAndTitle title="Buy SUI" backLink="/home" />
             <ContentBlock>
                 <Body isSemibold={true}>Not Available Yet</Body>
                 <Body isTextColorMedium>

@@ -47,7 +47,7 @@ const ChangeEmoji: React.FC = () => {
 
     const handleOnContinue = useCallback(() => {
         updateCurrentAccountInfo({ emoji: draftEmoji });
-        navigate('/tokens/customize/color');
+        navigate('/home/customize/color');
     }, [draftEmoji, navigate, updateCurrentAccountInfo]);
 
     const goBack = useCallback(() => {

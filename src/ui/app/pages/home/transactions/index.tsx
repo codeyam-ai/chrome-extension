@@ -153,7 +153,7 @@ const TransactionsPage = () => {
                         title="No transactions yet"
                         subtitle="Set up SUI tokens to send coins."
                         linkText="Get SUI"
-                        linkUrl="/tokens"
+                        linkUrl="/home"
                         internal={true}
                     />
                 )}

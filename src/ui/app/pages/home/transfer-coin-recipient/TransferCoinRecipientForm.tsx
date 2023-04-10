@@ -9,7 +9,7 @@ import AddressInput from '_components/address-input';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import Loading from '_src/ui/app/components/loading';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
-import { CoinSelect } from '_src/ui/app/pages/home/tokens/CoinDropdown';
+import { CoinSelect } from '_src/ui/app/pages/home/home/CoinDropdown';
 import { setSuiRecipient } from '_src/ui/app/redux/slices/forms';
 // import {
 //     getTransactionsByAddress,

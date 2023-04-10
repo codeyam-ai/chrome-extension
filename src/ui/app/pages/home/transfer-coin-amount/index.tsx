@@ -263,7 +263,7 @@ function TransferCoinAmountPage() {
     }, []);
 
     if (formState.to === '') {
-        return <Navigate to={'/tokens'} />;
+        return <Navigate to={'/home'} />;
     }
 
     return (

@@ -102,7 +102,7 @@ function TransferCoinReviewPage() {
                     );
                 }
 
-                const receiptUrl = '/tokens';
+                const receiptUrl = '/home';
                 navigate(receiptUrl);
             } catch (e) {
                 const error = e as { message: string };
@@ -114,7 +114,7 @@ function TransferCoinReviewPage() {
                               getGasDataFromError(error.message)?.gasBudget
                           )} SUI.`
                         : 'Transaction unsuccessful.';
-                const receiptUrl = '/tokens';
+                const receiptUrl = '/home';
                 navigate(receiptUrl);
                 toast(<FailAlert text={failAlertText} />, {
                     delay: 250,
