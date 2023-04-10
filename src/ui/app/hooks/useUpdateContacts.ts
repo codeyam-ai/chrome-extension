@@ -1,28 +1,12 @@
-// src/ui/app/hooks/useUpdateContacts.ts
-import { useState, useEffect } from 'react';
-
 import useAppDispatch from './useAppDispatch';
 import useAppSelector from './useAppSelector';
-import { saveContacts, setContacts } from '../redux/slices/contacts';
-import { getEncrypted } from '_src/shared/storagex/store';
+import { saveContacts } from '../redux/slices/contacts';
 
 import type { Contact } from '../redux/slices/contacts';
 
 export const useUpdateContacts = () => {
-    const [isHostedWallet, setIsHostedWallet] = useState<boolean>(false);
     const dispatch = useAppDispatch();
     const contacts = useAppSelector(({ contacts }) => contacts.contacts);
-
-    useEffect(() => {
-        const _setIsHosted = async () => {
-            const authentication = await getEncrypted({
-                key: 'authentication',
-                session: true,
-            });
-            setIsHostedWallet(authentication !== null);
-        };
-        _setIsHosted();
-    }, []);
 
     const addContact = async (newContact: Contact) => {
         const updatedContacts = [...contacts, newContact];
@@ -49,14 +33,7 @@ export const useUpdateContacts = () => {
     };
 
     const _saveContacts = async (updatedContacts: Contact[]) => {
-        if (isHostedWallet) {
-            // hosted wallet does not support saving contacts
-            // await Authentication.updateContacts(updatedContacts);
-            await dispatch(setContacts(updatedContacts));
-            // await Authentication.getContacts(true);
-        } else {
-            await dispatch(saveContacts(updatedContacts));
-        }
+        await dispatch(saveContacts(updatedContacts));
     };
 
     return { addContact, removeContact, editContact };

@@ -27,18 +27,29 @@ export async function setEncrypted({
     key,
     value,
     session,
+    strong,
     passphrase = MASTER_PASSPHRASE,
 }: {
     key: string;
     value: string;
     session: boolean;
+    strong: boolean;
     passphrase?: string;
 }) {
     if (!key || key.length === 0) return;
     if (!value || value.length === 0) return;
 
-    const encryptedKey = encrypt(key, passphrase, MASTER_SALT);
-    const encryptedValue = encrypt(value, passphrase);
+    const encryptedKey = encrypt({
+        text: key,
+        passphrase,
+        strong: false,
+        masterSalt: MASTER_SALT,
+    });
+    const encryptedValue = encrypt({
+        text: value,
+        strong,
+        passphrase,
+    });
 
     if (session) {
         await setSession({ [encryptedKey]: encryptedValue });
@@ -51,30 +62,48 @@ export async function getEncrypted({
     key,
     session,
     passphrase = MASTER_PASSPHRASE,
+    strong = false,
 }: {
     key: string;
     session: boolean;
     passphrase?: string;
+    strong: boolean;
 }) {
-    const encryptedKey = encrypt(key, passphrase, MASTER_SALT);
+    const encryptedKey = encrypt({
+        text: key,
+        passphrase,
+        masterSalt: MASTER_SALT,
+        strong: false,
+    });
     const encryptedValue = await (session
         ? getSession(encryptedKey)
         : getLocal(encryptedKey));
 
     if (!encryptedValue) return null;
-    return decrypt(encryptedValue as string, passphrase);
+    return decrypt({
+        encryptedData: encryptedValue as string,
+        passphrase,
+        strong,
+    });
 }
 
 export async function deleteEncrypted({
     key,
     session,
     passphrase = MASTER_PASSPHRASE,
+    strong,
 }: {
     key: string;
     session: boolean;
     passphrase?: string;
+    strong: boolean;
 }) {
-    const encryptedKey = encrypt(key, passphrase, MASTER_SALT);
+    const encryptedKey = encrypt({
+        text: key,
+        passphrase,
+        masterSalt: MASTER_SALT,
+        strong,
+    });
     await (session
         ? setSession({ [encryptedKey]: null })
         : setLocal({ [encryptedKey]: null }));

@@ -2,7 +2,7 @@ import {
     ArrowLeftIcon,
     Cog6ToothIcon,
     XMarkIcon,
-} from '@heroicons/react/24/solid';
+} from '@heroicons/react/24/outline';
 import { useCallback, useState } from 'react';
 import {
     Link,
@@ -12,6 +12,7 @@ import {
 } from 'react-router-dom';
 
 import WalletProfile from '../../content/rows-and-lists/WalletProfile';
+import EthosLogo from '../../svg/EthosLogo';
 import BodyLarge from '../../typography/BodyLarge';
 import EthosLink from '../../typography/EthosLink';
 import Header from '../../typography/Header';
@@ -219,20 +220,23 @@ const NavBar = () => {
             {isDetailsPage ? (
                 <button
                     onClick={goBack}
-                    className={'flex flex-row gap-3 items-center'}
+                    className={'flex flex-row gap-1 items-start'}
                 >
-                    <ArrowLeftIcon className="h-6 w-6 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />{' '}
+                    <ArrowLeftIcon className="h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />{' '}
                     <BodyLarge isTextColorMedium>Back</BodyLarge>
                 </button>
             ) : (
-                <Link to={'/settings/main'}>
-                    <Cog6ToothIcon
-                        data-testid="settings-toggle"
-                        className="h-6 w-6 text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
-                    />
+                <Link to={'/'} className="-mt-1">
+                    <EthosLogo />
                 </Link>
             )}
             <WalletProfile />
+            <Link to={'/settings/main'}>
+                <Cog6ToothIcon
+                    data-testid="settings-toggle"
+                    className="h-6 w-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark"
+                />
+            </Link>
         </div>
     );
 };

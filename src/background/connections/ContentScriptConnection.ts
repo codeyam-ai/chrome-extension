@@ -3,8 +3,6 @@
 
 import { Connection } from './Connection';
 import { DEFAULT_API_ENV } from '../../ui/app/ApiProvider';
-import Authentication from '../Authentication';
-import { isLocked } from '_app/helpers/lock-wallet';
 import { createMessage } from '_messages';
 import { isGetAccount } from '_payloads/account/GetAccount';
 import {
@@ -255,55 +253,22 @@ export class ContentScriptConnection extends Connection {
     }
 
     private async getAccountInfos(): Promise<AccountInfo[]> {
-        const passphrase = await getEncrypted({
-            key: 'passphrase',
-            session: true,
+        const accountInfosString = await getEncrypted({
+            key: 'accountInfos',
+            session: false,
+            strong: false,
         });
-        const locked = passphrase && (await isLocked(passphrase));
-        if (locked) {
-            throw new Error('Wallet is locked');
-        }
-        const authentication = await getEncrypted({
-            key: 'authentication',
-            session: true,
-        });
-        let accountInfos;
-        if (authentication) {
-            Authentication.set(authentication);
-            accountInfos = await Authentication.getAccountInfos();
-        } else {
-            const accountInfosString = await getEncrypted({
-                key: 'accountInfos',
-                session: false,
-                passphrase: (passphrase || authentication) as string,
-            });
-            accountInfos = JSON.parse(accountInfosString || '[]');
-        }
-
-        return accountInfos;
+        return JSON.parse(accountInfosString || '[]');
     }
 
     private async getActiveAccount(): Promise<AccountInfo> {
-        const passphrase = await getEncrypted({
-            key: 'passphrase',
-            session: true,
-        });
-        const locked = passphrase && (await isLocked(passphrase));
-        if (locked) {
-            throw new Error('Wallet is locked');
-        }
-        const authentication = await getEncrypted({
-            key: 'authentication',
-            session: true,
-        });
-
         const accountInfos = await this.getAccountInfos();
 
         const activeAccountIndex = parseInt(
             (await getEncrypted({
                 key: 'activeAccountIndex',
                 session: false,
-                passphrase: (passphrase || authentication) as string,
+                strong: false,
             })) || '0'
         );
 

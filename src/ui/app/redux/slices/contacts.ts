@@ -1,12 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import Authentication from '_src/background/Authentication';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
-import { AUTHENTICATION_REQUESTED } from '_src/ui/app/pages/initialize/hosted';
 
 import type { SuiAddress } from '@mysten/sui.js';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { RootState } from '_redux/RootReducer';
 
 export interface Contact {
     address: SuiAddress;
@@ -17,41 +14,12 @@ export interface Contact {
 
 export const loadContactsStorage = createAsyncThunk(
     'account/loadContacts',
-    async (_args, { getState }): Promise<Contact[]> => {
-        const authentication = await getEncrypted({
-            key: 'authentication',
-            session: true,
-        });
-
-        if (authentication) {
-            let contacts: Contact[] = [];
-            if (authentication !== AUTHENTICATION_REQUESTED) {
-                Authentication.set(authentication);
-
-                contacts = JSON.parse(
-                    (await getEncrypted({
-                        key: 'contacts',
-                        session: false,
-                        passphrase: authentication,
-                    })) || '[]'
-                );
-            }
-
-            return contacts;
-        }
-
-        const passphrase = await getEncrypted({
-            key: 'passphrase',
-            session: true,
-        });
-        if (!passphrase || passphrase.length === 0) {
-            return [];
-        }
+    async (): Promise<Contact[]> => {
         const contacts = JSON.parse(
             (await getEncrypted({
                 key: 'contacts',
                 session: false,
-                passphrase,
+                strong: false,
             })) || '[]'
         );
 
@@ -62,18 +30,12 @@ export const loadContactsStorage = createAsyncThunk(
 export const saveContacts = createAsyncThunk(
     'account/setContacts',
     async (contacts: Contact[], { getState }): Promise<Contact[]> => {
-        const {
-            account: { passphrase },
-        } = getState() as RootState;
-
-        if (passphrase) {
-            await setEncrypted({
-                key: 'contacts',
-                value: JSON.stringify(contacts),
-                session: false,
-                passphrase,
-            });
-        }
+        await setEncrypted({
+            key: 'contacts',
+            value: JSON.stringify(contacts),
+            session: false,
+            strong: false,
+        });
 
         return contacts;
     }

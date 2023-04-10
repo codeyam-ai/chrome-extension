@@ -21,7 +21,7 @@ const ContactListItem: React.FC<ContactListItemProps> = ({ contact }) => {
     return (
         <button
             onClick={handleViewContact}
-            className="flex justify-between w-full px-6 py-3 hover:bg-ethos-pale-purple"
+            className="flex justify-between w-full px-6 py-3 hover:bg-ethos-light-gray hover:dark:bg-ethos-dark-background-secondary"
         >
             <div className="flex gap-2">
                 <div

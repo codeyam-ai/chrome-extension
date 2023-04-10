@@ -1,17 +1,26 @@
 import { Counter, ModeOfOperation, utils } from 'aes-js';
 import { Pbkdf2HmacSha256 } from 'asmcrypto.js';
 
-const ITERATIONS = 10000;
+const STRONG_ITERATIONS = 600000;
+const ITERATIONS = 100;
 const KEY_LENGTH = 32;
 
-export function encrypt(
-    text: string,
-    passphrase: string,
-    masterSalt?: Uint8Array
-): string {
+export type EncryptArgs = {
+    text: string;
+    passphrase: string;
+    masterSalt?: Uint8Array;
+    strong?: boolean;
+};
+
+export function encrypt({
+    text,
+    passphrase,
+    masterSalt,
+    strong = false,
+}: EncryptArgs): string {
     const salt: Uint8Array =
         masterSalt || crypto.getRandomValues(new Uint8Array(16));
-    const key = generateKey(passphrase, salt);
+    const key = generateKey({ passphrase, salt, strong });
 
     const nonce: Uint8Array = crypto.getRandomValues(new Uint8Array(16));
     const aesCtr = new ModeOfOperation.ctr(
@@ -38,12 +47,22 @@ export function encrypt(
     return encryptedData;
 }
 
-export function decrypt(encryptedData: string, passphrase: string): string {
+export type DecryptArgs = {
+    encryptedData: string;
+    passphrase: string;
+    strong: boolean;
+};
+
+export function decrypt({
+    encryptedData,
+    passphrase,
+    strong,
+}: DecryptArgs): string {
     const { saltString, nonceString, encryptedText } =
         JSON.parse(encryptedData);
     const salt = utils.hex.toBytes(saltString);
     const nonce = utils.hex.toBytes(nonceString);
-    const key = generateKey(passphrase, salt);
+    const key = generateKey({ passphrase, salt, strong });
 
     const aesCtr = new ModeOfOperation.ctr(key, new Counter(nonce));
     const encryptedBytes = utils.hex.toBytes(encryptedText);
@@ -52,12 +71,20 @@ export function decrypt(encryptedData: string, passphrase: string): string {
     return decodeURIComponent(encodedText);
 }
 
-function generateKey(passphrase: string, salt: Uint8Array) {
+function generateKey({
+    passphrase,
+    salt,
+    strong,
+}: {
+    passphrase: string;
+    salt: Uint8Array;
+    strong: boolean;
+}) {
     const passphraseBytes = utils.utf8.toBytes(passphrase);
     return Pbkdf2HmacSha256(
         new Uint8Array(passphraseBytes),
         new Uint8Array(salt),
-        ITERATIONS,
+        strong ? STRONG_ITERATIONS : ITERATIONS,
         KEY_LENGTH
     );
 }

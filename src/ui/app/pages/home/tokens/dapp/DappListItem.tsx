@@ -25,7 +25,7 @@ const DappListItem: React.FC<ListItemProps> = ({ item, onClick }) => {
                 />
             </div>
             <p
-                className="mt-1 text-center text-xs w-20 truncate"
+                className="mt-1 text-center text-xs w-20 text-clip overflow-hidden"
                 title={item.name}
             >
                 {item.name}

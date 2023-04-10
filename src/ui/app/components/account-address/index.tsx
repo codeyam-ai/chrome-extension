@@ -46,7 +46,7 @@ function AccountAddress({
     );
     const address = useAppSelector(({ account }) => account.address);
 
-    const shortenAddress = useMiddleEllipsis(address, 9, 5);
+    const shortenAddress = useMiddleEllipsis(address, 6, 3);
     const cpIconMode = mode === AddressMode.NORMAL ? 'normal' : 'highlighted';
     const dotSize = mode === AddressMode.SMALL ? 'h-3 w-3' : 'h-5 w-5';
     return (

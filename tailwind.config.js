@@ -84,6 +84,7 @@ module.exports = {
                 'ethos-sui-blue': '#3D5FF2',
                 'ethos-light-purple': '#F0EBFE',
                 'ethos-pale-purple': '#F8F5FF',
+                'ethos-light-gray': '#F9F9FB',
 
                 // ==========
                 // Light mode

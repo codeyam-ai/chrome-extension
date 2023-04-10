@@ -36,7 +36,7 @@ const MintTransactionCard = ({
 
     return (
         <TransactionBody>
-            <div className="w-full rounded-xl bg-ethos-pale-purple dark:bg-ethos-dark-background-secondary flex flex-col divide-y divide-ethos-light-purple dark:divide-ethos-dark-text-stroke overflow-hidden">
+            <div className="w-full rounded-xl bg-ethos-light-gray dark:bg-ethos-dark-background-secondary flex flex-col divide-y divide-ethos-light-purple dark:divide-ethos-dark-text-stroke overflow-hidden">
                 <div className="p-6 flex-col justify-center items-center text-center">
                     {coinType && (
                         <div className="inline-block pb-3">

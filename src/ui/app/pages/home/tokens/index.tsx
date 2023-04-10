@@ -7,6 +7,7 @@ import CoinList from './CoinList';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import { DappList } from './dapp/DappList';
 import { sampleData } from './dapp/dappData';
+import ChainIndicator from '../../dapp-tx-approval/types/ChainIndicator';
 import { useAppSelector, useFormatCoin } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { LinkType } from '_src/enums/LinkType';
@@ -21,6 +22,8 @@ import Subheader from '_src/ui/app/shared/typography/Subheader';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 function TokensPage() {
+    const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const mistBalance = sumCoinBalances(balances);
     const [, , usdAmount] = useFormatCoin(mistBalance, SUI_TYPE_ARG);
@@ -36,15 +39,16 @@ function TokensPage() {
     const showDappList = true;
 
     return (
-        <>
+        <div className="flex flex-col gap-3">
             {showDappList && <DappList data={sampleData} />}
+            <ChainIndicator apiEnv={selectedApiEnv} />
             <WalletBalanceAndIconHomeView
                 accountInfo={accountInfo}
                 dollarValue={usdAmount}
             />
 
             <SendReceiveButtonGroup mistBalance={mistBalance} />
-            <div className="flex flex-col gap-6 pb-6 overflow-auto">
+            <div className="flex flex-col gap-6 overflow-auto">
                 <ContentBlock>
                     <CoinList balances={balances} />
 
@@ -66,7 +70,7 @@ function TokensPage() {
                     )}
                 </ContentBlock>
             </div>
-        </>
+        </div>
     );
 }
 

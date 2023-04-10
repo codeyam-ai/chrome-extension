@@ -10,14 +10,14 @@ const API_ENV_TO_EXPLORER_URL: Record<API_ENV, string | undefined> = {
     [API_ENV.devNet]: process.env.EXPLORER_URL_DEVNET,
     [API_ENV.testNet]: process.env.EXPLORER_URL_TESTNET,
     //No explorer url for Custom PRC
-    [API_ENV.customRPC]: '',
+    [API_ENV.customRPC]: undefined,
 };
 
 // TODO: rewrite this
 function getDefaultUrl(apiEnv?: API_ENV) {
-    const url = API_ENV_TO_EXPLORER_URL[apiEnv || DEFAULT_API_ENV];
-    if (!url && !API_ENV.customRPC) {
-        throw new Error(`Url for API_ENV ${DEFAULT_API_ENV} is not defined`);
+    let url = API_ENV_TO_EXPLORER_URL[apiEnv || DEFAULT_API_ENV];
+    if (!url) {
+        url = API_ENV_TO_EXPLORER_URL[DEFAULT_API_ENV];
     }
     return url;
 }

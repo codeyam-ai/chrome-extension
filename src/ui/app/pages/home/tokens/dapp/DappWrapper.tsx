@@ -27,7 +27,7 @@ export const DappWrapper: React.FC<DappWrapperProps> = ({
     const navigate = useNavigate();
 
     const onClose = useCallback(() => {
-        navigate('/tokens');
+        navigate(-1);
     }, [navigate]);
 
     return (
@@ -53,17 +53,19 @@ export const DappViewHeader: React.FC<DappViewHeaderProps> = ({
     closeDapp,
 }) => {
     return (
-        <div className="flex items-center justify-between p-4 border-b border-ethos-pale-purple border-ethos-dark-text-stroke">
-            <button onClick={closeDapp}>
-                <ChevronLeftIcon
-                    className={`h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium`}
-                />
-            </button>
-            <BodyLarge isSemibold className="truncate">
+        <div className="flex items-center justify-between p-4 border-b border-ethos-light-gray border-ethos-dark-text-stroke">
+            <div className="w-1/4 text-left">
+                <button onClick={closeDapp}>
+                    <ChevronLeftIcon
+                        className={`h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium`}
+                    />
+                </button>
+            </div>
+            <BodyLarge isSemibold className="truncate w-1/2 text-center">
                 {title}
             </BodyLarge>
             {/* Favorites currently not implemented */}
-            <div></div>
+            <div className="w-1/4"></div>
             {/* {isFavorite ? (
                 <StarIconSolid className="h-5 w-5 text-ethos-dark-primary-light dark:text-ethos-dark-primary-dark" />
             ) : (

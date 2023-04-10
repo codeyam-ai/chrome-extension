@@ -16,6 +16,7 @@ const useExplorerPermission = () => {
         const permissionsString = await getEncrypted({
             key: PERMISSIONS_STORAGE_KEY,
             session: false,
+            strong: false,
         });
         const permissions = JSON.parse(permissionsString || '{}');
 
@@ -44,6 +45,7 @@ const useExplorerPermission = () => {
             await setEncrypted({
                 key: PERMISSIONS_STORAGE_KEY,
                 session: false,
+                strong: false,
                 value: JSON.stringify(permissions),
             });
         }

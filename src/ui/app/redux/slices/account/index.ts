@@ -53,12 +53,14 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
         const accountTypeString = ((await getEncrypted({
             key: 'account-type',
             session: false,
+            strong: false,
         })) || AccountType.UNINITIALIZED) as keyof typeof AccountType;
         const accountType = AccountType[accountTypeString];
 
         let authentication = await getEncrypted({
             key: 'authentication',
             session: true,
+            strong: false,
         });
 
         if (authentication) {
@@ -70,7 +72,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     (await getEncrypted({
                         key: 'activeAccountIndex',
                         session: false,
-                        passphrase: authentication,
+                        strong: false,
                     })) || '0'
                 );
 
@@ -97,7 +99,9 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
         const passphrase = await getEncrypted({
             key: 'passphrase',
             session: true,
+            strong: false,
         });
+
         if (!passphrase || passphrase.length === 0) {
             return {
                 authentication: null,
@@ -114,12 +118,13 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             key: 'mnemonic',
             session: false,
             passphrase,
+            strong: true,
         });
         let accountInfos = JSON.parse(
             (await getEncrypted({
                 key: 'accountInfos',
                 session: false,
-                passphrase,
+                strong: false,
             })) || '[]'
         );
 
@@ -127,6 +132,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             const keypairVault = new KeypairVault();
             keypairVault.mnemonic = mnemonic;
 
+            let seeds = [];
             if (accountInfos.length === 0) {
                 accountInfos = [
                     {
@@ -135,30 +141,43 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                         color: getNextWalletColor(0),
                         emoji: getNextEmoji(0),
                         address: keypairVault.getAddress(0),
+                    },
+                ];
+                seeds = [
+                    {
+                        address: keypairVault.getAddress(0),
                         seed: (keypairVault.getSeed(0) || '').toString(),
                     },
                 ];
-                await setEncrypted({
-                    key: 'accountInfos',
-                    value: JSON.stringify(accountInfos),
-                    session: false,
-                    passphrase,
-                });
             } else {
                 for (let i = 0; i < accountInfos.length; i++) {
                     accountInfos[i].address = keypairVault.getAddress(i);
-                    accountInfos[i].seed = (
-                        keypairVault.getSeed(i) || ''
-                    ).toString();
+                    seeds.push({
+                        address: keypairVault.getAddress(i),
+                        seed: (keypairVault.getSeed(i) || '').toString(),
+                    });
                 }
             }
+
+            await setEncrypted({
+                key: 'accountInfos',
+                value: JSON.stringify(accountInfos),
+                session: false,
+                strong: false,
+            });
+            await setEncrypted({
+                key: 'seeds',
+                value: JSON.stringify(seeds),
+                session: true,
+                strong: false,
+            });
         }
 
         activeAccountIndex = parseInt(
             (await getEncrypted({
                 key: 'activeAccountIndex',
                 session: false,
-                passphrase,
+                strong: false,
             })) || '0'
         );
 
@@ -203,7 +222,11 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
 export const getEmail = createAsyncThunk(
     'account/getEmail',
     async (): Promise<string | null> => {
-        return await getEncrypted({ key: 'email', session: false });
+        return await getEncrypted({
+            key: 'email',
+            session: false,
+            strong: false,
+        });
     }
 );
 
@@ -218,11 +241,13 @@ export const createMnemonic = createAsyncThunk(
         const {
             account: { passphrase },
         } = getState() as RootState;
+
         if (passphrase) {
             await setEncrypted({
                 key: 'mnemonic',
                 value: mnemonic,
                 session: false,
+                strong: true,
                 passphrase,
             });
         }
@@ -235,17 +260,23 @@ export const saveAuthentication = createAsyncThunk(
     'account/setAuthentication',
     async (authentication: string | null, { getState }) => {
         if (!authentication) {
-            await deleteEncrypted({ key: 'authentication', session: true });
+            await deleteEncrypted({
+                key: 'authentication',
+                session: true,
+                strong: false,
+            });
         } else {
             await setEncrypted({
                 key: 'authentication',
                 value: authentication,
+                strong: false,
                 session: true,
             });
 
             await setEncrypted({
                 key: 'account-type',
                 value: AccountType.EMAIL,
+                strong: false,
                 session: false,
             });
         }
@@ -255,22 +286,13 @@ export const saveAuthentication = createAsyncThunk(
 
 export const saveAccountInfos = createAsyncThunk(
     'account/setAccountInfos',
-    async (
-        accountInfos: AccountInfo[],
-        { getState }
-    ): Promise<AccountInfo[]> => {
-        const {
-            account: { passphrase },
-        } = getState() as RootState;
-
-        if (passphrase) {
-            await setEncrypted({
-                key: 'accountInfos',
-                value: JSON.stringify(accountInfos),
-                session: false,
-                passphrase,
-            });
-        }
+    async (accountInfos: AccountInfo[]): Promise<AccountInfo[]> => {
+        await setEncrypted({
+            key: 'accountInfos',
+            value: JSON.stringify(accountInfos),
+            session: false,
+            strong: false,
+        });
 
         return accountInfos;
     }
@@ -279,14 +301,11 @@ export const saveAccountInfos = createAsyncThunk(
 export const saveActiveAccountIndex = createAsyncThunk(
     'account/setActiveAccountIndex',
     async (activeAccountIndex: number, { getState }): Promise<number> => {
-        const {
-            account: { passphrase, authentication },
-        } = getState() as RootState;
         await setEncrypted({
             key: 'activeAccountIndex',
             value: activeAccountIndex.toString(),
             session: false,
-            passphrase: passphrase || authentication || undefined,
+            strong: false,
         });
         await clearForNetworkOrWalletSwitch();
         api.resetSignerInstance();
@@ -298,9 +317,18 @@ export const saveEmail = createAsyncThunk(
     'account/setEmail',
     async (email: string | null) => {
         if (!email) {
-            await deleteEncrypted({ key: 'email', session: false });
+            await deleteEncrypted({
+                key: 'email',
+                session: false,
+                strong: false,
+            });
         } else {
-            await setEncrypted({ key: 'email', value: email, session: false });
+            await setEncrypted({
+                key: 'email',
+                value: email,
+                strong: false,
+                session: false,
+            });
         }
         return email;
     }
@@ -324,71 +352,36 @@ export const changePassword: AsyncThunk<
             return false;
         }
 
-        // First, decrypt the existing data with the current password
-        // Then, encrypt it with the new password
         const {
             account: { mnemonic },
         } = getState() as RootState;
 
         if (mnemonic) {
-            await deleteEncrypted({ key: 'mnemonic', session: false });
+            await deleteEncrypted({
+                key: 'mnemonic',
+                session: false,
+                strong: true,
+                passphrase: currentPassword,
+            });
             await setEncrypted({
                 key: 'mnemonic',
                 value: mnemonic,
                 session: false,
+                strong: true,
                 passphrase: newPassword,
             });
         }
 
-        // const authentication = await getEncrypted(
-        //     'authentication',
-        //     currentPassword
-        // );
-        // if (authentication) {
-        //     await deleteEncrypted({ key: 'authentication');
-        //     await setEncrypted({ key: 'authentication', value: authentication, session: true, passphrase: newPassword });
-        // }
-
-        // const email = await getEncrypted({ key: 'email', session: false, passphrase: currentPassword });
-        // if (email) {
-        //     await deleteEncrypted({ key: 'email', session: false });
-        //     await setEncrypted({ key: 'email', value: email, session: false, passphrase: newPassword });
-        // }
-
-        const accountInfos = JSON.parse(
-            (await getEncrypted({
-                key: 'accountInfos',
-                session: false,
-                passphrase: currentPassword,
-            })) || '[]'
-        );
-        await deleteEncrypted({ key: 'accountInfos', session: false });
-        await setEncrypted({
-            key: 'accountInfos',
-            value: JSON.stringify(accountInfos),
-            session: false,
-            passphrase: newPassword,
+        await deleteEncrypted({
+            key: 'passphrase',
+            session: true,
+            strong: false,
+            passphrase: currentPassword,
         });
-
-        const activeAccountIndex = parseInt(
-            (await getEncrypted({
-                key: 'activeAccountIndex',
-                session: false,
-                passphrase: currentPassword,
-            })) || '0'
-        );
-        await deleteEncrypted({ key: 'activeAccountIndex', session: false });
-        await setEncrypted({
-            key: 'activeAccountIndex',
-            value: activeAccountIndex.toString(),
-            session: false,
-            passphrase: newPassword,
-        });
-
-        await deleteEncrypted({ key: 'passphrase', session: true });
         await setEncrypted({
             key: 'passphrase',
             value: newPassword,
+            strong: false,
             session: true,
         });
 
@@ -407,13 +400,18 @@ export const savePassphrase: AsyncThunk<
     'account/setPassphrase',
     async (passphrase, { extra: { keypairVault }, getState }) => {
         if (!passphrase) {
-            deleteEncrypted({ key: 'passphrase', session: true });
+            deleteEncrypted({
+                key: 'passphrase',
+                session: true,
+                strong: false,
+            });
             return null;
         }
 
         await setEncrypted({
             key: 'passphrase',
             value: passphrase,
+            strong: false,
             session: true,
         });
 
@@ -421,12 +419,14 @@ export const savePassphrase: AsyncThunk<
             key: 'passphrase-test',
             value: PASSPHRASE_TEST,
             session: false,
+            strong: false,
             passphrase,
         });
 
         await setEncrypted({
             key: 'account-type',
             value: AccountType.PASSWORD,
+            strong: false,
             session: false,
         });
 
@@ -441,8 +441,10 @@ export const savePassphrase: AsyncThunk<
                 key: 'mnemonic',
                 value: mnemonic,
                 session: false,
+                strong: true,
                 passphrase,
             });
+
             await setEncrypted({
                 key: 'accountInfos',
                 value: JSON.stringify([
@@ -452,11 +454,22 @@ export const savePassphrase: AsyncThunk<
                         color: getNextWalletColor(0),
                         emoji: getNextEmoji(0),
                         address: keypairVault.getAddress() || '',
-                        seed: (keypairVault.getSeed() || '').toString(),
                     },
                 ]),
                 session: false,
-                passphrase,
+                strong: false,
+            });
+
+            await setEncrypted({
+                key: 'seeds',
+                value: JSON.stringify([
+                    {
+                        address: keypairVault.getAddress() || '',
+                        seed: (keypairVault.getSeed() || '').toString(),
+                    },
+                ]),
+                session: true,
+                strong: false,
             });
         }
         return passphrase;
@@ -470,22 +483,39 @@ export const reset = createAsyncThunk(
             account: { passphrase },
         } = getState() as RootState;
         if (passphrase) {
-            await deleteEncrypted({ key: 'passphrase', session: true });
+            await deleteEncrypted({
+                key: 'passphrase',
+                session: true,
+                strong: false,
+            });
             await deleteEncrypted({
                 key: 'mnemonic',
                 passphrase,
                 session: false,
+                strong: true,
             });
             await deleteEncrypted({
                 key: 'accountInfos',
-                passphrase,
                 session: false,
+                strong: false,
             });
         }
-        await deleteEncrypted({ key: 'authentication', session: true });
-        await deleteEncrypted({ key: 'email', session: false });
-        await deleteEncrypted({ key: 'activeAccountIndex', session: false });
-        await deleteEncrypted({ key: PERMISSIONS_STORAGE_KEY, session: false });
+        await deleteEncrypted({
+            key: 'authentication',
+            session: true,
+            strong: false,
+        });
+        await deleteEncrypted({ key: 'email', session: false, strong: false });
+        await deleteEncrypted({
+            key: 'activeAccountIndex',
+            session: false,
+            strong: false,
+        });
+        await deleteEncrypted({
+            key: PERMISSIONS_STORAGE_KEY,
+            session: false,
+            strong: false,
+        });
 
         window.location.reload();
     }
@@ -496,6 +526,7 @@ const isPasswordCorrect = async (password: string) => {
         key: 'passphrase-test',
         session: false,
         passphrase: password,
+        strong: false,
     });
 
     if (passphraseTest !== PASSPHRASE_TEST) return false;
@@ -524,6 +555,7 @@ export const unlock: AsyncThunk<string | null, string | null, AppThunkConfig> =
                     await setEncrypted({
                         key: 'passphrase',
                         value: passphrase,
+                        strong: false,
                         session: true,
                     });
 
@@ -654,6 +686,9 @@ const accountSlice = createSlice({
             })
             .addCase(unlock.fulfilled, (state, action) => {
                 state.locked = !action.payload;
+                if (!state.locked) {
+                    state.loading = true;
+                }
                 state.passphrase = action.payload;
             }),
 });

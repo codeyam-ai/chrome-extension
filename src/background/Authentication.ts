@@ -21,7 +21,7 @@ class Authentication {
         const accountsString = await getEncrypted({
             key: 'accountInfos',
             session: false,
-            passphrase: this._accessToken,
+            strong: false,
         });
 
         let accounts;
@@ -47,7 +47,7 @@ class Authentication {
             key: 'accountInfos',
             value: JSON.stringify(accounts),
             session: false,
-            passphrase: this._accessToken,
+            strong: false,
         });
 
         return accounts;

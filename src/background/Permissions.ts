@@ -105,6 +105,7 @@ class Permissions {
             (await getEncrypted({
                 key: PERMISSIONS_STORAGE_KEY,
                 session: false,
+                strong: false,
             })) || '{}';
         return JSON.parse(permissionString);
     }
@@ -276,6 +277,7 @@ class Permissions {
         await setEncrypted({
             key: PERMISSIONS_STORAGE_KEY,
             value: permissionsString,
+            strong: false,
             session: false,
         });
     }

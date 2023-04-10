@@ -12,12 +12,10 @@ import { filter, lastValueFrom, map, race, Subject, take } from 'rxjs';
 import { v4 as uuidV4 } from 'uuid';
 import Browser from 'webextension-polyfill';
 
-import Authentication from './Authentication';
 import { Window } from './Window';
 import { API_ENV } from '../ui/app/ApiProvider';
 import { PREAPPROVAL_KEY, TX_STORE_KEY } from '_src/shared/constants';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
-import { isLocked } from '_src/ui/app/helpers/lock-wallet';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 import type {
@@ -43,7 +41,7 @@ import type {
 import type { TransactionRequestResponse } from '_payloads/transactions/ui/TransactionRequestResponse';
 import type { ContentScriptConnection } from '_src/background/connections/ContentScriptConnection';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
-import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import type { SeedInfo } from '_src/ui/app/KeypairVault';
 
 // type SimpleCoin = {
 //     balance: number;
@@ -283,7 +281,7 @@ class Transactions {
         requestType?: SuiSignAndExecuteTransactionBlockInput['requestType'];
         options?: SuiSignAndExecuteTransactionBlockInput['options'];
     }) {
-        const activeAccount = await this.getAccount(address);
+        const activeSeed = await this.getSeedInfo(address);
 
         let env;
         let envEndpoint;
@@ -301,16 +299,17 @@ class Transactions {
                 env = API_ENV.customRPC;
                 break;
             default: {
-                const envInfo = await Browser.storage.local.get([
-                    'sui_Env',
-                    'sui_Env_RPC',
-                ]);
-
-                if (envInfo) {
-                    env = envInfo.sui_Env;
-                    envEndpoint = envInfo?.sui_Env_RPC;
-                }
+                env = API_ENV.testNet;
             }
+        }
+
+        const envInfo = await Browser.storage.local.get([
+            'sui_Env',
+            'sui_Env_RPC',
+        ]);
+
+        if (envInfo?.sui_Env === API_ENV.customRPC) {
+            envEndpoint = envInfo?.sui_Env_RPC;
         }
 
         let connection: Connection;
@@ -326,14 +325,14 @@ class Transactions {
             throw new Error('No connection found');
         }
 
-        const provider = new JsonRpcProvider(connection);
-        const secretKey = Uint8Array.from(
-            activeAccount.seed.split(',').map((n) => parseInt(n))
-        );
-        const keypair = Ed25519Keypair.fromSecretKey(secretKey);
-        const signer = new RawSigner(keypair, provider);
-
         try {
+            const provider = new JsonRpcProvider(connection);
+            const secretKey = Uint8Array.from(
+                activeSeed.seed.split(',').map((n) => parseInt(n))
+            );
+            const keypair = Ed25519Keypair.fromSecretKey(secretKey);
+            const signer = new RawSigner(keypair, provider);
+
             const txResponse = await signer.signAndExecuteTransactionBlock({
                 transactionBlock,
                 options,
@@ -424,6 +423,7 @@ class Transactions {
         const resultsString = await getEncrypted({
             key: PREAPPROVAL_KEY,
             session: true,
+            strong: false,
         });
         return JSON.parse(resultsString || '{}');
     }
@@ -442,35 +442,16 @@ class Transactions {
         this._preapprovalResponseMessages.next(msg);
     }
 
-    private async getAccount(address: SuiAddress): Promise<AccountInfo> {
-        const passphrase = await getEncrypted({
-            key: 'passphrase',
+    private async getSeedInfo(address: SuiAddress): Promise<SeedInfo> {
+        const seedInfoString = await getEncrypted({
+            key: 'seeds',
             session: true,
+            strong: false,
         });
-        const locked = passphrase && (await isLocked(passphrase));
+        const seedInfos = JSON.parse(seedInfoString || '[]');
 
-        const authentication = await getEncrypted({
-            key: 'authentication',
-            session: true,
-        });
-        if (locked || (!passphrase && !authentication)) {
-            throw new Error(`Wallet is locked`);
-        }
-        let accountInfos;
-        if (authentication) {
-            Authentication.set(authentication);
-            accountInfos = await Authentication.getAccountInfos();
-        } else {
-            const accountInfosString = await getEncrypted({
-                key: 'accountInfos',
-                session: false,
-                passphrase: (passphrase || authentication) as string,
-            });
-            accountInfos = JSON.parse(accountInfosString || '[]');
-        }
-
-        return accountInfos.find(
-            (accountInfo: AccountInfo) => accountInfo.address === address
+        return seedInfos.find(
+            (seedInfo: SeedInfo) => seedInfo.address === address
         );
     }
 
@@ -518,6 +499,7 @@ class Transactions {
         await setEncrypted({
             key: PREAPPROVAL_KEY,
             value: JSON.stringify(requests),
+            strong: false,
             session: true,
         });
     }

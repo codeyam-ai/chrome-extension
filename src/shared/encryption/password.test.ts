@@ -10,11 +10,15 @@ Object.defineProperty(global, 'crypto', {
 });
 
 describe('password', () => {
-    it('encrypts and decryps properly', () => {
+    it('encrypts and decrypts properly', () => {
         const text = 'this is some sample text';
         const passphrase = '123456passphrase654321';
 
-        const encryptedData = password.encrypt(text, passphrase);
+        const encryptedData = password.encrypt({
+            text,
+            passphrase,
+            strong: true,
+        });
         const { saltString, nonceString, encryptedText } =
             JSON.parse(encryptedData);
 
@@ -23,7 +27,11 @@ describe('password', () => {
         expect(encryptedText).toBeDefined();
         expect(encryptedText).not.toBe(text);
 
-        const decryptedText = password.decrypt(encryptedData, passphrase);
+        const decryptedText = password.decrypt({
+            encryptedData,
+            passphrase,
+            strong: true,
+        });
         expect(decryptedText).toBe(text);
     });
 });
