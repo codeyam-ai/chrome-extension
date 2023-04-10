@@ -27,7 +27,7 @@ export const DappWrapper: React.FC<DappWrapperProps> = ({
     const navigate = useNavigate();
 
     const onClose = useCallback(() => {
-        navigate('/tokens');
+        navigate(-1);
     }, [navigate]);
 
     return (

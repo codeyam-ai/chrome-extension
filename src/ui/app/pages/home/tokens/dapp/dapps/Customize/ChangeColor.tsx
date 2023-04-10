@@ -5,8 +5,8 @@ import { type AccountInfo } from '_src/ui/app/KeypairVault';
 import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { useUpdateCurrentAccountInfo } from '_src/ui/app/hooks/useUpdateCurrentAccountInfo';
-import Button from '_src/ui/app/shared/buttons/Button';
 import ColorPickerMenu from '_src/ui/app/shared/inputs/colors/ColorPickerMenu';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 
 const ChangeColor: React.FC = () => {
@@ -50,7 +50,7 @@ const ChangeColor: React.FC = () => {
 
     return (
         <div className="relative flex flex-col items-center pt-6 px-6">
-            <Title className="pb-6">Choose a color for your wallet</Title>
+            <Title className="pb-6">Choose your wallet&apos;s color</Title>
             <div
                 className="w-20 h-20 rounded-md cursor-pointer"
                 style={{ backgroundColor: draftColor }}
@@ -63,17 +63,26 @@ const ChangeColor: React.FC = () => {
                 closeColorPickerMenu={closeColorPickerMenu}
                 leftAbsoluteClassNames="left-[24px] top-[180px]"
             />
-            <div className="flex mt-3 gap-3">
-                <Button
-                    removeContainerPadding
-                    buttonStyle="secondary"
+            <div className="flex gap-2 w-full mt-6">
+                <button
                     onClick={goBack}
+                    className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-4 mt-6 mb-2 bg-ethos-light-primary-light/20"
                 >
-                    Back
-                </Button>
-                <Button removeContainerPadding onClick={handleOnContinue}>
-                    Continue
-                </Button>
+                    <BodyLarge
+                        isSemibold
+                        className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark"
+                    >
+                        Back
+                    </BodyLarge>
+                </button>
+                <button
+                    onClick={handleOnContinue}
+                    className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-4 mt-6 mb-2 bg-ethos-light-primary-light"
+                >
+                    <BodyLarge isSemibold className="text-white">
+                        Continue
+                    </BodyLarge>
+                </button>
             </div>
         </div>
     );
