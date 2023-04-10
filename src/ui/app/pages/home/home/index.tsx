@@ -50,7 +50,14 @@ function HomePage() {
             <SendReceiveButtonGroup mistBalance={mistBalance} />
             <div className="flex flex-col gap-6 overflow-auto">
                 <ContentBlock>
-                    <CoinList balances={balances} />
+                    {/* 
+
+                    Hide coinlist and display on the /tokens page
+                    TODO: remove once approved
+                    
+                    <CoinList balances={balances} /> 
+                    
+                    */}
 
                     {(!balances || Object.keys(balances).length < 2) && (
                         <div className="py-3">
