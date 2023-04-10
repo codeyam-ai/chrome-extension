@@ -3,7 +3,6 @@
 
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
-import CoinList from './CoinList';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import { DappList } from './dapp/DappList';
 import { sampleData } from './dapp/dappData';
