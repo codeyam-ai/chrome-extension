@@ -35,6 +35,7 @@ import { loadContactsStorage } from './redux/slices/contacts';
 import HeartbeatProvider from './shared/HeartbeatProvider';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { DappTxApprovalPage } from '_pages/dapp-tx-approval';
+import CoinListPage from './pages/home/coins';
 import HomePage, {
     NFTDetailsPage,
     NftsPage,
@@ -90,6 +91,7 @@ const App = () => {
                             path="tokens/address-book/*"
                             element={<AddressBookNavigation />}
                         />
+                        <Route path="coins" element={<CoinListPage />} />
                         <Route path="nfts">
                             <Route path={'*'} element={<NftsPage />} />
                             <Route
