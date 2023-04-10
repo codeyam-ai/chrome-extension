@@ -33,6 +33,7 @@ import { api } from '_store/thunk-extras';
 
 import type { AccountInfo } from '../../KeypairVault';
 import type { FormattedTransaction } from '../../helpers/transactions/types';
+
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 import st from './ReceiptCard.module.scss';
