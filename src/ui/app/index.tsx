@@ -35,15 +35,15 @@ import { loadContactsStorage } from './redux/slices/contacts';
 import HeartbeatProvider from './shared/HeartbeatProvider';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { DappTxApprovalPage } from '_pages/dapp-tx-approval';
-import CoinListPage from './pages/home/tokens';
-import HomePage, {
+import TokensPage from './pages/home/tokens';
+import AppContainer, {
+    HomePage,
     NFTDetailsPage,
     NftsPage,
     ReceiptPage,
     TicketsPage,
     TicketDetailsPage,
     TicketProjectDetailsPage,
-    TokensPage,
     TransactionDetailsPage,
     TransactionsPage,
 } from '_pages/home';
@@ -81,8 +81,8 @@ const App = () => {
                         path="/"
                         element={<Navigate to="/home" replace={true} />}
                     />
-                    <Route path="/*" element={<HomePage />}>
-                        <Route path="home" element={<TokensPage />} />
+                    <Route path="/*" element={<AppContainer />}>
+                        <Route path="home" element={<HomePage />} />
                         <Route
                             path="home/customize/*"
                             element={<CustomizeNavigation />}
@@ -91,7 +91,7 @@ const App = () => {
                             path="home/address-book/*"
                             element={<AddressBookNavigation />}
                         />
-                        <Route path="tokens" element={<CoinListPage />} />
+                        <Route path="tokens" element={<TokensPage />} />
                         <Route path="nfts">
                             <Route path={'*'} element={<NftsPage />} />
                             <Route
