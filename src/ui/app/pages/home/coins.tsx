@@ -18,9 +18,6 @@ function CoinListPage() {
     const balLength = Object.keys(balances).length || 0;
     const empty = !balances || balLength === 0;
 
-    console.log('balances', balances);
-    console.log('balLength', balLength);
-
     return (
         <>
             {balances && balLength === 0 ? (
