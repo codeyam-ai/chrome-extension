@@ -1,7 +1,7 @@
 import { ArrowRightCircleIcon } from '@heroicons/react/20/solid';
 
-import Sui from '../../home/tokens/Sui';
-import UnknownToken from '../../home/tokens/UnknownToken';
+import Sui from '../../home/home/Sui';
+import UnknownToken from '../../home/home/UnknownToken';
 
 const SendCoinImage = ({
     iconUrl,

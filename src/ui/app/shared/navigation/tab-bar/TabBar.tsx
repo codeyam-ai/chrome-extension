@@ -17,8 +17,8 @@ import { api } from '_src/ui/app/redux/store/thunk-extras';
 const iconClasses = 'w-6 h-6';
 const navItems: NavItem[] = [
     {
-        title: 'Tokens',
-        to: './tokens',
+        title: 'Home',
+        to: './home',
         icon: <HomeIcon className={iconClasses} />,
     },
     {
@@ -27,8 +27,8 @@ const navItems: NavItem[] = [
         icon: <SparklesIcon className={iconClasses} />,
     },
     {
-        title: 'Coins',
-        to: './coins',
+        title: 'Tokens',
+        to: './tokens',
         icon: <CircleStackIcon className={iconClasses} />,
     },
     {

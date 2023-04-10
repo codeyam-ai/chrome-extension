@@ -80,7 +80,7 @@ const SettingsHomePage = () => {
                             {
                                 text: 'Open Expanded View',
                                 iconWithNoClasses: <ArrowsPointingOutIcon />,
-                                to: '/tokens',
+                                to: '/home',
                                 isExpandView: true,
                             },
                         ],

@@ -5,14 +5,14 @@ import { memo, useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 
-import Sui from '../tokens/Sui';
-import UnknownToken from '../tokens/UnknownToken';
+import Sui from '../home/Sui';
+import UnknownToken from '../home/UnknownToken';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import ns from '_shared/namespace';
 import WalletTo from '_src/ui/app/components/wallet-to';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
-import { CoinSelect } from '_src/ui/app/pages/home/tokens/CoinDropdown';
+import { CoinSelect } from '_src/ui/app/pages/home/home/CoinDropdown';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Alert from '_src/ui/app/shared/feedback/Alert';

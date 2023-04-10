@@ -65,7 +65,7 @@ function TransferCoinForm({
     const theme = getTheme();
 
     if (amount === '' || to === '' || !coinSymbol) {
-        return <Navigate to={'/tokens'} />;
+        return <Navigate to={'/home'} />;
     } else {
         return (
             <Form autoComplete="off" noValidate={true}>

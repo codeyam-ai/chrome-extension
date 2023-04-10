@@ -16,7 +16,7 @@ import IconContainer from '../../icons/IconContainer';
 import SuiIcon from '../../svg/SuiIcon';
 import ipfs from '_src/ui/app/helpers/ipfs';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
-import UnknownToken from '_src/ui/app/pages/home/tokens/UnknownToken';
+import UnknownToken from '_src/ui/app/pages/home/home/UnknownToken';
 
 import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 

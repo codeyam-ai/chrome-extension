@@ -41,7 +41,7 @@ const ChangeColor: React.FC = () => {
 
     const handleOnContinue = useCallback(() => {
         updateCurrentAccountInfo({ color: draftColor });
-        navigate('/tokens/customize/completed');
+        navigate('/home/customize/completed');
     }, [draftColor, navigate, updateCurrentAccountInfo]);
 
     const goBack = useCallback(() => {

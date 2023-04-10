@@ -9,7 +9,7 @@ const CustomizeCompleted: React.FC = () => {
     const navigate = useNavigate();
 
     const handleOnContinue = useCallback(() => {
-        navigate('/tokens');
+        navigate('/home');
     }, [navigate]);
 
     const goBack = useCallback(() => {
