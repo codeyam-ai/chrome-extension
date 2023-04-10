@@ -12,7 +12,7 @@ import CoinList from './home/CoinList';
 
 import Loading from '../../components/loading';
 
-function CoinListPage() {
+function TokensPage() {
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const balLength = Object.keys(balances).length || 0;
     const empty = !balances || balLength === 0;
@@ -46,4 +46,4 @@ function CoinListPage() {
     );
 }
 
-export default CoinListPage;
+export default TokensPage;

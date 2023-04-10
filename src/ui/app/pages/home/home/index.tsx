@@ -21,7 +21,7 @@ import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
-function TokensPage() {
+function HomePage() {
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
 
     const balances = useAppSelector(accountAggregateBalancesSelector);
@@ -74,4 +74,4 @@ function TokensPage() {
     );
 }
 
-export default TokensPage;
+export default HomePage;
