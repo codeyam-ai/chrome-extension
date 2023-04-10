@@ -1,6 +1,7 @@
 import {
     ClockIcon,
     HomeIcon,
+    CircleStackIcon,
     SparklesIcon,
     TicketIcon,
 } from '@heroicons/react/24/solid';
@@ -24,6 +25,11 @@ const navItems: NavItem[] = [
         title: 'NFTs',
         to: './nfts',
         icon: <SparklesIcon className={iconClasses} />,
+    },
+    {
+        title: 'Coins',
+        to: './coins',
+        icon: <CircleStackIcon className={iconClasses} />,
     },
     {
         title: 'History',
