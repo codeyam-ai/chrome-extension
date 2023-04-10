@@ -2,7 +2,7 @@ import { Counter, ModeOfOperation, utils } from 'aes-js';
 import { Pbkdf2HmacSha256 } from 'asmcrypto.js';
 
 const STRONG_ITERATIONS = 600000;
-const ITERATIONS = 10000;
+const ITERATIONS = 100;
 const KEY_LENGTH = 32;
 
 export type EncryptArgs = {
