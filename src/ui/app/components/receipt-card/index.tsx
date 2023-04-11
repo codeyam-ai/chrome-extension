@@ -1,6 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { UserPlusIcon } from '@heroicons/react/24/outline';
 import {
     ArrowDownCircleIcon,
     ArrowUpCircleIcon,
@@ -19,6 +20,7 @@ import { getTheme } from '../../helpers/getTheme';
 import { getHumanReadable } from '../../helpers/transactions';
 import truncateMiddle from '../../helpers/truncate-middle';
 import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
+import Button from '../../shared/buttons/Button';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
 import { Icon } from '../../shared/icons/Icon';
 import { AssetCard } from '../../shared/nfts/AssetCard';
@@ -40,8 +42,6 @@ import type {
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 import st from './ReceiptCard.module.scss';
-import Button from '../../shared/buttons/Button';
-import { UserPlusIcon } from '@heroicons/react/24/outline';
 
 type TxResponseProps = {
     txDigest: string | null;

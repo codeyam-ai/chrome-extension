@@ -1,7 +1,7 @@
 import { isValidSuiAddress } from '@mysten/sui.js';
 import { Form, Formik } from 'formik';
 import { useCallback, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as Yup from 'yup';
 
 import ContactForm from './ContactForm';
@@ -29,8 +29,6 @@ const Add: React.FC = () => {
     const { addContact } = useUpdateContacts();
     const [emoji, setEmoji] = useState<string | undefined>(undefined);
     const [color, setColor] = useState<string>(getNextWalletColor(0));
-
-    console.log('newContactAddress', searchParams);
 
     const onSubmit = useCallback(
         ({ address, name }: FormikValues) => {

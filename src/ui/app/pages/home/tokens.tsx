@@ -3,14 +3,14 @@
 
 import { CircleStackIcon } from '@heroicons/react/24/solid';
 
+import CoinList from './home/CoinList';
+import Loading from '../../components/loading';
 import { Icon } from '../../shared/icons/Icon';
 import { useAppSelector } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
-import CoinList from './home/CoinList';
 
-import Loading from '../../components/loading';
 
 function TokensPage() {
     const balances = useAppSelector(accountAggregateBalancesSelector);
