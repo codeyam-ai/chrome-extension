@@ -18,11 +18,21 @@ describe('Rendering the Tokens page', () => {
         await screen.findByText('Get started with Sui');
     });
 
-    test('rendering the Tokens page when the wallet has some coins', async () => {
-        mockchain.mockSuiObjects({
-            suiBalance: 40000000000,
+    describe('when the wallet has some coins', () => {
+        test('shows the USD amount when configured to do so', async () => {
+            mockchain.mockSuiObjects({
+                suiBalance: 40000000000,
+            });
+            renderApp();
+            await screen.findByText('$4,000');
         });
-        renderApp();
-        await screen.findByText('$4,000');
+
+        xtest('shows the SUI amount when configured to do so', async () => {
+            mockchain.mockSuiObjects({
+                suiBalance: 40000000000,
+            });
+            renderApp();
+            await screen.findByText('40 SUI');
+        });
     });
 });
