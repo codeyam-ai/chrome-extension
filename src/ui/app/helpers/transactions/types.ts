@@ -35,7 +35,7 @@ export interface BalanceChange {
     amount: string;
 }
 
-export interface humanReadableDetails {
+export interface HumanReadableDetails {
     addresses?: toFrom;
     timeDisplay: string;
     txType: string;
@@ -55,5 +55,5 @@ export interface humanReadableDetails {
 
 export interface FormattedTransaction {
     transaction: SuiTransactionBlockResponse;
-    humanReadable: humanReadableDetails;
+    humanReadable: HumanReadableDetails;
 }

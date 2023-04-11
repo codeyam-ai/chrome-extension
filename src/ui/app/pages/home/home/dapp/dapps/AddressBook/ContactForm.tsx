@@ -20,6 +20,7 @@ interface ContactFormProps {
     color: string;
     setColor: React.Dispatch<React.SetStateAction<string>>;
     formMode: 'Add' | 'Edit';
+    disableAddressInput?: boolean;
 }
 
 const ContactForm = ({
@@ -30,6 +31,7 @@ const ContactForm = ({
     color,
     setColor,
     formMode,
+    disableAddressInput,
 }: ContactFormProps) => {
     const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
     const [isColorPickerMenuOpen, setIsColorPickerMenuOpen] = useState(false);
@@ -105,6 +107,7 @@ const ContactForm = ({
                             : undefined
                     }
                     autoComplete="off"
+                    disabled={disableAddressInput}
                 />
             ) : (
                 <div className="flex flex-col px-6 pb-6">
