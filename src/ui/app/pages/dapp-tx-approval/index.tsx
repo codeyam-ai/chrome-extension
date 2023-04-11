@@ -43,12 +43,14 @@ export function DappTxApprovalPage() {
 
     const activeChain = useMemo(() => {
         switch (selectedApiEnv) {
+            case 'customRPC':
+                return 'sui:unknown';
+            case 'local':
+                return 'sui:local';
             case 'testNet':
                 return 'sui:testnet';
             // case 'mainNet':
             //     return 'sui:mainnet';
-            case 'local':
-                return 'sui:local';
             default:
                 return 'sui:devnet';
         }
