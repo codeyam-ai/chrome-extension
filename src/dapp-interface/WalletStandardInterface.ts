@@ -165,7 +165,7 @@ export class EthosWallet implements Wallet {
                         'sui:signAndExecuteTransactionBlock',
                     ],
                     icon: dataIcon,
-                    label: this.#name
+                    label: this.#name,
                 })
         );
     }

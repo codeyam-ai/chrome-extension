@@ -1,4 +1,5 @@
 import { fromHEX, toB64 } from '@mysten/bcs';
+import { configure } from '@testing-library/dom';
 import { utils } from 'aes-js';
 import nock from 'nock';
 import * as util from 'util';
@@ -19,6 +20,8 @@ global.chrome = {
         session: fakeSessionStorage,
     },
 };
+
+configure({ asyncUtilTimeout: 3000 });
 
 jest.mock('webextension-polyfill', () => {
     return fakeBrowser;
