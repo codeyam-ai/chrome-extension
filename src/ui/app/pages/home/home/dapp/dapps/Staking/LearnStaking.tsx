@@ -27,10 +27,10 @@ const LearnStaking: React.FC = () => {
 
                 <p className={'text-left text-base mb-3'}>
                     The Sui blockchain uses a Delegated Proof-of-Stake (DPoS)
-                    mechanism. To help make the system more secure and reliable,
-                    token holders can "stake" their tokens, which means they
-                    temporarily lock them with trusted parties called
-                    validators.
+                    consensus mechanism. To help make the system more secure and
+                    reliable, token holders can &quot;stake&quot; their tokens,
+                    which means they temporarily lock them with trusted parties
+                    called validators.
                 </p>
                 <p className={'text-left text-base'}>
                     The Sui network ensures that no single validator has too
