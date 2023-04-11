@@ -73,7 +73,7 @@ function WalletPickerPage({
                 className="absolute top-0 w-full h-[535px] sm:rounded-[20px] bg-black opacity-20 dark:opacity-80"
                 onClick={handleOnCloseMenu}
             />
-            <div className="relative flex flex-col max-h-full drop-shadow-ethos-box-shadow rounded-b-[20px] sm:rounded-[20px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
+            <div className="relative flex flex-col max-h-full drop-shadow-ethos-box-shadow rounded-b-[20px]  bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
                 {walletView}
             </div>
         </div>
