@@ -25,7 +25,7 @@ module.exports = {
                 'size-ethos-title': '24px',
                 'size-ethos-header': '20px',
                 'size-ethos-subheader': '18px',
-                'size-ethos-body-large': '16px',
+                'size-ethos-body-large': '15px',
                 'size-ethos-body': '14px',
                 'size-ethos-small': '12px',
             },
