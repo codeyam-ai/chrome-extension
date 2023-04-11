@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Coin } from '@mysten/sui.js';
+import { BigNumber } from 'bignumber.js';
 import { Form, useFormikContext } from 'formik';
 import { memo, useEffect, useMemo, useRef } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
@@ -51,7 +52,16 @@ function TransferCoinForm({
     const onClearRef = useRef(onClearSubmitError);
     onClearRef.current = onClearSubmitError;
 
-    const [, , dollars, , icon] = useFormatCoin(null, coinType);
+    const [, , , , , queryResult] = useFormatCoin(null, coinType);
+    const unformattedAmount =
+        queryResult?.data &&
+        typeof queryResult.data === 'object' &&
+        'decimals' in queryResult.data
+            ? new BigNumber(formData.amount)
+                  .shiftedBy(queryResult.data.decimals as number)
+                  .toString()
+            : null;
+    const [, , dollars, , icon] = useFormatCoin(unformattedAmount, coinType);
 
     useEffect(() => {
         onClearRef.current();
