@@ -25,12 +25,12 @@ export const sampleData: DappData[] = [
         route: 'address-book',
         isFavorite: true,
     },
-    // {
-    //     image: 'https://via.placeholder.com/150/1',
-    //     name: 'localhost:3000/',
-    //     url: 'http://localhost:3000/',
-    //     isFavorite: true,
-    // },
+    {
+        image: 'https://via.placeholder.com/150/1',
+        name: 'Staking',
+        route: 'staking',
+        isFavorite: true,
+    },
     // {
     //     image: 'https://via.placeholder.com/150/1',
     //     name: 'Ethos Example App',
