@@ -26,6 +26,7 @@ import type {
     PreapprovalRequest,
     PreapprovalResponse,
 } from '_payloads/transactions';
+import type { NetworkEnvType } from '_src/background/NetworkEnv';
 import type { GetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
 import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
 import type { DisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
@@ -111,7 +112,7 @@ export class DAppInterface {
     //     );
     // }
 
-    public getNetwork(): Promise<string | number> {
+    public getNetwork(): Promise<NetworkEnvType> {
         return mapToPromise(
             this.send<GetNetwork, GetNetworkResponse>({
                 type: 'get-network',

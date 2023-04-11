@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Connection } from './Connection';
-import { DEFAULT_API_ENV } from '../../ui/app/ApiProvider';
+import networkEnv from '../NetworkEnv';
 import { createMessage } from '_messages';
 import { isGetAccount } from '_payloads/account/GetAccount';
 import {
@@ -29,11 +29,12 @@ import {
     type SignMessageRequest,
 } from '_src/shared/messaging/messages/payloads/transactions/SignMessage';
 import { isGetUrl } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
-import { getLocal, getEncrypted } from '_src/shared/storagex/store';
+import { getEncrypted } from '_src/shared/storagex/store';
 import { openInNewTab } from '_src/shared/utils';
 import { type AccountCustomization } from '_src/types/AccountCustomization';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 
+import type { NetworkEnvType } from '../NetworkEnv';
 import type { SuiAddress, SuiTransactionBlockResponse } from '@mysten/sui.js';
 import type { Message } from '_messages';
 import type { PortChannelName } from '_messaging/PortChannelName';
@@ -119,7 +120,7 @@ export class ContentScriptConnection extends Connection {
                 this.sendAccountCustomizations(accountCustomizations, msg.id);
             }
         } else if (isGetNetwork(payload)) {
-            const network = (await getLocal('sui_Env')) || DEFAULT_API_ENV;
+            const network = await networkEnv.getActiveNetwork();
             this.sendNetwork(network, msg.id);
         } else if (isHasPermissionRequest(payload)) {
             this.send(
@@ -321,7 +322,7 @@ export class ContentScriptConnection extends Connection {
         );
     }
 
-    private sendNetwork(network: string | number, responseForID?: string) {
+    private sendNetwork(network: NetworkEnvType, responseForID?: string) {
         this.send(
             createMessage<GetNetworkResponse>(
                 {

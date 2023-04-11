@@ -213,7 +213,8 @@ export class EthosWallet implements Wallet {
     };
 
     #connected = async () => {
-        this.#setActiveChain(await this.#getActiveNetwork());
+        const activeNetwork = await this.#getActiveNetwork();
+        this.#setActiveChain(activeNetwork);
         if (!(await this.#hasPermissions(['viewAccount']))) {
             return;
         }
