@@ -55,6 +55,7 @@ import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
 import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
+import StakingNavigation from './pages/home/home/dapp/dapps/Staking/StakingNavigation';
 
 const App = () => {
     const dispatch = useAppDispatch();
@@ -90,6 +91,10 @@ const App = () => {
                         <Route
                             path="home/address-book/*"
                             element={<AddressBookNavigation />}
+                        />
+                        <Route
+                            path="home/staking/*"
+                            element={<StakingNavigation />}
                         />
                         <Route path="tokens" element={<TokensPage />} />
                         <Route path="nfts">
