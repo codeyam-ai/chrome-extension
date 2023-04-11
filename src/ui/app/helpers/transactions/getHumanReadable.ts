@@ -25,7 +25,9 @@ const getHumanReadable = (
     ownerAddr: string,
     tx: SuiTransactionBlockResponse
 ): humanReadableDetails => {
-    const timeDisplay = convertUnixTimeToLocalTime(tx.timestampMs || 0);
+    const timeDisplay = convertUnixTimeToLocalTime(
+        Number(tx.timestampMs || '0')
+    );
     const txType = getTxType(tx);
     const txStatus = tx.effects?.status.status;
     const isSender = getIsSender(ownerAddr, tx);

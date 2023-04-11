@@ -99,6 +99,18 @@ export class DAppInterface {
         );
     }
 
+    // public syncAccountCustomizations(): Promise<AccountCustomization[]> {
+    //     return mapToPromise(
+    //         this.send<
+    //             GetAccountCustomizations,
+    //             GetAccountCustomizationsResponse
+    //         >({
+    //             type: 'sync-account-customizations',
+    //         }),
+    //         (response) => response.accountCustomizations
+    //     );
+    // }
+
     public getNetwork(): Promise<string | number> {
         return mapToPromise(
             this.send<GetNetwork, GetNetworkResponse>({
