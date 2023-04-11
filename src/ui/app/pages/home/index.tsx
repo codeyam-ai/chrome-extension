@@ -20,7 +20,7 @@ import PageLayout from '_src/ui/app/pages/PageLayout';
 
 const POLL_SUI_OBJECTS_INTERVAL = 4000;
 
-const HomePage = () => {
+const AppContainer = () => {
     const { loading, error, showError } = useObjectsState();
     const guardChecking = useInitializedGuard([
         AppState.MNEMONIC,
@@ -86,13 +86,13 @@ const HomePage = () => {
     );
 };
 
-export default HomePage;
+export default AppContainer;
 export { default as NFTDetailsPage } from './nft-details';
 export { default as NftsPage } from './nfts';
 export { default as TicketsPage } from './tickets';
 export { default as TicketDetailsPage } from './ticket-details';
 export { default as TicketProjectDetailsPage } from './ticket-project-details';
 export { default as ReceiptPage } from './receipt';
-export { default as TokensPage } from './tokens';
+export { default as HomePage } from './home';
 export { default as TransactionDetailsPage } from './transaction-details';
 export { default as TransactionsPage } from './transactions';

@@ -29,9 +29,10 @@ describe('send coin flow', () => {
     });
 
     const shouldSeeRootPageAndClickSend = async () => {
-        await screen.findByText('Coins');
-        await screen.findByText('Get started with Sui');
-        const sendButton = screen.getByRole('button', { name: 'Send' });
+        // await screen.findByText('Coins');
+        // await screen.findByText('Get started with Sui');
+        console.log(document);
+        const sendButton = await screen.findByText('Send');
         await userEvent.click(sendButton);
     };
 

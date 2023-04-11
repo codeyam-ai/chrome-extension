@@ -1,6 +1,6 @@
 import { ArrowRightCircleIcon } from '@heroicons/react/20/solid';
 
-import UnknownToken from '../../home/tokens/UnknownToken';
+import UnknownToken from '../../home/home/UnknownToken';
 
 const SendAssetImage = ({
     imageUrl,

@@ -62,7 +62,7 @@ function CoinBalance({ type, balance, replaceUrl }: CoinProps) {
                 </div>
                 <div className="flex flex-col items-start">
                     <div className="font-light text-base">
-                        {truncateString(name, 18)} ({symbol})
+                        {truncateString(name, 12)} ({symbol})
                     </div>
                     <div className="font-light text-sm text-slate-500 dark:text-slate-400">
                         {balanceFormatted}

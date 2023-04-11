@@ -1,7 +1,7 @@
 import { PhotoIcon } from '@heroicons/react/24/solid';
 
 import ipfs from '../../helpers/ipfs';
-import UnknownToken from '../../pages/home/tokens/UnknownToken';
+import UnknownToken from '../../pages/home/home/UnknownToken';
 import TxSui from '../svg/TxSui';
 
 export const AssetCard = ({

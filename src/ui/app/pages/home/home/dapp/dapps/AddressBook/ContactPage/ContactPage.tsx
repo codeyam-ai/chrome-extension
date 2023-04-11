@@ -40,7 +40,7 @@ const ContactPage = () => {
         if (!contact?.address) {
             return;
         }
-        navigate(`/tokens/address-book/contact/edit/${contact.address}`);
+        navigate(`/home/address-book/contact/edit/${contact.address}`);
     }, [contact?.address, navigate]);
 
     const removeThisContact = useCallback(() => {

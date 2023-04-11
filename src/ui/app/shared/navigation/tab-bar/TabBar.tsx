@@ -1,6 +1,7 @@
 import {
     ClockIcon,
     HomeIcon,
+    CircleStackIcon,
     SparklesIcon,
     TicketIcon,
 } from '@heroicons/react/24/solid';
@@ -16,14 +17,19 @@ import { api } from '_src/ui/app/redux/store/thunk-extras';
 const iconClasses = 'w-6 h-6';
 const navItems: NavItem[] = [
     {
-        title: 'Tokens',
-        to: './tokens',
+        title: 'Home',
+        to: './home',
         icon: <HomeIcon className={iconClasses} />,
     },
     {
         title: 'NFTs',
         to: './nfts',
         icon: <SparklesIcon className={iconClasses} />,
+    },
+    {
+        title: 'Tokens',
+        to: './tokens',
+        icon: <CircleStackIcon className={iconClasses} />,
     },
     {
         title: 'History',

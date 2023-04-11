@@ -12,8 +12,8 @@ import BuyPage from './pages/home/buy';
 import TransferNftRecipient from './pages/home/nft-details/transfer-nft-recipient';
 import TransferNftReview from './pages/home/nft-details/transfer-nft-review';
 import ReceivePage from './pages/home/receive';
-import AddressBookNavigation from './pages/home/tokens/dapp/dapps/AddressBook/AddressBookNavigation';
-import CustomizeNavigation from './pages/home/tokens/dapp/dapps/Customize/CustomizeNavigation';
+import AddressBookNavigation from './pages/home/home/dapp/dapps/AddressBook/AddressBookNavigation';
+import CustomizeNavigation from './pages/home/home/dapp/dapps/Customize/CustomizeNavigation';
 import TransferCoinAmountPage from './pages/home/transfer-coin-amount';
 import TransferCoinRecipientPage from './pages/home/transfer-coin-recipient';
 import TransferCoinReviewPage from './pages/home/transfer-coin-review';
@@ -35,14 +35,15 @@ import { loadContactsStorage } from './redux/slices/contacts';
 import HeartbeatProvider from './shared/HeartbeatProvider';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { DappTxApprovalPage } from '_pages/dapp-tx-approval';
-import HomePage, {
+import TokensPage from './pages/home/tokens';
+import AppContainer, {
+    HomePage,
     NFTDetailsPage,
     NftsPage,
     ReceiptPage,
     TicketsPage,
     TicketDetailsPage,
     TicketProjectDetailsPage,
-    TokensPage,
     TransactionDetailsPage,
     TransactionsPage,
 } from '_pages/home';
@@ -78,18 +79,19 @@ const App = () => {
                 <Routes>
                     <Route
                         path="/"
-                        element={<Navigate to="/tokens" replace={true} />}
+                        element={<Navigate to="/home" replace={true} />}
                     />
-                    <Route path="/*" element={<HomePage />}>
-                        <Route path="tokens" element={<TokensPage />} />
+                    <Route path="/*" element={<AppContainer />}>
+                        <Route path="home" element={<HomePage />} />
                         <Route
-                            path="tokens/customize/*"
+                            path="home/customize/*"
                             element={<CustomizeNavigation />}
                         />
                         <Route
-                            path="tokens/address-book/*"
+                            path="home/address-book/*"
                             element={<AddressBookNavigation />}
                         />
+                        <Route path="tokens" element={<TokensPage />} />
                         <Route path="nfts">
                             <Route path={'*'} element={<NftsPage />} />
                             <Route
@@ -201,7 +203,7 @@ const App = () => {
                     />
                     <Route
                         path="*"
-                        element={<Navigate to="/tokens" replace={true} />}
+                        element={<Navigate to="/home" replace={true} />}
                     />
                 </Routes>
             </HeartbeatProvider>

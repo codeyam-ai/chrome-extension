@@ -36,7 +36,7 @@ const WalletNickname: React.FC = () => {
 
     const handleOnSave = useCallback(() => {
         updateCurrentAccountInfo({ name: nickname });
-        navigate('/tokens/customize/emoji');
+        navigate('/home/customize/emoji');
     }, [nickname, updateCurrentAccountInfo, navigate]);
 
     const goBack = useCallback(() => {

@@ -3,7 +3,6 @@
 
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
-import CoinList from './CoinList';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import { DappList } from './dapp/DappList';
 import { sampleData } from './dapp/dappData';
@@ -21,7 +20,7 @@ import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
-function TokensPage() {
+function HomePage() {
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
 
     const balances = useAppSelector(accountAggregateBalancesSelector);
@@ -50,7 +49,14 @@ function TokensPage() {
             <SendReceiveButtonGroup mistBalance={mistBalance} />
             <div className="flex flex-col gap-6 overflow-auto">
                 <ContentBlock>
-                    <CoinList balances={balances} />
+                    {/* 
+
+                    Hide coinlist and display on the /tokens page
+                    TODO: remove once approved
+                    
+                    <CoinList balances={balances} /> 
+                    
+                    */}
 
                     {(!balances || Object.keys(balances).length < 2) && (
                         <div className="py-3">
@@ -74,4 +80,4 @@ function TokensPage() {
     );
 }
 
-export default TokensPage;
+export default HomePage;

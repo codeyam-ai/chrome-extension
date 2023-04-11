@@ -9,7 +9,7 @@ import { DASHBOARD_LINK } from '_src/shared/constants';
 export default function ReceivePage() {
     return (
         <>
-            <NavBarWithBackAndTitle title="Get Some SUI" backLink="/tokens" />
+            <NavBarWithBackAndTitle title="Get Some SUI" backLink="/home" />
             <ContentBlock>
                 <Body isSemibold={true}>Wallet Address</Body>
                 <Body isTextColorMedium>
