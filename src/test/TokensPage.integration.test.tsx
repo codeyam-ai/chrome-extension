@@ -3,6 +3,7 @@ import { screen } from '@testing-library/react';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
+import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
 describe('Rendering the Tokens page', () => {
     let mockchain: Mockchain;
@@ -27,11 +28,16 @@ describe('Rendering the Tokens page', () => {
             await screen.findByText('$4,000');
         });
 
-        xtest('shows the SUI amount when configured to do so', async () => {
+        test('shows the SUI amount when configured to do so', async () => {
             mockchain.mockSuiObjects({
                 suiBalance: 40000000000,
             });
-            renderApp();
+            renderApp({
+                dependencies: {
+                    ...makeTestDeps(),
+                    featureFlags: { showUsd: false },
+                },
+            });
             await screen.findByText('40 SUI');
         });
     });

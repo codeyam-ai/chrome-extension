@@ -1,5 +1,8 @@
 import { Square2StackIcon } from '@heroicons/react/24/outline';
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
+import { useFormatCoin } from '_hooks';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 import CopyToClipboard from '_src/ui/app/components/copy-to-clipboard';
 import useMiddleEllipsis from '_src/ui/app/hooks/useMiddleEllipsis';
 import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
@@ -11,22 +14,29 @@ import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 interface WalletBalanceAndIconHomeViewProps {
     accountInfo?: AccountInfo;
-    dollarValue: string;
+    mistBalance: bigint | undefined;
 }
 
 const WalletBalanceAndIconHomeView = ({
     accountInfo,
-    dollarValue,
+    mistBalance,
 }: WalletBalanceAndIconHomeViewProps) => {
-    if (dollarValue.endsWith('.00')) {
-        dollarValue = dollarValue.slice(0, -3);
-    }
-
     const addressWithEllipsis = useMiddleEllipsis(
         accountInfo?.address || '',
         9,
         5
     );
+
+    const { featureFlags } = useDependencies();
+
+    const [balanceFormatted, symbol, usdAmount] = useFormatCoin(
+        mistBalance,
+        SUI_TYPE_ARG
+    );
+
+    const formatted = usdAmount.endsWith('.00')
+        ? usdAmount.slice(0, -3)
+        : usdAmount;
 
     return (
         <div className="flex flex-col gap-3 place-items-center">
@@ -42,7 +52,11 @@ const WalletBalanceAndIconHomeView = ({
                 <BodyLarge isSemibold isTextColorMedium>
                     Wallet Balance
                 </BodyLarge>
-                <JumboTitle>{dollarValue}</JumboTitle>
+                <JumboTitle>
+                    {featureFlags.showUsd
+                        ? formatted
+                        : `${balanceFormatted} ${symbol}`}
+                </JumboTitle>
 
                 {addressWithEllipsis && (
                     <div className="pb-4">
