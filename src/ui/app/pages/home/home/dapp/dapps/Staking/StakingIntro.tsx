@@ -14,13 +14,13 @@ const StakingIntro: React.FC = () => {
                     alt={'Icon representing staking on the Sui network'}
                     className={'mx-auto'}
                 />
-                <Header className={'pt-2'}>
+                <Header className={'pt-2 mb-1'}>
                     Staking allows you to earn interest on your SUI
                 </Header>
 
                 <EthosLink
-                    className={'pt-2 underline'}
-                    to={'/learn-more'}
+                    className={'text-sm underline'}
+                    to={'/home/staking/learn-more'}
                     type={LinkType.Internal}
                 >
                     Learn More
