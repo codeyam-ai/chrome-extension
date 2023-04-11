@@ -9,11 +9,12 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import useSizeWindow from './hooks/useSizeWindow';
 import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
 import BuyPage from './pages/home/buy';
+import AddressBookNavigation from './pages/home/home/dapp/dapps/AddressBook/AddressBookNavigation';
+import CustomizeNavigation from './pages/home/home/dapp/dapps/Customize/CustomizeNavigation';
 import TransferNftRecipient from './pages/home/nft-details/transfer-nft-recipient';
 import TransferNftReview from './pages/home/nft-details/transfer-nft-review';
 import ReceivePage from './pages/home/receive';
-import AddressBookNavigation from './pages/home/home/dapp/dapps/AddressBook/AddressBookNavigation';
-import CustomizeNavigation from './pages/home/home/dapp/dapps/Customize/CustomizeNavigation';
+import TokensPage from './pages/home/tokens';
 import TransferCoinAmountPage from './pages/home/transfer-coin-amount';
 import TransferCoinRecipientPage from './pages/home/transfer-coin-recipient';
 import TransferCoinReviewPage from './pages/home/transfer-coin-review';
@@ -35,7 +36,6 @@ import { loadContactsStorage } from './redux/slices/contacts';
 import HeartbeatProvider from './shared/HeartbeatProvider';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { DappTxApprovalPage } from '_pages/dapp-tx-approval';
-import TokensPage from './pages/home/tokens';
 import AppContainer, {
     HomePage,
     NFTDetailsPage,

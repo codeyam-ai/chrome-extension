@@ -18,13 +18,13 @@ import convertUnixTimeToLocalTime from '../convertUnixTimeToLocalTime';
 import truncateMiddle from '../truncate-middle';
 import ns from '_shared/namespace';
 
-import type { humanReadableDetails } from './types';
+import type { HumanReadableDetails } from './types';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 const getHumanReadable = (
     ownerAddr: string,
     tx: SuiTransactionBlockResponse
-): humanReadableDetails => {
+): HumanReadableDetails => {
     const timeDisplay = convertUnixTimeToLocalTime(
         Number(tx.timestampMs || '0')
     );
