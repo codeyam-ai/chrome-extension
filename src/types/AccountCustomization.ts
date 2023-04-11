@@ -1,4 +1,5 @@
 import type { SuiAddress } from '@mysten/sui.js';
+import type { IdentifierString } from '@wallet-standard/standard';
 
 export interface Account {
     address: SuiAddress;
@@ -10,7 +11,7 @@ export interface Account {
 export interface Favorite {
     id: string;
     address: SuiAddress;
-    network: string;
+    chain: IdentifierString;
 }
 
 export interface AccountCustomization extends Account {

@@ -1,7 +1,11 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { CheckCircleIcon, EyeIcon } from '@heroicons/react/24/solid';
+import {
+    CheckCircleIcon,
+    EyeIcon,
+    PencilSquareIcon,
+} from '@heroicons/react/24/solid';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -39,6 +43,10 @@ const permissionTypeToTxt: Record<PermissionType, PermissionInfo> = {
     suggestSignMessages: {
         text: 'Suggest messages to sign',
         icon: <CheckCircleIcon />,
+    },
+    setAccountCustomizations: {
+        text: 'Set account customizations',
+        icon: <PencilSquareIcon />,
     },
 };
 

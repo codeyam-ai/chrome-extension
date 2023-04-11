@@ -23,15 +23,15 @@ import Transactions from '_src/background/Transactions';
 import { isGetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
 import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
 import { isGetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
+import { isSetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/SetAccountCustomizations';
 import { isDisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import {
     isSignMessageRequest,
     type SignMessageRequest,
 } from '_src/shared/messaging/messages/payloads/transactions/SignMessage';
 import { isGetUrl } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
-import { getEncrypted } from '_src/shared/storagex/store';
+import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { openInNewTab } from '_src/shared/utils';
-import { type AccountCustomization } from '_src/types/AccountCustomization';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 
 import type { NetworkEnvType } from '../NetworkEnv';
@@ -43,7 +43,13 @@ import type { GetAccountResponse } from '_payloads/account/GetAccountResponse';
 import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
+import type {
+    Favorite,
+    AccountCustomization,
+} from '_src/types/AccountCustomization';
+import type { Contact } from '_src/ui/app/redux/slices/contacts';
 import type { Runtime } from 'webextension-polyfill';
+import { isSetContacts } from '_src/shared/messaging/messages/payloads/account/SetContacts';
 
 export class ContentScriptConnection extends Connection {
     public static readonly CHANNEL: PortChannelName =
@@ -118,6 +124,57 @@ export class ContentScriptConnection extends Connection {
                 }
 
                 this.sendAccountCustomizations(accountCustomizations, msg.id);
+            }
+        } else if (isSetAccountCustomizations(payload)) {
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+            });
+
+            if (
+                !(await Permissions.hasPermissions(
+                    this.origin,
+                    ['setAccountCustomizations'],
+                    existingPermission
+                )) ||
+                !existingPermission
+            ) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                this.setAccountCustomizations(payload.accountCustomizations);
+            }
+        } else if (isSetContacts(payload)) {
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+            });
+
+            if (
+                !(await Permissions.hasPermissions(
+                    this.origin,
+                    ['setAccountCustomizations'],
+                    existingPermission
+                )) ||
+                !existingPermission
+            ) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                this.setContacts(payload.contacts);
+            }
+        } else if (isSetFavorites(payload)) {
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+            });
+
+            if (
+                !(await Permissions.hasPermissions(
+                    this.origin,
+                    ['setAccountCustomizations'],
+                    existingPermission
+                )) ||
+                !existingPermission
+            ) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                this.setFavorites(payload.favorites);
             }
         } else if (isGetNetwork(payload)) {
             const network = await networkEnv.getActiveNetwork();
@@ -260,6 +317,88 @@ export class ContentScriptConnection extends Connection {
             strong: false,
         });
         return JSON.parse(accountInfosString || '[]');
+    }
+
+    private async setAccountCustomizations(updates: AccountCustomization[]) {
+        const accountInfosString = await getEncrypted({
+            key: 'accountInfos',
+            session: false,
+            strong: false,
+        });
+        const accountInfos = JSON.parse(accountInfosString || '[]');
+        const newAccountInfos = accountInfos.map((accountInfo: AccountInfo) => {
+            const update = updates.find(
+                (u) => u.address === accountInfo.address
+            );
+
+            if (!update) return accountInfo;
+
+            return {
+                ...accountInfo,
+                ...update,
+            };
+        });
+
+        await setEncrypted({
+            key: 'accountInfos',
+            value: JSON.stringify(newAccountInfos),
+            session: false,
+            strong: false,
+        });
+    }
+
+    private async setContacts(updates: Contact[]) {
+        const contactsString = await getEncrypted({
+            key: 'contacts',
+            session: false,
+            strong: false,
+        });
+
+        const contacts = JSON.parse(contactsString || '[]') as Contact[];
+        const newContacts: Contact[] = contacts.map((contact: Contact) => {
+            const update = updates.find((u) => u.address === contact.address);
+
+            if (!update) return contact;
+
+            return {
+                ...contact,
+                ...update,
+            };
+        });
+
+        await setEncrypted({
+            key: 'contacts',
+            value: JSON.stringify(newContacts),
+            session: false,
+            strong: false,
+        });
+    }
+
+    private async setFavorites(updates: Favorite[]) {
+        const contactsString = await getEncrypted({
+            key: 'contacts',
+            session: false,
+            strong: false,
+        });
+
+        const contacts = JSON.parse(contactsString || '[]') as Contact[];
+        const newContacts: Contact[] = contacts.map((contact: Contact) => {
+            const update = updates.find((u) => u.address === contact.address);
+
+            if (!update) return contact;
+
+            return {
+                ...contact,
+                ...update,
+            };
+        });
+
+        await setEncrypted({
+            key: 'contacts',
+            value: JSON.stringify(newContacts),
+            session: false,
+            strong: false,
+        });
     }
 
     private async getActiveAccount(): Promise<AccountInfo> {

@@ -29,6 +29,8 @@ import type {
 import type { NetworkEnvType } from '_src/background/NetworkEnv';
 import type { GetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
 import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
+import type { SetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/SetAccountCustomizations';
+import type { SetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/SetAccountCustomizationsResponse';
 import type { DisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
@@ -100,17 +102,20 @@ export class DAppInterface {
         );
     }
 
-    // public syncAccountCustomizations(): Promise<AccountCustomization[]> {
-    //     return mapToPromise(
-    //         this.send<
-    //             GetAccountCustomizations,
-    //             GetAccountCustomizationsResponse
-    //         >({
-    //             type: 'sync-account-customizations',
-    //         }),
-    //         (response) => response.accountCustomizations
-    //     );
-    // }
+    public syncAccountCustomizations(
+        accountCustomizations: AccountCustomization[]
+    ) {
+        return mapToPromise(
+            this.send<
+                SetAccountCustomizations,
+                SetAccountCustomizationsResponse
+            >({
+                type: 'set-account-customizations',
+                accountCustomizations,
+            }),
+            (response) => response
+        );
+    }
 
     public getNetwork(): Promise<NetworkEnvType> {
         return mapToPromise(
