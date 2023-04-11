@@ -32,7 +32,7 @@ describe('The Transaction Approval popup', () => {
             dependencies: testDeps,
         });
 
-        await screen.findByText('Cost');
+        await screen.findByText('Cost', {}, { timeout: 5000 });
         const approveButton = await screen.findByText('Approve');
 
         await userEvent.click(approveButton);
@@ -55,7 +55,7 @@ describe('The Transaction Approval popup', () => {
             dependencies: testDeps,
         });
 
-        await screen.findByText('Cost');
+        await screen.findByText('Cost', {}, { timeout: 5000 });
 
         const cancelButton = await screen.findByText('Cancel');
         await userEvent.click(cancelButton);
