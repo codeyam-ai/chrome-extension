@@ -22,7 +22,7 @@ const buttonChildrenClassNames =
     'text-size-ethos-button-text inline-flex items-center justify-center gap-2';
 
 const baseButtonClassNames =
-    'flex items-center place-content-center w-full py-[10px] px-4 border border-transparent rounded-[10px] disabled:opacity-50';
+    'flex items-center place-content-center w-full py-[10px] px-4 min-h-[46px] border border-transparent rounded-[10px] disabled:opacity-50';
 
 const primaryButtonClassNames =
     baseButtonClassNames +
