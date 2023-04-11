@@ -31,9 +31,9 @@ const AddressTooltip: React.FC<AddressTooltipProps> = ({
     const handleTextClick = useCallback(() => {
         if (textRef.current) {
             toast(<SuccessAlert text={'Copied to clipboard'} />);
-            navigator.clipboard.writeText(textRef.current.innerText);
+            navigator.clipboard.writeText(address);
         }
-    }, []);
+    }, [address]);
 
     return (
         <span
@@ -47,7 +47,7 @@ const AddressTooltip: React.FC<AddressTooltipProps> = ({
             </span>
             <div
                 className={classNames(
-                    'absolute -left-[100px] -top-[106px] mt-2 px-4 py-6 w-[330px] break-words rounded shadow-lg transition-opacity duration-300 ease-in-out border-2 border-ethos-light-primary-light dark:border-ethos-dark-primary-dark bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary',
+                    'absolute -left-[92px] -top-[106px] mt-2 px-4 py-6 w-[330px] break-words rounded shadow-lg transition-opacity duration-300 ease-in-out border-2 border-ethos-light-primary-light dark:border-ethos-dark-primary-dark bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary',
                     isTooltipVisible
                         ? 'opacity-100'
                         : 'opacity-0 pointer-events-none'
