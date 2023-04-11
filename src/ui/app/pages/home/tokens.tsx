@@ -11,7 +11,6 @@ import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
-
 function TokensPage() {
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const balLength = Object.keys(balances).length || 0;

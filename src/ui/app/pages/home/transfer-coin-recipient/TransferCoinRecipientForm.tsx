@@ -8,6 +8,7 @@ import { useSearchParams } from 'react-router-dom';
 import AddressInput from '_components/address-input';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import Loading from '_src/ui/app/components/loading';
+import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { CoinSelect } from '_src/ui/app/pages/home/home/CoinDropdown';
 import { setSuiRecipient } from '_src/ui/app/redux/slices/forms';
@@ -15,9 +16,8 @@ import { setSuiRecipient } from '_src/ui/app/redux/slices/forms';
 //     getTransactionsByAddress,
 //     type TxResultState,
 // } from '_src/ui/app/redux/slices/txresults';
-import EmojiDisplay from '_src/ui/app/shared/EmojiDisplay';
+import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
 import Button from '_src/ui/app/shared/buttons/Button';
-import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
 
@@ -45,10 +45,10 @@ function TransferCoinRecipientForm({
     const coinType = searchParams.get('type');
     const toAddress = searchParams.get('to');
     const disableToInput =
-        searchParams.get('disableToInput') &&
+        searchParams.has('disableToInput') &&
         searchParams.get('disableToInput') === 'true';
     const hideWalletRecommendations =
-        searchParams.get('hideWalletRecommendations') &&
+        searchParams.has('hideWalletRecommendations') &&
         searchParams.get('hideWalletRecommendations') === 'true';
 
     // const txByAddress: TxResultState[] = useAppSelector(({ txresults }) => {
@@ -117,16 +117,30 @@ function TransferCoinRecipientForm({
                         <CoinSelect selectedCoinType={coinType} />
                     </div>
                     <div className={'relative'}>
-                        <Field
-                            placeholder={'0x... or SuiNS name'}
-                            className={'flex flex-col gap-2 pl-0 pr-0'}
-                            component={AddressInput}
-                            name="to"
-                            id="to"
-                            label={'Recipient'}
-                            onBlur={handleOnblur}
-                            disabled={disableToInput}
-                        />
+                        {disableToInput && contact ? (
+                            <div className="flex flex-row items-center w-full gap-2 py-[16px] px-[20px] shadow-sm rounded-[16px] bg-ethos-light-background-secondary font-weight-ethos-body-large text-size-ethos-body-large leading-line-height-ethos-body-large tracking-letter-spacing-ethos-body-large border border-ethos-light-text-stroke">
+                                <WalletColorAndEmojiCircle
+                                    circleSizeClasses="w-8 h-8"
+                                    color={contact.color}
+                                    emoji={contact.emoji}
+                                    emojiSizeInPx={20}
+                                />
+                                <BodyLarge>
+                                    {truncateMiddle(contact.address)}
+                                </BodyLarge>
+                            </div>
+                        ) : (
+                            <Field
+                                placeholder={'0x... or SuiNS name'}
+                                className={'flex flex-col gap-2 pl-0 pr-0'}
+                                component={AddressInput}
+                                name="to"
+                                id="to"
+                                label={'Recipient'}
+                                onBlur={handleOnblur}
+                                disabled={disableToInput}
+                            />
+                        )}
                         <div
                             className={`absolute top-0 right-0 mt-1 text-red-500 dark:text-red-400 ${
                                 isValid && 'hidden'
@@ -138,23 +152,6 @@ function TransferCoinRecipientForm({
                 </div>
 
                 <div className={'pb-[80px] pt-[202px]'}>
-                    {contact && (
-                        <div className="flex flex-col gap-2 pb-6 items-center place-content-center">
-                            <div
-                                data-testid="emoji-picker"
-                                className="flex w-11 h-11 rounded-full items-center place-content-center"
-                                style={{ backgroundColor: contact.color }}
-                            >
-                                <EmojiDisplay
-                                    emoji={contact.emoji}
-                                    sizeInPx={22}
-                                />
-                            </div>
-                            <div className="flex flex-col text-left">
-                                <Body isSemibold>{contact.name}</Body>
-                            </div>
-                        </div>
-                    )}
                     {!hideWalletRecommendations && recentWallets.length > 0 && (
                         <SuiTxWalletList
                             header={'Recent Wallets'}
