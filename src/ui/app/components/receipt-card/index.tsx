@@ -37,6 +37,8 @@ import type { FormattedTransaction } from '../../helpers/transactions/types';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 import st from './ReceiptCard.module.scss';
+import Button from '../../shared/buttons/Button';
+import { UserPlusIcon } from '@heroicons/react/24/outline';
 
 type TxResponseProps = {
     txDigest: string | null;
@@ -213,14 +215,6 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         },
         [accountInfos]
     );
-
-    if (!transaction)
-        return (
-            <div className={'pt-10'}>
-                <LoadingIndicator big={true} />
-            </div>
-        );
-
     const {
         txAction,
         timeDisplay,
@@ -234,6 +228,17 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         otherAddressStr,
         addresses,
     } = getHumanReadable(address, transaction);
+
+    const contactTo = useAppSelector(({ contacts: { contacts } }) =>
+        contacts.find((contact) => contact.address === addresses?.to)
+    );
+
+    if (!transaction)
+        return (
+            <div className={'pt-10'}>
+                <LoadingIndicator big={true} />
+            </div>
+        );
 
     /*
 
@@ -402,6 +407,12 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     </div>
                 </div>
             </div>
+            {!contactTo && (
+                <Button>
+                    <UserPlusIcon className="h-6 w-6 text-white" />
+                    Save Address
+                </Button>
+            )}
         </>
     );
 }
