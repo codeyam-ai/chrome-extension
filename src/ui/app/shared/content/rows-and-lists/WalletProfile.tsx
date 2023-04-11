@@ -70,11 +70,6 @@ const WalletProfile = ({ onClick, inlineWalletPicker }: WalletProfileProps) => {
                     </Link>
                 )}
             </div>
-            <AccountAddress
-                showName={false}
-                showLink={false}
-                mode={AddressMode.FADED}
-            />
         </div>
     );
 };
