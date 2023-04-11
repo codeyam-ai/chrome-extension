@@ -78,7 +78,7 @@ const SelectValidator: React.FC = () => {
                     apy={'4.4'}
                 />
             </div>
-            <Button to={'/home/staking/staking-amount'} removeContainerPadding>
+            <Button to={'/home/staking/amount-to-stake'} removeContainerPadding>
                 Next
             </Button>
         </div>
