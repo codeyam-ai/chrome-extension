@@ -1,5 +1,5 @@
 import type { BasePayload } from '_payloads';
 
-export interface SetContactsResponse extends BasePayload {
-    type: 'set-contacts-response';
+export interface GetContactsResponse extends BasePayload {
+    type: 'get-contacts-response';
 }

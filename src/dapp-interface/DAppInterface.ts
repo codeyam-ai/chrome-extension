@@ -9,7 +9,6 @@ import { WindowMessageStream } from '_messaging/WindowMessageStream';
 import { ALL_PERMISSION_TYPES } from '_payloads/permissions';
 import { type GetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
 import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
-import { type AccountCustomization } from '_src/types/AccountCustomization';
 
 import type { SuiAddress } from '@mysten/sui.js';
 import type { Payload } from '_payloads';
@@ -27,6 +26,10 @@ import type {
     PreapprovalResponse,
 } from '_payloads/transactions';
 import type { NetworkEnvType } from '_src/background/NetworkEnv';
+import type { GetContacts } from '_src/shared/messaging/messages/payloads/account/GetContacts';
+import type { GetContactsResponse } from '_src/shared/messaging/messages/payloads/account/GetContactsResponse';
+import type { GetFavorites } from '_src/shared/messaging/messages/payloads/account/GetFavorites';
+import type { GetFavoritesResponse } from '_src/shared/messaging/messages/payloads/account/GetFavoritesResponse';
 import type { GetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
 import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
 import type { SetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/SetAccountCustomizations';
@@ -36,6 +39,7 @@ import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { OpenWallet } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
+import type { AccountCustomization } from '_src/types/AccountCustomization';
 import type { Observable } from 'rxjs';
 
 export class DAppInterface {
@@ -102,7 +106,7 @@ export class DAppInterface {
         );
     }
 
-    public syncAccountCustomizations(
+    public setAccountCustomizations(
         accountCustomizations: AccountCustomization[]
     ) {
         return mapToPromise(
@@ -114,6 +118,24 @@ export class DAppInterface {
                 accountCustomizations,
             }),
             (response) => response
+        );
+    }
+
+    public getContacts(): Promise<AccountCustomization[]> {
+        return mapToPromise(
+            this.send<GetContacts, GetContactsResponse>({
+                type: 'get-contacts',
+            }),
+            (response) => response.contacts
+        );
+    }
+
+    public getFavorites(): Promise<AccountCustomization[]> {
+        return mapToPromise(
+            this.send<GetFavorites, GetFavoritesResponse>({
+                type: 'get-favorites',
+            }),
+            (response) => response.favorites
         );
     }
 

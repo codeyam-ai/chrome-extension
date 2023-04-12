@@ -24,6 +24,8 @@ import { isGetAccountCustomizations } from '_src/shared/messaging/messages/paylo
 import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
 import { isGetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
 import { isSetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/SetAccountCustomizations';
+import { isSetContacts } from '_src/shared/messaging/messages/payloads/account/SetContacts';
+import { isSetFavorites } from '_src/shared/messaging/messages/payloads/account/SetFavorites';
 import { isDisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import {
     isSignMessageRequest,
@@ -49,7 +51,6 @@ import type {
 } from '_src/types/AccountCustomization';
 import type { Contact } from '_src/ui/app/redux/slices/contacts';
 import type { Runtime } from 'webextension-polyfill';
-import { isSetContacts } from '_src/shared/messaging/messages/payloads/account/SetContacts';
 
 export class ContentScriptConnection extends Connection {
     public static readonly CHANNEL: PortChannelName =

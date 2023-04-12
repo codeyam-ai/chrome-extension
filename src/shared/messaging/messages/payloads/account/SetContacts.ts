@@ -1,11 +1,11 @@
 import { isBasePayload } from '_payloads';
 
 import type { BasePayload, Payload } from '_payloads';
-import type { AccountCustomization } from '_src/types/AccountCustomization';
+import type { Contact } from '_src/ui/app/redux/slices/contacts';
 
 export interface SetContacts extends BasePayload {
     type: 'set-contacts';
-    accountCustomizations: AccountCustomization[];
+    contacts: Contact[];
 }
 
 export function isSetContacts(payload: Payload): payload is SetContacts {
