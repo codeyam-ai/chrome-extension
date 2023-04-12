@@ -70,26 +70,37 @@ const ValidatorSelect = ({ validator, apy }: ValidatorSelectProps) => {
     }, []);
 
     return (
-        <button
-            onClick={selectValidator}
-            className={
-                'block w-full py-4 text-left border-2 border-white dark:border-ethos-dark-background-default hover:border-ethos-light-primary-light hover:border-2 hover:dark:border-ethos-dark-primary-dark transition-all'
-            }
-        >
-            <div className={'flex flex-row justify-between relative'}>
-                <div className={'mb-1 text-base'}>
-                    <p className={'font-bold'}>{validator}</p>
-                    <p
-                        className={
-                            'text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
-                        }
-                    >
-                        0xc23...23dc8
-                    </p>
+        <div>
+            <button
+                onClick={selectValidator}
+                className={
+                    'block w-full py-2 px-2 text-left rounded-xl border-2 border-white dark:border-ethos-dark-background-default hover:border-ethos-light-primary-light hover:border-2 hover:dark:border-ethos-dark-primary-dark transition-all'
+                }
+            >
+                <div
+                    className={
+                        'flex flex-row justify-between align-middle relative'
+                    }
+                >
+                    <div className={'mb-1 text-base'}>
+                        <p className={'font-bold'}>{validator}</p>
+                        <p
+                            className={
+                                'text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
+                            }
+                        >
+                            0xc23...23dc8
+                        </p>
+                    </div>
+                    <div className={'text-base font-bold'}>{apy}% APY</div>
                 </div>
-                <div className={'text-base font-bold'}>{apy}% APY</div>
-            </div>
-        </button>
+            </button>
+            <div
+                className={
+                    'border-[#F9F9FB] border dark:border-ethos-dark-text-stroke'
+                }
+            ></div>
+        </div>
     );
 };
 
