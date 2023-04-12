@@ -83,24 +83,20 @@ function TransferCoinReviewPage() {
                 resetForm();
                 dispatch(resetSendSuiForm());
 
-                if ('effects' in tx) {
-                    const txDigest = tx?.effects?.transactionDigest;
+                const txDigest = tx?.digest;
 
-                    const navLink = `/transactions/receipt?${new URLSearchParams(
-                        {
-                            txdigest: txDigest || '',
-                        }
-                    ).toString()}`;
+                const navLink = `/transactions/receipt?${new URLSearchParams({
+                    txdigest: txDigest || '',
+                }).toString()}`;
 
-                    toast(
-                        <SuccessAlert
-                            text={'Transaction successful.'}
-                            linkText={'View'}
-                            linkUrl={navLink}
-                        />,
-                        { delay: 500 }
-                    );
-                }
+                toast(
+                    <SuccessAlert
+                        text={'Transaction successful.'}
+                        linkText={'View'}
+                        linkUrl={navLink}
+                    />,
+                    { delay: 500 }
+                );
 
                 const receiptUrl = '/home';
                 navigate(receiptUrl);
