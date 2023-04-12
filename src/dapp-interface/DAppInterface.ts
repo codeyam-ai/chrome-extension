@@ -34,6 +34,10 @@ import type { GetNetwork } from '_src/shared/messaging/messages/payloads/account
 import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
 import type { SetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/SetAccountCustomizations';
 import type { SetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/SetAccountCustomizationsResponse';
+import type { SetContacts } from '_src/shared/messaging/messages/payloads/account/SetContacts';
+import type { SetContactsResponse } from '_src/shared/messaging/messages/payloads/account/SetContactsResponse';
+import type { SetFavorites } from '_src/shared/messaging/messages/payloads/account/SetFavorites';
+import type { SetFavoritesResponse } from '_src/shared/messaging/messages/payloads/account/SetFavoritesResponse';
 import type { DisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
@@ -140,6 +144,26 @@ export class DAppInterface {
                 type: 'get-favorites',
             }),
             (response) => response.favorites
+        );
+    }
+
+    public setContacts(contacts: Contact[]) {
+        return mapToPromise(
+            this.send<SetContacts, SetContactsResponse>({
+                type: 'set-contacts',
+                contacts,
+            }),
+            (response) => response
+        );
+    }
+
+    public setFavorites(favorites: Favorite[]) {
+        return mapToPromise(
+            this.send<SetFavorites, SetFavoritesResponse>({
+                type: 'set-favorites',
+                favorites,
+            }),
+            (response) => response
         );
     }
 

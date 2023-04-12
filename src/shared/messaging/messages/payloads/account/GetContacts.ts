@@ -7,5 +7,5 @@ export interface GetContacts extends BasePayload {
 }
 
 export function isGetContacts(payload: Payload): payload is GetContacts {
-    return isBasePayload(payload) && payload.type === 'get-contacts-response';
+    return isBasePayload(payload) && payload.type === 'get-contacts';
 }

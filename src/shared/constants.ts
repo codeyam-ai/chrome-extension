@@ -4,7 +4,7 @@
 export const BASE_URL = process.env.ETHOS_BASE_URL || 'http://localhost:3000';
 export const SECURE_URL =
     process.env.ETHOS_SECURE_URL || 'http://localhost:3000';
-export const LINK_URL = BASE_URL;
+export const LINK_URL = 'http://localhost:3000'; //BASE_URL;
 
 // const queryParamFrom = '?from=ethos-extension';
 

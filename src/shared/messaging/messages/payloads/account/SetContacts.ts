@@ -9,5 +9,5 @@ export interface SetContacts extends BasePayload {
 }
 
 export function isSetContacts(payload: Payload): payload is SetContacts {
-    return isBasePayload(payload) && payload.type === 'set-contacts-response';
+    return isBasePayload(payload) && payload.type === 'set-contacts';
 }

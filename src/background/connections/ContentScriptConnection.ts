@@ -103,8 +103,10 @@ export class ContentScriptConnection extends Connection {
                 )
             );
         } else if (isGetAccountCustomizations(payload)) {
+            const activeAccount = await this.getActiveAccount();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
+                account: activeAccount?.address,
             });
 
             if (
@@ -131,8 +133,10 @@ export class ContentScriptConnection extends Connection {
                 this.sendAccountCustomizations(accountCustomizations, msg.id);
             }
         } else if (isSetAccountCustomizations(payload)) {
+            const activeAccount = await this.getActiveAccount();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
+                account: activeAccount?.address,
             });
 
             if (
@@ -148,8 +152,10 @@ export class ContentScriptConnection extends Connection {
                 this.setAccountCustomizations(payload.accountCustomizations);
             }
         } else if (isGetContacts(payload)) {
+            const activeAccount = await this.getActiveAccount();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
+                account: activeAccount?.address,
             });
 
             if (
@@ -166,8 +172,10 @@ export class ContentScriptConnection extends Connection {
                 this.sendContacts(contacts, msg.id);
             }
         } else if (isSetContacts(payload)) {
+            const activeAccount = await this.getActiveAccount();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
+                account: activeAccount?.address,
             });
 
             if (
@@ -183,8 +191,10 @@ export class ContentScriptConnection extends Connection {
                 this.setContacts(payload.contacts);
             }
         } else if (isGetFavorites(payload)) {
+            const activeAccount = await this.getActiveAccount();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
+                account: activeAccount?.address,
             });
 
             if (
@@ -201,8 +211,10 @@ export class ContentScriptConnection extends Connection {
                 this.sendFavorites(contacts, msg.id);
             }
         } else if (isSetFavorites(payload)) {
+            const activeAccount = await this.getActiveAccount();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
+                account: activeAccount?.address,
             });
 
             if (
@@ -398,21 +410,9 @@ export class ContentScriptConnection extends Connection {
     }
 
     private async setContacts(updates: Contact[]) {
-        const contacts = await this.getContacts();
-        const newContacts: Contact[] = contacts.map((contact: Contact) => {
-            const update = updates.find((u) => u.address === contact.address);
-
-            if (!update) return contact;
-
-            return {
-                ...contact,
-                ...update,
-            };
-        });
-
         await setEncrypted({
             key: 'contacts',
-            value: JSON.stringify(newContacts),
+            value: JSON.stringify(updates),
             session: false,
             strong: false,
         });
@@ -428,21 +428,9 @@ export class ContentScriptConnection extends Connection {
     }
 
     private async setFavorites(updates: Favorite[]) {
-        const favorites = await this.getFavorites();
-        const newFavorites: Favorite[] = favorites.map((favorite: Favorite) => {
-            const update = updates.find((u) => u.id === favorite.id);
-
-            if (!update) return favorite;
-
-            return {
-                ...favorite,
-                ...update,
-            };
-        });
-
         await setEncrypted({
             key: 'favorites',
-            value: JSON.stringify(newFavorites),
+            value: JSON.stringify(updates),
             session: false,
             strong: false,
         });
