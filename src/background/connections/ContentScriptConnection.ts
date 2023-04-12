@@ -25,6 +25,7 @@ import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/mes
 import { isGetContacts } from '_src/shared/messaging/messages/payloads/account/GetContacts';
 import { isGetFavorites } from '_src/shared/messaging/messages/payloads/account/GetFavorites';
 import { isGetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
+import { isGetTheme } from '_src/shared/messaging/messages/payloads/account/GetTheme';
 import { isSetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/SetAccountCustomizations';
 import { isSetContacts } from '_src/shared/messaging/messages/payloads/account/SetContacts';
 import { isSetFavorites } from '_src/shared/messaging/messages/payloads/account/SetFavorites';
@@ -34,7 +35,11 @@ import {
     type SignMessageRequest,
 } from '_src/shared/messaging/messages/payloads/transactions/SignMessage';
 import { isGetUrl } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
-import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
+import {
+    getEncrypted,
+    getLocal,
+    setEncrypted,
+} from '_src/shared/storagex/store';
 import { openInNewTab } from '_src/shared/utils';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 
@@ -47,6 +52,7 @@ import type { GetAccountResponse } from '_payloads/account/GetAccountResponse';
 import type { GetContactsResponse } from '_src/shared/messaging/messages/payloads/account/GetContactsResponse';
 import type { GetFavoritesResponse } from '_src/shared/messaging/messages/payloads/account/GetFavoritesResponse';
 import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
+import type { GetThemeResponse } from '_src/shared/messaging/messages/payloads/account/GetThemeResponse';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
 import type {
@@ -150,6 +156,26 @@ export class ContentScriptConnection extends Connection {
                 this.sendNotAllowedError(msg.id);
             } else {
                 this.setAccountCustomizations(payload.accountCustomizations);
+            }
+        } else if (isGetTheme(payload)) {
+            const activeAccount = await this.getActiveAccount();
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+                account: activeAccount?.address,
+            });
+
+            if (
+                !(await Permissions.hasPermissions(
+                    this.origin,
+                    ['viewAccount'],
+                    existingPermission
+                )) ||
+                !existingPermission
+            ) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                const theme = (await getLocal('theme')) as string;
+                this.sendTheme(theme, msg.id);
             }
         } else if (isGetContacts(payload)) {
             const activeAccount = await this.getActiveAccount();
@@ -490,6 +516,18 @@ export class ContentScriptConnection extends Connection {
                 {
                     type: 'get-account-customizations-response',
                     accountCustomizations,
+                },
+                responseForID
+            )
+        );
+    }
+
+    private sendTheme(theme: string, responseForID?: string) {
+        this.send(
+            createMessage<GetThemeResponse>(
+                {
+                    type: 'get-theme-response',
+                    theme,
                 },
                 responseForID
             )

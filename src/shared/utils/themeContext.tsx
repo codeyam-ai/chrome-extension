@@ -1,5 +1,7 @@
 import { createContext, useState, useEffect, useCallback } from 'react';
 
+import { removeLocal, setLocal, getLocal } from '../storagex/store';
+
 import type { ReactNode } from 'react';
 
 type ThemeName = 'system' | 'light' | 'dark';
@@ -8,8 +10,14 @@ type ThemeContextType = {
     setTheme: (name: ThemeName) => void;
 };
 
-function getTheme(): ThemeName {
-    const localTheme = localStorage.theme;
+async function getTheme(): Promise<ThemeName> {
+    let localTheme = await getLocal('theme');
+    if (!localTheme) {
+        localTheme = localStorage.theme;
+        if (localTheme) {
+            setLocal({ theme: localTheme.toString() });
+        }
+    }
 
     if (localTheme === 'dark') {
         // user has manually selected dark mode
@@ -35,10 +43,13 @@ function getTheme(): ThemeName {
 function rawSetTheme(theme: ThemeName) {
     if (theme === 'dark') {
         localStorage.theme = 'dark';
+        setLocal({ theme: 'dark' });
     } else if (theme === 'light') {
         localStorage.theme = 'light';
+        setLocal({ theme: 'light' });
     } else {
         localStorage.removeItem('theme');
+        removeLocal('theme');
     }
 }
 
@@ -53,7 +64,7 @@ export const ThemeProvider = ({
     initialTheme: ThemeName | undefined;
     children: ReactNode;
 }) => {
-    const [theme, setTheme] = useState<ThemeName>(getTheme);
+    const [theme, setTheme] = useState<ThemeName>('system');
 
     const externalSetTheme = useCallback((theme: ThemeName) => {
         setTheme(theme);
@@ -64,6 +75,12 @@ export const ThemeProvider = ({
     if (initialTheme) {
         rawSetTheme(initialTheme);
     }
+
+    useEffect(() => {
+        getTheme().then((theme) => {
+            setTheme(theme);
+        });
+    }, []);
 
     useEffect(() => {
         rawSetTheme(theme);

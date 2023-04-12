@@ -32,6 +32,8 @@ import type { GetFavorites } from '_src/shared/messaging/messages/payloads/accou
 import type { GetFavoritesResponse } from '_src/shared/messaging/messages/payloads/account/GetFavoritesResponse';
 import type { GetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
 import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
+import type { GetTheme } from '_src/shared/messaging/messages/payloads/account/GetTheme';
+import type { GetThemeResponse } from '_src/shared/messaging/messages/payloads/account/GetThemeResponse';
 import type { SetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/SetAccountCustomizations';
 import type { SetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/SetAccountCustomizationsResponse';
 import type { SetContacts } from '_src/shared/messaging/messages/payloads/account/SetContacts';
@@ -99,6 +101,17 @@ export class DAppInterface {
                 type: 'get-account',
             }),
             (response) => response.accounts
+        );
+    }
+
+    public getTheme(): Promise<string> {
+        return mapToPromise(
+            this.send<GetTheme, GetThemeResponse>({
+                type: 'get-theme',
+            }),
+            (response) => {
+                return response.theme;
+            }
         );
     }
 
