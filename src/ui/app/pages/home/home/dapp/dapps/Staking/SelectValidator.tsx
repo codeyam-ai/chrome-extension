@@ -4,24 +4,28 @@ import { LinkType } from '_src/enums/LinkType';
 import Button from '_src/ui/app/shared/buttons/Button';
 import { useCallback } from 'react';
 
-interface ValidatorSelectProps {
+/*
+
+The Provider Select component will be used for main net launch.
+
+interface ProviderSelectProps {
     validator?: string;
     apy?: string;
     isHighReward: boolean;
 }
 
-const ValidatorSelect = ({
+const ProviderSelect = ({
     validator,
     apy,
     isHighReward,
-}: ValidatorSelectProps) => {
-    const selectValidator = useCallback(() => {
+}: ProviderSelectProps) => {
+    const selectProvider = useCallback(() => {
         console.log(validator);
     }, []);
 
     return (
         <button
-            onClick={selectValidator}
+            onClick={selectProvider}
             className={
                 'block w-full mb-5 rounded-md py-4 px-3 text-left border hover:border hover:dark:border-ethos-dark-primary-dark border-ethos-light-text-medium dark:border-ethos-dark-text-stroke transition-all'
             }
@@ -52,6 +56,43 @@ const ValidatorSelect = ({
     );
 };
 
+*/
+
+interface ValidatorSelectProps {
+    validator?: string;
+    apy?: string;
+    isHighReward: boolean;
+}
+
+const ValidatorSelect = ({ validator, apy }: ValidatorSelectProps) => {
+    const selectValidator = useCallback(() => {
+        console.log(validator);
+    }, []);
+
+    return (
+        <button
+            onClick={selectValidator}
+            className={
+                'block w-full py-4 text-left border-2 border-white dark:border-ethos-dark-background-default hover:border-ethos-light-primary-light hover:border-2 hover:dark:border-ethos-dark-primary-dark transition-all'
+            }
+        >
+            <div className={'flex flex-row justify-between relative'}>
+                <div className={'mb-1 text-base'}>
+                    <p className={'font-bold'}>{validator}</p>
+                    <p
+                        className={
+                            'text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
+                        }
+                    >
+                        0xc23...23dc8
+                    </p>
+                </div>
+                <div className={'text-base font-bold'}>{apy}% APY</div>
+            </div>
+        </button>
+    );
+};
+
 const SelectValidator: React.FC = () => {
     // add component
     return (
@@ -71,11 +112,6 @@ const SelectValidator: React.FC = () => {
                     isHighReward={true}
                     validator={'Coinbase'}
                     apy={'5'}
-                />
-                <ValidatorSelect
-                    isHighReward={false}
-                    validator={'Everstake'}
-                    apy={'4.4'}
                 />
             </div>
             <Button to={'/home/staking/amount-to-stake'} removeContainerPadding>
