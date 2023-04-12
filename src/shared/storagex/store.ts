@@ -23,12 +23,12 @@ export async function setSession(keyValue: Record<string, string | null>) {
     chrome.storage.session.set(keyValue);
 }
 
-export async function removeLocal(key: string) {
-    Browser.storage.local.remove(key);
+export async function removeLocal(keys: string | string[]) {
+    Browser.storage.local.remove(keys);
 }
 
-export async function removeSession(key: string) {
-    chrome.storage.session.remove(key);
+export async function removeSession(keys: string | string[]) {
+    chrome.storage.session.remove(keys);
 }
 
 export async function setEncrypted({

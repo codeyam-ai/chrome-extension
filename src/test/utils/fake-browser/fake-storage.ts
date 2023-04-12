@@ -38,6 +38,13 @@ export class FakeStorage {
         });
     }
 
+    async remove(key: string) {
+        delete this.storedValues[key];
+        return new Promise<void>((resolve, reject) => {
+            resolve();
+        });
+    }
+
     clear() {
         this.storedValues = {};
     }
