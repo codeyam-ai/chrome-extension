@@ -63,6 +63,7 @@ function renderApp() {
             window.close();
         },
         heartbeat: makeHeartbeat(),
+        featureFlags: { showUsd: false },
     };
 
     root.render(
