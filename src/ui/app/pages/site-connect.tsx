@@ -48,6 +48,22 @@ const permissionTypeToTxt: Record<PermissionType, PermissionInfo> = {
         text: 'Set account customizations',
         icon: <PencilSquareIcon />,
     },
+    viewContacts: {
+        text: 'Set account customizations',
+        icon: <CheckCircleIcon />,
+    },
+    setContacts: {
+        text: 'Set account customizations',
+        icon: <PencilSquareIcon />,
+    },
+    viewFavorites: {
+        text: 'Set account customizations',
+        icon: <CheckCircleIcon />,
+    },
+    setFavorites: {
+        text: 'Set account customizations',
+        icon: <PencilSquareIcon />,
+    },
 };
 
 function SiteConnectPage() {

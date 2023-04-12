@@ -22,6 +22,8 @@ import Permissions from '_src/background/Permissions';
 import Transactions from '_src/background/Transactions';
 import { isGetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
 import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
+import { isGetContacts } from '_src/shared/messaging/messages/payloads/account/GetContacts';
+import { isGetFavorites } from '_src/shared/messaging/messages/payloads/account/GetFavorites';
 import { isGetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
 import { isSetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/SetAccountCustomizations';
 import { isSetContacts } from '_src/shared/messaging/messages/payloads/account/SetContacts';
@@ -42,6 +44,8 @@ import type { Message } from '_messages';
 import type { PortChannelName } from '_messaging/PortChannelName';
 import type { ErrorPayload } from '_payloads';
 import type { GetAccountResponse } from '_payloads/account/GetAccountResponse';
+import type { GetContactsResponse } from '_src/shared/messaging/messages/payloads/account/GetContactsResponse';
+import type { GetFavoritesResponse } from '_src/shared/messaging/messages/payloads/account/GetFavoritesResponse';
 import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
@@ -143,6 +147,24 @@ export class ContentScriptConnection extends Connection {
             } else {
                 this.setAccountCustomizations(payload.accountCustomizations);
             }
+        } else if (isGetContacts(payload)) {
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+            });
+
+            if (
+                !(await Permissions.hasPermissions(
+                    this.origin,
+                    ['viewContacts'],
+                    existingPermission
+                )) ||
+                !existingPermission
+            ) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                const contacts = await this.getContacts();
+                this.sendContacts(contacts, msg.id);
+            }
         } else if (isSetContacts(payload)) {
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
@@ -151,7 +173,7 @@ export class ContentScriptConnection extends Connection {
             if (
                 !(await Permissions.hasPermissions(
                     this.origin,
-                    ['setAccountCustomizations'],
+                    ['setContacts'],
                     existingPermission
                 )) ||
                 !existingPermission
@@ -159,6 +181,24 @@ export class ContentScriptConnection extends Connection {
                 this.sendNotAllowedError(msg.id);
             } else {
                 this.setContacts(payload.contacts);
+            }
+        } else if (isGetFavorites(payload)) {
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+            });
+
+            if (
+                !(await Permissions.hasPermissions(
+                    this.origin,
+                    ['viewFavorites'],
+                    existingPermission
+                )) ||
+                !existingPermission
+            ) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                const contacts = await this.getFavorites();
+                this.sendFavorites(contacts, msg.id);
             }
         } else if (isSetFavorites(payload)) {
             const existingPermission = await Permissions.getPermission({
@@ -168,7 +208,7 @@ export class ContentScriptConnection extends Connection {
             if (
                 !(await Permissions.hasPermissions(
                     this.origin,
-                    ['setAccountCustomizations'],
+                    ['setFavorites'],
                     existingPermission
                 )) ||
                 !existingPermission
@@ -348,14 +388,17 @@ export class ContentScriptConnection extends Connection {
         });
     }
 
-    private async setContacts(updates: Contact[]) {
+    private async getContacts(): Promise<Contact[]> {
         const contactsString = await getEncrypted({
             key: 'contacts',
             session: false,
             strong: false,
         });
+        return JSON.parse(contactsString || '[]');
+    }
 
-        const contacts = JSON.parse(contactsString || '[]') as Contact[];
+    private async setContacts(updates: Contact[]) {
+        const contacts = await this.getContacts();
         const newContacts: Contact[] = contacts.map((contact: Contact) => {
             const update = updates.find((u) => u.address === contact.address);
 
@@ -375,28 +418,31 @@ export class ContentScriptConnection extends Connection {
         });
     }
 
-    private async setFavorites(updates: Favorite[]) {
-        const contactsString = await getEncrypted({
-            key: 'contacts',
+    private async getFavorites(): Promise<Favorite[]> {
+        const favoritesString = await getEncrypted({
+            key: 'favorites',
             session: false,
             strong: false,
         });
+        return JSON.parse(favoritesString || '[]');
+    }
 
-        const contacts = JSON.parse(contactsString || '[]') as Contact[];
-        const newContacts: Contact[] = contacts.map((contact: Contact) => {
-            const update = updates.find((u) => u.address === contact.address);
+    private async setFavorites(updates: Favorite[]) {
+        const favorites = await this.getFavorites();
+        const newFavorites: Favorite[] = favorites.map((favorite: Favorite) => {
+            const update = updates.find((u) => u.id === favorite.id);
 
-            if (!update) return contact;
+            if (!update) return favorite;
 
             return {
-                ...contact,
+                ...favorite,
                 ...update,
             };
         });
 
         await setEncrypted({
-            key: 'contacts',
-            value: JSON.stringify(newContacts),
+            key: 'favorites',
+            value: JSON.stringify(newFavorites),
             session: false,
             strong: false,
         });
@@ -456,6 +502,30 @@ export class ContentScriptConnection extends Connection {
                 {
                     type: 'get-account-customizations-response',
                     accountCustomizations,
+                },
+                responseForID
+            )
+        );
+    }
+
+    private sendContacts(contacts: Contact[], responseForID?: string) {
+        this.send(
+            createMessage<GetContactsResponse>(
+                {
+                    type: 'get-contacts-response',
+                    contacts,
+                },
+                responseForID
+            )
+        );
+    }
+
+    private sendFavorites(favorites: Favorite[], responseForID?: string) {
+        this.send(
+            createMessage<GetFavoritesResponse>(
+                {
+                    type: 'get-favorites-response',
+                    favorites,
                 },
                 responseForID
             )

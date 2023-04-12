@@ -1,7 +1,6 @@
 import { isBasePayload } from '_payloads';
 
 import type { BasePayload, Payload } from '_payloads';
-import type { Favorite } from '_src/types/AccountCustomization';
 
 export interface GetFavorites extends BasePayload {
     type: 'get-favorites';

@@ -6,6 +6,10 @@ export const ALL_PERMISSION_TYPES = [
     'suggestTransactions',
     'suggestSignMessages',
     'setAccountCustomizations',
+    'setContacts',
+    'setFavorites',
+    'viewContacts',
+    'viewFavorites',
 ] as const;
 
 type AllPermissionsType = typeof ALL_PERMISSION_TYPES;

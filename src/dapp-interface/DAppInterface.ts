@@ -39,7 +39,11 @@ import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { OpenWallet } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
-import type { AccountCustomization } from '_src/types/AccountCustomization';
+import type {
+    AccountCustomization,
+    Favorite,
+} from '_src/types/AccountCustomization';
+import type { Contact } from '_src/ui/app/redux/slices/contacts';
 import type { Observable } from 'rxjs';
 
 export class DAppInterface {
@@ -121,7 +125,7 @@ export class DAppInterface {
         );
     }
 
-    public getContacts(): Promise<AccountCustomization[]> {
+    public getContacts(): Promise<Contact[]> {
         return mapToPromise(
             this.send<GetContacts, GetContactsResponse>({
                 type: 'get-contacts',
@@ -130,7 +134,7 @@ export class DAppInterface {
         );
     }
 
-    public getFavorites(): Promise<AccountCustomization[]> {
+    public getFavorites(): Promise<Favorite[]> {
         return mapToPromise(
             this.send<GetFavorites, GetFavoritesResponse>({
                 type: 'get-favorites',
