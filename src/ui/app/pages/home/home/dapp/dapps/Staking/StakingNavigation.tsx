@@ -5,7 +5,7 @@ import StakingHome from './StakingHome';
 import StakingIntro from './StakingIntro';
 import LearnStaking from './LearnStaking';
 import SelectValidator from './SelectValidator';
-import StakeAmount from './StakeAmount';
+import StakeAmountPage from './StakeAmount/StakeAmountPage';
 import ReviewStake from './ReviewStake';
 import { DappWrapper } from '../../DappWrapper';
 
@@ -17,7 +17,7 @@ function StakingNavigation() {
                 <Route path="get-started" element={<StakingIntro />} />
                 <Route path="learn-more" element={<LearnStaking />} />
                 <Route path="select-validator" element={<SelectValidator />} />
-                <Route path="amount-to-stake" element={<StakeAmount />} />
+                <Route path="amount-to-stake" element={<StakeAmountPage />} />
                 <Route path="review-stake" element={<ReviewStake />} />
             </Routes>
             <Outlet />

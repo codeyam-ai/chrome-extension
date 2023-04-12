@@ -42,7 +42,7 @@ interface UseCoinInputs {
     aggregateBalances: AggregateBalances;
 }
 
-function useCoin({ aggregateBalances }: UseCoinInputs) {
+export function useCoin({ aggregateBalances }: UseCoinInputs) {
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
 
@@ -71,7 +71,7 @@ interface UseGasInputs {
     aggregateBalances: AggregateBalances;
 }
 
-function useGas({ coin, aggregateBalances }: UseGasInputs) {
+export function useGas({ coin, aggregateBalances }: UseGasInputs) {
     const gasAggregateBalance = useMemo(
         () => aggregateBalances[SUI_TYPE_ARG] || BigInt(0),
         [aggregateBalances]
