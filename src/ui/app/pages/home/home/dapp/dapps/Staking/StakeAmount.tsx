@@ -1,7 +1,10 @@
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
+import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
+import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
@@ -16,6 +19,13 @@ const StakeAmount: React.FC = () => {
     const [validators, setValidators] = useState<SuiValidatorSummary[]>([]);
     const [searchParams] = useSearchParams();
     const validatorSuiAddress = searchParams.get('validator');
+    const tokenBalances = useAppSelector(accountAggregateBalancesSelector);
+    const suiBalanceUnformatted = tokenBalances[SUI_TYPE_ARG] ?? 0;
+
+    const [formattedSuiBalance] = useFormatCoin(
+        suiBalanceUnformatted,
+        SUI_TYPE_ARG
+    );
 
     const validator = useMemo(() => {
         return validators.find((v) => v.suiAddress === validatorSuiAddress);
@@ -37,24 +47,26 @@ const StakeAmount: React.FC = () => {
                 <Subheader className={'text-center mb-1'}>
                     How much would you like to stake?
                 </Subheader>
-                <div className="flex flex-col gap-2 py-5 px-4 rounded-lg border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
+                <div className="flex flex-col gap-2 py-5 px-4 rounded-xl border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
                     <div className="flex justify-between">
                         <Body isSemibold>Amount</Body>
                         <span className="flex gap-1">
                             <Body isTextColorMedium>Available:</Body>
                             <Body isTextColorMedium isSemibold>
-                                X SUI
+                                {formattedSuiBalance} SUI
                             </Body>
                         </span>
                     </div>
-                    <div className="flex px-2 py-1 justify-between items-center place-content-center rounded-lg border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
+                    <div className="flex px-3 py-2 justify-between items-center place-content-center rounded-xl border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
                         <div className="flex">
                             <div className="p-2 rounded-full bg-ethos-sui-blue">
                                 <SuiIcon height={24} width={24} />
                             </div>
                             <input
                                 type="text"
-                                className="bg-transparent border-none"
+                                className="w-full bg-transparent border-none focus:ring-0 caret-ethos-light-primary-light dark:caret-ethos-dark-primary-dark"
+                                autoFocus
+                                placeholder="0"
                             />
                         </div>
                         <BodyLarge>SUI</BodyLarge>
