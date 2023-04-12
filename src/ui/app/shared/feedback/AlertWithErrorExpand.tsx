@@ -39,8 +39,8 @@ type TxInfo = {
 interface AlertWithErrorExpandProps {
     title: string;
     body: ReactElement;
-    fullErrorText: string;
-    txInfo: TxInfo;
+    fullErrorText?: string;
+    txInfo?: TxInfo;
 }
 
 const AlertWithErrorExpand = ({
@@ -88,6 +88,8 @@ const AlertWithErrorExpand = ({
 
     const logError = useCallback(
         async (event: React.FormEvent<HTMLFormElement>) => {
+            if (!txInfo || !fullErrorText) return;
+
             event.preventDefault();
 
             const data = {
@@ -139,15 +141,7 @@ const AlertWithErrorExpand = ({
                 );
             }
         },
-        [
-            accountInfo?.address,
-            txInfo.dAppUrl,
-            txInfo.txId,
-            txInfo.txRequest,
-            comment,
-            body,
-            fullErrorText,
-        ]
+        [txInfo, fullErrorText, accountInfo?.address, comment, body]
     );
 
     return (
@@ -237,46 +231,50 @@ const AlertWithErrorExpand = ({
                             {title}
                         </BodyLarge>
                         {body}
-                        <div
-                            className="flex justify-between cursor-pointer"
-                            onClick={toggleExpanded}
-                        >
-                            <Body isSemibold>Error details</Body>
-                            {expanded ? (
-                                <ChevronUpIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
-                            ) : (
-                                <ChevronDownIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
-                            )}
-                        </div>
-                        {expanded && (
-                            <div className="flex flex-col gap-1 text-left">
-                                <Body>
-                                    Please copy and paste the below message into
-                                    the{' '}
-                                    <code className="bg-black/10 rounded-sm px-1">
-                                        #product-help
-                                    </code>{' '}
-                                    channel in the{' '}
-                                    <EthosLink
-                                        type="external"
-                                        to="https://discord.gg/ethoswallet"
-                                    >
-                                        Ethos Discord
-                                    </EthosLink>{' '}
-                                    and describe the issue.
-                                </Body>
-                                <TextArea
-                                    label="Full Error"
-                                    id="expanded-error"
-                                    defaultValue={fullErrorText}
-                                    disabled
-                                    className="h-[200px]"
-                                />
-                            </div>
+                        {fullErrorText && txInfo && (
+                            <>
+                                <div
+                                    className="flex justify-between cursor-pointer"
+                                    onClick={toggleExpanded}
+                                >
+                                    <Body isSemibold>Error details</Body>
+                                    {expanded ? (
+                                        <ChevronUpIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                                    ) : (
+                                        <ChevronDownIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                                    )}
+                                </div>
+                                {expanded && (
+                                    <div className="flex flex-col gap-1 text-left">
+                                        <Body>
+                                            Please copy and paste the below
+                                            message into the{' '}
+                                            <code className="bg-black/10 rounded-sm px-1">
+                                                #product-help
+                                            </code>{' '}
+                                            channel in the{' '}
+                                            <EthosLink
+                                                type="external"
+                                                to="https://discord.gg/ethoswallet"
+                                            >
+                                                Ethos Discord
+                                            </EthosLink>{' '}
+                                            and describe the issue.
+                                        </Body>
+                                        <TextArea
+                                            label="Full Error"
+                                            id="expanded-error"
+                                            defaultValue={fullErrorText}
+                                            disabled
+                                            className="h-[200px]"
+                                        />
+                                    </div>
+                                )}
+                                {/* <Button onClick={showReportForm} removeContainerPadding>
+                                    Report Issue
+                                </Button> */}
+                            </>
                         )}
-                        {/* <Button onClick={showReportForm} removeContainerPadding>
-                            Report Issue
-                        </Button> */}
                     </span>
                 </>
             )}

@@ -22,16 +22,20 @@ import Permissions from '_src/background/Permissions';
 import Transactions from '_src/background/Transactions';
 import { isGetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
 import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
+import { isGetContacts } from '_src/shared/messaging/messages/payloads/account/GetContacts';
+import { isGetFavorites } from '_src/shared/messaging/messages/payloads/account/GetFavorites';
 import { isGetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
+import { isSetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/SetAccountCustomizations';
+import { isSetContacts } from '_src/shared/messaging/messages/payloads/account/SetContacts';
+import { isSetFavorites } from '_src/shared/messaging/messages/payloads/account/SetFavorites';
 import { isDisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import {
     isSignMessageRequest,
     type SignMessageRequest,
 } from '_src/shared/messaging/messages/payloads/transactions/SignMessage';
 import { isGetUrl } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
-import { getEncrypted } from '_src/shared/storagex/store';
+import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { openInNewTab } from '_src/shared/utils';
-import { type AccountCustomization } from '_src/types/AccountCustomization';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 
 import type { NetworkEnvType } from '../NetworkEnv';
@@ -40,9 +44,16 @@ import type { Message } from '_messages';
 import type { PortChannelName } from '_messaging/PortChannelName';
 import type { ErrorPayload } from '_payloads';
 import type { GetAccountResponse } from '_payloads/account/GetAccountResponse';
+import type { GetContactsResponse } from '_src/shared/messaging/messages/payloads/account/GetContactsResponse';
+import type { GetFavoritesResponse } from '_src/shared/messaging/messages/payloads/account/GetFavoritesResponse';
 import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
+import type {
+    Favorite,
+    AccountCustomization,
+} from '_src/types/AccountCustomization';
+import type { Contact } from '_src/ui/app/redux/slices/contacts';
 import type { Runtime } from 'webextension-polyfill';
 
 export class ContentScriptConnection extends Connection {
@@ -92,8 +103,10 @@ export class ContentScriptConnection extends Connection {
                 )
             );
         } else if (isGetAccountCustomizations(payload)) {
+            const activeAccount = await this.getActiveAccount();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
+                account: activeAccount?.address,
             });
 
             if (
@@ -118,6 +131,103 @@ export class ContentScriptConnection extends Connection {
                 }
 
                 this.sendAccountCustomizations(accountCustomizations, msg.id);
+            }
+        } else if (isSetAccountCustomizations(payload)) {
+            const activeAccount = await this.getActiveAccount();
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+                account: activeAccount?.address,
+            });
+
+            if (
+                !(await Permissions.hasPermissions(
+                    this.origin,
+                    ['setAccountCustomizations'],
+                    existingPermission
+                )) ||
+                !existingPermission
+            ) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                this.setAccountCustomizations(payload.accountCustomizations);
+            }
+        } else if (isGetContacts(payload)) {
+            const activeAccount = await this.getActiveAccount();
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+                account: activeAccount?.address,
+            });
+
+            if (
+                !(await Permissions.hasPermissions(
+                    this.origin,
+                    ['viewContacts'],
+                    existingPermission
+                )) ||
+                !existingPermission
+            ) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                const contacts = await this.getContacts();
+                this.sendContacts(contacts, msg.id);
+            }
+        } else if (isSetContacts(payload)) {
+            const activeAccount = await this.getActiveAccount();
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+                account: activeAccount?.address,
+            });
+
+            if (
+                !(await Permissions.hasPermissions(
+                    this.origin,
+                    ['setContacts'],
+                    existingPermission
+                )) ||
+                !existingPermission
+            ) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                this.setContacts(payload.contacts);
+            }
+        } else if (isGetFavorites(payload)) {
+            const activeAccount = await this.getActiveAccount();
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+                account: activeAccount?.address,
+            });
+
+            if (
+                !(await Permissions.hasPermissions(
+                    this.origin,
+                    ['viewFavorites'],
+                    existingPermission
+                )) ||
+                !existingPermission
+            ) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                const contacts = await this.getFavorites();
+                this.sendFavorites(contacts, msg.id);
+            }
+        } else if (isSetFavorites(payload)) {
+            const activeAccount = await this.getActiveAccount();
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+                account: activeAccount?.address,
+            });
+
+            if (
+                !(await Permissions.hasPermissions(
+                    this.origin,
+                    ['setFavorites'],
+                    existingPermission
+                )) ||
+                !existingPermission
+            ) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                this.setFavorites(payload.favorites);
             }
         } else if (isGetNetwork(payload)) {
             const network = await networkEnv.getActiveNetwork();
@@ -262,6 +372,70 @@ export class ContentScriptConnection extends Connection {
         return JSON.parse(accountInfosString || '[]');
     }
 
+    private async setAccountCustomizations(updates: AccountCustomization[]) {
+        const accountInfosString = await getEncrypted({
+            key: 'accountInfos',
+            session: false,
+            strong: false,
+        });
+        const accountInfos = JSON.parse(accountInfosString || '[]');
+        const newAccountInfos = accountInfos.map((accountInfo: AccountInfo) => {
+            const update = updates.find(
+                (u) => u.address === accountInfo.address
+            );
+
+            if (!update) return accountInfo;
+
+            return {
+                ...accountInfo,
+                ...update,
+            };
+        });
+
+        await setEncrypted({
+            key: 'accountInfos',
+            value: JSON.stringify(newAccountInfos),
+            session: false,
+            strong: false,
+        });
+    }
+
+    private async getContacts(): Promise<Contact[]> {
+        const contactsString = await getEncrypted({
+            key: 'contacts',
+            session: false,
+            strong: false,
+        });
+        return JSON.parse(contactsString || '[]');
+    }
+
+    private async setContacts(updates: Contact[]) {
+        await setEncrypted({
+            key: 'contacts',
+            value: JSON.stringify(updates),
+            session: false,
+            strong: false,
+        });
+    }
+
+    private async getFavorites(): Promise<Favorite[]> {
+        const favoritesString = await getEncrypted({
+            key: 'favorites',
+            session: false,
+            strong: false,
+        });
+        return JSON.parse(favoritesString || '[]');
+    }
+
+    private async setFavorites(updates: Favorite[]) {
+        await setEncrypted({
+            key: 'favorites',
+            value: JSON.stringify(updates),
+            session: false,
+            strong: false,
+        });
+    }
+
     private async getActiveAccount(): Promise<AccountInfo> {
         const accountInfos = await this.getAccountInfos();
 
@@ -316,6 +490,30 @@ export class ContentScriptConnection extends Connection {
                 {
                     type: 'get-account-customizations-response',
                     accountCustomizations,
+                },
+                responseForID
+            )
+        );
+    }
+
+    private sendContacts(contacts: Contact[], responseForID?: string) {
+        this.send(
+            createMessage<GetContactsResponse>(
+                {
+                    type: 'get-contacts-response',
+                    contacts,
+                },
+                responseForID
+            )
+        );
+    }
+
+    private sendFavorites(favorites: Favorite[], responseForID?: string) {
+        this.send(
+            createMessage<GetFavoritesResponse>(
+                {
+                    type: 'get-favorites-response',
+                    favorites,
                 },
                 responseForID
             )

@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import IncorrectChain from './errors/IncorrectChain';
 import IncorrectSigner from './errors/IncorrectSigner';
 import MissingObject from './errors/MissingObject';
+import NotEnoughGas from './errors/NotEnoughGas';
 import analyzeChanges from './lib/analyzeChanges';
 import finishTransaction from './lib/finishTransaction';
 import resizeWindow from './lib/resizeWindow';
@@ -25,6 +26,7 @@ import type { AnalyzeChangesResult } from './lib/analyzeChanges';
 import type { RawSigner, SuiMoveNormalizedType } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { ReactNode } from 'react';
 
 export type Permission = {
     label: string;
@@ -84,6 +86,7 @@ export function DappTxApprovalPage() {
     }, [txRequest]);
 
     const [dryRunError, setDryRunError] = useState<string | undefined>();
+    const [explicitError, setExplicitError] = useState<ReactNode | undefined>();
     const [done, setDone] = useState<boolean>(false);
 
     // const normalizedFunction = useNormalizedFunction(txRequest);
@@ -180,9 +183,26 @@ export function DappTxApprovalPage() {
                     transactionBlock,
                 });
 
-                // console.log('ANALYSIS', analysis);
-
-                setAnalysis(analysis);
+                if ('type' in analysis) {
+                    if (
+                        analysis.type === 'Insufficient Gas' &&
+                        analysis.errorInfo &&
+                        analysis.errorInfo.gasRequired &&
+                        analysis.errorInfo.gasAvailable
+                    ) {
+                        setExplicitError(
+                            <NotEnoughGas
+                                gasAvailable={analysis.errorInfo.gasAvailable}
+                                gasRequired={analysis.errorInfo.gasRequired}
+                            />
+                        );
+                    } else {
+                        setDryRunError(analysis.message);
+                    }
+                    setAnalysis(null);
+                } else {
+                    setAnalysis(analysis);
+                }
             } catch (e: unknown) {
                 setDryRunError(`${e}`);
                 setAnalysis(null);
@@ -296,12 +316,14 @@ export function DappTxApprovalPage() {
             return (
                 <SimpleBase onComplete={onComplete}>
                     <div className="p-6">
-                        <MissingObject
-                            selectedApiEnv={selectedApiEnv}
-                            errorMessage={dryRunError || 'Unknown Error'}
-                            txRequest={txRequest}
-                            txID={txID}
-                        />
+                        {explicitError || (
+                            <MissingObject
+                                selectedApiEnv={selectedApiEnv}
+                                errorMessage={dryRunError || 'Unknown Error'}
+                                txRequest={txRequest}
+                                txID={txID}
+                            />
+                        )}
                     </div>
                 </SimpleBase>
             );
@@ -389,19 +411,20 @@ export function DappTxApprovalPage() {
             />
         );
     }, [
-        activeAccountIndex,
-        activeChain,
-        address,
-        analysis,
-        authentication,
-        onApprove,
-        onComplete,
-        selectedApiEnv,
-        signer,
-        transactionBlock,
-        txID,
         txRequest,
+        address,
+        activeChain,
+        signer,
+        analysis,
+        txID,
+        authentication,
+        activeAccountIndex,
+        transactionBlock,
+        onComplete,
+        explicitError,
+        selectedApiEnv,
         dryRunError,
+        onApprove,
     ]);
 
     return (

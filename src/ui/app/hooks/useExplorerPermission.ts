@@ -37,6 +37,7 @@ const useExplorerPermission = () => {
                     'viewAccount',
                     'suggestTransactions',
                     'suggestSignMessages',
+                    'setAccountCustomizations',
                 ],
                 responseDate: new Date().toISOString(),
             };
