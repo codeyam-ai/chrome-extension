@@ -4,6 +4,7 @@ import { fakeAlarms } from '_src/test/utils/fake-browser/fake-browser';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
+import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
 describe('Rendering the Tokens page', () => {
     let mockchain: Mockchain;
@@ -23,12 +24,8 @@ describe('Rendering the Tokens page', () => {
     test('sends heartbeat and locks when background service says to', async () => {
         const fakeHeartbeat = new FakeHeartbeat();
         mockchain.mockSuiObjects();
-        renderApp({
-            dependencies: {
-                closeWindow: jest.fn(),
-                heartbeat: fakeHeartbeat,
-            },
-        });
+        const deps = { ...makeTestDeps(), heartbeat: fakeHeartbeat };
+        renderApp({ dependencies: deps });
         await screen.findByText('Get started with Sui');
 
         // at this point we expect the heartbeat listener to be registered but no alarm to be set yet

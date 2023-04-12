@@ -25,7 +25,6 @@ function HomePage() {
 
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const mistBalance = sumCoinBalances(balances);
-    const [, , usdAmount] = useFormatCoin(mistBalance, SUI_TYPE_ARG);
 
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex } }) =>
@@ -43,7 +42,7 @@ function HomePage() {
             <ChainIndicator apiEnv={selectedApiEnv} />
             <WalletBalanceAndIconHomeView
                 accountInfo={accountInfo}
-                dollarValue={usdAmount}
+                mistBalance={mistBalance}
             />
 
             <SendReceiveButtonGroup mistBalance={mistBalance} />
