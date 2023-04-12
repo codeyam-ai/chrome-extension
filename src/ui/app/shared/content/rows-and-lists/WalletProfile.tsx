@@ -4,9 +4,6 @@ import { Link } from 'react-router-dom';
 import WalletColorAndEmojiCircle from '../../WalletColorAndEmojiCircle';
 import BodyLarge from '../../typography/BodyLarge';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
-import AccountAddress, {
-    AddressMode,
-} from '_src/ui/app/components/account-address';
 import {
     useNextWalletPickerUrl,
     useWalletPickerIsOpen,

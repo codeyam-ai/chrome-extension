@@ -50,7 +50,19 @@ export type PayloadType =
     | 'set-network'
     | 'heartbeat'
     | 'wallet-locked'
-    | 'lock-wallet-request';
+    | 'lock-wallet-request'
+    | 'get-theme'
+    | 'get-theme-response'
+    | 'set-account-customizations'
+    | 'set-account-customizations-response'
+    | 'set-contacts'
+    | 'set-contacts-response'
+    | 'set-favorites'
+    | 'set-favorites-response'
+    | 'get-contacts'
+    | 'get-contacts-response'
+    | 'get-favorites'
+    | 'get-favorites-response';
 
 export interface BasePayload {
     type: PayloadType;

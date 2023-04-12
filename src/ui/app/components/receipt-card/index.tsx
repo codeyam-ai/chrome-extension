@@ -1,6 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { UserPlusIcon } from '@heroicons/react/24/outline';
 import {
     ArrowDownCircleIcon,
     ArrowUpCircleIcon,
@@ -11,14 +12,15 @@ import {
 } from '@heroicons/react/24/solid';
 import { useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import getObjData from '../../helpers/getObjData';
 import { getTheme } from '../../helpers/getTheme';
 import { getHumanReadable } from '../../helpers/transactions';
 import truncateMiddle from '../../helpers/truncate-middle';
 import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
+import Button from '../../shared/buttons/Button';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
 import { Icon } from '../../shared/icons/Icon';
 import { AssetCard } from '../../shared/nfts/AssetCard';
@@ -33,7 +35,10 @@ import { useAppSelector } from '_hooks';
 import { api } from '_store/thunk-extras';
 
 import type { AccountInfo } from '../../KeypairVault';
-import type { FormattedTransaction } from '../../helpers/transactions/types';
+import type {
+    FormattedTransaction,
+    HumanReadableDetails,
+} from '../../helpers/transactions/types';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 import st from './ReceiptCard.module.scss';
@@ -137,6 +142,7 @@ const TxTransfer = ({
 );
 
 function ReceiptCard({ txDigest }: TxResponseProps) {
+    const navigate = useNavigate();
     const { accountInfos } = useAppSelector(({ account }) => account);
     const address = useAppSelector(({ account }) => account.address) as string;
     const { data } = useQuery(['transactions-by-address', address]);
@@ -214,7 +220,36 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         [accountInfos]
     );
 
-    if (!transaction)
+    const humanReadableTxInfo: HumanReadableDetails | null = useMemo(() => {
+        return transaction && address
+            ? getHumanReadable(address, transaction)
+            : null;
+    }, [address, transaction]);
+
+    const contactTo = useAppSelector(({ contacts: { contacts } }) =>
+        contacts.find(
+            (contact) => contact.address === humanReadableTxInfo?.addresses?.to
+        )
+    );
+
+    const isToWalletIOwn = useAppSelector(({ account: { accountInfos } }) =>
+        accountInfos.find(
+            (accountInfo) =>
+                accountInfo.address === humanReadableTxInfo?.addresses?.to
+        )
+    );
+
+    const handleClickAddContact = useCallback(() => {
+        if (humanReadableTxInfo?.addresses?.to) {
+            navigate(
+                `/home/address-book/add?${new URLSearchParams({
+                    newContactAddress: humanReadableTxInfo?.addresses?.to,
+                }).toString()}`
+            );
+        }
+    }, [navigate, humanReadableTxInfo?.addresses?.to]);
+
+    if (!transaction || humanReadableTxInfo === null)
         return (
             <div className={'pt-10'}>
                 <LoadingIndicator big={true} />
@@ -233,10 +268,9 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         displayImage,
         otherAddressStr,
         addresses,
-    } = getHumanReadable(address, transaction);
+    } = humanReadableTxInfo;
 
     /*
-
     // TODO: Include support for coins other than SUI
 
     const [total, totalSymbol, dollars, , icon] = useFormatCoin(
@@ -245,7 +279,6 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     );
 
     const coinType = txDigest?.kind === 'PaySui' ? 'SUI' : 'Coin';
-    
     */
 
     let transferObj;
@@ -338,9 +371,14 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                                 subheader: addresses?.from || '',
                             },
                             to: {
-                                emoji: toWallet?.emoji || '',
-                                bgColor: toWallet?.color || '#6D28D9',
-                                header: toWallet?.name || 'To',
+                                emoji:
+                                    toWallet?.emoji || contactTo?.emoji || '',
+                                bgColor:
+                                    toWallet?.color ||
+                                    contactTo?.color ||
+                                    '#6D28D9',
+                                header:
+                                    toWallet?.name || contactTo?.name || 'To',
                                 subheader: addresses?.to || '',
                             },
                         }}
@@ -402,6 +440,13 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     </div>
                 </div>
             </div>
+
+            {!contactTo && !isToWalletIOwn && (
+                <Button onClick={handleClickAddContact}>
+                    <UserPlusIcon className="h-6 w-6 text-white" />
+                    Save Address
+                </Button>
+            )}
         </>
     );
 }

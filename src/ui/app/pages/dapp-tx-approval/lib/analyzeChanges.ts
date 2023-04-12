@@ -15,6 +15,12 @@ export type AnalyzeChangesArgs = {
     transactionBlock: string | TransactionBlock | Uint8Array;
 };
 
+export type AnalyzeError = {
+    type: string;
+    message: string;
+    errorInfo?: Record<string, string>;
+};
+
 export type GasCostSummary = {
     computationCost: string;
     storageCost: string;
@@ -142,69 +148,107 @@ const coinChanges = (
 const analyzeChanges = async ({
     signer,
     transactionBlock,
-}: AnalyzeChangesArgs): Promise<AnalyzeChangesResult> => {
-    const address = await signer.getAddress();
-    const dryRunResponse = await signer.dryRunTransactionBlock({
-        transactionBlock,
-    });
+}: AnalyzeChangesArgs): Promise<AnalyzeChangesResult | AnalyzeError> => {
+    try {
+        const address = await signer.getAddress();
+        const dryRunResponse = await signer.dryRunTransactionBlock({
+            transactionBlock,
+        });
 
-    const { effects, balanceChanges, objectChanges } = dryRunResponse;
+        const { effects, balanceChanges, objectChanges } = dryRunResponse;
 
-    const gas = {
-        ...effects.gasUsed,
-        total: (getTotalGasUsed(effects) ?? 0).toString(),
-    };
+        const gas = {
+            ...effects.gasUsed,
+            total: (getTotalGasUsed(effects) ?? 0).toString(),
+        };
 
-    const { mints: assetMints, transfers: assetTransfers } = assetChanges(
-        address,
-        objectChanges
-    );
-    const { reductions: balanceReductions, additions: balanceAdditions } =
-        coinChanges(address, dryRunResponse);
+        const { mints: assetMints, transfers: assetTransfers } = assetChanges(
+            address,
+            objectChanges
+        );
+        const { reductions: balanceReductions, additions: balanceAdditions } =
+            coinChanges(address, dryRunResponse);
 
-    const totalReductions = balanceChanges
-        .filter(
-            (balanceChange) =>
-                typeof balanceChange.owner === 'object' &&
-                'AddressOwner' in balanceChange.owner &&
-                balanceChange.owner.AddressOwner === address
-        )
-        .reduce(
-            (total, reduction) =>
-                new BigNumber(total).plus(new BigNumber(reduction.amount)),
-            new BigNumber(0)
-        )
-        .multipliedBy(-1);
+        const totalReductions = balanceChanges
+            .filter(
+                (balanceChange) =>
+                    typeof balanceChange.owner === 'object' &&
+                    'AddressOwner' in balanceChange.owner &&
+                    balanceChange.owner.AddressOwner === address
+            )
+            .reduce(
+                (total, reduction) =>
+                    new BigNumber(total).plus(new BigNumber(reduction.amount)),
+                new BigNumber(0)
+            )
+            .multipliedBy(-1);
 
-    const rawAmount = totalReductions.minus(gas.total).toString();
-    const totalFee = totalReductions.toString();
+        const rawAmount = totalReductions.minus(gas.total).toString();
+        const totalFee = totalReductions.toString();
 
-    let blockData;
-    let moveCalls: TransactionBlock['blockData']['transactions'] = [];
-    if (
-        typeof transactionBlock === 'object' &&
-        'blockData' in transactionBlock
-    ) {
-        blockData = transactionBlock.blockData;
-        if (blockData) {
-            moveCalls = blockData.transactions.filter(
-                (transaction) => transaction.kind === 'MoveCall'
-            );
+        let blockData;
+        let moveCalls: TransactionBlock['blockData']['transactions'] = [];
+        if (
+            typeof transactionBlock === 'object' &&
+            'blockData' in transactionBlock
+        ) {
+            blockData = transactionBlock.blockData;
+            if (blockData) {
+                moveCalls = blockData.transactions.filter(
+                    (transaction) => transaction.kind === 'MoveCall'
+                );
+            }
         }
-    }
 
-    return {
-        blockData,
-        moveCalls,
-        dryRunResponse,
-        gas,
-        balanceReductions,
-        balanceAdditions,
-        assetMints,
-        assetTransfers,
-        rawAmount,
-        totalFee,
-    };
+        return {
+            blockData,
+            moveCalls,
+            dryRunResponse,
+            gas,
+            balanceReductions,
+            balanceAdditions,
+            assetMints,
+            assetTransfers,
+            rawAmount,
+            totalFee,
+        };
+    } catch (error: unknown) {
+        const address = await signer.getAddress();
+        const {
+            totalBalance,
+            lockedBalance: { number },
+        } = await signer.provider.getBalance({
+            owner: address,
+            coinType: SUI_TYPE_ARG,
+        });
+        const gasAvailable = new BigNumber(totalBalance)
+            .minus(number || 0)
+            .div(Math.pow(10, 9));
+
+        const results = await signer.devInspectTransactionBlock({
+            transactionBlock,
+        });
+
+        const totalGas = new BigNumber(
+            getTotalGasUsed(results.effects)?.toString() || 0
+        ).div(Math.pow(10, 9));
+
+        if (totalGas.gte(gasAvailable)) {
+            return {
+                type: 'Insufficient Gas',
+                message: `You have ${gasAvailable} gas available, but this transaction requires ${totalGas} gas.`,
+                errorInfo: {
+                    gasAvailable: gasAvailable.toString(),
+                    gasRequired: totalGas.toString(),
+                },
+            };
+        }
+
+        return {
+            type: 'Unknown Error',
+            message: `${error}`,
+        };
+    }
 };
 
 export default analyzeChanges;

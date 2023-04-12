@@ -1,7 +1,7 @@
 import { isValidSuiAddress } from '@mysten/sui.js';
 import { Form, Formik } from 'formik';
 import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as Yup from 'yup';
 
 import ContactForm from './ContactForm';
@@ -25,6 +25,7 @@ const nameValidation = Yup.string().required('Enter a name');
 
 const Add: React.FC = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { addContact } = useUpdateContacts();
     const [emoji, setEmoji] = useState<string | undefined>(undefined);
     const [color, setColor] = useState<string>(getNextWalletColor(0));
@@ -40,7 +41,9 @@ const Add: React.FC = () => {
     return (
         <Formik
             initialValues={{
-                address: '',
+                address: searchParams.has('newContactAddress')
+                    ? searchParams.get('newContactAddress')
+                    : '',
                 name: '',
                 termsOfService: false,
             }}
@@ -57,6 +60,7 @@ const Add: React.FC = () => {
                     color={color}
                     setColor={setColor}
                     formMode="Add"
+                    disableAddressInput={searchParams.has('newContactAddress')}
                 />
             </Form>
         </Formik>

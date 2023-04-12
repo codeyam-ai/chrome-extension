@@ -1,6 +1,6 @@
 {
     "name": "ethos-wallet-extension-beta",
-    "version": "0.0.0.142",
+    "version": "0.0.0.143",
     "description": "Ethos is your Sui wallet and home base for the best dApps, experiences, and NFTs.",
     "main": "./dist/ui.js",
     "scripts": {
@@ -99,7 +99,7 @@
         "@headlessui/react": "^1.7.7",
         "@heroicons/react": "^2.0.16",
         "@internationalized/number": "^3.2.0",
-        "@mysten/bcs": "^0.6.1",
+        "@mysten/bcs": "^0.7.0",
         "@mysten/sui.js": "^0.32.1",
         "@mysten/wallet-standard": "^0.5.3",
         "@reduxjs/toolkit": "^1.8.3",
@@ -119,7 +119,7 @@
         "ed25519-hd-key": "^1.3.0",
         "emoji-mart": "^5.4.0",
         "formik": "^2.2.9",
-        "framer-motion": "^10.9.1",
+        "framer-motion": "^10.11.5",
         "isomorphic-fetch": "^3.0.0",
         "mitt": "^3.0.0",
         "react": "^18.2.0",
