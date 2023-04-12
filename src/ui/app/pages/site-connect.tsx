@@ -16,13 +16,16 @@ import PermissionList from '../shared/content/rows-and-lists/PermissionList';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
 import {
+    EXPLORER_PERMISSIONS,
+    type PermissionType,
+} from '_messages/payloads/permissions';
+import {
     permissionsSelectors,
     respondToPermissionRequest,
 } from '_redux/slices/permissions';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 
 import type { PermissionListItem } from '../shared/content/rows-and-lists/PermissionList';
-import type { PermissionType } from '_messages/payloads/permissions';
 import type { RootState } from '_redux/RootReducer';
 import type { ReactNode } from 'react';
 
@@ -93,6 +96,8 @@ function SiteConnectPage() {
     const permissionItems: PermissionListItem[] = [];
 
     permissionRequest?.permissions.forEach((permission) => {
+        if (EXPLORER_PERMISSIONS.includes(permission)) return;
+
         const info = permissionTypeToTxt[permission];
 
         permissionItems.push({
