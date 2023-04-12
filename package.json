@@ -119,7 +119,7 @@
         "ed25519-hd-key": "^1.3.0",
         "emoji-mart": "^5.4.0",
         "formik": "^2.2.9",
-        "framer-motion": "^10.9.1",
+        "framer-motion": "^10.11.5",
         "isomorphic-fetch": "^3.0.0",
         "mitt": "^3.0.0",
         "react": "^18.2.0",
