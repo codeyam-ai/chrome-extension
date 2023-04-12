@@ -88,7 +88,7 @@ const ClickableTooltip: React.FC<ClickableTooltipProps> = ({
             <div
                 ref={tooltipRef}
                 className={classNames(
-                    'fixed px-4 py-6 w-[330px] break-words rounded-lg shadow-lg transition-opacity duration-300 ease-in-out border border-ethos-light-primary-light/50 dark:border-ethos-dark-primary-dark/50 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary',
+                    'fixed px-4 py-6 w-[330px] break-words rounded-lg shadow-lg transition-opacity duration-300 ease-in-out bg-ethos-dark-background-secondary',
                     isTooltipVisible
                         ? 'opacity-100'
                         : 'opacity-0 pointer-events-none'
@@ -96,7 +96,7 @@ const ClickableTooltip: React.FC<ClickableTooltipProps> = ({
                 style={tooltipStyles}
                 onClick={handleClickInside}
             >
-                <Body>{message}</Body>
+                <Body className="text-white">{message}</Body>
             </div>
         </div>
     );
