@@ -1,12 +1,16 @@
-import Subheader from '_src/ui/app/shared/typography/Subheader';
-import EthosLink from '_src/ui/app/shared/typography/EthosLink';
+import { useCallback, useState } from 'react';
+
+import ValidatorList from './ValidatorList';
 import { LinkType } from '_src/enums/LinkType';
 import Button from '_src/ui/app/shared/buttons/Button';
-import { useCallback, useState } from 'react';
-import { SuiAddress, SuiValidatorSummary } from '@mysten/sui.js';
-import ValidatorList from './ValidatorList';
+import EthosLink from '_src/ui/app/shared/typography/EthosLink';
+import Subheader from '_src/ui/app/shared/typography/Subheader';
+
+import type { SuiAddress } from '@mysten/sui.js';
+import { useNavigate } from 'react-router-dom';
 
 const SelectValidator: React.FC = () => {
+    const navigate = useNavigate();
     const [selectedValidator, setSelectedValidator] = useState<
         SuiAddress | undefined
     >();
@@ -18,8 +22,16 @@ const SelectValidator: React.FC = () => {
         [setSelectedValidator]
     );
 
+    const onContinue = useCallback(() => {
+        navigate(
+            `/home/staking/amount-to-stake?${new URLSearchParams({
+                validator: selectedValidator ?? '',
+            }).toString()}`
+        );
+    }, [navigate, selectedValidator]);
+
     return (
-        <div className={'flex flex-col p-6 h-[414px] relative'}>
+        <div className={'flex flex-col px-6 h-[414px] relative'}>
             <div className={'overflow-y-scroll h-full no-scrollbar'}>
                 <Subheader className={'text-center mb-1'}>
                     Select a staking validator
@@ -39,9 +51,9 @@ const SelectValidator: React.FC = () => {
                 </div>
             </div>
             <Button
-                to={'/home/staking/amount-to-stake'}
+                onClick={onContinue}
                 removeContainerPadding
-                className="!mt-2"
+                className="!mt-2 !mb-6"
                 disabled={!selectedValidator}
             >
                 Next

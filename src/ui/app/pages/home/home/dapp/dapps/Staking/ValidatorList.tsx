@@ -1,10 +1,11 @@
-import { SuiAddress, SuiValidatorSummary } from '@mysten/sui.js';
-import { useQuery } from '@tanstack/react-query';
+import classNames from 'classnames';
+import { useCallback, useEffect, useState } from 'react';
+
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Body from '_src/ui/app/shared/typography/Body';
-import classNames from 'classnames';
-import { useCallback, useEffect, useState } from 'react';
+
+import type { SuiAddress, SuiValidatorSummary } from '@mysten/sui.js';
 
 interface ValidatorListProps {
     onSelectValidator: (string: SuiAddress) => void;
@@ -40,11 +41,17 @@ const ValidatorList: React.FC<ValidatorListProps> = ({
     );
 };
 
-const ValidatorRow: React.FC<{
+interface ValidatorRowProps {
     validator: SuiValidatorSummary;
     onSelect: (suiAddress: SuiAddress) => void;
     isSelected: boolean;
-}> = ({ validator, onSelect, isSelected }) => {
+}
+
+const ValidatorRow: React.FC<ValidatorRowProps> = ({
+    validator,
+    onSelect,
+    isSelected,
+}) => {
     const onClick = useCallback(() => {
         onSelect(validator.suiAddress);
     }, [onSelect, validator]);
