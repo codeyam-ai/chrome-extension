@@ -118,7 +118,7 @@ const CustomFormikForm = () => {
 
 const passwordsMustMatch = Yup.string()
     .required('Confirm your password')
-    .oneOf([Yup.ref('password'), null], 'Passwords must match');
+    .oneOf([Yup.ref('password')], 'Passwords must match');
 
 const CreatePasswordForm = ({ onSubmit }: CreatePasswordFormProps) => {
     const _onSubmit = useCallback(
