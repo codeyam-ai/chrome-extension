@@ -1,24 +1,27 @@
-import { SUI_TYPE_ARG, type SuiValidatorSummary } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { Formik } from 'formik';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import StakeAmountForm from './StakeAmountForm';
+import { useValidatorsWithApy } from '../ValidatorList';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { useCoin, useGas } from '_src/ui/app/pages/home/transfer-coin-amount';
 import { buildValidationSchema } from '_src/ui/app/pages/home/transfer-coin-amount/buildValidationSchema';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
-import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 const StakeAmountPage: React.FC = () => {
     const navigate = useNavigate();
-    const [validators, setValidators] = useState<SuiValidatorSummary[]>([]);
     const [searchParams] = useSearchParams();
     const validatorSuiAddress = searchParams.get('validator');
+
+    const { validators } = useValidatorsWithApy();
+
     const validator = useMemo(() => {
-        return validators.find((v) => v.suiAddress === validatorSuiAddress);
+        return validators && validators[validatorSuiAddress || ''];
     }, [validatorSuiAddress, validators]);
+
     const aggregateBalances = useAppSelector(accountAggregateBalancesSelector);
     const suiBalanceUnformatted = aggregateBalances[SUI_TYPE_ARG] ?? 0;
     const [formattedSuiBalance] = useFormatCoin(
@@ -47,16 +50,6 @@ const StakeAmountPage: React.FC = () => {
         },
         [navigate, validatorSuiAddress]
     );
-
-    useEffect(() => {
-        // NOTE look into useQuery for fetching validators
-        const fetchValidators = async () => {
-            const provider = api.instance.fullNode;
-            const res = await provider.getLatestSuiSystemState();
-            setValidators(res.activeValidators);
-        };
-        fetchValidators();
-    }, []);
 
     if (!validator) {
         // LOADING

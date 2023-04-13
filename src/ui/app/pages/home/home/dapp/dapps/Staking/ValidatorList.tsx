@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -8,7 +9,7 @@ import Body from '_src/ui/app/shared/typography/Body';
 
 import type { SuiAddress, SuiValidatorSummary } from '@mysten/sui.js';
 
-interface SuiValidatorSummaryWithApy extends SuiValidatorSummary {
+export interface SuiValidatorSummaryWithApy extends SuiValidatorSummary {
     apy: number;
 }
 
@@ -16,44 +17,54 @@ interface ValidatorListProps {
     onSelectValidator: (string: SuiAddress) => void;
     selectedValidator?: SuiAddress;
 }
+
+interface SuiValidatorWithApyMap {
+    [validatorAddress: SuiAddress]: SuiValidatorSummaryWithApy;
+}
+
+const getValidatorsWithApy = async () => {
+    const provider = api.instance.fullNode;
+    const res = await provider.getLatestSuiSystemState();
+    const test = await getRollingAverageApys(1000, res);
+
+    const validatorsWithApy: SuiValidatorWithApyMap =
+        res.activeValidators.reduce((acc, validator) => {
+            acc[validator.suiAddress] = {
+                ...validator,
+                apy: test.data[validator.suiAddress],
+            };
+
+            return acc;
+        }, {} as SuiValidatorWithApyMap);
+    return validatorsWithApy;
+};
+
+export const useValidatorsWithApy = () => {
+    const { isFetching, data: validators } = useQuery(
+        ['validators-with-apy'],
+        getValidatorsWithApy
+    );
+
+    return { isFetching, validators };
+};
+
 const ValidatorList: React.FC<ValidatorListProps> = ({
     onSelectValidator,
     selectedValidator,
 }) => {
-    const [validators, setValidators] = useState<SuiValidatorSummaryWithApy[]>(
-        []
-    );
-
-    useEffect(() => {
-        // NOTE look into useQuery for fetching validators
-        const fetchValidators = async () => {
-            const provider = api.instance.fullNode;
-            const res = await provider.getLatestSuiSystemState();
-            const test = await getRollingAverageApys(1000, res);
-
-            const validatorsWithApy: SuiValidatorSummaryWithApy[] =
-                res.activeValidators.map((validator) => {
-                    return {
-                        ...validator,
-                        apy: test.data[validator.suiAddress],
-                    };
-                });
-
-            setValidators(validatorsWithApy);
-        };
-        fetchValidators();
-    }, []);
-
+    const { isFetching, validators } = useValidatorsWithApy();
     return (
         <div className="flex flex-col">
-            {validators.map((validator, key) => (
-                <ValidatorRow
-                    onSelect={onSelectValidator}
-                    validator={validator}
-                    key={key}
-                    isSelected={validator.suiAddress === selectedValidator}
-                />
-            ))}
+            {!isFetching &&
+                validators &&
+                Object.values(validators).map((validator, key) => (
+                    <ValidatorRow
+                        onSelect={onSelectValidator}
+                        validator={validator}
+                        key={key}
+                        isSelected={validator.suiAddress === selectedValidator}
+                    />
+                ))}
         </div>
     );
 };
