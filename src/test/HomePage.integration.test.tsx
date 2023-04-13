@@ -20,25 +20,26 @@ describe('Rendering the Home page', () => {
     });
 
     describe('when the wallet has some coins', () => {
-        test('shows the USD amount AND NOT the SUI amount when configured to do so', async () => {
+        beforeEach(async () => {
             mockchain.mockSuiObjects({
                 suiBalance: 40000000000,
             });
+        });
+        test('shows the USD amount when configured to do so', async () => {
             renderApp();
 
-            // be careful only to check within the main part of the screen, as there is also a CoinList with
-            // similar information.
             const walletAndBalance = await screen.findByTestId(
                 'wallet-and-balance'
             );
             await within(walletAndBalance).findByText('$4,000');
             expect(within(walletAndBalance).queryByText('40 SUI')).toBeNull();
+
+            const coinList = await screen.findByTestId('coin-list');
+            await within(coinList).findByText('$4,000.00');
+            await within(coinList).findByText('40');
         });
 
         test('shows just the SUI amount when configured to do so', async () => {
-            mockchain.mockSuiObjects({
-                suiBalance: 40000000000,
-            });
             renderApp({
                 dependencies: {
                     ...makeTestDeps(),
@@ -46,13 +47,15 @@ describe('Rendering the Home page', () => {
                 },
             });
 
-            // be careful only to check within the main part of the screen, as there is also a CoinList with
-            // similar information.
             const walletAndBalance = await screen.findByTestId(
                 'wallet-and-balance'
             );
             expect(within(walletAndBalance).queryByText('$4,000')).toBeNull();
             await within(walletAndBalance).findByText('40 SUI');
+
+            const coinList = await screen.findByTestId('coin-list');
+            expect(within(coinList).queryByText('$4,000.00')).toBeNull();
+            await within(coinList).findByText('40');
         });
     });
 });

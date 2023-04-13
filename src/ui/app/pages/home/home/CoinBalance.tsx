@@ -8,6 +8,7 @@ import Sui from './Sui';
 import UnknownToken from './UnknownToken';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 
 export type CoinProps = {
     type: string;
@@ -40,6 +41,8 @@ function CoinBalance({ type, balance, replaceUrl }: CoinProps) {
         navigate(sendUrl, { replace: replaceUrl });
     }, [navigate, sendUrl, replaceUrl]);
 
+    const { featureFlags } = useDependencies();
+
     return (
         <button
             onClick={updateUrl}
@@ -69,9 +72,12 @@ function CoinBalance({ type, balance, replaceUrl }: CoinProps) {
                     </div>
                 </div>
             </div>
-            <div className="flex items-center text-base text-slate-800 dark:text-slate-300">
-                <div>{usdAmount}</div>
-            </div>
+
+            {featureFlags.showUsd && (
+                <div className="flex items-center text-base text-slate-800 dark:text-slate-300">
+                    <div>{usdAmount}</div>
+                </div>
+            )}
         </button>
     );
 }
