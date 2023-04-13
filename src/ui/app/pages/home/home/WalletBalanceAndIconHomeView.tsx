@@ -31,9 +31,9 @@ const WalletBalanceAndIconHomeView = ({
 
     const [balanceFormatted, symbol, usdAmount] = useFormatCoin(
         mistBalance,
-        SUI_TYPE_ARG
+        SUI_TYPE_ARG,
+        6
     );
-
     const formatted = usdAmount.endsWith('.00')
         ? usdAmount.slice(0, -3)
         : usdAmount;
