@@ -20,6 +20,7 @@ const BaseLayout = ({ className, children }: BaseLayoutProps) => {
 
     const defaultClasses =
         'mx-auto w-[360px] min-h-[600px] shadow-ethos-box-shadow sm:rounded-[20px] text-center bg-ethos-light-background-default dark:bg-ethos-dark-background-default';
+
     return (
         <div className={`${className || ''} ${defaultClasses}`}>
             <ToastContainer

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { defer, filter, from, of, repeat, switchMap } from 'rxjs';
 
@@ -21,6 +21,7 @@ import PageLayout from '_src/ui/app/pages/PageLayout';
 const POLL_SUI_OBJECTS_INTERVAL = 4000;
 
 const AppContainer = () => {
+    const { pathname } = useLocation();
     const { loading, error, showError } = useObjectsState();
     const guardChecking = useInitializedGuard([
         AppState.MNEMONIC,
@@ -55,6 +56,10 @@ const AppContainer = () => {
             );
         }
     }, []);
+
+    useEffect(() => {
+        document.getElementsByTagName('main')[0]?.scrollTo(0, 0);
+    }, [pathname]);
 
     return (
         <PageLayout>

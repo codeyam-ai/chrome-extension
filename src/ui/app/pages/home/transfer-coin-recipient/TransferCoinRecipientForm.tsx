@@ -90,7 +90,7 @@ function TransferCoinRecipientForm({
                             'mb-6 flex flex-row items-center gap-6 relative z-5'
                         }
                     >
-                        <BodyLarge isTextColorMedium>Sending</BodyLarge>
+                        <BodyLarge isTextColorMedium>Sendingy</BodyLarge>
                         <CoinSelect selectedCoinType={coinType} />
                     </div>
                     <div className={'relative'}>
