@@ -23,6 +23,7 @@ import type {
 } from '../lib/analyzeChanges';
 import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 
 export type StepInformation = {
     name: string;
@@ -46,6 +47,8 @@ const StepOne = ({
     onCancel: () => void;
     onSelectStep: (index: number) => void;
 }) => {
+    const { featureFlags } = useDependencies();
+
     const {
         name,
         formatted,
@@ -68,16 +71,18 @@ const StepOne = ({
                 <SendCoinImage iconUrl={iconUrl} symbol={symbol} />
                 <div className="flex flex-col items-center gap-1 text-lg py-3">
                     <BodyLarge className="font-light">
-                        Confirm your want to send
+                        Confirm you want to send
                     </BodyLarge>
                     {name && (
                         <BodyLarge isSemibold>
                             {formatted} {symbol.toUpperCase()}
                         </BodyLarge>
                     )}
-                    <Body className="text-ethos-light-text-medium text-sm">
-                        ≈ {dollars}
-                    </Body>
+                    {featureFlags?.showUsd && (
+                        <Body className="text-ethos-light-text-medium text-sm">
+                            ≈ {dollars}
+                        </Body>
+                    )}
                 </div>
             </TransactionBody>
             <FromToCard to={to}></FromToCard>
