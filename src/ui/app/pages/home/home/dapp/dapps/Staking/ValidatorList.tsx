@@ -1,10 +1,11 @@
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 
+import { getRollingAverageApys } from '_src/ui/app/helpers/staking/getRollingAverageApys';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Body from '_src/ui/app/shared/typography/Body';
-import { getRollingAverageApys } from '_src/ui/app/helpers/staking/getRollingAverageApys';
+
 import type { SuiAddress, SuiValidatorSummary } from '@mysten/sui.js';
 
 interface SuiValidatorSummaryWithApy extends SuiValidatorSummary {

@@ -12,20 +12,6 @@ type GetValidatorsEvent = {
     order: 'ascending' | 'descending';
 };
 
-interface ValidatorEvent {
-    id: {
-        txDigest: string;
-        eventSeq: string;
-    };
-    packageId: string;
-    transactionModule: string;
-    sender: string;
-    type: string;
-    parsedJson?: Record<string, any> | undefined;
-    bcs?: string | undefined;
-    timestampMs?: string | undefined;
-}
-
 const getValidatorEvents = async ({ limit, order }: GetValidatorsEvent) => {
     const provider = api.instance.fullNode;
 

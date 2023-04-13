@@ -62,7 +62,6 @@ export async function getRollingAverageApys(
         order: 'descending',
     });
 
-    console.log('validatorEpochEvents :>> ', validatorEpochEvents);
     const getApyByValidator = () => {
         if (!validatorEpochEvents || !systemState) {
             return null;
@@ -99,7 +98,6 @@ export async function getRollingAverageApys(
                 apyGroups[validator_address] = [];
             }
             const apyFloat = calculateApy(stake, pool_staking_reward);
-            console.log('apyFloat :>> ', apyFloat);
             // If the APY is greater than 10000% or isNAN, set it to 0
             apyGroups[validator_address].push(
                 Number.isNaN(apyFloat) || apyFloat > 10_000 ? 0 : apyFloat

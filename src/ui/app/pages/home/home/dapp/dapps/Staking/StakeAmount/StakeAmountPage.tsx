@@ -10,7 +10,6 @@ import { useCoin, useGas } from '_src/ui/app/pages/home/transfer-coin-amount';
 import { buildValidationSchema } from '_src/ui/app/pages/home/transfer-coin-amount/buildValidationSchema';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
-import { getRollingAverageApys } from '_src/ui/app/helpers/staking/getRollingAverageApys';
 
 const StakeAmountPage: React.FC = () => {
     const navigate = useNavigate();
