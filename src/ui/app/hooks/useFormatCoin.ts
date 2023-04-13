@@ -80,7 +80,7 @@ export function useFormatCoin(
         if (formattedLength && fullFormattedBalance.length > formattedLength) {
             return ns.format.coinBalance(balance, decimals, formattedLength);
         }
-        
+
         return fullFormattedBalance;
     }, [balance, isError, isFetched, decimals, formattedLength, intl]);
 

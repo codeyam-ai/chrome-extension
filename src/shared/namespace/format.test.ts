@@ -23,7 +23,7 @@ describe('format.formatBalance', () => {
     });
 
     test('formats numbers less than 1 to a specified length if provided', () => {
-        const balance = "0.5678089234098324"
+        const balance = '0.5678089234098324';
         expect(format.coinBalance(balance, 0)).toBe('0.5678089234098324');
         expect(format.coinBalance(balance, 0, 2)).toBe('0.57');
         expect(format.coinBalance(balance, 0, 4)).toBe('0.5678');
