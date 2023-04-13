@@ -21,6 +21,14 @@ describe('format.formatBalance', () => {
     test('formats numbers greate than 1 and with decimals by rounded down to two significant digits', () => {
         expect(format.coinBalance(1234.567, 0)).toBe('1,234.56');
     });
+
+    test('formats numbers less than 1 to a specified length if provided', () => {
+        const balance = "0.5678089234098324"
+        expect(format.coinBalance(balance, 0)).toBe('0.5678089234098324');
+        expect(format.coinBalance(balance, 0, 2)).toBe('0.57');
+        expect(format.coinBalance(balance, 0, 4)).toBe('0.5678');
+        expect(format.coinBalance(balance, 0, 8)).toBe('0.56780892');
+    });
 });
 
 describe('format.dollars', () => {

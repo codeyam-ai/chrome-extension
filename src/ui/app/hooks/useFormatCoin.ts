@@ -75,7 +75,13 @@ export function useFormatCoin(
         if (typeof decimals === 'undefined') {
             return '...';
         }
-        return ns.format.coinBalance(balance, decimals, formattedLength);
+        const fullFormattedBalance = ns.format.coinBalance(balance, decimals);
+
+        if (formattedLength && fullFormattedBalance.length > formattedLength) {
+            return ns.format.coinBalance(balance, decimals, formattedLength);
+        }
+        
+        return fullFormattedBalance;
     }, [balance, isError, isFetched, decimals, formattedLength, intl]);
 
     const dollars = useMemo(() => {
