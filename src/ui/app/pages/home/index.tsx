@@ -58,7 +58,7 @@ const AppContainer = () => {
     }, []);
 
     useEffect(() => {
-        document.getElementsByTagName('main')[0]?.scrollTo(0, 0);
+        document.getElementsByTagName('main')[0]?.scrollTo?.(0, 0);
     }, [pathname]);
 
     return (
