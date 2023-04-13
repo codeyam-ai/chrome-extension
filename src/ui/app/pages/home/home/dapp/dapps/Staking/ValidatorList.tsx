@@ -4,8 +4,12 @@ import { useCallback, useEffect, useState } from 'react';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Body from '_src/ui/app/shared/typography/Body';
-
+import { getRollingAverageApys } from '_src/ui/app/helpers/staking/getRollingAverageApys';
 import type { SuiAddress, SuiValidatorSummary } from '@mysten/sui.js';
+
+interface SuiValidatorSummaryWithApy extends SuiValidatorSummary {
+    apy: number;
+}
 
 interface ValidatorListProps {
     onSelectValidator: (string: SuiAddress) => void;
@@ -15,14 +19,26 @@ const ValidatorList: React.FC<ValidatorListProps> = ({
     onSelectValidator,
     selectedValidator,
 }) => {
-    const [validators, setValidators] = useState<SuiValidatorSummary[]>([]);
+    const [validators, setValidators] = useState<SuiValidatorSummaryWithApy[]>(
+        []
+    );
 
     useEffect(() => {
         // NOTE look into useQuery for fetching validators
         const fetchValidators = async () => {
             const provider = api.instance.fullNode;
             const res = await provider.getLatestSuiSystemState();
-            setValidators(res.activeValidators);
+            const test = await getRollingAverageApys(1000, res);
+
+            const validatorsWithApy: SuiValidatorSummaryWithApy[] =
+                res.activeValidators.map((validator) => {
+                    return {
+                        ...validator,
+                        apy: test.data[validator.suiAddress],
+                    };
+                });
+
+            setValidators(validatorsWithApy);
         };
         fetchValidators();
     }, []);
@@ -42,7 +58,7 @@ const ValidatorList: React.FC<ValidatorListProps> = ({
 };
 
 interface ValidatorRowProps {
-    validator: SuiValidatorSummary;
+    validator: SuiValidatorSummaryWithApy;
     onSelect: (suiAddress: SuiAddress) => void;
     isSelected: boolean;
 }
@@ -84,7 +100,7 @@ const ValidatorRow: React.FC<ValidatorRowProps> = ({
                         </Body>
                     </div>
                 </div>
-                <Body isSemibold>5.123%</Body>
+                <Body isSemibold>{validator.apy || 0}%</Body>
             </div>
         </button>
     );
