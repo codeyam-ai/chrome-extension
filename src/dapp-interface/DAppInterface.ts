@@ -11,6 +11,7 @@ import { ALL_PERMISSION_TYPES } from '_payloads/permissions';
 import { type GetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
 import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
 
+import type { SuiAddress } from '@mysten/sui.js';
 import type { Payload } from '_payloads';
 import type {
     PermissionType,
@@ -40,6 +41,8 @@ import type { SetContacts } from '_src/shared/messaging/messages/payloads/accoun
 import type { SetContactsResponse } from '_src/shared/messaging/messages/payloads/account/SetContactsResponse';
 import type { SetFavorites } from '_src/shared/messaging/messages/payloads/account/SetFavorites';
 import type { SetFavoritesResponse } from '_src/shared/messaging/messages/payloads/account/SetFavoritesResponse';
+import type { SwitchAccount } from '_src/shared/messaging/messages/payloads/account/SwitchAccount';
+import type { SwitchAccountResponse } from '_src/shared/messaging/messages/payloads/account/SwitchAccountResponse';
 import type { DisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
@@ -95,7 +98,7 @@ export class DAppInterface {
         );
     }
 
-    public getAccounts(): Promise<ReadonlyWalletAccount[]> {
+    public getAccounts(address?: string): Promise<ReadonlyWalletAccount[]> {
         return mapToPromise(
             this.send<GetAccounts, GetAccountsResponse>({
                 type: 'get-accounts',
@@ -118,6 +121,16 @@ export class DAppInterface {
                         })
                 );
             }
+        );
+    }
+
+    public switchAccount(address: string): Promise<SuiAddress> {
+        return mapToPromise(
+            this.send<SwitchAccount, SwitchAccountResponse>({
+                type: 'switch-account',
+                address,
+            }),
+            (response) => response.address
         );
     }
 

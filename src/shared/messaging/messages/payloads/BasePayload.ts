@@ -64,7 +64,9 @@ export type PayloadType =
     | 'get-contacts'
     | 'get-contacts-response'
     | 'get-favorites'
-    | 'get-favorites-response';
+    | 'get-favorites-response'
+    | 'switch-account'
+    | 'switch-account-response';
 
 export interface BasePayload {
     type: PayloadType;

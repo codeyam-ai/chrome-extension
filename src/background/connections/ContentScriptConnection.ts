@@ -30,6 +30,7 @@ import { isGetTheme } from '_src/shared/messaging/messages/payloads/account/GetT
 import { isSetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/SetAccountCustomizations';
 import { isSetContacts } from '_src/shared/messaging/messages/payloads/account/SetContacts';
 import { isSetFavorites } from '_src/shared/messaging/messages/payloads/account/SetFavorites';
+import { isSwitchAccount } from '_src/shared/messaging/messages/payloads/account/SwitchAccount';
 import { isDisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import {
     isSignMessageRequest,
@@ -54,6 +55,7 @@ import type { GetContactsResponse } from '_src/shared/messaging/messages/payload
 import type { GetFavoritesResponse } from '_src/shared/messaging/messages/payloads/account/GetFavoritesResponse';
 import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
 import type { GetThemeResponse } from '_src/shared/messaging/messages/payloads/account/GetThemeResponse';
+import type { SwitchAccountResponse } from '_src/shared/messaging/messages/payloads/account/SwitchAccountResponse';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
 import type {
@@ -81,12 +83,10 @@ export class ContentScriptConnection extends Connection {
         const { payload } = msg;
 
         if (isGetAccount(payload)) {
-            const accountInfos = await this.getAccountInfos();
+            const activeAccount = await this.getActiveAccount();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                accounts: accountInfos.map(
-                    (accountInfo) => accountInfo.address
-                ),
+                account: activeAccount?.address,
             });
             if (
                 !(await Permissions.hasPermissions(
@@ -98,15 +98,33 @@ export class ContentScriptConnection extends Connection {
             ) {
                 this.sendNotAllowedError(msg.id);
             } else {
-                this.sendAccounts(existingPermission.accounts, msg.id);
+                this.sendAccounts([activeAccount.address], msg.id);
             }
-        } else if (isGetAccounts(payload)) {
-            const accountInfos = await this.getAccountInfos();
+        } else if (isSwitchAccount(payload)) {
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                accounts: accountInfos.map(
-                    (accountInfo) => accountInfo.address
-                ),
+                account: payload.address,
+            });
+            if (
+                !(await Permissions.hasPermissions(
+                    this.origin,
+                    ['switchAccount'],
+                    existingPermission
+                )) ||
+                !existingPermission
+            ) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                const activeAddress = await this.setActiveAccount(
+                    payload.address
+                );
+                this.sendAddress(activeAddress, msg.id);
+            }
+        } else if (isGetAccounts(payload)) {
+            const activeAccount = await this.getActiveAccount();
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+                account: activeAccount?.address,
             });
             if (
                 !(await Permissions.hasPermissions(
@@ -136,12 +154,10 @@ export class ContentScriptConnection extends Connection {
                 )
             );
         } else if (isGetAccountCustomizations(payload)) {
-            const accountInfos = await this.getAccountInfos();
+            const activeAccount = await this.getActiveAccount();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                accounts: accountInfos.map(
-                    (accountInfo) => accountInfo.address
-                ),
+                account: activeAccount?.address,
             });
 
             if (
@@ -168,12 +184,10 @@ export class ContentScriptConnection extends Connection {
                 this.sendAccountCustomizations(accountCustomizations, msg.id);
             }
         } else if (isSetAccountCustomizations(payload)) {
-            const accountInfos = await this.getAccountInfos();
+            const activeAccount = await this.getActiveAccount();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                accounts: accountInfos.map(
-                    (accountInfo) => accountInfo.address
-                ),
+                account: activeAccount?.address,
             });
 
             if (
@@ -189,12 +203,10 @@ export class ContentScriptConnection extends Connection {
                 this.setAccountCustomizations(payload.accountCustomizations);
             }
         } else if (isGetTheme(payload)) {
-            const accountInfos = await this.getAccountInfos();
+            const activeAccount = await this.getActiveAccount();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                accounts: accountInfos.map(
-                    (accountInfo) => accountInfo.address
-                ),
+                account: activeAccount?.address,
             });
 
             if (
@@ -211,12 +223,10 @@ export class ContentScriptConnection extends Connection {
                 this.sendTheme(theme, msg.id);
             }
         } else if (isGetContacts(payload)) {
-            const accountInfos = await this.getAccountInfos();
+            const activeAccount = await this.getActiveAccount();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                accounts: accountInfos.map(
-                    (accountInfo) => accountInfo.address
-                ),
+                account: activeAccount?.address,
             });
 
             if (
@@ -233,12 +243,10 @@ export class ContentScriptConnection extends Connection {
                 this.sendContacts(contacts, msg.id);
             }
         } else if (isSetContacts(payload)) {
-            const accountInfos = await this.getAccountInfos();
+            const activeAccount = await this.getActiveAccount();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                accounts: accountInfos.map(
-                    (accountInfo) => accountInfo.address
-                ),
+                account: activeAccount?.address,
             });
 
             if (
@@ -254,12 +262,10 @@ export class ContentScriptConnection extends Connection {
                 this.setContacts(payload.contacts);
             }
         } else if (isGetFavorites(payload)) {
-            const accountInfos = await this.getAccountInfos();
+            const activeAccount = await this.getActiveAccount();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                accounts: accountInfos.map(
-                    (accountInfo) => accountInfo.address
-                ),
+                account: activeAccount?.address,
             });
 
             if (
@@ -276,12 +282,10 @@ export class ContentScriptConnection extends Connection {
                 this.sendFavorites(contacts, msg.id);
             }
         } else if (isSetFavorites(payload)) {
-            const accountInfos = await this.getAccountInfos();
+            const activeAccount = await this.getActiveAccount();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                accounts: accountInfos.map(
-                    (accountInfo) => accountInfo.address
-                ),
+                account: activeAccount?.address,
             });
 
             if (
@@ -503,6 +507,27 @@ export class ContentScriptConnection extends Connection {
         });
     }
 
+    private async setActiveAccount(address: SuiAddress): Promise<SuiAddress> {
+        const accountInfos = await this.getAccountInfos();
+        const activeAccountIndex = accountInfos.findIndex(
+            (a) => a.address === address
+        );
+
+        if (activeAccountIndex === -1) {
+            const activeAccount = await this.getActiveAccount();
+            return activeAccount.address;
+        }
+
+        await setEncrypted({
+            key: 'activeAccountIndex',
+            value: activeAccountIndex.toString(),
+            session: false,
+            strong: false,
+        });
+
+        return accountInfos[activeAccountIndex].address;
+    }
+
     private async getActiveAccount(): Promise<AccountInfo> {
         const accountInfos = await this.getAccountInfos();
 
@@ -542,6 +567,18 @@ export class ContentScriptConnection extends Connection {
                 {
                     type: 'get-account-response',
                     accounts,
+                },
+                responseForID
+            )
+        );
+    }
+
+    private sendAddress(address: SuiAddress, responseForID?: string) {
+        this.send(
+            createMessage<SwitchAccountResponse>(
+                {
+                    type: 'switch-account-response',
+                    address,
                 },
                 responseForID
             )
@@ -617,7 +654,7 @@ export class ContentScriptConnection extends Connection {
     ) {
         const existingPermission = await Permissions.getPermission({
             origin: this.origin,
-            accounts: account ? [account] : undefined,
+            account,
         });
         const allowed = await Permissions.hasPermissions(
             this.origin,

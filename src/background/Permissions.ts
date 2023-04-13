@@ -112,15 +112,15 @@ class Permissions {
 
     public async getPermission({
         origin,
-        accounts,
+        account,
         permission,
     }: {
         origin: string;
-        accounts?: string[];
+        account?: string;
         permission?: Permission | null;
     }): Promise<Permission | null> {
-        if (origin === LINK_URL && accounts) {
-            return this.explorerPermission(accounts);
+        if (origin === LINK_URL && account) {
+            return this.explorerPermission([account]);
         }
 
         if (permission && permission.origin !== origin) {
@@ -202,6 +202,7 @@ class Permissions {
                 'setFavorites',
                 'viewContacts',
                 'setContacts',
+                'switchAccount',
             ],
             responseDate: Date.now().toString(),
             title: 'Ethos Wallet Dashboard',
