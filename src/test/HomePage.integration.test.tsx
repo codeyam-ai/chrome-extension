@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
@@ -20,15 +20,22 @@ describe('Rendering the Home page', () => {
     });
 
     describe('when the wallet has some coins', () => {
-        test('shows the USD amount when configured to do so', async () => {
+        test('shows the USD amount AND NOT the SUI amount when configured to do so', async () => {
             mockchain.mockSuiObjects({
                 suiBalance: 40000000000,
             });
             renderApp();
-            await screen.findByText('$4,000');
+
+            // be careful only to check within the main part of the screen, as there is also a CoinList with
+            // similar information.
+            const walletAndBalance = await screen.findByTestId(
+                'wallet-and-balance'
+            );
+            await within(walletAndBalance).findByText('$4,000');
+            expect(within(walletAndBalance).queryByText('40 SUI')).toBeNull();
         });
 
-        test('shows the SUI amount when configured to do so', async () => {
+        test('shows just the SUI amount when configured to do so', async () => {
             mockchain.mockSuiObjects({
                 suiBalance: 40000000000,
             });
@@ -38,7 +45,14 @@ describe('Rendering the Home page', () => {
                     featureFlags: { showUsd: false },
                 },
             });
-            await screen.findByText('40 SUI');
+
+            // be careful only to check within the main part of the screen, as there is also a CoinList with
+            // similar information.
+            const walletAndBalance = await screen.findByTestId(
+                'wallet-and-balance'
+            );
+            expect(within(walletAndBalance).queryByText('$4,000')).toBeNull();
+            await within(walletAndBalance).findByText('40 SUI');
         });
     });
 });
