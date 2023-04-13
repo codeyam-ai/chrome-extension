@@ -24,7 +24,7 @@ const ReviewStake: React.FC = () => {
 
     const onConfirm = useCallback(() => {
         navigate(
-            `/home/staking/confirm?${new URLSearchParams({
+            `/home/staking/complete?${new URLSearchParams({
                 validator: validatorSuiAddress ?? '',
                 amount: (amount ?? '').toString(),
             }).toString()}`
@@ -47,31 +47,11 @@ const ReviewStake: React.FC = () => {
                 <Subheader className={'text-center mb-6'}>
                     Review Stake
                 </Subheader>
-                <KeyValueList
-                    rowClassName="pb-2 border-b border-ethos-light-purple dark:border-ethos-dark-text-stroke"
-                    keyNamesAndValues={[
-                        {
-                            keyName: 'Stake',
-                            value: `${amount} SUI`,
-                        },
-                        {
-                            keyName: 'Staking APY',
-                            value: '0.00%',
-                        },
-                        {
-                            keyName: 'Staking Rewards Start',
-                            keyHelpMessage:
-                                'The staked SUI starts earning reward at the end of the Epoch in which it was staked. The rewards will become available at the end of one full Epoch of staking.',
-                            value: 'Eh, couple days',
-                        },
-                        {
-                            keyName: 'Gas Fee',
-                            value: `${mistToSui(
-                                +(validator?.gasPrice || '0'),
-                                4
-                            )} SUI`,
-                        },
-                    ]}
+                <StakeSummary
+                    amount={amount || ''}
+                    stakingAPY={'1.134'}
+                    rewardsStart={'Tomorrow'}
+                    gasPrice={mistToSui(+(validator?.gasPrice || '0'), 4)}
                 />
             </div>
             <div>
@@ -89,6 +69,46 @@ const ReviewStake: React.FC = () => {
                 <Button onClick={onConfirm}>Confirm</Button>
             </div>
         </div>
+    );
+};
+
+interface StakeSummaryProps {
+    amount: string;
+    stakingAPY: string;
+    rewardsStart: string;
+    gasPrice: string;
+}
+
+export const StakeSummary: React.FC<StakeSummaryProps> = ({
+    amount,
+    stakingAPY,
+    rewardsStart,
+    gasPrice,
+}) => {
+    return (
+        <KeyValueList
+            rowClassName="pb-2 border-b border-ethos-light-purple dark:border-ethos-dark-text-stroke"
+            keyNamesAndValues={[
+                {
+                    keyName: 'Stake',
+                    value: `${amount} SUI`,
+                },
+                {
+                    keyName: 'Staking APY',
+                    value: `${stakingAPY}%`,
+                },
+                {
+                    keyName: 'Staking Rewards Start',
+                    keyHelpMessage:
+                        'The staked SUI starts earning reward at the end of the Epoch in which it was staked. The rewards will become available at the end of one full Epoch of staking.',
+                    value: rewardsStart,
+                },
+                {
+                    keyName: 'Gas Fee',
+                    value: `${gasPrice} SUI`,
+                },
+            ]}
+        />
     );
 };
 
