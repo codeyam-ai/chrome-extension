@@ -1,5 +1,3 @@
-import mistToSui from './mistToSui';
-
 import type BigNumber from 'bignumber.js';
 
 const getErrorDisplaySuiForMist = (

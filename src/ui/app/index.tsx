@@ -11,6 +11,7 @@ import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval'
 import BuyPage from './pages/home/buy';
 import AddressBookNavigation from './pages/home/home/dapp/dapps/AddressBook/AddressBookNavigation';
 import CustomizeNavigation from './pages/home/home/dapp/dapps/Customize/CustomizeNavigation';
+import StakingNavigation from './pages/home/home/dapp/dapps/Staking/StakingNavigation';
 import TransferNftRecipient from './pages/home/nft-details/transfer-nft-recipient';
 import TransferNftReview from './pages/home/nft-details/transfer-nft-review';
 import ReceivePage from './pages/home/receive';
@@ -55,7 +56,6 @@ import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
 import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
-import StakingNavigation from './pages/home/home/dapp/dapps/Staking/StakingNavigation';
 
 const App = () => {
     const dispatch = useAppDispatch();

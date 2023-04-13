@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import ValidatorList from './ValidatorList';
 import { LinkType } from '_src/enums/LinkType';
@@ -7,7 +8,6 @@ import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { SuiAddress } from '@mysten/sui.js';
-import { useNavigate } from 'react-router-dom';
 
 const SelectValidator: React.FC = () => {
     const navigate = useNavigate();

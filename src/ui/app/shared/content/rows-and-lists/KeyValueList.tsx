@@ -1,10 +1,12 @@
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid';
+import classNames from 'classnames';
+
 import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
 import CopyBody from '../../typography/CopyBody';
+import ClickableLargeTooltip from '_src/ui/app/components/ClickableTooltip';
 
 import type { ReactElement } from 'react';
-import ClickableLargeTooltip from '_src/ui/app/components/ClickableTooltip';
 
 export type KeyNameAndValue = {
     keyName: string;
@@ -16,9 +18,14 @@ export type KeyNameAndValue = {
 interface KeyValueListProps {
     header?: string;
     keyNamesAndValues: KeyNameAndValue[];
+    rowClassName?: string;
 }
 
-const KeyValueList = ({ header, keyNamesAndValues }: KeyValueListProps) => {
+const KeyValueList = ({
+    header,
+    keyNamesAndValues,
+    rowClassName,
+}: KeyValueListProps) => {
     return (
         <div className={'px-6 pb-6'}>
             {header && (
@@ -29,7 +36,10 @@ const KeyValueList = ({ header, keyNamesAndValues }: KeyValueListProps) => {
             {keyNamesAndValues.map((item, key) => {
                 return (
                     <div
-                        className="flex flex-row justify-between mb-2"
+                        className={classNames(
+                            'flex flex-row justify-between mb-2',
+                            rowClassName
+                        )}
                         key={key}
                     >
                         <div className="flex items-center">

@@ -2,7 +2,7 @@ import { SUI_TYPE_ARG, type SuiValidatorSummary } from '@mysten/sui.js';
 import { Formik } from 'formik';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import StakeAmountForm from './StakeAmountForm';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
@@ -12,7 +12,7 @@ import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/accou
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 const StakeAmountPage: React.FC = () => {
-    const [amountToStake, setAmountToStake] = useState<number>();
+    const navigate = useNavigate();
     const [validators, setValidators] = useState<SuiValidatorSummary[]>([]);
     const [searchParams] = useSearchParams();
     const validatorSuiAddress = searchParams.get('validator');
@@ -38,9 +38,14 @@ const StakeAmountPage: React.FC = () => {
 
     const onHandleSubmit = useCallback(
         async ({ amount }: { amount: number | string }) => {
-            console.log('amount submitted from form :>> ', amount);
+            navigate(
+                `/home/staking/review?${new URLSearchParams({
+                    validator: validatorSuiAddress ?? '',
+                    amount: amount.toString(),
+                }).toString()}`
+            );
         },
-        []
+        [navigate, validatorSuiAddress]
     );
 
     useEffect(() => {

@@ -1,7 +1,7 @@
-import Button from '_src/ui/app/shared/buttons/Button';
 import StakingIcon from '_assets/images/staking-icon.png';
-import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import { LinkType } from '_src/enums/LinkType';
+import Button from '_src/ui/app/shared/buttons/Button';
+import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Header from '_src/ui/app/shared/typography/Header';
 
 const StakingIntro: React.FC = () => {

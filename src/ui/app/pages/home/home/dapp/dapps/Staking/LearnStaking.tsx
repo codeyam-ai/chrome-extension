@@ -1,7 +1,7 @@
+import StakingIcon from '_assets/images/staking-icon.png';
+import { LinkType } from '_src/enums/LinkType';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Header from '_src/ui/app/shared/typography/Header';
-import { LinkType } from '_src/enums/LinkType';
-import StakingIcon from '_assets/images/staking-icon.png';
 
 const LearnStaking: React.FC = () => {
     // add component
