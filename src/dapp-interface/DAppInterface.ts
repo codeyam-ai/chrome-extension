@@ -1,6 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { ReadonlyWalletAccount } from '@mysten/wallet-standard';
 import { filter, map } from 'rxjs';
 
 import { mapToPromise } from './utils';
@@ -12,8 +13,6 @@ import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/mes
 
 import type { SuiAddress } from '@mysten/sui.js';
 import type { Payload } from '_payloads';
-import type { GetAccount } from '_payloads/account/GetAccount';
-import type { GetAccountResponse } from '_payloads/account/GetAccountResponse';
 import type {
     PermissionType,
     HasPermissionsRequest,
@@ -26,6 +25,8 @@ import type {
     PreapprovalResponse,
 } from '_payloads/transactions';
 import type { NetworkEnvType } from '_src/background/NetworkEnv';
+import type { GetAccounts } from '_src/shared/messaging/messages/payloads/account/GetAccounts';
+import type { GetAccountsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountsResponse';
 import type { GetContacts } from '_src/shared/messaging/messages/payloads/account/GetContacts';
 import type { GetContactsResponse } from '_src/shared/messaging/messages/payloads/account/GetContactsResponse';
 import type { GetFavorites } from '_src/shared/messaging/messages/payloads/account/GetFavorites';
@@ -40,6 +41,8 @@ import type { SetContacts } from '_src/shared/messaging/messages/payloads/accoun
 import type { SetContactsResponse } from '_src/shared/messaging/messages/payloads/account/SetContactsResponse';
 import type { SetFavorites } from '_src/shared/messaging/messages/payloads/account/SetFavorites';
 import type { SetFavoritesResponse } from '_src/shared/messaging/messages/payloads/account/SetFavoritesResponse';
+import type { SwitchAccount } from '_src/shared/messaging/messages/payloads/account/SwitchAccount';
+import type { SwitchAccountResponse } from '_src/shared/messaging/messages/payloads/account/SwitchAccountResponse';
 import type { DisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
@@ -95,12 +98,39 @@ export class DAppInterface {
         );
     }
 
-    public getAccounts(): Promise<SuiAddress[]> {
+    public getAccounts(address?: string): Promise<ReadonlyWalletAccount[]> {
         return mapToPromise(
-            this.send<GetAccount, GetAccountResponse>({
-                type: 'get-account',
+            this.send<GetAccounts, GetAccountsResponse>({
+                type: 'get-accounts',
             }),
-            (response) => response.accounts
+            (response) => {
+                return response.accounts.map(
+                    (address) =>
+                        new ReadonlyWalletAccount({
+                            address,
+                            publicKey: new Uint8Array(),
+                            chains: ['sui:devnet', 'sui:testnet'],
+                            features: [
+                                'standard:connect',
+                                'standard:disconnect',
+                                'standard:events',
+                                'sui:signMessage',
+                                'sui:signTransactionBlock',
+                                'sui:signAndExecuteTransactionBlock',
+                            ],
+                        })
+                );
+            }
+        );
+    }
+
+    public switchAccount(address: string): Promise<SuiAddress> {
+        return mapToPromise(
+            this.send<SwitchAccount, SwitchAccountResponse>({
+                type: 'switch-account',
+                address,
+            }),
+            (response) => response.address
         );
     }
 

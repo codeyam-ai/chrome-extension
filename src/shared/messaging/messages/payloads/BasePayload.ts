@@ -9,6 +9,8 @@ export type PayloadType =
     | 'get-permission-requests'
     | 'get-account'
     | 'get-account-response'
+    | 'get-accounts'
+    | 'get-accounts-response'
     | 'has-permissions-request'
     | 'has-permissions-response'
     | 'acquire-permissions-request'
@@ -62,7 +64,9 @@ export type PayloadType =
     | 'get-contacts'
     | 'get-contacts-response'
     | 'get-favorites'
-    | 'get-favorites-response';
+    | 'get-favorites-response'
+    | 'switch-account'
+    | 'switch-account-response';
 
 export interface BasePayload {
     type: PayloadType;

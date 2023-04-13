@@ -22,6 +22,7 @@ import Permissions from '_src/background/Permissions';
 import Transactions from '_src/background/Transactions';
 import { isGetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
 import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
+import { isGetAccounts } from '_src/shared/messaging/messages/payloads/account/GetAccounts';
 import { isGetContacts } from '_src/shared/messaging/messages/payloads/account/GetContacts';
 import { isGetFavorites } from '_src/shared/messaging/messages/payloads/account/GetFavorites';
 import { isGetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
@@ -29,6 +30,7 @@ import { isGetTheme } from '_src/shared/messaging/messages/payloads/account/GetT
 import { isSetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/SetAccountCustomizations';
 import { isSetContacts } from '_src/shared/messaging/messages/payloads/account/SetContacts';
 import { isSetFavorites } from '_src/shared/messaging/messages/payloads/account/SetFavorites';
+import { isSwitchAccount } from '_src/shared/messaging/messages/payloads/account/SwitchAccount';
 import { isDisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import {
     isSignMessageRequest,
@@ -53,6 +55,7 @@ import type { GetContactsResponse } from '_src/shared/messaging/messages/payload
 import type { GetFavoritesResponse } from '_src/shared/messaging/messages/payloads/account/GetFavoritesResponse';
 import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
 import type { GetThemeResponse } from '_src/shared/messaging/messages/payloads/account/GetThemeResponse';
+import type { SwitchAccountResponse } from '_src/shared/messaging/messages/payloads/account/SwitchAccountResponse';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
 import type {
@@ -95,7 +98,49 @@ export class ContentScriptConnection extends Connection {
             ) {
                 this.sendNotAllowedError(msg.id);
             } else {
-                this.sendAccounts(existingPermission.accounts, msg.id);
+                this.sendAccounts([activeAccount.address], msg.id);
+            }
+        } else if (isSwitchAccount(payload)) {
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+                account: payload.address,
+            });
+            if (
+                !(await Permissions.hasPermissions(
+                    this.origin,
+                    ['switchAccount'],
+                    existingPermission
+                )) ||
+                !existingPermission
+            ) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                const activeAddress = await this.setActiveAccount(
+                    payload.address
+                );
+                this.sendAddress(activeAddress, msg.id);
+            }
+        } else if (isGetAccounts(payload)) {
+            const activeAccount = await this.getActiveAccount();
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+                account: activeAccount?.address,
+            });
+            if (
+                !(await Permissions.hasPermissions(
+                    this.origin,
+                    ['viewAccount'],
+                    existingPermission
+                )) ||
+                !existingPermission
+            ) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                const accountInfos = await this.getAccountInfos();
+                const addresses = accountInfos.map(
+                    (accountInfo) => accountInfo.address
+                );
+                this.sendAccounts(addresses, msg.id);
             }
         } else if (isGetUrl(payload)) {
             openInNewTab('ui.html#/initialize/hosted/logging-in');
@@ -462,6 +507,27 @@ export class ContentScriptConnection extends Connection {
         });
     }
 
+    private async setActiveAccount(address: SuiAddress): Promise<SuiAddress> {
+        const accountInfos = await this.getAccountInfos();
+        const activeAccountIndex = accountInfos.findIndex(
+            (a) => a.address === address
+        );
+
+        if (activeAccountIndex === -1) {
+            const activeAccount = await this.getActiveAccount();
+            return activeAccount.address;
+        }
+
+        await setEncrypted({
+            key: 'activeAccountIndex',
+            value: activeAccountIndex.toString(),
+            session: false,
+            strong: false,
+        });
+
+        return accountInfos[activeAccountIndex].address;
+    }
+
     private async getActiveAccount(): Promise<AccountInfo> {
         const accountInfos = await this.getAccountInfos();
 
@@ -501,6 +567,18 @@ export class ContentScriptConnection extends Connection {
                 {
                     type: 'get-account-response',
                     accounts,
+                },
+                responseForID
+            )
+        );
+    }
+
+    private sendAddress(address: SuiAddress, responseForID?: string) {
+        this.send(
+            createMessage<SwitchAccountResponse>(
+                {
+                    type: 'switch-account-response',
+                    address,
                 },
                 responseForID
             )

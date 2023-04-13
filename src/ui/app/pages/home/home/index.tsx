@@ -1,13 +1,12 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
-
+import CoinList from './CoinList';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import { DappList } from './dapp/DappList';
 import { sampleData } from './dapp/dappData';
 import ChainIndicator from '../../dapp-tx-approval/types/ChainIndicator';
-import { useAppSelector, useFormatCoin } from '_hooks';
+import { useAppSelector } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
@@ -48,14 +47,7 @@ function HomePage() {
             <SendReceiveButtonGroup mistBalance={mistBalance} />
             <div className="flex flex-col gap-6 overflow-auto">
                 <ContentBlock>
-                    {/* 
-
-                    Hide coinlist and display on the /tokens page
-                    TODO: remove once approved
-                    
-                    <CoinList balances={balances} /> 
-                    
-                    */}
+                    <CoinList balances={balances} />
 
                     {(!balances || Object.keys(balances).length < 2) && (
                         <div className="py-3">

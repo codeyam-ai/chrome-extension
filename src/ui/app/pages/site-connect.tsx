@@ -52,19 +52,23 @@ const permissionTypeToTxt: Record<PermissionType, PermissionInfo> = {
         icon: <PencilSquareIcon />,
     },
     viewContacts: {
-        text: 'Set account customizations',
+        text: 'View Countacts',
         icon: <CheckCircleIcon />,
     },
     setContacts: {
-        text: 'Set account customizations',
+        text: 'Set Contacts',
         icon: <PencilSquareIcon />,
     },
     viewFavorites: {
-        text: 'Set account customizations',
+        text: 'View favorites',
         icon: <CheckCircleIcon />,
     },
     setFavorites: {
-        text: 'Set account customizations',
+        text: 'Set Favorites',
+        icon: <PencilSquareIcon />,
+    },
+    switchAccount: {
+        text: 'Switch Account',
         icon: <PencilSquareIcon />,
     },
 };

@@ -23,17 +23,17 @@ const WalletBalanceAndIconHomeView = ({
 }: WalletBalanceAndIconHomeViewProps) => {
     const addressWithEllipsis = useMiddleEllipsis(
         accountInfo?.address || '',
-        9,
-        5
+        12,
+        6
     );
 
     const { featureFlags } = useDependencies();
 
     const [balanceFormatted, symbol, usdAmount] = useFormatCoin(
         mistBalance,
-        SUI_TYPE_ARG
+        SUI_TYPE_ARG,
+        6
     );
-
     const formatted = usdAmount.endsWith('.00')
         ? usdAmount.slice(0, -3)
         : usdAmount;
@@ -59,7 +59,7 @@ const WalletBalanceAndIconHomeView = ({
                 </JumboTitle>
 
                 {addressWithEllipsis && (
-                    <div className="pb-4">
+                    <div className="flex w-full justify-center pl-[30px] pb-3">
                         <CopyToClipboard txt={accountInfo?.address || ''}>
                             <Body>{addressWithEllipsis}</Body>
                             <div className="p-2">

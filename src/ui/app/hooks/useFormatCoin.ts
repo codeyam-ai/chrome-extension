@@ -49,7 +49,8 @@ export function useCoinDecimals(coinType?: string | null) {
 // today, but it really shouldn't in a perfect world.
 export function useFormatCoin(
     balance?: bigint | number | string | null,
-    coinType?: string | null
+    coinType?: string | null,
+    formattedLength?: number
 ): FormattedCoin {
     const intl = useIntl();
     const symbol = useMemo(
@@ -74,8 +75,14 @@ export function useFormatCoin(
         if (typeof decimals === 'undefined') {
             return '...';
         }
-        return ns.format.coinBalance(balance, decimals);
-    }, [decimals, isError, isFetched, intl, balance]);
+        const fullFormattedBalance = ns.format.coinBalance(balance, decimals);
+
+        if (formattedLength && fullFormattedBalance.length > formattedLength) {
+            return ns.format.coinBalance(balance, decimals, formattedLength);
+        }
+
+        return fullFormattedBalance;
+    }, [balance, isError, isFetched, decimals, formattedLength, intl]);
 
     const dollars = useMemo(() => {
         if (
