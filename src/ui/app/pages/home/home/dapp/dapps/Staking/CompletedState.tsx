@@ -2,7 +2,7 @@ import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { StakeSummary } from './ReviewStake';
+import StakeSummary from './StakeSummary';
 import StakingIcon from '_assets/images/staking-icon.png';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
 import { api } from '_src/ui/app/redux/store/thunk-extras';

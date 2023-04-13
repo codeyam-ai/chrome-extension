@@ -11,6 +11,7 @@ import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { SuiValidatorSummary } from '@mysten/sui.js';
+import StakeSummary from './StakeSummary';
 
 const ReviewStake: React.FC = () => {
     const navigate = useNavigate();
@@ -69,46 +70,6 @@ const ReviewStake: React.FC = () => {
                 <Button onClick={onConfirm}>Confirm</Button>
             </div>
         </div>
-    );
-};
-
-interface StakeSummaryProps {
-    amount: string;
-    stakingAPY: string;
-    rewardsStart: string;
-    gasPrice: string;
-}
-
-export const StakeSummary: React.FC<StakeSummaryProps> = ({
-    amount,
-    stakingAPY,
-    rewardsStart,
-    gasPrice,
-}) => {
-    return (
-        <KeyValueList
-            rowClassName="pb-2 border-b border-ethos-light-purple dark:border-ethos-dark-text-stroke"
-            keyNamesAndValues={[
-                {
-                    keyName: 'Stake',
-                    value: `${amount} SUI`,
-                },
-                {
-                    keyName: 'Staking APY',
-                    value: `${stakingAPY}%`,
-                },
-                {
-                    keyName: 'Staking Rewards Start',
-                    keyHelpMessage:
-                        'The staked SUI starts earning reward at the end of the Epoch in which it was staked. The rewards will become available at the end of one full Epoch of staking.',
-                    value: rewardsStart,
-                },
-                {
-                    keyName: 'Gas Fee',
-                    value: `${gasPrice} SUI`,
-                },
-            ]}
-        />
     );
 };
 

@@ -8,10 +8,11 @@ import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
-import type { SuiValidatorSummary } from '@mysten/sui.js';
+import StakeSummary from '../StakeSummary';
+import { type SuiValidatorSummaryWithApy } from '../ValidatorList';
 
 interface StakeAmountFormProps {
-    validator: SuiValidatorSummary;
+    validator: SuiValidatorSummaryWithApy;
     formattedSuiBalance: string;
 }
 
@@ -67,26 +68,11 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
             </div>
             <div>
                 <div className={'-mx-6'}>
-                    <KeyValueList
-                        keyNamesAndValues={[
-                            {
-                                keyName: 'Staking APY',
-                                value: '1.34%',
-                            },
-                            {
-                                keyName: 'Staking Rewards Start',
-                                keyHelpMessage:
-                                    'The staked SUI starts earning reward at the end of the Epoch in which it was staked. The rewards will become available at the end of one full Epoch of staking.',
-                                value: '1 day 3 hours',
-                            },
-                            {
-                                keyName: 'Gas Fee',
-                                value: `${mistToSui(
-                                    +(validator?.gasPrice || '0'),
-                                    4
-                                )} SUI`,
-                            },
-                        ]}
+                    <StakeSummary
+                        amount={''}
+                        rewardsStart={'30sec'}
+                        stakingAPY={validator.apy.toString()}
+                        gasPrice={mistToSui(+(validator.gasPrice || '0'), 4)}
                     />
                 </div>
                 <div className="!mb-6">
