@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
 import truncateString from '_src/ui/app/helpers/truncate-string';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 
 type ActivityRowProps = {
     failed: boolean;
@@ -38,6 +39,8 @@ export const ActivityRow = ({
     dollars,
 }: ActivityRowProps) => {
     const displayFormattedAmount = truncateString(formattedAmount || '', 6);
+    const { featureFlags } = useDependencies();
+
     return (
         <Link to={link} className="flex flex-col">
             <Transition
@@ -97,14 +100,16 @@ export const ActivityRow = ({
                                 >
                                     {displayFormattedAmount} {symbol}
                                 </BodyLarge>
-                                <Body
-                                    isTextColorMedium
-                                    className={
-                                        'inline p-[3px] bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-[4px]'
-                                    }
-                                >
-                                    {dollars}
-                                </Body>
+                                {featureFlags.showUsd && (
+                                    <Body
+                                        isTextColorMedium
+                                        className={
+                                            'inline p-[3px] bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-[4px]'
+                                        }
+                                    >
+                                        {dollars}
+                                    </Body>
+                                )}
                             </div>
                         )}
                     </div>
