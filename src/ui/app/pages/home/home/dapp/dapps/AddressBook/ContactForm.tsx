@@ -1,5 +1,7 @@
+import { isValidSuiAddress } from '@mysten/sui.js';
 import { useField } from 'formik';
 import { useState, useCallback } from 'react';
+import * as Yup from 'yup';
 
 import EmojiDisplay from '_src/ui/app/shared/EmojiDisplay';
 import Button from '_src/ui/app/shared/buttons/Button';
@@ -10,6 +12,19 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { SuiAddress } from '@mysten/sui.js';
 import type { EmojiPickerResult } from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
+
+export const addressValidation = Yup.string()
+    .ensure()
+    .required('Enter an address')
+    .test({
+        name: 'address-validity',
+        test: (address: string) => {
+            return isValidSuiAddress(address);
+        },
+        message: 'That address is not valid',
+    });
+
+export const nameValidation = Yup.string().required('Enter a name');
 
 interface ContactFormProps {
     name?: string;
@@ -74,10 +89,9 @@ const ContactForm = ({
     return (
         <div className="relative flex flex-col place-content-center pt-6">
             <Input
+                {...nameField}
                 autoFocus
                 label="Your Contact's Name"
-                {...nameField}
-                value={name ?? nameField.value}
                 placeholder="Type a name"
                 id="name"
                 data-testid="name"
@@ -93,7 +107,6 @@ const ContactForm = ({
 
             <Input
                 {...addressField}
-                value={address ?? addressField.value}
                 label="Address"
                 placeholder="Paste or type an address"
                 id="address"
@@ -161,8 +174,8 @@ const ContactForm = ({
                 type="submit"
                 data-testid="submit"
                 disabled={
-                    (formMode === 'Add' && !addressMeta.value) ||
-                    (formMode === 'Add' && !!addressMeta.error) ||
+                    !addressMeta.value ||
+                    !!addressMeta.error ||
                     !nameMeta.value ||
                     !!nameMeta.error
                 }
