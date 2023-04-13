@@ -140,7 +140,14 @@ function NFTdetailsContent({
                                     'text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
                                 }
                             >
-                                <ArrowUpRightIcon width={16} height={16} />
+                                <ExplorerLink
+                                    type={ExplorerLinkType.object}
+                                    objectID={nftObjectID}
+                                    title="View on Sui Explorer"
+                                    showIcon={true}
+                                >
+                                    <ArrowUpRightIcon width={16} height={16} />
+                                </ExplorerLink>
                             </div>
                         </div>
                         {/*

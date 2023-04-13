@@ -436,7 +436,17 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                         </ExplorerLink>
                     </BodyLarge>
                     <div className={'text-ethos-light-text-medium'}>
-                        <ArrowUpRightIcon width={16} height={16} />
+                        <ExplorerLink
+                            type={ExplorerLinkType.transaction}
+                            transactionID={
+                                transaction?.effects?.transactionDigest || ''
+                            }
+                            title="View on Sui Explorer"
+                            className={st['explorer-link']}
+                            showIcon={true}
+                        >
+                            <ArrowUpRightIcon width={16} height={16} />
+                        </ExplorerLink>
                     </div>
                 </div>
             </div>

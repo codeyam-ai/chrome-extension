@@ -29,7 +29,7 @@ export class NFT {
         if (
             data.display?.data &&
             typeof data.display.data === 'object' &&
-            'image_url' in data.display.data
+            ('image_url' in data.display.data || 'img_url' in data.display.data)
         ) {
             return true;
         }
