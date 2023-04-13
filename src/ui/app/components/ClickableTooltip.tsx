@@ -80,6 +80,7 @@ const ClickableTooltip: React.FC<ClickableTooltipProps> = ({
         <div className="flex justify-center">
             <button
                 className="relative"
+                type="button"
                 onClick={handleTextClick}
                 ref={textRef}
             >
