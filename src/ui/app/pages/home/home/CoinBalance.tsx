@@ -6,9 +6,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import Sui from './Sui';
 import UnknownToken from './UnknownToken';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
-import { useDependencies } from '_shared/utils/dependenciesContext';
 
 export type CoinProps = {
     type: string;
