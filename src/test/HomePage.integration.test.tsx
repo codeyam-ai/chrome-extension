@@ -5,7 +5,7 @@ import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
-describe('Rendering the Tokens page', () => {
+describe('Rendering the Home page', () => {
     let mockchain: Mockchain;
     beforeEach(async () => {
         mockchain = new Mockchain();
@@ -13,7 +13,7 @@ describe('Rendering the Tokens page', () => {
         mockchain.mockCommonCalls();
     });
 
-    test('rendering the Tokens page when wallet has no coins', async () => {
+    test('when wallet has no coins', async () => {
         mockchain.mockSuiObjects();
         renderApp();
         await screen.findByText('Get started with Sui');
