@@ -22,6 +22,7 @@ import Permissions from '_src/background/Permissions';
 import Transactions from '_src/background/Transactions';
 import { isGetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
 import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
+import { isGetAccounts } from '_src/shared/messaging/messages/payloads/account/GetAccounts';
 import { isGetContacts } from '_src/shared/messaging/messages/payloads/account/GetContacts';
 import { isGetFavorites } from '_src/shared/messaging/messages/payloads/account/GetFavorites';
 import { isGetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
@@ -80,10 +81,12 @@ export class ContentScriptConnection extends Connection {
         const { payload } = msg;
 
         if (isGetAccount(payload)) {
-            const activeAccount = await this.getActiveAccount();
+            const accountInfos = await this.getAccountInfos();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                account: activeAccount?.address,
+                accounts: accountInfos.map(
+                    (accountInfo) => accountInfo.address
+                ),
             });
             if (
                 !(await Permissions.hasPermissions(
@@ -97,6 +100,30 @@ export class ContentScriptConnection extends Connection {
             } else {
                 this.sendAccounts(existingPermission.accounts, msg.id);
             }
+        } else if (isGetAccounts(payload)) {
+            const accountInfos = await this.getAccountInfos();
+            const existingPermission = await Permissions.getPermission({
+                origin: this.origin,
+                accounts: accountInfos.map(
+                    (accountInfo) => accountInfo.address
+                ),
+            });
+            if (
+                !(await Permissions.hasPermissions(
+                    this.origin,
+                    ['viewAccount'],
+                    existingPermission
+                )) ||
+                !existingPermission
+            ) {
+                this.sendNotAllowedError(msg.id);
+            } else {
+                const accountInfos = await this.getAccountInfos();
+                const addresses = accountInfos.map(
+                    (accountInfo) => accountInfo.address
+                );
+                this.sendAccounts(addresses, msg.id);
+            }
         } else if (isGetUrl(payload)) {
             openInNewTab('ui.html#/initialize/hosted/logging-in');
             this.send(
@@ -109,10 +136,12 @@ export class ContentScriptConnection extends Connection {
                 )
             );
         } else if (isGetAccountCustomizations(payload)) {
-            const activeAccount = await this.getActiveAccount();
+            const accountInfos = await this.getAccountInfos();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                account: activeAccount?.address,
+                accounts: accountInfos.map(
+                    (accountInfo) => accountInfo.address
+                ),
             });
 
             if (
@@ -139,10 +168,12 @@ export class ContentScriptConnection extends Connection {
                 this.sendAccountCustomizations(accountCustomizations, msg.id);
             }
         } else if (isSetAccountCustomizations(payload)) {
-            const activeAccount = await this.getActiveAccount();
+            const accountInfos = await this.getAccountInfos();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                account: activeAccount?.address,
+                accounts: accountInfos.map(
+                    (accountInfo) => accountInfo.address
+                ),
             });
 
             if (
@@ -158,10 +189,12 @@ export class ContentScriptConnection extends Connection {
                 this.setAccountCustomizations(payload.accountCustomizations);
             }
         } else if (isGetTheme(payload)) {
-            const activeAccount = await this.getActiveAccount();
+            const accountInfos = await this.getAccountInfos();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                account: activeAccount?.address,
+                accounts: accountInfos.map(
+                    (accountInfo) => accountInfo.address
+                ),
             });
 
             if (
@@ -178,10 +211,12 @@ export class ContentScriptConnection extends Connection {
                 this.sendTheme(theme, msg.id);
             }
         } else if (isGetContacts(payload)) {
-            const activeAccount = await this.getActiveAccount();
+            const accountInfos = await this.getAccountInfos();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                account: activeAccount?.address,
+                accounts: accountInfos.map(
+                    (accountInfo) => accountInfo.address
+                ),
             });
 
             if (
@@ -198,10 +233,12 @@ export class ContentScriptConnection extends Connection {
                 this.sendContacts(contacts, msg.id);
             }
         } else if (isSetContacts(payload)) {
-            const activeAccount = await this.getActiveAccount();
+            const accountInfos = await this.getAccountInfos();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                account: activeAccount?.address,
+                accounts: accountInfos.map(
+                    (accountInfo) => accountInfo.address
+                ),
             });
 
             if (
@@ -217,10 +254,12 @@ export class ContentScriptConnection extends Connection {
                 this.setContacts(payload.contacts);
             }
         } else if (isGetFavorites(payload)) {
-            const activeAccount = await this.getActiveAccount();
+            const accountInfos = await this.getAccountInfos();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                account: activeAccount?.address,
+                accounts: accountInfos.map(
+                    (accountInfo) => accountInfo.address
+                ),
             });
 
             if (
@@ -237,10 +276,12 @@ export class ContentScriptConnection extends Connection {
                 this.sendFavorites(contacts, msg.id);
             }
         } else if (isSetFavorites(payload)) {
-            const activeAccount = await this.getActiveAccount();
+            const accountInfos = await this.getAccountInfos();
             const existingPermission = await Permissions.getPermission({
                 origin: this.origin,
-                account: activeAccount?.address,
+                accounts: accountInfos.map(
+                    (accountInfo) => accountInfo.address
+                ),
             });
 
             if (
@@ -576,7 +617,7 @@ export class ContentScriptConnection extends Connection {
     ) {
         const existingPermission = await Permissions.getPermission({
             origin: this.origin,
-            account,
+            accounts: account ? [account] : undefined,
         });
         const allowed = await Permissions.hasPermissions(
             this.origin,

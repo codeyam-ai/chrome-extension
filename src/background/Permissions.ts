@@ -112,15 +112,17 @@ class Permissions {
 
     public async getPermission({
         origin,
-        account,
+        accounts,
         permission,
     }: {
         origin: string;
-        account?: string;
+        accounts?: string[];
         permission?: Permission | null;
     }): Promise<Permission | null> {
-        if (origin === LINK_URL && account)
-            return this.explorerPermission(account);
+        if (origin === LINK_URL && accounts) {
+            return this.explorerPermission(accounts);
+        }
+
         if (permission && permission.origin !== origin) {
             throw new Error(
                 `Provided permission has different origin from the one provided. "${permission.origin} !== ${origin}"`
@@ -179,13 +181,13 @@ class Permissions {
     public async grantEthosDashboardBasicPermissionsForAccount(
         account: string
     ): Promise<void> {
-        const permission = this.explorerPermission(account);
+        const permission = this.explorerPermission([account]);
         await this.storePermission(permission);
     }
 
-    explorerPermission(account: string) {
+    explorerPermission(accounts: string[]) {
         const permission: Permission = {
-            accounts: [account],
+            accounts,
             allowed: true,
             createdDate: Date.now().toString(),
             favIcon: BASE_URL + '/favicon.ico',

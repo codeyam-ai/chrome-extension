@@ -1,6 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { ReadonlyWalletAccount } from '@mysten/wallet-standard';
 import { filter, map } from 'rxjs';
 
 import { mapToPromise } from './utils';
@@ -10,10 +11,7 @@ import { ALL_PERMISSION_TYPES } from '_payloads/permissions';
 import { type GetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
 import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
 
-import type { SuiAddress } from '@mysten/sui.js';
 import type { Payload } from '_payloads';
-import type { GetAccount } from '_payloads/account/GetAccount';
-import type { GetAccountResponse } from '_payloads/account/GetAccountResponse';
 import type {
     PermissionType,
     HasPermissionsRequest,
@@ -26,6 +24,8 @@ import type {
     PreapprovalResponse,
 } from '_payloads/transactions';
 import type { NetworkEnvType } from '_src/background/NetworkEnv';
+import type { GetAccounts } from '_src/shared/messaging/messages/payloads/account/GetAccounts';
+import type { GetAccountsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountsResponse';
 import type { GetContacts } from '_src/shared/messaging/messages/payloads/account/GetContacts';
 import type { GetContactsResponse } from '_src/shared/messaging/messages/payloads/account/GetContactsResponse';
 import type { GetFavorites } from '_src/shared/messaging/messages/payloads/account/GetFavorites';
@@ -95,12 +95,29 @@ export class DAppInterface {
         );
     }
 
-    public getAccounts(): Promise<SuiAddress[]> {
+    public getAccounts(): Promise<ReadonlyWalletAccount[]> {
         return mapToPromise(
-            this.send<GetAccount, GetAccountResponse>({
-                type: 'get-account',
+            this.send<GetAccounts, GetAccountsResponse>({
+                type: 'get-accounts',
             }),
-            (response) => response.accounts
+            (response) => {
+                return response.accounts.map(
+                    (address) =>
+                        new ReadonlyWalletAccount({
+                            address,
+                            publicKey: new Uint8Array(),
+                            chains: ['sui:devnet', 'sui:testnet'],
+                            features: [
+                                'standard:connect',
+                                'standard:disconnect',
+                                'standard:events',
+                                'sui:signMessage',
+                                'sui:signTransactionBlock',
+                                'sui:signAndExecuteTransactionBlock',
+                            ],
+                        })
+                );
+            }
         );
     }
 

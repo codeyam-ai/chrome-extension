@@ -9,6 +9,8 @@ export type PayloadType =
     | 'get-permission-requests'
     | 'get-account'
     | 'get-account-response'
+    | 'get-accounts'
+    | 'get-accounts-response'
     | 'has-permissions-request'
     | 'has-permissions-response'
     | 'acquire-permissions-request'
