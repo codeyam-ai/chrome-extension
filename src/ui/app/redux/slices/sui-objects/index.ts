@@ -40,7 +40,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
     const allSuiObjects: SuiObjectData[] = [];
     if (address) {
         const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
-            owner: '0x8865423661525de0824e090287ab4c3bc2cfa0f4a4f088e87697a73b8d554725',
+            owner: address,
         });
 
         const objectIDs = allObjectRefs.data
@@ -84,13 +84,6 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         for (const objRes of allObjRes) {
             const suiObjectData = getSuiObjectData(objRes);
             if (suiObjectData) {
-                if (
-                    suiObjectData.owner &&
-                    typeof suiObjectData.owner === 'object' &&
-                    'AddressOwner' in suiObjectData.owner
-                ) {
-                    suiObjectData.owner.AddressOwner = address;
-                }
                 allSuiObjects.push(suiObjectData);
             }
         }
