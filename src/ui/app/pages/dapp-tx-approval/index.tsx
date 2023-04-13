@@ -232,6 +232,10 @@ export function DappTxApprovalPage() {
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
+            const justSign =
+                txRequest?.tx && 'justSign' in txRequest.tx
+                    ? txRequest.tx.justSign
+                    : undefined;
             const options =
                 txRequest?.tx && 'options' in txRequest.tx
                     ? txRequest.tx.options
@@ -247,6 +251,7 @@ export function DappTxApprovalPage() {
                 authentication ?? null,
                 address,
                 activeAccountIndex,
+                justSign,
                 options,
                 requestType
             );

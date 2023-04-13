@@ -143,7 +143,6 @@ class Transactions {
                 connection.origin,
                 connection.originFavIcon
             );
-
         if (txResultError) {
             throw new Error(
                 `Transaction failed with the following error. ${txResultError}`

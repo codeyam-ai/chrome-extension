@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Connection } from './Connection';
+import { isSignTransactionRequest } from '../../shared/messaging/messages/payloads/transactions/ExecuteTransactionRequest';
 import networkEnv from '../NetworkEnv';
 import { createMessage } from '_messages';
 import { isGetAccount } from '_payloads/account/GetAccount';
@@ -17,6 +18,7 @@ import {
     isExecuteTransactionRequest,
     type PreapprovalResponse,
     type ExecuteTransactionResponse,
+    type SignTransactionResponse,
 } from '_payloads/transactions';
 import Permissions from '_src/background/Permissions';
 import Transactions from '_src/background/Transactions';
@@ -46,7 +48,11 @@ import { openInNewTab } from '_src/shared/utils';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 
 import type { NetworkEnvType } from '../NetworkEnv';
-import type { SuiAddress, SuiTransactionBlockResponse } from '@mysten/sui.js';
+import type {
+    SignedTransaction,
+    SuiAddress,
+    SuiTransactionBlockResponse,
+} from '@mysten/sui.js';
 import type { Message } from '_messages';
 import type { PortChannelName } from '_messaging/PortChannelName';
 import type { ErrorPayload } from '_payloads';
@@ -359,6 +365,28 @@ export class ContentScriptConnection extends Connection {
                     {
                         type: 'execute-transaction-response',
                         result: result as SuiTransactionBlockResponse,
+                    },
+                    msg.id
+                )
+            );
+        } else if (isSignTransactionRequest(payload)) {
+            if (!payload.transaction.account) {
+                // make sure we don't execute transactions that doesn't have a specified account
+                throw new Error('Missing account');
+            }
+            await this.ensurePermissions(
+                ['viewAccount', 'suggestTransactions'],
+                payload.transaction.account
+            );
+            const result = await Transactions.executeOrSignTransaction(
+                { sign: payload.transaction },
+                this
+            );
+            this.send(
+                createMessage<SignTransactionResponse>(
+                    {
+                        type: 'sign-transaction-response',
+                        result: result as SignedTransaction,
                     },
                     msg.id
                 )

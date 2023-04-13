@@ -414,6 +414,10 @@ const Base = ({
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
+            const justSign =
+                txRequest?.tx && 'justSign' in txRequest.tx
+                    ? txRequest.tx.justSign
+                    : undefined;
             const options =
                 txRequest?.tx && 'options' in txRequest.tx
                     ? txRequest.tx.options
@@ -429,6 +433,7 @@ const Base = ({
                 authentication ?? null,
                 address,
                 activeAccountIndex,
+                justSign,
                 options,
                 requestType
             );

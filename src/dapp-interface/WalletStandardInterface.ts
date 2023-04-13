@@ -278,7 +278,9 @@ export class EthosWallet implements Wallet {
                     transaction: input.transactionBlock.serialize(),
                 },
             }),
-            (response) => response.result
+            (response) => {
+                return response.result;
+            }
         );
     };
 
