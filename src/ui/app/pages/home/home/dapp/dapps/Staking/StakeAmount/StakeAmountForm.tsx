@@ -1,15 +1,13 @@
 import { Form, useField, useFormikContext } from 'formik';
 
+import StakeSummary from '../StakeSummary';
+import { type SuiValidatorSummaryWithApy } from '../ValidatorList';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
 import Button from '_src/ui/app/shared/buttons/Button';
-import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 import SuiIcon from '_src/ui/app/shared/svg/SuiIcon';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
-
-import StakeSummary from '../StakeSummary';
-import { type SuiValidatorSummaryWithApy } from '../ValidatorList';
 
 interface StakeAmountFormProps {
     validator: SuiValidatorSummaryWithApy;
@@ -23,6 +21,7 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
     const { isSubmitting, isValid, dirty } = useFormikContext();
 
     const [amountField, amountMeta] = useField('amount');
+    console.log('validartor', validator);
 
     return (
         <Form
@@ -71,7 +70,7 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                     <StakeSummary
                         amount={''}
                         rewardsStart={'30sec'}
-                        stakingAPY={validator.apy.toString()}
+                        stakingAPY={validator.apy?.toString()}
                         gasPrice={mistToSui(+(validator.gasPrice || '0'), 4)}
                     />
                 </div>

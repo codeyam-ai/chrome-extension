@@ -12,15 +12,19 @@ import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { SuiValidatorSummary } from '@mysten/sui.js';
 import StakeSummary from './StakeSummary';
+import { useValidatorsWithApy } from './ValidatorList';
 
 const ReviewStake: React.FC = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const [validators, setValidators] = useState<SuiValidatorSummary[]>([]);
     const validatorSuiAddress = searchParams.get('validator');
+
+    const { validators } = useValidatorsWithApy();
+
     const validator = useMemo(() => {
-        return validators.find((v) => v.suiAddress === validatorSuiAddress);
+        return validators && validators[validatorSuiAddress || ''];
     }, [validatorSuiAddress, validators]);
+
     const amount = searchParams.get('amount');
 
     const onConfirm = useCallback(() => {
@@ -32,16 +36,6 @@ const ReviewStake: React.FC = () => {
         );
     }, [amount, navigate, validatorSuiAddress]);
 
-    useEffect(() => {
-        // NOTE look into useQuery for fetching validators
-        const fetchValidators = async () => {
-            const provider = api.instance.fullNode;
-            const res = await provider.getLatestSuiSystemState();
-            setValidators(res.activeValidators);
-        };
-        fetchValidators();
-    }, []);
-
     return (
         <div className="flex flex-col h-full justify-between">
             <div>
@@ -49,8 +43,8 @@ const ReviewStake: React.FC = () => {
                     Review Stake
                 </Subheader>
                 <StakeSummary
-                    amount={amount || ''}
-                    stakingAPY={'1.134'}
+                    amount={amount || undefined}
+                    stakingAPY={validator?.apy?.toString()}
                     rewardsStart={'Tomorrow'}
                     gasPrice={mistToSui(+(validator?.gasPrice || '0'), 4)}
                 />

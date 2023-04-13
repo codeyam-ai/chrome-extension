@@ -2,7 +2,7 @@ import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList
 
 interface StakeSummaryProps {
     amount?: string;
-    stakingAPY: string;
+    stakingAPY?: string;
     rewardsStart: string;
     gasPrice: string;
 }
@@ -43,7 +43,7 @@ const StakeSummary: React.FC<StakeSummaryProps> = ({
             keyNamesAndValues={[
                 {
                     keyName: 'Staking APY',
-                    value: `${stakingAPY}%`,
+                    value: `${stakingAPY || 'NA'}%`,
                 },
                 {
                     keyName: 'Staking Rewards Start',
