@@ -39,7 +39,10 @@ const WalletBalanceAndIconHomeView = ({
         : usdAmount;
 
     return (
-        <div className="flex flex-col gap-3 place-items-center">
+        <div
+            className="flex flex-col gap-3 place-items-center"
+            data-testid="wallet-and-balance"
+        >
             <div className="p-3">
                 <WalletColorAndEmojiCircle
                     color={accountInfo?.color}

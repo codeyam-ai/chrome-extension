@@ -2,7 +2,7 @@ import CoinBalance from './CoinBalance';
 
 const CoinList = ({ balances }: { balances: Record<string, bigint> }) => {
     return (
-        <div className="text-left">
+        <div className="text-left" data-testid="coin-list">
             {Object.keys(balances).map((type: string) => {
                 const balance = balances[type];
                 return (
