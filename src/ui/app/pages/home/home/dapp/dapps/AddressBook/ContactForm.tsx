@@ -6,7 +6,6 @@ import Button from '_src/ui/app/shared/buttons/Button';
 import Input from '_src/ui/app/shared/inputs/Input';
 import ColorPickerMenu from '_src/ui/app/shared/inputs/colors/ColorPickerMenu';
 import EmojiPickerMenu from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
-import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { SuiAddress } from '@mysten/sui.js';
@@ -78,6 +77,7 @@ const ContactForm = ({
                 autoFocus
                 label="Your Contact's Name"
                 {...nameField}
+                value={name ?? nameField.value}
                 placeholder="Type a name"
                 id="name"
                 data-testid="name"
@@ -91,37 +91,24 @@ const ContactForm = ({
                 }
             />
 
-            {formMode === 'Add' ? (
-                <Input
-                    {...addressField}
-                    label="Address"
-                    placeholder="Paste or type an address"
-                    id="address"
-                    data-testid="address"
-                    name="address"
-                    type="text"
-                    required={true}
-                    errorText={
-                        addressMeta.touched && addressMeta.error
-                            ? addressMeta.error
-                            : undefined
-                    }
-                    autoComplete="off"
-                    disabled={disableAddressInput}
-                />
-            ) : (
-                <div className="flex flex-col px-6 pb-6">
-                    <BodyLarge isSemibold className="mb-2 text-left">
-                        Address
-                    </BodyLarge>
-                    <Body
-                        isTextColorMedium
-                        className="w-full break-words !text-left"
-                    >
-                        {address}
-                    </Body>
-                </div>
-            )}
+            <Input
+                {...addressField}
+                value={address ?? addressField.value}
+                label="Address"
+                placeholder="Paste or type an address"
+                id="address"
+                data-testid="address"
+                name="address"
+                type="text"
+                required={true}
+                errorText={
+                    addressMeta.touched && addressMeta.error
+                        ? addressMeta.error
+                        : undefined
+                }
+                autoComplete="off"
+                disabled={disableAddressInput}
+            />
 
             <div className="flex flex-row justify-center mb-8">
                 <div className="relative flex flex-col justify-center items-center m-1 ">

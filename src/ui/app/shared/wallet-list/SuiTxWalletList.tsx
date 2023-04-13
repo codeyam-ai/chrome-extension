@@ -6,17 +6,10 @@ import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 
-interface WalletSelectorProps {
-    wallet: AccountInfo;
-    setFieldValue: (
-        field: string,
-        value: string,
-        shouldValidate?: boolean | undefined
-    ) => void;
-}
+import type { Contact } from '../../redux/slices/contacts';
 
-interface TxSelectorProps {
-    tx: string;
+interface WalletSelectorProps {
+    wallet: AccountInfo | Contact;
     setFieldValue: (
         field: string,
         value: string,
@@ -33,7 +26,7 @@ const WalletSelector = ({ wallet, setFieldValue }: WalletSelectorProps) => {
 
     return (
         <div
-            data-testid={`wallet${wallet.index + 1}`}
+            data-testid={`wallet${wallet.address}`}
             className={`py-[10px] px-3 flex justify-between items-center cursor-pointer`}
             onClick={selectWallet}
         >
@@ -48,7 +41,11 @@ const WalletSelector = ({ wallet, setFieldValue }: WalletSelectorProps) => {
                     <BodyLarge>
                         {wallet.name ||
                             `Wallet${
-                                wallet.index > 0 ? ' ' + wallet.index + 1 : ''
+                                'index' in wallet
+                                    ? wallet.index > 0
+                                        ? ' ' + wallet.index + 1
+                                        : ''
+                                    : wallet.address
                             }`}
                     </BodyLarge>
                     <Body isTextColorMedium>{shortenedAddress}</Body>
@@ -58,48 +55,10 @@ const WalletSelector = ({ wallet, setFieldValue }: WalletSelectorProps) => {
     );
 };
 
-const TxSelector = ({ tx, setFieldValue }: TxSelectorProps) => {
-    const shortenedAddress = useMiddleEllipsis(tx, 12, 12);
-    const selectWallet = useCallback(() => {
-        setFieldValue('to', tx);
-    }, [setFieldValue, tx]);
-
-    const walletColor = `#${tx.substring(3, 5)}${tx.substring(
-        7,
-        9
-    )}${tx.substring(10, 12)}`;
-
-    if (!tx) {
-        return <></>;
-    } else {
-        return (
-            <div
-                data-testid={`tx-${tx}`}
-                className={`py-[10px] px-3 flex justify-between items-center cursor-pointer`}
-                onClick={selectWallet}
-            >
-                <div className="flex gap-3">
-                    <WalletColorAndEmojiCircle
-                        color={walletColor}
-                        emoji={undefined}
-                        hideEmoji={true}
-                        circleSizeClasses="h-10 w-10"
-                        emojiSizeInPx={22}
-                    />
-                    <div className="flex flex-row text-left items-center">
-                        <BodyLarge isSemibold>{shortenedAddress}</BodyLarge>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-};
-
 export type SuiTxWalletListProps = {
     header?: string;
     hasTopPadding?: boolean;
-    wallets?: AccountInfo[];
-    transactions?: string[];
+    wallets?: (AccountInfo | Contact)[];
     activeAccountIndex: number;
     setFieldValue: (
         field: string,
@@ -112,7 +71,6 @@ const WalletList = ({
     header,
     hasTopPadding,
     wallets,
-    transactions,
     activeAccountIndex,
     setFieldValue,
 }: SuiTxWalletListProps) => {
@@ -129,47 +87,24 @@ const WalletList = ({
             >
                 {header}
             </BodyLarge>
-            {transactions
-                ? transactions.map((tx, key) => {
-                      const wallet = (wallets || []).find(
-                          (w) => w.address === tx
-                      );
-
-                      if (wallet && wallet.index === activeAccountIndex) {
-                          return null;
-                      }
-
-                      return (
-                          <div key={key}>
-                              {wallet ? (
-                                  <WalletSelector
-                                      wallet={wallet}
-                                      setFieldValue={setFieldValue}
-                                  />
-                              ) : (
-                                  <TxSelector
-                                      tx={tx}
-                                      setFieldValue={setFieldValue}
-                                  />
-                              )}
-                          </div>
-                      );
-                  })
-                : wallets &&
-                  wallets.map((wallet, key) => {
-                      if ((wallet.index || 0) !== activeAccountIndex) {
-                          return (
-                              <div key={key}>
-                                  <WalletSelector
-                                      wallet={wallet}
-                                      setFieldValue={setFieldValue}
-                                  />
-                              </div>
-                          );
-                      } else {
-                          return null;
-                      }
-                  })}
+            {wallets &&
+                wallets.map((wallet, key) => {
+                    if (
+                        !('index' in wallet) ||
+                        (wallet.index || 0) !== activeAccountIndex
+                    ) {
+                        return (
+                            <div key={key}>
+                                <WalletSelector
+                                    wallet={wallet}
+                                    setFieldValue={setFieldValue}
+                                />
+                            </div>
+                        );
+                    } else {
+                        return null;
+                    }
+                })}
         </div>
     );
 };

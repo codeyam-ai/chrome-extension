@@ -12,10 +12,6 @@ import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { CoinSelect } from '_src/ui/app/pages/home/home/CoinDropdown';
 import { setSuiRecipient } from '_src/ui/app/redux/slices/forms';
-// import {
-//     getTransactionsByAddress,
-//     type TxResultState,
-// } from '_src/ui/app/redux/slices/txresults';
 import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
@@ -51,25 +47,8 @@ function TransferCoinRecipientForm({
         searchParams.has('hideWalletRecommendations') &&
         searchParams.get('hideWalletRecommendations') === 'true';
 
-    // const txByAddress: TxResultState[] = useAppSelector(({ txresults }) => {
-    //     console.log('txresults', txresults);
-    //     return txresults.latestTx.filter((tx) => tx.isSender);
-    // });
-
-    // console.log('txByAddress', txByAddress);
-    const recentTxs: string[] = [];
-    // txByAddress.forEach((tx) => {
-    //     if (tx.to) {
-    //         return recentTxs.push(tx.to);
-    //     }
-    // });
-
     const loading = false; //useAppSelector(({ txresults }) => txresults.loading);
     const dispatch = useAppDispatch();
-
-    // useEffect(() => {
-    //     dispatch(getTransactionsByAddress()).unwrap();
-    // }, [dispatch]);
 
     const {
         isSubmitting,
@@ -99,8 +78,6 @@ function TransferCoinRecipientForm({
         },
         [accountInfos, activeAccountIndex, dispatch]
     );
-
-    const recentWallets = [...new Set(recentTxs)].splice(0, 3);
 
     if (!coinType) return <></>;
 
@@ -152,11 +129,10 @@ function TransferCoinRecipientForm({
                 </div>
 
                 <div className={'pb-[80px] pt-[202px]'}>
-                    {!hideWalletRecommendations && recentWallets.length > 0 && (
+                    {!hideWalletRecommendations && contacts.length > 0 && (
                         <SuiTxWalletList
-                            header={'Recent Wallets'}
-                            wallets={accountInfos}
-                            transactions={recentWallets}
+                            header={'From Address Book'}
+                            wallets={contacts}
                             activeAccountIndex={activeAccountIndex}
                             setFieldValue={setFieldValue}
                         />

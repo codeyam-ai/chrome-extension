@@ -9,14 +9,12 @@ import AddressInput from '_components/address-input';
 import NFTDisplayCard from '_components/nft-display';
 import { DEFAULT_NFT_TRANSFER_GAS_FEE } from '_redux/slices/sui-objects/Coin';
 import { useAppSelector } from '_src/ui/app/hooks';
-// import { getTransactionsByAddress } from '_src/ui/app/redux/slices/txresults';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import SuiTxWalletList from '_src/ui/app/shared/wallet-list/SuiTxWalletList';
 
 import type { FormValues } from '.';
 import type { SuiObjectData } from '@mysten/sui.js';
-// import type { TxResultState } from '_src/ui/app/redux/slices/txresults';
 
 import st from './TransferNFTForm.module.scss';
 import 'react-toastify/dist/ReactToastify.css';
@@ -35,27 +33,12 @@ function TransferNFTForm({
     onClearSubmitError,
 }: TransferNFTFormProps) {
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
+    const { contacts } = useAppSelector(({ contacts }) => contacts);
 
     const activeAccountIndex = useAppSelector(
         ({ account: { activeAccountIndex } }) => activeAccountIndex
     );
 
-    // const txByAddress: TxResultState[] = useAppSelector(({ txresults }) =>
-    //     txresults.latestTx.filter((tx) => tx.isSender)
-    // );
-
-    const recentTxs: string[] = [];
-    // txByAddress.forEach((tx) => {
-    //     if (tx.to) {
-    //         return recentTxs.push(tx.to);
-    //     }
-    // });
-
-    // const dispatch = useAppDispatch();
-
-    // useEffect(() => {
-    //     dispatch(getTransactionsByAddress()).unwrap();
-    // }, [dispatch]);
     const {
         isSubmitting,
         isValid,
@@ -70,8 +53,6 @@ function TransferNFTForm({
     useEffect(() => {
         onClearRef.current();
     }, [to, amount]);
-
-    const recentWallets = [...new Set(recentTxs)].splice(0, 3);
 
     return (
         <div>
@@ -135,11 +116,10 @@ function TransferNFTForm({
                             </div>
                         </div>
                         <div className="pb-[80px]">
-                            {recentWallets.length > 0 && (
+                            {contacts.length > 0 && (
                                 <SuiTxWalletList
-                                    header={'Recent Wallets'}
-                                    transactions={recentWallets}
-                                    wallets={accountInfos}
+                                    header={'From Address Book'}
+                                    wallets={contacts}
                                     activeAccountIndex={activeAccountIndex}
                                     setFieldValue={setFieldValue}
                                 />
