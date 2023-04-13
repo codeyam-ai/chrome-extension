@@ -41,6 +41,10 @@ function TransferNftReviewForm({
         accountInfos.find((accountInfo) => accountInfo.address === formData.to)
     );
 
+    const contactTo = useAppSelector(({ contacts: { contacts } }) =>
+        contacts.find((contact) => contact.address === formData.to)
+    );
+
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex } }) =>
             accountInfos.find(
@@ -115,7 +119,13 @@ function TransferNftReviewForm({
                                             shortValue: (
                                                 <WalletTo
                                                     addressTo={formData.to}
-                                                    walletTo={walletTo}
+                                                    walletTo={
+                                                        walletTo
+                                                            ? walletTo
+                                                            : contactTo
+                                                            ? contactTo
+                                                            : undefined
+                                                    }
                                                     noTo={true}
                                                 />
                                             ),
