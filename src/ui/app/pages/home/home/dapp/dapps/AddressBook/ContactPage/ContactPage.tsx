@@ -6,7 +6,7 @@ import {
 import { ArrowUpIcon } from '@heroicons/react/24/solid';
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useCallback, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import AddressTooltip from './AddressTooltip';
 import ContactTransactions from './ContactTransactions';
@@ -64,7 +64,7 @@ const ContactPage = () => {
     }, [accountAddress, contact?.address, navigate]);
 
     if (!contact) {
-        return <div>Not found</div>;
+        return <Navigate to="/home/address-book" />;
     }
 
     return (

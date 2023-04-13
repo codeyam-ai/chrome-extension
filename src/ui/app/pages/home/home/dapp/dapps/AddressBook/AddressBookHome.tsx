@@ -7,7 +7,7 @@ import { useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Title from '_src/ui/app/shared/typography/Title';
 
-const AddressHome: React.FC = () => {
+const AddressBookHome: React.FC = () => {
     const contacts = useAppSelector(({ contacts }) => contacts.contacts);
 
     const navigate = useNavigate();
@@ -40,4 +40,4 @@ const AddressHome: React.FC = () => {
     );
 };
 
-export default AddressHome;
+export default AddressBookHome;
