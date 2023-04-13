@@ -5,6 +5,7 @@ import { useFormatCoin } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { BalanceReduction, BalanceAddition } from '../lib/analyzeChanges';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 
 export const Costs = ({
     balanceReductions,
@@ -67,7 +68,8 @@ const Amount = ({
         balanceChange.type
     );
 
-    return (
+    const { featureFlags } = useDependencies();
+    return featureFlags.showUsd ? (
         <div className="flex flex-col items-end text-right">
             <div
                 className={`flex items-center gap-1 text-base ${
@@ -80,6 +82,18 @@ const Amount = ({
             <Body className="text-size-ethos-small text-[#74777C]">
                 {formatted} {symbol}
             </Body>
+        </div>
+    ) : (
+        <div className="flex flex-col items-end text-right">
+            <div
+                className={`flex items-center gap-1 text-base ${
+                    positive ? 'text-green-700' : ''
+                }`}
+            >
+                <Body isSemibold>
+                    {formatted} {symbol}
+                </Body>
+            </div>
         </div>
     );
 };
