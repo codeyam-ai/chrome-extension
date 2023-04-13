@@ -1,17 +1,15 @@
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG, type SuiValidatorSummary } from '@mysten/sui.js';
+import { Formik } from 'formik';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 
+import StakeAmountForm from './StakeAmountForm';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
+import { useCoin, useGas } from '_src/ui/app/pages/home/transfer-coin-amount';
 import { buildValidationSchema } from '_src/ui/app/pages/home/transfer-coin-amount/buildValidationSchema';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
-
-import type { SuiValidatorSummary } from '@mysten/sui.js';
-import { useCoin, useGas } from '_src/ui/app/pages/home/transfer-coin-amount';
-import StakeAmountForm from './StakeAmountForm';
-import { Formik } from 'formik';
 
 const StakeAmountPage: React.FC = () => {
     const [amountToStake, setAmountToStake] = useState<number>();
@@ -27,7 +25,8 @@ const StakeAmountPage: React.FC = () => {
         suiBalanceUnformatted,
         SUI_TYPE_ARG
     );
-    const coin = useCoin({ aggregateBalances });
+
+    const coin = useCoin({ aggregateBalances, coinType: SUI_TYPE_ARG });
     const gas = useGas({ coin, aggregateBalances });
 
     const { locale } = useIntl();
@@ -38,7 +37,7 @@ const StakeAmountPage: React.FC = () => {
     );
 
     const onHandleSubmit = useCallback(
-        async ({ amount }: { amount: number }) => {
+        async ({ amount }: { amount: number | string }) => {
             console.log('amount submitted from form :>> ', amount);
         },
         []
@@ -62,10 +61,12 @@ const StakeAmountPage: React.FC = () => {
     return (
         <Formik
             initialValues={{
-                amount: 0,
+                amount: '',
             }}
             validationSchema={validationSchema}
             onSubmit={onHandleSubmit}
+            validateOnMount={true}
+            initialErrors={true}
         >
             <StakeAmountForm
                 validator={validator}

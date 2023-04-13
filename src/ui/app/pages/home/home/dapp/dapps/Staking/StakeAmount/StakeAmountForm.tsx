@@ -1,4 +1,4 @@
-import { SuiValidatorSummary } from '@mysten/sui.js';
+import { Form, useField, useFormikContext } from 'formik';
 
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
 import Button from '_src/ui/app/shared/buttons/Button';
@@ -7,7 +7,8 @@ import SuiIcon from '_src/ui/app/shared/svg/SuiIcon';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
-import { Field, Form, useFormikContext } from 'formik';
+
+import type { SuiValidatorSummary } from '@mysten/sui.js';
 
 interface StakeAmountFormProps {
     validator: SuiValidatorSummary;
@@ -18,13 +19,10 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
     validator,
     formattedSuiBalance,
 }) => {
-    const {
-        isSubmitting,
-        isValid,
-        values: { amount },
-    } = useFormikContext<any>();
+    const { isSubmitting, isValid, dirty } = useFormikContext();
 
-    console.log('amount :>> ', amount);
+    const [amountField, amountMeta] = useField('amount');
+
     return (
         <Form autoComplete="off">
             <div className="flex flex-col h-full justify-between px-6">
@@ -32,14 +30,6 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                     <Subheader className={'text-center mb-1'}>
                         How much would you like to stake?
                     </Subheader>
-                    <Field
-                        name="amount"
-                        type="text"
-                        // className={classes}
-                        placeholder="Amount"
-                        autoFocus
-                        // disabled={isSubmitting}
-                    />
                     <div className="flex flex-col gap-2 py-5 px-4 rounded-xl border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
                         <div className="flex justify-between">
                             <Body isSemibold>Amount</Body>
@@ -56,6 +46,8 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                                     <SuiIcon height={24} width={24} />
                                 </div>
                                 <input
+                                    {...amountField}
+                                    name="amount"
                                     type="text"
                                     className="w-full bg-transparent border-none focus:ring-0 caret-ethos-light-primary-light dark:caret-ethos-dark-primary-dark"
                                     autoFocus
@@ -64,6 +56,11 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                             </div>
                             <BodyLarge>SUI</BodyLarge>
                         </div>
+                        {dirty && amountMeta.error && (
+                            <div className="mt-1 text-ethos-light-red dark:text-ethos-dark-red">
+                                {amountMeta.error}
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div>
@@ -91,7 +88,11 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                         />
                     </div>
                     <div className="!mb-6">
-                        <Button type="submit" removeContainerPadding>
+                        <Button
+                            disabled={!isValid || isSubmitting}
+                            type="submit"
+                            removeContainerPadding
+                        >
                             Review
                         </Button>
                     </div>
