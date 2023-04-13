@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
+import BigNumber from 'bignumber.js';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -75,13 +76,19 @@ export function useFormatCoin(
         if (typeof decimals === 'undefined') {
             return '...';
         }
-        const fullFormattedBalance = ns.format.coinBalance(balance, decimals);
+        const decimalsBalance = new BigNumber(balance.toString()).shiftedBy(
+            -1 * decimals
+        );
 
-        if (formattedLength && fullFormattedBalance.length > formattedLength) {
+        if (
+            formattedLength &&
+            decimalsBalance.lt(1) &&
+            decimalsBalance.toString().split('.')[1].length > formattedLength
+        ) {
             return ns.format.coinBalance(balance, decimals, formattedLength);
         }
 
-        return fullFormattedBalance;
+        return ns.format.coinBalance(balance, decimals);
     }, [balance, isError, isFetched, decimals, formattedLength, intl]);
 
     const dollars = useMemo(() => {
