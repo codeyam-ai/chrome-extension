@@ -131,7 +131,7 @@ function TransferCoinRecipientForm({
                 <div className={'pb-[80px] pt-[202px]'}>
                     {!hideWalletRecommendations && contacts.length > 0 && (
                         <SuiTxWalletList
-                            header={'From Address Book'}
+                            header={'Address Book'}
                             wallets={contacts}
                             activeAccountIndex={activeAccountIndex}
                             setFieldValue={setFieldValue}

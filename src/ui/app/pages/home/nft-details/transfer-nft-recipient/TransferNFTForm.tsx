@@ -118,7 +118,7 @@ function TransferNFTForm({
                         <div className="pb-[80px]">
                             {contacts.length > 0 && (
                                 <SuiTxWalletList
-                                    header={'From Address Book'}
+                                    header={'Address Book'}
                                     wallets={contacts}
                                     activeAccountIndex={activeAccountIndex}
                                     setFieldValue={setFieldValue}
