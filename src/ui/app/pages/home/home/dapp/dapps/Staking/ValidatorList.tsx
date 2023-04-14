@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 
+import Loading from '_src/ui/app/components/loading';
 import { getRollingAverageApys } from '_src/ui/app/helpers/staking/getRollingAverageApys';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { SuiAddress, SuiValidatorSummary } from '@mysten/sui.js';
-import Loading from '_src/ui/app/components/loading';
 
 export interface SuiValidatorSummaryWithApy extends SuiValidatorSummary {
     apy: number;

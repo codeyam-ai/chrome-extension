@@ -1,13 +1,12 @@
-import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-
-import StakingIntro from './StakingIntro';
-import { api } from '_src/ui/app/redux/store/thunk-extras';
-
 import { SUI_TYPE_ARG, type DelegatedStake } from '@mysten/sui.js';
-import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
-import Loading from '_src/ui/app/components/loading';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import Body from '_src/ui/app/shared/typography/Body';
+
+import ExistingStake from './ExistingStake';
+import StakingIntro from './StakingIntro';
+import Loading from '_src/ui/app/components/loading';
+import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
+import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 export function useGetDelegatedStake(
     address: string
@@ -51,18 +50,7 @@ const StakingHome: React.FC = () => {
         <div className="flex w-full h-full items-center place-content-center">
             <Loading loading={isLoading || queryResult.isLoading} big={true}>
                 {delegatedStake && !!totalActivePendingStake ? (
-                    <div className="flex flex-col gap-6">
-                        <div className="flex gap-3">
-                            <Body isSemibold>
-                                {totalActivePendingStake
-                                    ? 'Currently Staked'
-                                    : 'Stake & Earn SUI'}
-                            </Body>
-                            <Body isSemibold>
-                                {formatted} {symbol}
-                            </Body>
-                        </div>
-                    </div>
+                    <ExistingStake amountStaked={totalActivePendingStake} />
                 ) : (
                     <StakingIntro />
                 )}

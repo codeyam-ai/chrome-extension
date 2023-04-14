@@ -21,7 +21,6 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
     const { isSubmitting, isValid, dirty } = useFormikContext();
 
     const [amountField, amountMeta] = useField('amount');
-    console.log('validartor', validator);
 
     return (
         <Form

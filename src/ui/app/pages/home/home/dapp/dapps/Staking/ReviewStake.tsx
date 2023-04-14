@@ -1,23 +1,18 @@
-import {
-    TransactionBlock,
-    type SuiValidatorSummary,
-    SUI_SYSTEM_STATE_OBJECT_ID,
-} from '@mysten/sui.js';
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { TransactionBlock, SUI_SYSTEM_STATE_OBJECT_ID } from '@mysten/sui.js';
+import BigNumber from 'bignumber.js';
+import { useMemo, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import StakeSummary from './StakeSummary';
 import { useValidatorsWithApy } from './ValidatorList';
 import { ToS_LINK } from '_src/shared/constants';
+import { useAppSelector } from '_src/ui/app/hooks';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
 import { api, thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
 import Button from '_src/ui/app/shared/buttons/Button';
-import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 import Body from '_src/ui/app/shared/typography/Body';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
-import { useAppSelector } from '_src/ui/app/hooks';
-import BigNumber from 'bignumber.js';
 
 function createStakeTransaction(amount: bigint, validator: string) {
     const tx = new TransactionBlock();
