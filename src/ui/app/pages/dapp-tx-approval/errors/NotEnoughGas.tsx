@@ -15,10 +15,10 @@ const NotEnoughGas = ({ gasRequired, gasAvailable }: NotEnoughGasProps) => {
                 <div className="flex flex-col gap-3">
                     <Body>
                         It looks like your wallet doesn&apos;t have enough SUI
-                        to pay for the gas for this transaction.
+                        to pay for this transaction.
                     </Body>
-                    <Body>Gas Required: {gasRequired} SUI</Body>
-                    <Body>Gas Available: {gasAvailable} SUI</Body>
+                    <Body>Required: {gasRequired} SUI</Body>
+                    <Body>Available: {gasAvailable} SUI</Body>
                 </div>
             }
         />

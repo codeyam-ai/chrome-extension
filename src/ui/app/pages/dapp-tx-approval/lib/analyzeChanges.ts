@@ -221,9 +221,11 @@ const analyzeChanges = async ({
             owner: address,
             coinType: SUI_TYPE_ARG,
         });
+
+        const gasPrice = await signer.provider.getReferenceGasPrice();
         const gasAvailable = new BigNumber(totalBalance)
             .minus(number || 0)
-            .div(Math.pow(10, 9));
+            .dividedBy(Math.pow(10, 9));
 
         const results = await signer.devInspectTransactionBlock({
             transactionBlock,
@@ -231,7 +233,9 @@ const analyzeChanges = async ({
 
         const totalGas = new BigNumber(
             getTotalGasUsed(results.effects)?.toString() || 0
-        ).div(Math.pow(10, 9));
+        )
+            .dividedBy(Math.pow(10, 9))
+            .multipliedBy(gasPrice.toString());
 
         if (totalGas.gte(gasAvailable)) {
             return {
