@@ -42,7 +42,7 @@ const TransactionsPage = () => {
         isFetchingNextPage,
     } = useInfiniteQuery(['query-transactions'], fetchTransactions, {
         enabled: !!address,
-        refetchInterval: 3000,
+        refetchInterval: 5000,
         staleTime: 30000,
     });
 
@@ -101,7 +101,7 @@ const TransactionsPage = () => {
         }
     }, [suiTxns, activePage, fetchNextPage]);
 
-    if (error) {
+    if (error && formattedTxns.length === 0) {
         return (
             <div className="pb-4">
                 <Alert
@@ -116,7 +116,7 @@ const TransactionsPage = () => {
     return (
         <React.Fragment>
             <Loading loading={!suiTxns} big={true}>
-                {suiTxns && suiTxns.pages[0].blocks.length > 0 && (
+                {formattedTxns.length > 0 && (
                     <div className={'flex flex-col'}>
                         <TextPageTitle title="Activity" />
                         <TransactionRows transactions={formattedTxns} />

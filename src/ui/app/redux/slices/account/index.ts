@@ -625,8 +625,12 @@ const accountSlice = createSlice({
         setEmail: (state, action: PayloadAction<string | null>) => {
             state.email = action.payload;
         },
-        lockWalletUI: (state, action: PayloadAction) => {
-            state.locked = true;
+        lockWalletUI: (state, action: PayloadAction<boolean>) => {
+            if (action.payload) {
+                state.authentication = null;
+            } else {
+                state.locked = true;
+            }
         },
     },
     extraReducers: (builder) =>

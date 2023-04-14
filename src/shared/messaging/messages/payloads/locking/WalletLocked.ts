@@ -4,6 +4,7 @@ import type { BasePayload, Payload } from '_payloads';
 
 export interface WalletLocked extends BasePayload {
     type: 'wallet-locked';
+    hosted: boolean;
 }
 
 export function isWalletLockedMessage(

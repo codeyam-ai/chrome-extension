@@ -154,6 +154,7 @@ export class ContentScriptConnection extends Connection {
             if (accessToken && refreshToken) {
                 await setSession({ accessToken, refreshToken });
             }
+
             openInNewTab('ui.html#/initialize/hosted/logging-in');
             this.send(
                 createMessage<OpenWalletResponse>(
