@@ -5,12 +5,11 @@ import { useIntl } from 'react-intl';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import StakeAmountForm from './StakeAmountForm';
+import { buildStakeAmountValidationSchema } from './buildStakeAmountValidationSchema';
 import { useValidatorsWithApy } from '../ValidatorList';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { useCoin, useGas } from '_src/ui/app/pages/home/transfer-coin-amount';
-import { buildValidationSchema } from '_src/ui/app/pages/home/transfer-coin-amount/buildValidationSchema';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
-import { buildStakeAmountValidationSchema } from './buildStakeAmountValidationSchema';
 
 const StakeAmountPage: React.FC = () => {
     const navigate = useNavigate();

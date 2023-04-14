@@ -38,10 +38,7 @@ const StakingHome: React.FC = () => {
         );
     }, [delegatedStake]);
 
-    const stakedValidators =
-        delegatedStake?.map(({ validatorAddress }) => validatorAddress) || [];
-
-    const [formatted, symbol, , , , queryResult] = useFormatCoin(
+    const [, , , , , queryResult] = useFormatCoin(
         totalActivePendingStake,
         SUI_TYPE_ARG
     );
@@ -50,7 +47,10 @@ const StakingHome: React.FC = () => {
         <div className="flex w-full h-full items-center place-content-center">
             <Loading loading={isLoading || queryResult.isLoading} big={true}>
                 {delegatedStake && !!totalActivePendingStake ? (
-                    <ExistingStake amountStaked={totalActivePendingStake} />
+                    <ExistingStake
+                        delegatedStake={delegatedStake}
+                        amountStaked={totalActivePendingStake}
+                    />
                 ) : (
                     <StakingIntro />
                 )}
