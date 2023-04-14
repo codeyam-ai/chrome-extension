@@ -5,6 +5,7 @@ import nock from 'nock';
 import { Mockchain } from './utils/mockchain';
 import { fakeAccessToken } from './utils/storage';
 import { BASE_URL } from '_src/shared/constants';
+import { setSession } from '_src/shared/storagex/store';
 import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('Email Authentication', () => {
@@ -52,6 +53,7 @@ describe('Email Authentication', () => {
 
     test('User can see tokens page after logged in via the iframe', async () => {
         const fakeAccessToken = '12345';
+        await setSession({ accessToken: fakeAccessToken })
         mockchain.mockSuiObjects();
         nock(BASE_URL, {
             reqheaders: { 'x-supabase-access-token': fakeAccessToken },
@@ -69,23 +71,7 @@ describe('Email Authentication', () => {
         renderApp({
             initialRoute: '/initialize/hosted/logging-in',
         });
-        await screen.findByTitle('wallet');
-        simulateIframeSendingAccessCode(fakeAccessToken);
+        
         await screen.findByText('Get started with Sui');
     });
-
-    function simulateIframeSendingAccessCode(fakeAccessToken: string) {
-        window.dispatchEvent(
-            new MessageEvent('message', {
-                source: window,
-                origin: 'http://localhost:3000',
-                data: {
-                    action: 'sendKey',
-                    data: {
-                        key: `{"currentSession": {"access_token": "${fakeAccessToken}"}}`,
-                    },
-                },
-            })
-        );
-    }
 });
