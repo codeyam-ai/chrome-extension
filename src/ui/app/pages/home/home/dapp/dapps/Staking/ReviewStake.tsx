@@ -105,14 +105,15 @@ const ReviewStake: React.FC = () => {
             </div>
             <div>
                 <Body className="pb-4 mx-6">
-                    By clicking confirm you agree to{' '}
+                    By clicking confirm you agree to
+                    <br />
                     <EthosLink type="external" to={ToS_LINK}>
                         Ethos&apos;s Terms of Use
                     </EthosLink>
-                    , and understand the{' '}
+                    {/* , and understand the{' '}
                     <EthosLink type="external" to="">
                         Risk Disclosures
-                    </EthosLink>
+                    </EthosLink> */}
                     .
                 </Body>
                 <Button onClick={onConfirm}>Confirm</Button>
