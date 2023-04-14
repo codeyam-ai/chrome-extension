@@ -26,10 +26,6 @@ const ExistingStake: React.FC<ExistingStakeProps> = ({
         SUI_TYPE_ARG
     );
 
-    const onNavigateToTokens = useCallback(() => {
-        navigate('/tokens');
-    }, [navigate]);
-
     return (
         <div className="w-full flex flex-col h-full justify-between">
             <div className="flex gap-2 items-center place-content-center py-5 bg-ethos-light-green/10 dark:bg-ethos-dark-green/10 ">
@@ -56,7 +52,9 @@ const ExistingStake: React.FC<ExistingStakeProps> = ({
                 </div>
             </div>
             <div>
-                <Button onClick={onNavigateToTokens}>Go to SUI Balance</Button>
+                <Button to={'/home/staking/select-validator'}>
+                    Stake More
+                </Button>
             </div>
         </div>
     );
