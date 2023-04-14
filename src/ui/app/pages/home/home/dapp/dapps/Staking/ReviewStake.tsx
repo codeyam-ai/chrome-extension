@@ -73,14 +73,14 @@ const ReviewStake: React.FC = () => {
                 showEvents: true,
             },
         });
-        console.log('RESPONSE', response);
 
-        // navigate(
-        //     `/home/staking/complete?${new URLSearchParams({
-        //         validator: validatorSuiAddress ?? '',
-        //         amount: (amount ?? '').toString(),
-        //     }).toString()}`
-        // );
+        navigate(
+            `/home/staking/complete?${new URLSearchParams({
+                response: response.digest,
+                validator: validatorSuiAddress ?? '',
+                amount: (amount ?? '').toString(),
+            }).toString()}`
+        );
     }, [
         activeAccountIndex,
         address,
