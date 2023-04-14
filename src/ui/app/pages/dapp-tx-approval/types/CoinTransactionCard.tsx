@@ -8,6 +8,7 @@ import TransactionBody from './TransactionBody';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { StepInformation } from './SimpleCoinTransfer';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 
 const CoinTransactionCard = ({
     stepInformation,
@@ -16,6 +17,8 @@ const CoinTransactionCard = ({
 }) => {
     const { formatted, iconUrl, symbol, dollars, to, analysis } =
         stepInformation;
+
+    const { featureFlags } = useDependencies();
 
     return (
         <TransactionBody>
@@ -29,12 +32,14 @@ const CoinTransactionCard = ({
                         <BodyLarge isSemibold>
                             {formatted} {symbol}
                         </BodyLarge>
-                        <BodyLarge
-                            isSemibold
-                            className="text-[#74777C] text-xl"
-                        >
-                            ≈ {dollars}
-                        </BodyLarge>
+                        {featureFlags.showUsd && (
+                            <BodyLarge
+                                isSemibold
+                                className="text-[#74777C] text-xl"
+                            >
+                                ≈ {dollars}
+                            </BodyLarge>
+                        )}
                     </div>
                 </div>
                 <From />

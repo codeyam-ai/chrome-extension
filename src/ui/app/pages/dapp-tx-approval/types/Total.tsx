@@ -8,6 +8,7 @@ import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 
 const Total = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
     const bnTotalFee = new BigNumber(analysis.totalFee);
@@ -16,6 +17,8 @@ const Total = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
         bnTotalFee.abs().toString(),
         SUI_TYPE_ARG
     );
+
+    const { featureFlags } = useDependencies();
 
     return (
         <CardRow
@@ -28,19 +31,33 @@ const Total = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
                 Total
                 {bnTotalFee.lt(0) && ' (Gain)'}
             </BodyLarge>
-            <div className="text-right flex flex-col gap-1">
-                <BodyLarge
-                    isSemibold
-                    className={`text-size-ethos-subheader ${
-                        bnTotalFee.lt(0) ? 'text-green-700' : ''
-                    }`}
-                >
-                    {dollars} USD
-                </BodyLarge>
-                <Body className="text-[#74777C]">
-                    {formatted} {symbol}
-                </Body>
-            </div>
+
+            {featureFlags.showUsd ? (
+                <div className="text-right flex flex-col gap-1">
+                    <BodyLarge
+                        isSemibold
+                        className={`text-size-ethos-subheader ${
+                            bnTotalFee.lt(0) ? 'text-green-700' : ''
+                        }`}
+                    >
+                        {dollars} USD
+                    </BodyLarge>
+                    <Body className="text-[#74777C]">
+                        {formatted} {symbol}
+                    </Body>
+                </div>
+            ) : (
+                <div className="text-right flex flex-col gap-1">
+                    <BodyLarge
+                        isSemibold
+                        className={`text-size-ethos-subheader ${
+                            bnTotalFee.lt(0) ? 'text-green-700' : ''
+                        }`}
+                    >
+                        {formatted} {symbol}
+                    </BodyLarge>
+                </div>
+            )}
         </CardRow>
     );
 };

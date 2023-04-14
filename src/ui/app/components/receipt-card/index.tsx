@@ -42,6 +42,7 @@ import type {
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 import st from './ReceiptCard.module.scss';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 
 type TxResponseProps = {
     txDigest: string | null;
@@ -142,6 +143,7 @@ const TxTransfer = ({
 );
 
 function ReceiptCard({ txDigest }: TxResponseProps) {
+    const { featureFlags } = useDependencies();
     const navigate = useNavigate();
     const { accountInfos } = useAppSelector(({ account }) => account);
     const address = useAppSelector(({ account }) => account.address) as string;
@@ -338,6 +340,28 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     const fromWallet = addresses?.from ? getAccount(addresses.from) : null;
     const toWallet = addresses?.to ? getAccount(addresses.to) : null;
 
+    function getDetailsFieldsForSuiTransactions() {
+        const fields = [
+            {
+                keyName: (txAmount && 'Amount') || '',
+                value: (txAmount && txAmount + ' SUI') || '',
+            },
+            {
+                keyName: 'Transaction Fee',
+                value: `${gasFeeInSui} SUI`,
+            },
+        ];
+
+        if (featureFlags.showUsd) {
+            fields.push({
+                keyName: 'Total (USD)',
+                value: txUsdAmount as string,
+            });
+        }
+
+        return fields;
+    }
+
     return (
         <>
             <div className={'pt-6 px-6 pb-8'}>
@@ -403,20 +427,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             ) : (
                 <KeyValueList
                     header={'Details'}
-                    keyNamesAndValues={[
-                        {
-                            keyName: (txAmount && 'Amount') || '',
-                            value: (txAmount && txAmount + ' SUI') || '',
-                        },
-                        {
-                            keyName: 'Transaction Fee',
-                            value: `${gasFeeInSui} SUI`,
-                        },
-                        {
-                            keyName: 'Total (USD)',
-                            value: txUsdAmount as string,
-                        },
-                    ]}
+                    keyNamesAndValues={getDetailsFieldsForSuiTransactions()}
                 />
             )}
 
