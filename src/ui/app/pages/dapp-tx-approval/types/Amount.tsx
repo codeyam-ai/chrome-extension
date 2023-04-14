@@ -1,11 +1,11 @@
 import BigNumber from 'bignumber.js';
 
 import CardRow from './CardRow';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { BalanceReduction, BalanceAddition } from '../lib/analyzeChanges';
-import { useDependencies } from '_shared/utils/dependenciesContext';
 
 export const Costs = ({
     balanceReductions,

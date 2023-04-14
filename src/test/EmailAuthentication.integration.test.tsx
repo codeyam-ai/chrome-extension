@@ -53,7 +53,7 @@ describe('Email Authentication', () => {
 
     test('User can see tokens page after logged in via the iframe', async () => {
         const fakeAccessToken = '12345';
-        await setSession({ accessToken: fakeAccessToken })
+        await setSession({ accessToken: fakeAccessToken });
         mockchain.mockSuiObjects();
         nock(BASE_URL, {
             reqheaders: { 'x-supabase-access-token': fakeAccessToken },
@@ -71,7 +71,7 @@ describe('Email Authentication', () => {
         renderApp({
             initialRoute: '/initialize/hosted/logging-in',
         });
-        
+
         await screen.findByText('Get started with Sui');
     });
 });

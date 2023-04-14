@@ -32,6 +32,7 @@ import LoadingIndicator from '../loading/LoadingIndicator';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { useAppSelector } from '_hooks';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 import { api } from '_store/thunk-extras';
 
 import type { AccountInfo } from '../../KeypairVault';
@@ -42,7 +43,6 @@ import type {
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 import st from './ReceiptCard.module.scss';
-import { useDependencies } from '_shared/utils/dependenciesContext';
 
 type TxResponseProps = {
     txDigest: string | null;

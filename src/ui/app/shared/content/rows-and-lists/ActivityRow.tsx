@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 
 import Body from '../../typography/Body';
 import BodyLarge from '../../typography/BodyLarge';
-import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useDependencies } from '_shared/utils/dependenciesContext';
+import truncateString from '_src/ui/app/helpers/truncate-string';
 
 type ActivityRowProps = {
     failed: boolean;

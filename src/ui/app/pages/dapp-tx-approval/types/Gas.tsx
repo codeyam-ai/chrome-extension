@@ -1,11 +1,11 @@
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import CardRow from './CardRow';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { GasCostSummary } from '../lib/analyzeChanges';
-import { useDependencies } from '_shared/utils/dependenciesContext';
 
 const Gas = ({ gasSummary }: { gasSummary: GasCostSummary }) => {
     const [formatted, symbol, dollars] = useFormatCoin(

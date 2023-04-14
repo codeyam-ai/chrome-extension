@@ -12,6 +12,7 @@ import Steps from './Steps';
 import TransactionBody from './TransactionBody';
 import Warning from './Warning';
 import resizeWindow from '../lib/resizeWindow';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 import Loading from '_src/ui/app/components/loading';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
@@ -23,7 +24,6 @@ import type {
 } from '../lib/analyzeChanges';
 import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import { useDependencies } from '_shared/utils/dependenciesContext';
 
 export type StepInformation = {
     name: string;

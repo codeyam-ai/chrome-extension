@@ -22,7 +22,7 @@ class FeatureGating {
 
     private async loadFeatures() {
         if (!global.fetch) return;
-        
+
         setAttributes(this.#growthBook);
         try {
             const res = await fetch(

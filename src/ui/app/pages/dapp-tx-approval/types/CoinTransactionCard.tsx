@@ -5,10 +5,10 @@ import Gas from './Gas';
 import SendCoinImage from './SendCoinImage';
 import Total from './Total';
 import TransactionBody from './TransactionBody';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { StepInformation } from './SimpleCoinTransfer';
-import { useDependencies } from '_shared/utils/dependenciesContext';
 
 const CoinTransactionCard = ({
     stepInformation,
