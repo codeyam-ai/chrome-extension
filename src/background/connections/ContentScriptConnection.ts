@@ -43,6 +43,7 @@ import {
     getEncrypted,
     getLocal,
     setEncrypted,
+    setSession,
 } from '_src/shared/storagex/store';
 import { openInNewTab } from '_src/shared/utils';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
@@ -149,6 +150,10 @@ export class ContentScriptConnection extends Connection {
                 this.sendAccounts(addresses, msg.id);
             }
         } else if (isGetUrl(payload)) {
+            const { accessToken, refreshToken } = payload;
+            if (accessToken && refreshToken) {
+                await setSession({ accessToken, refreshToken });
+            }
             openInNewTab('ui.html#/initialize/hosted/logging-in');
             this.send(
                 createMessage<OpenWalletResponse>(

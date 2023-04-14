@@ -95,6 +95,7 @@ const HostedPage = () => {
                     <EmailForm onSubmit={_handleSubmit} loading={loading} />
                 )}
             </OnboardingCard>
+
             <iframe
                 id="wallet-iframe"
                 src={IFRAME_URL}

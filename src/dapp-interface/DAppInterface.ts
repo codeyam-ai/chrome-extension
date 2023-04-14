@@ -65,10 +65,15 @@ export class DAppInterface {
         );
     }
 
-    public openWallet(): Promise<boolean> {
+    public openWallet(
+        accessToken?: string,
+        refreshToken?: string
+    ): Promise<boolean> {
         return mapToPromise(
             this.send<OpenWallet, OpenWalletResponse>({
                 type: 'open-wallet',
+                accessToken,
+                refreshToken,
             }),
             (response) => response.success
         );
