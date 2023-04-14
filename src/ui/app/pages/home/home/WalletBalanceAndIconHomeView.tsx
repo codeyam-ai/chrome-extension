@@ -8,6 +8,7 @@ import useMiddleEllipsis from '_src/ui/app/hooks/useMiddleEllipsis';
 import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import Header from '_src/ui/app/shared/typography/Header';
 import JumboTitle from '_src/ui/app/shared/typography/JumboTitle';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
@@ -55,11 +56,14 @@ const WalletBalanceAndIconHomeView = ({
                 <BodyLarge isSemibold isTextColorMedium>
                     Wallet Balance
                 </BodyLarge>
-                <JumboTitle>
-                    {featureFlags.showUsd
-                        ? formatted
-                        : `${balanceFormatted} ${symbol}`}
-                </JumboTitle>
+                {featureFlags.showUsd ? (
+                    <JumboTitle>{formatted}</JumboTitle>
+                ) : (
+                    <span className="flex gap-1 place-content-center items-baseline">
+                        <JumboTitle>{balanceFormatted}</JumboTitle>
+                        <Header>{symbol}</Header>
+                    </span>
+                )}
 
                 {addressWithEllipsis && (
                     <div className="flex w-full justify-center pl-[30px] pb-3">

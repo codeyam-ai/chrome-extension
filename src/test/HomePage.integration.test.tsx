@@ -51,7 +51,9 @@ describe('Rendering the Home page', () => {
                 'wallet-and-balance'
             );
             expect(within(walletAndBalance).queryByText('$4,000')).toBeNull();
-            await within(walletAndBalance).findByText('40 SUI');
+            // Amount and coin symbol are in separate elements
+            await within(walletAndBalance).findByText('40');
+            await within(walletAndBalance).findByText('SUI');
 
             const coinList = await screen.findByTestId('coin-list');
             expect(within(coinList).queryByText('$4,000.00')).toBeNull();
