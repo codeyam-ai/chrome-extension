@@ -63,7 +63,7 @@ export function useFormatCoin(
     const { isFetched, isError } = queryResult;
 
     const formatted = useMemo(() => {
-        if (typeof balance === 'undefined' || balance === null) return '';
+        if (typeof balance === 'undefined' || balance === null) return '0';
 
         if (isError) {
             return intl.formatNumber(BigInt(balance), {
