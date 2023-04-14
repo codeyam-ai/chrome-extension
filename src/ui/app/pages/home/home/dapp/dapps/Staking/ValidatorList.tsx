@@ -8,6 +8,7 @@ import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { SuiAddress, SuiValidatorSummary } from '@mysten/sui.js';
+import Loading from '_src/ui/app/components/loading';
 
 export interface SuiValidatorSummaryWithApy extends SuiValidatorSummary {
     apy: number;
@@ -53,19 +54,24 @@ const ValidatorList: React.FC<ValidatorListProps> = ({
     selectedValidator,
 }) => {
     const { isFetching, validators } = useValidatorsWithApy();
+
     return (
-        <div className="flex flex-col">
-            {!isFetching &&
-                validators &&
-                Object.values(validators).map((validator, key) => (
-                    <ValidatorRow
-                        onSelect={onSelectValidator}
-                        validator={validator}
-                        key={key}
-                        isSelected={validator.suiAddress === selectedValidator}
-                    />
-                ))}
-        </div>
+        <Loading loading={isFetching} big={true}>
+            <div className="flex flex-col">
+                {!isFetching &&
+                    validators &&
+                    Object.values(validators).map((validator, key) => (
+                        <ValidatorRow
+                            onSelect={onSelectValidator}
+                            validator={validator}
+                            key={key}
+                            isSelected={
+                                validator.suiAddress === selectedValidator
+                            }
+                        />
+                    ))}
+            </div>
+        </Loading>
     );
 };
 
