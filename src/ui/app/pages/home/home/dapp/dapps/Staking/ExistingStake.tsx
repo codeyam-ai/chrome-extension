@@ -8,6 +8,7 @@ import { useFormatCoin } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
+import Title from '_src/ui/app/shared/typography/Title';
 
 interface ExistingStakeProps {
     amountStaked: bigint;
@@ -47,11 +48,11 @@ const ExistingStake: React.FC<ExistingStakeProps> = ({
                     className={'mx-auto'}
                 />
 
-                <div className="flex gap-2 items-baseline place-content-center">
-                    <BodyLarge isTextColorMedium>Total staked:</BodyLarge>
-                    <Subheader>
+                <div className="flex flex-col items-center place-content-center">
+                    <Subheader isTextColorMedium>Total staked:</Subheader>
+                    <Title>
                         {formatted} {symbol}
-                    </Subheader>
+                    </Title>
                 </div>
             </div>
             <div>
