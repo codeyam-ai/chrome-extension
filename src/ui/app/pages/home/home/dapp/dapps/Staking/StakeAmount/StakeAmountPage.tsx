@@ -10,6 +10,7 @@ import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { useCoin, useGas } from '_src/ui/app/pages/home/transfer-coin-amount';
 import { buildValidationSchema } from '_src/ui/app/pages/home/transfer-coin-amount/buildValidationSchema';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
+import { buildStakeAmountValidationSchema } from './buildStakeAmountValidationSchema';
 
 const StakeAmountPage: React.FC = () => {
     const navigate = useNavigate();
@@ -35,7 +36,7 @@ const StakeAmountPage: React.FC = () => {
     const { locale } = useIntl();
 
     const validationSchema = useMemo(
-        () => buildValidationSchema({ coin, gas, locale }),
+        () => buildStakeAmountValidationSchema({ coin, gas, locale }),
         [coin, gas, locale]
     );
 
