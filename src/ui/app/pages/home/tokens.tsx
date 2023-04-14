@@ -10,11 +10,14 @@ import { useAppSelector } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
+import sortTokens from '../../helpers/sortCoins';
 
 function TokensPage() {
-    const balances = useAppSelector(accountAggregateBalancesSelector);
+    let balances = useAppSelector(accountAggregateBalancesSelector);
     const balLength = Object.keys(balances).length || 0;
     const empty = !balances || balLength === 0;
+
+    balances = sortTokens(balances);
 
     return (
         <>
