@@ -18,7 +18,7 @@ const StakeSummary: React.FC<StakeSummaryProps> = ({
     const keyValueList: KeyNameAndValue[] = [
         {
             keyName: 'Staking APY',
-            value: `${stakingAPY}%`,
+            value: stakingAPY ? `${stakingAPY}%` : 'N/A',
         },
     ];
 

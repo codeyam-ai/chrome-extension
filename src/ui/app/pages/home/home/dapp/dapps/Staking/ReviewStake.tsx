@@ -1,14 +1,17 @@
 import { TransactionBlock, SUI_SYSTEM_STATE_OBJECT_ID } from '@mysten/sui.js';
 import BigNumber from 'bignumber.js';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import StakeSummary from './StakeSummary';
 import { useValidatorsWithApy } from './ValidatorList';
 import { ToS_LINK } from '_src/shared/constants';
+import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import { useAppSelector } from '_src/ui/app/hooks';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
 import { api, thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
+import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
@@ -29,6 +32,7 @@ function createStakeTransaction(amount: bigint, validator: string) {
 }
 
 const ReviewStake: React.FC = () => {
+    const [loading, setLoading] = useState(false);
     const { activeAccountIndex, address, authentication } = useAppSelector(
         ({ account }) => account
     );
@@ -46,6 +50,7 @@ const ReviewStake: React.FC = () => {
 
     const onConfirm = useCallback(async () => {
         if (!amount) return;
+        setLoading(true);
         let signer;
 
         if (authentication) {
@@ -60,22 +65,29 @@ const ReviewStake: React.FC = () => {
             BigInt(new BigNumber(amount).shiftedBy(9).toString()),
             validatorSuiAddress ?? ''
         );
-        const response = await signer.signAndExecuteTransactionBlock({
-            transactionBlock,
-            options: {
-                showInput: true,
-                showEffects: true,
-                showEvents: true,
-            },
-        });
 
-        navigate(
-            `/home/staking/complete?${new URLSearchParams({
-                response: response.digest,
-                validator: validatorSuiAddress ?? '',
-                amount: (amount ?? '').toString(),
-            }).toString()}`
-        );
+        try {
+            const response = await signer.signAndExecuteTransactionBlock({
+                transactionBlock,
+                options: {
+                    showInput: true,
+                    showEffects: true,
+                    showEvents: true,
+                },
+            });
+            navigate(
+                `/home/staking/complete?${new URLSearchParams({
+                    response: response.digest,
+                    validator: validatorSuiAddress ?? '',
+                    amount: (amount ?? '').toString(),
+                }).toString()}`
+            );
+        } catch (error) {
+            toast(
+                <FailAlert text="Something went wrong. Please make sure you have enough SUI and try again." />
+            );
+        }
+        setLoading(false);
     }, [
         activeAccountIndex,
         address,
@@ -111,7 +123,9 @@ const ReviewStake: React.FC = () => {
                     </EthosLink> */}
                     .
                 </Body>
-                <Button onClick={onConfirm}>Confirm</Button>
+                <Button onClick={onConfirm} disabled={loading}>
+                    {loading ? <LoadingIndicator /> : 'Confirm'}
+                </Button>
             </div>
         </div>
     );
