@@ -48,24 +48,26 @@ const StakingHome: React.FC = () => {
     );
 
     return (
-        <Loading loading={isLoading || queryResult.isLoading} big={true}>
-            {delegatedStake && !!totalActivePendingStake ? (
-                <div className="flex flex-col gap-6">
-                    <div className="flex gap-3">
-                        <Body isSemibold>
-                            {totalActivePendingStake
-                                ? 'Currently Staked'
-                                : 'Stake & Earn SUI'}
-                        </Body>
-                        <Body isSemibold>
-                            {formatted} {symbol}
-                        </Body>
+        <div className="flex w-full h-full items-center place-content-center">
+            <Loading loading={isLoading || queryResult.isLoading} big={true}>
+                {delegatedStake && !!totalActivePendingStake ? (
+                    <div className="flex flex-col gap-6">
+                        <div className="flex gap-3">
+                            <Body isSemibold>
+                                {totalActivePendingStake
+                                    ? 'Currently Staked'
+                                    : 'Stake & Earn SUI'}
+                            </Body>
+                            <Body isSemibold>
+                                {formatted} {symbol}
+                            </Body>
+                        </div>
                     </div>
-                </div>
-            ) : (
-                <StakingIntro />
-            )}
-        </Loading>
+                ) : (
+                    <StakingIntro />
+                )}
+            </Loading>
+        </div>
     );
 };
 
