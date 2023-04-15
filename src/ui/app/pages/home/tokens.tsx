@@ -5,12 +5,12 @@ import { CircleStackIcon } from '@heroicons/react/24/solid';
 
 import CoinList from './home/CoinList';
 import Loading from '../../components/loading';
+import sortTokens from '../../helpers/sortCoins';
 import { Icon } from '../../shared/icons/Icon';
 import { useAppSelector } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
-import sortTokens from '../../helpers/sortCoins';
 
 function TokensPage() {
     let balances = useAppSelector(accountAggregateBalancesSelector);

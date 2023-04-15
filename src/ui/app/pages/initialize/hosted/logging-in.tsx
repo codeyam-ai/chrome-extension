@@ -2,8 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Authentication from '_src/background/Authentication';
+import { IFRAME_URL } from '_src/shared/constants';
 import { getSession } from '_src/shared/storagex/store';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
+import { iframe } from '_src/ui/app/helpers';
 import { useAppDispatch } from '_src/ui/app/hooks';
 import {
     saveAccountInfos,
@@ -17,10 +19,15 @@ const LoggingInPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [loading, setLoading] = useState<boolean>(true);
+    const [authenticationSlow, setAuthenticationSlow] =
+        useState<boolean>(false);
 
     useEffect(() => {
         const setAccessToken = async () => {
-            const accessToken = (await getSession('accessToken')) as string;
+            let accessToken = (await getSession('accessToken')) as string;
+            if (!accessToken) {
+                accessToken = await iframe.listenForAccessToken();
+            }
             Authentication.set(accessToken);
 
             const accountInfos = await Authentication.getAccountInfos();
@@ -38,26 +45,47 @@ const LoggingInPage = () => {
         setAccessToken();
     }, [dispatch, navigate]);
 
+    useEffect(() => {
+        setTimeout(() => {
+            setAuthenticationSlow(true);
+        }, 10000);
+    }, []);
+
+    useEffect(() => {
+        iframe.listenForReady();
+    }, [dispatch]);
+
     const reset = useCallback(async () => {
         await dispatch(saveAuthentication(null));
         navigate('/');
     }, [dispatch, navigate]);
 
     return (
-        <div className="flex flex-col items-center gap-6">
-            <BodyLarge isSemibold>Authenticating</BodyLarge>
-            <LoadingIndicator big />
-            {!loading && (
-                <>
-                    <BodyLarge>
-                        Authentication is taking a while.
-                        <br />
-                        You might need to log back in.
-                    </BodyLarge>
-                    <Button onClick={reset}>Log Back In</Button>
-                </>
-            )}
-        </div>
+        <>
+            <div className="flex flex-col items-center gap-6">
+                <BodyLarge isSemibold>Authenticating</BodyLarge>
+                <LoadingIndicator big />
+                {!loading && authenticationSlow && (
+                    <>
+                        <BodyLarge>
+                            Authentication is taking a while.
+                            <br />
+                            You might need to log back in.
+                        </BodyLarge>
+                        <Button onClick={reset}>Log Back In</Button>
+                    </>
+                )}
+            </div>
+            <iframe
+                id="wallet-iframe"
+                src={IFRAME_URL}
+                height="1px"
+                width="1px"
+                title="wallet"
+                // Hide the iframe pixel, as it is visible in dark mode
+                className="-top-[1000px] absolute"
+            />
+        </>
     );
 };
 
