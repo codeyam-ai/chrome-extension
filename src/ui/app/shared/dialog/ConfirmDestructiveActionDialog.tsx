@@ -2,10 +2,9 @@ import { Dialog, Transition } from '@headlessui/react';
 import { TrashIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { Fragment, useCallback } from 'react';
 
+import LoadingIndicator from '../../components/loading/LoadingIndicator';
 import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
 import HeaderWithIcons from '_src/ui/app/shared/headers/page-headers/HeaderWithIcons';
-import LoadingIndicator from '../../components/loading/LoadingIndicator';
-import classNames from 'classnames';
 
 interface ConfirmDestructiveActionDialogProps {
     isOpen: boolean;
@@ -16,7 +15,7 @@ interface ConfirmDestructiveActionDialogProps {
     description: string;
     primaryButtonText: string;
     secondaryButtonText: string;
-    primaryActionIsLoading: boolean;
+    primaryActionIsLoading?: boolean;
 }
 
 const ConfirmDestructiveActionDialog = ({
