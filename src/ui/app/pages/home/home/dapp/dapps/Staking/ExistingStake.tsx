@@ -101,7 +101,7 @@ const DelegatedStakeRow = ({
         <button
             onClick={navigateToStakeDetail}
             key={delegatedStake.validatorAddress}
-            className="w-full flex flex-row items-center place-content-center justify-between py-3 px-4 hover:bg-ethos-light-background-secondary dark:hover:bg-ethos-dark-background-secondary border-b border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke"
+            className="w-full flex flex-row items-center place-content-center justify-between py-3 px-4 hover:bg-ethos-super-light-purple dark:hover:bg-ethos-dark-background-secondary/50 border-b border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke"
         >
             <div className="flex items-center place-content-center gap-3">
                 {validator?.imageUrl ? (
