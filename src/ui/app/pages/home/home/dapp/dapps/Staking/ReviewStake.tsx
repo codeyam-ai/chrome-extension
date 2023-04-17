@@ -16,6 +16,8 @@ import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
+import { calculateStakeRewardStart } from '_src/ui/app/helpers/staking/calculateStakeRewardStart';
+import { useSystemState } from '_src/ui/app/hooks/useSystemState';
 
 function createStakeTransaction(amount: bigint, validator: string) {
     const tx = new TransactionBlock();
@@ -45,6 +47,13 @@ const ReviewStake: React.FC = () => {
     const validator = useMemo(() => {
         return validators && validators[validatorSuiAddress || ''];
     }, [validatorSuiAddress, validators]);
+
+    const { data: systemState, isFetching: isFetchingSystemState } =
+        useSystemState();
+
+    const { formattedDistanceToRewards } = useMemo(() => {
+        return calculateStakeRewardStart(systemState);
+    }, [systemState]);
 
     const amount = searchParams.get('amount');
 
@@ -107,7 +116,7 @@ const ReviewStake: React.FC = () => {
                 <StakeSummary
                     amount={amount || undefined}
                     stakingAPY={validator?.apy?.toString()}
-                    rewardsStart={'Tomorrow'}
+                    rewardsStart={formattedDistanceToRewards}
                     gasPrice={mistToSui(+(validator?.gasPrice || '0'), 4)}
                 />
             </div>

@@ -1,0 +1,22 @@
+import { formatRelative } from 'date-fns';
+
+import getTimeToEarnStakingRewards from './getTimeToEarnStakeRewards';
+import { NUM_OF_EPOCH_BEFORE_EARNING } from '_src/shared/constants';
+
+import type { SuiSystemStateSummary } from '@mysten/sui.js';
+
+export function calculateStakeRewardStart(systemState?: SuiSystemStateSummary) {
+    const startEarningRewardsEpoch =
+        Number(systemState?.epoch || 0) + NUM_OF_EPOCH_BEFORE_EARNING;
+    const timeToEarnStakeRewards =
+        systemState &&
+        getTimeToEarnStakingRewards(systemState, startEarningRewardsEpoch);
+    const formattedDistanceToRewards = timeToEarnStakeRewards
+        ? formatRelative(new Date(timeToEarnStakeRewards), new Date())
+        : undefined;
+
+    return {
+        timeToEarnStakeRewards,
+        formattedDistanceToRewards,
+    };
+}
