@@ -76,7 +76,7 @@ const StakingHome: React.FC = () => {
             <Loading loading={isLoading || queryResult.isLoading} big={true}>
                 {delegatedStake && !!totalActivePendingStake ? (
                     <ExistingStake
-                        delegatedStake={delegatedStake}
+                        delegatedStakes={delegatedStake}
                         amountStaked={totalActivePendingStake}
                     />
                 ) : (

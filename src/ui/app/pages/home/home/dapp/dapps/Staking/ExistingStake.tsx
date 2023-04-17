@@ -31,24 +31,14 @@ export interface StakeWithValidatorAddress extends Stake {
 
 interface ExistingStakeProps {
     amountStaked: bigint;
-    delegatedStake: DelegatedStake[];
+    delegatedStakes: DelegatedStake[];
 }
 
 const ExistingStake: React.FC<ExistingStakeProps> = ({
     amountStaked,
-    delegatedStake,
+    delegatedStakes,
 }) => {
     const [formatted, symbol] = useFormatCoin(amountStaked, SUI_TYPE_ARG);
-
-    const allStakes = delegatedStake.reduce((agg, stake) => {
-        const { validatorAddress, stakes } = stake;
-        const stakesWithValidator = stakes.map((st) => ({
-            validatorAddress: validatorAddress,
-            ...st,
-        }));
-
-        return [...stakesWithValidator, ...agg];
-    }, [] as StakeWithValidatorAddress[]);
 
     return (
         <div className="w-full flex flex-col h-full justify-between">
@@ -62,21 +52,19 @@ const ExistingStake: React.FC<ExistingStakeProps> = ({
                         Your staked SUI is earning rewards!
                     </BodyLarge>
                 </div>
-                <div className="flex flex-col items-center place-content-center">
+                <div className="flex flex-col items-center place-content-center my-4">
                     <Subheader isTextColorMedium>Total staked:</Subheader>
                     <Title>
                         {formatted} {symbol}
                     </Title>
                 </div>
                 <div>
-                    <div className="py-3 px-4 text-left rounded-lg border-b border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
-                        {allStakes.map((stake) => (
-                            <DelegatedStakeRow
-                                key={stake.validatorAddress}
-                                stake={stake}
-                            />
-                        ))}
-                    </div>
+                    {delegatedStakes.map((delegatedStake) => (
+                        <DelegatedStakeRow
+                            key={delegatedStake.validatorAddress}
+                            delegatedStake={delegatedStake}
+                        />
+                    ))}
                 </div>
             </div>
             <div>
@@ -88,42 +76,55 @@ const ExistingStake: React.FC<ExistingStakeProps> = ({
     );
 };
 
-const DelegatedStakeRow = ({ stake }: { stake: StakeWithValidatorAddress }) => {
+const DelegatedStakeRow = ({
+    delegatedStake,
+}: {
+    delegatedStake: DelegatedStake;
+}) => {
     const navigate = useNavigate();
 
     const navigateToStakeDetail = useCallback(() => {
-        navigate(`validator-details/${stake.validatorAddress}`);
-    }, [navigate, stake.validatorAddress]);
+        navigate(`validator-details/${delegatedStake.validatorAddress}`);
+    }, [navigate, delegatedStake.validatorAddress]);
+
+    const amountStaked = delegatedStake?.stakes.reduce(
+        (total, { principal }) => total + BigInt(principal),
+        BigInt(0)
+    );
+
+    const [formattedAmount, symbol] = useFormatCoin(amountStaked, SUI_TYPE_ARG);
 
     const { validators } = useValidatorsWithApy();
-    const validator = validators?.[stake.validatorAddress];
-    const [coinAmount] = useFormatCoin(stake.principal, SUI_TYPE_ARG);
+    const validator = validators?.[delegatedStake.validatorAddress];
 
     return (
-        <button onClick={navigateToStakeDetail} key={stake.validatorAddress}>
-            <div className="flex flex-row items-center place-content-center justify-between">
-                <div className="flex items-center place-content-center gap-3">
-                    {validator?.imageUrl ? (
-                        <img
-                            src={validator.imageUrl}
-                            alt={validator.name}
-                            className="h-9 w-9 rounded-full"
-                        />
-                    ) : (
-                        <div className="h-9 w-9 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
-                    )}
-                    <div className="flex flex-col">
-                        <Body isSemibold>{validator?.name}</Body>
-                        <Body isTextColorMedium>
-                            {truncateMiddle(validator?.suiAddress || '')}
-                        </Body>
-                    </div>
+        <button
+            onClick={navigateToStakeDetail}
+            key={delegatedStake.validatorAddress}
+            className="w-full flex flex-row items-center place-content-center justify-between py-3 px-4 hover:bg-ethos-light-background-secondary dark:hover:bg-ethos-dark-background-secondary border-b border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke"
+        >
+            <div className="flex items-center place-content-center gap-3">
+                {validator?.imageUrl ? (
+                    <img
+                        src={validator.imageUrl}
+                        alt={validator.name}
+                        className="h-9 w-9 rounded-full"
+                    />
+                ) : (
+                    <div className="h-9 w-9 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
+                )}
+                <div className="flex flex-col items-start">
+                    <Body isSemibold>{validator?.name}</Body>
+                    <Body isTextColorMedium>
+                        {truncateMiddle(validator?.suiAddress || '')}
+                    </Body>
                 </div>
+            </div>
 
-                <div className="flex flex-col items-end">
-                    <Body isSemibold>{coinAmount} SUI</Body>
-                    <Body isTextColorMedium>{stake.status}</Body>
-                </div>
+            <div className="flex flex-col items-end">
+                <Body isSemibold>
+                    {formattedAmount} {symbol}
+                </Body>
             </div>
         </button>
     );
