@@ -1,5 +1,6 @@
+import { formatRelative } from 'date-fns';
 import { Form, useField, useFormikContext } from 'formik';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 import StakeSummary from '../StakeSummary';
 import { type SuiValidatorSummaryWithApy } from '../ValidatorList';
@@ -30,15 +31,27 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
     const [systemState, setSystemState] = useState<
         SuiSystemStateSummary | undefined
     >();
-    // Reward will be available after 2 epochs
-    const startEarningRewardsEpoch =
-        Number(epoch || 0) + NUM_OF_EPOCH_BEFORE_EARNING;
-
     const { isSubmitting, isValid, dirty } = useFormikContext();
-    const timeToEarnStakeRewards =
-        systemState &&
-        getTimeToEarnStakingRewards(systemState, startEarningRewardsEpoch);
-    console.log('timeToEarnStakeRewards :>> ', timeToEarnStakeRewards);
+
+    const { timeToEarnStakeRewards, formattedDistanceToRewards } =
+        useMemo(() => {
+            const startEarningRewardsEpoch =
+                Number(epoch || 0) + NUM_OF_EPOCH_BEFORE_EARNING;
+            const timeToEarnStakeRewards =
+                systemState &&
+                getTimeToEarnStakingRewards(
+                    systemState,
+                    startEarningRewardsEpoch
+                );
+            const formattedDistanceToRewards = timeToEarnStakeRewards
+                ? formatRelative(new Date(timeToEarnStakeRewards), new Date())
+                : undefined;
+
+            return {
+                timeToEarnStakeRewards,
+                formattedDistanceToRewards,
+            };
+        }, [epoch, systemState]);
 
     useEffect(() => {
         const getSystemState = async () => {
@@ -70,7 +83,7 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                         ) : (
                             <div className="h-9 w-9 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
                         )}
-                        <div className="flex flex-col items-start">
+                        <div className="flex flex-col items-start text-left">
                             <Body isSemibold>{validator.name}</Body>
                             <Body>{validator.description}</Body>
                             <Body isTextColorMedium>
@@ -124,7 +137,7 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                 <div className={'-mx-6'}>
                     <StakeSummary
                         amount={''}
-                        rewardsStart={'30sec'}
+                        rewardsStart={formattedDistanceToRewards}
                         stakingAPY={validator.apy?.toString()}
                         gasPrice={mistToSui(+(validator.gasPrice || '0'), 4)}
                     />

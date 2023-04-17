@@ -38,7 +38,7 @@ const StakeSummary: React.FC<StakeSummaryProps> = ({
 
     if (rewardsStart) {
         keyValueList.push({
-            keyName: 'Staking Rewards Start',
+            keyName: 'Rewards Start',
             keyHelpMessage:
                 'The staked SUI starts earning reward at the end of the Epoch in which it was staked. The rewards will become available at the end of one full Epoch of staking.',
             value: rewardsStart,
