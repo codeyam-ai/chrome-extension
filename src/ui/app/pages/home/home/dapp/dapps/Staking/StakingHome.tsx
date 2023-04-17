@@ -8,7 +8,7 @@ import Loading from '_src/ui/app/components/loading';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
-export function useGetDelegatedStake(
+export function useGetDelegatedStakes(
     address: string
 ): UseQueryResult<DelegatedStake[], Error> {
     const rpc = api.instance.fullNode;
@@ -47,15 +47,15 @@ const calculateTotalStakeForValidator = null;
 
 const StakingHome: React.FC = () => {
     const { address } = useAppSelector(({ account }) => account);
-    const { data: delegatedStake, isLoading } = useGetDelegatedStake(
+    const { data: delegatedStakes, isLoading } = useGetDelegatedStakes(
         address || ''
     );
 
     // Total active stake for all delegations
     const totalActivePendingStake = useMemo(() => {
-        if (!delegatedStake) return BigInt(0);
+        if (!delegatedStakes) return BigInt(0);
 
-        return delegatedStake.reduce(
+        return delegatedStakes.reduce(
             (acc, curr) =>
                 curr.stakes.reduce(
                     (total, { principal }) => total + BigInt(principal),
@@ -64,7 +64,7 @@ const StakingHome: React.FC = () => {
 
             BigInt(0)
         );
-    }, [delegatedStake]);
+    }, [delegatedStakes]);
 
     const [, , , , , queryResult] = useFormatCoin(
         totalActivePendingStake,
@@ -74,9 +74,9 @@ const StakingHome: React.FC = () => {
     return (
         <div className="flex w-full h-full items-center place-content-center">
             <Loading loading={isLoading || queryResult.isLoading} big={true}>
-                {delegatedStake && !!totalActivePendingStake ? (
+                {delegatedStakes && !!totalActivePendingStake ? (
                     <ExistingStake
-                        delegatedStakes={delegatedStake}
+                        delegatedStakes={delegatedStakes}
                         amountStaked={totalActivePendingStake}
                     />
                 ) : (

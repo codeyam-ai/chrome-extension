@@ -14,7 +14,7 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 import Title from '_src/ui/app/shared/typography/Title';
 import { useParams } from 'react-router-dom';
-import { useGetDelegatedStake } from './StakingHome';
+import { useGetDelegatedStakes } from './StakingHome';
 import { useMemo } from 'react';
 
 interface ExistingStakeProps {
@@ -26,7 +26,7 @@ const StakeDetail: React.FC = () => {
     const { validatorAddress } = useParams();
 
     const { address } = useAppSelector(({ account }) => account);
-    const { data: allDelegatedStakes } = useGetDelegatedStake(address || '');
+    const { data: allDelegatedStakes } = useGetDelegatedStakes(address || '');
 
     const delegatedStake = useMemo(() => {
         return allDelegatedStakes?.find(
