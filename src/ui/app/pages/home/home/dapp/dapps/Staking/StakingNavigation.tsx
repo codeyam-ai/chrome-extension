@@ -9,6 +9,7 @@ import StakeAmountPage from './StakeAmount/StakeAmountPage';
 import StakingHome from './StakingHome';
 import StakingIntro from './StakingIntro';
 import { DappWrapper } from '../../DappWrapper';
+import StakeDetail from './StakeDetail';
 
 function StakingNavigation() {
     return (
@@ -21,6 +22,10 @@ function StakingNavigation() {
                 <Route path="amount-to-stake" element={<StakeAmountPage />} />
                 <Route path="review" element={<ReviewStake />} />
                 <Route path="complete" element={<CompletedStake />} />
+                <Route
+                    path="validator-details/:validatorAddress"
+                    element={<StakeDetail />}
+                />
             </Routes>
             <Outlet />
         </DappWrapper>

@@ -83,6 +83,7 @@ const ReviewStake: React.FC = () => {
                 }).toString()}`
             );
         } catch (error) {
+            console.log('error', error);
             toast(
                 <FailAlert text="Something went wrong. Please make sure you have enough SUI and try again." />
             );
