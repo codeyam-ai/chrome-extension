@@ -1,8 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import ESLintPlugin from 'eslint-webpack-plugin';
-import StyleLintPlugin from 'stylelint-webpack-plugin';
 import { merge } from 'webpack-merge';
 
 import configCommon from './webpack.config.common';
@@ -15,10 +13,7 @@ const configDev: Configuration = {
     },
     mode: 'development',
     devtool: 'cheap-source-map',
-    plugins: [
-        new ESLintPlugin({ extensions: ['ts', 'tsx', 'js', 'jsx'] }),
-        new StyleLintPlugin(),
-    ],
+    plugins: [],
     watchOptions: {
         aggregateTimeout: 600,
     },

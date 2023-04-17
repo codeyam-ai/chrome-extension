@@ -105,9 +105,9 @@ const commonConfig: () => Promise<Configuration> = async () => {
             rules: [
                 {
                     test: /\.(t|j)sx?$/,
-                    loader: 'ts-loader',
+                    loader: 'esbuild-loader',
                     options: {
-                        configFile: TS_CONFIG_FILE,
+                        tsconfig: TS_CONFIG_FILE,
                     },
                     exclude: /node_modules/,
                 },
