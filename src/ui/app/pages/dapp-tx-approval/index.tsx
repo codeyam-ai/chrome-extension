@@ -4,8 +4,8 @@ import { useParams } from 'react-router-dom';
 
 import IncorrectChain from './errors/IncorrectChain';
 import IncorrectSigner from './errors/IncorrectSigner';
-import MissingObject from './errors/MissingObject';
 import NotEnoughGas from './errors/NotEnoughGas';
+import UnknownError from './errors/UnknownError';
 import analyzeChanges from './lib/analyzeChanges';
 import finishTransaction from './lib/finishTransaction';
 import resizeWindow from './lib/resizeWindow';
@@ -322,7 +322,7 @@ export function DappTxApprovalPage() {
                 <SimpleBase onComplete={onComplete}>
                     <div className="p-6">
                         {explicitError || (
-                            <MissingObject
+                            <UnknownError
                                 selectedApiEnv={selectedApiEnv}
                                 errorMessage={dryRunError || 'Unknown Error'}
                                 txRequest={txRequest}
