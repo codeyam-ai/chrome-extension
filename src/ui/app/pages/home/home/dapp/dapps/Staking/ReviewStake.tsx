@@ -1,0 +1,144 @@
+import { TransactionBlock, SUI_SYSTEM_STATE_OBJECT_ID } from '@mysten/sui.js';
+import BigNumber from 'bignumber.js';
+import { useMemo, useCallback, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
+import StakeSummary from './StakeSummary';
+import { useValidatorsWithApy } from './ValidatorList';
+import { ToS_LINK } from '_src/shared/constants';
+import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
+import { calculateStakeRewardStart } from '_src/ui/app/helpers/staking/calculateStakeRewardStart';
+import { useAppSelector } from '_src/ui/app/hooks';
+import { useSystemState } from '_src/ui/app/hooks/useSystemState';
+import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
+import { api, thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
+import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
+import Button from '_src/ui/app/shared/buttons/Button';
+import Body from '_src/ui/app/shared/typography/Body';
+import EthosLink from '_src/ui/app/shared/typography/EthosLink';
+import Subheader from '_src/ui/app/shared/typography/Subheader';
+
+function createStakeTransaction(amount: bigint, validator: string) {
+    const tx = new TransactionBlock();
+    const stakeCoin = tx.splitCoins(tx.gas, [tx.pure(amount)]);
+    tx.moveCall({
+        target: '0x3::sui_system::request_add_stake',
+        arguments: [
+            tx.object(SUI_SYSTEM_STATE_OBJECT_ID),
+            stakeCoin,
+            tx.pure(validator),
+        ],
+    });
+    return tx;
+}
+
+const ReviewStake: React.FC = () => {
+    const [loading, setLoading] = useState(false);
+    const { activeAccountIndex, address, authentication } = useAppSelector(
+        ({ account }) => account
+    );
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const validatorSuiAddress = searchParams.get('validator');
+
+    const { validators } = useValidatorsWithApy();
+
+    const validator = useMemo(() => {
+        return validators && validators[validatorSuiAddress || ''];
+    }, [validatorSuiAddress, validators]);
+
+    const { data: systemState } = useSystemState();
+
+    const { formattedDistanceToRewards } = useMemo(() => {
+        return calculateStakeRewardStart(systemState);
+    }, [systemState]);
+
+    const amount = searchParams.get('amount');
+
+    const onConfirm = useCallback(async () => {
+        if (!amount) return;
+        setLoading(true);
+        let signer;
+
+        if (authentication) {
+            signer = api.getEthosSignerInstance(address || '', authentication);
+        } else {
+            signer = api.getSignerInstance(
+                thunkExtras.keypairVault.getKeyPair(activeAccountIndex)
+            );
+        }
+
+        const transactionBlock = createStakeTransaction(
+            BigInt(new BigNumber(amount).shiftedBy(9).toString()),
+            validatorSuiAddress ?? ''
+        );
+
+        try {
+            const response = await signer.signAndExecuteTransactionBlock({
+                transactionBlock,
+                options: {
+                    showInput: true,
+                    showEffects: true,
+                    showEvents: true,
+                },
+            });
+            navigate(
+                `/home/staking/complete?${new URLSearchParams({
+                    response: response.digest,
+                    validator: validatorSuiAddress ?? '',
+                    amount: (amount ?? '').toString(),
+                }).toString()}`
+            );
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error('error', error);
+            toast(
+                <FailAlert text="Something went wrong. Please make sure you have enough SUI and try again." />
+            );
+        }
+        setLoading(false);
+    }, [
+        activeAccountIndex,
+        address,
+        amount,
+        authentication,
+        navigate,
+        validatorSuiAddress,
+    ]);
+
+    return (
+        <div className="flex flex-col h-full justify-between">
+            <div>
+                <Subheader className={'text-center mb-6'}>
+                    Review Stake
+                </Subheader>
+                <StakeSummary
+                    amount={amount || undefined}
+                    stakingAPY={validator?.apy?.toString()}
+                    rewardsStart={formattedDistanceToRewards}
+                    gasPrice={mistToSui(+(validator?.gasPrice || '0'), 4)}
+                />
+            </div>
+            <div>
+                <Body className="pb-4 mx-6">
+                    By clicking confirm you agree to
+                    <br />
+                    <EthosLink type="external" to={ToS_LINK}>
+                        Ethos&apos;s Terms of Use
+                    </EthosLink>
+                    {/* , and understand the{' '}
+                    <EthosLink type="external" to="">
+                        Risk Disclosures
+                    </EthosLink> */}
+                    .
+                </Body>
+                <Button onClick={onConfirm} disabled={loading}>
+                    {loading ? <LoadingIndicator /> : 'Confirm'}
+                </Button>
+            </div>
+        </div>
+    );
+};
+
+export default ReviewStake;

@@ -171,7 +171,7 @@ function TransferCoinForm({
                     {dollarDisplay}
                 </BodyLarge>
                 <ErrorMessage
-                    className="mt-1 text-red-500 dark:text-red-400"
+                    className="mt-1 text-ethos-light-red dark:text-ethos-dark-red"
                     name="amount"
                     component="div"
                 />

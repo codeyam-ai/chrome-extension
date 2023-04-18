@@ -40,12 +40,10 @@ type AggregateBalances = Record<string, bigint>;
 
 interface UseCoinInputs {
     aggregateBalances: AggregateBalances;
+    coinType: string | null;
 }
 
-function useCoin({ aggregateBalances }: UseCoinInputs) {
-    const [searchParams] = useSearchParams();
-    const coinType = searchParams.get('type');
-
+export function useCoin({ aggregateBalances, coinType }: UseCoinInputs) {
     const coinBalance = useMemo(
         () => (coinType && aggregateBalances[coinType]) || BigInt(0),
         [coinType, aggregateBalances]
@@ -71,7 +69,7 @@ interface UseGasInputs {
     aggregateBalances: AggregateBalances;
 }
 
-function useGas({ coin, aggregateBalances }: UseGasInputs) {
+export function useGas({ coin, aggregateBalances }: UseGasInputs) {
     const gasAggregateBalance = useMemo(
         () => aggregateBalances[SUI_TYPE_ARG] || BigInt(0),
         [aggregateBalances]
@@ -241,16 +239,22 @@ function useOnHandleSubmit({
 
 // TODO: show out of sync when sui objects locally might be outdated
 function TransferCoinAmountPage() {
+    const [searchParams] = useSearchParams();
+    const coinType = searchParams.get('type');
+
     const aggregateBalances = useAppSelector(accountAggregateBalancesSelector);
-    const coin = useCoin({ aggregateBalances });
+    const coin = useCoin({ aggregateBalances, coinType });
     const gas = useGas({ coin, aggregateBalances });
+
     const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
     const [sendError, setSendError] = useState<string | null>(null);
     const onHandleSubmit = useOnHandleSubmit({ coin, setSendError, formState });
+
     const [formattedBalance] = useFormatCoin(
         coin.balance,
         coin.type || SUI_TYPE_ARG
     );
+
     const { locale } = useIntl();
 
     const validationSchema = useMemo(

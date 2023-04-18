@@ -1,6 +1,7 @@
 import CustomizeNavigation from './dapps/Customize/CustomizeNavigation';
 import addressBookIcon from '_src/ui/assets/images/dappIcons/address-book.png';
 import customizeIcon from '_src/ui/assets/images/dappIcons/customize.png';
+import stakingIcon from '_src/ui/assets/images/dappIcons/staking.png';
 export interface DappData {
     image: string;
     name: string;
@@ -25,12 +26,12 @@ export const sampleData: DappData[] = [
         route: 'address-book',
         isFavorite: true,
     },
-    // {
-    //     image: 'https://via.placeholder.com/150/1',
-    //     name: 'localhost:3000/',
-    //     url: 'http://localhost:3000/',
-    //     isFavorite: true,
-    // },
+    {
+        image: stakingIcon,
+        name: 'Staking',
+        route: 'staking',
+        isFavorite: true,
+    },
     // {
     //     image: 'https://via.placeholder.com/150/1',
     //     name: 'Ethos Example App',
