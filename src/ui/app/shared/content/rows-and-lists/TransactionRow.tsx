@@ -18,6 +18,7 @@ import SuiIcon from '../../svg/SuiIcon';
 import ActionIcon from '../../transactions/ActionIcon';
 import Body from '../../typography/Body';
 import { getIcon } from '_src/ui/app/helpers/transactions';
+import getSummary from '_src/ui/app/helpers/transactions/getSummary';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import UnknownToken from '_src/ui/app/pages/home/home/UnknownToken';
 
@@ -60,7 +61,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                 <div></div>
                 <Body isTextColorMedium>{timeDisplay}</Body>
             </div>
-            <div>
+            <div className="flex gap-3 items-center">
                 {image ? (
                     typeof image === 'string' ? (
                         <img
@@ -80,6 +81,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                         )}
                     </ActionIcon>
                 )}
+                {getSummary(analyzedTransaction)}
             </div>
         </Link>
     );
