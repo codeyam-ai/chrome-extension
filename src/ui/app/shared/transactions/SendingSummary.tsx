@@ -22,7 +22,7 @@ const SendingSummary = ({
             <div>
                 <BodyLarge isSemibold>
                     {isSender ? 'Sent' : 'Received'}{' '}
-                    {sendingTransactionInfo.objectId ? 'NFT' : 'Coin'}
+                    {sendingTransactionInfo.objectId ? 'NFT' : 'Tokens'}
                 </BodyLarge>
             </div>
             <div className="flex items-center gap-1">

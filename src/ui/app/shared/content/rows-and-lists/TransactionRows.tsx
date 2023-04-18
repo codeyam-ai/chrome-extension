@@ -8,14 +8,16 @@ const TransactionRows = ({
     transactions: FormattedTransaction[];
 }) => {
     return (
-        <div className="px-6 pb-6 flex flex-col gap-9 divide-ethos-light-text-stroke">
+        <div className="pb-6 flex flex-col divide-ethos-light-text-stroke">
             {transactions &&
                 transactions.map((txn: FormattedTransaction, index: number) => {
                     return (
-                        <TransactionRow
-                            txn={txn}
+                        <div
+                            className="even:bg-ethos-light-background-secondary even:dark:bg-ethos-dark-background-secondary p-6"
                             key={`txn-${index}-${txn.analyzedTransaction.digest}`}
-                        />
+                        >
+                            <TransactionRow txn={txn} />
+                        </div>
                     );
                 })}
         </div>
