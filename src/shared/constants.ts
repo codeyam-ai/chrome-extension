@@ -23,6 +23,8 @@ export const PASSPHRASE_TEST = 'PASSPHRASE_TEST';
 export const TX_STORE_KEY = 'transactions';
 export const PREAPPROVAL_KEY = 'preapprovals';
 
+export const NUM_OF_EPOCH_BEFORE_EARNING = 2;
+
 export enum AccountType {
     EMAIL = 'EMAIL',
     PASSWORD = 'PASSWORD',

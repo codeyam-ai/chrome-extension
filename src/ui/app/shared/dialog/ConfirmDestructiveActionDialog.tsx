@@ -2,25 +2,36 @@ import { Dialog, Transition } from '@headlessui/react';
 import { TrashIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import { Fragment, useCallback } from 'react';
 
+import LoadingIndicator from '../../components/loading/LoadingIndicator';
 import InlineButtonGroup from '_src/ui/app/shared/buttons/InlineButtonGroup';
 import HeaderWithIcons from '_src/ui/app/shared/headers/page-headers/HeaderWithIcons';
 
-interface ConfirmDeleteContactModalProps {
+interface ConfirmDestructiveActionDialogProps {
     isOpen: boolean;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
     onCancel: () => void;
     onConfirm: () => void;
+    title: string;
+    description: string;
+    primaryButtonText: string;
+    secondaryButtonText: string;
+    primaryActionIsLoading?: boolean;
 }
 
-const ConfirmDeleteContactModal = ({
+const ConfirmDestructiveActionDialog = ({
     isOpen,
     setIsOpen,
     onCancel,
     onConfirm,
-}: ConfirmDeleteContactModalProps) => {
+    title,
+    description,
+    primaryButtonText,
+    secondaryButtonText,
+    primaryActionIsLoading,
+}: ConfirmDestructiveActionDialogProps) => {
     const closeModal = useCallback(() => {
-        setIsOpen(false);
-    }, [setIsOpen]);
+        if (!primaryActionIsLoading) setIsOpen(false);
+    }, [primaryActionIsLoading, setIsOpen]);
 
     return (
         <>
@@ -51,7 +62,14 @@ const ConfirmDeleteContactModal = ({
                             >
                                 <Dialog.Panel className="w-[328px] transform overflow-hidden rounded-[20px] text-center align-middle shadow-ethos-modal-box-shadow transition-all bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
                                     <div className="flex place-content-end pt-6 px-6">
-                                        <button onClick={closeModal}>
+                                        <button
+                                            onClick={closeModal}
+                                            className={
+                                                primaryActionIsLoading
+                                                    ? 'invisible'
+                                                    : ''
+                                            }
+                                        >
                                             <XMarkIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
                                         </button>
                                     </div>
@@ -62,16 +80,30 @@ const ConfirmDeleteContactModal = ({
                                                 <TrashIcon className="h-8 w-8 text-ethos-light-red dark:text-ethos-dark-red" />
                                             </div>
                                         }
-                                        title="Are you sure you want to delete this contact?"
-                                        description="This action cannot be undone."
+                                        title={title}
+                                        description={description}
                                     />
 
                                     <InlineButtonGroup
+                                        isButtonPrimaryDisabled={
+                                            primaryActionIsLoading
+                                        }
+                                        isButtonSecondaryDisabled={
+                                            primaryActionIsLoading
+                                        }
                                         isDanger
                                         onClickButtonPrimary={onConfirm}
-                                        buttonPrimaryChildren="Delete"
+                                        buttonPrimaryChildren={
+                                            primaryActionIsLoading ? (
+                                                <LoadingIndicator />
+                                            ) : (
+                                                primaryButtonText
+                                            )
+                                        }
                                         onClickButtonSecondary={onCancel}
-                                        buttonSecondaryChildren="Cancel"
+                                        buttonSecondaryChildren={
+                                            secondaryButtonText
+                                        }
                                     />
                                 </Dialog.Panel>
                             </Transition.Child>
@@ -83,4 +115,4 @@ const ConfirmDeleteContactModal = ({
     );
 };
 
-export default ConfirmDeleteContactModal;
+export default ConfirmDestructiveActionDialog;

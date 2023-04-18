@@ -10,11 +10,11 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import AddressTooltip from './AddressTooltip';
 import ContactTransactions from './ContactTransactions';
-import ConfirmDeleteContactModal from '../ConfirmDeleteContactModal';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { useUpdateContacts } from '_src/ui/app/hooks/useUpdateContacts';
 import EmojiDisplay from '_src/ui/app/shared/EmojiDisplay';
+import ConfirmDestructiveActionDialog from '_src/ui/app/shared/dialog/ConfirmDestructiveActionDialog';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 const ContactPage = () => {
@@ -122,11 +122,15 @@ const ContactPage = () => {
                 </div>
             </div>
             <ContactTransactions contactAddress={contact.address} />
-            <ConfirmDeleteContactModal
+            <ConfirmDestructiveActionDialog
                 isOpen={isConfirmDeleteModalOpen}
                 setIsOpen={setIsConfirmDeleteModalOpen}
                 onCancel={closeConfirmationModal}
                 onConfirm={removeThisContact}
+                title="Are you sure you want to delete this contact?"
+                description="This action cannot be undone."
+                primaryButtonText="Delete"
+                secondaryButtonText="Cancel"
             />
         </div>
     );

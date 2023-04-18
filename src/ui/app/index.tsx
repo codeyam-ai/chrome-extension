@@ -11,6 +11,7 @@ import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval'
 import BuyPage from './pages/home/buy';
 import AddressBookNavigation from './pages/home/home/dapp/dapps/AddressBook/AddressBookNavigation';
 import CustomizeNavigation from './pages/home/home/dapp/dapps/Customize/CustomizeNavigation';
+import StakingNavigation from './pages/home/home/dapp/dapps/Staking/StakingNavigation';
 import TransferNftRecipient from './pages/home/nft-details/transfer-nft-recipient';
 import TransferNftReview from './pages/home/nft-details/transfer-nft-review';
 import ReceivePage from './pages/home/receive';
@@ -90,6 +91,10 @@ const App = () => {
                         <Route
                             path="home/address-book/*"
                             element={<AddressBookNavigation />}
+                        />
+                        <Route
+                            path="home/staking/*"
+                            element={<StakingNavigation />}
                         />
                         <Route path="tokens" element={<TokensPage />} />
                         <Route path="nfts">

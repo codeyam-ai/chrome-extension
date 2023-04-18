@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import ConfirmRevokeModal from './ConfirmRevokeModal';
 import ConnectedAppDisplay from './ConnectedAppDisplay';
 import Permissions from '_src/background/Permissions';
 import Transactions from '_src/background/Transactions';
+import ConfirmDestructiveActionDialog from '_src/ui/app/shared/dialog/ConfirmDestructiveActionDialog';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import Header from '_src/ui/app/shared/typography/Header';
@@ -134,11 +134,15 @@ const PermissionsPage = () => {
                     );
                 })}
             </div>
-            <ConfirmRevokeModal
+            <ConfirmDestructiveActionDialog
                 isOpen={isConfirmationModalOpen}
                 setIsOpen={setIsConfirmationModalOpen}
                 onCancel={closeConfirmationModal}
                 onConfirm={revokeAllAccess}
+                title="Are you sure you want to Revoke Access?"
+                description="Revoking access will remove this dApp's permissions to sign transactions for you."
+                primaryButtonText="Revoke"
+                secondaryButtonText="Cancel"
             />
         </>
     );

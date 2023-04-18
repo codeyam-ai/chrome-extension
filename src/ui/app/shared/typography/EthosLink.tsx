@@ -13,6 +13,7 @@ export interface EthosLinkProps {
     onMouseOver?: () => void;
     forceLightMode?: boolean;
     children: ReactNode;
+    className?: string;
 }
 
 const EthosLink = ({
@@ -22,8 +23,9 @@ const EthosLink = ({
     onMouseOver,
     forceLightMode,
     children,
+    className,
 }: EthosLinkProps) => {
-    const linkClasses = `font-weight-ethos-semibold-body text-ethos-light-primary-light cursor-pointer ${
+    const linkClasses = `${className} font-weight-ethos-semibold-body text-ethos-light-primary-light cursor-pointer ${
         forceLightMode ? '' : 'dark:text-ethos-dark-primary-dark'
     }`;
     if (type === 'internal' && to) {
