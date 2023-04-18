@@ -18,6 +18,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import getObjData from '../../helpers/getObjData';
 import { getTheme } from '../../helpers/getTheme';
 import { getHumanReadable } from '../../helpers/transactions';
+import analyzeTransactions from '../../helpers/transactions/analyzeTransactions';
 import truncateMiddle from '../../helpers/truncate-middle';
 import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
 import Button from '../../shared/buttons/Button';
@@ -36,11 +37,11 @@ import { useDependencies } from '_shared/utils/dependenciesContext';
 import { api } from '_store/thunk-extras';
 
 import type { AccountInfo } from '../../KeypairVault';
+import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTransactions';
 import type {
     FormattedTransaction,
     HumanReadableDetails,
 } from '../../helpers/transactions/types';
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 import st from './ReceiptCard.module.scss';
 
@@ -152,8 +153,8 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     const theme = getTheme();
     const txRef = useRef<FormattedTransaction>();
 
-    const [transaction, setTransaction] =
-        useState<SuiTransactionBlockResponse>();
+    const [analyzedTransaction, setTransaction] =
+        useState<AnalyzedTransaction>();
 
     // get the txdigest from the url
     const [searchParams] = useSearchParams();
@@ -165,10 +166,10 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         if (result) {
             // find transaction details based on txDigest
             txRef.current = result.find(
-                (tx) => tx.transaction.digest === txDigest
+                (tx) => tx.analyzedTransaction.digest === txDigest
             ) as FormattedTransaction;
 
-            setTransaction(txRef.current.transaction);
+            setTransaction(txRef.current.analyzedTransaction);
         } else {
             const getTransaction = async () => {
                 const digest = txDigestFromUrl as string;
@@ -206,12 +207,16 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     }
                 }
 
-                setTransaction(tx);
+                const analyzedTransactions = await analyzeTransactions(
+                    address,
+                    [tx]
+                );
+                setTransaction(analyzedTransactions[0]);
             };
 
             getTransaction();
         }
-    }, [result, txDigest, txDigestFromUrl]);
+    }, [address, result, txDigest, txDigestFromUrl]);
 
     const getAccount = useCallback(
         (address: string) => {
@@ -223,10 +228,10 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     );
 
     const humanReadableTxInfo: HumanReadableDetails | null = useMemo(() => {
-        return transaction && address
-            ? getHumanReadable(address, transaction)
+        return analyzedTransaction && address
+            ? getHumanReadable(address, analyzedTransaction)
             : null;
-    }, [address, transaction]);
+    }, [address, analyzedTransaction]);
 
     const contactTo = useAppSelector(({ contacts: { contacts } }) =>
         contacts.find(
@@ -251,7 +256,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         }
     }, [navigate, humanReadableTxInfo?.addresses?.to]);
 
-    if (!transaction || humanReadableTxInfo === null)
+    if (!analyzedTransaction || humanReadableTxInfo === null)
         return (
             <div className={'pt-10'}>
                 <LoadingIndicator big={true} />
@@ -420,7 +425,10 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                         },
                         {
                             keyName: 'Digest',
-                            value: truncateMiddle(transaction.digest, 5),
+                            value: truncateMiddle(
+                                analyzedTransaction.digest,
+                                5
+                            ),
                         },
                     ]}
                 />
@@ -436,9 +444,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     <BodyLarge>
                         <ExplorerLink
                             type={ExplorerLinkType.transaction}
-                            transactionID={
-                                transaction?.effects?.transactionDigest || ''
-                            }
+                            transactionID={analyzedTransaction?.digest || ''}
                             title="View on Sui Explorer"
                             className={st['explorer-link']}
                             showIcon={true}
@@ -449,9 +455,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     <div className={'text-ethos-light-text-medium'}>
                         <ExplorerLink
                             type={ExplorerLinkType.transaction}
-                            transactionID={
-                                transaction?.effects?.transactionDigest || ''
-                            }
+                            transactionID={analyzedTransaction?.digest}
                             title="View on Sui Explorer"
                             className={st['explorer-link']}
                             showIcon={true}

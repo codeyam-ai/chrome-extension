@@ -1,5 +1,5 @@
+import type { AnalyzedTransaction } from './analyzeTransactions';
 import type { toFrom } from './getToFromAddress';
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 export interface TransactionCoinInfo {
     type: string;
@@ -54,6 +54,6 @@ export interface HumanReadableDetails {
 }
 
 export interface FormattedTransaction {
-    transaction: SuiTransactionBlockResponse;
+    analyzedTransaction: AnalyzedTransaction;
     humanReadable: HumanReadableDetails;
 }

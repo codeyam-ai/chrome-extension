@@ -14,7 +14,7 @@ const TransactionRows = ({
                     return (
                         <TransactionRow
                             txn={txn}
-                            key={`txn-${index}-${txn.transaction.digest}`}
+                            key={`txn-${index}-${txn.analyzedTransaction.digest}`}
                         />
                     );
                 })}

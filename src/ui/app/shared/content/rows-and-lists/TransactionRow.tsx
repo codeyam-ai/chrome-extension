@@ -53,7 +53,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
     } = txn.humanReadable;
 
     const drilldownLink = `/transactions/receipt?${new URLSearchParams({
-        txdigest: txn.transaction.digest || '',
+        txdigest: txn.analyzedTransaction.digest || '',
         symbol: 'SUI', // TODO: what to do with coins / multiple coins / batch txs
         isFunc: txType === 'func' ? 'yes' : 'no',
     }).toString()}`;
@@ -63,9 +63,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         amount: parseFloat(txAmount),
         coinType: '', // TODO: what to do with coins / multiple coins / batch txs
         action: txAction || '',
-        txDirText: `From ${truncateMiddle(
-            txn?.transaction?.transaction?.data.sender
-        )}`,
+        txDirText: `From ${truncateMiddle(txn?.analyzedTransaction?.from)}`,
         link: drilldownLink,
         date: timeDisplay,
         header: txCommands || 'Sui Action',
