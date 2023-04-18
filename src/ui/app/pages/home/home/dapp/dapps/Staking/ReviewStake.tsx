@@ -8,7 +8,9 @@ import StakeSummary from './StakeSummary';
 import { useValidatorsWithApy } from './ValidatorList';
 import { ToS_LINK } from '_src/shared/constants';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
+import { calculateStakeRewardStart } from '_src/ui/app/helpers/staking/calculateStakeRewardStart';
 import { useAppSelector } from '_src/ui/app/hooks';
+import { useSystemState } from '_src/ui/app/hooks/useSystemState';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
 import { api, thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
@@ -16,8 +18,6 @@ import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
-import { calculateStakeRewardStart } from '_src/ui/app/helpers/staking/calculateStakeRewardStart';
-import { useSystemState } from '_src/ui/app/hooks/useSystemState';
 
 function createStakeTransaction(amount: bigint, validator: string) {
     const tx = new TransactionBlock();
@@ -48,8 +48,7 @@ const ReviewStake: React.FC = () => {
         return validators && validators[validatorSuiAddress || ''];
     }, [validatorSuiAddress, validators]);
 
-    const { data: systemState, isFetching: isFetchingSystemState } =
-        useSystemState();
+    const { data: systemState } = useSystemState();
 
     const { formattedDistanceToRewards } = useMemo(() => {
         return calculateStakeRewardStart(systemState);
@@ -92,7 +91,8 @@ const ReviewStake: React.FC = () => {
                 }).toString()}`
             );
         } catch (error) {
-            console.log('error', error);
+            // eslint-disable-next-line no-console
+            console.error('error', error);
             toast(
                 <FailAlert text="Something went wrong. Please make sure you have enough SUI and try again." />
             );

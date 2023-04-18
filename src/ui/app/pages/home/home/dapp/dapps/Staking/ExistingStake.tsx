@@ -4,6 +4,8 @@ import {
     SUI_TYPE_ARG,
     type SuiAddress,
 } from '@mysten/sui.js';
+import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useValidatorsWithApy } from './ValidatorList';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
@@ -13,8 +15,6 @@ import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 import Title from '_src/ui/app/shared/typography/Title';
-import { useNavigate } from 'react-router-dom';
-import { useCallback } from 'react';
 
 export interface Stake {
     status: 'Active' | 'Pending' | 'Unstaked';

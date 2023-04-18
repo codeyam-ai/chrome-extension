@@ -17,34 +17,6 @@ export function useGetDelegatedStakes(
     );
 }
 
-const calculateTotalStakeForValidator = null;
-
-// TODO does not filter pending...
-// const calculateTotalActivePendingStake = (delegatedStake: DelegatedStake[]) => {
-//     if (!delegatedStake) return BigInt(0);
-
-//     const calculateTotalStakeForValidator = (delegatedStake: DelegatedStake) = {
-//         return delegatedStake.reduce(
-//                 curr.stakes.reduce(
-//                     (total, { principal }) => total + BigInt(principal),
-//                     acc
-//                 ),
-
-//         );
-//     };
-
-//     return delegatedStake.reduce(
-//         (acc, curr) =>
-
-//             curr.stakes.reduce(
-//                 (total, { principal }) => total + BigInt(principal),
-//                 acc
-//             ),
-
-//         BigInt(0)
-//     );
-// };
-
 const StakingHome: React.FC = () => {
     const { address } = useAppSelector(({ account }) => account);
     const { data: delegatedStakes, isLoading } = useGetDelegatedStakes(

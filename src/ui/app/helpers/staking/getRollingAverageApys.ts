@@ -8,6 +8,8 @@ import Decimal from 'decimal.js';
 import getValidatorEvents from './getValidatorEvents';
 import { roundFloat } from '../roundFloat';
 
+import type { SuiSystemStateSummary } from '@mysten/sui.js';
+
 // recentEpochRewards is list of the last 30 epoch rewards for a specific validator
 // APY_e = (1 + epoch_rewards / stake)^365-1
 // APY_e_30rollingaverage = average(APY_e,APY_e-1,…,APY_e-29);
@@ -53,7 +55,7 @@ const calculateApy = (stake: string, poolStakingReward: string) => {
 
 export async function getRollingAverageApys(
     numberOfValidators: number | null,
-    systemState: any
+    systemState: SuiSystemStateSummary
 ) {
     // Set the limit to the number of validators  * the rolling average
     // Order the response in descending order so that the most recent epoch are at the top
@@ -91,7 +93,7 @@ export async function getRollingAverageApys(
         );
         const apyGroups: ApyGroups = {};
         // validatorEpochEvents.data.forEach(({ parsedJson }: any) => {
-        validatorEpochEvents?.forEach(({ parsedJson }: any) => {
+        validatorEpochEvents?.forEach(({ parsedJson }) => {
             const { stake, pool_staking_reward, validator_address } =
                 parsedJson as ParsedJson;
             if (!apyGroups[validator_address]) {

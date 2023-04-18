@@ -26,13 +26,13 @@ interface SuiValidatorWithApyMap {
 const getValidatorsWithApy = async () => {
     const provider = api.instance.fullNode;
     const res = await provider.getLatestSuiSystemState();
-    const test = await getRollingAverageApys(1000, res);
+    const rollingAverageApys = await getRollingAverageApys(1000, res);
 
     const validatorsWithApy: SuiValidatorWithApyMap =
         res.activeValidators.reduce((acc, validator) => {
             acc[validator.suiAddress] = {
                 ...validator,
-                apy: test.data[validator.suiAddress],
+                apy: rollingAverageApys.data?.[validator.suiAddress] ?? 0,
             };
 
             return acc;
