@@ -8,7 +8,7 @@ const TransactionRows = ({
     transactions: FormattedTransaction[];
 }) => {
     return (
-        <div className="px-6 pb-6 divide-ethos-light-text-stroke">
+        <div className="px-6 pb-6 flex flex-col gap-6 divide-ethos-light-text-stroke">
             {transactions &&
                 transactions.map((txn: FormattedTransaction, index: number) => {
                     return (

@@ -8,11 +8,16 @@ import {
     ArrowUpIcon,
     FireIcon,
     SparklesIcon,
+    XMarkIcon,
 } from '@heroicons/react/24/solid';
+import { Link } from 'react-router-dom';
 
 import { ActivityRow } from './ActivityRow';
 import IconContainer from '../../icons/IconContainer';
 import SuiIcon from '../../svg/SuiIcon';
+import ActionIcon from '../../transactions/ActionIcon';
+import Body from '../../typography/Body';
+import { getIcon } from '_src/ui/app/helpers/transactions';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import UnknownToken from '_src/ui/app/pages/home/home/UnknownToken';
 
@@ -50,9 +55,33 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
     }).toString()}`;
 
     return (
-        <div>
-            <div> {timeDisplay} </div>
-        </div>
+        <Link to={drilldownLink} className="flex flex-col gap-1">
+            <div className="flex flex-row justify-between items-center">
+                <div></div>
+                <Body isTextColorMedium>{timeDisplay}</Body>
+            </div>
+            <div>
+                {image ? (
+                    typeof image === 'string' ? (
+                        <img
+                            src={image}
+                            alt={`${action} Transaction`}
+                            className="h-10 w-10 rounded-md"
+                        />
+                    ) : (
+                        image
+                    )
+                ) : (
+                    <ActionIcon>
+                        {analyzedTransaction.status === 'failure' || !action ? (
+                            <XMarkIcon />
+                        ) : (
+                            getIcon(action)
+                        )}
+                    </ActionIcon>
+                )}
+            </div>
+        </Link>
     );
 };
 
