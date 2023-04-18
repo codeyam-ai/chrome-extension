@@ -1,11 +1,11 @@
 import truncateMiddle from '../../helpers/truncate-middle';
 import { useAppSelector } from '../../hooks';
 import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
+import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import CopyBody from '../typography/CopyBody';
 
 import type { SendTransactionInfo } from '../../helpers/transactions/sendTransactionAnalysis';
-import Body from '../typography/Body';
 
 const SendingSummary = ({
     sendingTransactionInfo,
@@ -47,8 +47,8 @@ const SendingSummary = ({
                         <Body>{otherAddressWallet.name}</Body>
                     </div>
                 ) : (
-                    <CopyBody txt={sendingTransactionInfo.recipient}>
-                        truncateMiddle(otherAddress)
+                    <CopyBody txt={otherAddress}>
+                        {truncateMiddle(otherAddress)}
                     </CopyBody>
                 )}
             </div>

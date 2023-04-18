@@ -7,7 +7,7 @@ export type TxAction =
     | 'staking'
     | 'mint'
     | 'transfer'
-    | 'func'
+    | 'function'
     | 'clone'
     | 'modify'
     | 'burn'
@@ -23,7 +23,7 @@ const getTxAction = (analyzedTransaction: AnalyzedTransaction): TxAction => {
     }
 
     if (analyzedTransaction.important?.moveCalls) {
-        return 'func';
+        return 'function';
     }
 
     if (analyzedTransaction.important?.sending) {

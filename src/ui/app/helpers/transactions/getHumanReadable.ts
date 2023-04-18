@@ -3,8 +3,6 @@ import getTxAction from './getTxAction';
 import convertUnixTimeToLocalTime from '../convertUnixTimeToLocalTime';
 
 import type { AnalyzedTransaction } from './analyzeTransactions';
-import type { TxAction } from './getTxAction';
-import type { ReactNode } from 'react';
 
 const getHumanReadable = (analyzedTransaction: AnalyzedTransaction) => {
     const timeDisplay = convertUnixTimeToLocalTime(

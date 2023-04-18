@@ -1,4 +1,5 @@
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import classNames from 'classnames';
 import { useMemo } from 'react';
 
 import { useFormatCoin } from '../../hooks';
@@ -6,7 +7,6 @@ import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 
 import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTransactions';
-import classNames from 'classnames';
 
 const ValueAndGas = ({
     totalGasUsed,
