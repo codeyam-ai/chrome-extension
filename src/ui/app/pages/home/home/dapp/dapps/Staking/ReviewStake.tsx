@@ -1,16 +1,17 @@
 import { TransactionBlock, SUI_SYSTEM_STATE_OBJECT_ID } from '@mysten/sui.js';
+import { useQueryClient } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { useMemo, useCallback, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import StakeSummary from './StakeSummary';
-import { useValidatorsWithApy } from './ValidatorList';
 import { ToS_LINK } from '_src/shared/constants';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import { calculateStakeRewardStart } from '_src/ui/app/helpers/staking/calculateStakeRewardStart';
 import { useAppSelector } from '_src/ui/app/hooks';
-import { useSystemState } from '_src/ui/app/hooks/useSystemState';
+import { useSystemState } from '_src/ui/app/hooks/staking/useSystemState';
+import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
 import { api, thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
@@ -42,7 +43,8 @@ const ReviewStake: React.FC = () => {
     const [searchParams] = useSearchParams();
     const validatorSuiAddress = searchParams.get('validator');
 
-    const { validators } = useValidatorsWithApy();
+    const { data: validators } = useValidatorsWithApy();
+    const queryClient = useQueryClient();
 
     const validator = useMemo(() => {
         return validators && validators[validatorSuiAddress || ''];
@@ -83,6 +85,14 @@ const ReviewStake: React.FC = () => {
                     showEvents: true,
                 },
             });
+            Promise.all([
+                queryClient.invalidateQueries({
+                    queryKey: ['system', 'state'],
+                }),
+                queryClient.invalidateQueries({
+                    queryKey: ['validator', validatorSuiAddress],
+                }),
+            ]);
             navigate(
                 `/home/staking/complete?${new URLSearchParams({
                     response: response.digest,
@@ -104,6 +114,7 @@ const ReviewStake: React.FC = () => {
         amount,
         authentication,
         navigate,
+        queryClient,
         validatorSuiAddress,
     ]);
 

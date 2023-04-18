@@ -1,11 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useCallback } from 'react';
 
 import Loading from '_src/ui/app/components/loading';
-import { getRollingAverageApys } from '_src/ui/app/helpers/staking/getRollingAverageApys';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
-import { api } from '_src/ui/app/redux/store/thunk-extras';
+import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { SuiAddress, SuiValidatorSummary } from '@mysten/sui.js';
@@ -19,41 +17,11 @@ interface ValidatorListProps {
     selectedValidator?: SuiAddress;
 }
 
-interface SuiValidatorWithApyMap {
-    [validatorAddress: SuiAddress]: SuiValidatorSummaryWithApy;
-}
-
-const getValidatorsWithApy = async () => {
-    const provider = api.instance.fullNode;
-    const res = await provider.getLatestSuiSystemState();
-    const rollingAverageApys = await getRollingAverageApys(1000, res);
-
-    const validatorsWithApy: SuiValidatorWithApyMap =
-        res.activeValidators.reduce((acc, validator) => {
-            acc[validator.suiAddress] = {
-                ...validator,
-                apy: rollingAverageApys.data?.[validator.suiAddress] ?? 0,
-            };
-
-            return acc;
-        }, {} as SuiValidatorWithApyMap);
-    return validatorsWithApy;
-};
-
-export const useValidatorsWithApy = () => {
-    const { isFetching, data: validators } = useQuery(
-        ['validators-with-apy'],
-        getValidatorsWithApy
-    );
-
-    return { isFetching, validators };
-};
-
 const ValidatorList: React.FC<ValidatorListProps> = ({
     onSelectValidator,
     selectedValidator,
 }) => {
-    const { isFetching, validators } = useValidatorsWithApy();
+    const { isFetching, data: validators } = useValidatorsWithApy();
 
     return (
         <Loading loading={isFetching} big={true}>
