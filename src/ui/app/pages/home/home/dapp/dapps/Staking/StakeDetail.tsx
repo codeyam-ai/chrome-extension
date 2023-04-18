@@ -27,7 +27,7 @@ interface Stake {
     stakeRequestEpoch: string;
     stakeActiveEpoch: string;
     principal: string;
-    estimatedReward?: number | undefined;
+    estimatedReward?: string | undefined;
 }
 
 function revokeStakeTransaction(stakedSuiId: SuiAddress) {
@@ -169,7 +169,7 @@ const StakeRow = ({ stake }: { stake: Stake }) => {
                 <div className="flex gap-1">
                     <Body isTextColorMedium>Est. Reward:</Body>
                     <Body isSemibold>
-                        {mistToSui(stake.estimatedReward, 2)} SUI
+                        {mistToSui(Number(stake.estimatedReward), 2)} SUI
                     </Body>
                 </div>
             </div>
