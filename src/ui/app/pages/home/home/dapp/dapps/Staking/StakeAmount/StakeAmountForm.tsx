@@ -1,9 +1,15 @@
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import BigNumber from 'bignumber.js';
 import { Form, useField, useFormikContext } from 'formik';
 import { useMemo } from 'react';
 
+import StakeSummary from '../StakeSummary';
+import { type SuiValidatorSummaryWithApy } from '../ValidatorList';
+import ClickableTooltip from '_src/ui/app/components/ClickableTooltip';
 import Loading from '_src/ui/app/components/loading';
 import { calculateStakeRewardStart } from '_src/ui/app/helpers/staking/calculateStakeRewardStart';
-import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
+import { useFormatCoin } from '_src/ui/app/hooks';
 import { useSystemState } from '_src/ui/app/hooks/useSystemState';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
 import Button from '_src/ui/app/shared/buttons/Button';
@@ -11,16 +17,6 @@ import SuiIcon from '_src/ui/app/shared/svg/SuiIcon';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
-import StakeSummary from '../StakeSummary';
-import { type SuiValidatorSummaryWithApy } from '../ValidatorList';
-import BigNumber from 'bignumber.js';
-import { useFormatCoin } from '_src/ui/app/hooks';
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
-import {
-    InformationCircleIcon,
-    QuestionMarkCircleIcon,
-} from '@heroicons/react/24/outline';
-import ClickableTooltip from '_src/ui/app/components/ClickableTooltip';
 
 interface StakeAmountFormProps {
     validator: SuiValidatorSummaryWithApy;

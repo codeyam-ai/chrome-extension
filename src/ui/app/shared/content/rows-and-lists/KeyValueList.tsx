@@ -7,7 +7,6 @@ import CopyBody from '../../typography/CopyBody';
 import ClickableLargeTooltip from '_src/ui/app/components/ClickableTooltip';
 
 import type { ReactElement } from 'react';
-import { padding } from 'aes-js';
 
 export type KeyNameAndValue = {
     keyName: string;
@@ -29,11 +28,6 @@ const KeyValueList = ({
     rowClassName,
     paddingOverride,
 }: KeyValueListProps) => {
-    console.log('padding override', paddingOverride);
-    console.log(
-        'padding calc',
-        paddingOverride ? paddingOverride : 'px-6 pb-6'
-    );
     return (
         <div className={paddingOverride ? paddingOverride : 'px-6 pb-6'}>
             {header && (
