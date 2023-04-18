@@ -1,5 +1,6 @@
-import Body from 'src/components/typography/body/Body';
-import { BasicTransactionInfo } from '../../../lib/transactions/basicTransactionAnalysis';
+import Body from '../typography/Body';
+
+import type { BasicTransactionInfo } from '../../helpers/transactions/basicTransactionAnalysis';
 
 const translateCommand = (command: string) => {
     switch (command) {

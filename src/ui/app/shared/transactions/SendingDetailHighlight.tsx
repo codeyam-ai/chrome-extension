@@ -1,15 +1,16 @@
-import { SuiAddress } from '@mysten/sui.js';
-import SuiIcon from 'src/components/icons/SuiIcon/SuiIcon';
-import Body from 'src/components/typography/body/Body';
-import BodyLarge from 'src/components/typography/bodyLarge/BodyLarge';
-import Copyable from 'src/components/utility/Copyable/Copyable';
-import truncateMiddle from 'src/lib/format/truncateMiddle';
-import { useFormatCoin } from 'src/lib/format/useFormatCoin';
-import { SendTransactionInfo } from 'src/lib/transactions/sendTransactionAnalysis';
+import truncateMiddle from '../../helpers/truncate-middle';
+import { useFormatCoin } from '../../hooks';
+import SuiIcon from '../svg/SuiIcon';
+import Body from '../typography/Body';
+import BodyLarge from '../typography/BodyLarge';
+import CopyBody from '../typography/CopyBody';
+
+import type { SendTransactionInfo } from '../../helpers/transactions/sendTransactionAnalysis';
+import type { SuiAddress } from '@mysten/sui.js';
 
 export type CoinSendingDetailHighlightArgs = {
     isSender: boolean;
-    coinAmount: BigInt;
+    coinAmount: bigint;
     coinType: string;
 };
 
@@ -40,7 +41,7 @@ const CoinSendingDetailHighlight = ({
                     + {formattedAmount} {symbol}
                 </BodyLarge>
             )}
-            <SuiIcon width={18} />
+            <SuiIcon height={18} width={18} />
         </div>
     );
 };
@@ -63,9 +64,9 @@ const NFTSendingDetailHighlight = ({
                     +1 {structName}
                 </BodyLarge>
             )}
-            <Copyable copyText={objectId}>
+            <CopyBody txt={objectId}>
                 <Body isTextColorMedium>{truncateMiddle(objectId)}</Body>
-            </Copyable>
+            </CopyBody>
         </div>
     );
 };

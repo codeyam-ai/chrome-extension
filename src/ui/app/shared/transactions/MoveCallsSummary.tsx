@@ -1,5 +1,6 @@
-import Body from 'src/components/typography/body/Body';
-import { MoveCallTransactionInfo } from 'src/lib/transactions/moveCallTransactionAnalysis';
+import Body from '../typography/Body';
+
+import type { MoveCallTransactionInfo } from '../../helpers/transactions/moveCallTransactionAnalysis';
 
 const capitalize = (s: string) => {
     if (typeof s !== 'string') return '';

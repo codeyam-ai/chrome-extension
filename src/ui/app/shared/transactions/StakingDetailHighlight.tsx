@@ -1,8 +1,10 @@
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
-import SuiIcon from 'src/components/icons/SuiIcon/SuiIcon';
-import BodyLarge from 'src/components/typography/bodyLarge/BodyLarge';
-import { useFormatCoin } from 'src/lib/format/useFormatCoin';
-import { StakingTransactionInfo } from 'src/lib/transactions/stakingTransactionAnalysis';
+
+import { useFormatCoin } from '../../hooks';
+import SuiIcon from '../svg/SuiIcon';
+import BodyLarge from '../typography/BodyLarge';
+
+import type { StakingTransactionInfo } from '../../helpers/transactions/stakingTransactionAnalysis';
 
 const StakingDetailHighlight = ({
     stakingInfo,
@@ -21,7 +23,7 @@ const StakingDetailHighlight = ({
             <BodyLarge className="!text-ethos-light-green !dark:text-ethos-dark-green">
                 {formattedAmount} {symbol}
             </BodyLarge>
-            <SuiIcon width={18} />
+            <SuiIcon height={18} width={18} />
         </div>
     );
 };

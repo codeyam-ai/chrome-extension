@@ -1,7 +1,8 @@
-import Body from 'src/components/typography/body/Body';
-import Copyable from 'src/components/utility/Copyable/Copyable';
-import truncateMiddle from 'src/lib/format/truncateMiddle';
-import { StakingTransactionInfo } from 'src/lib/transactions/stakingTransactionAnalysis';
+import truncateMiddle from '../../helpers/truncate-middle';
+import Body from '../typography/Body';
+import CopyBody from '../typography/CopyBody';
+
+import type { StakingTransactionInfo } from '../../helpers/transactions/stakingTransactionAnalysis';
 
 const StakingSummary = ({
     stakingTransactionInfo,
@@ -13,9 +14,9 @@ const StakingSummary = ({
     return (
         <Body className={`flex gap-2 ${small ? '!text-xs' : ''}`}>
             Staked to:
-            <Copyable copyText={stakingTransactionInfo.validator}>
+            <CopyBody txt={stakingTransactionInfo.validator}>
                 {truncateMiddle(stakingTransactionInfo.validator, 15)}
-            </Copyable>
+            </CopyBody>
         </Body>
     );
 };

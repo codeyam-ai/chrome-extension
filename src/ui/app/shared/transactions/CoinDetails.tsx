@@ -1,11 +1,12 @@
-/* eslint-disable @next/next/no-img-element */
-import SuiIcon from 'src/components/icons/SuiIcon/SuiIcon';
-import Body from 'src/components/typography/body/Body';
-import BodyLarge from 'src/components/typography/bodyLarge/BodyLarge';
-import truncateString from 'src/lib/format/truncateString';
-import { getTheme } from 'src/lib/helpers/getTheme';
-import classNames from 'src/lib/styles/classNames';
-import { TxAction } from 'src/lib/transactions/getTxAction';
+import classNames from 'classnames';
+
+import { getTheme } from '../../helpers/getTheme';
+import truncateString from '../../helpers/truncate-string';
+import SuiIcon from '../svg/SuiIcon';
+import Body from '../typography/Body';
+import BodyLarge from '../typography/BodyLarge';
+
+import type { TxAction } from '../../helpers/transactions/getTxAction';
 
 interface CoinDetailsProps {
     txAction: TxAction;
@@ -38,6 +39,7 @@ const CoinDetails = ({
                         {symbol}
                     </span>
                     <SuiIcon
+                        height={16}
                         width={16}
                         color={theme === 'dark' ? 'white' : 'black'}
                     />

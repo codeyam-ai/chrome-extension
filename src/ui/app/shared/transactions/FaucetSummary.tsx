@@ -1,4 +1,4 @@
-import Body from 'src/components/typography/body/Body';
+import Body from '../typography/Body';
 
 const FaucetSummary = ({ small }: { small?: boolean }) => {
     return (

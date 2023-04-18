@@ -1,7 +1,8 @@
-import Body from 'src/components/typography/body/Body';
-import Copyable from 'src/components/utility/Copyable/Copyable';
-import truncateMiddle from 'src/lib/format/truncateMiddle';
-import { SendTransactionInfo } from 'src/lib/transactions/sendTransactionAnalysis';
+import truncateMiddle from '../../helpers/truncate-middle';
+import Body from '../typography/Body';
+import CopyBody from '../typography/CopyBody';
+
+import type { SendTransactionInfo } from '../../helpers/transactions/sendTransactionAnalysis';
 
 const SendingSummary = ({
     sendingTransactionInfo,
@@ -16,9 +17,9 @@ const SendingSummary = ({
     return (
         <Body className={`hidden lg:flex gap-2 ${small ? '!text-xs' : ''}`}>
             {isSender ? 'Sent to' : 'Received from'}:
-            <Copyable copyText={sendingTransactionInfo.recipient}>
+            <CopyBody txt={sendingTransactionInfo.recipient}>
                 {truncateMiddle(otherAddress, small ? 5 : 15)}
-            </Copyable>
+            </CopyBody>
         </Body>
     );
 };
