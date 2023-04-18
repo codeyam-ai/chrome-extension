@@ -3,8 +3,8 @@ import { useMemo, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import StakeSummary from './StakeSummary';
-import { useValidatorsWithApy } from './ValidatorList';
 import StakingIcon from '_assets/images/staking-icon.png';
+import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
@@ -15,7 +15,7 @@ const CompletedStake: React.FC = () => {
     const validatorSuiAddress = searchParams.get('validator');
     const amount = searchParams.get('amount');
 
-    const { validators } = useValidatorsWithApy();
+    const { data: validators } = useValidatorsWithApy();
 
     const validator = useMemo(() => {
         return validators && validators[validatorSuiAddress || ''];
@@ -43,12 +43,14 @@ const CompletedStake: React.FC = () => {
                     className={'mx-auto'}
                 />
 
-                <StakeSummary
-                    amount={amount || undefined}
-                    stakingAPY={validator?.apy?.toString()}
-                    rewardsStart={'Tomorrow'}
-                    gasPrice={mistToSui(+(validator?.gasPrice || '0'), 4)}
-                />
+                <div className="px-6 pb-6">
+                    <StakeSummary
+                        amount={amount || undefined}
+                        stakingAPY={validator?.apy?.toString()}
+                        rewardsStart={'Tomorrow'}
+                        gasPrice={mistToSui(+(validator?.gasPrice || '0'), 4)}
+                    />
+                </div>
             </div>
             <div>
                 <Button onClick={onNavigateToTokens}>Go to SUI Balance</Button>

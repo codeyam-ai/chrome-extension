@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { api } from '../redux/store/thunk-extras';
+import { api } from '../../redux/store/thunk-extras';
 
 export function useSystemState() {
     const provider = api.instance.fullNode;

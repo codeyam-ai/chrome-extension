@@ -1,21 +1,11 @@
-import { SUI_TYPE_ARG, type DelegatedStake } from '@mysten/sui.js';
-import { useQuery, type UseQueryResult } from '@tanstack/react-query';
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useMemo } from 'react';
 
 import ExistingStake from './ExistingStake';
 import StakingIntro from './StakingIntro';
 import Loading from '_src/ui/app/components/loading';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
-import { api } from '_src/ui/app/redux/store/thunk-extras';
-
-export function useGetDelegatedStakes(
-    address: string
-): UseQueryResult<DelegatedStake[], Error> {
-    const rpc = api.instance.fullNode;
-    return useQuery(['validator', address], () =>
-        rpc.getStakes({ owner: address })
-    );
-}
+import useGetDelegatedStakes from '_src/ui/app/hooks/staking/useGetDelegatedStakes';
 
 const StakingHome: React.FC = () => {
     const { address } = useAppSelector(({ account }) => account);

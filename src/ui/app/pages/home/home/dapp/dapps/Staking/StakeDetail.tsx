@@ -4,13 +4,14 @@ import {
     SUI_TYPE_ARG,
     TransactionBlock,
 } from '@mysten/sui.js';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { useGetDelegatedStakes } from './StakingHome';
-import { useValidatorsWithApy } from './ValidatorList';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
+import useGetDelegatedStakes from '_src/ui/app/hooks/staking/useGetDelegatedStakes';
+import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
 import { api, thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
@@ -63,12 +64,16 @@ const StakeDetail: React.FC = () => {
 
     const [formattedAmount, symbol] = useFormatCoin(amountStaked, SUI_TYPE_ARG);
 
-    const { validators } = useValidatorsWithApy();
+    const { data: validators } = useValidatorsWithApy();
     const validator = validators?.[delegatedStake?.validatorAddress || ''];
+
+    if (!delegatedStake?.stakes) {
+        return <Navigate to="/home/staking" />;
+    }
 
     return (
         <div className="w-full flex flex-col h-full items-center">
-            <div className="p-4">
+            <div className="p-4 flex flex-col items-center place-content-center">
                 {validator?.imageUrl ? (
                     <img
                         src={validator.imageUrl}
@@ -109,6 +114,7 @@ const StakeRow = ({ stake }: { stake: Stake }) => {
     const { stakedSuiId } = stake;
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState(false);
+    const queryClient = useQueryClient();
 
     const [formattedPrincipal, symbol] = useFormatCoin(
         stake?.principal,
@@ -144,13 +150,21 @@ const StakeRow = ({ stake }: { stake: Stake }) => {
                     showEvents: true,
                 },
             });
+            Promise.all([
+                queryClient.invalidateQueries({
+                    queryKey: ['system', 'state'],
+                }),
+                queryClient.invalidateQueries({
+                    queryKey: ['validator', address],
+                }),
+            ]);
         } catch (error) {
-            toast(<FailAlert text="Unable to revoke this Stake transation" />);
+            toast(<FailAlert text="Unable to revoke this Stake transaction" />);
         } finally {
             setLoading(false);
             setIsModalOpen(false);
         }
-    }, [activeAccountIndex, address, authentication, stakedSuiId]);
+    }, [activeAccountIndex, address, authentication, queryClient, stakedSuiId]);
 
     const onCancelConfirmRevokeStake = useCallback(() => {
         setIsModalOpen(false);
