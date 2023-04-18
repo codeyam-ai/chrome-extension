@@ -37,7 +37,7 @@ const ReceiptHeader = (analyzedTransaction: AnalyzedTransaction) => {
     }
 
     return (
-        <div className="flex flex-col gap-3 items-center py-6">
+        <div className="flex flex-col gap-3 items-center">
             {commands && (
                 <>
                     {commands.map((command, index) => (

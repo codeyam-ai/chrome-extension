@@ -21,11 +21,7 @@ const AvatarItem = ({
     subheader?: string;
     emoji?: string;
 }) => (
-    <div
-        className={
-            'p-[10px] flex flex-row space-around items-center align-center gap-4'
-        }
-    >
+    <div className={'flex flex-row space-around items-center gap-6'}>
         <WalletColorAndEmojiCircle
             emojiSizeInPx={20}
             circleSizeClasses={'w-[40px] h-[40px] auto'}
@@ -92,15 +88,11 @@ const PrimaryInteraction = ({ from, important }: AnalyzedTransaction) => {
     }
 
     return (
-        <div className={'flex flex-col'}>
+        <div className={'py-3 flex flex-col gap-3'}>
             {from && <WalletAvatarItem header="From" address={from} />}
             {toAddress && (
                 <>
-                    <div
-                        className={
-                            'py-1 pl-[18px] text-left text-ethos-light-text-medium'
-                        }
-                    >
+                    <div className="pl-3 text-ethos-light-text-medium">
                         <ChevronDoubleDownIcon width={25} height={23} />
                     </div>
                     <WalletAvatarItem header="To" address={toAddress} />

@@ -10,6 +10,7 @@ import PrimaryInteraction from './PrimaryInteraction';
 import ReceiptDetails from './ReceiptDetails';
 import ReceiptExplorerLink from './ReceiptExplorerLink';
 import ReceiptHeader from './ReceiptHeader';
+import ReceiptSpecifics from './ReceiptSpecifics';
 import analyzeTransactions, {
     type AnalyzedTransaction,
 } from '../../helpers/transactions/analyzeTransactions';
@@ -104,12 +105,12 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         );
 
     return (
-        <>
+        <div className="px-6 py-6 flex flex-col gap-6">
             <ReceiptHeader {...analyzedTransaction} />
 
-            <div className={'px-6 pb-6'}>
-                <PrimaryInteraction {...analyzedTransaction} />
-            </div>
+            <PrimaryInteraction {...analyzedTransaction} />
+
+            <ReceiptSpecifics {...analyzedTransaction} />
 
             <ReceiptDetails {...analyzedTransaction} />
 
@@ -121,7 +122,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     Save Address
                 </Button>
             )}
-        </>
+        </div>
     );
 }
 

@@ -3,6 +3,7 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import truncateMiddle from '../../helpers/truncate-middle';
 import { useFormatCoin } from '../../hooks';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
+import CopyBody from '../../shared/typography/CopyBody';
 
 import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTransactions';
 
@@ -22,7 +23,11 @@ const ReceiptDetails = ({ totalGasUsed, digest }: AnalyzedTransaction) => {
                 },
                 {
                     keyName: 'Digest',
-                    value: truncateMiddle(digest, 5),
+                    value: (
+                        <CopyBody txt={digest}>
+                            {truncateMiddle(digest, 5)}
+                        </CopyBody>
+                    ),
                 },
             ]}
         />
