@@ -1,6 +1,7 @@
 import { ChevronDoubleDownIcon } from '@heroicons/react/24/solid';
 
 import truncateMiddle from '../../helpers/truncate-middle';
+import { useAppSelector } from '../../hooks';
 import useWalletOrContact from '../../hooks/useWalletOrContact';
 import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
 import BodyLarge from '../../shared/typography/BodyLarge';
@@ -10,12 +11,12 @@ import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTran
 import type { SuiAddress } from '@mysten/sui.js';
 
 const AvatarItem = ({
-    bgColor,
+    color,
     header,
     subheader,
     emoji,
 }: {
-    bgColor?: string;
+    color?: string;
     header?: string;
     subheader?: string;
     emoji?: string;
@@ -28,7 +29,7 @@ const AvatarItem = ({
         <WalletColorAndEmojiCircle
             emojiSizeInPx={20}
             circleSizeClasses={'w-[40px] h-[40px] auto'}
-            color={bgColor || '#7E23CA'}
+            color={color || '#7E23CA'}
             emoji={emoji}
         />
         <div className={'flex flex-col items-left'}>
@@ -65,26 +66,35 @@ const WalletAvatarItem = ({
     address: SuiAddress;
 }) => {
     const wallet = useWalletOrContact(address);
+    const { activeAccountIndex, accountInfos } = useAppSelector(
+        ({ account }) => account
+    );
+    const activeAccount = accountInfos[activeAccountIndex];
 
-    if (!wallet) {
-        return <></>;
+    if (address === activeAccount.address) {
+        return <AvatarItem header={`${header}: You`} {...activeAccount} />;
+    } else {
+        return (
+            <AvatarItem
+                color={wallet?.color ?? '#6D28D9'}
+                header={`${header}: ${wallet?.name}`}
+                subheader={wallet?.address ?? ''}
+                emoji={wallet?.emoji ?? ''}
+            />
+        );
+    }
+};
+
+const PrimaryInteraction = ({ from, important }: AnalyzedTransaction) => {
+    let toAddress;
+    if (important.sending) {
+        toAddress = important.sending[0].recipient;
     }
 
     return (
-        <AvatarItem
-            bgColor={wallet.color ?? '#6D28D9'}
-            header={header}
-            subheader={wallet.address ?? ''}
-            emoji={wallet.emoji ?? ''}
-        />
-    );
-};
-
-const PrimaryInteraction = ({ from }: AnalyzedTransaction) => {
-    return (
         <div className={'flex flex-col'}>
             {from && <WalletAvatarItem header="From" address={from} />}
-            {from && (
+            {toAddress && (
                 <>
                     <div
                         className={
@@ -93,7 +103,7 @@ const PrimaryInteraction = ({ from }: AnalyzedTransaction) => {
                     >
                         <ChevronDoubleDownIcon width={25} height={23} />
                     </div>
-                    <WalletAvatarItem header="To" address={from} />
+                    <WalletAvatarItem header="To" address={toAddress} />
                 </>
             )}
         </div>
