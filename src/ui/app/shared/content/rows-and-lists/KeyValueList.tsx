@@ -1,4 +1,4 @@
-import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid';
+import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 import classNames from 'classnames';
 
 import Body from '../../typography/Body';
@@ -7,6 +7,7 @@ import CopyBody from '../../typography/CopyBody';
 import ClickableLargeTooltip from '_src/ui/app/components/ClickableTooltip';
 
 import type { ReactElement } from 'react';
+import { padding } from 'aes-js';
 
 export type KeyNameAndValue = {
     keyName: string;
@@ -19,15 +20,22 @@ interface KeyValueListProps {
     header?: string;
     keyNamesAndValues: KeyNameAndValue[];
     rowClassName?: string;
+    paddingOverride?: string;
 }
 
 const KeyValueList = ({
     header,
     keyNamesAndValues,
     rowClassName,
+    paddingOverride,
 }: KeyValueListProps) => {
+    console.log('padding override', paddingOverride);
+    console.log(
+        'padding calc',
+        paddingOverride ? paddingOverride : 'px-6 pb-6'
+    );
     return (
-        <div className={'px-6 pb-6'}>
+        <div className={paddingOverride ? paddingOverride : 'px-6 pb-6'}>
             {header && (
                 <BodyLarge isSemibold className={'mb-3 text-left'}>
                     {header}

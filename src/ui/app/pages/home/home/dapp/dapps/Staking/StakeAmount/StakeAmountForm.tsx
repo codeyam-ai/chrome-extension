@@ -16,6 +16,11 @@ import { type SuiValidatorSummaryWithApy } from '../ValidatorList';
 import BigNumber from 'bignumber.js';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import {
+    InformationCircleIcon,
+    QuestionMarkCircleIcon,
+} from '@heroicons/react/24/outline';
+import ClickableTooltip from '_src/ui/app/components/ClickableTooltip';
 
 interface StakeAmountFormProps {
     validator: SuiValidatorSummaryWithApy;
@@ -74,38 +79,7 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                         <Subheader className={'text-center mb-6'}>
                             How much would you like to stake?
                         </Subheader>
-                        <div className="flex flex-col justify-between p-3 rounded-lg bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
-                            <div className="flex flex-col items-center place-content-center gap-3">
-                                {validator.imageUrl ? (
-                                    <img
-                                        src={validator.imageUrl}
-                                        alt={validator.name}
-                                        className="h-9 w-9 rounded-full"
-                                    />
-                                ) : (
-                                    <div className="h-9 w-9 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
-                                )}
-                                <Body isSemibold>{validator.name}</Body>
-                                <Body isTextColorMedium>
-                                    {truncateMiddle(validator.suiAddress)}
-                                </Body>
-                                <Body>{validator.description}</Body>
-                            </div>
-                            <div className="flex justify-between pt-2">
-                                <div className="flex flex-col">
-                                    <Body isSemibold>Staking Share</Body>
-                                    <Body isTextColorMedium>
-                                        {stakingSharePercentage}%
-                                    </Body>
-                                </div>
-                                <div className="flex flex-col">
-                                    <Body isSemibold>Total Staked</Body>
-                                    <Body isTextColorMedium>
-                                        {formattedTotalStaked} SUI
-                                    </Body>
-                                </div>
-                            </div>
-                        </div>
+
                         <div className="flex flex-col gap-2 py-5 px-4 rounded-xl border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
                             <div className="flex justify-between">
                                 <Body isSemibold>Amount</Body>
@@ -139,8 +113,42 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                             )}
                         </div>
                     </div>
-                    <div>
-                        <div className={'-mx-6'}>
+                    <div className="flex flex-col justify-between p-3 mt-9 mb-4 rounded-lg bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary divide-y divide-ethos-light-text-stroke dark:divide-ethos-dark-text-stroke">
+                        <div className="flex justify-between pt-2 pb-4">
+                            <div className="flex place-content-center gap-1">
+                                {validator.imageUrl ? (
+                                    <img
+                                        src={validator.imageUrl}
+                                        alt={validator.name}
+                                        className="h-5 w-5 rounded-full"
+                                    />
+                                ) : (
+                                    <div className="h-5 w-5 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
+                                )}
+                                <Body isSemibold>{validator.name}</Body>
+                                <ClickableTooltip
+                                    message={validator.description}
+                                    tooltipPosition="below"
+                                >
+                                    <InformationCircleIcon className="mt-[2px] h-4 w-4 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
+                                </ClickableTooltip>
+                            </div>
+                            <div className="flex flex-col items-end gap-2">
+                                <div className="flex gap-1">
+                                    <Body isTextColorMedium>Staking Share</Body>
+                                    <Body isSemibold>
+                                        {stakingSharePercentage}%
+                                    </Body>
+                                </div>
+                                <div className="flex gap-1">
+                                    <Body isTextColorMedium>Total Staked</Body>
+                                    <Body isSemibold>
+                                        {formattedTotalStaked} SUI
+                                    </Body>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="pt-4">
                             <StakeSummary
                                 amount={''}
                                 rewardsStart={formattedDistanceToRewards}
@@ -151,6 +159,8 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                                 )}
                             />
                         </div>
+                    </div>
+                    <div>
                         <div className="!mb-6">
                             <Button
                                 disabled={!isValid || isSubmitting}

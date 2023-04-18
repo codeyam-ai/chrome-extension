@@ -47,6 +47,7 @@ const StakeSummary: React.FC<StakeSummaryProps> = ({
 
     return (
         <KeyValueList
+            paddingOverride={'p-0'}
             rowClassName="pb-2 border-b border-ethos-light-purple dark:border-ethos-dark-text-stroke"
             keyNamesAndValues={keyValueList}
         />

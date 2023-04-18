@@ -6,7 +6,7 @@ import Body from '_src/ui/app/shared/typography/Body';
 import type { ReactNode } from 'react';
 
 interface ClickableTooltipProps {
-    message: string;
+    message: string | ReactNode;
     children: ReactNode;
     tooltipPosition?: 'above' | 'below';
 }
@@ -77,7 +77,7 @@ const ClickableTooltip: React.FC<ClickableTooltipProps> = ({
     }, [handleClickOutside]);
 
     return (
-        <div className="flex justify-center">
+        <div>
             <button
                 className="relative"
                 type="button"
