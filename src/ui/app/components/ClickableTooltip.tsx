@@ -45,6 +45,10 @@ const ClickableTooltip: React.FC<ClickableTooltipProps> = ({
         []
     );
 
+    const handleScroll = useCallback(() => {
+        isTooltipVisible && setIsTooltipVisible(false);
+    }, [isTooltipVisible]);
+
     useEffect(() => {
         if (textRef.current) {
             const rect = textRef.current.getBoundingClientRect();
@@ -76,6 +80,13 @@ const ClickableTooltip: React.FC<ClickableTooltipProps> = ({
         };
     }, [handleClickOutside]);
 
+    useEffect(() => {
+        document.addEventListener('wheel', handleScroll);
+        return () => {
+            document.removeEventListener('wheel', handleScroll);
+        };
+    }, [handleScroll]);
+
     return (
         <div>
             <button
@@ -89,7 +100,7 @@ const ClickableTooltip: React.FC<ClickableTooltipProps> = ({
             <div
                 ref={tooltipRef}
                 className={classNames(
-                    'fixed px-4 py-6 w-[330px] break-words rounded-lg shadow-lg transition-opacity duration-300 ease-in-out bg-ethos-dark-background-secondary',
+                    'fixed px-4 py-6 w-[330px] z-50 break-words rounded-lg shadow-lg transition-opacity duration-300 ease-in-out bg-ethos-dark-background-secondary',
                     isTooltipVisible
                         ? 'opacity-100'
                         : 'opacity-0 pointer-events-none'

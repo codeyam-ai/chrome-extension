@@ -55,8 +55,9 @@ const KeyValueList = ({
                             {item.keyHelpMessage && (
                                 <ClickableLargeTooltip
                                     message={item.keyHelpMessage}
+                                    tooltipPosition="above"
                                 >
-                                    <QuestionMarkCircleIcon className="h-4 w-4 ml-1 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
+                                    <QuestionMarkCircleIcon className="h-4 w-4 ml-1 mt-1 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
                                 </ClickableLargeTooltip>
                             )}
                         </div>
