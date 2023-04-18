@@ -40,7 +40,7 @@ import type { AccountInfo } from '../../KeypairVault';
 import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTransactions';
 import type {
     FormattedTransaction,
-    HumanReadableDetails,
+    HumanReadableTransactionValues,
 } from '../../helpers/transactions/types';
 
 import st from './ReceiptCard.module.scss';
@@ -227,34 +227,35 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         [accountInfos]
     );
 
-    const humanReadableTxInfo: HumanReadableDetails | null = useMemo(() => {
-        return analyzedTransaction && address
-            ? getHumanReadable(address, analyzedTransaction)
-            : null;
-    }, [address, analyzedTransaction]);
+    const humanReadableTxInfo: HumanReadableTransactionValues | null =
+        useMemo(() => {
+            return analyzedTransaction
+                ? getHumanReadable(analyzedTransaction)
+                : null;
+        }, [analyzedTransaction]);
+
+    const recipient = useMemo(
+        () => analyzedTransaction?.important.sending?.[0].recipient,
+        [analyzedTransaction]
+    );
 
     const contactTo = useAppSelector(({ contacts: { contacts } }) =>
-        contacts.find(
-            (contact) => contact.address === humanReadableTxInfo?.addresses?.to
-        )
+        contacts.find((contact) => contact.address === recipient)
     );
 
     const isToWalletIOwn = useAppSelector(({ account: { accountInfos } }) =>
-        accountInfos.find(
-            (accountInfo) =>
-                accountInfo.address === humanReadableTxInfo?.addresses?.to
-        )
+        accountInfos.find((accountInfo) => accountInfo.address === recipient)
     );
 
     const handleClickAddContact = useCallback(() => {
-        if (humanReadableTxInfo?.addresses?.to) {
+        if (recipient) {
             navigate(
                 `/home/address-book/add?${new URLSearchParams({
-                    newContactAddress: humanReadableTxInfo?.addresses?.to,
+                    newContactAddress: recipient,
                 }).toString()}`
             );
         }
-    }, [navigate, humanReadableTxInfo?.addresses?.to]);
+    }, [navigate, recipient]);
 
     if (!analyzedTransaction || humanReadableTxInfo === null)
         return (
@@ -263,19 +264,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             </div>
         );
 
-    const {
-        txAction,
-        timeDisplay,
-        txType,
-        txAmount,
-        txStatus,
-        txUsdAmount,
-        gasFeeInSui,
-        txCommands,
-        displayImage,
-        otherAddressStr,
-        addresses,
-    } = humanReadableTxInfo;
+    const { timeDisplay, action, image } = humanReadableTxInfo;
 
     /*
     // TODO: Include support for coins other than SUI
@@ -289,22 +278,21 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     */
 
     let transferObj;
-    const transferAction = txAction;
+    const transferAction = action;
 
     switch (transferAction) {
         case 'send':
             transferObj = {
                 txName: 'Sent',
                 transfer: 'To',
-                txIcon: (
-                    <Icon
-                        displayIcon={<ArrowUpCircleIcon />}
-                        isRound={txType === 'nft' ? false : true}
-                    />
+                txIcon: image ? (
+                    image
+                ) : (
+                    <Icon displayIcon={<ArrowUpCircleIcon />} isRound={true} />
                 ),
                 addressTruncate: 'get-to-str',
                 address: 'get-to-str',
-                failedMsg: txStatus === 'success' || 'Failed',
+                failedMsg: analyzedTransaction.status === 'success' || 'Failed',
             };
             break;
         case 'receive':
@@ -314,66 +302,65 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                 txIcon: (
                     <Icon
                         displayIcon={<ArrowDownCircleIcon />}
-                        isRound={txType === 'nft' ? false : true}
+                        isRound={true}
                     />
                 ),
-                addressTruncate: truncateMiddle(otherAddressStr, 5),
-                address: otherAddressStr,
+                addressTruncate: truncateMiddle(recipient, 5),
+                address: recipient,
                 failedMsg: '',
             };
             break;
         default:
             transferObj = {
-                txName: txAction === 'mint' ? 'Minted' : `${txAction}`,
+                txName: action === 'mint' ? 'Minted' : `${action}`,
                 txIcon:
-                    txAction === 'mint' ? (
-                        <Icon
-                            isRound={txType === 'coin' || txType === 'sui'}
-                            displayIcon={<SparklesIcon />}
-                        />
+                    action === 'mint' ? (
+                        <Icon isRound={false} displayIcon={<SparklesIcon />} />
                     ) : (
                         <Icon displayIcon={<CogIcon />} />
                     ),
-                transfer: txAction === 'send' ? 'To' : 'From',
+                transfer: action === 'send' ? 'To' : 'From',
                 address: false,
                 addressTruncate: false,
-                failedMsg: txStatus === 'success' || 'Failed',
+                failedMsg: analyzedTransaction.status === 'success' || 'Failed',
             };
             break;
     }
 
-    const fromWallet = addresses?.from ? getAccount(addresses.from) : null;
-    const toWallet = addresses?.to ? getAccount(addresses.to) : null;
+    const fromWallet = analyzedTransaction.from
+        ? getAccount(analyzedTransaction.from)
+        : null;
+    const toWallet = recipient ? getAccount(recipient) : null;
 
-    function getDetailsFieldsForSuiTransactions() {
-        const fields = [
-            {
-                keyName: (txAmount && 'Amount') || '',
-                value: (txAmount && txAmount + ' SUI') || '',
-            },
-            {
-                keyName: 'Transaction Fee',
-                value: `${gasFeeInSui} SUI`,
-            },
-        ];
+    // function getDetailsFieldsForSuiTransactions() {
+    //     const fields = [
+    //         // {
+    //         //     keyName: (txAmount && 'Amount') || '',
+    //         //     value: (txAmount && txAmount + ' SUI') || '',
+    //         // },
+    //         {
+    //             keyName: 'Transaction Fee',
+    //             value: `${analyzedTransaction?.totalGasUsed} SUI`,
+    //         },
+    //     ];
 
-        if (featureFlags.showUsd) {
-            fields.push({
-                keyName: 'Total (USD)',
-                value: txUsdAmount as string,
-            });
-        }
+    //     // if (featureFlags.showUsd) {
+    //     //     fields.push({
+    //     //         keyName: 'Total (USD)',
+    //     //         value: txUsdAmount as string,
+    //     //     });
+    //     // }
 
-        return fields;
-    }
+    //     return fields;
+    // }
 
     return (
         <>
-            <div className={'pt-6 px-6 pb-8'}>
+            {/* <div className={'pt-6 px-6 pb-8'}>
                 <AssetCard
                     theme={theme}
                     txType={txType}
-                    imgUrl={displayImage || img || ''}
+                    imgUrl={image || img || ''}
                     name={txCommands || 'NFT'}
                     icon={transferObj.txIcon} // TODO: handle success / failure icon
                 />
@@ -388,8 +375,8 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                 <Body className={'text-ethos-light-text-medium'}>
                     {timeDisplay}
                 </Body>
-            </div>
-            {txAction !== 'mint' && (
+            </div> */}
+            {/* {txAction !== 'mint' && (
                 <div className={'px-6 pb-6'}>
                     <TxTransfer
                         ToFrom={{
@@ -397,7 +384,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                                 emoji: fromWallet?.emoji || '',
                                 bgColor: fromWallet?.color || '#6D28D9',
                                 header: fromWallet?.name || 'From',
-                                subheader: addresses?.from || '',
+                                subheader: analyzedTransaction.from || '',
                             },
                             to: {
                                 emoji:
@@ -408,20 +395,20 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                                     '#6D28D9',
                                 header:
                                     toWallet?.name || contactTo?.name || 'To',
-                                subheader: addresses?.to || '',
+                                subheader: recipient || '',
                             },
                         }}
                     />
                 </div>
-            )}
+            )} */}
 
-            {txType === 'nft' ? (
+            {/* {txType === 'nft' ? (
                 <KeyValueList
                     header={'Details'}
                     keyNamesAndValues={[
                         {
                             keyName: 'Transaction Fee',
-                            value: `${gasFeeInSui} SUI`,
+                            value: `${analyzedTransaction.totalGasUsed} SUI`,
                         },
                         {
                             keyName: 'Digest',
@@ -437,7 +424,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
                     header={'Details'}
                     keyNamesAndValues={getDetailsFieldsForSuiTransactions()}
                 />
-            )}
+            )} */}
 
             <div className={'px-6 pb-6'}>
                 <div className={'flex flex-row justify-between'}>

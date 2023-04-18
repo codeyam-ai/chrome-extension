@@ -56,7 +56,7 @@ export const queryTransactionsByAddress = async (
     const analyzedTxBlock = analyzeTransactions(address, txBlocks);
 
     const formattedTxBlocks = analyzedTxBlock.map((analyzedTransaction) => {
-        const humanReadable = getHumanReadable(address, analyzedTransaction);
+        const humanReadable = getHumanReadable(analyzedTransaction);
         return {
             analyzedTransaction: analyzedTransaction,
             humanReadable: humanReadable,
