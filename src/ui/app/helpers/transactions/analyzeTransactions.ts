@@ -32,6 +32,7 @@ export type AnalyzedTransaction = {
     owner: SuiAddress;
     digest: string;
     timestampMs?: string;
+    isSender: boolean;
     from?: SuiAddress;
     totalGasUsed?: bigint;
     important: ImportantTransactionInfo;
@@ -92,6 +93,7 @@ const analyzeTransactions = (
             owner: ownerAddress,
             digest: transaction.digest,
             timestampMs: transaction.timestampMs,
+            isSender: ownerAddress === transaction.transaction?.data?.sender,
             from: transaction.transaction?.data?.sender,
             totalGasUsed,
             important,

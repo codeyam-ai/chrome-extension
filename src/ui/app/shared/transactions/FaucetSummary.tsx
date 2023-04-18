@@ -1,11 +1,7 @@
-import Body from '../typography/Body';
+import BodyLarge from '../typography/BodyLarge';
 
-const FaucetSummary = ({ small }: { small?: boolean }) => {
-    return (
-        <Body className={`flex gap-2 ${small ? '!text-xs' : ''}`}>
-            Sui Faucet
-        </Body>
-    );
+const FaucetSummary = () => {
+    return <BodyLarge isSemibold>Sui Faucet</BodyLarge>;
 };
 
 export default FaucetSummary;

@@ -24,6 +24,7 @@ import UnknownToken from '_src/ui/app/pages/home/home/UnknownToken';
 
 import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 import type { ReactNode } from 'react';
+import ValueAndGas from '../../transactions/ValueAndGas';
 
 interface TransactionRowProps {
     txn: FormattedTransaction;
@@ -56,32 +57,38 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
     }).toString()}`;
 
     return (
-        <Link to={drilldownLink} className="flex flex-col gap-1">
+        <Link to={drilldownLink} className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
                 <div></div>
                 <Body isTextColorMedium>{timeDisplay}</Body>
             </div>
-            <div className="flex gap-3 items-center">
-                {image ? (
-                    typeof image === 'string' ? (
-                        <img
-                            src={image}
-                            alt={`${action} Transaction`}
-                            className="h-10 w-10 rounded-md"
-                        />
-                    ) : (
-                        image
-                    )
-                ) : (
-                    <ActionIcon>
-                        {analyzedTransaction.status === 'failure' || !action ? (
-                            <XMarkIcon />
+            <div className="flex justify-between items-center">
+                <div className="flex gap-3 items-center">
+                    {image ? (
+                        typeof image === 'string' ? (
+                            <img
+                                src={image}
+                                alt={`${action} Transaction`}
+                                className="h-10 w-10 rounded-md"
+                            />
                         ) : (
-                            getIcon(action)
-                        )}
-                    </ActionIcon>
-                )}
-                {getSummary(analyzedTransaction)}
+                            image
+                        )
+                    ) : (
+                        <ActionIcon>
+                            {analyzedTransaction.status === 'failure' ||
+                            !action ? (
+                                <XMarkIcon />
+                            ) : (
+                                getIcon(action)
+                            )}
+                        </ActionIcon>
+                    )}
+                    {getSummary(analyzedTransaction)}
+                </div>
+                <div>
+                    <ValueAndGas {...analyzedTransaction} />
+                </div>
             </div>
         </Link>
     );

@@ -35,7 +35,7 @@ const SendingSummary = ({
                     {sendingTransactionInfo.objectId ? 'NFT' : 'Coin'}
                 </BodyLarge>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
                 <Body>{isSender ? 'To' : 'From'}:</Body>
                 {otherAddressWallet ? (
                     <div className="flex gap-1 items-center">
