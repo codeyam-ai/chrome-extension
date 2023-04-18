@@ -1,5 +1,5 @@
 import truncateMiddle from '../../helpers/truncate-middle';
-import { useAppSelector } from '../../hooks';
+import useWalletOrContact from '../../hooks/useWalletOrContact';
 import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
@@ -15,17 +15,7 @@ const SendingSummary = ({
     const { isSender, sender, recipient } = sendingTransactionInfo;
     const otherAddress = isSender ? recipient : sender;
 
-    const otherAddressWallet = useAppSelector(({ account, contacts }) => {
-        const accountInfos = account.accountInfos;
-        const contactsInfos = contacts.contacts;
-
-        return (
-            accountInfos.find(
-                (accountInfo) => accountInfo.address === otherAddress
-            ) ||
-            contactsInfos.find((contact) => contact.address === otherAddress)
-        );
-    });
+    const otherAddressWallet = useWalletOrContact(otherAddress);
 
     return (
         <div className="flex flex-col items-start justify-between">
