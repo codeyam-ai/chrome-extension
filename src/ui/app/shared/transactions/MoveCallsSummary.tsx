@@ -1,4 +1,5 @@
 import Body from '../typography/Body';
+import BodyLarge from '../typography/BodyLarge';
 
 import type { MoveCallTransactionInfo } from '../../helpers/transactions/moveCallTransactionAnalysis';
 
@@ -12,17 +13,16 @@ const capitalize = (s: string) => {
 
 const MoveCallsSummary = ({
     moveCallTransactionInfo,
-    small,
 }: {
     moveCallTransactionInfo: MoveCallTransactionInfo;
-    small?: boolean;
 }) => {
     const { moduleName, functionName } = moveCallTransactionInfo;
 
     return (
-        <Body className={small ? `!text-xs` : ''}>
-            {capitalize(moduleName)}: {capitalize(functionName)}
-        </Body>
+        <div className="flex flex-col items-start justify-between">
+            <BodyLarge isSemibold>{capitalize(moduleName)}</BodyLarge>
+            <Body isTextColorMedium>{capitalize(functionName)}</Body>
+        </div>
     );
 };
 

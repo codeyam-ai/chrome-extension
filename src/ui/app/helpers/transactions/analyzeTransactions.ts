@@ -2,6 +2,7 @@ import {
     type SuiAddress,
     type SuiTransactionBlockResponse,
     getTotalGasUsed,
+    SUI_TYPE_ARG,
 } from '@mysten/sui.js';
 
 import basicTransactionAnalysis, {
@@ -10,6 +11,7 @@ import basicTransactionAnalysis, {
 import faucetTransactionAnalysis, {
     type FaucetTransactionInfo,
 } from './faucetTransactionAnalysis';
+import findBalanceChanges from './findBalanceChanges';
 import moveCallTransactionAnalysis, {
     type MoveCallTransactionInfo,
 } from './moveCallTransactionAnalysis';
@@ -35,6 +37,7 @@ export type AnalyzedTransaction = {
     isSender: boolean;
     from?: SuiAddress;
     totalGasUsed?: bigint;
+    ownerBalanceChanges?: Record<string, bigint>;
     important: ImportantTransactionInfo;
     status: 'success' | 'failure';
     original: SuiTransactionBlockResponse;
@@ -47,6 +50,8 @@ const analyzeTransactions = (
     const results: AnalyzedTransaction[] = [];
 
     for (const transaction of transactions) {
+        const isSender = ownerAddress === transaction.transaction?.data?.sender;
+
         const important: ImportantTransactionInfo = {};
 
         const stakingTransactions = stakingTransactionAnalysis(
@@ -83,19 +88,32 @@ const analyzeTransactions = (
             important.basic = basicAnalysis;
         }
 
-        const totalGasUsed =
-            transaction?.effects &&
-            ownerAddress === transaction.transaction?.data?.sender
-                ? getTotalGasUsed(transaction.effects)
-                : undefined;
+        const totalGasUsed = transaction?.effects
+            ? getTotalGasUsed(transaction.effects)
+            : undefined;
+
+        const ownerBalanceChanges = findBalanceChanges({
+            balanceChanges: transaction.balanceChanges || [],
+            ownerAddress: ownerAddress,
+            // eslint-disable-next-line no-loop-func
+        }).reduce((acc, { coinType, amount }) => {
+            acc[coinType] = BigInt(amount);
+
+            if (isSender && coinType === SUI_TYPE_ARG && totalGasUsed) {
+                acc[coinType] += totalGasUsed;
+            }
+
+            return acc;
+        }, {} as Record<string, bigint>);
 
         results.push({
             owner: ownerAddress,
             digest: transaction.digest,
             timestampMs: transaction.timestampMs,
-            isSender: ownerAddress === transaction.transaction?.data?.sender,
+            isSender,
             from: transaction.transaction?.data?.sender,
             totalGasUsed,
+            ownerBalanceChanges,
             important,
             status: transaction.effects?.status.status ?? 'failure',
             original: transaction,

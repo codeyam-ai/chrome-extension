@@ -20,6 +20,7 @@ const StakingSummary = ({
                 <CopyBody
                     isTextColorMedium
                     txt={stakingTransactionInfo.validator}
+                    className="!text-xs"
                 >
                     {truncateMiddle(stakingTransactionInfo.validator)}
                 </CopyBody>
