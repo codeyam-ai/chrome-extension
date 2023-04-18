@@ -6,10 +6,10 @@ import LearnStaking from './LearnStaking';
 import ReviewStake from './ReviewStake';
 import SelectValidator from './SelectValidator';
 import StakeAmountPage from './StakeAmount/StakeAmountPage';
+import StakeDetail from './StakeDetail';
 import StakingHome from './StakingHome';
 import StakingIntro from './StakingIntro';
 import { DappWrapper } from '../../DappWrapper';
-import StakeDetail from './StakeDetail';
 
 function StakingNavigation() {
     return (

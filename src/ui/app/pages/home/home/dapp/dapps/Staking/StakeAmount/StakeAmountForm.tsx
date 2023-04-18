@@ -101,7 +101,7 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                                 <div className="flex flex-col">
                                     <Body isSemibold>Total Staked</Body>
                                     <Body isTextColorMedium>
-                                        {formattedTotalStaked}
+                                        {formattedTotalStaked} SUI
                                     </Body>
                                 </div>
                             </div>
