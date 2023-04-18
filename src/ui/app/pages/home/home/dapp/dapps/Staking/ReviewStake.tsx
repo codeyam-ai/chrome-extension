@@ -113,12 +113,14 @@ const ReviewStake: React.FC = () => {
                 <Subheader className={'text-center mb-6'}>
                     Review Stake
                 </Subheader>
-                <StakeSummary
-                    amount={amount || undefined}
-                    stakingAPY={validator?.apy?.toString()}
-                    rewardsStart={formattedDistanceToRewards}
-                    gasPrice={mistToSui(+(validator?.gasPrice || '0'), 4)}
-                />
+                <div className="px-6 pb-6">
+                    <StakeSummary
+                        amount={amount || undefined}
+                        stakingAPY={validator?.apy?.toString()}
+                        rewardsStart={formattedDistanceToRewards}
+                        gasPrice={mistToSui(+(validator?.gasPrice || '0'), 4)}
+                    />
+                </div>
             </div>
             <div>
                 <Body className="pb-4 mx-6">

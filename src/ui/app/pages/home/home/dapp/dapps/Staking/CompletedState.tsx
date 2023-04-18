@@ -43,12 +43,14 @@ const CompletedStake: React.FC = () => {
                     className={'mx-auto'}
                 />
 
-                <StakeSummary
-                    amount={amount || undefined}
-                    stakingAPY={validator?.apy?.toString()}
-                    rewardsStart={'Tomorrow'}
-                    gasPrice={mistToSui(+(validator?.gasPrice || '0'), 4)}
-                />
+                <div className="px-6 pb-6">
+                    <StakeSummary
+                        amount={amount || undefined}
+                        stakingAPY={validator?.apy?.toString()}
+                        rewardsStart={'Tomorrow'}
+                        gasPrice={mistToSui(+(validator?.gasPrice || '0'), 4)}
+                    />
+                </div>
             </div>
             <div>
                 <Button onClick={onNavigateToTokens}>Go to SUI Balance</Button>
