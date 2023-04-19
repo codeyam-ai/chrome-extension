@@ -140,18 +140,17 @@ const PrimaryInteraction = ({ from, important }: AnalyzedTransaction) => {
                     address={from}
                 />
             )}
-            {toAddress ||
-                (toNode && (
-                    <>
-                        <div className="pl-[30px] text-ethos-light-text-medium">
-                            <ChevronDoubleDownIcon width={25} height={23} />
-                        </div>
-                        {toNode && toNode}
-                        {!toNode && !!toAddress && (
-                            <WalletAvatarItem pre="To" address={toAddress} />
-                        )}
-                    </>
-                ))}
+            {(toAddress || toNode) && (
+                <>
+                    <div className="pl-[30px] text-ethos-light-text-medium">
+                        <ChevronDoubleDownIcon width={25} height={23} />
+                    </div>
+                    {toNode && toNode}
+                    {!toNode && !!toAddress && (
+                        <WalletAvatarItem pre="To" address={toAddress} />
+                    )}
+                </>
+            )}
         </div>
     );
 };
