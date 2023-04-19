@@ -40,7 +40,7 @@ const CompletedStake: React.FC = () => {
                 <img
                     src={StakingIcon}
                     alt={'Icon representing staking on the Sui network'}
-                    className={'mx-auto'}
+                    className={'h-[200px] mx-auto'}
                 />
 
                 <div className="px-6 pb-6">
