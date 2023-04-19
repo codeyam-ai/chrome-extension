@@ -95,6 +95,7 @@ module.exports = {
                 // Background
                 'ethos-light-background-default': '#FFFFFF',
                 'ethos-light-background-secondary': '#F2F2F2',
+                'ethos-light-background-light-grey': '#F9F9FB',
                 'ethos-light-fullscreen-backdrop': '#FAFAFB',
 
                 // Text and stroke
@@ -117,6 +118,7 @@ module.exports = {
                 // Background
                 'ethos-dark-background-default': '#111111',
                 'ethos-dark-background-secondary': '#1A1C26',
+                'ethos-dark-background-light-grey': '#1A1C26',
                 'ethos-dark-fullscreen-backdrop': '#000',
 
                 // Text and stroke

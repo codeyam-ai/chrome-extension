@@ -130,6 +130,7 @@ const ReviewStake: React.FC = () => {
                         stakingAPY={validator?.apy?.toString()}
                         rewardsStart={formattedDistanceToRewards}
                         gasPrice={mistToSui(+(validator?.gasPrice || '0'), 4)}
+                        showRowDividers
                     />
                 </div>
             </div>

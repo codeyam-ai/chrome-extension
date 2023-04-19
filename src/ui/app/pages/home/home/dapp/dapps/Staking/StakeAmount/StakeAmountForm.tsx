@@ -18,6 +18,9 @@ import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
+import type { KeyNameAndValue } from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
+import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
+
 interface StakeAmountFormProps {
     validator: SuiValidatorSummaryWithApy;
     formattedSuiBalance: string;
@@ -64,14 +67,48 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
         return calculateStakeRewardStart(systemState);
     }, [systemState]);
 
+    const validatorInfoKeyValueList: KeyNameAndValue[] = [
+        {
+            keyName: validator.name,
+            value: (
+                <div className="flex place-content-center gap-1">
+                    {validator.imageUrl ? (
+                        <img
+                            src={validator.imageUrl}
+                            alt={validator.name}
+                            className="h-5 w-5 rounded-full"
+                        />
+                    ) : (
+                        <div className="h-5 w-5 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
+                    )}
+                    <Body isSemibold>{validator.name}</Body>
+                    <ClickableTooltip
+                        message={validator.description}
+                        tooltipPosition="below"
+                    >
+                        <InformationCircleIcon className="mt-[2px] h-4 w-4 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
+                    </ClickableTooltip>
+                </div>
+            ),
+        },
+        {
+            keyName: 'Staking Share',
+            value: `${stakingSharePercentage}%`,
+        },
+        {
+            keyName: 'Total Staked',
+            value: `${formattedTotalStaked} SUI`,
+        },
+    ];
+
     return (
         <div className="flex items-center place-content-center">
             <Loading loading={isFetchingSystemState} big>
                 <Form
                     autoComplete="off"
-                    className="flex flex-col h-full justify-between px-6"
+                    className="flex flex-col h-full justify-between"
                 >
-                    <div>
+                    <div className="px-6">
                         <Subheader className={'text-center mb-6'}>
                             How much would you like to stake?
                         </Subheader>
@@ -109,40 +146,12 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                             )}
                         </div>
                     </div>
-                    <div className="flex flex-col justify-between p-3 mt-9 mb-4 rounded-lg bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary divide-y divide-ethos-light-text-stroke dark:divide-ethos-dark-text-stroke">
-                        <div className="flex justify-between pt-2 pb-4">
-                            <div className="flex place-content-center gap-1">
-                                {validator.imageUrl ? (
-                                    <img
-                                        src={validator.imageUrl}
-                                        alt={validator.name}
-                                        className="h-5 w-5 rounded-full"
-                                    />
-                                ) : (
-                                    <div className="h-5 w-5 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
-                                )}
-                                <Body isSemibold>{validator.name}</Body>
-                                <ClickableTooltip
-                                    message={validator.description}
-                                    tooltipPosition="below"
-                                >
-                                    <InformationCircleIcon className="mt-[2px] h-4 w-4 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
-                                </ClickableTooltip>
-                            </div>
-                            <div className="flex flex-col items-end gap-2">
-                                <div className="flex gap-1">
-                                    <Body isTextColorMedium>Staking Share</Body>
-                                    <Body isSemibold>
-                                        {stakingSharePercentage}%
-                                    </Body>
-                                </div>
-                                <div className="flex gap-1">
-                                    <Body isTextColorMedium>Total Staked</Body>
-                                    <Body isSemibold>
-                                        {formattedTotalStaked} SUI
-                                    </Body>
-                                </div>
-                            </div>
+                    <div className="flex flex-col justify-between py-5 px-6 mt-9 mb-4 bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey divide-y divide-ethos-light-text-stroke dark:divide-ethos-dark-text-stroke border-t border-b border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
+                        <div className="pb-2">
+                            <KeyValueList
+                                paddingOverride={'p-0'}
+                                keyNamesAndValues={validatorInfoKeyValueList}
+                            />
                         </div>
                         <div className="pt-4">
                             <StakeSummary
@@ -157,7 +166,7 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                         </div>
                     </div>
                     <div>
-                        <div className="!mb-6">
+                        <div className="!mb-6 !mx-6">
                             <Button
                                 disabled={!isValid || isSubmitting}
                                 type="submit"
