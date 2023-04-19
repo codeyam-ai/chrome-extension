@@ -109,7 +109,7 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                     className="flex flex-col h-full justify-between"
                 >
                     <div className="px-6">
-                        <Subheader className={'text-center mb-6'}>
+                        <Subheader className={'text-center mb-6 mt-2'}>
                             How much would you like to stake?
                         </Subheader>
 
