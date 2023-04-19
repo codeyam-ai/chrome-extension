@@ -7,9 +7,9 @@ import {
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useValidatorsWithApy } from './ValidatorList';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useFormatCoin } from '_src/ui/app/hooks';
+import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
@@ -67,11 +67,9 @@ const ExistingStake: React.FC<ExistingStakeProps> = ({
                     ))}
                 </div>
             </div>
-            <div>
-                <Button to={'/home/staking/select-validator'}>
-                    Stake More
-                </Button>
-            </div>
+            <Button to={'/home/staking/select-validator'} className="mt-2">
+                Stake More
+            </Button>
         </div>
     );
 };
@@ -94,7 +92,7 @@ const DelegatedStakeRow = ({
 
     const [formattedAmount, symbol] = useFormatCoin(amountStaked, SUI_TYPE_ARG);
 
-    const { validators } = useValidatorsWithApy();
+    const { data: validators } = useValidatorsWithApy();
     const validator = validators?.[delegatedStake.validatorAddress];
 
     return (

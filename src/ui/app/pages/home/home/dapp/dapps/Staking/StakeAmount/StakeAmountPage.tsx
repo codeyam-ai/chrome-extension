@@ -6,8 +6,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import StakeAmountForm from './StakeAmountForm';
 import { buildStakeAmountValidationSchema } from './buildStakeAmountValidationSchema';
-import { useValidatorsWithApy } from '../ValidatorList';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
+import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 import { useCoin, useGas } from '_src/ui/app/pages/home/transfer-coin-amount';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
 
@@ -16,7 +16,7 @@ const StakeAmountPage: React.FC = () => {
     const [searchParams] = useSearchParams();
     const validatorSuiAddress = searchParams.get('validator');
 
-    const { validators } = useValidatorsWithApy();
+    const { data: validators } = useValidatorsWithApy();
 
     const validator = useMemo(() => {
         return validators && validators[validatorSuiAddress || ''];
