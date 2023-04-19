@@ -89,369 +89,388 @@ export class ContentScriptConnection extends Connection {
     protected async handleMessage(msg: Message) {
         const { payload } = msg;
 
-        if (isGetAccount(payload)) {
-            const activeAccount = await this.getActiveAccount();
-            const existingPermission = await Permissions.getPermission({
-                origin: this.origin,
-                account: activeAccount?.address,
-            });
-            if (
-                !(await Permissions.hasPermissions(
-                    this.origin,
-                    ['viewAccount'],
-                    existingPermission
-                )) ||
-                !existingPermission
-            ) {
-                this.sendNotAllowedError(msg.id);
-            } else {
-                this.sendAccounts([activeAccount.address], msg.id);
-            }
-        } else if (isSwitchAccount(payload)) {
-            const existingPermission = await Permissions.getPermission({
-                origin: this.origin,
-                account: payload.address,
-            });
-            if (
-                !(await Permissions.hasPermissions(
-                    this.origin,
-                    ['switchAccount'],
-                    existingPermission
-                )) ||
-                !existingPermission
-            ) {
-                this.sendNotAllowedError(msg.id);
-            } else {
-                const activeAddress = await this.setActiveAccount(
-                    payload.address
-                );
-                this.sendAddress(activeAddress, msg.id);
-            }
-        } else if (isGetAccounts(payload)) {
-            const activeAccount = await this.getActiveAccount();
-            const existingPermission = await Permissions.getPermission({
-                origin: this.origin,
-                account: activeAccount?.address,
-            });
-            if (
-                !(await Permissions.hasPermissions(
-                    this.origin,
-                    ['viewAccount'],
-                    existingPermission
-                )) ||
-                !existingPermission
-            ) {
-                this.sendNotAllowedError(msg.id);
-            } else {
-                const accountInfos = await this.getAccountInfos();
-                const addresses = accountInfos.map(
-                    (accountInfo) => accountInfo.address
-                );
-                this.sendAccounts(addresses, msg.id);
-            }
-        } else if (isGetUrl(payload)) {
-            const { accessToken, refreshToken } = payload;
-            if (accessToken && refreshToken) {
-                await setSession({ accessToken, refreshToken });
-            }
-
-            openInNewTab('ui.html#/initialize/hosted/logging-in');
-            this.send(
-                createMessage<OpenWalletResponse>(
-                    {
-                        type: 'open-wallet-response',
-                        success: true,
-                    },
-                    msg.id
-                )
-            );
-        } else if (isGetAccountCustomizations(payload)) {
-            const activeAccount = await this.getActiveAccount();
-            const existingPermission = await Permissions.getPermission({
-                origin: this.origin,
-                account: activeAccount?.address,
-            });
-
-            if (
-                !(await Permissions.hasPermissions(
-                    this.origin,
-                    ['viewAccount'],
-                    existingPermission
-                )) ||
-                !existingPermission
-            ) {
-                this.sendNotAllowedError(msg.id);
-            } else {
-                const accountInfos = await this.getAccountInfos();
-                const accountCustomizations: AccountCustomization[] = [];
-                for (const accountInfo of accountInfos) {
-                    accountCustomizations.push({
-                        address: accountInfo.address,
-                        nickname: accountInfo.name || '',
-                        color: accountInfo.color || '',
-                        emoji: accountInfo.emoji || '',
-                    });
+        try {
+            if (isGetAccount(payload)) {
+                const activeAccount = await this.getActiveAccount();
+                const existingPermission = await Permissions.getPermission({
+                    origin: this.origin,
+                    account: activeAccount?.address,
+                });
+                if (
+                    !(await Permissions.hasPermissions(
+                        this.origin,
+                        ['viewAccount'],
+                        existingPermission
+                    )) ||
+                    !existingPermission
+                ) {
+                    this.sendNotAllowedError(msg.id);
+                } else {
+                    this.sendAccounts([activeAccount.address], msg.id);
+                }
+            } else if (isSwitchAccount(payload)) {
+                const existingPermission = await Permissions.getPermission({
+                    origin: this.origin,
+                    account: payload.address,
+                });
+                if (
+                    !(await Permissions.hasPermissions(
+                        this.origin,
+                        ['switchAccount'],
+                        existingPermission
+                    )) ||
+                    !existingPermission
+                ) {
+                    this.sendNotAllowedError(msg.id);
+                } else {
+                    const activeAddress = await this.setActiveAccount(
+                        payload.address
+                    );
+                    this.sendAddress(activeAddress, msg.id);
+                }
+            } else if (isGetAccounts(payload)) {
+                const activeAccount = await this.getActiveAccount();
+                const existingPermission = await Permissions.getPermission({
+                    origin: this.origin,
+                    account: activeAccount?.address,
+                });
+                if (
+                    !(await Permissions.hasPermissions(
+                        this.origin,
+                        ['viewAccount'],
+                        existingPermission
+                    )) ||
+                    !existingPermission
+                ) {
+                    this.sendNotAllowedError(msg.id);
+                } else {
+                    const accountInfos = await this.getAccountInfos();
+                    const addresses = accountInfos.map(
+                        (accountInfo) => accountInfo.address
+                    );
+                    this.sendAccounts(addresses, msg.id);
+                }
+            } else if (isGetUrl(payload)) {
+                const { accessToken, refreshToken } = payload;
+                if (accessToken && refreshToken) {
+                    await setSession({ accessToken, refreshToken });
                 }
 
-                this.sendAccountCustomizations(accountCustomizations, msg.id);
-            }
-        } else if (isSetAccountCustomizations(payload)) {
-            const activeAccount = await this.getActiveAccount();
-            const existingPermission = await Permissions.getPermission({
-                origin: this.origin,
-                account: activeAccount?.address,
-            });
-
-            if (
-                !(await Permissions.hasPermissions(
-                    this.origin,
-                    ['setAccountCustomizations'],
-                    existingPermission
-                )) ||
-                !existingPermission
-            ) {
-                this.sendNotAllowedError(msg.id);
-            } else {
-                this.setAccountCustomizations(payload.accountCustomizations);
-            }
-        } else if (isGetTheme(payload)) {
-            const activeAccount = await this.getActiveAccount();
-            const existingPermission = await Permissions.getPermission({
-                origin: this.origin,
-                account: activeAccount?.address,
-            });
-
-            if (
-                !(await Permissions.hasPermissions(
-                    this.origin,
-                    ['viewAccount'],
-                    existingPermission
-                )) ||
-                !existingPermission
-            ) {
-                this.sendNotAllowedError(msg.id);
-            } else {
-                const theme = (await getLocal('theme')) as string;
-                this.sendTheme(theme, msg.id);
-            }
-        } else if (isGetContacts(payload)) {
-            const activeAccount = await this.getActiveAccount();
-            const existingPermission = await Permissions.getPermission({
-                origin: this.origin,
-                account: activeAccount?.address,
-            });
-
-            if (
-                !(await Permissions.hasPermissions(
-                    this.origin,
-                    ['viewContacts'],
-                    existingPermission
-                )) ||
-                !existingPermission
-            ) {
-                this.sendNotAllowedError(msg.id);
-            } else {
-                const contacts = await this.getContacts();
-                this.sendContacts(contacts, msg.id);
-            }
-        } else if (isSetContacts(payload)) {
-            const activeAccount = await this.getActiveAccount();
-            const existingPermission = await Permissions.getPermission({
-                origin: this.origin,
-                account: activeAccount?.address,
-            });
-
-            if (
-                !(await Permissions.hasPermissions(
-                    this.origin,
-                    ['setContacts'],
-                    existingPermission
-                )) ||
-                !existingPermission
-            ) {
-                this.sendNotAllowedError(msg.id);
-            } else {
-                this.setContacts(payload.contacts);
-            }
-        } else if (isGetFavorites(payload)) {
-            const activeAccount = await this.getActiveAccount();
-            const existingPermission = await Permissions.getPermission({
-                origin: this.origin,
-                account: activeAccount?.address,
-            });
-
-            if (
-                !(await Permissions.hasPermissions(
-                    this.origin,
-                    ['viewFavorites'],
-                    existingPermission
-                )) ||
-                !existingPermission
-            ) {
-                this.sendNotAllowedError(msg.id);
-            } else {
-                const contacts = await this.getFavorites();
-                this.sendFavorites(contacts, msg.id);
-            }
-        } else if (isSetFavorites(payload)) {
-            const activeAccount = await this.getActiveAccount();
-            const existingPermission = await Permissions.getPermission({
-                origin: this.origin,
-                account: activeAccount?.address,
-            });
-
-            if (
-                !(await Permissions.hasPermissions(
-                    this.origin,
-                    ['setFavorites'],
-                    existingPermission
-                )) ||
-                !existingPermission
-            ) {
-                this.sendNotAllowedError(msg.id);
-            } else {
-                this.setFavorites(payload.favorites);
-            }
-        } else if (isGetNetwork(payload)) {
-            const network = await networkEnv.getActiveNetwork();
-            this.sendNetwork(network, msg.id);
-        } else if (isHasPermissionRequest(payload)) {
-            this.send(
-                createMessage<HasPermissionsResponse>(
-                    {
-                        type: 'has-permissions-response',
-                        result: await Permissions.hasPermissions(
-                            this.origin,
-                            payload.permissions
-                        ),
-                    },
-                    msg.id
-                )
-            );
-        } else if (isAcquirePermissionsRequest(payload)) {
-            try {
-                const permission = await Permissions.acquirePermissions(
-                    payload.permissions,
-                    this
-                );
+                openInNewTab('ui.html#/initialize/hosted/logging-in');
                 this.send(
-                    createMessage<AcquirePermissionsResponse>(
+                    createMessage<OpenWalletResponse>(
                         {
-                            type: 'acquire-permissions-response',
-                            result: !!permission.allowed,
+                            type: 'open-wallet-response',
+                            success: true,
                         },
                         msg.id
                     )
                 );
-            } catch (e) {
-                this.sendError(
-                    {
-                        error: true,
-                        message: (e as Error).toString(),
-                        code: -1,
-                    },
-                    msg.id
+            } else if (isGetAccountCustomizations(payload)) {
+                const activeAccount = await this.getActiveAccount();
+                const existingPermission = await Permissions.getPermission({
+                    origin: this.origin,
+                    account: activeAccount?.address,
+                });
+
+                if (
+                    !(await Permissions.hasPermissions(
+                        this.origin,
+                        ['viewAccount'],
+                        existingPermission
+                    )) ||
+                    !existingPermission
+                ) {
+                    this.sendNotAllowedError(msg.id);
+                } else {
+                    const accountInfos = await this.getAccountInfos();
+                    const accountCustomizations: AccountCustomization[] = [];
+                    for (const accountInfo of accountInfos) {
+                        accountCustomizations.push({
+                            address: accountInfo.address,
+                            nickname: accountInfo.name || '',
+                            color: accountInfo.color || '',
+                            emoji: accountInfo.emoji || '',
+                        });
+                    }
+
+                    this.sendAccountCustomizations(
+                        accountCustomizations,
+                        msg.id
+                    );
+                }
+            } else if (isSetAccountCustomizations(payload)) {
+                const activeAccount = await this.getActiveAccount();
+                const existingPermission = await Permissions.getPermission({
+                    origin: this.origin,
+                    account: activeAccount?.address,
+                });
+
+                if (
+                    !(await Permissions.hasPermissions(
+                        this.origin,
+                        ['setAccountCustomizations'],
+                        existingPermission
+                    )) ||
+                    !existingPermission
+                ) {
+                    this.sendNotAllowedError(msg.id);
+                } else {
+                    this.setAccountCustomizations(
+                        payload.accountCustomizations
+                    );
+                }
+            } else if (isGetTheme(payload)) {
+                const activeAccount = await this.getActiveAccount();
+                const existingPermission = await Permissions.getPermission({
+                    origin: this.origin,
+                    account: activeAccount?.address,
+                });
+
+                if (
+                    !(await Permissions.hasPermissions(
+                        this.origin,
+                        ['viewAccount'],
+                        existingPermission
+                    )) ||
+                    !existingPermission
+                ) {
+                    this.sendNotAllowedError(msg.id);
+                } else {
+                    const theme = (await getLocal('theme')) as string;
+                    this.sendTheme(theme, msg.id);
+                }
+            } else if (isGetContacts(payload)) {
+                const activeAccount = await this.getActiveAccount();
+                const existingPermission = await Permissions.getPermission({
+                    origin: this.origin,
+                    account: activeAccount?.address,
+                });
+
+                if (
+                    !(await Permissions.hasPermissions(
+                        this.origin,
+                        ['viewContacts'],
+                        existingPermission
+                    )) ||
+                    !existingPermission
+                ) {
+                    this.sendNotAllowedError(msg.id);
+                } else {
+                    const contacts = await this.getContacts();
+                    this.sendContacts(contacts, msg.id);
+                }
+            } else if (isSetContacts(payload)) {
+                const activeAccount = await this.getActiveAccount();
+                const existingPermission = await Permissions.getPermission({
+                    origin: this.origin,
+                    account: activeAccount?.address,
+                });
+
+                if (
+                    !(await Permissions.hasPermissions(
+                        this.origin,
+                        ['setContacts'],
+                        existingPermission
+                    )) ||
+                    !existingPermission
+                ) {
+                    this.sendNotAllowedError(msg.id);
+                } else {
+                    this.setContacts(payload.contacts);
+                }
+            } else if (isGetFavorites(payload)) {
+                const activeAccount = await this.getActiveAccount();
+                const existingPermission = await Permissions.getPermission({
+                    origin: this.origin,
+                    account: activeAccount?.address,
+                });
+
+                if (
+                    !(await Permissions.hasPermissions(
+                        this.origin,
+                        ['viewFavorites'],
+                        existingPermission
+                    )) ||
+                    !existingPermission
+                ) {
+                    this.sendNotAllowedError(msg.id);
+                } else {
+                    const contacts = await this.getFavorites();
+                    this.sendFavorites(contacts, msg.id);
+                }
+            } else if (isSetFavorites(payload)) {
+                const activeAccount = await this.getActiveAccount();
+                const existingPermission = await Permissions.getPermission({
+                    origin: this.origin,
+                    account: activeAccount?.address,
+                });
+
+                if (
+                    !(await Permissions.hasPermissions(
+                        this.origin,
+                        ['setFavorites'],
+                        existingPermission
+                    )) ||
+                    !existingPermission
+                ) {
+                    this.sendNotAllowedError(msg.id);
+                } else {
+                    this.setFavorites(payload.favorites);
+                }
+            } else if (isGetNetwork(payload)) {
+                const network = await networkEnv.getActiveNetwork();
+                this.sendNetwork(network, msg.id);
+            } else if (isHasPermissionRequest(payload)) {
+                this.send(
+                    createMessage<HasPermissionsResponse>(
+                        {
+                            type: 'has-permissions-response',
+                            result: await Permissions.hasPermissions(
+                                this.origin,
+                                payload.permissions
+                            ),
+                        },
+                        msg.id
+                    )
                 );
-            }
-        } else if (isExecuteTransactionRequest(payload)) {
-            if (!payload.transaction.account) {
-                // make sure we don't execute transactions that doesn't have a specified account
-                throw new Error('Missing account');
-            }
-            await this.ensurePermissions(
-                ['viewAccount', 'suggestTransactions'],
-                payload.transaction.account
-            );
-            const result = await Transactions.executeOrSignTransaction(
-                { tx: payload.transaction },
-                this
-            );
-            this.send(
-                createMessage<ExecuteTransactionResponse>(
-                    {
-                        type: 'execute-transaction-response',
-                        result: result as SuiTransactionBlockResponse,
-                    },
-                    msg.id
-                )
-            );
-        } else if (isSignTransactionRequest(payload)) {
-            if (!payload.transaction.account) {
-                // make sure we don't execute transactions that doesn't have a specified account
-                throw new Error('Missing account');
-            }
-            await this.ensurePermissions(
-                ['viewAccount', 'suggestTransactions'],
-                payload.transaction.account
-            );
-            const result = await Transactions.executeOrSignTransaction(
-                { sign: payload.transaction },
-                this
-            );
-            this.send(
-                createMessage<SignTransactionResponse>(
-                    {
-                        type: 'sign-transaction-response',
-                        result: result as SignedTransaction,
-                    },
-                    msg.id
-                )
-            );
-        } else if (isSignMessageRequest(payload) && payload.args) {
-            await this.ensurePermissions(
-                ['viewAccount', 'suggestTransactions'],
-                payload.args.accountAddress
-            );
-            const result = await Transactions.signMessage(payload.args, this);
-            this.send(
-                createMessage<SignMessageRequest>(
-                    { type: 'sign-message-request', return: result },
-                    msg.id
-                )
-            );
-        } else if (isPreapprovalRequest(payload)) {
-            const allowed = await Permissions.hasPermissions(this.origin, [
-                'viewAccount',
-                'suggestTransactions',
-            ]);
-            if (allowed) {
+            } else if (isAcquirePermissionsRequest(payload)) {
                 try {
-                    const result = await Transactions.requestPreapproval(
-                        payload.preapproval,
+                    const permission = await Permissions.acquirePermissions(
+                        payload.permissions,
                         this
                     );
                     this.send(
-                        createMessage<PreapprovalResponse>(result, msg.id)
+                        createMessage<AcquirePermissionsResponse>(
+                            {
+                                type: 'acquire-permissions-response',
+                                result: !!permission.allowed,
+                            },
+                            msg.id
+                        )
                     );
                 } catch (e) {
                     this.sendError(
                         {
                             error: true,
+                            message: (e as Error).toString(),
                             code: -1,
-                            message: (e as Error).message,
                         },
                         msg.id
                     );
                 }
-            } else {
-                this.sendNotAllowedError(msg.id);
-            }
-        } else if (isDisconnectRequest(payload)) {
-            let success = true;
-            try {
-                await Permissions.revokeAllPermissions(this.origin);
-            } catch (e) {
-                success = false;
-            }
+            } else if (isExecuteTransactionRequest(payload)) {
+                if (!payload.transaction.account) {
+                    // make sure we don't execute transactions that doesn't have a specified account
+                    throw new Error('Missing account');
+                }
+                await this.ensurePermissions(
+                    ['viewAccount', 'suggestTransactions'],
+                    payload.transaction.account
+                );
+                const result = await Transactions.executeOrSignTransaction(
+                    { tx: payload.transaction },
+                    this
+                );
+                this.send(
+                    createMessage<ExecuteTransactionResponse>(
+                        {
+                            type: 'execute-transaction-response',
+                            result: result as SuiTransactionBlockResponse,
+                        },
+                        msg.id
+                    )
+                );
+            } else if (isSignTransactionRequest(payload)) {
+                if (!payload.transaction.account) {
+                    // make sure we don't execute transactions that doesn't have a specified account
+                    throw new Error('Missing account');
+                }
+                await this.ensurePermissions(
+                    ['viewAccount', 'suggestTransactions'],
+                    payload.transaction.account
+                );
+                const result = await Transactions.executeOrSignTransaction(
+                    { sign: payload.transaction },
+                    this
+                );
+                this.send(
+                    createMessage<SignTransactionResponse>(
+                        {
+                            type: 'sign-transaction-response',
+                            result: result as SignedTransaction,
+                        },
+                        msg.id
+                    )
+                );
+            } else if (isSignMessageRequest(payload) && payload.args) {
+                await this.ensurePermissions(
+                    ['viewAccount', 'suggestTransactions'],
+                    payload.args.accountAddress
+                );
+                const result = await Transactions.signMessage(
+                    payload.args,
+                    this
+                );
+                this.send(
+                    createMessage<SignMessageRequest>(
+                        { type: 'sign-message-request', return: result },
+                        msg.id
+                    )
+                );
+            } else if (isPreapprovalRequest(payload)) {
+                const allowed = await Permissions.hasPermissions(this.origin, [
+                    'viewAccount',
+                    'suggestTransactions',
+                ]);
+                if (allowed) {
+                    try {
+                        const result = await Transactions.requestPreapproval(
+                            payload.preapproval,
+                            this
+                        );
+                        this.send(
+                            createMessage<PreapprovalResponse>(result, msg.id)
+                        );
+                    } catch (e) {
+                        this.sendError(
+                            {
+                                error: true,
+                                code: -1,
+                                message: (e as Error).message,
+                            },
+                            msg.id
+                        );
+                    }
+                } else {
+                    this.sendNotAllowedError(msg.id);
+                }
+            } else if (isDisconnectRequest(payload)) {
+                let success = true;
+                try {
+                    await Permissions.revokeAllPermissions(this.origin);
+                } catch (e) {
+                    success = false;
+                }
 
-            this.send(
-                createMessage<DisconnectResponse>(
-                    {
-                        type: 'disconnect-response',
-                        success,
-                    },
-                    msg.id
-                )
+                this.send(
+                    createMessage<DisconnectResponse>(
+                        {
+                            type: 'disconnect-response',
+                            success,
+                        },
+                        msg.id
+                    )
+                );
+            }
+        } catch (e) {
+            this.sendError(
+                {
+                    error: true,
+                    code: -1,
+                    message: (e as Error).message,
+                },
+                msg.id
             );
         }
     }
