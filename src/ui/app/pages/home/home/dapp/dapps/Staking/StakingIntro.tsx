@@ -8,11 +8,11 @@ const StakingIntro: React.FC = () => {
     // add component
     return (
         <div className={'p-6 relative'}>
-            <div className={'text-center pt-[33px]'}>
+            <div className={'text-center'}>
                 <img
                     src={StakingIcon}
                     alt={'Icon representing staking on the Sui network'}
-                    className={'mx-auto'}
+                    className={'h-[200px] mx-auto'}
                 />
                 <Header className={'pt-2 mb-1'}>
                     Staking allows you to earn interest on your SUI

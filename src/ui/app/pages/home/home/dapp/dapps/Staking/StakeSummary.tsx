@@ -7,6 +7,7 @@ interface StakeSummaryProps {
     stakingAPY?: string;
     rewardsStart?: string;
     gasPrice?: string;
+    showRowDividers?: boolean;
 }
 
 const StakeSummary: React.FC<StakeSummaryProps> = ({
@@ -14,6 +15,7 @@ const StakeSummary: React.FC<StakeSummaryProps> = ({
     stakingAPY,
     rewardsStart,
     gasPrice,
+    showRowDividers,
 }) => {
     const keyValueList: KeyNameAndValue[] = [
         {
@@ -48,7 +50,11 @@ const StakeSummary: React.FC<StakeSummaryProps> = ({
     return (
         <KeyValueList
             paddingOverride={'p-0'}
-            rowClassName="pb-2 border-b border-ethos-light-purple dark:border-ethos-dark-text-stroke"
+            rowClassName={
+                showRowDividers
+                    ? 'pb-2 border-b border-ethos-light-purple dark:border-ethos-dark-text-stroke'
+                    : ''
+            }
             keyNamesAndValues={keyValueList}
         />
     );
