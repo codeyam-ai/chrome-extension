@@ -85,12 +85,20 @@ const ReviewStake: React.FC = () => {
                     showEvents: true,
                 },
             });
+
+            const { effects } = response;
+            const status = effects?.status;
+
+            if (status?.status === 'failure') {
+                throw new Error(status.error);
+            }
+
             Promise.all([
                 queryClient.invalidateQueries({
                     queryKey: ['system', 'state'],
                 }),
                 queryClient.invalidateQueries({
-                    queryKey: ['validator', validatorSuiAddress],
+                    queryKey: ['validator'],
                 }),
             ]);
             navigate(
@@ -103,9 +111,8 @@ const ReviewStake: React.FC = () => {
         } catch (error) {
             // eslint-disable-next-line no-console
             console.error('error', error);
-            toast(
-                <FailAlert text="Something went wrong. Please make sure you have enough SUI and try again." />
-            );
+
+            toast(<FailAlert text={`Something went wrong. ${error}`} />);
         }
         setLoading(false);
     }, [
