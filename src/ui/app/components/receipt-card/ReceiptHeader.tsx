@@ -2,6 +2,7 @@ import {
     ArrowDownOnSquareStackIcon,
     ArrowUpRightIcon,
     CheckCircleIcon,
+    Square3Stack3DIcon,
 } from '@heroicons/react/24/solid';
 
 import { getHumanReadable } from '../../helpers/transactions';
@@ -17,6 +18,8 @@ const commandIcon = (command: string) => {
             return <ArrowUpRightIcon />;
         case 'Faucet':
             return <ArrowDownOnSquareStackIcon />;
+        case 'Staking':
+            return <Square3Stack3DIcon />;
         default:
             return <CheckCircleIcon />;
     }
@@ -34,6 +37,7 @@ const ReceiptHeader = (analyzedTransaction: AnalyzedTransaction) => {
         commands = ['Faucet', ...(commands || [])];
         title = 'Faucet Request';
     } else if (important?.staking) {
+        commands = ['Staking', ...(commands || [])];
         title = 'Staking SUI';
     } else if (important.sending) {
         title = important.sending[0].isSender
