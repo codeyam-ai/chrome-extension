@@ -119,7 +119,7 @@ const PrimaryInteraction = ({ from, important }: AnalyzedTransaction) => {
                 <ActionIcon>
                     <CodeBracketIcon />
                 </ActionIcon>
-                <div className="flex flex-col items-start">
+                <div className="flex flex-col items-start text-left">
                     <BodyLarge isSemibold>
                         {moduleName} &gt; {functionName}
                     </BodyLarge>
