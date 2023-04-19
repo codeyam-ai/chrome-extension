@@ -13,13 +13,13 @@ import { useFormatCoin } from '_src/ui/app/hooks';
 import { useSystemState } from '_src/ui/app/hooks/staking/useSystemState';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
 import Button from '_src/ui/app/shared/buttons/Button';
+import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 import SuiIcon from '_src/ui/app/shared/svg/SuiIcon';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { KeyNameAndValue } from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
-import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 
 interface StakeAmountFormProps {
     validator: SuiValidatorSummaryWithApy;
