@@ -121,7 +121,7 @@ const ReviewStake: React.FC = () => {
     return (
         <div className="flex flex-col h-full justify-between">
             <div>
-                <Subheader className={'text-center mb-6'}>
+                <Subheader className={'text-center mb-6 mt-2'}>
                     Review Stake
                 </Subheader>
                 <div className="px-6 pb-6">
