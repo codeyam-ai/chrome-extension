@@ -145,7 +145,11 @@ module.exports = {
         },
     },
     plugins: [require('@tailwindcss/forms')],
-    variants: {},
+    variants: {
+        extend: {
+            backgroundColor: ['even'],
+        },
+    },
     corePlugins: {
         preflight: true,
     },

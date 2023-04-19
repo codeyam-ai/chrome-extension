@@ -4,6 +4,8 @@
 import { type SuiAddress } from '@mysten/sui.js';
 
 import { getHumanReadable } from '../helpers/transactions';
+import analyzeTransactions from '../helpers/transactions/analyzeTransactions';
+import sortUniqueTransactions from '../helpers/transactions/sortUniqueTransactions';
 import { api } from '_redux/store/thunk-extras';
 
 export const queryTransactionsByAddress = async (
@@ -46,21 +48,17 @@ export const queryTransactionsByAddress = async (
         }),
     ]);
 
-    const txBlocks = [...toBlocks.data, ...fromBlocks.data]
-        .filter(
-            (value, index, self) =>
-                self.findIndex((tx) => tx.digest === value.digest) === index
-        )
-        .sort(
-            // timestamp could be null, so we need to handle
-            (a, b) =>
-                Number(b.timestampMs || '0') - Number(a.timestampMs || '0')
-        );
+    const txBlocks = sortUniqueTransactions([
+        ...toBlocks.data,
+        ...fromBlocks.data,
+    ]);
 
-    const formattedTxBlocks = txBlocks.map((txBlock) => {
-        const humanReadable = getHumanReadable(address, txBlock);
+    const analyzedTxBlock = analyzeTransactions(address, txBlocks);
+
+    const formattedTxBlocks = analyzedTxBlock.map((analyzedTransaction) => {
+        const humanReadable = getHumanReadable(analyzedTransaction);
         return {
-            transaction: txBlock,
+            analyzedTransaction: analyzedTransaction,
             humanReadable: humanReadable,
         };
     });

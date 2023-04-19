@@ -8,11 +8,13 @@ import BodyLarge from '../../typography/BodyLarge';
 import { useDependencies } from '_shared/utils/dependenciesContext';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 
+import type { ReactNode } from 'react';
+
 type ActivityRowProps = {
     failed: boolean;
-    icon: JSX.Element;
+    icon: ReactNode;
     txAction: string;
-    typeIcon: JSX.Element;
+    typeIcon: ReactNode;
     type: string;
     link: string;
     header?: string;

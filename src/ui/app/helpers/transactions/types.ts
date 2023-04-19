@@ -1,5 +1,6 @@
-import type { toFrom } from './getToFromAddress';
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
+import type { AnalyzedTransaction } from './analyzeTransactions';
+import type { TxAction } from './getTxAction';
+import type { ReactNode } from 'react';
 
 export interface TransactionCoinInfo {
     type: string;
@@ -35,25 +36,13 @@ export interface BalanceChange {
     amount: string;
 }
 
-export interface HumanReadableDetails {
-    addresses?: toFrom;
-    timeDisplay: string;
-    txType: string;
-    txAction: string;
-    txAmount: string;
-    txStatus: 'success' | 'failure' | undefined;
-    txUsdAmount: string | number | undefined;
-    gasFeeInSui: string | undefined;
-    gasFeeInUsd: string | undefined;
-    txCommands: string | null;
-    preposition: string;
-    isSender: boolean;
-    otherAddress: string;
-    otherAddressStr: string;
-    displayImage: string | null;
+export interface HumanReadableTransactionValues {
+    timeDisplay?: string;
+    image?: ReactNode;
+    action?: TxAction;
 }
 
 export interface FormattedTransaction {
-    transaction: SuiTransactionBlockResponse;
-    humanReadable: HumanReadableDetails;
+    analyzedTransaction: AnalyzedTransaction;
+    humanReadable: HumanReadableTransactionValues;
 }

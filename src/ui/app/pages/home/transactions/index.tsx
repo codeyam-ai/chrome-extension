@@ -53,13 +53,14 @@ const TransactionsPage = () => {
             // Save the length of the first page to compare with
             // the length of the first page after refetching.
             setFirstDigest(
-                suiTxns.pages[activePage].blocks[0].transaction.digest
+                suiTxns.pages[activePage].blocks[0].analyzedTransaction.digest
             );
         }
 
         if (
             !firstDigest ||
-            suiTxns.pages[0].blocks[0].transaction.digest === firstDigest
+            suiTxns.pages[0].blocks[0].analyzedTransaction.digest ===
+                firstDigest
         ) {
             // Initial fetch or when selecting the load more button.
             // Deduplicate the transactions and set the state.
