@@ -81,6 +81,8 @@ const WalletAvatarItem = ({
         ({ account }) => account
     );
     const activeAccount = accountInfos[activeAccountIndex];
+    const header = fullHeader ? undefined : wallet?.name ?? address;
+    const subheader = header === address ? undefined : address;
 
     if (address === activeAccount.address) {
         return <AvatarItem fullHeader={`${pre}: You`} {...activeAccount} />;
@@ -90,8 +92,8 @@ const WalletAvatarItem = ({
                 color={wallet?.color ?? '#6D28D9'}
                 fullHeader={fullHeader}
                 pre={fullHeader ? undefined : pre}
-                header={fullHeader ? undefined : wallet?.name ?? address}
-                subheader={address}
+                header={header}
+                subheader={subheader}
                 emoji={wallet?.emoji ?? ''}
             />
         );
