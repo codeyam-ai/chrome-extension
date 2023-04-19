@@ -1,4 +1,8 @@
-import { ArrowUpRightIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
+import {
+    ArrowDownOnSquareStackIcon,
+    ArrowUpRightIcon,
+    CheckCircleIcon,
+} from '@heroicons/react/24/solid';
 
 import { getHumanReadable } from '../../helpers/transactions';
 import ActionIcon from '../../shared/transactions/ActionIcon';
@@ -11,6 +15,8 @@ const commandIcon = (command: string) => {
     switch (command) {
         case 'TransferObjects':
             return <ArrowUpRightIcon />;
+        case 'Faucet':
+            return <ArrowDownOnSquareStackIcon />;
         default:
             return <CheckCircleIcon />;
     }
@@ -21,17 +27,18 @@ const ReceiptHeader = (analyzedTransaction: AnalyzedTransaction) => {
     const { important } = analyzedTransaction;
 
     const { timeDisplay } = humanReadable;
-    const commands = important.basic?.commands;
+    let commands = important.basic?.commands;
 
     let title = 'Transaction';
-    if (important.sending) {
-        title = important.sending[0].isSender
-            ? 'Sending Transaction'
-            : 'Receiving Transaction';
-    } else if (important.faucet) {
+    if (important.faucet) {
+        commands = ['Faucet', ...(commands || [])];
         title = 'Faucet Request';
     } else if (important?.staking) {
         title = 'Staking SUI';
+    } else if (important.sending) {
+        title = important.sending[0].isSender
+            ? 'Sending Transaction'
+            : 'Receiving Transaction';
     } else if (important.moveCalls) {
         title = 'Function Call';
     }
@@ -40,11 +47,17 @@ const ReceiptHeader = (analyzedTransaction: AnalyzedTransaction) => {
         <div className="flex flex-col gap-3 items-center">
             {commands && (
                 <>
-                    {commands.map((command, index) => (
-                        <ActionIcon key={`command-icon-${index}`}>
-                            {commandIcon(command)}
-                        </ActionIcon>
-                    ))}
+                    <div className="flex items-center">
+                        {commands.map((command, index) => (
+                            <ActionIcon
+                                key={`command-icon-${index}`}
+                                className="border-2 border-white !h-12 !w-12"
+                                style={{ marginLeft: `${index * -6}px` }}
+                            >
+                                {commandIcon(command)}
+                            </ActionIcon>
+                        ))}
+                    </div>
                     <Body isTextColorMedium>{commands.join(', ')}</Body>
                 </>
             )}

@@ -12,37 +12,46 @@ import type { SuiAddress } from '@mysten/sui.js';
 
 const AvatarItem = ({
     color,
+    pre,
     header,
     subheader,
     emoji,
+    fullHeader,
 }: {
     color?: string;
+    pre?: string;
     header?: string;
     subheader?: string;
     emoji?: string;
+    fullHeader?: string;
 }) => (
-    <div className={'flex flex-row space-around items-center gap-6'}>
+    <div className={'flex items-center gap-3'}>
         <WalletColorAndEmojiCircle
             emojiSizeInPx={20}
             circleSizeClasses={'w-[40px] h-[40px] auto'}
             color={color || '#7E23CA'}
             emoji={emoji}
         />
-        <div className={'flex flex-col items-left'}>
-            {(header || '').length > 15 ? (
-                <CopyBody
-                    txt={header || ''}
-                    large
-                    isSemibold
-                    className={'text-left'}
-                >
-                    {truncateMiddle(header)}
-                </CopyBody>
-            ) : (
-                <BodyLarge isSemibold className={'text-left'}>
-                    {header}
-                </BodyLarge>
-            )}
+        <div className={'flex flex-col items-start'}>
+            <div className="flex gap-1 items-center">
+                {!fullHeader && (
+                    <BodyLarge isSemibold>{pre ? `${pre}:` : ''}</BodyLarge>
+                )}
+                {(fullHeader ?? header ?? '').length > 24 ? (
+                    <CopyBody
+                        txt={fullHeader ?? header ?? ''}
+                        large
+                        isSemibold
+                        className={'text-left'}
+                    >
+                        {truncateMiddle(fullHeader ?? header)}
+                    </CopyBody>
+                ) : (
+                    <BodyLarge isSemibold className={'text-left'}>
+                        {fullHeader ?? header}
+                    </BodyLarge>
+                )}
+            </div>
 
             <CopyBody
                 txt={subheader || ''}
@@ -55,10 +64,12 @@ const AvatarItem = ({
 );
 
 const WalletAvatarItem = ({
-    header,
+    pre,
+    fullHeader,
     address,
 }: {
-    header: string;
+    pre: string;
+    fullHeader?: string;
     address: SuiAddress;
 }) => {
     const wallet = useWalletOrContact(address);
@@ -68,13 +79,15 @@ const WalletAvatarItem = ({
     const activeAccount = accountInfos[activeAccountIndex];
 
     if (address === activeAccount.address) {
-        return <AvatarItem header={`${header}: You`} {...activeAccount} />;
+        return <AvatarItem fullHeader={`${pre}: You`} {...activeAccount} />;
     } else {
         return (
             <AvatarItem
                 color={wallet?.color ?? '#6D28D9'}
-                header={`${header}: ${wallet?.name}`}
-                subheader={wallet?.address ?? ''}
+                fullHeader={fullHeader}
+                pre={fullHeader ? undefined : pre}
+                header={fullHeader ? undefined : wallet?.name ?? address}
+                subheader={address}
                 emoji={wallet?.emoji ?? ''}
             />
         );
@@ -83,19 +96,31 @@ const WalletAvatarItem = ({
 
 const PrimaryInteraction = ({ from, important }: AnalyzedTransaction) => {
     let toAddress;
+
+    let fromHeader;
+    if (important.faucet) {
+        fromHeader = 'From: Sui Faucet';
+    }
+
     if (important.sending) {
         toAddress = important.sending[0].recipient;
     }
 
     return (
         <div className={'py-3 flex flex-col gap-3'}>
-            {from && <WalletAvatarItem header="From" address={from} />}
+            {from && (
+                <WalletAvatarItem
+                    pre="From"
+                    fullHeader={fromHeader}
+                    address={from}
+                />
+            )}
             {toAddress && (
                 <>
-                    <div className="pl-[36px] text-ethos-light-text-medium">
+                    <div className="pl-[30px] text-ethos-light-text-medium">
                         <ChevronDoubleDownIcon width={25} height={23} />
                     </div>
-                    <WalletAvatarItem header="To" address={toAddress} />
+                    <WalletAvatarItem pre="To" address={toAddress} />
                 </>
             )}
         </div>

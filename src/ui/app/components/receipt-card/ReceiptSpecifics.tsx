@@ -1,9 +1,11 @@
 import addressOwner from '../../helpers/transactions/addressOwner';
+import truncateMiddle from '../../helpers/truncate-middle';
 import { useFormatCoin } from '../../hooks';
 import useWalletOrContact from '../../hooks/useWalletOrContact';
 import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
 import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';
+import CopyBody from '../../shared/typography/CopyBody';
 
 import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTransactions';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
@@ -32,7 +34,9 @@ const BalanceChange = ({
                     <Body isTextColorMedium>{ownerWallet.name}</Body>
                 </div>
             ) : (
-                <Body isTextColorMedium>{ownerAddress}</Body>
+                <CopyBody txt={ownerAddress || ''} isTextColorMedium>
+                    {truncateMiddle(ownerAddress)}
+                </CopyBody>
             )}
             <Body>
                 {formattedAmount} {symbol}
