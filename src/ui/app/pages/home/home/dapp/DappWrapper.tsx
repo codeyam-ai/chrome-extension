@@ -53,7 +53,7 @@ export const DappViewHeader: React.FC<DappViewHeaderProps> = ({
     closeDapp,
 }) => {
     return (
-        <div className="flex items-center justify-between p-4 border-b border-ethos-light-gray border-ethos-dark-text-stroke">
+        <div className="flex items-center justify-between p-4 shadow-ethos-shadow-small border-b border-ethos-light-gray border-ethos-dark-text-stroke bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
             <div className="w-1/4 text-left">
                 <button onClick={closeDapp}>
                     <ChevronLeftIcon
@@ -61,7 +61,10 @@ export const DappViewHeader: React.FC<DappViewHeaderProps> = ({
                     />
                 </button>
             </div>
-            <BodyLarge isSemibold className="truncate w-1/2 text-center">
+            <BodyLarge
+                isSemibold
+                className="truncate w-1/2 text-center text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
+            >
                 {title}
             </BodyLarge>
             {/* Favorites currently not implemented */}
