@@ -33,7 +33,7 @@ const SelectValidator: React.FC = () => {
     return (
         <div className={'flex flex-col px-6 h-[414px] relative'}>
             <div className={'overflow-y-scroll h-full no-scrollbar'}>
-                <Subheader className={'text-center mb-1'}>
+                <Subheader className={'text-center mb-1 mt-2'}>
                     Select a staking validator
                 </Subheader>
                 <EthosLink
