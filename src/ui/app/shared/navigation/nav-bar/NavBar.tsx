@@ -233,7 +233,7 @@ const NavBar = () => {
                     <BodyLarge isTextColorMedium>Back</BodyLarge>
                 </button>
             ) : (
-                <Link to={'/'} className="-mt-1">
+                <Link to={'/home'} className="-mt-1">
                     <EthosLogo />
                 </Link>
             )}
