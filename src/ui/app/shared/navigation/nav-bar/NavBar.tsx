@@ -24,8 +24,13 @@ import {
 } from '_src/ui/app/components/settings-menu/hooks';
 import WalletPickerPage from '_src/ui/app/components/wallet-picker-menu/WalletPickerPage';
 import { useOnKeyboardEvent } from '_src/ui/app/hooks';
+import { sampleData } from '_src/ui/app/pages/home/home/dapp/dappData';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
+
+const isPathInDappData = (path: string): boolean => {
+    return sampleData.some((item) => item.route && path.includes(item.route));
+};
 
 interface WalletPickerNavBarProps {
     goBack: () => void;
@@ -163,6 +168,8 @@ const NavBar = () => {
 
     const isDetailsPage = params.length > 0;
 
+    const isDappPage = isPathInDappData(pathname);
+
     const goBack = useCallback(() => {
         navigate(-1);
     }, [navigate]);
@@ -217,7 +224,7 @@ const NavBar = () => {
 
     return (
         <div className="flex flex-row items-center justify-between px-6 py-4 border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
-            {isDetailsPage ? (
+            {!isDappPage && isDetailsPage ? (
                 <button
                     onClick={goBack}
                     className={'flex flex-row gap-1 items-start'}
