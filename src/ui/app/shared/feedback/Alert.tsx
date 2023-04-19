@@ -12,7 +12,7 @@ interface AlertProps {
     forceLightMode?: boolean;
 }
 
-const Alert = ({
+export const Alert = ({
     title,
     subtitle,
     borderRadius,

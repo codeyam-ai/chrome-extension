@@ -15,6 +15,7 @@ import analyzeTransactions, {
     type AnalyzedTransaction,
 } from '../../helpers/transactions/analyzeTransactions';
 import Button from '../../shared/buttons/Button';
+import Alert from '../../shared/feedback/Alert';
 import LoadingIndicator from '../loading/LoadingIndicator';
 import { useAppSelector } from '_hooks';
 import { api } from '_store/thunk-extras';
@@ -31,6 +32,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
     const address = useAppSelector(({ account }) => account.address) as string;
     const { data } = useQuery(['transactions-by-address', address]);
     const txRef = useRef<FormattedTransaction>();
+    const [error, setError] = useState(false);
 
     const [analyzedTransaction, setTransaction] =
         useState<AnalyzedTransaction>();
@@ -52,22 +54,26 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         } else {
             const getTransaction = async () => {
                 const digest = txDigestFromUrl as string;
-                const tx = await api.instance.fullNode.getTransactionBlock({
-                    digest: digest,
-                    options: {
-                        showInput: true,
-                        showEvents: true,
-                        showEffects: true,
-                        showObjectChanges: true,
-                        showBalanceChanges: true,
-                    },
-                });
+                try {
+                    const tx = await api.instance.fullNode.getTransactionBlock({
+                        digest: digest,
+                        options: {
+                            showInput: true,
+                            showEvents: true,
+                            showEffects: true,
+                            showObjectChanges: true,
+                            showBalanceChanges: true,
+                        },
+                    });
 
-                const analyzedTransactions = await analyzeTransactions(
-                    address,
-                    [tx]
-                );
-                setTransaction(analyzedTransactions[0]);
+                    const analyzedTransactions = await analyzeTransactions(
+                        address,
+                        [tx]
+                    );
+                    setTransaction(analyzedTransactions[0]);
+                } catch (e: unknown) {
+                    setError(true);
+                }
             };
 
             getTransaction();
@@ -96,6 +102,17 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             );
         }
     }, [navigate, recipient]);
+
+    if (error) {
+        return (
+            <div className="px-6 py-6">
+                <Alert
+                    title="Unable to load transaction"
+                    subtitle="There was an error loading this transcation. Please wait a bit and try again."
+                />
+            </div>
+        );
+    }
 
     if (!analyzedTransaction)
         return (
