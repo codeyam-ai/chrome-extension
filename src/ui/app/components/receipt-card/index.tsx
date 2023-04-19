@@ -136,7 +136,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             {!contactTo && !isToWalletIOwn && (
                 <Button onClick={handleClickAddContact}>
                     <UserPlusIcon className="h-6 w-6 text-white" />
-                    Save Address
+                    Save &#34;To&#34; Address
                 </Button>
             )}
         </div>
