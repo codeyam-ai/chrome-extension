@@ -134,7 +134,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             <ReceiptExplorerLink {...analyzedTransaction} />
 
             {!contactTo && !isToWalletIOwn && (
-                <Button onClick={handleClickAddContact}>
+                <Button onClick={handleClickAddContact} removeContainerPadding>
                     <UserPlusIcon className="h-6 w-6 text-white" />
                     Save &#34;To&#34; Address
                 </Button>
