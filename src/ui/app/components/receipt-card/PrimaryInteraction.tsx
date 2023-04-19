@@ -1,9 +1,13 @@
-import { ChevronDoubleDownIcon } from '@heroicons/react/24/solid';
+import {
+    ChevronDoubleDownIcon,
+    CodeBracketIcon,
+} from '@heroicons/react/24/solid';
 
 import truncateMiddle from '../../helpers/truncate-middle';
 import { useAppSelector } from '../../hooks';
 import useWalletOrContact from '../../hooks/useWalletOrContact';
 import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
+import ActionIcon from '../../shared/transactions/ActionIcon';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import CopyBody from '../../shared/typography/CopyBody';
 
@@ -96,14 +100,35 @@ const WalletAvatarItem = ({
 
 const PrimaryInteraction = ({ from, important }: AnalyzedTransaction) => {
     let toAddress;
-
+    let toNode;
     let fromHeader;
+
     if (important.faucet) {
         fromHeader = 'From: Sui Faucet';
     }
 
     if (important.sending) {
         toAddress = important.sending[0].recipient;
+    }
+
+    if (important.moveCalls) {
+        const { functionName, moduleName, packageObjectId } =
+            important.moveCalls[0];
+        toNode = (
+            <div className="flex items-center gap-3">
+                <ActionIcon>
+                    <CodeBracketIcon />
+                </ActionIcon>
+                <div className="flex flex-col items-start">
+                    <BodyLarge isSemibold>
+                        {moduleName} &gt; {functionName}
+                    </BodyLarge>
+                    <CopyBody txt={packageObjectId} isTextColorMedium>
+                        {truncateMiddle(packageObjectId)}
+                    </CopyBody>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -115,14 +140,18 @@ const PrimaryInteraction = ({ from, important }: AnalyzedTransaction) => {
                     address={from}
                 />
             )}
-            {toAddress && (
-                <>
-                    <div className="pl-[30px] text-ethos-light-text-medium">
-                        <ChevronDoubleDownIcon width={25} height={23} />
-                    </div>
-                    <WalletAvatarItem pre="To" address={toAddress} />
-                </>
-            )}
+            {toAddress ||
+                (toNode && (
+                    <>
+                        <div className="pl-[30px] text-ethos-light-text-medium">
+                            <ChevronDoubleDownIcon width={25} height={23} />
+                        </div>
+                        {toNode && toNode}
+                        {!toNode && !!toAddress && (
+                            <WalletAvatarItem pre="To" address={toAddress} />
+                        )}
+                    </>
+                ))}
         </div>
     );
 };

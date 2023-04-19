@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
+import ipfs from '../helpers/ipfs';
 import { api } from '../redux/store/thunk-extras';
 
 export type DisplayData = {
@@ -49,10 +50,16 @@ const useDisplayDatas = (objectIds: string[]): Record<string, DisplayData> => {
                 data.display &&
                 data.display.data &&
                 typeof data.display.data === 'object' &&
-                'image_url' in data.display.data
+                ('image_url' in data.display.data ||
+                    'url' in data.display.data ||
+                    'img_url' in data.display.data)
             ) {
                 acc[data.objectId] = {
-                    imageUrl: data.display.data.image_url,
+                    imageUrl: ipfs(
+                        data.display.data.image_url ??
+                            data.display.data.img_url ??
+                            data.display.data.url
+                    ),
                     name: data.display.data.name,
                     description: data.display.data.description,
                 };
@@ -60,10 +67,16 @@ const useDisplayDatas = (objectIds: string[]): Record<string, DisplayData> => {
                 data.content &&
                 data.content.dataType === 'moveObject' &&
                 data.content.fields &&
-                'image_url' in data.content.fields
+                ('image_url' in data.content.fields ||
+                    'url' in data.content.fields ||
+                    'img_url' in data.content.fields)
             ) {
                 acc[data.objectId] = {
-                    imageUrl: data.content.fields.image_url,
+                    imageUrl: ipfs(
+                        data.content.fields.image_url ??
+                            data.content.fields.img_url ??
+                            data.content.fields.url
+                    ),
                     name: data.content.fields.name,
                     description: data.content.fields.description,
                 };
