@@ -92,7 +92,7 @@ const PrimaryInteraction = ({ from, important }: AnalyzedTransaction) => {
             {from && <WalletAvatarItem header="From" address={from} />}
             {toAddress && (
                 <>
-                    <div className="pl-3 text-ethos-light-text-medium">
+                    <div className="pl-[36px] text-ethos-light-text-medium">
                         <ChevronDoubleDownIcon width={25} height={23} />
                     </div>
                     <WalletAvatarItem header="To" address={toAddress} />

@@ -105,7 +105,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         );
 
     return (
-        <div className="px-6 py-6 flex flex-col gap-6">
+        <div className="py-6 px-9 flex flex-col gap-6">
             <ReceiptHeader {...analyzedTransaction} />
 
             <PrimaryInteraction {...analyzedTransaction} />

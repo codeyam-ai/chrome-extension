@@ -14,23 +14,25 @@ const ReceiptDetails = ({ totalGasUsed, digest }: AnalyzedTransaction) => {
     );
 
     return (
-        <KeyValueList
-            header={'Details'}
-            keyNamesAndValues={[
-                {
-                    keyName: 'Gas Fee',
-                    value: `${formattedGasFee} ${gasSymbol}`,
-                },
-                {
-                    keyName: 'Digest',
-                    value: (
-                        <CopyBody txt={digest}>
-                            {truncateMiddle(digest, 5)}
-                        </CopyBody>
-                    ),
-                },
-            ]}
-        />
+        <div className="-mx-6">
+            <KeyValueList
+                header={'Details'}
+                keyNamesAndValues={[
+                    {
+                        keyName: 'Gas Fee',
+                        value: `${formattedGasFee} ${gasSymbol}`,
+                    },
+                    {
+                        keyName: 'Digest',
+                        value: (
+                            <CopyBody txt={digest}>
+                                {truncateMiddle(digest, 5)}
+                            </CopyBody>
+                        ),
+                    },
+                ]}
+            />
+        </div>
     );
 };
 
