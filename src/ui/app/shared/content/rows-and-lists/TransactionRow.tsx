@@ -1,8 +1,10 @@
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
 
 import ActionIcon from '../../transactions/ActionIcon';
 import Body from '../../typography/Body';
+import capitalize from '_src/ui/app/helpers/capitalize';
+import { getIcon } from '_src/ui/app/helpers/transactions';
 import getSummary from '_src/ui/app/helpers/transactions/getSummary';
 
 import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
@@ -24,6 +26,12 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
     return (
         <Link to={drilldownLink} className="flex flex-col gap-2">
             <div className="flex flex-row justify-between items-center">
+                <div className="flex gap-1 items-center">
+                    <Body isTextColorMedium>
+                        {!!action && getIcon(action, 18)}
+                    </Body>
+                    <Body isTextColorMedium>{capitalize(action)}</Body>
+                </div>
                 <Body isTextColorMedium>{timeDisplay}</Body>
             </div>
             <div className="flex justify-between items-center">
@@ -38,10 +46,15 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                         ) : (
                             image
                         )
-                    ) : analyzedTransaction.status === 'failure' || !action ? (
-                        <ExclamationTriangleIcon className="flex items-center h-10 w-10 rounded-full p-3 text-white bg-ethos-light-red dark:bg-ethos-dark-red" />
                     ) : (
-                        <ActionIcon>getIcon(action)</ActionIcon>
+                        <ActionIcon>
+                            {analyzedTransaction.status === 'failure' ||
+                            !action ? (
+                                <XMarkIcon />
+                            ) : (
+                                getIcon(action)
+                            )}
+                        </ActionIcon>
                     )}
                     {getSummary(analyzedTransaction)}
                 </div>

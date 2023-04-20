@@ -18,7 +18,6 @@ const getSummary = (analyzedTransaction: AnalyzedTransaction): ReactNode => {
                 stakingTransactionInfo={
                     analyzedTransaction.important.staking[0]
                 }
-                isFailure={analyzedTransaction.status === 'failure'}
             />
         );
     }
