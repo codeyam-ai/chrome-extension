@@ -4,6 +4,7 @@ import { v4 as uuidV4 } from 'uuid';
 
 import { renderTemplate } from './json-templates';
 import { suiSystemStateObject } from '_src/test/utils/mockchain-templates/sui-system-state';
+import { dryRunTransactionResponse } from '_src/test/utils/mockchain-templates/dryRunTransaction';
 
 interface ExpectedCall {
     method: string;
@@ -284,7 +285,7 @@ export class Mockchain {
                         method: 'sui_dryRunTransactionBlock',
                         params: [digest],
                     },
-                    renderTemplate('dryRunTransaction', {}),
+                    dryRunTransactionResponse,
                     true
                 );
             },
