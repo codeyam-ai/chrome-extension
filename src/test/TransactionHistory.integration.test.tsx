@@ -6,6 +6,7 @@ import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { preventActWarning } from '_src/test/utils/test-helpers';
+import { makeCoinObject } from '_src/test/utils/mockchain-templates/coinObject';
 
 xdescribe('The Transaction History Page', () => {
     let mockchain: Mockchain;
@@ -134,10 +135,10 @@ xdescribe('The Transaction History Page', () => {
                 method: 'suix_getObject',
                 params: ['0x12e502e444d75209e744cd0b8e29b01e7c3ebf96'],
             },
-            renderTemplate('coinObject', {
-                balance: 200000000,
-                id: '0x12e502e444d75209e744cd0b8e29b01e7c3ebf96',
-            }),
+            makeCoinObject(
+                200000000,
+                '0x12e502e444d75209e744cd0b8e29b01e7c3ebf96'
+            ),
             true
         );
 

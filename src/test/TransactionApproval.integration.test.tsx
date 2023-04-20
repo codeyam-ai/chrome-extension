@@ -12,6 +12,7 @@ import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
 import type { ApprovalRequest } from '_payloads/transactions';
 import { dryRunTransactionResponse } from '_src/test/utils/mockchain-templates/dryRunTransaction';
+import { makeCoinObject } from '_src/test/utils/mockchain-templates/coinObject';
 
 describe('The Transaction Approval popup', () => {
     const txRequestId = '95ae4a0d-0b7b-478b-ab70-bc3fe291540e';
@@ -198,6 +199,10 @@ describe('The Transaction Approval popup', () => {
     }
 
     function mockBlockchainTransactionExecution() {
+        const coinObj = makeCoinObject(
+            40000000,
+            '0x395c50c614cc22156c9de8db24163f48e4ff66ae'
+        );
         mockchain.mockBlockchainCall(
             {
                 method: 'sui_multiGetObjects',
@@ -208,12 +213,7 @@ describe('The Transaction Approval popup', () => {
                     },
                 ],
             },
-            [
-                renderTemplate('coinObject', {
-                    balance: 40000000,
-                    id: '0x395c50c614cc22156c9de8db24163f48e4ff66ae',
-                }),
-            ]
+            [coinObj]
         );
 
         mockchain.mockBlockchainCall(
