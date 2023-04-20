@@ -185,12 +185,17 @@ describe('The Security Settings page', () => {
             await userEvent.click(await screen.findByText('Save'));
             await screen.findByText('Settings');
 
-            const passphrase = await getEncrypted({
-                key: 'passphrase',
-                session: true,
-                strong: false,
-            });
-            expect(passphrase).toEqual('one two three');
+            const lockOption = await screen.findByText('Lock Ethos');
+            await userEvent.click(lockOption);
+
+            const lockWalletButton = await screen.findByText('Lock Wallet');
+            await userEvent.click(lockWalletButton);
+
+            const paswwordInput = await screen.findByTestId('password');
+
+            await userEvent.type(paswwordInput, 'one two three');
+            await userEvent.click(screen.getByTestId('submit'));
+            await screen.findByText('Wallet Balance');
         });
 
         test('does not allow user to change password if they put wrong current password', async () => {

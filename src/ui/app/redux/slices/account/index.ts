@@ -385,6 +385,20 @@ export const changePassword: AsyncThunk<
             session: true,
         });
 
+        await deleteEncrypted({
+            key: 'passphrase-test',
+            session: false,
+            strong: false,
+            passphrase: currentPassword,
+        });
+        await setEncrypted({
+            key: 'passphrase-test',
+            value: PASSPHRASE_TEST,
+            session: false,
+            strong: false,
+            passphrase: newPassword,
+        });
+
         await setLocked(currentPassword);
         await setUnlocked(newPassword);
 
