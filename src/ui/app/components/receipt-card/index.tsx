@@ -123,13 +123,16 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             </div>
         );
 
+    const isStakingFailure =
+        analyzedTransaction.status === 'failure' &&
+        analyzedTransaction.important.staking;
     return (
         <div className="py-6 px-9 flex flex-col gap-6">
             <ReceiptHeader {...analyzedTransaction} />
 
             <PrimaryInteraction {...analyzedTransaction} />
 
-            <ReceiptSpecifics {...analyzedTransaction} />
+            {!isStakingFailure && <ReceiptSpecifics {...analyzedTransaction} />}
 
             <ReceiptDetails {...analyzedTransaction} />
 

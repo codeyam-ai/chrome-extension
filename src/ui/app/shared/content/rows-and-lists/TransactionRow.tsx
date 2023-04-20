@@ -6,6 +6,7 @@ import Body from '../../typography/Body';
 import getSummary from '_src/ui/app/helpers/transactions/getSummary';
 
 import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
+import { getIcon } from '_src/ui/app/helpers/transactions';
 
 interface TransactionRowProps {
     txn: FormattedTransaction;
@@ -41,7 +42,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                     ) : analyzedTransaction.status === 'failure' || !action ? (
                         <ExclamationTriangleIcon className="flex items-center h-10 w-10 rounded-full p-3 text-white bg-ethos-light-red dark:bg-ethos-dark-red" />
                     ) : (
-                        <ActionIcon>getIcon(action)</ActionIcon>
+                        <ActionIcon>{getIcon(action)}</ActionIcon>
                     )}
                     {getSummary(analyzedTransaction)}
                 </div>
