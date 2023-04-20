@@ -144,7 +144,7 @@ const PrimaryInteraction = ({ from, important }: AnalyzedTransaction) => {
             )}
             {(toAddress || toNode) && (
                 <>
-                    <div className="pl-[6px] text-ethos-light-text-medium dark:text-ethos-dark-text-medium">
+                    <div className="pl-[30px] text-ethos-light-text-medium">
                         <ChevronDoubleDownIcon width={25} height={23} />
                     </div>
                     {toNode && toNode}

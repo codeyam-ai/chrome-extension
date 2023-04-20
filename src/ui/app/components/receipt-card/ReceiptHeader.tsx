@@ -3,7 +3,6 @@ import {
     ArrowUpRightIcon,
     CheckCircleIcon,
     Square3Stack3DIcon,
-    XCircleIcon,
 } from '@heroicons/react/24/solid';
 
 import { getHumanReadable } from '../../helpers/transactions';
@@ -13,10 +12,7 @@ import BodyLarge from '../../shared/typography/BodyLarge';
 
 import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTransactions';
 
-const commandIcon = (command: string, status: 'success' | 'failure') => {
-    if (status === 'failure') {
-        return <XCircleIcon />;
-    }
+const commandIcon = (command: string) => {
     switch (command) {
         case 'TransferObjects':
             return <ArrowUpRightIcon />;
@@ -31,8 +27,8 @@ const commandIcon = (command: string, status: 'success' | 'failure') => {
 
 const ReceiptHeader = (analyzedTransaction: AnalyzedTransaction) => {
     const humanReadable = getHumanReadable(analyzedTransaction);
-    const { important, status } = analyzedTransaction;
-    console.log('analyzedTransaction :>> ', analyzedTransaction);
+    const { important } = analyzedTransaction;
+
     const { timeDisplay } = humanReadable;
     let commands = important.basic?.commands;
 
@@ -62,7 +58,7 @@ const ReceiptHeader = (analyzedTransaction: AnalyzedTransaction) => {
                                 className="border-2 border-white !h-12 !w-12"
                                 style={{ marginLeft: `${index * -6}px` }}
                             >
-                                {commandIcon(command, status)}
+                                {commandIcon(command)}
                             </ActionIcon>
                         ))}
                     </div>

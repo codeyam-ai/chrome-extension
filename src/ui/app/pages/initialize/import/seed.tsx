@@ -176,7 +176,7 @@ const ImportSeedPage = () => {
                     hide={passwordMode}
                     onToggle={togglePasswordMode}
                 />
-                <div className="pb-10">
+                <div className="px-10 pb-10">
                     <Button
                         id="continue"
                         type="submit"
