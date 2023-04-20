@@ -7,7 +7,10 @@ import StakingSummary from '../../shared/transactions/StakingSummary';
 import type { AnalyzedTransaction } from './analyzeTransactions';
 import type { ReactNode } from 'react';
 
-const getSummary = (analyzedTransaction: AnalyzedTransaction): ReactNode => {
+const getSummary = (
+    analyzedTransaction: AnalyzedTransaction,
+    timeDisplay: string
+): ReactNode => {
     if (analyzedTransaction.important.faucet) {
         return <FaucetSummary />;
     }
@@ -18,6 +21,7 @@ const getSummary = (analyzedTransaction: AnalyzedTransaction): ReactNode => {
                 stakingTransactionInfo={
                     analyzedTransaction.important.staking[0]
                 }
+                timeDisplay={timeDisplay}
                 isFailure={analyzedTransaction.status === 'failure'}
             />
         );
@@ -29,6 +33,7 @@ const getSummary = (analyzedTransaction: AnalyzedTransaction): ReactNode => {
                 moveCallTransactionInfo={
                     analyzedTransaction.important.moveCalls[0]
                 }
+                timeDisplay={timeDisplay}
             />
         );
     }
@@ -39,6 +44,7 @@ const getSummary = (analyzedTransaction: AnalyzedTransaction): ReactNode => {
                 sendingTransactionInfo={
                     analyzedTransaction.important.sending[0]
                 }
+                timeDisplay={timeDisplay}
             />
         );
     }
@@ -47,6 +53,7 @@ const getSummary = (analyzedTransaction: AnalyzedTransaction): ReactNode => {
         return (
             <BasicSummary
                 basicTransactionInfo={analyzedTransaction.important.basic}
+                timeDisplay={timeDisplay}
             />
         );
     }

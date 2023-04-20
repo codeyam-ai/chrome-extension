@@ -5,6 +5,7 @@ import {
 
 import truncateMiddle from '../../helpers/truncate-middle';
 import { useAppSelector } from '../../hooks';
+import { useValidatorsWithApy } from '../../hooks/staking/useValidatorsWithApy';
 import useWalletOrContact from '../../hooks/useWalletOrContact';
 import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
 import ActionIcon from '../../shared/transactions/ActionIcon';
@@ -101,9 +102,12 @@ const WalletAvatarItem = ({
 };
 
 const PrimaryInteraction = ({ from, important }: AnalyzedTransaction) => {
+    const { data: validators } = useValidatorsWithApy();
+
     let toAddress;
     let toNode;
     let fromHeader;
+    let toValidator;
 
     if (important.faucet) {
         fromHeader = 'From: Sui Faucet';
@@ -133,6 +137,34 @@ const PrimaryInteraction = ({ from, important }: AnalyzedTransaction) => {
         );
     }
 
+    if (important.staking) {
+        toAddress = important.staking[0].validatorAddress;
+        const validator = validators?.[important.staking[0].validatorAddress];
+        toNode = undefined;
+        toValidator = (
+            <div className="flex items-center gap-3">
+                {validator && validator.imageUrl ? (
+                    <img
+                        src={validator.imageUrl}
+                        alt={validator.name}
+                        className="h-9 w-9 rounded-full"
+                    />
+                ) : (
+                    <div className="h-9 w-9 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
+                )}
+                <div className="flex flex-col items-start text-left">
+                    <BodyLarge isSemibold>{validator?.name}</BodyLarge>
+                    <CopyBody
+                        txt={validator?.suiAddress ?? ''}
+                        isTextColorMedium
+                    >
+                        {truncateMiddle(validator?.suiAddress)}
+                    </CopyBody>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className={'py-3 flex flex-col gap-3'}>
             {from && (
@@ -142,13 +174,14 @@ const PrimaryInteraction = ({ from, important }: AnalyzedTransaction) => {
                     address={from}
                 />
             )}
-            {(toAddress || toNode) && (
+            {(toAddress || toNode || toValidator) && (
                 <>
                     <div className="pl-[6px] text-ethos-light-text-medium dark:text-ethos-dark-text-medium">
                         <ChevronDoubleDownIcon width={25} height={23} />
                     </div>
+                    {toValidator && toValidator}
                     {toNode && toNode}
-                    {!toNode && !!toAddress && (
+                    {!toNode && !toValidator && !!toAddress && (
                         <WalletAvatarItem pre="To" address={toAddress} />
                     )}
                 </>

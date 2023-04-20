@@ -1,9 +1,9 @@
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import {
     ArrowDownOnSquareStackIcon,
     ArrowUpRightIcon,
     CheckCircleIcon,
     Square3Stack3DIcon,
-    XCircleIcon,
 } from '@heroicons/react/24/solid';
 
 import { getHumanReadable } from '../../helpers/transactions';
@@ -13,10 +13,7 @@ import BodyLarge from '../../shared/typography/BodyLarge';
 
 import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTransactions';
 
-const commandIcon = (command: string, status: 'success' | 'failure') => {
-    if (status === 'failure') {
-        return <XCircleIcon />;
-    }
+const commandIcon = (command: string) => {
     switch (command) {
         case 'TransferObjects':
             return <ArrowUpRightIcon />;
@@ -40,6 +37,9 @@ const ReceiptHeader = (analyzedTransaction: AnalyzedTransaction) => {
     if (important.faucet) {
         commands = ['Faucet', ...(commands || [])];
         title = 'Faucet Request';
+    } else if (important?.staking && status === 'failure') {
+        commands = ['Staking', ...(commands || [])];
+        title = 'Failed Staking';
     } else if (important?.staking) {
         commands = ['Staking', ...(commands || [])];
         title = 'Staking SUI';
@@ -53,21 +53,25 @@ const ReceiptHeader = (analyzedTransaction: AnalyzedTransaction) => {
 
     return (
         <div className="flex flex-col gap-3 items-center">
-            {commands && (
-                <>
-                    <div className="flex items-center">
-                        {commands.map((command, index) => (
-                            <ActionIcon
-                                key={`command-icon-${index}`}
-                                className="border-2 border-white !h-12 !w-12"
-                                style={{ marginLeft: `${index * -6}px` }}
-                            >
-                                {commandIcon(command, status)}
-                            </ActionIcon>
-                        ))}
-                    </div>
-                    <Body isTextColorMedium>{commands.join(', ')}</Body>
-                </>
+            {status === 'failure' ? (
+                <ExclamationTriangleIcon className="flex items-center h-10 w-10 rounded-full p-3 text-white bg-ethos-light-red dark:bg-ethos-dark-red" />
+            ) : (
+                commands && (
+                    <>
+                        <div className="flex items-center">
+                            {commands.map((command, index) => (
+                                <ActionIcon
+                                    key={`command-icon-${index}`}
+                                    className="border-2 border-white !h-12 !w-12"
+                                    style={{ marginLeft: `${index * -6}px` }}
+                                >
+                                    {commandIcon(command)}
+                                </ActionIcon>
+                            ))}
+                        </div>
+                        <Body isTextColorMedium>{commands.join(', ')}</Body>
+                    </>
+                )
             )}
             <BodyLarge isSemibold>{title}</BodyLarge>
             <Body isTextColorMedium>{timeDisplay}</Body>

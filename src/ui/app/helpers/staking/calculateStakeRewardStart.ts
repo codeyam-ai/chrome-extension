@@ -1,6 +1,7 @@
 import { formatRelative } from 'date-fns';
 
 import getTimeToEarnStakingRewards from './getTimeToEarnStakeRewards';
+import capitalize from '../capitalize';
 import { NUM_OF_EPOCH_BEFORE_EARNING } from '_src/shared/constants';
 
 import type { SuiSystemStateSummary } from '@mysten/sui.js';
@@ -12,7 +13,9 @@ export function calculateStakeRewardStart(systemState?: SuiSystemStateSummary) {
         systemState &&
         getTimeToEarnStakingRewards(systemState, startEarningRewardsEpoch);
     const formattedDistanceToRewards = timeToEarnStakeRewards
-        ? formatRelative(new Date(timeToEarnStakeRewards), new Date())
+        ? capitalize(
+              formatRelative(new Date(timeToEarnStakeRewards), new Date())
+          )
         : undefined;
 
     return {

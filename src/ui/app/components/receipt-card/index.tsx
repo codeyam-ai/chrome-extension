@@ -93,6 +93,8 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         accountInfos.find((accountInfo) => accountInfo.address === recipient)
     );
 
+    const isStaking = analyzedTransaction?.important.staking;
+
     const handleClickAddContact = useCallback(() => {
         if (recipient) {
             navigate(
@@ -121,19 +123,22 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             </div>
         );
 
+    const isStakingFailure =
+        analyzedTransaction.status === 'failure' &&
+        analyzedTransaction.important.staking;
     return (
         <div className="py-6 px-9 flex flex-col gap-6">
             <ReceiptHeader {...analyzedTransaction} />
 
             <PrimaryInteraction {...analyzedTransaction} />
 
-            <ReceiptSpecifics {...analyzedTransaction} />
+            {!isStakingFailure && <ReceiptSpecifics {...analyzedTransaction} />}
 
             <ReceiptDetails {...analyzedTransaction} />
 
             <ReceiptExplorerLink {...analyzedTransaction} />
 
-            {!contactTo && !isToWalletIOwn && (
+            {!contactTo && !isToWalletIOwn && !isStaking && (
                 <Button onClick={handleClickAddContact} removeContainerPadding>
                     <UserPlusIcon className="h-6 w-6 text-white" />
                     Save &#34;To&#34; Address

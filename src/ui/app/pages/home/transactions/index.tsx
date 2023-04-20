@@ -104,7 +104,7 @@ const TransactionsPage = () => {
 
     if (error && formattedTxns.length === 0) {
         return (
-            <div className="pb-4">
+            <div className="p-6">
                 <Alert
                     title={'We could not retrieve your transactions'}
                     subtitle={'Please try again later.'}
@@ -137,7 +137,6 @@ const TransactionsPage = () => {
                         >
                             <Button
                                 buttonStyle={'secondary'}
-                                className={'mb-6'}
                                 onClick={incrementPage}
                             >
                                 Load more
