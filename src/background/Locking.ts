@@ -14,9 +14,9 @@ export async function lockWallet() {
 
     chrome.storage.session.clear();
 
-    const uiConnection = connections.getUiConnection();
-    if (uiConnection) {
-        uiConnection.sendWalletLockedMessage(!!authentication);
+    const uiConnection = connections.getUiConnections();
+    for (const connection of uiConnection) {
+        connection.sendWalletLockedMessage(!!authentication);
     }
 }
 
