@@ -2,12 +2,11 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 
 import ActionIcon from '../../transactions/ActionIcon';
-import Body from '../../typography/Body';
+import { getIcon } from '_src/ui/app/helpers/transactions';
 import getSummary from '_src/ui/app/helpers/transactions/getSummary';
+import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 
 import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
-import { getIcon } from '_src/ui/app/helpers/transactions';
-import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 
 interface TransactionRowProps {
     txn: FormattedTransaction;

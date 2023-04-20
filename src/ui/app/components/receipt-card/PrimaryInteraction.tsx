@@ -5,6 +5,7 @@ import {
 
 import truncateMiddle from '../../helpers/truncate-middle';
 import { useAppSelector } from '../../hooks';
+import { useValidatorsWithApy } from '../../hooks/staking/useValidatorsWithApy';
 import useWalletOrContact from '../../hooks/useWalletOrContact';
 import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
 import ActionIcon from '../../shared/transactions/ActionIcon';
@@ -13,7 +14,6 @@ import CopyBody from '../../shared/typography/CopyBody';
 
 import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTransactions';
 import type { SuiAddress } from '@mysten/sui.js';
-import { useValidatorsWithApy } from '../../hooks/staking/useValidatorsWithApy';
 
 const AvatarItem = ({
     color,

@@ -1,4 +1,5 @@
 import truncateMiddle from '../../helpers/truncate-middle';
+import truncateString from '../../helpers/truncate-string';
 import { useFormatCoin } from '../../hooks';
 import useWalletOrContact from '../../hooks/useWalletOrContact';
 import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
@@ -7,7 +8,6 @@ import BodyLarge from '../typography/BodyLarge';
 import CopyBody from '../typography/CopyBody';
 
 import type { SendTransactionInfo } from '../../helpers/transactions/sendTransactionAnalysis';
-import truncateString from '../../helpers/truncate-string';
 
 const SendingSummary = ({
     sendingTransactionInfo,

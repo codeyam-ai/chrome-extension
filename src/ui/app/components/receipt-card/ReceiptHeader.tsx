@@ -1,9 +1,9 @@
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import {
     ArrowDownOnSquareStackIcon,
     ArrowUpRightIcon,
     CheckCircleIcon,
     Square3Stack3DIcon,
-    XCircleIcon,
 } from '@heroicons/react/24/solid';
 
 import { getHumanReadable } from '../../helpers/transactions';
@@ -12,7 +12,6 @@ import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';
 
 import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTransactions';
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 const commandIcon = (command: string) => {
     switch (command) {
