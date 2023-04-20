@@ -28,9 +28,11 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         symbol: 'SUI', // TODO: what to do with coins / multiple coins / batch txs
         isFunc: action === 'function' ? 'yes' : 'no',
     }).toString()}`;
-
     return (
-        <Link to={drilldownLink} className="flex flex-col gap-2">
+        <Link
+            to={drilldownLink}
+            className="flex flex-col gap-2 px-6 py-4 hover:bg-ethos-light-background-light-grey hover:dark:bg-ethos-dark-background-secondary"
+        >
             <div className="flex flex-row justify-between items-center">
                 <Body isTextColorMedium>{timeDisplay}</Body>
             </div>

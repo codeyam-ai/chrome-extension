@@ -12,12 +12,10 @@ const TransactionRows = ({
             {transactions &&
                 transactions.map((txn: FormattedTransaction, index: number) => {
                     return (
-                        <div
-                            className="even:bg-ethos-light-background-secondary even:dark:bg-ethos-dark-background-secondary p-6"
+                        <TransactionRow
+                            txn={txn}
                             key={`txn-${index}-${txn.analyzedTransaction.digest}`}
-                        >
-                            <TransactionRow txn={txn} />
-                        </div>
+                        />
                     );
                 })}
         </div>

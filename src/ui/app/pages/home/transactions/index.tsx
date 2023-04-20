@@ -137,7 +137,6 @@ const TransactionsPage = () => {
                         >
                             <Button
                                 buttonStyle={'secondary'}
-                                className={'mb-6'}
                                 onClick={incrementPage}
                             >
                                 Load more
