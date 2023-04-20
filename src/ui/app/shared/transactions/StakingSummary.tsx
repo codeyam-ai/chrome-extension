@@ -6,38 +6,43 @@ import type { StakingTransactionInfo } from '../../helpers/transactions/stakingT
 
 interface StakingSummaryProps {
     stakingTransactionInfo: StakingTransactionInfo;
+    timeDisplay: string;
     small?: boolean;
     isFailure?: boolean;
 }
 
 const StakingSummary = ({
     stakingTransactionInfo,
+    timeDisplay,
     small,
     isFailure,
 }: StakingSummaryProps) => {
     const { data: validators } = useValidatorsWithApy();
     const validator = validators?.[stakingTransactionInfo.validatorAddress];
     return (
-        <div className="flex flex-col justify-between items-start">
-            <BodyLarge isSemibold>
-                {isFailure ? 'Failed Staking' : 'Staked Sui'}
-            </BodyLarge>
-            <div className="flex items-center gap-1 !text-xs">
-                {isFailure && (
-                    <div>
-                        {validator && validator.imageUrl ? (
-                            <img
-                                src={validator.imageUrl}
-                                alt={validator.name}
-                                className="h-4 w-4 rounded-full"
-                            />
-                        ) : (
-                            <div className="h-4 w-4 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
-                        )}
-                    </div>
-                )}
-                <Body isTextColorMedium>{validator?.name}</Body>
+        <div className="w-full flex justify-between items-center">
+            <div className="flex flex-col justify-between items-start">
+                <BodyLarge isSemibold>
+                    {isFailure ? 'Failed Staking' : 'Staked Sui'}
+                </BodyLarge>
+                <div className="flex items-center gap-1 !text-xs">
+                    {isFailure && (
+                        <div>
+                            {validator && validator.imageUrl ? (
+                                <img
+                                    src={validator.imageUrl}
+                                    alt={validator.name}
+                                    className="h-4 w-4 rounded-full"
+                                />
+                            ) : (
+                                <div className="h-4 w-4 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
+                            )}
+                        </div>
+                    )}
+                    <Body isTextColorMedium>{validator?.name}</Body>
+                </div>
             </div>
+            <Body isTextColorMedium>{timeDisplay}</Body>
         </div>
     );
 };

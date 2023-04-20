@@ -21,6 +21,7 @@ const getSummary = (
                 stakingTransactionInfo={
                     analyzedTransaction.important.staking[0]
                 }
+                timeDisplay={timeDisplay}
                 isFailure={analyzedTransaction.status === 'failure'}
             />
         );
@@ -32,6 +33,7 @@ const getSummary = (
                 moveCallTransactionInfo={
                     analyzedTransaction.important.moveCalls[0]
                 }
+                timeDisplay={timeDisplay}
             />
         );
     }
@@ -51,6 +53,7 @@ const getSummary = (
         return (
             <BasicSummary
                 basicTransactionInfo={analyzedTransaction.important.basic}
+                timeDisplay={timeDisplay}
             />
         );
     }
