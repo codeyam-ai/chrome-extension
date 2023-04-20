@@ -7,14 +7,21 @@ import getSummary from '_src/ui/app/helpers/transactions/getSummary';
 
 import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/types';
 import { getIcon } from '_src/ui/app/helpers/transactions';
+import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 
 interface TransactionRowProps {
     txn: FormattedTransaction;
 }
 
 const TransactionRow = ({ txn }: TransactionRowProps) => {
+    const { data: validators } = useValidatorsWithApy();
     const { analyzedTransaction, humanReadable } = txn;
     const { timeDisplay, action, image } = humanReadable;
+    const validator =
+        validators?.[
+            analyzedTransaction.important.staking?.[0].validatorAddress ?? ''
+        ];
+    const isStaking = analyzedTransaction.important.staking;
 
     const drilldownLink = `/transactions/receipt?${new URLSearchParams({
         txdigest: txn.analyzedTransaction.digest || '',
@@ -41,6 +48,18 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                         )
                     ) : analyzedTransaction.status === 'failure' || !action ? (
                         <ExclamationTriangleIcon className="flex items-center h-10 w-10 rounded-full p-3 text-white bg-ethos-light-red dark:bg-ethos-dark-red" />
+                    ) : isStaking ? (
+                        <div>
+                            {validator && validator.imageUrl ? (
+                                <img
+                                    src={validator.imageUrl}
+                                    alt={validator.name}
+                                    className="h-10 w-10 rounded-full"
+                                />
+                            ) : (
+                                <div className="h-10 w-10 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
+                            )}
+                        </div>
                     ) : (
                         <ActionIcon>{getIcon(action)}</ActionIcon>
                     )}
