@@ -33,11 +33,8 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
             to={drilldownLink}
             className="flex flex-col gap-2 px-6 py-4 hover:bg-ethos-light-background-light-grey hover:dark:bg-ethos-dark-background-secondary"
         >
-            <div className="flex flex-row justify-between items-center">
-                <Body isTextColorMedium>{timeDisplay}</Body>
-            </div>
             <div className="flex justify-between items-center">
-                <div className="flex gap-3 items-center">
+                <div className="w-full flex gap-3 items-center">
                     {image ? (
                         typeof image === 'string' ? (
                             <img
@@ -65,7 +62,7 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                     ) : (
                         <ActionIcon>{getIcon(action)}</ActionIcon>
                     )}
-                    {getSummary(analyzedTransaction)}
+                    {getSummary(analyzedTransaction, timeDisplay ?? '')}
                 </div>
             </div>
         </Link>
