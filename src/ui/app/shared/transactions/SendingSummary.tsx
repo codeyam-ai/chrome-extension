@@ -55,14 +55,18 @@ const SendingSummary = ({
                 </div>
             </div>
             <div className="flex flex-col items-end">
-                <BodyLarge isSemibold>
-                    {`${isSender ? '-' : '+'} ${truncateString(
-                        formattedCoinAmount,
-                        12
-                    )}
-                    ${formattedCoinType}`}
-                </BodyLarge>
-                <Body isTextColorMedium>{timeDisplay}</Body>
+                {!!coinAmount && (
+                    <BodyLarge isSemibold>
+                        {`${isSender ? '-' : '+'} ${truncateString(
+                            formattedCoinAmount,
+                            12
+                        )}
+                        ${formattedCoinType}`}
+                    </BodyLarge>
+                )}
+                <Body isTextColorMedium className="text-right">
+                    {timeDisplay}
+                </Body>
             </div>
         </div>
     );

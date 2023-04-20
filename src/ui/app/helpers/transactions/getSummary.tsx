@@ -12,7 +12,7 @@ const getSummary = (
     timeDisplay: string
 ): ReactNode => {
     if (analyzedTransaction.important.faucet) {
-        return <FaucetSummary />;
+        return <FaucetSummary timeDisplay={timeDisplay} />;
     }
 
     if (analyzedTransaction.important.staking) {

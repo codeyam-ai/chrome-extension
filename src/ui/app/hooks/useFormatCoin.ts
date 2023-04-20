@@ -4,7 +4,7 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
+// import { useIntl } from 'react-intl';
 
 import { Coin } from '../redux/slices/sui-objects/Coin';
 import { api } from '../redux/store/thunk-extras';
@@ -53,31 +53,34 @@ export function useFormatCoin(
     coinType?: string | null,
     formattedLength?: number
 ): FormattedCoin {
-    const intl = useIntl();
+    // const intl = useIntl();
     const symbol = useMemo(
         () => (coinType ? Coin.getCoinSymbol(coinType) : ''),
         [coinType]
     );
 
     const [decimals, coinMetadata, queryResult] = useCoinDecimals(coinType);
-    const { isFetched, isError } = queryResult;
+    // const { isFetched, isError } = queryResult;
 
     const formatted = useMemo(() => {
         if (typeof balance === 'undefined' || balance === null) return '0';
 
-        if (isError) {
-            return intl.formatNumber(BigInt(balance), {
-                maximumFractionDigits: 0,
-            });
-        }
+        // if (isError) {
+        //     return intl.formatNumber(BigInt(balance), {
+        //         maximumFractionDigits: 0,
+        //     });
+        // }
 
-        if (!isFetched) return '...';
+        // if (!isFetched) return '...';
 
-        if (typeof decimals === 'undefined') {
-            return '...';
-        }
+        // if (typeof decimals === 'undefined') {
+        //     return '...';
+        // }
+
+        const safeDecimals = decimals ?? 9;
+
         const decimalsBalance = new BigNumber(balance.toString()).shiftedBy(
-            -1 * decimals
+            -1 * safeDecimals
         );
 
         if (
@@ -85,11 +88,15 @@ export function useFormatCoin(
             decimalsBalance.lt(1) &&
             decimalsBalance.toString().split('.')[1].length > formattedLength
         ) {
-            return ns.format.coinBalance(balance, decimals, formattedLength);
+            return ns.format.coinBalance(
+                balance,
+                safeDecimals,
+                formattedLength
+            );
         }
 
-        return ns.format.coinBalance(balance, decimals);
-    }, [balance, isError, isFetched, decimals, formattedLength, intl]);
+        return ns.format.coinBalance(balance, safeDecimals);
+    }, [balance, decimals, formattedLength]);
 
     const dollars = useMemo(() => {
         if (

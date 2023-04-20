@@ -13,7 +13,7 @@ import {
 
 import type { TxAction } from './getTxAction';
 
-const getIcon = (txAction: TxAction, width?: number): JSX.Element => {
+const getIcon = (txAction: TxAction, width = 30): JSX.Element => {
     switch (txAction) {
         case 'mint':
             return <SparklesIcon width={width} />;

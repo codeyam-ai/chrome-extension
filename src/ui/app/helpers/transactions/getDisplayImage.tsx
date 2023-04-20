@@ -1,13 +1,15 @@
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
-import getIcon from './getIcon';
+import { useValidatorsWithApy } from '../../hooks/staking/useValidatorsWithApy';
 import useDisplayDatas from '../../hooks/useDisplayDatas';
 import { useFormatCoin } from '../../hooks/useFormatCoin';
 import SuiIcon from '../../shared/svg/SuiIcon';
 import ActionIcon from '../../shared/transactions/ActionIcon';
+import { getIcon } from '_src/ui/app/helpers/transactions';
 
 import type { AnalyzedTransaction } from './analyzeTransactions';
 import type { TxAction } from './getTxAction';
+import type { SuiAddress } from '@mysten/sui.js';
 import type { ReactNode } from 'react';
 
 export type TxType = string;
@@ -67,16 +69,38 @@ const ObjectIcon = ({
     return <ActionIcon>{getIcon(txAction)}</ActionIcon>;
 };
 
+const StakingIcon = ({ address }: { address: SuiAddress }) => {
+    const { data: validators } = useValidatorsWithApy();
+    const validator = validators?.[address ?? ''];
+
+    if (validator && validator.imageUrl) {
+        return (
+            <img
+                src={validator.imageUrl}
+                alt={validator.name}
+                className="h-10 w-10 rounded-full"
+            />
+        );
+    }
+
+    return <ActionIcon>{getIcon('staking')}</ActionIcon>;
+};
+
 const getDisplayImage = (
     analyzedTransaction: AnalyzedTransaction,
     txAction: TxAction
 ): ReactNode | null => {
     if (analyzedTransaction.important.faucet) {
         return (
-            <div className="bg-blue-600 flex items-center justify-center rounded-full w-[41px] h-[41px]">
+            <div className="bg-blue-600 flex items-center justify-center rounded-full w-[48px] h-[42px]">
                 <SuiIcon height={18} width={18} />
             </div>
         );
+    }
+
+    if (analyzedTransaction.important.staking) {
+        const { validatorAddress } = analyzedTransaction.important.staking[0];
+        return <StakingIcon address={validatorAddress} />;
     }
 
     if (analyzedTransaction.important.sending) {

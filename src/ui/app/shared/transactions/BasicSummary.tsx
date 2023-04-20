@@ -40,7 +40,9 @@ const BasicSummary = ({
                           .join(', ')}`
                     : translateKind(basicTransactionInfo.type)}
             </Body>
-            <Body isTextColorMedium>{timeDisplay}</Body>
+            <Body isTextColorMedium className="text-right">
+                {timeDisplay}
+            </Body>
         </div>
     );
 };

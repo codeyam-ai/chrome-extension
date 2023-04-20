@@ -1,21 +1,19 @@
+import { useFormatCoin } from '../../hooks';
 import { useValidatorsWithApy } from '../../hooks/staking/useValidatorsWithApy';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 
 import type { StakingTransactionInfo } from '../../helpers/transactions/stakingTransactionAnalysis';
-import { useFormatCoin } from '../../hooks';
 
 interface StakingSummaryProps {
     stakingTransactionInfo: StakingTransactionInfo;
     timeDisplay: string;
-    small?: boolean;
     isFailure?: boolean;
 }
 
 const StakingSummary = ({
     stakingTransactionInfo,
     timeDisplay,
-    small,
     isFailure,
 }: StakingSummaryProps) => {
     const { data: validators } = useValidatorsWithApy();
@@ -55,7 +53,9 @@ const StakingSummary = ({
                         {formattedCoinAmount} {formattedCoinType}
                     </BodyLarge>
                 )}
-                <Body isTextColorMedium>{timeDisplay}</Body>
+                <Body isTextColorMedium className="text-right">
+                    {timeDisplay}
+                </Body>
             </div>{' '}
         </div>
     );

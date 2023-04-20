@@ -19,7 +19,6 @@ import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/type
 const TransactionsPage = () => {
     const [activePage, setActivePage] = useState(0);
     const address = useAppSelector(({ account }) => account.address);
-    const [firstDigest, setFirstDigest] = useState<string>();
     const [formattedTxns, setFormattedTxns] = useState<FormattedTransaction[]>(
         []
     );
@@ -43,39 +42,53 @@ const TransactionsPage = () => {
     } = useInfiniteQuery(['query-transactions'], fetchTransactions, {
         enabled: !!address,
         refetchInterval: 5000,
-        staleTime: 30000,
     });
 
     const loadPage = useCallback(async () => {
         if (!suiTxns?.pages[activePage]) return;
 
-        if (activePage === 0) {
-            // Save the length of the first page to compare with
-            // the length of the first page after refetching.
-            setFirstDigest(
-                suiTxns.pages[activePage].blocks[0].analyzedTransaction.digest
+        setFormattedTxns((prev) => {
+            const newTransactionDigests = suiTxns?.pages[0].blocks.map(
+                (x) => x.analyzedTransaction.digest
             );
-        }
+            let newTransactionsLength = 0;
+            for (const newTranasctionDigest of newTransactionDigests) {
+                if (
+                    prev.find(
+                        (x) =>
+                            x.analyzedTransaction.digest ===
+                            newTranasctionDigest
+                    )
+                ) {
+                    break;
+                }
+                newTransactionsLength++;
+            }
+            const newTransactions = suiTxns?.pages[0].blocks.slice(
+                0,
+                newTransactionsLength
+            );
 
-        if (
-            !firstDigest ||
-            suiTxns.pages[0].blocks[0].analyzedTransaction.digest ===
-                firstDigest
-        ) {
-            // Initial fetch or when selecting the load more button.
-            // Deduplicate the transactions and set the state.
-            setFormattedTxns((prev) =>
-                _.uniqWith(
-                    [...prev, ...suiTxns.pages[activePage].blocks],
-                    _.isEqual
-                )
+            const newX = suiTxns?.pages[activePage].blocks ?? [];
+            const lastX = prev.slice(newX.length * -1) ?? [];
+
+            const newXDigests = newX.map((x) => x.analyzedTransaction.digest);
+            const lastXDigests = lastX.map((x) => x.analyzedTransaction.digest);
+
+            if (_.isEqual(newXDigests, lastXDigests)) {
+                if (newTransactions.length === 0) {
+                    return prev;
+                }
+
+                return [...newTransactions, ...prev];
+            }
+
+            return _.uniqBy(
+                [...newTransactions, ...prev, ...newX],
+                (x) => x.analyzedTransaction.digest
             );
-        } else {
-            // Compare the length of the first page with the length
-            // of the initial page. If they are different, prepend the new item.
-            setFormattedTxns((prev) => [suiTxns.pages[0].blocks[0], ...prev]);
-        }
-    }, [suiTxns, activePage, firstDigest]);
+        });
+    }, [suiTxns, activePage]);
 
     // load a page of "formatted transactions"
     useEffect(() => {

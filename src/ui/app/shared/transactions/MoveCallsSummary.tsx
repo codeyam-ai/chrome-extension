@@ -19,7 +19,9 @@ const MoveCallsSummary = ({
                 <BodyLarge isSemibold>{capitalize(moduleName)}</BodyLarge>
                 <Body isTextColorMedium>{capitalize(functionName)}</Body>
             </div>
-            <Body isTextColorMedium>{timeDisplay}</Body>
+            <Body isTextColorMedium className="text-right">
+                {timeDisplay}
+            </Body>
         </div>
     );
 };
