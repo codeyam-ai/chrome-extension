@@ -3,6 +3,7 @@ import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 
 import type { StakingTransactionInfo } from '../../helpers/transactions/stakingTransactionAnalysis';
+import { useFormatCoin } from '../../hooks';
 
 interface StakingSummaryProps {
     stakingTransactionInfo: StakingTransactionInfo;
@@ -19,6 +20,12 @@ const StakingSummary = ({
 }: StakingSummaryProps) => {
     const { data: validators } = useValidatorsWithApy();
     const validator = validators?.[stakingTransactionInfo.validatorAddress];
+
+    const [formattedCoinAmount, formattedCoinType] = useFormatCoin(
+        stakingTransactionInfo.amount,
+        stakingTransactionInfo.coinType
+    );
+
     return (
         <div className="w-full flex justify-between items-center">
             <div className="flex flex-col justify-between items-start">
@@ -42,7 +49,14 @@ const StakingSummary = ({
                     <Body isTextColorMedium>{validator?.name}</Body>
                 </div>
             </div>
-            <Body isTextColorMedium>{timeDisplay}</Body>
+            <div className="flex flex-col items-end">
+                {!isFailure && (
+                    <BodyLarge isSemibold>
+                        {formattedCoinAmount} {formattedCoinType}
+                    </BodyLarge>
+                )}
+                <Body isTextColorMedium>{timeDisplay}</Body>
+            </div>{' '}
         </div>
     );
 };
