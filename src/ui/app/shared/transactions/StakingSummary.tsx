@@ -23,14 +23,18 @@ const StakingSummary = ({
                 {isFailure ? 'Failed Staking' : 'Staked Sui'}
             </BodyLarge>
             <div className="flex items-center gap-1 !text-xs">
-                {validator && validator.imageUrl ? (
-                    <img
-                        src={validator.imageUrl}
-                        alt={validator.name}
-                        className="h-4 w-4 rounded-full"
-                    />
-                ) : (
-                    <div className="h-4 w-4 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
+                {isFailure && (
+                    <div>
+                        {validator && validator.imageUrl ? (
+                            <img
+                                src={validator.imageUrl}
+                                alt={validator.name}
+                                className="h-4 w-4 rounded-full"
+                            />
+                        ) : (
+                            <div className="h-4 w-4 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
+                        )}
+                    </div>
                 )}
                 <Body isTextColorMedium>{validator?.name}</Body>
             </div>
