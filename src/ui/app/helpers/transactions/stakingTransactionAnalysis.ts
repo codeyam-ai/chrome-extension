@@ -1,7 +1,9 @@
 import {
     type SuiAddress,
     type SuiTransactionBlockResponse,
+    type SuiJsonValue,
     getTotalGasUsed,
+    SUI_TYPE_ARG,
 } from '@mysten/sui.js';
 
 import addressOwner from './addressOwner';
@@ -9,7 +11,7 @@ import addressOwner from './addressOwner';
 export type StakingTransactionInfo = {
     coinType?: string;
     amount: bigint;
-    validator: string;
+    validatorAddress: string;
 };
 
 const stakingTransactionAnalysis = (
@@ -18,6 +20,14 @@ const stakingTransactionAnalysis = (
 ) => {
     const analysis: StakingTransactionInfo[] = [];
     if (!transaction.effects || !transaction.events) return analysis;
+
+    const { isStakingFailure, failedStakingAnalysis } =
+        getStakingFailureInfo(transaction);
+
+    if (isStakingFailure) {
+        analysis.push(failedStakingAnalysis);
+        return analysis;
+    }
 
     const gasUsed = getTotalGasUsed(transaction.effects) || BigInt(0);
     const stakingEvents = transaction.events.filter(
@@ -45,10 +55,77 @@ const stakingTransactionAnalysis = (
             }
         }
 
-        analysis.push({ coinType, amount, validator });
+        analysis.push({ coinType, amount, validatorAddress: validator });
     }
 
     return analysis;
 };
 
+const getStakingFailureInfo = (
+    transaction: SuiTransactionBlockResponse
+): {
+    isStakingFailure: boolean;
+    failedStakingAnalysis: StakingTransactionInfo;
+} => {
+    if (!transaction.effects || !transaction.events) {
+        return {
+            isStakingFailure: false,
+            failedStakingAnalysis: { amount: BigInt(0), validatorAddress: '' },
+        };
+    }
+
+    const isTxFailure = transaction.effects.status.status === 'failure';
+    const tx = transaction.transaction;
+    const internalTransaction = tx?.data?.transaction;
+
+    if (internalTransaction?.kind !== 'ProgrammableTransaction') {
+        return {
+            isStakingFailure: false,
+            failedStakingAnalysis: { amount: BigInt(0), validatorAddress: '' },
+        };
+    }
+
+    const { transactions: internalTransactions } = internalTransaction;
+
+    const moveCalls = internalTransactions.filter(
+        (transaction) => 'MoveCall' in transaction
+    );
+
+    const isStakingMoveCall = moveCalls.some((call) => {
+        if (!('MoveCall' in call)) return undefined;
+
+        return (
+            call.MoveCall.function === 'request_add_stake' ||
+            call.MoveCall.function === 'request_withdraw_stake'
+        );
+    });
+
+    if (!isTxFailure || !isStakingMoveCall) {
+        return {
+            isStakingFailure: false,
+            failedStakingAnalysis: { amount: BigInt(0), validatorAddress: '' },
+        };
+    }
+
+    let validatorAddress: SuiJsonValue | undefined;
+    let suiAmount: SuiJsonValue | undefined;
+
+    internalTransaction.inputs.forEach((input) => {
+        if ('valueType' in input && input.valueType === 'address') {
+            validatorAddress = input.value;
+        }
+        if ('valueType' in input && input.valueType === 'u64') {
+            suiAmount = input.value;
+        }
+    });
+
+    return {
+        isStakingFailure: true,
+        failedStakingAnalysis: {
+            coinType: SUI_TYPE_ARG,
+            amount: BigInt(suiAmount?.toString() ?? '0'),
+            validatorAddress: validatorAddress?.toString() ?? '',
+        },
+    };
+};
 export default stakingTransactionAnalysis;

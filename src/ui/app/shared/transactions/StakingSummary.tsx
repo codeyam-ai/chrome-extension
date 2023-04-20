@@ -1,29 +1,38 @@
-import truncateMiddle from '../../helpers/truncate-middle';
+import { useValidatorsWithApy } from '../../hooks/staking/useValidatorsWithApy';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
-import CopyBody from '../typography/CopyBody';
 
 import type { StakingTransactionInfo } from '../../helpers/transactions/stakingTransactionAnalysis';
+
+interface StakingSummaryProps {
+    stakingTransactionInfo: StakingTransactionInfo;
+    small?: boolean;
+    isFailure?: boolean;
+}
 
 const StakingSummary = ({
     stakingTransactionInfo,
     small,
-}: {
-    stakingTransactionInfo: StakingTransactionInfo;
-    small?: boolean;
-}) => {
+    isFailure,
+}: StakingSummaryProps) => {
+    const { data: validators } = useValidatorsWithApy();
+    const validator = validators?.[stakingTransactionInfo.validatorAddress];
     return (
         <div className="flex flex-col justify-between items-start">
-            <BodyLarge isSemibold>Staked Sui</BodyLarge>
+            <BodyLarge isSemibold>
+                {isFailure ? 'Failed Staking' : 'Staked Sui'}
+            </BodyLarge>
             <div className="flex items-center gap-1 !text-xs">
-                <Body isTextColorMedium>To:</Body>
-                <CopyBody
-                    isTextColorMedium
-                    txt={stakingTransactionInfo.validator}
-                    className="!text-xs"
-                >
-                    {truncateMiddle(stakingTransactionInfo.validator)}
-                </CopyBody>
+                {validator && validator.imageUrl ? (
+                    <img
+                        src={validator.imageUrl}
+                        alt={validator.name}
+                        className="h-4 w-4 rounded-full"
+                    />
+                ) : (
+                    <div className="h-4 w-4 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
+                )}
+                <Body isTextColorMedium>{validator?.name}</Body>
             </div>
         </div>
     );
