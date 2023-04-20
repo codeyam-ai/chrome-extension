@@ -93,6 +93,8 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
         accountInfos.find((accountInfo) => accountInfo.address === recipient)
     );
 
+    const isStaking = analyzedTransaction?.important.staking;
+
     const handleClickAddContact = useCallback(() => {
         if (recipient) {
             navigate(
@@ -133,7 +135,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
 
             <ReceiptExplorerLink {...analyzedTransaction} />
 
-            {!contactTo && !isToWalletIOwn && (
+            {!contactTo && !isToWalletIOwn && !isStaking && (
                 <Button onClick={handleClickAddContact} removeContainerPadding>
                     <UserPlusIcon className="h-6 w-6 text-white" />
                     Save &#34;To&#34; Address
