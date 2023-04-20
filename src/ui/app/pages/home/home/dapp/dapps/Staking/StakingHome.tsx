@@ -28,14 +28,9 @@ const StakingHome: React.FC = () => {
         );
     }, [delegatedStakes]);
 
-    const [, , , , , queryResult] = useFormatCoin(
-        totalActivePendingStake,
-        SUI_TYPE_ARG
-    );
-
     return (
         <div className="flex w-full h-full items-center place-content-center">
-            <Loading loading={isLoading || queryResult.isLoading} big={true}>
+            <Loading loading={isLoading} big={true}>
                 {delegatedStakes && !!totalActivePendingStake ? (
                     <ExistingStake
                         delegatedStakes={delegatedStakes}
