@@ -93,7 +93,7 @@ export class Mockchain {
             const coinObjectInfo = {
                 data: {
                     objectId: objId,
-                    version: 0,
+                    version: '0',
                     digest: '12Pe8JN96upsApMseeghANkkNMKUWA6Bz4JD5NTWko2q',
                     type: '0x2::coin::Coin<0x2::sui::SUI>',
                     owner: {
@@ -116,7 +116,7 @@ export class Mockchain {
                 data: {
                     objectId:
                         '0x3c36fe1eca57222e087352959ab0edf83251fe0a5aa8a0ec87c4e3fa1714f367',
-                    version: 10,
+                    version: '10',
                     digest: '3LrFiM2niq5to7XJ466L7b9oVkQtXqTvNhfiLWCNCTTN',
                 },
             };
