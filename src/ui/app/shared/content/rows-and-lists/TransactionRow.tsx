@@ -50,11 +50,13 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                     ) : isStaking ? (
                         <div>
                             {validator && validator.imageUrl ? (
-                                <img
-                                    src={validator.imageUrl}
-                                    alt={validator.name}
-                                    className="h-10 w-10 rounded-full"
-                                />
+                                <div className="h-10 w-10 rounded-full">
+                                    <img
+                                        src={validator.imageUrl}
+                                        alt={validator.name}
+                                        className="w-full h-full rounded-full object-cover"
+                                    />
+                                </div>
                             ) : (
                                 <div className="h-10 w-10 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
                             )}
