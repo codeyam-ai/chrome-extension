@@ -32,8 +32,8 @@ const commandIcon = (command: string, status: 'success' | 'failure') => {
 const ReceiptHeader = (analyzedTransaction: AnalyzedTransaction) => {
     const humanReadable = getHumanReadable(analyzedTransaction);
     const { important, status } = analyzedTransaction;
-    console.log('analyzedTransaction :>> ', analyzedTransaction);
     const { timeDisplay } = humanReadable;
+
     let commands = important.basic?.commands;
 
     let title = 'Transaction';

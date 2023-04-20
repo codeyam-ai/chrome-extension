@@ -2,7 +2,6 @@ import { XMarkIcon } from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
 
 import ActionIcon from '../../transactions/ActionIcon';
-import ValueAndGas from '../../transactions/ValueAndGas';
 import Body from '../../typography/Body';
 import capitalize from '_src/ui/app/helpers/capitalize';
 import { getIcon } from '_src/ui/app/helpers/transactions';
@@ -58,9 +57,6 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                         </ActionIcon>
                     )}
                     {getSummary(analyzedTransaction)}
-                </div>
-                <div>
-                    <ValueAndGas {...analyzedTransaction} />
                 </div>
             </div>
         </Link>
