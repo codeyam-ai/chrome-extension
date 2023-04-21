@@ -1,10 +1,9 @@
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useMemo } from 'react';
 
 import ExistingStake from './ExistingStake';
 import StakingIntro from './StakingIntro';
 import Loading from '_src/ui/app/components/loading';
-import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
+import { useAppSelector } from '_src/ui/app/hooks';
 import useGetDelegatedStakes from '_src/ui/app/hooks/staking/useGetDelegatedStakes';
 
 const StakingHome: React.FC = () => {

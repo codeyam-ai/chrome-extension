@@ -25,15 +25,13 @@ const translateKind = (kind: string) => {
 const BasicSummary = ({
     basicTransactionInfo,
     timeDisplay,
-    small,
 }: {
     basicTransactionInfo: BasicTransactionInfo;
     timeDisplay: string;
-    small?: boolean;
 }) => {
     return (
         <div className="w-full flex justify-between items-center">
-            <Body className={small ? `!text-xs` : ''}>
+            <Body className="text-left">
                 {basicTransactionInfo.commands
                     ? `${basicTransactionInfo.commands
                           .map((c) => translateCommand(c))
