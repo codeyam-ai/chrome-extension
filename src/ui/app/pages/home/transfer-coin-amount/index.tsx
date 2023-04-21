@@ -58,7 +58,7 @@ export function useCoin({ aggregateBalances, coinType }: UseCoinInputs) {
         type: coinType,
         balance: coinBalance,
         symbol: coinSymbol,
-        decimals: coinDecimals,
+        decimals: coinDecimals ?? 9,
     };
 
     return coin;
