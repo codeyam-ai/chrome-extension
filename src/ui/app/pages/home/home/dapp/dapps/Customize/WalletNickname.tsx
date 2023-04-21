@@ -40,7 +40,7 @@ const WalletNickname: React.FC = () => {
     }, [nickname, updateCurrentAccountInfo, navigate]);
 
     const goBack = useCallback(() => {
-        navigate(-1);
+        navigate('/home');
     }, [navigate]);
 
     useEffect(() => {

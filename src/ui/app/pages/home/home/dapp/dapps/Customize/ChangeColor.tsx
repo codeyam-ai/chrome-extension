@@ -41,11 +41,11 @@ const ChangeColor: React.FC = () => {
 
     const handleOnContinue = useCallback(() => {
         updateCurrentAccountInfo({ color: draftColor });
-        navigate('/home/customize/completed');
+        navigate('/home/customize/favorites');
     }, [draftColor, navigate, updateCurrentAccountInfo]);
 
     const goBack = useCallback(() => {
-        navigate(-1);
+        navigate('/home/customize/emoji');
     }, [navigate]);
 
     return (

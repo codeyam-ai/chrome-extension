@@ -51,7 +51,7 @@ const ChangeEmoji: React.FC = () => {
     }, [draftEmoji, navigate, updateCurrentAccountInfo]);
 
     const goBack = useCallback(() => {
-        navigate(-1);
+        navigate('/home/customize');
     }, [navigate]);
 
     return (
