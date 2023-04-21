@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 import { FavoritesSortableList } from './FavoritesSortableList';
-import { TestSort } from './Test';
 
 const ChangeFavoritesPage: React.FC = () => {
     const navigate = useNavigate();
@@ -18,11 +17,10 @@ const ChangeFavoritesPage: React.FC = () => {
     }, [navigate]);
 
     return (
-        <div className="relative flex flex-col items-center pt-6 px-6">
+        <div className="relative flex flex-col items-center pt-6">
             <Title className="pb-6">Choose your wallet&apos;s color</Title>
             <FavoritesSortableList />
-            {/* <TestSort /> */}
-            <div className="flex gap-2 w-full mt-6">
+            <div className="flex gap-2 w-full mt-6 px-6">
                 <button
                     onClick={goBack}
                     className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-4 mt-6 mb-2 bg-ethos-light-primary-light/20"
