@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { DappWrapper } from './DappWrapper';
 import { useAppSelector } from '_src/ui/app/hooks';
 
-import type { DappData } from './dappData';
+import type { DappData } from '_src/types/DappData';
 
 interface DappViewProps {
     dapp: DappData | null;

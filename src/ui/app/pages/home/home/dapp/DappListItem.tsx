@@ -1,15 +1,15 @@
 import { useCallback } from 'react';
 
-import type { DappData } from './dappData';
+import type { DappData } from '_src/types/DappData';
 
 interface ListItemProps {
     item: DappData;
-    onClick: (dapp: DappData) => void;
+    onClick?: (dapp: DappData) => void;
 }
 
 const DappListItem: React.FC<ListItemProps> = ({ item, onClick }) => {
     const handleClick = useCallback(() => {
-        onClick(item);
+        onClick && onClick(item);
     }, [onClick, item]);
 
     return (

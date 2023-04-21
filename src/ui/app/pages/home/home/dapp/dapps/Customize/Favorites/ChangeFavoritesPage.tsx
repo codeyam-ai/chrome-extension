@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
+import { FavoritesSortableList } from './FavoritesSortableList';
+import { TestSort } from './Test';
 
-const ChangeFavorites: React.FC = () => {
+const ChangeFavoritesPage: React.FC = () => {
     const navigate = useNavigate();
 
     const handleOnContinue = useCallback(() => {
@@ -18,7 +20,8 @@ const ChangeFavorites: React.FC = () => {
     return (
         <div className="relative flex flex-col items-center pt-6 px-6">
             <Title className="pb-6">Choose your wallet&apos;s color</Title>
-            <div>Content</div>
+            <FavoritesSortableList />
+            {/* <TestSort /> */}
             <div className="flex gap-2 w-full mt-6">
                 <button
                     onClick={goBack}
@@ -44,4 +47,4 @@ const ChangeFavorites: React.FC = () => {
     );
 };
 
-export default ChangeFavorites;
+export default ChangeFavoritesPage;

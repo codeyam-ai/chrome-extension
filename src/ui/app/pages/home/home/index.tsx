@@ -6,13 +6,12 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import CoinList from './CoinList';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import { DappList } from './dapp/DappList';
-import { sampleData } from './dapp/dappData';
+import { dapps } from './dapp/dappData';
 import ChainIndicator from '../../dapp-tx-approval/types/ChainIndicator';
 import { useAppSelector } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
-// import { sumCoinBalances } from '_src/ui/app/helpers/sumCoinBalances';
 import SendReceiveButtonGroup from '_src/ui/app/shared/buttons/SendReceiveButtonGroup';
 import Body from '_src/ui/app/shared/typography/Body';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
@@ -39,7 +38,7 @@ function HomePage() {
 
     return (
         <div className="flex flex-col gap-3">
-            {showDappList && <DappList data={sampleData} />}
+            {showDappList && <DappList data={dapps} />}
             <ChainIndicator apiEnv={selectedApiEnv} />
             <WalletBalanceAndIconHomeView
                 accountInfo={accountInfo}

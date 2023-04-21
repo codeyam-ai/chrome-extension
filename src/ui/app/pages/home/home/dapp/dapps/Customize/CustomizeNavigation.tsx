@@ -2,7 +2,7 @@ import { Outlet, Route, Routes, useLocation } from 'react-router-dom';
 
 import ChangeColor from './ChangeColor';
 import ChangeEmoji from './ChangeEmoji';
-import ChangeFavorites from './ChangeFavorites';
+import ChangeFavoritesPage from './Favorites/ChangeFavoritesPage';
 import CustomizeCompleted from './CustomizeCompleted';
 import Tabs from './Tabs';
 import WalletNickname from './WalletNickname';
@@ -28,7 +28,7 @@ function CustomizeNavigation() {
                     <Route path="/" element={<WalletNickname />} />
                     <Route path="emoji" element={<ChangeEmoji />} />
                     <Route path="color" element={<ChangeColor />} />
-                    <Route path="favorites" element={<ChangeFavorites />} />
+                    <Route path="favorites" element={<ChangeFavoritesPage />} />
                     <Route path="completed" element={<CustomizeCompleted />} />
                 </Routes>
                 <Outlet />

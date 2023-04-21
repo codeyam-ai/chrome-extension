@@ -5,7 +5,7 @@ import DappListItem from './DappListItem';
 import DappView from './DappView';
 import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVerticalScrollToHorizontal';
 
-import type { DappData } from './dappData';
+import type { DappData } from '_src/types/DappData';
 
 interface DappListProps {
     data: DappData[];
