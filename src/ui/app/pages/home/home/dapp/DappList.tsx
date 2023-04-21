@@ -1,18 +1,20 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import DappListItem from './DappListItem';
 import DappView from './DappView';
+import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVerticalScrollToHorizontal';
 
 import type { DappData } from './dappData';
 
-interface ScrollingListProps {
+interface DappListProps {
     data: DappData[];
 }
 
-export const DappList: React.FC<ScrollingListProps> = ({ data }) => {
+export const DappList: React.FC<DappListProps> = ({ data }) => {
     const [selectedDapp, setSelectedDapp] = useState<DappData | null>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    useConvertVerticalScrollToHorizontal(scrollContainerRef);
     const navigate = useNavigate();
 
     const handleItemClick = useCallback(
@@ -31,35 +33,9 @@ export const DappList: React.FC<ScrollingListProps> = ({ data }) => {
         ));
     }, [data, handleItemClick]);
 
-    const handleWheel = useCallback((event: WheelEvent) => {
-        if (scrollContainerRef.current) {
-            const deltaY = event.deltaY;
-            const deltaX = event.deltaX;
-            const ratio = Math.abs(deltaY / deltaX);
-
-            if (ratio > 1) {
-                scrollContainerRef.current.scrollLeft += event.deltaY;
-                event.preventDefault();
-            }
-        }
-    }, []);
-
     const closeDapp = useCallback(() => {
         navigate(-1);
     }, [navigate]);
-
-    useEffect(() => {
-        const container = scrollContainerRef.current;
-        if (container) {
-            container.addEventListener('wheel', handleWheel);
-        }
-
-        return () => {
-            if (container) {
-                container.removeEventListener('wheel', handleWheel);
-            }
-        };
-    }, [handleWheel]);
 
     return (
         <div>
