@@ -1,12 +1,8 @@
-import { Square2StackIcon } from '@heroicons/react/24/outline';
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import { useFormatCoin } from '_hooks';
 import { useDependencies } from '_shared/utils/dependenciesContext';
-import CopyToClipboard from '_src/ui/app/components/copy-to-clipboard';
-import useMiddleEllipsis from '_src/ui/app/hooks/useMiddleEllipsis';
 import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
-import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Header from '_src/ui/app/shared/typography/Header';
 import JumboTitle from '_src/ui/app/shared/typography/JumboTitle';
@@ -22,12 +18,6 @@ const WalletBalanceAndIconHomeView = ({
     accountInfo,
     mistBalance,
 }: WalletBalanceAndIconHomeViewProps) => {
-    const addressWithEllipsis = useMiddleEllipsis(
-        accountInfo?.address || '',
-        12,
-        6
-    );
-
     const { featureFlags } = useDependencies();
 
     const [balanceFormatted, symbol, usdAmount] = useFormatCoin(
@@ -63,21 +53,6 @@ const WalletBalanceAndIconHomeView = ({
                         <JumboTitle>{balanceFormatted}</JumboTitle>
                         <Header>{symbol}</Header>
                     </span>
-                )}
-
-                {addressWithEllipsis && (
-                    <div className="flex w-full justify-center pl-[30px] pb-3">
-                        <CopyToClipboard txt={accountInfo?.address || ''}>
-                            <Body>{addressWithEllipsis}</Body>
-                            <div className="p-2">
-                                <Square2StackIcon
-                                    className="text-ethos-light-primary-light"
-                                    width={14}
-                                    height={14}
-                                />
-                            </div>
-                        </CopyToClipboard>
-                    </div>
                 )}
             </div>
         </div>
