@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { ReactSortable } from 'react-sortablejs';
+import { ReactSortable, type SortableEvent } from 'react-sortablejs';
 
 import DappListItem from '../../../DappListItem';
 import { favoritableDapps } from '../../../favoritableDapps';
@@ -21,8 +21,7 @@ export const FavoritesSortableList: FC = (props) => {
     const favoriteScrollContainerRef = useRef<HTMLDivElement>(null);
     useConvertVerticalScrollToHorizontal(favoriteScrollContainerRef);
 
-    const notFavoriteScrollContainerRef = useRef<HTMLDivElement>(null);
-    useConvertVerticalScrollToHorizontal(notFavoriteScrollContainerRef);
+    const allDappsContainerRef = useRef<HTMLDivElement>(null);
 
     const dappsWithIds = useMemo(
         () =>
@@ -36,9 +35,11 @@ export const FavoritesSortableList: FC = (props) => {
     const [favoritesState, setFavoritesState] = useState<SortableItem[]>(
         dappsWithIds.filter((item) => item.isFavorite)
     );
-    const [notFavoritesState, setNotFavoritesState] = useState<SortableItem[]>(
-        dappsWithIds.filter((item) => !item.isFavorite)
-    );
+
+    console.log('favoritesState :>> ', favoritesState);
+
+    const [isDragging, setIsDragging] = useState(false);
+    const [draggedFromFavorites, setDraggedFromFavorites] = useState(false);
 
     const favoriteItems = useMemo(
         () =>
@@ -50,14 +51,70 @@ export const FavoritesSortableList: FC = (props) => {
         [favoritesState]
     );
 
-    const notFavoriteItems = useMemo(
+    const allDappsItems = useMemo(
         () =>
-            notFavoritesState.map((item) => (
-                <div key={item.id} className="inline-block">
+            dappsWithIds.map((item) => (
+                <div
+                    key={item.id}
+                    className={`inline-block ${
+                        favoritesState.some((fav) => fav.id === item.id)
+                            ? 'border-2 border-red-500'
+                            : ''
+                    }`}
+                >
                     <DappListItem item={item} />
                 </div>
             )),
-        [notFavoritesState]
+        [dappsWithIds, favoritesState]
+    );
+
+    const handleDragStart = useCallback((evt: SortableEvent) => {
+        setIsDragging(true);
+        setDraggedFromFavorites(
+            evt.from.className.includes('FavoriteListIndicator')
+        );
+    }, []);
+
+    const handleDragEnd = useCallback(() => {
+        setIsDragging(false);
+        setDraggedFromFavorites(false);
+    }, []);
+
+    const handleAdd = useCallback(
+        (evt: SortableEvent) => {
+            if (evt.from === allDappsContainerRef.current) {
+                if (!evt.oldIndex) {
+                    return;
+                }
+                const item = dappsWithIds[evt.oldIndex];
+                setFavoritesState((prevState) => [...prevState, item]);
+            }
+        },
+        [dappsWithIds]
+    );
+
+    const handleRemoveFromFavorites = useCallback(
+        (evt: SortableEvent) => {
+            console.log('handleRemove');
+
+            const removedItemId = Number(evt.item.getAttribute('data-id'));
+
+            const removedItem = favoritesState.find(
+                (item) => item.id === removedItemId
+            );
+            console.log('removedItem :>> ', removedItem);
+            if (draggedFromFavorites && removedItem) {
+                console.log('remove');
+                console.log(
+                    'favoritesState.filter((item) => item.id !== removedItemId) :>> ',
+                    favoritesState.filter((item) => item.id !== removedItemId)
+                );
+                setFavoritesState((prevState) =>
+                    prevState.filter((item) => item.id !== removedItemId)
+                );
+            }
+        },
+        [draggedFromFavorites, favoritesState]
     );
 
     return (
@@ -67,33 +124,75 @@ export const FavoritesSortableList: FC = (props) => {
                 className="flex overflow-x-auto whitespace-nowrap py-2 h-[85px] bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
             >
                 <ReactSortable
-                    group="shared"
+                    group={{ name: 'shared', pull: 'clone' }}
                     list={favoritesState}
                     setList={setFavoritesState}
                     style={{ display: 'flex' }}
                     animation={200}
                     bubbleScroll
                     ghostClass="opacity-50"
+                    onStart={handleDragStart}
+                    onEnd={handleDragEnd}
+                    onAdd={handleAdd}
+                    onRemove={handleRemoveFromFavorites}
+                    className="FavoriteListIndicator"
                 >
                     {favoriteItems}
                 </ReactSortable>
             </div>
-            <div
-                ref={notFavoriteScrollContainerRef}
-                className="flex overflow-x-auto whitespace-nowrap py-2 h-[85px] bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
-            >
+            {isDragging && draggedFromFavorites ? (
                 <ReactSortable
-                    bubbleScroll
-                    group="shared"
-                    list={notFavoritesState}
-                    setList={setNotFavoritesState}
+                    group={{ name: 'shared', pull: false }}
+                    list={favoritesState}
+                    setList={setFavoritesState}
                     style={{ display: 'flex' }}
                     animation={200}
-                    ghostClass="opacity-50"
+                    bubbleScroll
+                    ghostClass="hidden"
+                    // onStart={handleDragStart}
+                    onEnd={handleDragEnd}
+                    // onAdd={handleRedBoxAdd}
+                    className="RemoveFromFavoritesIndicator"
                 >
-                    {notFavoriteItems}
+                    <div
+                        className={`flex items-center justify-center w-full h-[85px] bg-red-500 text-white ${
+                            isDragging && draggedFromFavorites ? '' : 'hidden'
+                        }`}
+                    >
+                        Drag here to remove from favorites
+                    </div>
                 </ReactSortable>
-            </div>
+            ) : (
+                <div
+                    ref={allDappsContainerRef}
+                    className={`p-2 h-auto bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default`}
+                >
+                    <ReactSortable
+                        sort={false}
+                        bubbleScroll
+                        group="shared"
+                        list={dappsWithIds}
+                        setList={() => {}}
+                        animation={200}
+                        ghostClass="opacity-50"
+                        onStart={handleDragStart}
+                        onEnd={handleDragEnd}
+                        filter={'.border-red-500'} // Exclude favorite dapps from being draggable
+                        onClone={(evt: SortableEvent) => {
+                            // Keep the dapp in the UI while dragging
+                            if (!evt.item.parentNode) {
+                                return;
+                            }
+                            evt.item.parentNode.insertBefore(
+                                evt.item,
+                                evt.item.nextSibling
+                            );
+                        }}
+                    >
+                        {allDappsItems}
+                    </ReactSortable>
+                </div>
+            )}
         </div>
     );
 };
