@@ -32,6 +32,7 @@ export const SubpageUrls = {
     key: '/settings/security/view-private-key',
     permissions: '/settings/permissions',
     lock: '/settings/lock',
+    changeAutoLockTimeout: '/settings/change-auto-lock-timeout',
 };
 
 const SettingsHomePage = () => {

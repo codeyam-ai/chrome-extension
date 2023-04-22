@@ -7,7 +7,6 @@ import {
     simulateEmailUser,
     simulateMnemonicUser,
 } from '_src/test/utils/storage';
-import { before } from 'node:test';
 
 describe('Lock Wallet Page', () => {
     let mockchain: Mockchain;
@@ -43,6 +42,31 @@ describe('Lock Wallet Page', () => {
         beforeEach(async () => {
             simulateMnemonicUser();
         });
+
+        test('allows user to set the lock timeout', async () => {
+            await renderApp();
+            await screen.findByText('Get started with Sui');
+            const settingsButton = await screen.findByTestId('settings-toggle');
+            await userEvent.click(settingsButton);
+
+            const lockOption = await screen.findByText('Lock Ethos');
+            await userEvent.click(lockOption);
+
+            await screen.findByText(/15 minutes/);
+            const changeAutolockButton = await screen.findByText(
+                'Change Auto-Lock time'
+            );
+            await userEvent.click(changeAutolockButton);
+
+            await screen.findByText('HI');
+
+            // const timeoutInput = await screen.findByText('timeout-input');
+            // await userEvent.type(timeoutInput, '7');
+            // await userEvent.click(await screen.findByText('Save'));
+            //
+            // await screen.findByText('7 minutes');
+        });
+
         test('allows user to lock the wallet manually', async () => {
             await renderApp();
             await screen.findByText('Get started with Sui');

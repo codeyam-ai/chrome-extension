@@ -40,10 +40,11 @@ describe('Rendering the Home page', () => {
         });
 
         test('shows just the SUI amount when configured to do so', async () => {
+            const testDeps = makeTestDeps();
             renderApp({
                 dependencies: {
-                    ...makeTestDeps(),
-                    featureFlags: { showUsd: false },
+                    ...testDeps,
+                    featureFlags: { ...testDeps.featureFlags, showUsd: false },
                 },
             });
 

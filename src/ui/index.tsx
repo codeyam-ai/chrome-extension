@@ -28,8 +28,12 @@ import './styles/toastify.css';
 import '_font-icons/output/sui-icons.scss';
 import 'bootstrap-icons/font/bootstrap-icons.scss';
 
+function isDevMode() {
+    return process.env.NODE_ENV === 'development';
+}
+
 async function init() {
-    if (process.env.NODE_ENV === 'development') {
+    if (isDevMode()) {
         Object.defineProperty(window, 'store', { value: store });
     }
     store.dispatch(initAppType(getFromLocationSearch(window.location.search)));
@@ -63,7 +67,7 @@ function renderApp() {
             window.close();
         },
         heartbeat: makeHeartbeat(),
-        featureFlags: { showUsd: false },
+        featureFlags: { showUsd: false, showWipFeatures: isDevMode() },
     };
 
     root.render(
