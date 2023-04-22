@@ -1,6 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { useMemo } from 'react';
@@ -43,7 +44,33 @@ export function useCoinDecimals(coinType?: string | null) {
         }
     );
 
-    return [queryResult.data?.decimals, queryResult.data, queryResult] as const;
+    let safeQueryResult = queryResult;
+    if (!queryResult.data && coinType === SUI_TYPE_ARG) {
+        safeQueryResult = {
+            ...queryResult,
+            isLoading: false,
+            isLoadingError: false,
+            isRefetchError: false,
+            isError: false,
+            isSuccess: true,
+            status: 'success',
+            error: null,
+            data: {
+                decimals: 9,
+                name: 'Sui',
+                symbol: 'SUI',
+                description: '',
+                iconUrl: null,
+                id: null,
+            },
+        };
+    }
+
+    return [
+        safeQueryResult.data?.decimals,
+        safeQueryResult.data,
+        safeQueryResult,
+    ] as const;
 }
 
 // TODO: This handles undefined values to make it easier to integrate with the reset of the app as it is

@@ -53,14 +53,16 @@ function TransferCoinForm({
     onClearRef.current = onClearSubmitError;
 
     const [, , , , , queryResult] = useFormatCoin(null, coinType);
-    const unformattedAmount =
+    const decimals =
         queryResult?.data &&
         typeof queryResult.data === 'object' &&
         'decimals' in queryResult.data
-            ? new BigNumber(formData.amount)
-                  .shiftedBy(queryResult.data.decimals as number)
-                  .toString()
-            : null;
+            ? (queryResult.data.decimals as number)
+            : 9;
+    const unformattedAmount = new BigNumber(formData.amount)
+        .shiftedBy(decimals)
+        .toString();
+
     const [, , dollars, , icon] = useFormatCoin(unformattedAmount, coinType);
 
     useEffect(() => {
