@@ -2,8 +2,8 @@ import { Outlet, Route, Routes, useLocation } from 'react-router-dom';
 
 import ChangeColor from './ChangeColor';
 import ChangeEmoji from './ChangeEmoji';
-import ChangeFavoritesPage from './Favorites/ChangeFavoritesPage';
 import CustomizeCompleted from './CustomizeCompleted';
+import ChangeFavoritesPage from './Favorites/ChangeFavoritesPage';
 import Tabs from './Tabs';
 import WalletNickname from './WalletNickname';
 import { DappWrapper } from '../../DappWrapper';

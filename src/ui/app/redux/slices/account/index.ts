@@ -591,10 +591,6 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
                 strong: false,
             })) || '[]'
         );
-        console.log(
-            'favoriteDappsKeys loaded from storage :>> ',
-            favoriteDappsKeys
-        );
         return favoriteDappsKeys;
     }
 );
@@ -602,10 +598,6 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
 export const saveFavoriteDappsKeys = createAsyncThunk(
     'account/setFavoriteDappsKeys',
     async (favoriteDappsKeys: string[]): Promise<string[]> => {
-        console.log(
-            'favoriteDappsKeys saved to storage :>> ',
-            favoriteDappsKeys
-        );
         await setEncrypted({
             key: 'favoriteDappsKeys',
             value: JSON.stringify(favoriteDappsKeys),

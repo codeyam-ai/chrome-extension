@@ -1,7 +1,6 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import cl from 'classnames';
 import { Field, Formik, Form } from 'formik';
 import { useCallback } from 'react';
 import * as Yup from 'yup';

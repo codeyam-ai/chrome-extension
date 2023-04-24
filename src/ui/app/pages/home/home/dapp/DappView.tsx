@@ -3,9 +3,9 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { DappWrapper } from './DappWrapper';
 import { useAppSelector } from '_src/ui/app/hooks';
+import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
 
 import type { DappData } from '_src/types/DappData';
-import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
 
 interface DappViewProps {
     dapp: DappData | null;

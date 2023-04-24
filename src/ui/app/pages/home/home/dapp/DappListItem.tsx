@@ -1,7 +1,7 @@
+import classNames from 'classnames';
 import { useCallback } from 'react';
 
 import type { DappData } from '_src/types/DappData';
-import classNames from 'classnames';
 
 interface ListItemProps {
     item: DappData;

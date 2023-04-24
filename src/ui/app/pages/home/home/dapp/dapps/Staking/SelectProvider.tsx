@@ -1,9 +1,10 @@
-import Subheader from '_src/ui/app/shared/typography/Subheader';
-import EthosLink from '_src/ui/app/shared/typography/EthosLink';
+import { useCallback } from 'react';
+
 import { LinkType } from '_src/enums/LinkType';
 import Button from '_src/ui/app/shared/buttons/Button';
-import { useCallback } from 'react';
-import { SuiValidatorSummary } from '@mysten/sui.js';
+import EthosLink from '_src/ui/app/shared/typography/EthosLink';
+import Subheader from '_src/ui/app/shared/typography/Subheader';
+
 /*
 
 The Provider Select component will be used for main net launch.
@@ -65,14 +66,11 @@ interface ValidatorSelectProps {
 }
 
 const ValidatorSelect = ({ validator, apy }: ValidatorSelectProps) => {
-    const selectValidator = useCallback(() => {
-        console.log(validator);
-    }, []);
 
     return (
         <div>
             <button
-                onClick={selectValidator}
+                // onClick={selectValidator}
                 className={
                     'block w-full py-2 px-2 text-left rounded-xl border-2 border-white dark:border-ethos-dark-background-default hover:border-ethos-light-primary-light hover:border-2 hover:dark:border-ethos-dark-primary-dark transition-all'
                 }
