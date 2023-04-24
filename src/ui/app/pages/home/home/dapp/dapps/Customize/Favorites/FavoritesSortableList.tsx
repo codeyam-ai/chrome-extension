@@ -124,7 +124,7 @@ export const FavoritesSortableList: FC = (props) => {
                 className="flex overflow-x-auto whitespace-nowrap py-2 h-[85px] bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
             >
                 <ReactSortable
-                    group={{ name: 'shared', pull: 'clone' }}
+                    group={{ name: 'shared' }}
                     list={favoritesState}
                     setList={setFavoritesState}
                     style={{ display: 'flex' }}
