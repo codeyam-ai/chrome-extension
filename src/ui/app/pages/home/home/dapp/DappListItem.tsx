@@ -1,20 +1,29 @@
 import { useCallback } from 'react';
 
 import type { DappData } from '_src/types/DappData';
+import classNames from 'classnames';
 
 interface ListItemProps {
     item: DappData;
     onClick?: (dapp: DappData) => void;
+    cursorDefault?: boolean;
 }
 
-const DappListItem: React.FC<ListItemProps> = ({ item, onClick }) => {
+const DappListItem: React.FC<ListItemProps> = ({
+    item,
+    onClick,
+    cursorDefault,
+}) => {
     const handleClick = useCallback(() => {
         onClick && onClick(item);
     }, [onClick, item]);
 
     return (
         <div
-            className="flex flex-col items-center cursor-pointer mx-2"
+            className={classNames(
+                'flex flex-col items-center mx-2',
+                cursorDefault ? '' : 'cursor-pointer'
+            )}
             onClick={handleClick}
         >
             <div className="w-12 h-12 rounded-lg overflow-hidden">

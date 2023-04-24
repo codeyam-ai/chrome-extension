@@ -7,6 +7,10 @@ import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVe
 
 import type { DappData } from '_src/types/DappData';
 import type { FC } from 'react';
+import Body from '_src/ui/app/shared/typography/Body';
+import { MinusCircleIcon } from '@heroicons/react/24/outline';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import { StarIcon } from '@heroicons/react/24/solid';
 
 function generateUniqueId(): number {
     return Math.floor(Math.random() * 1000) + 1;
@@ -36,8 +40,6 @@ export const FavoritesSortableList: FC = (props) => {
         dappsWithIds.filter((item) => item.isFavorite)
     );
 
-    console.log('favoritesState :>> ', favoritesState);
-
     const [isDragging, setIsDragging] = useState(false);
     const [draggedFromFavorites, setDraggedFromFavorites] = useState(false);
 
@@ -53,18 +55,26 @@ export const FavoritesSortableList: FC = (props) => {
 
     const allDappsItems = useMemo(
         () =>
-            dappsWithIds.map((item) => (
-                <div
-                    key={item.id}
-                    className={`inline-block ${
-                        favoritesState.some((fav) => fav.id === item.id)
-                            ? 'border-2 border-red-500'
-                            : ''
-                    }`}
-                >
-                    <DappListItem item={item} />
-                </div>
-            )),
+            dappsWithIds.map((item) => {
+                const isFavorite = favoritesState.some(
+                    (fav) => fav.id === item.id
+                );
+                return (
+                    <div
+                        key={item.id}
+                        className={`inline-block relative ${
+                            isFavorite ? 'IsFavoriteIndicator' : ''
+                        }`}
+                    >
+                        {isFavorite && (
+                            <div className="absolute -top-[8px] right-[20px] p-1 rounded-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
+                                <StarIcon className="w-4 h-4 text-ethos-light-primary-light dark:bg-ethos-dark-primary-dark" />
+                            </div>
+                        )}
+                        <DappListItem item={item} cursorDefault={isFavorite} />
+                    </div>
+                );
+            }),
         [dappsWithIds, favoritesState]
     );
 
@@ -80,42 +90,13 @@ export const FavoritesSortableList: FC = (props) => {
         setDraggedFromFavorites(false);
     }, []);
 
-    const handleAdd = useCallback(
-        (evt: SortableEvent) => {
-            if (evt.from === allDappsContainerRef.current) {
-                if (!evt.oldIndex) {
-                    return;
-                }
-                const item = dappsWithIds[evt.oldIndex];
-                setFavoritesState((prevState) => [...prevState, item]);
-            }
-        },
-        [dappsWithIds]
-    );
-
-    const handleRemoveFromFavorites = useCallback(
-        (evt: SortableEvent) => {
-            console.log('handleRemove');
-
-            const removedItemId = Number(evt.item.getAttribute('data-id'));
-
-            const removedItem = favoritesState.find(
-                (item) => item.id === removedItemId
-            );
-            console.log('removedItem :>> ', removedItem);
-            if (draggedFromFavorites && removedItem) {
-                console.log('remove');
-                console.log(
-                    'favoritesState.filter((item) => item.id !== removedItemId) :>> ',
-                    favoritesState.filter((item) => item.id !== removedItemId)
-                );
-                setFavoritesState((prevState) =>
-                    prevState.filter((item) => item.id !== removedItemId)
-                );
-            }
-        },
-        [draggedFromFavorites, favoritesState]
-    );
+    const handleClone = useCallback((evt: SortableEvent) => {
+        // Keep the dapp in the UI while dragging
+        if (!evt.item.parentNode) {
+            return;
+        }
+        evt.item.parentNode.insertBefore(evt.item, evt.item.nextSibling);
+    }, []);
 
     return (
         <div className="w-full flex flex-col">
@@ -133,8 +114,6 @@ export const FavoritesSortableList: FC = (props) => {
                     ghostClass="opacity-50"
                     onStart={handleDragStart}
                     onEnd={handleDragEnd}
-                    onAdd={handleAdd}
-                    onRemove={handleRemoveFromFavorites}
                     className="FavoriteListIndicator"
                 >
                     {favoriteItems}
@@ -143,54 +122,58 @@ export const FavoritesSortableList: FC = (props) => {
             {isDragging && draggedFromFavorites ? (
                 <ReactSortable
                     group={{ name: 'shared', pull: false }}
-                    list={favoritesState}
-                    setList={setFavoritesState}
+                    list={[]}
+                    // eslint-disable-next-line react/jsx-no-bind, @typescript-eslint/no-empty-function
+                    setList={() => {}}
                     style={{ display: 'flex' }}
                     animation={200}
                     bubbleScroll
                     ghostClass="hidden"
-                    // onStart={handleDragStart}
                     onEnd={handleDragEnd}
-                    // onAdd={handleRedBoxAdd}
                     className="RemoveFromFavoritesIndicator"
                 >
                     <div
-                        className={`flex items-center justify-center w-full h-[85px] bg-red-500 text-white ${
-                            isDragging && draggedFromFavorites ? '' : 'hidden'
-                        }`}
+                        className="flex w-full"
+                        style={{
+                            // Prevents awkward jump when dragging from favorites and scrolled down
+                            height: allDappsContainerRef.current?.clientHeight,
+                        }}
                     >
-                        Drag here to remove from favorites
+                        <div className="flex flex-col items-center justify-center gap-2 w-full h-28 m-4 rounded-lg border-2 border-dashed border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
+                            <MinusCircleIcon className="w-5 h-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                            <Body isTextColorMedium>
+                                Drag here to remove from favorites
+                            </Body>
+                        </div>
                     </div>
                 </ReactSortable>
             ) : (
-                <div
-                    ref={allDappsContainerRef}
-                    className={`p-2 h-auto bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default`}
-                >
-                    <ReactSortable
-                        sort={false}
-                        bubbleScroll
-                        group="shared"
-                        list={dappsWithIds}
-                        setList={() => {}}
-                        animation={200}
-                        ghostClass="opacity-50"
-                        onStart={handleDragStart}
-                        onEnd={handleDragEnd}
-                        filter={'.border-red-500'} // Exclude favorite dapps from being draggable
-                        onClone={(evt: SortableEvent) => {
-                            // Keep the dapp in the UI while dragging
-                            if (!evt.item.parentNode) {
-                                return;
-                            }
-                            evt.item.parentNode.insertBefore(
-                                evt.item,
-                                evt.item.nextSibling
-                            );
-                        }}
+                <div className="flex flex-col">
+                    <BodyLarge isSemibold isTextColorMedium>
+                        All Apps
+                    </BodyLarge>
+                    <div
+                        ref={allDappsContainerRef}
+                        className={`p-2 h-auto bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default`}
                     >
-                        {allDappsItems}
-                    </ReactSortable>
+                        <ReactSortable
+                            sort={false}
+                            bubbleScroll
+                            group="shared"
+                            list={dappsWithIds}
+                            // eslint-disable-next-line react/jsx-no-bind, @typescript-eslint/no-empty-function
+                            setList={() => {}}
+                            animation={200}
+                            ghostClass="opacity-50"
+                            onStart={handleDragStart}
+                            onEnd={handleDragEnd}
+                            filter={'.IsFavoriteIndicator'} // Exclude favorite dapps from being draggable
+                            onClone={handleClone}
+                            className="grid grid-cols-3 gap-2"
+                        >
+                            {allDappsItems}
+                        </ReactSortable>
+                    </div>
                 </div>
             )}
         </div>
