@@ -8,6 +8,7 @@ import { memo, useEffect, useMemo, useRef } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
 import LoadingIndicator from '_components/loading/LoadingIndicator';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 import WalletTo from '_src/ui/app/components/wallet-to';
 import { getTheme } from '_src/ui/app/helpers/getTheme';
 import truncateString from '_src/ui/app/helpers/truncate-string';
@@ -76,6 +77,7 @@ function TransferCoinForm({
 
     const theme = getTheme();
 
+    const { featureFlags } = useDependencies();
     if (amount === '' || to === '' || !coinSymbol) {
         return <Navigate to={'/home'} />;
     } else {
@@ -95,7 +97,9 @@ function TransferCoinForm({
                     <Header className={'font-weight-ethos-subheader'}>
                         {amount} {truncateString(coinSymbol, 8)}
                     </Header>
-                    <Subheader isTextColorMedium>{dollars}</Subheader>
+                    {featureFlags.showUsd && (
+                        <Subheader isTextColorMedium>{dollars}</Subheader>
+                    )}
                 </div>
                 <KeyValueList
                     keyNamesAndValues={[

@@ -9,6 +9,7 @@ import Sui from '../home/Sui';
 import UnknownToken from '../home/UnknownToken';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import ns from '_shared/namespace';
+import { useDependencies } from '_shared/utils/dependenciesContext';
 import WalletTo from '_src/ui/app/components/wallet-to';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
@@ -53,6 +54,7 @@ const AvailableBalance = ({
         return types.filter((type: string) => filterType === type);
     }, [balances, filterType]);
 
+    const { featureFlags } = useDependencies();
     return (
         <div className="text-left">
             {filteredTypes.map((type: string, idx: number) => {
@@ -89,9 +91,11 @@ const AvailableBalance = ({
                                 </div>
                             </div>
                         </div>
-                        <div className="flex items-center text-base text-slate-800 dark:text-slate-300">
-                            <div>{usdAmount}</div>
-                        </div>
+                        {featureFlags.showUsd && (
+                            <div className="flex items-center text-base text-slate-800 dark:text-slate-300">
+                                <div>{usdAmount}</div>
+                            </div>
+                        )}
                     </div>
                 );
             })}
@@ -141,6 +145,7 @@ function TransferCoinForm({
 
     const dollarDisplay = isValid && amountBigNumber.gte(0) ? dollars : '$0.00';
 
+    const { featureFlags } = useDependencies();
     return (
         <Form autoComplete="off" noValidate={false}>
             <div className="pt-6 px-6 text-left flex flex-col mb-2">
@@ -167,9 +172,11 @@ function TransferCoinForm({
                 <div className={'mb-3'}>
                     <AmountField />
                 </div>
-                <BodyLarge isSemibold isTextColorMedium>
-                    {dollarDisplay}
-                </BodyLarge>
+                {featureFlags.showUsd && (
+                    <BodyLarge isSemibold isTextColorMedium>
+                        {dollarDisplay}
+                    </BodyLarge>
+                )}
                 <ErrorMessage
                     className="mt-1 text-ethos-light-red dark:text-ethos-dark-red"
                     name="amount"
