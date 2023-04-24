@@ -100,6 +100,12 @@ export const FavoritesSortableList: FC = (props) => {
 
     return (
         <div className="w-full flex flex-col">
+            <BodyLarge isSemibold className="text-left pl-6">
+                Your Favorites
+            </BodyLarge>
+            <Body isTextColorMedium className="text-left pl-6 pb-2">
+                Drag to reorder or remove
+            </Body>
             <div
                 ref={favoriteScrollContainerRef}
                 className="flex overflow-x-auto whitespace-nowrap py-2 h-[85px] bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
@@ -148,10 +154,13 @@ export const FavoritesSortableList: FC = (props) => {
                     </div>
                 </ReactSortable>
             ) : (
-                <div className="flex flex-col">
-                    <BodyLarge isSemibold isTextColorMedium>
+                <div className="flex flex-col pt-4">
+                    <BodyLarge isSemibold className="text-left pl-6">
                         All Apps
                     </BodyLarge>
+                    <Body isTextColorMedium className="text-left pl-6 pb-2">
+                        Drag up to add to favorites
+                    </Body>
                     <div
                         ref={allDappsContainerRef}
                         className={`p-2 h-auto bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default`}

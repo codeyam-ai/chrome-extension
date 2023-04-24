@@ -18,7 +18,7 @@ const ChangeFavoritesPage: React.FC = () => {
 
     return (
         <div className="relative flex flex-col items-center pt-6">
-            <Title className="pb-6">Choose your wallet&apos;s color</Title>
+            <Title className="pb-6">Choose your favorite apps</Title>
             <FavoritesSortableList />
             <div className="flex gap-2 w-full mt-6 px-6">
                 <button
