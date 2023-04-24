@@ -29,7 +29,9 @@ import { dapps } from '_src/ui/app/pages/home/home/dapp/dappData';
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
 const isPathInDappData = (path: string): boolean => {
-    return dapps.some((item) => item.route && path.includes(item.route));
+    return Array.from(dapps.values()).some(
+        (item) => item.route && path.includes(item.route)
+    );
 };
 
 interface WalletPickerNavBarProps {

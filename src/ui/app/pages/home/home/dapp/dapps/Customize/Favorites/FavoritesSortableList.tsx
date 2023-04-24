@@ -1,16 +1,16 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { ReactSortable, type SortableEvent } from 'react-sortablejs';
 
-import DappListItem from '../../../DappListItem';
-import { favoritableDapps } from '../../../favoritableDapps';
 import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVerticalScrollToHorizontal';
+import DappListItem from '../../../DappListItem';
 
-import type { DappData } from '_src/types/DappData';
-import type { FC } from 'react';
-import Body from '_src/ui/app/shared/typography/Body';
 import { MinusCircleIcon } from '@heroicons/react/24/outline';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import { StarIcon } from '@heroicons/react/24/solid';
+import type { DappData } from '_src/types/DappData';
+import Body from '_src/ui/app/shared/typography/Body';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import type { FC } from 'react';
+import { favoritableDappsMap } from '../../../favoritableDapps';
 
 function generateUniqueId(): number {
     return Math.floor(Math.random() * 1000) + 1;
@@ -27,15 +27,15 @@ export const FavoritesSortableList: FC = (props) => {
 
     const allDappsContainerRef = useRef<HTMLDivElement>(null);
 
+    // Each item needs a number ID to work with react-sortablejs
     const dappsWithIds = useMemo(
         () =>
-            favoritableDapps.map((dapp) => ({
+            [...Array.from(favoritableDappsMap.values())].map((dapp) => ({
                 ...dapp,
                 id: generateUniqueId(),
             })),
         []
     );
-
     const [favoritesState, setFavoritesState] = useState<SortableItem[]>(
         dappsWithIds.filter((item) => item.isFavorite)
     );
