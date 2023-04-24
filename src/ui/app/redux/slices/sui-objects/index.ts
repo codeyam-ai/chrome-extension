@@ -71,7 +71,6 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
             })
             .filter((objId) => objId.length > 0);
 
-        objectIDs.push(SUI_SYSTEM_STATE_OBJECT_ID);
         const allObjRes = await api.instance.fullNode.multiGetObjects({
             ids: objectIDs,
             options: {
@@ -84,6 +83,13 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         for (const objRes of allObjRes) {
             const suiObjectData = getSuiObjectData(objRes);
             if (suiObjectData) {
+                // if (
+                //     suiObjectData.owner &&
+                //     typeof suiObjectData.owner === 'object' &&
+                //     'AddressOwner' in suiObjectData.owner
+                // ) {
+                //     suiObjectData.owner.AddressOwner = address;
+                // }
                 allSuiObjects.push(suiObjectData);
             }
         }
