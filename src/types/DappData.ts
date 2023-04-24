@@ -4,5 +4,4 @@ export interface DappData {
     url?: string;
     component?: React.ComponentType;
     route?: string;
-    isFavorite: boolean;
 }

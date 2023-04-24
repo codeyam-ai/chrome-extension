@@ -581,6 +581,41 @@ export const unlock: AsyncThunk<string | null, string | null, AppThunkConfig> =
         }
     );
 
+export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
+    'account/getFavoriteDappsKeys',
+    async (): Promise<string[]> => {
+        const favoriteDappsKeys = JSON.parse(
+            (await getEncrypted({
+                key: 'favoriteDappsKeys',
+                session: false,
+                strong: false,
+            })) || '[]'
+        );
+        console.log(
+            'favoriteDappsKeys loaded from storage :>> ',
+            favoriteDappsKeys
+        );
+        return favoriteDappsKeys;
+    }
+);
+
+export const saveFavoriteDappsKeys = createAsyncThunk(
+    'account/setFavoriteDappsKeys',
+    async (favoriteDappsKeys: string[]): Promise<string[]> => {
+        console.log(
+            'favoriteDappsKeys saved to storage :>> ',
+            favoriteDappsKeys
+        );
+        await setEncrypted({
+            key: 'favoriteDappsKeys',
+            value: JSON.stringify(favoriteDappsKeys),
+            session: false,
+            strong: false,
+        });
+        return favoriteDappsKeys;
+    }
+);
+
 type AccountState = {
     loading: boolean;
     authentication: string | null;
@@ -594,6 +629,7 @@ type AccountState = {
     activeAccountIndex: number;
     accountType: AccountType;
     locked: boolean;
+    favoriteDappsKeys: string[];
 };
 
 const initialState: AccountState = {
@@ -609,6 +645,7 @@ const initialState: AccountState = {
     activeAccountIndex: 0,
     accountType: AccountType.UNINITIALIZED,
     locked: false,
+    favoriteDappsKeys: [],
 };
 
 const accountSlice = createSlice({
@@ -708,6 +745,15 @@ const accountSlice = createSlice({
                     state.loading = true;
                 }
                 state.passphrase = action.payload;
+            })
+            .addCase(
+                loadFavoriteDappsKeysFromStorage.fulfilled,
+                (state, action) => {
+                    state.favoriteDappsKeys = action.payload;
+                }
+            )
+            .addCase(saveFavoriteDappsKeys.fulfilled, (state, action) => {
+                state.favoriteDappsKeys = action.payload;
             }),
 });
 

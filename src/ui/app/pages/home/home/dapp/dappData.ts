@@ -13,7 +13,6 @@ export const dappsLockedToFavoritesMap = new Map<string, DappData>([
             name: 'Customize',
             component: CustomizeNavigation,
             route: 'customize',
-            isFavorite: true,
         },
     ],
     [
@@ -23,7 +22,6 @@ export const dappsLockedToFavoritesMap = new Map<string, DappData>([
             name: 'Address Book',
             component: CustomizeNavigation,
             route: 'address-book',
-            isFavorite: true,
         },
     ],
 ]);

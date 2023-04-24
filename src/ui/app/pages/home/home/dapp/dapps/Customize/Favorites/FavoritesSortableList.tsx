@@ -1,16 +1,17 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { ReactSortable, type SortableEvent } from 'react-sortablejs';
-
-import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVerticalScrollToHorizontal';
-import DappListItem from '../../../DappListItem';
-
 import { MinusCircleIcon } from '@heroicons/react/24/outline';
 import { StarIcon } from '@heroicons/react/24/solid';
-import type { DappData } from '_src/types/DappData';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ReactSortable, type SortableEvent } from 'react-sortablejs';
+
+import DappListItem from '../../../DappListItem';
+import { favoritableDappsMap } from '../../../favoritableDapps';
+import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVerticalScrollToHorizontal';
+import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+
+import type { DappData } from '_src/types/DappData';
 import type { FC } from 'react';
-import { favoritableDappsMap } from '../../../favoritableDapps';
 
 function generateUniqueId(): number {
     return Math.floor(Math.random() * 1000) + 1;
@@ -19,25 +20,48 @@ function generateUniqueId(): number {
 interface SortableItem extends DappData {
     id: number;
     name: string;
+    key: string;
 }
 
-export const FavoritesSortableList: FC = (props) => {
+interface FavoritesSortableListProps {
+    onFavoritesChosen: (favoriteDappsKeys: string[]) => void;
+}
+
+export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
+    onFavoritesChosen,
+}) => {
+    const { favoriteDapps } = useFavoriteDapps();
+
     const favoriteScrollContainerRef = useRef<HTMLDivElement>(null);
     useConvertVerticalScrollToHorizontal(favoriteScrollContainerRef);
 
     const allDappsContainerRef = useRef<HTMLDivElement>(null);
 
     // Each item needs a number ID to work with react-sortablejs
-    const dappsWithIds = useMemo(
-        () =>
-            [...Array.from(favoritableDappsMap.values())].map((dapp) => ({
-                ...dapp,
-                id: generateUniqueId(),
-            })),
-        []
-    );
+    const dappsWithIds: SortableItem[] = useMemo(() => {
+        const dappEntries = Array.from(favoritableDappsMap.entries()).map(
+            ([key, value]) => ({ key, value })
+        );
+
+        return dappEntries.map((entry) => ({
+            ...entry.value,
+            id: generateUniqueId(),
+            key: entry.key,
+        }));
+    }, []);
+
     const [favoritesState, setFavoritesState] = useState<SortableItem[]>(
-        dappsWithIds.filter((item) => item.isFavorite)
+        dappsWithIds
+            .filter((item) =>
+                favoriteDapps.some((fav) => fav.name === item.name)
+            )
+            .map((item) => {
+                const key = Array.from(favoritableDappsMap.keys()).find(
+                    (k) => favoritableDappsMap.get(k)?.name === item.name
+                );
+                return key ? { ...item, key } : undefined;
+            })
+            .filter((item): item is SortableItem => item !== undefined)
     );
 
     const [isDragging, setIsDragging] = useState(false);
@@ -98,6 +122,10 @@ export const FavoritesSortableList: FC = (props) => {
         evt.item.parentNode.insertBefore(evt.item, evt.item.nextSibling);
     }, []);
 
+    useEffect(() => {
+        onFavoritesChosen(favoritesState.map((item) => item.key));
+    }, [favoritesState, onFavoritesChosen]);
+
     return (
         <div className="w-full flex flex-col">
             <BodyLarge isSemibold className="text-left pl-6">
@@ -108,7 +136,7 @@ export const FavoritesSortableList: FC = (props) => {
             </Body>
             <div
                 ref={favoriteScrollContainerRef}
-                className="flex overflow-x-auto whitespace-nowrap py-2 h-[85px] bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
+                className="flex overflow-x-auto whitespace-nowrap py-2 h-[85px] w-full bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
             >
                 <ReactSortable
                     group={{ name: 'shared' }}

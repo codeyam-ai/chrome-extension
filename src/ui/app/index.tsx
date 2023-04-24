@@ -49,7 +49,10 @@ import AppContainer, {
     TransactionsPage,
 } from '_pages/home';
 import InitializePage from '_pages/initialize';
-import { loadAccountInformationFromStorage } from '_redux/slices/account';
+import {
+    loadAccountInformationFromStorage,
+    loadFavoriteDappsKeysFromStorage,
+} from '_redux/slices/account';
 import { ThemeProvider } from '_src/shared/utils/themeContext';
 import { DappPreapprovalPage } from '_src/ui/app/pages/dapp-preapproval';
 import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
@@ -63,6 +66,7 @@ const App = () => {
 
     useEffect(() => {
         dispatch(loadAccountInformationFromStorage());
+        dispatch(loadFavoriteDappsKeysFromStorage());
         dispatch(loadContactsStorage());
     }, [dispatch]);
 
