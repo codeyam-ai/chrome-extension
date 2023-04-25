@@ -1,4 +1,4 @@
-import { Coin, getTotalGasUsed, SUI_TYPE_ARG } from '@mysten/sui.js';
+import { getTotalGasUsed, SUI_TYPE_ARG } from '@mysten/sui.js';
 import BigNumber from 'bignumber.js';
 
 import addressOwner from '_src/ui/app/helpers/transactions/addressOwner';
