@@ -1,10 +1,11 @@
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import {
-    type DelegatedStake,
     SUI_TYPE_ARG,
+    type DelegatedStake,
     type SuiAddress,
 } from '@mysten/sui.js';
 import { useCallback } from 'react';
+import Skeleton from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
 
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
@@ -92,7 +93,7 @@ const DelegatedStakeRow = ({
 
     const [formattedAmount, symbol] = useFormatCoin(amountStaked, SUI_TYPE_ARG);
 
-    const { data: validators } = useValidatorsWithApy();
+    const { data: validators, isInitialLoading } = useValidatorsWithApy();
     const validator = validators?.[delegatedStake.validatorAddress];
 
     return (
@@ -112,13 +113,22 @@ const DelegatedStakeRow = ({
                     <div className="h-9 w-9 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
                 )}
                 <div className="flex flex-col items-start">
-                    <Body isSemibold>{validator?.name}</Body>
+                    <Body isSemibold>
+                        {isInitialLoading ? (
+                            <Skeleton height={15} width={60} />
+                        ) : (
+                            validator?.name
+                        )}
+                    </Body>
                     <Body isTextColorMedium>
-                        {truncateMiddle(validator?.suiAddress || '')}
+                        {isInitialLoading ? (
+                            <Skeleton height={15} width={112} />
+                        ) : (
+                            truncateMiddle(validator?.suiAddress || '')
+                        )}
                     </Body>
                 </div>
             </div>
-
             <div className="flex flex-col items-end">
                 <Body isSemibold>
                     {formattedAmount} {symbol}

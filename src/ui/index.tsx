@@ -27,6 +27,7 @@ import './styles/tailwind.css';
 import './styles/toastify.css';
 import '_font-icons/output/sui-icons.scss';
 import 'bootstrap-icons/font/bootstrap-icons.scss';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 function isDevMode() {
     return process.env.NODE_ENV === 'development';
