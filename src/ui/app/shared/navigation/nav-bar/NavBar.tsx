@@ -24,12 +24,14 @@ import {
 } from '_src/ui/app/components/settings-menu/hooks';
 import WalletPickerPage from '_src/ui/app/components/wallet-picker-menu/WalletPickerPage';
 import { useOnKeyboardEvent } from '_src/ui/app/hooks';
-import { sampleData } from '_src/ui/app/pages/home/home/dapp/dappData';
+import { dapps } from '_src/ui/app/pages/home/home/dapp/dappData';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 
 const isPathInDappData = (path: string): boolean => {
-    return sampleData.some((item) => item.route && path.includes(item.route));
+    return Array.from(dapps.values()).some(
+        (item) => item.route && path.includes(item.route)
+    );
 };
 
 interface WalletPickerNavBarProps {

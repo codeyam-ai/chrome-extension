@@ -6,13 +6,13 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import CoinList from './CoinList';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import { DappList } from './dapp/DappList';
-import { sampleData } from './dapp/dappData';
+import { dappsLockedToFavoritesMap } from './dapp/dappData';
 import ChainIndicator from '../../dapp-tx-approval/types/ChainIndicator';
 import { useAppSelector } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
-// import { sumCoinBalances } from '_src/ui/app/helpers/sumCoinBalances';
+import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
 import SendReceiveButtonGroup from '_src/ui/app/shared/buttons/SendReceiveButtonGroup';
 import Body from '_src/ui/app/shared/typography/Body';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
@@ -22,6 +22,11 @@ import Subheader from '_src/ui/app/shared/typography/Subheader';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 function HomePage() {
+    const { favoriteDapps } = useFavoriteDapps();
+    const allFavoriteDapps = [
+        ...Array.from(dappsLockedToFavoritesMap.values()),
+        ...favoriteDapps,
+    ];
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
 
     const balances = useAppSelector(accountAggregateBalancesSelector);
@@ -39,7 +44,7 @@ function HomePage() {
 
     return (
         <div className="flex flex-col gap-3">
-            {showDappList && <DappList data={sampleData} />}
+            {showDappList && <DappList data={allFavoriteDapps} />}
             <ChainIndicator apiEnv={selectedApiEnv} />
             <WalletBalanceAndIconHomeView
                 accountInfo={accountInfo}

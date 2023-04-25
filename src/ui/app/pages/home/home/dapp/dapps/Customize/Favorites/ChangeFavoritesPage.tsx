@@ -1,32 +1,36 @@
-import { CheckCircleIcon } from '@heroicons/react/24/outline';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useDependencies } from '_src/shared/utils/dependenciesContext';
+import { FavoritesSortableList } from './FavoritesSortableList';
+import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 
-const CustomizeCompleted: React.FC = () => {
-    const { featureFlags } = useDependencies();
+const ChangeFavoritesPage: React.FC = () => {
+    const [tempFavoriteDappsKeys, setTempFavoriteDappsKeys] = useState<
+        string[]
+    >([]);
+    const { setFavoriteDappsKeys } = useFavoriteDapps();
     const navigate = useNavigate();
 
+    const onFavoritesChosen = useCallback((favoriteDappsKeys: string[]) => {
+        setTempFavoriteDappsKeys(favoriteDappsKeys);
+    }, []);
+
     const handleOnContinue = useCallback(() => {
-        navigate('/home');
-    }, [navigate]);
+        setFavoriteDappsKeys(tempFavoriteDappsKeys);
+        navigate('/home/customize/completed');
+    }, [navigate, setFavoriteDappsKeys, tempFavoriteDappsKeys]);
 
     const goBack = useCallback(() => {
-        if (featureFlags.showWipFeatures) {
-            navigate('/home/customize/favorites');
-        } else {
-            navigate('/home/customize/color');
-        }
-    }, [featureFlags.showWipFeatures, navigate]);
+        navigate('/home/customize/color');
+    }, [navigate]);
 
     return (
-        <div className="flex flex-col gap-6 mt-6 mx-6 items-center place-content-center">
-            <CheckCircleIcon className="w-10 h-10 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
-            <Title>Customization complete!</Title>
-            <div className="flex gap-2 w-full mt-4">
+        <div className="relative flex flex-col items-center pt-6">
+            <Title className="pb-6">Choose your favorite apps</Title>
+            <FavoritesSortableList onFavoritesChosen={onFavoritesChosen} />
+            <div className="flex gap-2 w-full mt-6 px-6">
                 <button
                     onClick={goBack}
                     className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-4 mt-6 mb-2 bg-ethos-light-primary-light/20"
@@ -43,7 +47,7 @@ const CustomizeCompleted: React.FC = () => {
                     className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-4 mt-6 mb-2 bg-ethos-light-primary-light"
                 >
                     <BodyLarge isSemibold className="text-white">
-                        Finish
+                        Continue
                     </BodyLarge>
                 </button>
             </div>
@@ -51,4 +55,4 @@ const CustomizeCompleted: React.FC = () => {
     );
 };
 
-export default CustomizeCompleted;
+export default ChangeFavoritesPage;

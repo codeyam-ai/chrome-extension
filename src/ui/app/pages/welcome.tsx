@@ -3,9 +3,11 @@ import {
     EnvelopeIcon,
     PlusCircleIcon,
 } from '@heroicons/react/24/solid';
+import { useEffect } from 'react';
 
-import { useInitializedGuard } from '../hooks';
+import { useAppDispatch, useInitializedGuard } from '../hooks';
 import { AppState } from '../hooks/useInitializedGuard';
+import { saveFavoriteDappsKeys } from '../redux/slices/account';
 import OnboardingButton from '../shared/buttons/OnboardingButton';
 import OnboardingHeader from '../shared/headers/page-headers/OnboardingHeader';
 import OnboardingLayout from '../shared/layouts/OnboardingLayout';
@@ -45,7 +47,12 @@ const setupButtons: OnboardingButtonProps[] = [
 
 const WelcomePage = () => {
     useInitializedGuard([AppState.UNINITIALIZED, AppState.LOCKED]);
+    const dispatch = useAppDispatch();
 
+    useEffect(() => {
+        // save Staking dapp as favorite by default, but it is not locked like Customize or Address Book
+        dispatch(saveFavoriteDappsKeys(['id3']));
+    }, [dispatch]);
     return (
         <OnboardingLayout>
             <div className="flex flex-col w-[464px]">

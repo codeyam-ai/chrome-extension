@@ -1,10 +1,11 @@
 import classNames from 'classnames';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { DappWrapper } from './DappWrapper';
 import { useAppSelector } from '_src/ui/app/hooks';
+import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
 
-import type { DappData } from './dappData';
+import type { DappData } from '_src/types/DappData';
 
 interface DappViewProps {
     dapp: DappData | null;
@@ -12,8 +13,13 @@ interface DappViewProps {
 }
 
 const DappView: React.FC<DappViewProps> = ({ dapp, onClose }) => {
+    const { favoriteDapps } = useFavoriteDapps();
     const address = useAppSelector(({ account: { address } }) => address);
     const iframeRef = useRef<HTMLIFrameElement>(null);
+
+    const isFavorite = useMemo(() => {
+        return favoriteDapps.some((fav) => fav.name === dapp?.name);
+    }, [dapp?.name, favoriteDapps]);
 
     const closeDapp = useCallback(() => {
         onClose();
@@ -51,7 +57,7 @@ const DappView: React.FC<DappViewProps> = ({ dapp, onClose }) => {
             {dapp?.url ? (
                 <DappWrapper
                     dappTitle={dapp.name}
-                    isFavorite={dapp.isFavorite}
+                    isFavorite={isFavorite}
                     closeDapp={closeDapp}
                 >
                     <iframe
