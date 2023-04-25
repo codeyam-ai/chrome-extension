@@ -12,7 +12,7 @@ export type DisplayData = {
 
 const useDisplayDatas = (objectIds: string[]): Record<string, DisplayData> => {
     const queryResult = useQuery(
-        [`multiget-object-${objectIds.join('-')}`, objectIds],
+        [`1multiget-object-${objectIds.join('-')}`, objectIds],
         async () => {
             const provider = api.instance.fullNode;
 
@@ -29,7 +29,6 @@ const useDisplayDatas = (objectIds: string[]): Record<string, DisplayData> => {
             });
         },
         {
-            // This is currently expected to fail for non-SUI tokens, so disable retries:
             retry: false,
             // Never consider this data to be stale:
             staleTime: Infinity,
