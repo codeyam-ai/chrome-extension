@@ -66,7 +66,6 @@ interface ValidatorSelectProps {
 }
 
 const ValidatorSelect = ({ validator, apy }: ValidatorSelectProps) => {
-
     return (
         <div>
             <button
