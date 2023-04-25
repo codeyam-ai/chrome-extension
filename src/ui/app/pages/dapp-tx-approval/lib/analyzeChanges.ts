@@ -1,4 +1,4 @@
-import { getTotalGasUsed, SUI_TYPE_ARG } from '@mysten/sui.js';
+import { Coin, getTotalGasUsed, SUI_TYPE_ARG } from '@mysten/sui.js';
 import BigNumber from 'bignumber.js';
 
 import addressOwner from '_src/ui/app/helpers/transactions/addressOwner';
@@ -64,6 +64,7 @@ const assetChanges = (
         (objectChange) =>
             objectChange.type === 'mutated' &&
             objectChange.sender === address &&
+            addressOwner(objectChange.owner) &&
             objectChange.sender !== addressOwner(objectChange.owner)
     );
 

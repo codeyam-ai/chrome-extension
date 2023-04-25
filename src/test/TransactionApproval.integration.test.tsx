@@ -252,6 +252,39 @@ describe('The Transaction Approval popup', () => {
 
         mockchain.mockBlockchainCall(
             {
+                method: 'sui_multiGetObjects',
+                params: [
+                    [
+                        "0x986b14a24acd0c8bb2b08d166069d6a2361f48e76f34151efc773e5cb98da53b"
+                    ],
+                    {
+                        "showContent": true,
+                        "showDisplay": true
+                    }
+                ],
+            },
+            renderTemplate('mintCoinMultiGetObjects', {})
+        );
+
+        mockchain.mockBlockchainCall(
+            {
+                method: 'sui_multiGetObjects',
+                params: [
+                    [
+                        "0xce06dadf062062d551c86379e37bdef20da55835fa440e011e5beb4a333f1f62",
+                        "0xde7af23cfd81b32a9d191dea03f5e6a1b086c8218856212388980f7def43a9b6"
+                    ],
+                    {
+                        "showContent": true,
+                        "showDisplay": true
+                    }
+                ],
+            },
+            renderTemplate('mintCoinMultiGetObjects', {})
+        );
+
+        mockchain.mockBlockchainCall(
+            {
                 method: 'suix_getReferenceGasPrice',
                 params: [],
             },
