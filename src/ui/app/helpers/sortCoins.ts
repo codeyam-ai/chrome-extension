@@ -7,8 +7,8 @@ const sortTokens = (tokens: object) => {
         const aKeyParts = a[0].split('::');
         const bKeyParts = b[0].split('::');
 
-        const aToken = aKeyParts[1];
-        const bToken = bKeyParts[1];
+        const aToken = aKeyParts[2].toLocaleLowerCase();
+        const bToken = bKeyParts[2].toLocaleLowerCase();
 
         // Always put 'sui' as the first item
         if (aToken === 'sui') return -1;
