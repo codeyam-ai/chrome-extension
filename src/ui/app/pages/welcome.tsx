@@ -3,17 +3,17 @@ import {
     EnvelopeIcon,
     PlusCircleIcon,
 } from '@heroicons/react/24/solid';
+import { useEffect } from 'react';
 
 import { useAppDispatch, useInitializedGuard } from '../hooks';
 import { AppState } from '../hooks/useInitializedGuard';
+import { saveFavoriteDappsKeys } from '../redux/slices/account';
 import OnboardingButton from '../shared/buttons/OnboardingButton';
 import OnboardingHeader from '../shared/headers/page-headers/OnboardingHeader';
 import OnboardingLayout from '../shared/layouts/OnboardingLayout';
 import Title from '../shared/typography/Title';
 
 import type { OnboardingButtonProps } from '../shared/buttons/OnboardingButton';
-import { useEffect } from 'react';
-import { saveFavoriteDappsKeys } from '../redux/slices/account';
 
 const setupButtons: OnboardingButtonProps[] = [
     {

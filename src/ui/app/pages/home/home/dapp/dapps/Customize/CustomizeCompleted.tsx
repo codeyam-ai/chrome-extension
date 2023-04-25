@@ -2,10 +2,12 @@ import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useDependencies } from '_src/shared/utils/dependenciesContext';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 
 const CustomizeCompleted: React.FC = () => {
+    const { featureFlags } = useDependencies();
     const navigate = useNavigate();
 
     const handleOnContinue = useCallback(() => {
@@ -13,8 +15,12 @@ const CustomizeCompleted: React.FC = () => {
     }, [navigate]);
 
     const goBack = useCallback(() => {
-        navigate(-1);
-    }, [navigate]);
+        if (featureFlags.showWipFeatures) {
+            navigate('/home/customize/favorites');
+        } else {
+            navigate('/home/customize/color');
+        }
+    }, [featureFlags.showWipFeatures, navigate]);
 
     return (
         <div className="flex flex-col gap-6 mt-6 mx-6 items-center place-content-center">

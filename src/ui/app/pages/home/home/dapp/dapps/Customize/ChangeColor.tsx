@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useDependencies } from '_src/shared/utils/dependenciesContext';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 import { useAppSelector } from '_src/ui/app/hooks';
@@ -10,6 +11,7 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 
 const ChangeColor: React.FC = () => {
+    const { featureFlags } = useDependencies();
     const [isColorPickerMenuOpen, setIsColorPickerMenuOpen] = useState(false);
     const { updateCurrentAccountInfo } = useUpdateCurrentAccountInfo();
     const navigate = useNavigate();
@@ -41,8 +43,17 @@ const ChangeColor: React.FC = () => {
 
     const handleOnContinue = useCallback(() => {
         updateCurrentAccountInfo({ color: draftColor });
-        navigate('/home/customize/favorites');
-    }, [draftColor, navigate, updateCurrentAccountInfo]);
+        if (featureFlags.showWipFeatures) {
+            navigate('/home/customize/favorites');
+        } else {
+            navigate('/home/customize/completed');
+        }
+    }, [
+        draftColor,
+        featureFlags.showWipFeatures,
+        navigate,
+        updateCurrentAccountInfo,
+    ]);
 
     const goBack = useCallback(() => {
         navigate('/home/customize/emoji');
