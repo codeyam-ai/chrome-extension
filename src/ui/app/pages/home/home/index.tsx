@@ -6,7 +6,7 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import CoinList from './CoinList';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import { DappList } from './dapp/DappList';
-import { dapps } from './dapp/dappData';
+import { dapps, dappsLockedToFavoritesMap } from './dapp/dappData';
 import ChainIndicator from '../../dapp-tx-approval/types/ChainIndicator';
 import { useAppSelector } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
@@ -19,8 +19,14 @@ import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
 
 function HomePage() {
+    const { favoriteDapps } = useFavoriteDapps();
+    const allFavoriteDapps = [
+        ...Array.from(dappsLockedToFavoritesMap.values()),
+        ...favoriteDapps,
+    ];
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
 
     const balances = useAppSelector(accountAggregateBalancesSelector);
@@ -38,7 +44,7 @@ function HomePage() {
 
     return (
         <div className="flex flex-col gap-3">
-            {showDappList && <DappList data={dapps} />}
+            {showDappList && <DappList data={allFavoriteDapps} />}
             <ChainIndicator apiEnv={selectedApiEnv} />
             <WalletBalanceAndIconHomeView
                 accountInfo={accountInfo}

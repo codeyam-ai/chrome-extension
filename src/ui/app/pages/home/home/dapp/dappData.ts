@@ -7,6 +7,7 @@ import type { DappData } from '_src/types/DappData';
 
 export const dappsLockedToFavoritesMap = new Map<string, DappData>([
     [
+        // in the future these IDs can be UUIDs, but for now they are shorter to keep it simple
         'id1',
         {
             image: customizeIcon,

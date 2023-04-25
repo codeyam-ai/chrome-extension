@@ -142,7 +142,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                     group={{ name: 'shared' }}
                     list={favoritesState}
                     setList={setFavoritesState}
-                    style={{ display: 'flex' }}
+                    style={{ display: 'flex', width: '100%' }}
                     animation={200}
                     bubbleScroll
                     ghostClass="opacity-50"

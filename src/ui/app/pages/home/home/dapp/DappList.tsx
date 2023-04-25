@@ -8,7 +8,7 @@ import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVe
 import type { DappData } from '_src/types/DappData';
 
 interface DappListProps {
-    data: Map<string, DappData>;
+    data: DappData[];
 }
 
 export const DappList: React.FC<DappListProps> = ({ data }) => {
@@ -28,7 +28,7 @@ export const DappList: React.FC<DappListProps> = ({ data }) => {
     );
 
     const listItems = useMemo(() => {
-        return Array.from(data.values()).map((item, index) => (
+        return data.map((item, index) => (
             <DappListItem key={index} item={item} onClick={handleItemClick} />
         ));
     }, [data, handleItemClick]);
