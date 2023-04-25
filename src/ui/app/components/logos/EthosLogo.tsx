@@ -1,9 +1,11 @@
-const EthosLogo = () => {
+const EthosLogo = ({ width = 104 }: { width?: number }) => {
     return (
         <svg
             viewBox="0 0 105 104"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            width={width}
+            height={width}
         >
             <rect x="0.5" width="104" height="104" rx="52" fill="#6D28D9" />
             <g clipPath="url(#clip0_1011_2059)">

@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid';
+import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import BodyLarge from '../../shared/typography/BodyLarge';
 import Loading from '_components/loading';
 import {
     useAppDispatch,
@@ -24,7 +26,6 @@ import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Accordion from '_src/ui/app/shared/content/Accordion';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 import Alert from '_src/ui/app/shared/feedback/Alert';
-import Input from '_src/ui/app/shared/inputs/Input';
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { KeyNameAndValue } from '../../shared/content/rows-and-lists/KeyValueList';
@@ -53,6 +54,7 @@ type SuiParameter = {
 type PermissionInputArgs = {
     property: string;
     title: string;
+    denomination?: string;
     description?: string;
     defaultValue: string;
     onChange: (field: string, value: string) => void;
@@ -83,6 +85,7 @@ const NftDisplay = ({ nft }: { nft: SuiObject }) => {
 const PermissionInput = ({
     property,
     title,
+    denomination,
     description,
     defaultValue,
     onChange,
@@ -108,12 +111,15 @@ const PermissionInput = ({
                         </Tooltip>
                     )}
                 </div>
-                <Input
-                    onChange={_handleChange}
-                    value={value}
-                    isTextAlignRight
-                    className="!px-0 !py-0 max-w-[112px]"
-                />
+                <div className="flex justify-end gap-1 bg-ethos-pale-purple text-base px-3 py-2 text-right border rounded-md w-[150px]">
+                    <input
+                        onChange={_handleChange}
+                        value={value}
+                        type="text"
+                        className="bg-transparent border-none p-0 text-right w-[90px]"
+                    />
+                    <BodyLarge isSemibold>{denomination}</BodyLarge>
+                </div>
             </div>
         </div>
     );
@@ -229,7 +235,7 @@ export function DappPreapprovalPage() {
 
             const object = await provider.getObject({
                 id: preapproval.objectId,
-                options: { showContent: true },
+                options: { showContent: true, showDisplay: true },
             });
 
             const nft = {
@@ -248,21 +254,32 @@ export function DappPreapprovalPage() {
             {
                 property: 'maxTransactionCount',
                 title: 'Max Transactions',
+                denomination: '',
                 description:
                     'Only this # of transactions will be pre-approved.',
                 defaultValue: (
                     preapproval?.maxTransactionCount as number
                 ).toString(),
+                onChange,
             },
             {
                 property: 'totalGasLimit',
                 title: 'Total Gas Limit',
+                denomination: 'SUI',
                 description:
                     'Pre-approved transactions will not exceed this gas amount.',
-                defaultValue: (preapproval?.totalGasLimit as number).toString(),
+                defaultValue: new BigNumber(preapproval?.totalGasLimit ?? '0')
+                    .shiftedBy(-9)
+                    .toString(),
+                onChange: (property: string, value: string) => {
+                    onChange(
+                        property,
+                        new BigNumber(value).shiftedBy(9).toString()
+                    );
+                },
             },
         ],
-        [preapproval]
+        [onChange, preapproval]
     );
 
     const Details = () => {
@@ -323,8 +340,8 @@ export function DappPreapprovalPage() {
                             />
                         </div>
                     ) : (
-                        <div className="flex flex-col gap-4">
-                            <div className="flex flex-col justify-center items-center gap-2">
+                        <div className="flex flex-col gap-3">
+                            <div className="flex flex-col justify-center items-center gap-2 bg-ethos-pale-purple mx-6 p-3 rounded-xl">
                                 <Body isTextColorMedium>
                                     Transactions can only {modifier} this NFT:
                                 </Body>
@@ -350,7 +367,6 @@ export function DappPreapprovalPage() {
                                 {permissionInputs.map((info, index) => (
                                     <PermissionInput
                                         key={`permission-input-${index}`}
-                                        onChange={onChange}
                                         {...info}
                                     />
                                 ))}

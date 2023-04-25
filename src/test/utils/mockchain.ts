@@ -287,7 +287,9 @@ export class Mockchain {
                     true
                 );
             },
-            sui_executeTransactionBlock: (params: (string | string[] | null)[]) => {
+            sui_executeTransactionBlock: (
+                params: (string | string[] | null)[]
+            ) => {
                 this.mockBlockchainCall(
                     {
                         method: 'sui_executeTransactionBlock',
