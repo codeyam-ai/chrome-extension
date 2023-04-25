@@ -6,7 +6,7 @@ import Title from '../../typography/Title';
 interface HeaderWithIconRowProps {
     firstIcon: ReactNode;
     secondIcon?: ReactNode;
-    title: string;
+    title?: string;
     description?: string;
 }
 
@@ -29,13 +29,17 @@ const HeaderWithIcons = ({
                 <span>{firstIcon}</span>
             )}
 
-            <Title
-                as="h1"
-                className="text-ethos-light-text-default dark:text-ethos-dark-text-default"
-            >
-                {title}
-            </Title>
-            <BodyLarge isTextColorMedium>{description}</BodyLarge>
+            {title && (
+                <Title
+                    as="h1"
+                    className="text-ethos-light-text-default dark:text-ethos-dark-text-default"
+                >
+                    {title}
+                </Title>
+            )}
+            {description && (
+                <BodyLarge isTextColorMedium>{description}</BodyLarge>
+            )}
         </div>
     );
 };

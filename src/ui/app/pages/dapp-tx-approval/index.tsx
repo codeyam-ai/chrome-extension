@@ -284,7 +284,7 @@ export function DappTxApprovalPage() {
             txRequest.tx.account !== address
         ) {
             return (
-                <SimpleBase onComplete={onComplete}>
+                <SimpleBase approval={txRequest} onComplete={onComplete}>
                     <div className="py-12">
                         <IncorrectSigner
                             txID={txID}
@@ -305,7 +305,7 @@ export function DappTxApprovalPage() {
             txRequest.tx.chain !== activeChain
         ) {
             return (
-                <SimpleBase onComplete={onComplete}>
+                <SimpleBase approval={txRequest} onComplete={onComplete}>
                     <IncorrectChain
                         txID={txID}
                         txRequest={txRequest}
@@ -319,7 +319,7 @@ export function DappTxApprovalPage() {
 
         if (analysis === null) {
             return (
-                <SimpleBase onComplete={onComplete}>
+                <SimpleBase approval={txRequest} onComplete={onComplete}>
                     <div className="p-6">
                         {explicitError || (
                             <UnknownError
@@ -341,7 +341,7 @@ export function DappTxApprovalPage() {
                 analysis.assetTransfers.length === 0
             ) {
                 return (
-                    <SimpleBase onComplete={onComplete}>
+                    <SimpleBase approval={txRequest} onComplete={onComplete}>
                         <SimpleAssetMint
                             signer={signer}
                             assetMint={analysis.assetMints[0]}
@@ -358,7 +358,7 @@ export function DappTxApprovalPage() {
                 analysis.balanceReductions.length === 0
             ) {
                 return (
-                    <SimpleBase onComplete={onComplete}>
+                    <SimpleBase approval={txRequest} onComplete={onComplete}>
                         <SimpleAssetTransfer
                             signer={signer}
                             assetTransfer={analysis.assetTransfers[0]}
@@ -375,7 +375,7 @@ export function DappTxApprovalPage() {
                 analysis.balanceReductions.length === 1
             ) {
                 return (
-                    <SimpleBase onComplete={onComplete}>
+                    <SimpleBase approval={txRequest} onComplete={onComplete}>
                         <SimpleCoinTransfer
                             signer={signer}
                             reduction={analysis.balanceReductions[0]}
@@ -387,7 +387,7 @@ export function DappTxApprovalPage() {
                 );
             } else {
                 return (
-                    <SimpleBase onComplete={onComplete}>
+                    <SimpleBase approval={txRequest} onComplete={onComplete}>
                         <ComplexMoveCall
                             signer={signer}
                             analysis={analysis}

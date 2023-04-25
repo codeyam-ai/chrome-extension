@@ -9,7 +9,7 @@ interface UserApproveHeaderWithSiteIconProps {
     iconSrc?: string;
     iconAlt?: string;
     isConnectingToEthosDashboard?: boolean;
-    title: string;
+    title?: string;
     description?: string;
 }
 

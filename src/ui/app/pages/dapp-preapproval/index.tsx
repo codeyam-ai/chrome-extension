@@ -111,14 +111,18 @@ const PermissionInput = ({
                         </Tooltip>
                     )}
                 </div>
-                <div className="flex justify-end gap-1 bg-ethos-pale-purple text-base px-3 py-2 text-right border rounded-md w-[150px]">
+                <div className="flex justify-end items-center bg-ethos-pale-purple text-base pl-3 text-right border rounded-md w-[150px]">
                     <input
                         onChange={_handleChange}
                         value={value}
                         type="text"
-                        className="bg-transparent border-none p-0 text-right w-[90px]"
+                        className="bg-transparent border-none outline-none focus:border-none focus:ring-0 pr-3 py-2 text-right w-[90px]"
                     />
-                    <BodyLarge isSemibold>{denomination}</BodyLarge>
+                    {denomination && (
+                        <BodyLarge isSemibold className="pr-3">
+                            {denomination}
+                        </BodyLarge>
+                    )}
                 </div>
             </div>
         </div>
@@ -254,7 +258,6 @@ export function DappPreapprovalPage() {
             {
                 property: 'maxTransactionCount',
                 title: 'Max Transactions',
-                denomination: '',
                 description:
                     'Only this # of transactions will be pre-approved.',
                 defaultValue: (
