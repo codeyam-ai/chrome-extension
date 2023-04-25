@@ -1,7 +1,7 @@
 import CustomizeNavigation from './dapps/Customize/CustomizeNavigation';
 import { favoritableDappsMap } from './favoritableDapps';
+import customizeIcon from '_images/dappIcons/customize.png';
 import addressBookIcon from '_src/ui/assets/images/dappIcons/address-book.png';
-import customizeIcon from '_src/ui/assets/images/dappIcons/customize.png';
 
 import type { DappData } from '_src/types/DappData';
 
