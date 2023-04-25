@@ -727,8 +727,9 @@ export const ownedObjects = createSelector(
             return objects.filter(
                 ({ owner }) =>
                     typeof owner === 'object' &&
-                    'AddressOwner' in owner &&
-                    owner.AddressOwner === address
+                    ('ObjectOwner' in owner ||
+                        ('AddressOwner' in owner &&
+                            owner.AddressOwner === address))
             );
         }
         return [];

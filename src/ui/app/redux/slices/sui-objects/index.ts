@@ -18,6 +18,7 @@ import {
 } from '@reduxjs/toolkit';
 
 import { SUI_SYSTEM_STATE_OBJECT_ID } from './Coin';
+import { NFT } from './NFT';
 
 import type { SuiAddress, ObjectId, SuiObjectData } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
@@ -90,7 +91,20 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                 // ) {
                 //     suiObjectData.owner.AddressOwner = address;
                 // }
-                allSuiObjects.push(suiObjectData);
+                if (NFT.isKiosk(suiObjectData)) {
+                    const kioskObjects = await NFT.getKioskObjects(
+                        api.instance.fullNode,
+                        suiObjectData
+                    );
+                    for (const kioskObject of kioskObjects) {
+                        const kioskObjectData = getSuiObjectData(kioskObject);
+                        if (kioskObjectData) {
+                            allSuiObjects.push(kioskObjectData);
+                        }
+                    }
+                } else {
+                    allSuiObjects.push(suiObjectData);
+                }
             }
         }
     }

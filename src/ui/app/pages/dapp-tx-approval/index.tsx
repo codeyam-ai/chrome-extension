@@ -335,7 +335,6 @@ export function DappTxApprovalPage() {
         }
 
         try {
-            console.log("analysis", analysis.moveCalls.length, analysis.assetMints.length, analysis.assetTransfers.length)
             if (
                 analysis.moveCalls.length === 1 &&
                 analysis.assetMints.length === 1 &&
