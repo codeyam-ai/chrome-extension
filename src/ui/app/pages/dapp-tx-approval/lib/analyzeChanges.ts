@@ -1,5 +1,7 @@
-import { getTotalGasUsed, SUI_TYPE_ARG } from '@mysten/sui.js';
+import { Coin, getTotalGasUsed, SUI_TYPE_ARG } from '@mysten/sui.js';
 import BigNumber from 'bignumber.js';
+
+import addressOwner from '_src/ui/app/helpers/transactions/addressOwner';
 
 import type {
     RawSigner,
@@ -41,6 +43,7 @@ export type BalanceAddition = {
 };
 
 export type AnalyzeChangesResult = {
+    owner: SuiAddress;
     blockData?: TransactionBlock['blockData'];
     moveCalls: TransactionBlock['blockData']['transactions'];
     dryRunResponse: DryRunTransactionBlockResponse;
@@ -61,18 +64,15 @@ const assetChanges = (
         (objectChange) =>
             objectChange.type === 'mutated' &&
             objectChange.sender === address &&
-            typeof objectChange.owner !== 'string' &&
-            'AddressOwner' in objectChange.owner &&
-            objectChange.sender !== objectChange.owner.AddressOwner
+            addressOwner(objectChange.owner) &&
+            objectChange.sender !== addressOwner(objectChange.owner)
     );
 
     const mints = objectChanges.filter(
         (objectChange) =>
             objectChange.type === 'created' &&
             objectChange.sender === address &&
-            typeof objectChange.owner !== 'string' &&
-            'AddressOwner' in objectChange.owner &&
-            objectChange.sender === objectChange.owner.AddressOwner
+            objectChange.sender === addressOwner(objectChange.owner)
     );
 
     return {
@@ -88,17 +88,13 @@ const coinChanges = (
     const gasUsed = getTotalGasUsed(effects);
     const reductionChanges = balanceChanges.filter(
         (balanceChange) =>
-            typeof balanceChange.owner === 'object' &&
-            'AddressOwner' in balanceChange.owner &&
-            balanceChange.owner.AddressOwner === address &&
+            addressOwner(balanceChange.owner) === address &&
             new BigNumber(balanceChange.amount).isNegative()
     );
 
     const additionChanges = balanceChanges.filter(
         (balanceChange) =>
-            typeof balanceChange.owner === 'object' &&
-            'AddressOwner' in balanceChange.owner &&
-            balanceChange.owner.AddressOwner === address &&
+            addressOwner(balanceChange.owner) === address &&
             new BigNumber(balanceChange.amount).isPositive()
     );
 
@@ -120,10 +116,7 @@ const coinChanges = (
             );
 
             const recipient =
-                (recipientChange &&
-                    typeof recipientChange.owner === 'object' &&
-                    'AddressOwner' in recipientChange.owner &&
-                    recipientChange.owner.AddressOwner) ||
+                (recipientChange && addressOwner(recipientChange.owner)) ||
                 undefined;
 
             return {
@@ -172,9 +165,8 @@ const analyzeChanges = async ({
         const totalReductions = balanceChanges
             .filter(
                 (balanceChange) =>
-                    typeof balanceChange.owner === 'object' &&
-                    'AddressOwner' in balanceChange.owner &&
-                    balanceChange.owner.AddressOwner === address
+                    addressOwner(balanceChange.owner) === address &&
+                    balanceChange.coinType === SUI_TYPE_ARG
             )
             .reduce(
                 (total, reduction) =>
@@ -201,6 +193,7 @@ const analyzeChanges = async ({
         }
 
         return {
+            owner: address,
             blockData,
             moveCalls,
             dryRunResponse,

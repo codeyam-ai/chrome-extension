@@ -1,11 +1,15 @@
 import BigNumber from 'bignumber.js';
 
+import AssetPreviews from './AssetPreviews';
 import CardRow from './CardRow';
 import { useDependencies } from '_shared/utils/dependenciesContext';
+import addressOwner from '_src/ui/app/helpers/transactions/addressOwner';
+import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { BalanceReduction, BalanceAddition } from '../lib/analyzeChanges';
+import type { SuiAddress, SuiObjectChange } from '@mysten/sui.js';
 
 export const Costs = ({
     balanceReductions,
@@ -49,6 +53,77 @@ export const Gains = ({
                         balanceChange={balanceAddition}
                         positive={true}
                     />
+                ))}
+            </div>
+        </CardRow>
+    );
+};
+
+export const Sending = ({
+    owner,
+    transfers,
+}: {
+    owner: SuiAddress;
+    transfers: SuiObjectChange[];
+}) => {
+    const sending = transfers.filter(
+        (transfer) => transfer.type === 'mutated' && transfer.sender === owner
+    );
+
+    if (sending.length === 0) return <></>;
+
+    return (
+        <CardRow>
+            <Body>Sent</Body>
+            <AssetPreviews
+                objectIds={sending.map((transfer) =>
+                    transfer.type === 'mutated' ? transfer.objectId : ''
+                )}
+            />
+        </CardRow>
+    );
+};
+
+export const Receiving = ({
+    owner,
+    transfers,
+}: {
+    owner: SuiAddress;
+    transfers: SuiObjectChange[];
+}) => {
+    const receiving = transfers.filter(
+        (transfer) =>
+            transfer.type === 'mutated' &&
+            addressOwner(transfer.owner) === owner
+    );
+    if (receiving.length === 0) return <></>;
+
+    return (
+        <CardRow>
+            <Body>Receiving</Body>
+            <AssetPreviews
+                objectIds={receiving.map((transfer) =>
+                    transfer.type === 'mutated' ? transfer.objectId : ''
+                )}
+            />
+        </CardRow>
+    );
+};
+
+export const Mints = ({ mints }: { mints: SuiObjectChange[] }) => {
+    if (mints.length === 0) return <></>;
+
+    return (
+        <CardRow>
+            <Body>Gain{mints.length > 0 ? 's' : ''}</Body>
+            <div className="flex flex-col gap-1 items-end">
+                {mints.map((mint) => (
+                    <div
+                        key={`mint-${mint.type === 'created' && mint.objectId}`}
+                    >
+                        {mint.type === 'created' &&
+                            truncateMiddle(mint.objectId)}
+                    </div>
                 ))}
             </div>
         </CardRow>

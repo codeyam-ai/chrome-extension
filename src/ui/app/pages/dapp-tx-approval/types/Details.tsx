@@ -273,7 +273,7 @@ const Details = ({
                 onClick={toggleDetails}
             >
                 <BodyLarge className="text-[#9040F5] underline">
-                    More Details
+                    {details ? 'Less' : 'More'} Details
                 </BodyLarge>
                 {details ? (
                     <ChevronUpIcon color="#9040F5" width={20} />

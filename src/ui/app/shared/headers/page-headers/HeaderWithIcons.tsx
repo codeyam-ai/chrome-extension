@@ -6,7 +6,7 @@ import Title from '../../typography/Title';
 interface HeaderWithIconRowProps {
     firstIcon: ReactNode;
     secondIcon?: ReactNode;
-    title: string;
+    title?: string;
     description?: string;
 }
 
@@ -17,25 +17,29 @@ const HeaderWithIcons = ({
     description,
 }: HeaderWithIconRowProps) => {
     return (
-        <div className="flex flex-col py-8 px-6 gap-3 place-content-center place-items-center text-center">
+        <div className="flex flex-col py-3 px-6 gap-3 items-center text-center">
             {secondIcon ? (
-                <div className="flex ml-2">
-                    <span className="h-14 w-14 z-10 border-ethos-light-background-default dark:border-ethos-dark-background-default rounded-full">
+                <div className="flex -ml-3">
+                    <span className="z-10 border-ethos-light-background-default dark:border-ethos-dark-background-default rounded-full">
                         {firstIcon}
                     </span>
-                    <span className="h-14 w-14 -ml-2">{secondIcon}</span>
+                    <span className="-ml-3">{secondIcon}</span>
                 </div>
             ) : (
-                <span className="h-14 w-14">{firstIcon}</span>
+                <span>{firstIcon}</span>
             )}
 
-            <Title
-                as="h1"
-                className="text-ethos-light-text-default dark:text-ethos-dark-text-default"
-            >
-                {title}
-            </Title>
-            <BodyLarge isTextColorMedium>{description}</BodyLarge>
+            {title && (
+                <Title
+                    as="h1"
+                    className="text-ethos-light-text-default dark:text-ethos-dark-text-default"
+                >
+                    {title}
+                </Title>
+            )}
+            {description && (
+                <BodyLarge isTextColorMedium>{description}</BodyLarge>
+            )}
         </div>
     );
 };

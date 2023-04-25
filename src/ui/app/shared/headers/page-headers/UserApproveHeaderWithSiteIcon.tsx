@@ -9,7 +9,7 @@ interface UserApproveHeaderWithSiteIconProps {
     iconSrc?: string;
     iconAlt?: string;
     isConnectingToEthosDashboard?: boolean;
-    title: string;
+    title?: string;
     description?: string;
 }
 
@@ -40,18 +40,20 @@ const UserApproveHeaderWithSiteIcon = ({
         <HeaderWithIcons
             firstIcon={
                 isConnectingToEthosDashboard ? (
-                    <EthosLogo />
+                    <EthosLogo width={42} />
                 ) : (
                     <img
                         src={iconSrc}
-                        className="rounded-full w-full hidden relative"
+                        className="w-[42px] aspect-square rounded-full hidden relative"
                         alt={iconAlt}
                         onError={hideIcon}
                         onLoad={showIcon}
                     />
                 )
             }
-            secondIcon={isConnectingToEthosDashboard ? null : <EthosLogo />}
+            secondIcon={
+                isConnectingToEthosDashboard ? null : <EthosLogo width={42} />
+            }
             title={title}
             description={description}
         />
