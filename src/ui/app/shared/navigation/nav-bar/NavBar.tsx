@@ -30,7 +30,7 @@ const CLOSE_KEY_CODES: string[] = ['Escape'];
 
 const isPathInDappData = (path: string): boolean => {
     return Array.from(dapps.values()).some(
-        (item) => item.route && path.includes(item.route)
+        (item) => item.urls && path.includes(Object.values(item.urls)[0])
     );
 };
 

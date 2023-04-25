@@ -2,21 +2,31 @@ import classNames from 'classnames';
 import { useCallback } from 'react';
 
 import type { DappData } from '_src/types/DappData';
+import useDappUrl from '_src/ui/app/hooks/useDappUrl';
+import { useNavigate } from 'react-router-dom';
 
 interface ListItemProps {
-    item: DappData;
-    onClick?: (dapp: DappData) => void;
+    dapp: DappData;
     cursorDefault?: boolean;
 }
 
-const DappListItem: React.FC<ListItemProps> = ({
-    item,
-    onClick,
-    cursorDefault,
-}) => {
-    const handleClick = useCallback(() => {
-        onClick && onClick(item);
-    }, [onClick, item]);
+const DappListItem: React.FC<ListItemProps> = ({ dapp, cursorDefault }) => {
+    const dappUrl = useDappUrl(dapp.urls);
+    const navigate = useNavigate();
+
+    const onClick = useCallback(() => {
+        console.log('dappUrl :>> ', dappUrl);
+        if (!dappUrl) {
+            return;
+        }
+        if (dapp.isLocal) {
+            navigate(dappUrl, {
+                replace: false,
+            });
+        } else {
+            window.open(dappUrl, '_blank');
+        }
+    }, [dapp.isLocal, dappUrl, navigate]);
 
     return (
         <div
@@ -24,20 +34,20 @@ const DappListItem: React.FC<ListItemProps> = ({
                 'flex flex-col items-center mx-2',
                 cursorDefault ? '' : 'cursor-pointer'
             )}
-            onClick={handleClick}
+            onClick={onClick}
         >
             <div className="w-12 h-12 rounded-lg overflow-hidden">
                 <img
-                    src={item.image}
-                    alt={item.name}
+                    src={dapp.image}
+                    alt={dapp.title}
                     className="object-cover w-full h-full"
                 />
             </div>
             <p
                 className="mt-1 text-center text-xs w-20 text-clip overflow-hidden"
-                title={item.name}
+                title={dapp.title}
             >
-                {item.name}
+                {dapp.title}
             </p>
         </div>
     );

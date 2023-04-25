@@ -20,13 +20,15 @@ import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import dappsMap from '_src/data/dappsMap';
 
 function HomePage() {
     const { favoriteDapps } = useFavoriteDapps();
-    const allFavoriteDapps = [
-        ...Array.from(dappsLockedToFavoritesMap.values()),
-        ...favoriteDapps,
-    ];
+    const allFavoriteDapps = [...Array.from(dappsMap.values())];
+    // const allFavoriteDapps = [
+    //     ...Array.from(dappsLockedToFavoritesMap.values()),
+    //     ...favoriteDapps,
+    // ];
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
 
     const balances = useAppSelector(accountAggregateBalancesSelector);
@@ -44,7 +46,7 @@ function HomePage() {
 
     return (
         <div className="flex flex-col gap-3">
-            {showDappList && <DappList data={allFavoriteDapps} />}
+            {showDappList && <DappList dapps={allFavoriteDapps} />}
             <ChainIndicator apiEnv={selectedApiEnv} />
             <WalletBalanceAndIconHomeView
                 accountInfo={accountInfo}

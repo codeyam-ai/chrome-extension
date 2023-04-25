@@ -1,7 +1,12 @@
-export interface DappData {
+import type { TagName } from './Tag';
+
+export type DappData = {
+    id: string;
     image: string;
-    name: string;
-    url?: string;
-    component?: React.ComponentType;
-    route?: string;
-}
+    title: string;
+    description: string;
+    urls: Record<string, string>;
+    images?: string[];
+    tags: TagName[];
+    isLocal?: boolean;
+};

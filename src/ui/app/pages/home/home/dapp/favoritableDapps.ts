@@ -2,7 +2,7 @@ import stakingIcon from '_src/ui/assets/images/dappIcons/staking.png';
 
 import type { DappData } from '_src/types/DappData';
 
-export const favoritableDappsMap = new Map<string, DappData>([
+export const favoritableDappsMap = new Map<string, any>([
     [
         'id3',
         {

@@ -6,32 +6,23 @@ import DappView from './DappView';
 import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVerticalScrollToHorizontal';
 
 import type { DappData } from '_src/types/DappData';
+import { useAppSelector } from '_src/ui/app/hooks';
 
 interface DappListProps {
-    data: DappData[];
+    dapps: DappData[];
 }
 
-export const DappList: React.FC<DappListProps> = ({ data }) => {
+export const DappList: React.FC<DappListProps> = ({ dapps }) => {
     const [selectedDapp, setSelectedDapp] = useState<DappData | null>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     useConvertVerticalScrollToHorizontal(scrollContainerRef);
     const navigate = useNavigate();
 
-    const handleItemClick = useCallback(
-        (dapp: DappData) => {
-            setSelectedDapp(dapp);
-            if (dapp.route) {
-                navigate(dapp.route, { replace: false });
-            }
-        },
-        [navigate]
-    );
-
     const listItems = useMemo(() => {
-        return data.map((item, index) => (
-            <DappListItem key={index} item={item} onClick={handleItemClick} />
+        return dapps.map((dapp, index) => (
+            <DappListItem key={index} dapp={dapp} />
         ));
-    }, [data, handleItemClick]);
+    }, [dapps]);
 
     const closeDapp = useCallback(() => {
         navigate(-1);

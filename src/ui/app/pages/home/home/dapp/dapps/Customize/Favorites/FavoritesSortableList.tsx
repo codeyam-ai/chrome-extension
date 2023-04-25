@@ -5,6 +5,7 @@ import { ReactSortable, type SortableEvent } from 'react-sortablejs';
 
 import DappListItem from '../../../DappListItem';
 import { favoritableDappsMap } from '../../../favoritableDapps';
+import dappsMap from '_src/data/dappsMap';
 import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVerticalScrollToHorizontal';
 import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
 import Body from '_src/ui/app/shared/typography/Body';
@@ -18,8 +19,7 @@ function generateUniqueId(): number {
 }
 
 interface SortableItem extends DappData {
-    id: number;
-    name: string;
+    sortId: number;
     key: string;
 }
 
@@ -38,26 +38,24 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
     const allDappsContainerRef = useRef<HTMLDivElement>(null);
 
     // Each item needs a number ID to work with react-sortablejs
-    const dappsWithIds: SortableItem[] = useMemo(() => {
-        const dappEntries = Array.from(favoritableDappsMap.entries()).map(
+    const dappsWithSortIds: SortableItem[] = useMemo(() => {
+        const dappEntries = Array.from(dappsMap.entries()).map(
             ([key, value]) => ({ key, value })
         );
 
         return dappEntries.map((entry) => ({
             ...entry.value,
-            id: generateUniqueId(),
+            sortId: generateUniqueId(),
             key: entry.key,
         }));
     }, []);
 
     const [favoritesState, setFavoritesState] = useState<SortableItem[]>(
-        dappsWithIds
-            .filter((item) =>
-                favoriteDapps.some((fav) => fav.name === item.name)
-            )
+        dappsWithSortIds
+            .filter((item) => favoriteDapps.some((fav) => fav.id === item.id))
             .map((item) => {
                 const key = Array.from(favoritableDappsMap.keys()).find(
-                    (k) => favoritableDappsMap.get(k)?.name === item.name
+                    (k) => favoritableDappsMap.get(k)?.id === item.id
                 );
                 return key ? { ...item, key } : undefined;
             })
@@ -71,7 +69,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
         () =>
             favoritesState.map((item) => (
                 <div key={item.id} className="inline-block">
-                    <DappListItem item={item} />
+                    <DappListItem dapp={item} />
                 </div>
             )),
         [favoritesState]
@@ -79,7 +77,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
 
     const allDappsItems = useMemo(
         () =>
-            dappsWithIds.map((item) => {
+            dappsWithSortIds.map((item) => {
                 const isFavorite = favoritesState.some(
                     (fav) => fav.id === item.id
                 );
@@ -95,11 +93,11 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                                 <StarIcon className="w-4 h-4 text-ethos-light-primary-light dark:bg-ethos-dark-primary-dark" />
                             </div>
                         )}
-                        <DappListItem item={item} cursorDefault={isFavorite} />
+                        <DappListItem dapp={item} cursorDefault={isFavorite} />
                     </div>
                 );
             }),
-        [dappsWithIds, favoritesState]
+        [dappsWithSortIds, favoritesState]
     );
 
     const handleDragStart = useCallback((evt: SortableEvent) => {
@@ -197,7 +195,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                             sort={false}
                             bubbleScroll
                             group="shared"
-                            list={dappsWithIds}
+                            list={dappsWithSortIds}
                             // eslint-disable-next-line react/jsx-no-bind, @typescript-eslint/no-empty-function
                             setList={() => {}}
                             animation={200}
