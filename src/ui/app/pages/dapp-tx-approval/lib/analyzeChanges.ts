@@ -174,7 +174,8 @@ const analyzeChanges = async ({
                 (balanceChange) =>
                     typeof balanceChange.owner === 'object' &&
                     'AddressOwner' in balanceChange.owner &&
-                    balanceChange.owner.AddressOwner === address
+                    balanceChange.owner.AddressOwner === address &&
+                    balanceChange.coinType === SUI_TYPE_ARG
             )
             .reduce(
                 (total, reduction) =>
