@@ -62,6 +62,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                         type: 'dapp',
                     } as SortableItem)
             );
+
         const sortableNfts = projectNfts
             .filter((item) => !EXPLORER_ONLY_KEYS.includes(item.id))
             .map(

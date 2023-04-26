@@ -17,6 +17,8 @@ const ChangeFavoritesPage: React.FC = () => {
 
     const onFavoritesChosen = useCallback(
         (favoriteDappsKeys: string[], removedNftKeys: string[]) => {
+            console.log('favoriteDappsKeys :>> ', favoriteDappsKeys);
+            console.log('removedNftKeys :>> ', removedNftKeys);
             setTempFavoriteDappsKeys(favoriteDappsKeys);
             setTempRemovedNftKeys(removedNftKeys);
         },
