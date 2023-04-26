@@ -28,9 +28,8 @@ const ChangeFavoritesPage: React.FC = () => {
 
     return (
         <div className="relative flex flex-col items-center pt-6">
-            <Title className="pb-6">Choose your favorite apps</Title>
-            <FavoritesSortableList onFavoritesChosen={onFavoritesChosen} />
-            <div className="flex gap-2 w-full mt-6 px-6">
+            <Title>Choose your favorite apps</Title>
+            <div className="flex gap-2 w-full mb-2 px-6">
                 <button
                     onClick={goBack}
                     className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-4 mt-6 mb-2 bg-ethos-light-primary-light/20"
@@ -51,6 +50,7 @@ const ChangeFavoritesPage: React.FC = () => {
                     </BodyLarge>
                 </button>
             </div>
+            <FavoritesSortableList onFavoritesChosen={onFavoritesChosen} />
         </div>
     );
 };
