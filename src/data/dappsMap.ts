@@ -54,6 +54,7 @@ import sui8192screenshot1 from '_images/dapps/screenshots/sui8192-1.png';
 import sui8192screenshot2 from '_images/dapps/screenshots/sui8192-2.png';
 import typusScreenshot1 from '_images/dapps/screenshots/typus-1.png';
 import typusScreenshot2 from '_images/dapps/screenshots/typus-2.png';
+import { LINK_URL } from '_src/shared/constants';
 
 import type { DappData } from 'src/types/DappData';
 
@@ -143,8 +144,8 @@ const dappsMap: Map<string, DappData> = new Map([
             description:
                 'Manage all of the assets you own. Access relevant dapps for each asset or bulk send a number of assets.',
             urls: {
-                [NetworkName.DEVNET]: '/dapps/assets',
-                [NetworkName.TESTNET]: '/dapps/assets',
+                [NetworkName.DEVNET]: `${LINK_URL}/dapps/assets`,
+                [NetworkName.TESTNET]: `${LINK_URL}/dapps/assets`,
             },
             tags: [TagName.TOOLS],
             images: [assetsScreenshot1, assetsScreenshot2],

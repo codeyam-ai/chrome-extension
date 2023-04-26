@@ -16,7 +16,7 @@ export default function useDappUrl(
             return undefined;
         }
         if (customRPC) {
-            return dappUrls['CUSTOM_RPC'];
+            return dappUrls[NetworkName.TESTNET];
         }
         if (selectedApiEnv === 'testNet') {
             return dappUrls[NetworkName.TESTNET];
