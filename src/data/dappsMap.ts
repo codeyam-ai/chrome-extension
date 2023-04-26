@@ -98,7 +98,6 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.TESTNET]: 'customize',
             },
             tags: [TagName.TOOLS],
-            isLocal: true,
         } as DappData,
     ],
     [
@@ -116,7 +115,6 @@ const dappsMap: Map<string, DappData> = new Map([
             },
             tags: [TagName.TOOLS],
             images: [addressScreenshot1],
-            isLocal: true,
         } as DappData,
     ],
     [
@@ -132,7 +130,6 @@ const dappsMap: Map<string, DappData> = new Map([
             },
             tags: [TagName.TOOLS],
             images: [addressScreenshot1],
-            isLocal: true,
         } as DappData,
     ],
     [

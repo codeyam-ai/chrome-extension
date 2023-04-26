@@ -6,6 +6,7 @@ import { useAppSelector } from '_src/ui/app/hooks';
 import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
 
 import type { DappData } from '_src/types/DappData';
+import useDappUrl from '_src/ui/app/hooks/useDappUrl';
 
 interface DappViewProps {
     dapp: DappData | null;
@@ -13,6 +14,7 @@ interface DappViewProps {
 }
 
 const DappView: React.FC<DappViewProps> = ({ dapp, onClose }) => {
+    const { dappUrl, isLocal } = useDappUrl(dapp?.urls);
     const { favoriteDapps } = useFavoriteDapps();
     const address = useAppSelector(({ account: { address } }) => address);
     const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -54,7 +56,7 @@ const DappView: React.FC<DappViewProps> = ({ dapp, onClose }) => {
                 dapp ? 'scale-y-100' : 'scale-y-0'
             )}
         >
-            {dapp?.isLocal ? (
+            {isLocal ? (
                 <div>SHOW DAPP COMPONENT</div>
             ) : (
                 <DappWrapper

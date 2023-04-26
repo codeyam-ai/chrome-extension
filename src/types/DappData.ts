@@ -8,5 +8,4 @@ export type DappData = {
     urls: Record<string, string>;
     images?: string[];
     tags: TagName[];
-    isLocal?: boolean;
 };

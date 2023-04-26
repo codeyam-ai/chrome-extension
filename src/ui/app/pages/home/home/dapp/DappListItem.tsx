@@ -12,19 +12,19 @@ interface ListItemProps {
 }
 
 const DappListItem: React.FC<ListItemProps> = ({ dapp, cursorDefault }) => {
-    const dappUrl = useDappUrl(dapp.urls);
+    const { dappUrl, isLocal } = useDappUrl(dapp.urls);
     const navigate = useNavigate();
 
     const onClick = useCallback(() => {
         if (!dappUrl) {
             return;
         }
-        if (dapp.isLocal) {
+        if (isLocal) {
             navigate(dappUrl);
         } else {
             window.open(dappUrl, '_blank');
         }
-    }, [dapp.isLocal, dappUrl, navigate]);
+    }, [dappUrl, isLocal, navigate]);
 
     return (
         <div

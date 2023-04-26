@@ -4,14 +4,17 @@ import useAppSelector from './useAppSelector';
 import { NetworkName } from '_src/enums/network';
 
 export default function useDappUrl(
-    dappUrls: Record<string, string>
-): string | undefined {
+    dappUrls: Record<string, string> | undefined
+): { dappUrl: string | undefined; isLocal: boolean } {
     const [selectedApiEnv, customRPC] = useAppSelector(({ app }) => [
         app.apiEnv,
         app.customRPC,
     ]);
 
-    return useMemo(() => {
+    const dappUrl = useMemo(() => {
+        if (!dappUrls) {
+            return undefined;
+        }
         if (customRPC) {
             return dappUrls['CUSTOM_RPC'];
         }
@@ -23,4 +26,13 @@ export default function useDappUrl(
         }
         return undefined;
     }, [customRPC, dappUrls, selectedApiEnv]);
+
+    const isLocal = useMemo(() => {
+        if (!dappUrl) {
+            return false;
+        }
+        return !dappUrl.startsWith('http');
+    }, [dappUrl]);
+
+    return { dappUrl, isLocal };
 }
