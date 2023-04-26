@@ -22,7 +22,7 @@ export const DappList: React.FC<DappListProps> = ({ dapps }) => {
     return (
         <div
             ref={scrollContainerRef}
-            className="flex overflow-x-auto whitespace-nowrap py-2 bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
+            className="flex overflow-x-auto no-scrollbar whitespace-nowrap py-2 bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
         >
             {listItems}
         </div>

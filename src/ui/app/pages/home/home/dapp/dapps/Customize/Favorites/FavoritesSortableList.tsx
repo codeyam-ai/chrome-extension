@@ -92,7 +92,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                                 <StarIcon className="w-4 h-4 text-ethos-light-primary-light dark:bg-ethos-dark-primary-dark" />
                             </div>
                         )}
-                        <DappListItem dapp={item} cursorDefault={isFavorite} />
+                        <DappListItem dapp={item} isClickable={isFavorite} />
                     </div>
                 );
             }),
