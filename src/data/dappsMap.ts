@@ -81,7 +81,6 @@ export const MY_ASSETS_ID = '580b2639-0e50-4042-a5af-edbb6a9dfca2';
 export const TOKENS_ID = '580b2639-0e50-4042-a5af-edbb6a9dfca2';
 export const COLLECTIBLES_ID = '580b2639-0e50-4042-a5af-edbb6a9dfca2';
 export const EXPLORER_ID = 'e6539937-7cad-4a15-bc31-49d963e392ff';
-
 export const CUSTOMIZE_ID = '5bbe5c3d-88a2-4537-92a5-20b6021e2ea3';
 export const STAKING_ID = 'c97b5592-ae1f-4dd4-a903-050a97c4d84a';
 

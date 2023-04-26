@@ -15,7 +15,6 @@ const DappListItem: React.FC<ListItemProps> = ({ dapp, cursorDefault }) => {
     const navigate = useNavigate();
 
     const onClick = useCallback(() => {
-        console.log('dappUrl :>> ', dappUrl);
         if (!dappUrl) {
             return;
         }

@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 
-import { favoritableDappsMap } from '../pages/home/home/dapp/favoritableDapps';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { saveFavoriteDappsKeys } from '_src/ui/app/redux/slices/account';
 
+import dappsMap from '_src/data/dappsMap';
 import type { DappData } from '_src/types/DappData';
 
 export const useFavoriteDapps = () => {
@@ -12,7 +12,7 @@ export const useFavoriteDapps = () => {
     );
 
     const favoriteDapps: DappData[] = favoriteDappsKeys
-        .map((key) => favoritableDappsMap.get(key))
+        .map((key) => dappsMap.get(key))
         .filter(Boolean) as DappData[];
 
     const dispatch = useAppDispatch();

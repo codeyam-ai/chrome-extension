@@ -6,10 +6,10 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import CoinList from './CoinList';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import { DappList } from './dapp/DappList';
-import { dappsLockedToFavoritesMap } from './dapp/dappData';
 import ChainIndicator from '../../dapp-tx-approval/types/ChainIndicator';
 import { useAppSelector } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
+import { LOCKED_FAVORITE_DAPPS } from '_src/data/lockedFavoriteDapps';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
@@ -20,11 +20,10 @@ import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-import dappsMap from '_src/data/dappsMap';
 
 function HomePage() {
     const { favoriteDapps } = useFavoriteDapps();
-    const allFavoriteDapps = [...Array.from(dappsMap.values())];
+    const allFavoriteDapps = [...LOCKED_FAVORITE_DAPPS, ...favoriteDapps];
     // const allFavoriteDapps = [
     //     ...Array.from(dappsLockedToFavoritesMap.values()),
     //     ...favoriteDapps,

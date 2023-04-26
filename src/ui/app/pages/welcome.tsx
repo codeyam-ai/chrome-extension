@@ -14,6 +14,7 @@ import OnboardingLayout from '../shared/layouts/OnboardingLayout';
 import Title from '../shared/typography/Title';
 
 import type { OnboardingButtonProps } from '../shared/buttons/OnboardingButton';
+import { STAKING_ID } from '_src/data/dappsMap';
 
 const setupButtons: OnboardingButtonProps[] = [
     {
@@ -51,7 +52,7 @@ const WelcomePage = () => {
 
     useEffect(() => {
         // save Staking dapp as favorite by default, but it is not locked like Customize or Address Book
-        dispatch(saveFavoriteDappsKeys(['id3']));
+        dispatch(saveFavoriteDappsKeys([STAKING_ID]));
     }, [dispatch]);
     return (
         <OnboardingLayout>

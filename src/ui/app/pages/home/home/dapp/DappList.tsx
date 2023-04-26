@@ -13,10 +13,8 @@ interface DappListProps {
 }
 
 export const DappList: React.FC<DappListProps> = ({ dapps }) => {
-    const [selectedDapp, setSelectedDapp] = useState<DappData | null>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     useConvertVerticalScrollToHorizontal(scrollContainerRef);
-    const navigate = useNavigate();
 
     const listItems = useMemo(() => {
         return dapps.map((dapp, index) => (
@@ -24,19 +22,12 @@ export const DappList: React.FC<DappListProps> = ({ dapps }) => {
         ));
     }, [dapps]);
 
-    const closeDapp = useCallback(() => {
-        navigate(-1);
-    }, [navigate]);
-
     return (
-        <div>
-            <DappView dapp={selectedDapp} onClose={closeDapp} />
-            <div
-                ref={scrollContainerRef}
-                className="flex overflow-x-auto whitespace-nowrap py-2 bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
-            >
-                {listItems}
-            </div>
+        <div
+            ref={scrollContainerRef}
+            className="flex overflow-x-auto whitespace-nowrap py-2 bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
+        >
+            {listItems}
         </div>
     );
 };

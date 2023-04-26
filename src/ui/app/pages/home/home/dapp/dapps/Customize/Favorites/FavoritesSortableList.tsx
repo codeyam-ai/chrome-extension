@@ -4,8 +4,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ReactSortable, type SortableEvent } from 'react-sortablejs';
 
 import DappListItem from '../../../DappListItem';
-import { favoritableDappsMap } from '../../../favoritableDapps';
 import dappsMap from '_src/data/dappsMap';
+import {
+    EXPLORER_ONLY_KEYS,
+    LOCKED_FAVORITES_KEYS,
+} from '_src/data/lockedFavoriteDapps';
 import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVerticalScrollToHorizontal';
 import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
 import Body from '_src/ui/app/shared/typography/Body';
@@ -13,10 +16,6 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { DappData } from '_src/types/DappData';
 import type { FC } from 'react';
-
-function generateUniqueId(): number {
-    return Math.floor(Math.random() * 1000) + 1;
-}
 
 interface SortableItem extends DappData {
     sortId: number;
@@ -39,27 +38,27 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
 
     // Each item needs a number ID to work with react-sortablejs
     const dappsWithSortIds: SortableItem[] = useMemo(() => {
-        const dappEntries = Array.from(dappsMap.entries()).map(
-            ([key, value]) => ({ key, value })
-        );
+        const dappEntries = Array.from(dappsMap.entries())
+            .filter(
+                ([key]) =>
+                    !LOCKED_FAVORITES_KEYS.includes(key) &&
+                    !EXPLORER_ONLY_KEYS.includes(key)
+            )
+            .map(([key, value]) => ({ key, value }));
 
         return dappEntries.map((entry) => ({
             ...entry.value,
-            sortId: generateUniqueId(),
+            sortId: uuidToNumber(entry.key),
             key: entry.key,
         }));
     }, []);
 
     const [favoritesState, setFavoritesState] = useState<SortableItem[]>(
-        dappsWithSortIds
-            .filter((item) => favoriteDapps.some((fav) => fav.id === item.id))
-            .map((item) => {
-                const key = Array.from(favoritableDappsMap.keys()).find(
-                    (k) => favoritableDappsMap.get(k)?.id === item.id
-                );
-                return key ? { ...item, key } : undefined;
-            })
-            .filter((item): item is SortableItem => item !== undefined)
+        favoriteDapps.map((item) => ({
+            ...item,
+            sortId: uuidToNumber(item.id),
+            key: item.id,
+        }))
     );
 
     const [isDragging, setIsDragging] = useState(false);
@@ -214,3 +213,19 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
         </div>
     );
 };
+
+// Each item needs a number ID to work with react-sortablejs
+// There is a loss of precision using this method (multiple UUIDs could produce the same number),
+// but it's good enough for our purposes
+function uuidToNumber(uuid: string): number {
+    // Remove dashes from the UUID string
+    const hexString = uuid.replace(/-/g, '');
+
+    // Truncate the hexadecimal string to fit within a JavaScript number
+    const truncatedHexString = hexString.slice(-15);
+
+    // Convert the truncated hexadecimal string to a number
+    const number = parseInt(truncatedHexString, 16);
+
+    return number;
+}
