@@ -27,7 +27,6 @@ const DappListItem: React.FC<ListItemProps> = ({
     const [isHovered, setIsHovered] = useState(false); // Add isHovered state
 
     const onClick = useCallback(() => {
-        console.log('dragged :>> ', dragged);
         if (!dappUrl || dragMode || dragged) {
             return;
         }

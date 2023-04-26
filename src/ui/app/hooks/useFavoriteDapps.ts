@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash';
 import { useCallback, useMemo } from 'react';
 
 import getDisplay from '../helpers/getDisplay';
@@ -85,7 +86,12 @@ export const useFavoriteDapps = () => {
             });
         }
 
-        if (dapps.map((d) => d.id) !== allFavoriteDappsKeys) {
+        if (
+            !isEqual(
+                dapps.map((d) => d.id),
+                allFavoriteDappsKeys
+            )
+        ) {
             setFavoriteDappsKeys(dapps.map((d) => d.id));
         }
 
