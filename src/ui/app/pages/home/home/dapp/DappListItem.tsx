@@ -82,7 +82,7 @@ const DappListItem: React.FC<ListItemProps> = ({
                 </div>
             </div>
             <p
-                className="mt-1 text-center text-xs w-20 text-clip overflow-hidden"
+                className="mt-1 text-center text-xs w-[60px] text-clip overflow-hidden"
                 title={dapp.title}
             >
                 {dapp.title}
