@@ -61,7 +61,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
         () =>
             favoritesState.map((item) => (
                 <div key={item.id} className="inline-block">
-                    <DappListItem dapp={item} />
+                    <DappListItem dapp={item} dragMode />
                 </div>
             )),
         [favoritesState]
