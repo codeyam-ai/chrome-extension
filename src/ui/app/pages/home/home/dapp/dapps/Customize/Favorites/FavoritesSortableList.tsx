@@ -22,6 +22,7 @@ import { accountNftsSelector } from '_src/ui/app/redux/slices/account';
 interface SortableItem extends DappData {
     sortId: number;
     key: string;
+    type: 'dapp' | 'nft';
 }
 
 interface FavoritesSortableListProps {
@@ -31,7 +32,10 @@ interface FavoritesSortableListProps {
 export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
     onFavoritesChosen,
 }) => {
-    const { favoriteDapps } = useFavoriteDapps();
+    const { allFavorites, favoriteDapps, favoriteNfts } = useFavoriteDapps();
+    console.log('allFavorites :>> ', allFavorites);
+    console.log('favoriteDapps :>> ', favoriteDapps);
+    console.log('favoriteNfts :>> ', favoriteNfts);
     const nfts = useAppSelector(accountNftsSelector);
     const projectNfts = useMemo(() => {
         const projectNftsRecord = getProjectNftsFromAllNfts(nfts);
@@ -45,13 +49,30 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
 
     // Each item needs a number ID to work with react-sortablejs
     const dappsWithSortIds: SortableItem[] = useMemo(() => {
-        return [...dappsMap.values(), ...projectNfts]
+        const sortableDapps = Array.from(dappsMap.values())
             .filter((item) => !EXPLORER_ONLY_KEYS.includes(item.id))
-            .map((item) => ({
-                ...item,
-                sortId: uuidToNumber(item.id),
-                key: item.id,
-            }));
+            .map(
+                (item) =>
+                    ({
+                        ...item,
+                        sortId: uuidToNumber(item.id),
+                        key: item.id,
+                        type: 'dapp',
+                    } as SortableItem)
+            );
+        const sortableNfts = projectNfts
+            .filter((item) => !EXPLORER_ONLY_KEYS.includes(item.id))
+            .map(
+                (item) =>
+                    ({
+                        ...item,
+                        sortId: uuidToNumber(item.id),
+                        key: item.id,
+                        type: 'nft',
+                    } as SortableItem)
+            );
+
+        return [...sortableDapps, ...sortableNfts];
     }, [projectNfts]);
 
     const [favoritesState, setFavoritesState] = useState<SortableItem[]>(
@@ -59,6 +80,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
             ...item,
             sortId: uuidToNumber(item.id),
             key: item.id,
+            type: 'dapp',
         }))
     );
 

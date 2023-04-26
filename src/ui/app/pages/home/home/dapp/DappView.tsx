@@ -15,13 +15,13 @@ interface DappViewProps {
 
 const DappView: React.FC<DappViewProps> = ({ dapp, onClose }) => {
     const { dappUrl, isLocal } = useDappUrl(dapp?.urls);
-    const { favoriteDapps } = useFavoriteDapps();
+    const { allFavorites } = useFavoriteDapps();
     const address = useAppSelector(({ account: { address } }) => address);
     const iframeRef = useRef<HTMLIFrameElement>(null);
 
     const isFavorite = useMemo(() => {
-        return favoriteDapps.some((fav) => fav.id === dapp?.id);
-    }, [dapp?.id, favoriteDapps]);
+        return allFavorites.some((fav) => fav.id === dapp?.id);
+    }, [dapp?.id, allFavorites]);
 
     const closeDapp = useCallback(() => {
         onClose();

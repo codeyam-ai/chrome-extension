@@ -45,44 +45,29 @@ export const useFavoriteDapps = () => {
             allFavoriteDappsKeys.push(CUSTOMIZE_ID);
         }
 
+        return allFavoriteDappsKeys
+            .map((key) => dappsMap.get(key))
+            .filter(Boolean) as DappData[];
+    }, [favoriteDappsKeys]);
+
+    const favoriteNfts: DappData[] = useMemo(() => {
         let projectNFTs: Record<string, DappData> = {};
         if (nfts) {
             projectNFTs = getProjectNftsFromAllNfts(nfts);
         }
+        return Object.keys(projectNFTs)
+            .filter((nft) => !excludedNFTKeys.includes(nft))
+            .map((key) => projectNFTs[key]);
+    }, [nfts, excludedNFTKeys]);
 
-        const validProjectNFTs = Object.keys(projectNFTs)
-            .filter((nft) => excludedNFTKeys.includes(nft))
-            .reduce((acc, key) => {
-                acc[key] = projectNFTs[key];
-                return acc;
-            }, {} as Record<string, DappData>);
-
-        const dapps = allFavoriteDappsKeys
-            .map((key) => dappsMap.get(key))
-            .filter(Boolean) as DappData[];
-
-        if (Object.values(validProjectNFTs).length > 0) {
-            Object.keys(validProjectNFTs).forEach((key) => {
-                if (!dapps.find((d) => d.id === key)) {
-                    dapps.splice(0, 0, validProjectNFTs[key]);
-                }
-            });
-        }
-
-        if (
-            !isEqual(
-                dapps.map((d) => d.id),
-                allFavoriteDappsKeys
-            )
-        ) {
-            setFavoriteDappsKeys(dapps.map((d) => d.id));
-        }
-
-        return dapps;
-    }, [favoriteDappsKeys, nfts, setFavoriteDappsKeys, excludedNFTKeys]);
+    const allFavorites: DappData[] = useMemo(() => {
+        return [...favoriteNfts, ...favoriteDapps];
+    }, [favoriteNfts, favoriteDapps]);
 
     return {
         favoriteDapps,
+        favoriteNfts,
+        allFavorites,
         setFavoriteDappsKeys,
         setExcludedNftKeys,
     };
