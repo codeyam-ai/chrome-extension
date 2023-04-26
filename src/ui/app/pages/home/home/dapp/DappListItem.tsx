@@ -12,6 +12,7 @@ interface ListItemProps {
     isCursorDefault?: boolean;
     dragMode?: boolean;
     showArrowOnHover?: boolean;
+    dragged?: boolean;
 }
 
 const DappListItem: React.FC<ListItemProps> = ({
@@ -19,13 +20,14 @@ const DappListItem: React.FC<ListItemProps> = ({
     isCursorDefault,
     dragMode,
     showArrowOnHover,
+    dragged,
 }) => {
     const { dappUrl, isLocal } = useDappUrl(dapp.urls);
     const navigate = useNavigate();
     const [isHovered, setIsHovered] = useState(false); // Add isHovered state
 
     const onClick = useCallback(() => {
-        if (!dappUrl || dragMode) {
+        if (!dappUrl || dragMode || dragged) {
             return;
         }
         if (isLocal) {
@@ -33,7 +35,7 @@ const DappListItem: React.FC<ListItemProps> = ({
         } else {
             window.open(dappUrl, '_blank');
         }
-    }, [dappUrl, dragMode, isLocal, navigate]);
+    }, [dappUrl, dragMode, isLocal, navigate, dragged]);
 
     const setIsHoveredTrue = useCallback(() => {
         setIsHovered(true);
@@ -42,6 +44,13 @@ const DappListItem: React.FC<ListItemProps> = ({
     const setIsHoveredFalse = useCallback(() => {
         setIsHovered(false);
     }, []);
+
+    const cancelNativeImgDrag = useCallback(
+        (e: React.DragEvent<HTMLImageElement>) => {
+            e.preventDefault();
+        },
+        []
+    );
 
     return (
         <div
@@ -58,6 +67,7 @@ const DappListItem: React.FC<ListItemProps> = ({
                     src={dapp.image}
                     alt={dapp.title}
                     className="object-cover w-full h-full"
+                    onDragStart={cancelNativeImgDrag}
                 />
                 <div
                     className={classNames(
