@@ -10,6 +10,7 @@ import capyart from '_images/dapps/logos/capyart.png';
 import cetus from '_images/dapps/logos/cetus.png';
 import clutchy from '_images/dapps/logos/clutchy.jpg';
 import collectibles from '_images/dapps/logos/collectibles.png';
+import customize from '_images/dapps/logos/customize.png';
 import explorer from '_images/dapps/logos/explorer.png';
 import finalStardust from '_images/dapps/logos/final-stardust.png';
 import gotbeef from '_images/dapps/logos/gotbeef.png';
@@ -89,13 +90,13 @@ const dappsMap: Map<string, DappData> = new Map([
         CUSTOMIZE_ID,
         {
             id: '5bbe5c3d-88a2-4537-92a5-20b6021e2ea3',
-            image: '',
+            image: customize,
             title: 'Customize',
             description: 'NOT YET IMPLEMENTED IN EXPLORER',
             urls: {
-                CUSTOM_RPC: '/dapps/customize',
-                [NetworkName.DEVNET]: '/dapps/customize',
-                [NetworkName.TESTNET]: '/dapps/customize',
+                CUSTOM_RPC: 'customize',
+                [NetworkName.DEVNET]: 'customize',
+                [NetworkName.TESTNET]: 'customize',
             },
             tags: [TagName.TOOLS],
             isLocal: true,
@@ -110,9 +111,9 @@ const dappsMap: Map<string, DappData> = new Map([
             description:
                 'Manage all of the addresses you frequently interact with. Easily send coins and assets to an address.',
             urls: {
-                CUSTOM_RPC: '/dapps/address-book',
-                [NetworkName.DEVNET]: '/dapps/address-book',
-                [NetworkName.TESTNET]: '/dapps/address-book',
+                CUSTOM_RPC: 'address-book',
+                [NetworkName.DEVNET]: 'address-book',
+                [NetworkName.TESTNET]: 'address-book',
             },
             tags: [TagName.TOOLS],
             images: [addressScreenshot1],
@@ -127,8 +128,8 @@ const dappsMap: Map<string, DappData> = new Map([
             title: 'Staking',
             description: 'Stake your SUI assets and earn rewards.',
             urls: {
-                [NetworkName.DEVNET]: '/dapps/staking',
-                [NetworkName.TESTNET]: '/dapps/staking',
+                [NetworkName.DEVNET]: 'staking',
+                [NetworkName.TESTNET]: 'staking',
             },
             tags: [TagName.TOOLS],
             images: [addressScreenshot1],
@@ -184,8 +185,8 @@ const dappsMap: Map<string, DappData> = new Map([
         {
             id: EXPLORER_ID,
             image: explorer,
-            title: 'Explorer',
-            description: 'Show case your favorite collectibles.',
+            title: 'Block Explorer',
+            description: 'View transactions on the Sui blockchain.',
             urls: {
                 [NetworkName.DEVNET]: 'https://explorer.sui.io',
                 [NetworkName.TESTNET]: 'https://explorer.sui.io',

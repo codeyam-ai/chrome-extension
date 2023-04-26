@@ -20,9 +20,7 @@ const DappListItem: React.FC<ListItemProps> = ({ dapp, cursorDefault }) => {
             return;
         }
         if (dapp.isLocal) {
-            navigate(dappUrl, {
-                replace: false,
-            });
+            navigate(dappUrl);
         } else {
             window.open(dappUrl, '_blank');
         }
