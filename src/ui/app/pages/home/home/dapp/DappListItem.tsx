@@ -27,6 +27,7 @@ const DappListItem: React.FC<ListItemProps> = ({
     const [isHovered, setIsHovered] = useState(false); // Add isHovered state
 
     const onClick = useCallback(() => {
+        console.log('dragged :>> ', dragged);
         if (!dappUrl || dragMode || dragged) {
             return;
         }
@@ -58,7 +59,8 @@ const DappListItem: React.FC<ListItemProps> = ({
                 'flex flex-col items-center mx-2 relative',
                 isCursorDefault ? '' : 'cursor-pointer'
             )}
-            onClick={onClick}
+            // onClick={onClick}
+            onMouseUp={onClick}
             onMouseEnter={setIsHoveredTrue}
             onMouseLeave={setIsHoveredFalse}
         >

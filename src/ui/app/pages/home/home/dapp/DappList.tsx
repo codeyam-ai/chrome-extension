@@ -5,6 +5,8 @@ import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVe
 
 import type { DappData } from '_src/types/DappData';
 
+const DRAG_MOVEMENT_THRESHOLD = 5; // In px - anything less than this is considered a click
+
 interface DappListProps {
     dapps: DappData[];
 }
@@ -13,6 +15,7 @@ export const DappList: React.FC<DappListProps> = ({ dapps }) => {
     const [dragged, setDragged] = useState(false);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const mouseXRef = useRef<number | null>(null);
+    const totalMovementXRef = useRef(0);
     useConvertVerticalScrollToHorizontal(scrollContainerRef);
 
     const listItems = useMemo(() => {
@@ -33,7 +36,12 @@ export const DappList: React.FC<DappListProps> = ({ dapps }) => {
     const onMouseMove = useCallback((e: React.MouseEvent) => {
         if (mouseXRef.current === null) return;
 
-        setDragged(true);
+        const movementX = Math.abs(mouseXRef.current - e.nativeEvent.clientX);
+        totalMovementXRef.current += movementX;
+
+        if (totalMovementXRef.current > DRAG_MOVEMENT_THRESHOLD) {
+            setDragged(true);
+        }
 
         scrollContainerRef.current?.scrollBy({
             left: mouseXRef.current - e.nativeEvent.clientX,
@@ -44,6 +52,7 @@ export const DappList: React.FC<DappListProps> = ({ dapps }) => {
 
     const onMouseUp = useCallback(() => {
         mouseXRef.current = null;
+        totalMovementXRef.current = 0;
         setDragged(false);
     }, []);
 
