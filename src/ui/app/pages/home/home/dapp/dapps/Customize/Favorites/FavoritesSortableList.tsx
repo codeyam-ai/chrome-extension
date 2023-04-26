@@ -7,12 +7,17 @@ import DappListItem from '../../../DappListItem';
 import dappsMap from '_src/data/dappsMap';
 import { EXPLORER_ONLY_KEYS } from '_src/data/explorerOnlyDapps';
 import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVerticalScrollToHorizontal';
-import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
+import {
+    getProjectNftsFromAllNfts,
+    useFavoriteDapps,
+} from '_src/ui/app/hooks/useFavoriteDapps';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { DappData } from '_src/types/DappData';
 import type { FC } from 'react';
+import { useAppSelector } from '_src/ui/app/hooks';
+import { accountNftsSelector } from '_src/ui/app/redux/slices/account';
 
 interface SortableItem extends DappData {
     sortId: number;
@@ -27,6 +32,11 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
     onFavoritesChosen,
 }) => {
     const { favoriteDapps } = useFavoriteDapps();
+    const nfts = useAppSelector(accountNftsSelector);
+    const projectNfts = useMemo(() => {
+        const projectNftsRecord = getProjectNftsFromAllNfts(nfts);
+        return Object.values(projectNftsRecord);
+    }, [nfts]);
 
     const favoriteScrollContainerRef = useRef<HTMLDivElement>(null);
     useConvertVerticalScrollToHorizontal(favoriteScrollContainerRef);
@@ -35,16 +45,14 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
 
     // Each item needs a number ID to work with react-sortablejs
     const dappsWithSortIds: SortableItem[] = useMemo(() => {
-        const dappEntries = Array.from(dappsMap.entries())
-            .filter(([key]) => !EXPLORER_ONLY_KEYS.includes(key))
-            .map(([key, value]) => ({ key, value }));
-
-        return dappEntries.map((entry) => ({
-            ...entry.value,
-            sortId: uuidToNumber(entry.key),
-            key: entry.key,
-        }));
-    }, []);
+        return [...dappsMap.values(), ...projectNfts]
+            .filter((item) => !EXPLORER_ONLY_KEYS.includes(item.id))
+            .map((item) => ({
+                ...item,
+                sortId: uuidToNumber(item.id),
+                key: item.id,
+            }));
+    }, [projectNfts]);
 
     const [favoritesState, setFavoritesState] = useState<SortableItem[]>(
         favoriteDapps.map((item) => ({
@@ -130,7 +138,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
             </Body>
             <div
                 ref={favoriteScrollContainerRef}
-                className="flex overflow-x-auto whitespace-nowrap py-2 h-[85px] w-full bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
+                className="flex overflow-x-auto no-scrollbar whitespace-nowrap py-2 h-[85px] w-full bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
             >
                 <ReactSortable
                     group={{ name: 'shared' }}

@@ -10,6 +10,7 @@ import {
     saveFavoriteDappsKeys,
 } from '_src/ui/app/redux/slices/account';
 
+import type { SuiObjectData } from '@mysten/sui.js';
 import type { DappData } from '_src/types/DappData';
 
 export const useFavoriteDapps = () => {
@@ -36,42 +37,7 @@ export const useFavoriteDapps = () => {
 
         let projectNFTs: Record<string, DappData> = {};
         if (nfts) {
-            projectNFTs = nfts
-                .map((nft) => ({ ...(getDisplay(nft.display) ?? {}) }))
-                .filter((display) => {
-                    if (!display) return false;
-
-                    if (
-                        display.project_url === 'https://testnet.suifrens.com'
-                    ) {
-                        display.project_name = 'SuiFrens';
-                        display.project_image_url = capyart;
-                    }
-
-                    return (
-                        display &&
-                        display.project_url &&
-                        display.project_name &&
-                        display.project_image_url
-                    );
-                })
-                .reduce((acc, display) => {
-                    if (!display?.project_url) return acc;
-                    return {
-                        ...acc,
-                        [display.project_url]: {
-                            id: display.project_url,
-                            title: display.project_name,
-                            description: display.project_description,
-                            image: display.project_image_url,
-                            urls: {
-                                [NetworkName.DEVNET]: display.project_url,
-                                [NetworkName.TESTNET]: display.project_url,
-                            },
-                            tags: [],
-                        },
-                    };
-                }, {} as Record<string, DappData>);
+            projectNFTs = getProjectNftsFromAllNfts(nfts);
         }
 
         const dapps = allFavoriteDappsKeys
@@ -102,4 +68,41 @@ export const useFavoriteDapps = () => {
         favoriteDapps,
         setFavoriteDappsKeys,
     };
+};
+
+export const getProjectNftsFromAllNfts = (allNfts: SuiObjectData[]) => {
+    return allNfts
+        .map((nft) => ({ ...(getDisplay(nft.display) ?? {}) }))
+        .filter((display) => {
+            if (!display) return false;
+
+            if (display.project_url === 'https://testnet.suifrens.com') {
+                display.project_name = 'SuiFrens';
+                display.project_image_url = capyart;
+            }
+
+            return (
+                display &&
+                display.project_url &&
+                display.project_name &&
+                display.project_image_url
+            );
+        })
+        .reduce((acc, display) => {
+            if (!display?.project_url) return acc;
+            return {
+                ...acc,
+                [display.project_url]: {
+                    id: display.project_url,
+                    title: display.project_name,
+                    description: display.project_description,
+                    image: display.project_image_url,
+                    urls: {
+                        [NetworkName.DEVNET]: display.project_url,
+                        [NetworkName.TESTNET]: display.project_url,
+                    },
+                    tags: [],
+                },
+            };
+        }, {} as Record<string, DappData>);
 };
