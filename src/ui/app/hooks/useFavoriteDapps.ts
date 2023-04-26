@@ -18,6 +18,15 @@ export const useFavoriteDapps = () => {
 
     const nfts = useAppSelector(accountNftsSelector);
 
+    const dispatch = useAppDispatch();
+
+    const setFavoriteDappsKeys = useCallback(
+        (keys: string[]) => {
+            dispatch(saveFavoriteDappsKeys(keys));
+        },
+        [dispatch]
+    );
+
     const favoriteDapps: DappData[] = useMemo(() => {
         const allFavoriteDappsKeys = [...favoriteDappsKeys];
         if (!favoriteDappsKeys.includes(CUSTOMIZE_ID)) {
@@ -76,17 +85,12 @@ export const useFavoriteDapps = () => {
             });
         }
 
+        if (dapps.map((d) => d.id) !== allFavoriteDappsKeys) {
+            setFavoriteDappsKeys(dapps.map((d) => d.id));
+        }
+
         return dapps;
-    }, [favoriteDappsKeys, nfts]);
-
-    const dispatch = useAppDispatch();
-
-    const setFavoriteDappsKeys = useCallback(
-        (keys: string[]) => {
-            dispatch(saveFavoriteDappsKeys(keys));
-        },
-        [dispatch]
-    );
+    }, [favoriteDappsKeys, nfts, setFavoriteDappsKeys]);
 
     return {
         favoriteDapps,
