@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 import DappListItem from './DappListItem';
 import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVerticalScrollToHorizontal';
@@ -10,15 +10,21 @@ interface DappListProps {
 }
 
 export const DappList: React.FC<DappListProps> = ({ dapps }) => {
+    const [dragged, setDragged] = useState(false);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const mouseXRef = useRef<number | null>(null);
     useConvertVerticalScrollToHorizontal(scrollContainerRef);
 
     const listItems = useMemo(() => {
         return dapps.map((dapp, index) => (
-            <DappListItem key={index} dapp={dapp} showArrowOnHover />
+            <DappListItem
+                key={index}
+                dapp={dapp}
+                showArrowOnHover
+                dragged={dragged}
+            />
         ));
-    }, [dapps]);
+    }, [dapps, dragged]);
 
     const onMouseDown = useCallback((e: React.MouseEvent) => {
         mouseXRef.current = e.nativeEvent.clientX;
@@ -26,6 +32,8 @@ export const DappList: React.FC<DappListProps> = ({ dapps }) => {
 
     const onMouseMove = useCallback((e: React.MouseEvent) => {
         if (mouseXRef.current === null) return;
+
+        setDragged(true);
 
         scrollContainerRef.current?.scrollBy({
             left: mouseXRef.current - e.nativeEvent.clientX,
@@ -36,6 +44,7 @@ export const DappList: React.FC<DappListProps> = ({ dapps }) => {
 
     const onMouseUp = useCallback(() => {
         mouseXRef.current = null;
+        setDragged(false);
     }, []);
 
     return (
