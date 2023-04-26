@@ -1,24 +1,31 @@
+import { ArrowUpRightIcon } from '@heroicons/react/24/solid';
 import classNames from 'classnames';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import useDappUrl from '_src/ui/app/hooks/useDappUrl';
 
-import { ArrowUpRightIcon } from '@heroicons/react/24/solid';
 import type { DappData } from '_src/types/DappData';
 
 interface ListItemProps {
     dapp: DappData;
-    isClickable?: boolean;
+    isCursorDefault?: boolean;
+    dragMode?: boolean;
+    showArrowOnHover?: boolean;
 }
 
-const DappListItem: React.FC<ListItemProps> = ({ dapp, isClickable }) => {
+const DappListItem: React.FC<ListItemProps> = ({
+    dapp,
+    isCursorDefault,
+    dragMode,
+    showArrowOnHover,
+}) => {
     const { dappUrl, isLocal } = useDappUrl(dapp.urls);
     const navigate = useNavigate();
     const [isHovered, setIsHovered] = useState(false); // Add isHovered state
 
     const onClick = useCallback(() => {
-        if (!dappUrl) {
+        if (!dappUrl || dragMode) {
             return;
         }
         if (isLocal) {
@@ -26,7 +33,7 @@ const DappListItem: React.FC<ListItemProps> = ({ dapp, isClickable }) => {
         } else {
             window.open(dappUrl, '_blank');
         }
-    }, [dappUrl, isLocal, navigate]);
+    }, [dappUrl, dragMode, isLocal, navigate]);
 
     const setIsHoveredTrue = useCallback(() => {
         setIsHovered(true);
@@ -40,7 +47,7 @@ const DappListItem: React.FC<ListItemProps> = ({ dapp, isClickable }) => {
         <div
             className={classNames(
                 'flex flex-col items-center mx-2 relative',
-                isClickable ? '' : 'cursor-pointer'
+                isCursorDefault ? '' : 'cursor-pointer'
             )}
             onClick={onClick}
             onMouseEnter={setIsHoveredTrue}
@@ -55,7 +62,9 @@ const DappListItem: React.FC<ListItemProps> = ({ dapp, isClickable }) => {
                 <div
                     className={classNames(
                         'absolute -top-[8px] right-[6px] p-1 rounded-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default transition ease-in-out duration-200',
-                        !isLocal && isHovered ? 'opacity-100' : 'opacity-0'
+                        showArrowOnHover && !isLocal && isHovered
+                            ? 'opacity-100'
+                            : 'opacity-0'
                     )}
                 >
                     <ArrowUpRightIcon className="w-4 h-4 text-ethos-light-primary-light dark:bg-ethos-dark-primary-dark" />

@@ -88,11 +88,15 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                         }`}
                     >
                         {isFavorite && (
-                            <div className="absolute -top-[8px] right-[20px] p-1 rounded-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
+                            <div className="absolute -top-[8px] right-[20px] p-1 z-10 rounded-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
                                 <StarIcon className="w-4 h-4 text-ethos-light-primary-light dark:bg-ethos-dark-primary-dark" />
                             </div>
                         )}
-                        <DappListItem dapp={item} isClickable={isFavorite} />
+                        <DappListItem
+                            dapp={item}
+                            isCursorDefault={isFavorite}
+                            dragMode
+                        />
                     </div>
                 );
             }),

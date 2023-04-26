@@ -15,7 +15,7 @@ export const DappList: React.FC<DappListProps> = ({ dapps }) => {
 
     const listItems = useMemo(() => {
         return dapps.map((dapp, index) => (
-            <DappListItem key={index} dapp={dapp} />
+            <DappListItem key={index} dapp={dapp} showArrowOnHover />
         ));
     }, [dapps]);
 
