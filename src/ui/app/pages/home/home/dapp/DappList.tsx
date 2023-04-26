@@ -1,12 +1,9 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useMemo, useRef } from 'react';
 
 import DappListItem from './DappListItem';
-import DappView from './DappView';
 import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVerticalScrollToHorizontal';
 
 import type { DappData } from '_src/types/DappData';
-import { useAppSelector } from '_src/ui/app/hooks';
 
 interface DappListProps {
     dapps: DappData[];

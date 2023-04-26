@@ -12,9 +12,9 @@ import OnboardingButton from '../shared/buttons/OnboardingButton';
 import OnboardingHeader from '../shared/headers/page-headers/OnboardingHeader';
 import OnboardingLayout from '../shared/layouts/OnboardingLayout';
 import Title from '../shared/typography/Title';
+import { STAKING_ID } from '_src/data/dappsMap';
 
 import type { OnboardingButtonProps } from '../shared/buttons/OnboardingButton';
-import { STAKING_ID } from '_src/data/dappsMap';
 
 const setupButtons: OnboardingButtonProps[] = [
     {

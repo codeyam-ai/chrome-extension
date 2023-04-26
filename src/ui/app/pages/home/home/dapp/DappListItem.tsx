@@ -1,9 +1,10 @@
 import classNames from 'classnames';
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import useDappUrl from '_src/ui/app/hooks/useDappUrl';
 
 import type { DappData } from '_src/types/DappData';
-import useDappUrl from '_src/ui/app/hooks/useDappUrl';
-import { useNavigate } from 'react-router-dom';
 
 interface ListItemProps {
     dapp: DappData;

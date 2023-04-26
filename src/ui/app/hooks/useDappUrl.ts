@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
+
 import useAppSelector from './useAppSelector';
-import { ADDRESS_BOOK_ID, CUSTOMIZE_ID } from '_src/data/dappsMap';
 import { NetworkName } from '_src/enums/network';
 
 export default function useDappUrl(
