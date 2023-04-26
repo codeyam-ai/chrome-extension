@@ -7,6 +7,7 @@ import dappsMap, { CUSTOMIZE_ID, NetworkName } from '_src/data/dappsMap';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import {
     accountNftsSelector,
+    saveExcludedNftKeys,
     saveFavoriteDappsKeys,
 } from '_src/ui/app/redux/slices/account';
 
@@ -17,10 +18,19 @@ export const useFavoriteDapps = () => {
     const favoriteDappsKeys = useAppSelector(
         ({ account }) => account.favoriteDappsKeys
     );
-
+    const excludedNFTKeys = useAppSelector(
+        ({ account }) => account.excludedNftKeys
+    );
     const nfts = useAppSelector(accountNftsSelector);
 
     const dispatch = useAppDispatch();
+
+    const setExcludedNftKeys = useCallback(
+        (keys: string[]) => {
+            dispatch(saveExcludedNftKeys(keys));
+        },
+        [dispatch]
+    );
 
     const setFavoriteDappsKeys = useCallback(
         (keys: string[]) => {
@@ -40,14 +50,21 @@ export const useFavoriteDapps = () => {
             projectNFTs = getProjectNftsFromAllNfts(nfts);
         }
 
+        const validProjectNFTs = Object.keys(projectNFTs)
+            .filter((nft) => excludedNFTKeys.includes(nft))
+            .reduce((acc, key) => {
+                acc[key] = projectNFTs[key];
+                return acc;
+            }, {} as Record<string, DappData>);
+
         const dapps = allFavoriteDappsKeys
             .map((key) => dappsMap.get(key))
             .filter(Boolean) as DappData[];
 
-        if (Object.values(projectNFTs).length > 0) {
-            Object.keys(projectNFTs).forEach((key) => {
+        if (Object.values(validProjectNFTs).length > 0) {
+            Object.keys(validProjectNFTs).forEach((key) => {
                 if (!dapps.find((d) => d.id === key)) {
-                    dapps.splice(0, 0, projectNFTs[key]);
+                    dapps.splice(0, 0, validProjectNFTs[key]);
                 }
             });
         }
@@ -62,11 +79,12 @@ export const useFavoriteDapps = () => {
         }
 
         return dapps;
-    }, [favoriteDappsKeys, nfts, setFavoriteDappsKeys]);
+    }, [favoriteDappsKeys, nfts, setFavoriteDappsKeys, excludedNFTKeys]);
 
     return {
         favoriteDapps,
         setFavoriteDappsKeys,
+        setExcludedNftKeys,
     };
 };
 

@@ -597,22 +597,11 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
-        const excludedFavoriteDappsKeys = JSON.parse(
-            (await getEncrypted({
-                key: 'excludedFavoriteDappsKeys',
-                session: false,
-                strong: false,
-            })) || '[]'
-        );
-
         const automaticKeys = [CUSTOMIZE_ID, ADDRESS_BOOK_ID, MY_ASSETS_ID];
 
         const allFavoriteDappsKeys = [...favoriteDappsKeys];
         for (const key of automaticKeys) {
-            if (
-                !favoriteDappsKeys.includes(key) &&
-                !excludedFavoriteDappsKeys.includes(key)
-            ) {
+            if (!favoriteDappsKeys.includes(key)) {
                 allFavoriteDappsKeys.push(key);
             }
         }
@@ -628,39 +617,6 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
 export const saveFavoriteDappsKeys = createAsyncThunk(
     'account/setFavoriteDappsKeys',
     async (favoriteDappsKeys: string[]): Promise<string[]> => {
-        const favoriteDappsKeysFromStorageString = await getEncrypted({
-            key: 'favoriteDappsKeys',
-            session: false,
-            strong: false,
-        });
-
-        const excludedFavoriteDappsKeysFromStorageString = await getEncrypted({
-            key: 'excludedFavoriteDappsKeys',
-            session: false,
-            strong: false,
-        });
-
-        const favoriteDappsKeysFromStorage = JSON.parse(
-            favoriteDappsKeysFromStorageString ?? '[]'
-        );
-
-        const excludedFavoriteDappsKeysFromStorage = JSON.parse(
-            excludedFavoriteDappsKeysFromStorageString ?? '[]'
-        );
-
-        for (const key of favoriteDappsKeysFromStorage) {
-            if (!favoriteDappsKeys.includes(key)) {
-                excludedFavoriteDappsKeysFromStorage.push(key);
-            }
-        }
-
-        for (const key of excludedFavoriteDappsKeysFromStorage) {
-            const favoriteIndex = favoriteDappsKeys.indexOf(key);
-            if (favoriteIndex > -1) {
-                excludedFavoriteDappsKeysFromStorage.splice(favoriteIndex, 1);
-            }
-        }
-
         await setEncrypted({
             key: 'favoriteDappsKeys',
             value: JSON.stringify(favoriteDappsKeys),
@@ -668,14 +624,36 @@ export const saveFavoriteDappsKeys = createAsyncThunk(
             strong: false,
         });
 
+        return favoriteDappsKeys;
+    }
+);
+
+export const loadExcludedNftKeysFromStorage = createAsyncThunk(
+    'account/getExcludedNftKeys',
+    async (): Promise<string[]> => {
+        const excludedFavoriteDappsKeys = JSON.parse(
+            (await getEncrypted({
+                key: 'excludedNftKeys',
+                session: false,
+                strong: false,
+            })) || '[]'
+        );
+
+        return excludedFavoriteDappsKeys;
+    }
+);
+
+export const saveExcludedNftKeys = createAsyncThunk(
+    'account/saveExcludedNftKeys',
+    async (exludedNftKeys: string[]): Promise<string[]> => {
         await setEncrypted({
-            key: 'excludedFavoriteDappsKeys',
-            value: JSON.stringify(excludedFavoriteDappsKeysFromStorage),
+            key: 'excludedNftKeys',
+            value: JSON.stringify(exludedNftKeys),
             session: false,
             strong: false,
         });
 
-        return favoriteDappsKeys;
+        return exludedNftKeys;
     }
 );
 
@@ -693,6 +671,7 @@ type AccountState = {
     accountType: AccountType;
     locked: boolean;
     favoriteDappsKeys: string[];
+    excludedNftKeys: string[];
 };
 
 const initialState: AccountState = {
@@ -709,6 +688,7 @@ const initialState: AccountState = {
     accountType: AccountType.UNINITIALIZED,
     locked: false,
     favoriteDappsKeys: [],
+    excludedNftKeys: [],
 };
 
 const accountSlice = createSlice({
