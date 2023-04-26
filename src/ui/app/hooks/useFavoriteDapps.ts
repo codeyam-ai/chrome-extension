@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import getDisplay from '../helpers/getDisplay';
 import capyart from '_images/dapps/logos/capyart.png';
@@ -27,7 +27,7 @@ export const useFavoriteDapps = () => {
         [dispatch]
     );
 
-    const dapps = useMemo(() => {
+    const favoriteDapps: DappData[] = useMemo(() => {
         const allFavoriteDappsKeys = [...favoriteDappsKeys];
         if (!favoriteDappsKeys.includes(CUSTOMIZE_ID)) {
             allFavoriteDappsKeys.push(CUSTOMIZE_ID);
@@ -85,19 +85,15 @@ export const useFavoriteDapps = () => {
             });
         }
 
-        return allFavoriteDappsKeys
-            .map((key) => dappsMap.get(key))
-            .filter(Boolean) as DappData[];
-    }, [favoriteDappsKeys, nfts]);
-
-    useEffect(() => {
-        if (dapps.map((d) => d.id).join(',') !== favoriteDappsKeys.join(',')) {
+        if (dapps.map((d) => d.id) !== allFavoriteDappsKeys) {
             setFavoriteDappsKeys(dapps.map((d) => d.id));
         }
-    }, [dapps, favoriteDappsKeys, setFavoriteDappsKeys]);
+
+        return dapps;
+    }, [favoriteDappsKeys, nfts, setFavoriteDappsKeys]);
 
     return {
-        favoriteDapps: dapps,
+        favoriteDapps,
         setFavoriteDappsKeys,
     };
 };
