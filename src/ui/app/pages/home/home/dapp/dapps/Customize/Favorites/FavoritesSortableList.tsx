@@ -5,10 +5,7 @@ import { ReactSortable, type SortableEvent } from 'react-sortablejs';
 
 import DappListItem from '../../../DappListItem';
 import dappsMap from '_src/data/dappsMap';
-import {
-    EXPLORER_ONLY_KEYS,
-    LOCKED_FAVORITES_KEYS,
-} from '_src/data/lockedFavoriteDapps';
+import { EXPLORER_ONLY_KEYS } from '_src/data/explorerOnlyDapps';
 import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVerticalScrollToHorizontal';
 import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
 import Body from '_src/ui/app/shared/typography/Body';
@@ -39,11 +36,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
     // Each item needs a number ID to work with react-sortablejs
     const dappsWithSortIds: SortableItem[] = useMemo(() => {
         const dappEntries = Array.from(dappsMap.entries())
-            .filter(
-                ([key]) =>
-                    !LOCKED_FAVORITES_KEYS.includes(key) &&
-                    !EXPLORER_ONLY_KEYS.includes(key)
-            )
+            .filter(([key]) => !EXPLORER_ONLY_KEYS.includes(key))
             .map(([key, value]) => ({ key, value }));
 
         return dappEntries.map((entry) => ({

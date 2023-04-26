@@ -9,7 +9,6 @@ import { DappList } from './dapp/DappList';
 import ChainIndicator from '../../dapp-tx-approval/types/ChainIndicator';
 import { useAppSelector } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
-import { LOCKED_FAVORITE_DAPPS } from '_src/data/lockedFavoriteDapps';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
@@ -23,11 +22,6 @@ import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 function HomePage() {
     const { favoriteDapps } = useFavoriteDapps();
-    const allFavoriteDapps = [...LOCKED_FAVORITE_DAPPS, ...favoriteDapps];
-    // const allFavoriteDapps = [
-    //     ...Array.from(dappsLockedToFavoritesMap.values()),
-    //     ...favoriteDapps,
-    // ];
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
 
     const balances = useAppSelector(accountAggregateBalancesSelector);
@@ -45,7 +39,7 @@ function HomePage() {
 
     return (
         <div className="flex flex-col gap-3">
-            {showDappList && <DappList dapps={allFavoriteDapps} />}
+            {showDappList && <DappList dapps={favoriteDapps} />}
             <ChainIndicator apiEnv={selectedApiEnv} />
             <WalletBalanceAndIconHomeView
                 accountInfo={accountInfo}

@@ -11,6 +11,7 @@ import cetus from '_images/dapps/logos/cetus.png';
 import clutchy from '_images/dapps/logos/clutchy.jpg';
 import collectibles from '_images/dapps/logos/collectibles.png';
 import customize from '_images/dapps/logos/customize.png';
+import display from '_images/dapps/logos/display.png';
 import explorer from '_images/dapps/logos/explorer.png';
 import finalStardust from '_images/dapps/logos/final-stardust.png';
 import gotbeef from '_images/dapps/logos/gotbeef.png';
@@ -34,6 +35,7 @@ import assetsScreenshot1 from '_images/dapps/screenshots/assets-1.png';
 import assetsScreenshot2 from '_images/dapps/screenshots/assets-2.png';
 import bayswapScreenshot1 from '_images/dapps/screenshots/bayswap-1.png';
 import bayswapScreenshot2 from '_images/dapps/screenshots/bayswap-2.png';
+import displayScreenshot1 from '_images/dapps/screenshots/display-1.png';
 import finalStardustScreenshot1 from '_images/dapps/screenshots/final-stardust-1.jpg';
 import finalStardustScreenshot2 from '_images/dapps/screenshots/final-stardust-2.jpg';
 import gotbeefscreenshot1 from '_images/dapps/screenshots/gotbeef-1.png';
@@ -54,8 +56,7 @@ import typusScreenshot1 from '_images/dapps/screenshots/typus-1.png';
 import typusScreenshot2 from '_images/dapps/screenshots/typus-2.png';
 
 import type { DappData } from 'src/types/DappData';
-// import { NetworkName } from 'src/enums/network';
-// import { TagName } from 'src/types/Tag';
+
 export enum NetworkName {
     DEVNET = 'devnet',
     TESTNET = 'testnet',
@@ -78,11 +79,12 @@ export interface Tag {
 
 export const ADDRESS_BOOK_ID = '85f70cfc-fb4c-408c-b78a-f0757589b999';
 export const MY_ASSETS_ID = '580b2639-0e50-4042-a5af-edbb6a9dfca2';
-export const TOKENS_ID = '580b2639-0e50-4042-a5af-edbb6a9dfca2';
-export const COLLECTIBLES_ID = '580b2639-0e50-4042-a5af-edbb6a9dfca2';
+export const TOKENS_ID = '62fc1aa7-cdcb-4824-81a9-027a3bfd2655';
+export const COLLECTIBLES_ID = '43884604-3950-4125-b4e5-108cf2e9b8aa';
 export const EXPLORER_ID = 'e6539937-7cad-4a15-bc31-49d963e392ff';
 export const CUSTOMIZE_ID = '5bbe5c3d-88a2-4537-92a5-20b6021e2ea3';
 export const STAKING_ID = 'c97b5592-ae1f-4dd4-a903-050a97c4d84a';
+export const DISPLAY_ID = '8154ebc4-035c-4133-ba09-e6b07b7c2040';
 
 const dappsMap: Map<string, DappData> = new Map([
     [
@@ -146,6 +148,22 @@ const dappsMap: Map<string, DappData> = new Map([
             },
             tags: [TagName.TOOLS],
             images: [assetsScreenshot1, assetsScreenshot2],
+        } as DappData,
+    ],
+    [
+        DISPLAY_ID,
+        {
+            id: DISPLAY_ID,
+            image: display,
+            title: 'Display Editor',
+            description:
+                'Manage how all of your projects display throught the Display Object (primarily for creators and developers).',
+            urls: {
+                [NetworkName.DEVNET]: '/dapps/display',
+                [NetworkName.TESTNET]: '/dapps/display',
+            },
+            tags: [TagName.TOOLS],
+            images: [displayScreenshot1],
         } as DappData,
     ],
     [

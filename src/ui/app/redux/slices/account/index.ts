@@ -19,6 +19,11 @@ import { Coin } from '_redux/slices/sui-objects/Coin';
 import { generateMnemonic } from '_shared/cryptography/mnemonics';
 import Authentication from '_src/background/Authentication';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
+import {
+    ADDRESS_BOOK_ID,
+    CUSTOMIZE_ID,
+    MY_ASSETS_ID,
+} from '_src/data/dappsMap';
 import { AccountType, PASSPHRASE_TEST } from '_src/shared/constants';
 import {
     deleteEncrypted,
@@ -591,19 +596,85 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
                 strong: false,
             })) || '[]'
         );
-        return favoriteDappsKeys;
+
+        const excludedFavoriteDappsKeys = JSON.parse(
+            (await getEncrypted({
+                key: 'excludedFavoriteDappsKeys',
+                session: false,
+                strong: false,
+            })) || '[]'
+        );
+
+        const automaticKeys = [CUSTOMIZE_ID, ADDRESS_BOOK_ID, MY_ASSETS_ID];
+
+        const allFavoriteDappsKeys = [...favoriteDappsKeys];
+        for (const key of automaticKeys) {
+            if (
+                !favoriteDappsKeys.includes(key) &&
+                !excludedFavoriteDappsKeys.includes(key)
+            ) {
+                allFavoriteDappsKeys.push(key);
+            }
+        }
+
+        if (allFavoriteDappsKeys.length !== favoriteDappsKeys.length) {
+            await saveFavoriteDappsKeys(allFavoriteDappsKeys);
+        }
+
+        return allFavoriteDappsKeys;
     }
 );
 
 export const saveFavoriteDappsKeys = createAsyncThunk(
     'account/setFavoriteDappsKeys',
     async (favoriteDappsKeys: string[]): Promise<string[]> => {
+        const favoriteDappsKeysFromStorageString = await getEncrypted({
+            key: 'favoriteDappsKeys',
+            session: false,
+            strong: false,
+        });
+
+        const excludedFavoriteDappsKeysFromStorageString = await getEncrypted({
+            key: 'excludedFavoriteDappsKeys',
+            session: false,
+            strong: false,
+        });
+
+        const favoriteDappsKeysFromStorage = JSON.parse(
+            favoriteDappsKeysFromStorageString ?? '[]'
+        );
+
+        const excludedFavoriteDappsKeysFromStorage = JSON.parse(
+            excludedFavoriteDappsKeysFromStorageString ?? '[]'
+        );
+
+        for (const key of favoriteDappsKeysFromStorage) {
+            if (!favoriteDappsKeys.includes(key)) {
+                excludedFavoriteDappsKeysFromStorage.push(key);
+            }
+        }
+
+        for (const key of excludedFavoriteDappsKeysFromStorage) {
+            const favoriteIndex = favoriteDappsKeys.indexOf(key);
+            if (favoriteIndex > -1) {
+                excludedFavoriteDappsKeysFromStorage.splice(favoriteIndex, 1);
+            }
+        }
+
         await setEncrypted({
             key: 'favoriteDappsKeys',
             value: JSON.stringify(favoriteDappsKeys),
             session: false,
             strong: false,
         });
+
+        await setEncrypted({
+            key: 'excludedFavoriteDappsKeys',
+            value: JSON.stringify(excludedFavoriteDappsKeysFromStorage),
+            session: false,
+            strong: false,
+        });
+
         return favoriteDappsKeys;
     }
 );
