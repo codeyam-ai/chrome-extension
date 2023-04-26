@@ -24,15 +24,8 @@ import {
 } from '_src/ui/app/components/settings-menu/hooks';
 import WalletPickerPage from '_src/ui/app/components/wallet-picker-menu/WalletPickerPage';
 import { useOnKeyboardEvent } from '_src/ui/app/hooks';
-import { dapps } from '_src/ui/app/pages/home/home/dapp/dappData';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
-
-const isPathInDappData = (path: string): boolean => {
-    return Array.from(dapps.values()).some(
-        (item) => item.urls && path.includes(Object.values(item.urls)[0])
-    );
-};
 
 interface WalletPickerNavBarProps {
     goBack: () => void;
@@ -170,7 +163,10 @@ const NavBar = () => {
 
     const isDetailsPage = params.length > 0;
 
-    const isDappPage = isPathInDappData(pathname);
+    const isDappPage =
+        pathname.includes('customize') ||
+        pathname.includes('address-book') ||
+        pathname.includes('staking');
 
     const goBack = useCallback(() => {
         navigate(-1);
