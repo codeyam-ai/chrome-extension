@@ -26,15 +26,15 @@ export const useFavoriteDapps = () => {
     const dispatch = useAppDispatch();
 
     const setExcludedNftKeys = useCallback(
-        (keys: string[]) => {
-            dispatch(saveExcludedNftKeys(keys));
+        async (keys: string[]) => {
+            await dispatch(saveExcludedNftKeys(keys));
         },
         [dispatch]
     );
 
     const setFavoriteDappsKeys = useCallback(
-        (keys: string[]) => {
-            dispatch(saveFavoriteDappsKeys(keys));
+        async (keys: string[]) => {
+            await dispatch(saveFavoriteDappsKeys(keys));
         },
         [dispatch]
     );

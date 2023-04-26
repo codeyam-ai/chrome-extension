@@ -617,7 +617,6 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
 export const saveFavoriteDappsKeys = createAsyncThunk(
     'account/setFavoriteDappsKeys',
     async (favoriteDappsKeys: string[]): Promise<string[]> => {
-        console.log('favoriteDappsKeys :>> ', favoriteDappsKeys);
         await setEncrypted({
             key: 'favoriteDappsKeys',
             value: JSON.stringify(favoriteDappsKeys),
@@ -798,6 +797,15 @@ const accountSlice = createSlice({
             )
             .addCase(saveFavoriteDappsKeys.fulfilled, (state, action) => {
                 state.favoriteDappsKeys = action.payload;
+            })
+            .addCase(
+                loadExcludedNftKeysFromStorage.fulfilled,
+                (state, action) => {
+                    state.excludedNftKeys = action.payload;
+                }
+            )
+            .addCase(saveExcludedNftKeys.fulfilled, (state, action) => {
+                state.excludedNftKeys = action.payload;
             }),
 });
 

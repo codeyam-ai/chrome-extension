@@ -10,17 +10,31 @@ const ChangeFavoritesPage: React.FC = () => {
     const [tempFavoriteDappsKeys, setTempFavoriteDappsKeys] = useState<
         string[]
     >([]);
-    const { setFavoriteDappsKeys } = useFavoriteDapps();
+    const [tempRemovedNftKeys, setTempRemovedNftKeys] = useState<string[]>([]);
+
+    const { setFavoriteDappsKeys, setExcludedNftKeys } = useFavoriteDapps();
     const navigate = useNavigate();
 
-    const onFavoritesChosen = useCallback((favoriteDappsKeys: string[]) => {
-        setTempFavoriteDappsKeys(favoriteDappsKeys);
-    }, []);
+    const onFavoritesChosen = useCallback(
+        (favoriteDappsKeys: string[], removedNftKeys: string[]) => {
+            setTempFavoriteDappsKeys(favoriteDappsKeys);
+            setTempRemovedNftKeys(removedNftKeys);
+        },
+        []
+    );
 
-    const handleOnContinue = useCallback(() => {
-        setFavoriteDappsKeys(tempFavoriteDappsKeys);
+    const handleOnContinue = useCallback(async () => {
+        await setFavoriteDappsKeys(tempFavoriteDappsKeys);
+        await setExcludedNftKeys(tempRemovedNftKeys);
+
         navigate('/home/customize/completed');
-    }, [navigate, setFavoriteDappsKeys, tempFavoriteDappsKeys]);
+    }, [
+        navigate,
+        setExcludedNftKeys,
+        setFavoriteDappsKeys,
+        tempFavoriteDappsKeys,
+        tempRemovedNftKeys,
+    ]);
 
     const goBack = useCallback(() => {
         navigate('/home/customize/color');

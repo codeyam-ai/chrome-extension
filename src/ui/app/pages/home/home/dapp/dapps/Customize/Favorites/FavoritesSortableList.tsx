@@ -1,23 +1,24 @@
 import { MinusCircleIcon } from '@heroicons/react/24/outline';
 import { StarIcon } from '@heroicons/react/24/solid';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import _ from 'lodash';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { ReactSortable, type SortableEvent } from 'react-sortablejs';
 
 import DappListItem from '../../../DappListItem';
 import dappsMap from '_src/data/dappsMap';
 import { EXPLORER_ONLY_KEYS } from '_src/data/explorerOnlyDapps';
+import { useAppSelector } from '_src/ui/app/hooks';
 import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVerticalScrollToHorizontal';
 import {
     getProjectNftsFromAllNfts,
     useFavoriteDapps,
 } from '_src/ui/app/hooks/useFavoriteDapps';
+import { accountNftsSelector } from '_src/ui/app/redux/slices/account';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { DappData } from '_src/types/DappData';
 import type { FC } from 'react';
-import { useAppSelector } from '_src/ui/app/hooks';
-import { accountNftsSelector } from '_src/ui/app/redux/slices/account';
 
 interface SortableItem extends DappData {
     sortId: number;
@@ -26,16 +27,17 @@ interface SortableItem extends DappData {
 }
 
 interface FavoritesSortableListProps {
-    onFavoritesChosen: (favoriteDappsKeys: string[]) => void;
+    onFavoritesChosen: (
+        favoriteDappsKeys: string[],
+        removedNftKeys: string[]
+    ) => void;
 }
 
 export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
     onFavoritesChosen,
 }) => {
-    const { allFavorites, favoriteDapps, favoriteNfts } = useFavoriteDapps();
-    console.log('allFavorites :>> ', allFavorites);
-    console.log('favoriteDapps :>> ', favoriteDapps);
-    console.log('favoriteNfts :>> ', favoriteNfts);
+    const { favoriteDapps, favoriteNfts } = useFavoriteDapps();
+
     const nfts = useAppSelector(accountNftsSelector);
     const projectNfts = useMemo(() => {
         const projectNftsRecord = getProjectNftsFromAllNfts(nfts);
@@ -158,9 +160,22 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
         evt.item.parentNode.insertBefore(evt.item, evt.item.nextSibling);
     }, []);
 
-    useEffect(() => {
-        onFavoritesChosen(favoritesState.map((item) => item.key));
-    }, [favoritesState, onFavoritesChosen]);
+    const onSetFavoritesList = useCallback(
+        (newListState: SortableItem[]) => {
+            const removedNfts = _.differenceWith(
+                favoritesState,
+                newListState,
+                _.isEqual
+            ).filter((item) => item.type === 'nft');
+
+            setFavoritesState(newListState);
+            onFavoritesChosen(
+                newListState.map((item) => item.key),
+                removedNfts.map((nft) => nft.key)
+            );
+        },
+        [favoritesState, onFavoritesChosen]
+    );
 
     return (
         <div className="w-full flex flex-col">
@@ -177,7 +192,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                 <ReactSortable
                     group={{ name: 'shared' }}
                     list={favoritesState}
-                    setList={setFavoritesState}
+                    setList={onSetFavoritesList}
                     style={{ display: 'flex', width: '100%' }}
                     animation={200}
                     bubbleScroll
