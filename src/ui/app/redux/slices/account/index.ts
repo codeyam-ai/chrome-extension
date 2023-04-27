@@ -645,15 +645,15 @@ export const loadExcludedNftKeysFromStorage = createAsyncThunk(
 
 export const saveExcludedNftKeys = createAsyncThunk(
     'account/saveExcludedNftKeys',
-    async (exludedNftKeys: string[]): Promise<string[]> => {
+    async (excludedNftKeys: string[]): Promise<string[]> => {
         await setEncrypted({
             key: 'excludedNftKeys',
-            value: JSON.stringify(exludedNftKeys),
+            value: JSON.stringify(excludedNftKeys),
             session: false,
             strong: false,
         });
 
-        return exludedNftKeys;
+        return excludedNftKeys;
     }
 );
 

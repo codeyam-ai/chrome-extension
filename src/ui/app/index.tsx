@@ -51,6 +51,7 @@ import AppContainer, {
 import InitializePage from '_pages/initialize';
 import {
     loadAccountInformationFromStorage,
+    loadExcludedNftKeysFromStorage,
     loadFavoriteDappsKeysFromStorage,
 } from '_redux/slices/account';
 import { ThemeProvider } from '_src/shared/utils/themeContext';
@@ -67,6 +68,7 @@ const App = () => {
     useEffect(() => {
         dispatch(loadAccountInformationFromStorage());
         dispatch(loadFavoriteDappsKeysFromStorage());
+        dispatch(loadExcludedNftKeysFromStorage());
         dispatch(loadContactsStorage());
     }, [dispatch]);
 

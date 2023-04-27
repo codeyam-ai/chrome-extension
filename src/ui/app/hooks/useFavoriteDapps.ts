@@ -1,4 +1,3 @@
-import { isEqual } from 'lodash';
 import { useCallback, useMemo } from 'react';
 
 import getDisplay from '../helpers/getDisplay';
@@ -15,6 +14,8 @@ import type { SuiObjectData } from '@mysten/sui.js';
 import type { DappData } from '_src/types/DappData';
 
 export const useFavoriteDapps = () => {
+    const dispatch = useAppDispatch();
+
     const favoriteDappsKeys = useAppSelector(
         ({ account }) => account.favoriteDappsKeys
     );
@@ -22,8 +23,6 @@ export const useFavoriteDapps = () => {
         ({ account }) => account.excludedNftKeys
     );
     const nfts = useAppSelector(accountNftsSelector);
-
-    const dispatch = useAppDispatch();
 
     const setExcludedNftKeys = useCallback(
         async (keys: string[]) => {
