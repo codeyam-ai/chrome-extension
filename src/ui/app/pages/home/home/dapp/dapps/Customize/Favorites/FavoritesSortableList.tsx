@@ -142,7 +142,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                     >
                         {isFavorite && (
                             <div className="absolute -top-[8px] right-[20px] p-1 z-10 rounded-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
-                                <StarIcon className="w-4 h-4 text-ethos-light-primary-light dark:bg-ethos-dark-primary-dark" />
+                                <StarIcon className="w-4 h-4 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
                             </div>
                         )}
                         <DappListItem
@@ -288,14 +288,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
 // There is a loss of precision using this method (multiple UUIDs could produce the same number),
 // but it's good enough for our purposes
 function uuidToNumber(uuid: string): number {
-    // Remove dashes from the UUID string
     const hexString = uuid.replace(/-/g, '');
-
-    // Truncate the hexadecimal string to fit within a JavaScript number
     const truncatedHexString = hexString.slice(-15);
-
-    // Convert the truncated hexadecimal string to a number
-    const number = parseInt(truncatedHexString, 16);
-
-    return number;
+    return parseInt(truncatedHexString, 16);
 }
