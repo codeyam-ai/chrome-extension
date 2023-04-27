@@ -36,7 +36,8 @@ interface FavoritesSortableListProps {
 export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
     onFavoritesChosen,
 }) => {
-    const { favoriteDapps, favoriteNfts } = useFavoriteDapps();
+    const { favoriteDapps, favoriteNfts, excludedDappsKeys } =
+        useFavoriteDapps();
 
     const nfts = useAppSelector(accountNftsSelector);
     const projectNfts = useMemo(() => {
@@ -178,19 +179,25 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
 
     const onSetFavoritesList = useCallback(
         (newListState: SortableItem[]) => {
-            const removedNfts = _.differenceWith(
-                favoritesState,
-                newListState,
-                _.isEqual
-            ).filter((item) => item.type === 'nft');
+            const existingRemovedNfts = excludedDappsKeys.filter(
+                (key) => !newListState.some((item) => item.key === key)
+            );
+            const removedNfts = [
+                ...existingRemovedNfts,
+                ..._.differenceWith(
+                    favoritesState,
+                    newListState,
+                    _.isEqual
+                ).map((nft) => nft.key),
+            ].filter((item, index, self) => self.indexOf(item) === index);
 
             setFavoritesState(newListState);
             onFavoritesChosen(
                 newListState.map((item) => item.key),
-                removedNfts.map((nft) => nft.key)
+                removedNfts
             );
         },
-        [favoritesState, onFavoritesChosen]
+        [excludedDappsKeys, favoritesState, onFavoritesChosen]
     );
 
     return (

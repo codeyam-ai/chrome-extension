@@ -23,6 +23,7 @@ import {
     ADDRESS_BOOK_ID,
     CUSTOMIZE_ID,
     MY_ASSETS_ID,
+    STAKING_ID,
 } from '_src/data/dappsMap';
 import { AccountType, PASSPHRASE_TEST } from '_src/shared/constants';
 import {
@@ -597,7 +598,12 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
-        const automaticKeys = [CUSTOMIZE_ID, ADDRESS_BOOK_ID, MY_ASSETS_ID];
+        const automaticKeys = [
+            CUSTOMIZE_ID,
+            ADDRESS_BOOK_ID,
+            MY_ASSETS_ID,
+            STAKING_ID,
+        ];
 
         const allFavoriteDappsKeys = [...favoriteDappsKeys];
         for (const key of automaticKeys) {
@@ -628,12 +634,12 @@ export const saveFavoriteDappsKeys = createAsyncThunk(
     }
 );
 
-export const loadExcludedNftKeysFromStorage = createAsyncThunk(
-    'account/getExcludedNftKeys',
+export const loadExcludedDappsKeysFromStorage = createAsyncThunk(
+    'account/getExcludedDappsKeys',
     async (): Promise<string[]> => {
         const excludedFavoriteDappsKeys = JSON.parse(
             (await getEncrypted({
-                key: 'excludedNftKeys',
+                key: 'excludedDappsKeys',
                 session: false,
                 strong: false,
             })) || '[]'
@@ -644,17 +650,17 @@ export const loadExcludedNftKeysFromStorage = createAsyncThunk(
     }
 );
 
-export const saveExcludedNftKeys = createAsyncThunk(
-    'account/saveExcludedNftKeys',
-    async (excludedNftKeys: string[]): Promise<string[]> => {
+export const saveExcludedDappsKeys = createAsyncThunk(
+    'account/saveExcludedDappsKeys',
+    async (excludedDappsKeys: string[]): Promise<string[]> => {
         await setEncrypted({
-            key: 'excludedNftKeys',
-            value: JSON.stringify(excludedNftKeys),
+            key: 'excludedDappsKeys',
+            value: JSON.stringify(excludedDappsKeys),
             session: false,
             strong: false,
         });
 
-        return excludedNftKeys;
+        return excludedDappsKeys;
     }
 );
 
@@ -672,7 +678,7 @@ type AccountState = {
     accountType: AccountType;
     locked: boolean;
     favoriteDappsKeys: string[];
-    excludedNftKeys: string[];
+    excludedDappsKeys: string[];
 };
 
 const initialState: AccountState = {
@@ -689,7 +695,7 @@ const initialState: AccountState = {
     accountType: AccountType.UNINITIALIZED,
     locked: false,
     favoriteDappsKeys: [],
-    excludedNftKeys: [],
+    excludedDappsKeys: [],
 };
 
 const accountSlice = createSlice({
@@ -800,13 +806,13 @@ const accountSlice = createSlice({
                 state.favoriteDappsKeys = action.payload;
             })
             .addCase(
-                loadExcludedNftKeysFromStorage.fulfilled,
+                loadExcludedDappsKeysFromStorage.fulfilled,
                 (state, action) => {
-                    state.excludedNftKeys = action.payload;
+                    state.excludedDappsKeys = action.payload;
                 }
             )
-            .addCase(saveExcludedNftKeys.fulfilled, (state, action) => {
-                state.excludedNftKeys = action.payload;
+            .addCase(saveExcludedDappsKeys.fulfilled, (state, action) => {
+                state.excludedDappsKeys = action.payload;
             }),
 });
 

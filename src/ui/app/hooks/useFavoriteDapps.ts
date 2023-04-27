@@ -6,7 +6,7 @@ import dappsMap, { CUSTOMIZE_ID, NetworkName } from '_src/data/dappsMap';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import {
     accountNftsSelector,
-    saveExcludedNftKeys,
+    saveExcludedDappsKeys,
     saveFavoriteDappsKeys,
 } from '_src/ui/app/redux/slices/account';
 
@@ -23,14 +23,14 @@ export const useFavoriteDapps = () => {
     const favoriteDappsKeys = useAppSelector(
         ({ account }) => account.favoriteDappsKeys
     );
-    const excludedNFTKeys = useAppSelector(
-        ({ account }) => account.excludedNftKeys
+    const excludedDappsKeys = useAppSelector(
+        ({ account }) => account.excludedDappsKeys
     );
     const nfts = useAppSelector(accountNftsSelector);
 
-    const setExcludedNftKeys = useCallback(
+    const setExcludedDappsKeys = useCallback(
         async (keys: string[]) => {
-            await dispatch(saveExcludedNftKeys(keys));
+            await dispatch(saveExcludedDappsKeys(keys));
         },
         [dispatch]
     );
@@ -43,7 +43,9 @@ export const useFavoriteDapps = () => {
     );
 
     const favoriteDapps: DappData[] = useMemo(() => {
-        const allFavoriteDappsKeys = [...favoriteDappsKeys];
+        const allFavoriteDappsKeys = [...favoriteDappsKeys].filter(
+            (key) => !excludedDappsKeys.includes(key)
+        );
         if (!favoriteDappsKeys.includes(CUSTOMIZE_ID)) {
             allFavoriteDappsKeys.push(CUSTOMIZE_ID);
         }
@@ -57,7 +59,7 @@ export const useFavoriteDapps = () => {
                 return dapp;
             })
             .filter(Boolean) as DappData[];
-    }, [favoriteDappsKeys, selectedApiEnv]);
+    }, [excludedDappsKeys, favoriteDappsKeys, selectedApiEnv]);
 
     const favoriteNfts: DappData[] = useMemo(() => {
         let projectNFTs: Record<string, DappData> = {};
@@ -66,10 +68,10 @@ export const useFavoriteDapps = () => {
         }
         return Object.keys(projectNFTs)
             .filter((nftKey) => {
-                return !excludedNFTKeys.includes(nftKey);
+                return !excludedDappsKeys.includes(nftKey);
             })
             .map((key) => projectNFTs[key]);
-    }, [nfts, excludedNFTKeys]);
+    }, [nfts, excludedDappsKeys]);
 
     const allFavorites: DappData[] = useMemo(() => {
         return [...favoriteNfts, ...favoriteDapps];
@@ -79,8 +81,9 @@ export const useFavoriteDapps = () => {
         favoriteDapps,
         favoriteNfts,
         allFavorites,
+        excludedDappsKeys,
         setFavoriteDappsKeys,
-        setExcludedNftKeys,
+        setExcludedDappsKeys,
     };
 };
 
