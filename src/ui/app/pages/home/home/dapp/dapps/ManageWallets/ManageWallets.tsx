@@ -16,7 +16,11 @@ const ManageWallets = () => {
                 <div className="mx-6 p-3 rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
                     No imported seed phrases yet.
                 </div>
-                <Button buttonStyle="primary" removeContainerPadding>
+                <Button
+                    buttonStyle="primary"
+                    removeContainerPadding
+                    to="/home/manage-wallets/import-seed"
+                >
                     Import Seed Phrase
                 </Button>
             </div>
@@ -25,7 +29,11 @@ const ManageWallets = () => {
                 <div className="mx-6 p-3 rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
                     No imported private keys yet.
                 </div>
-                <Button buttonStyle="primary" removeContainerPadding>
+                <Button
+                    buttonStyle="primary"
+                    removeContainerPadding
+                    to="/home/manage-wallets/import-key"
+                >
                     Import Private Key
                 </Button>
             </div>
