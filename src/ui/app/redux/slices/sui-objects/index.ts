@@ -53,7 +53,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         while (nextCursor !== null) {
             page += 1;
             const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
-                owner: '0x11d2a0dab1f5073514c555c39c15d97ba249b8a5052d0bd734743b00affa4872',
+                owner: address,
                 cursor: nextCursor,
             });
 
