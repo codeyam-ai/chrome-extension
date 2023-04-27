@@ -54,15 +54,13 @@ const WalletPicker = ({
                                     )}
                                 </Button>
                             </CreateWalletProvider>
-                            <div className="flex">
-                                <Button
-                                    buttonStyle="secondary"
-                                    to="/"
-                                    disabled={loading}
-                                >
-                                    Import / Manage Imported Wallets
-                                </Button>
-                            </div>
+                            <Button
+                                buttonStyle="secondary"
+                                to="/home/manage-wallets"
+                                disabled={loading}
+                            >
+                                Import / Manage External Wallets
+                            </Button>
                         </div>
                     ) : (
                         <div className="flex gap-2 py-4 px-5 place-content-center">
