@@ -3,10 +3,10 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { DappWrapper } from './DappWrapper';
 import { useAppSelector } from '_src/ui/app/hooks';
+import useDappUrl from '_src/ui/app/hooks/useDappUrl';
 import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
 
 import type { DappData } from '_src/types/DappData';
-import useDappUrl from '_src/ui/app/hooks/useDappUrl';
 
 interface DappViewProps {
     dapp: DappData | null;
@@ -14,14 +14,14 @@ interface DappViewProps {
 }
 
 const DappView: React.FC<DappViewProps> = ({ dapp, onClose }) => {
-    const { dappUrl, isLocal } = useDappUrl(dapp?.urls);
-    const { favoriteDapps } = useFavoriteDapps();
+    const { isLocal } = useDappUrl(dapp?.urls);
+    const { allFavorites } = useFavoriteDapps();
     const address = useAppSelector(({ account: { address } }) => address);
     const iframeRef = useRef<HTMLIFrameElement>(null);
 
     const isFavorite = useMemo(() => {
-        return favoriteDapps.some((fav) => fav.id === dapp?.id);
-    }, [dapp?.id, favoriteDapps]);
+        return allFavorites.some((fav) => fav.id === dapp?.id);
+    }, [dapp?.id, allFavorites]);
 
     const closeDapp = useCallback(() => {
         onClose();

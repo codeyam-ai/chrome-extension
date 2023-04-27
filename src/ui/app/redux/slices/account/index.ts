@@ -8,6 +8,7 @@ import {
 } from '@reduxjs/toolkit';
 
 import { api, type AppThunkConfig } from '../../store/thunk-extras';
+import { suiBalancesAdapterSelectors } from '../balances';
 import { NFT } from '../sui-objects/NFT';
 import { Ticket } from '../sui-objects/Ticket';
 import { isLocked, setLocked, setUnlocked } from '_app/helpers/lock-wallet';
@@ -23,6 +24,7 @@ import {
     ADDRESS_BOOK_ID,
     CUSTOMIZE_ID,
     MY_ASSETS_ID,
+    STAKING_ID,
 } from '_src/data/dappsMap';
 import { AccountType, PASSPHRASE_TEST } from '_src/shared/constants';
 import {
@@ -597,22 +599,16 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
-        const excludedFavoriteDappsKeys = JSON.parse(
-            (await getEncrypted({
-                key: 'excludedFavoriteDappsKeys',
-                session: false,
-                strong: false,
-            })) || '[]'
-        );
-
-        const automaticKeys = [CUSTOMIZE_ID, ADDRESS_BOOK_ID, MY_ASSETS_ID];
+        const automaticKeys = [
+            CUSTOMIZE_ID,
+            ADDRESS_BOOK_ID,
+            MY_ASSETS_ID,
+            STAKING_ID,
+        ];
 
         const allFavoriteDappsKeys = [...favoriteDappsKeys];
         for (const key of automaticKeys) {
-            if (
-                !favoriteDappsKeys.includes(key) &&
-                !excludedFavoriteDappsKeys.includes(key)
-            ) {
+            if (!favoriteDappsKeys.includes(key)) {
                 allFavoriteDappsKeys.push(key);
             }
         }
@@ -628,39 +624,6 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
 export const saveFavoriteDappsKeys = createAsyncThunk(
     'account/setFavoriteDappsKeys',
     async (favoriteDappsKeys: string[]): Promise<string[]> => {
-        const favoriteDappsKeysFromStorageString = await getEncrypted({
-            key: 'favoriteDappsKeys',
-            session: false,
-            strong: false,
-        });
-
-        const excludedFavoriteDappsKeysFromStorageString = await getEncrypted({
-            key: 'excludedFavoriteDappsKeys',
-            session: false,
-            strong: false,
-        });
-
-        const favoriteDappsKeysFromStorage = JSON.parse(
-            favoriteDappsKeysFromStorageString ?? '[]'
-        );
-
-        const excludedFavoriteDappsKeysFromStorage = JSON.parse(
-            excludedFavoriteDappsKeysFromStorageString ?? '[]'
-        );
-
-        for (const key of favoriteDappsKeysFromStorage) {
-            if (!favoriteDappsKeys.includes(key)) {
-                excludedFavoriteDappsKeysFromStorage.push(key);
-            }
-        }
-
-        for (const key of excludedFavoriteDappsKeysFromStorage) {
-            const favoriteIndex = favoriteDappsKeys.indexOf(key);
-            if (favoriteIndex > -1) {
-                excludedFavoriteDappsKeysFromStorage.splice(favoriteIndex, 1);
-            }
-        }
-
         await setEncrypted({
             key: 'favoriteDappsKeys',
             value: JSON.stringify(favoriteDappsKeys),
@@ -668,14 +631,36 @@ export const saveFavoriteDappsKeys = createAsyncThunk(
             strong: false,
         });
 
+        return favoriteDappsKeys;
+    }
+);
+
+export const loadExcludedDappsKeysFromStorage = createAsyncThunk(
+    'account/getExcludedDappsKeys',
+    async (): Promise<string[]> => {
+        const excludedFavoriteDappsKeys = JSON.parse(
+            (await getEncrypted({
+                key: 'excludedDappsKeys',
+                session: false,
+                strong: false,
+            })) || '[]'
+        );
+
+        return excludedFavoriteDappsKeys;
+    }
+);
+
+export const saveExcludedDappsKeys = createAsyncThunk(
+    'account/saveExcludedDappsKeys',
+    async (excludedDappsKeys: string[]): Promise<string[]> => {
         await setEncrypted({
-            key: 'excludedFavoriteDappsKeys',
-            value: JSON.stringify(excludedFavoriteDappsKeysFromStorage),
+            key: 'excludedDappsKeys',
+            value: JSON.stringify(excludedDappsKeys),
             session: false,
             strong: false,
         });
 
-        return favoriteDappsKeys;
+        return excludedDappsKeys;
     }
 );
 
@@ -693,6 +678,7 @@ type AccountState = {
     accountType: AccountType;
     locked: boolean;
     favoriteDappsKeys: string[];
+    excludedDappsKeys: string[];
 };
 
 const initialState: AccountState = {
@@ -709,6 +695,7 @@ const initialState: AccountState = {
     accountType: AccountType.UNINITIALIZED,
     locked: false,
     favoriteDappsKeys: [],
+    excludedDappsKeys: [],
 };
 
 const accountSlice = createSlice({
@@ -817,6 +804,15 @@ const accountSlice = createSlice({
             )
             .addCase(saveFavoriteDappsKeys.fulfilled, (state, action) => {
                 state.favoriteDappsKeys = action.payload;
+            })
+            .addCase(
+                loadExcludedDappsKeysFromStorage.fulfilled,
+                (state, action) => {
+                    state.excludedDappsKeys = action.payload;
+                }
+            )
+            .addCase(saveExcludedDappsKeys.fulfilled, (state, action) => {
+                state.excludedDappsKeys = action.payload;
             }),
 });
 
@@ -845,6 +841,12 @@ export const ownedObjects = createSelector(
     }
 );
 
+export const balances = createSelector(
+    suiBalancesAdapterSelectors.selectAll,
+    activeAccountSelector,
+    (balances) => balances
+);
+
 export const accountCoinsSelector = createSelector(
     ownedObjects,
     (allSuiObjects) => {
@@ -854,21 +856,13 @@ export const accountCoinsSelector = createSelector(
     }
 );
 
-// return an aggregate balance for each coin type
 export const accountAggregateBalancesSelector = createSelector(
-    accountCoinsSelector,
-    (coins) => {
-        return coins.reduce((acc, aCoin) => {
-            const coinType = Coin.getCoinTypeArg(aCoin);
-            if (coinType) {
-                if (typeof acc[coinType] === 'undefined') {
-                    acc[coinType] = BigInt(0);
-                }
-                acc[coinType] += Coin.getBalance(aCoin);
-            }
+    balances,
+    (balances) =>
+        balances.reduce((acc, balance) => {
+            acc[balance.coinType] = BigInt(balance.totalBalance);
             return acc;
-        }, {} as Record<string, bigint>);
-    }
+        }, {} as Record<string, bigint>)
 );
 
 // return a list of balances for each coin object for each coin type

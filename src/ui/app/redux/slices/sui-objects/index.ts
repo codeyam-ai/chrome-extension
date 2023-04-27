@@ -19,8 +19,15 @@ import {
 
 import { SUI_SYSTEM_STATE_OBJECT_ID } from './Coin';
 import { NFT } from './NFT';
+import { fetchAllBalances } from '../balances';
 
-import type { SuiAddress, ObjectId, SuiObjectData } from '@mysten/sui.js';
+import type {
+    SuiAddress,
+    ObjectId,
+    SuiObjectData,
+    PaginatedObjectsResponse,
+    SuiObjectResponse,
+} from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
@@ -40,47 +47,67 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
     } = state;
     const allSuiObjects: SuiObjectData[] = [];
     if (address) {
-        const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
-            owner: address,
-        });
+        let allObjRes: SuiObjectResponse[] = [];
+        let nextCursor: PaginatedObjectsResponse['nextCursor'] | undefined;
+        let page = 0;
+        while (nextCursor !== null) {
+            page += 1;
+            const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
+                owner: address,
+                cursor: nextCursor,
+            });
 
-        const objectIDs = allObjectRefs.data
-            .filter((anObj) => {
-                const fetchedVersion = getObjectVersion(anObj);
-                const storedObj = suiObjectsAdapterSelectors.selectById(
-                    state,
-                    getObjectId(anObj)
-                );
-                const storedVersion = storedObj
-                    ? getObjectVersion(storedObj)
-                    : null;
-                const objOutdated = fetchedVersion !== storedVersion;
-                if (!objOutdated && storedObj) {
-                    allSuiObjects.push(storedObj);
-                }
-                return objOutdated;
-            })
-            .map((anObj) => {
-                if (
-                    typeof anObj.data === 'object' &&
-                    'objectId' in anObj.data
-                ) {
-                    return anObj.data.objectId;
+            if (page > 20) {
+                nextCursor = null;
+            } else {
+                if (allObjectRefs.hasNextPage) {
+                    nextCursor = allObjectRefs.nextCursor;
                 } else {
-                    return '';
+                    nextCursor = null;
                 }
-            })
-            .filter((objId) => objId.length > 0);
+            }
 
-        const allObjRes = await api.instance.fullNode.multiGetObjects({
-            ids: objectIDs,
-            options: {
-                showOwner: true,
-                showContent: true,
-                showType: true,
-                showDisplay: true,
-            },
-        });
+            const objectIDs = allObjectRefs.data
+                .filter((anObj) => {
+                    const fetchedVersion = getObjectVersion(anObj);
+                    const storedObj = suiObjectsAdapterSelectors.selectById(
+                        state,
+                        getObjectId(anObj)
+                    );
+                    const storedVersion = storedObj
+                        ? getObjectVersion(storedObj)
+                        : null;
+                    const objOutdated = fetchedVersion !== storedVersion;
+                    if (!objOutdated && storedObj) {
+                        allSuiObjects.push(storedObj);
+                    }
+                    return objOutdated;
+                })
+                .map((anObj) => {
+                    if (
+                        typeof anObj.data === 'object' &&
+                        'objectId' in anObj.data
+                    ) {
+                        return anObj.data.objectId;
+                    } else {
+                        return '';
+                    }
+                })
+                .filter((objId) => objId.length > 0);
+
+            const newObjRes = await api.instance.fullNode.multiGetObjects({
+                ids: objectIDs,
+                options: {
+                    showOwner: true,
+                    showContent: true,
+                    showType: true,
+                    showDisplay: true,
+                },
+            });
+
+            allObjRes = [...allObjRes, ...newObjRes];
+        }
+
         for (const objRes of allObjRes) {
             const suiObjectData = getSuiObjectData(objRes);
             if (suiObjectData) {
@@ -155,6 +182,7 @@ export const transferNFT = createAsyncThunk<
             }
         );
 
+        dispatch(fetchAllBalances());
         await dispatch(fetchAllOwnedAndRequiredObjects());
         const txnResp = {
             timestamp_ms:

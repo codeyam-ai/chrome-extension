@@ -12,7 +12,7 @@ import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
 
 export type CoinProps = {
     type: string;
-    balance: bigint;
+    balance: string;
     replaceUrl?: boolean;
 };
 

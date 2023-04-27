@@ -1,4 +1,4 @@
-import CoinBalance from './CoinBalance';
+import CoinBalanceElement from './CoinBalance';
 
 const CoinList = ({ balances }: { balances: Record<string, bigint> }) => {
     return (
@@ -7,7 +7,10 @@ const CoinList = ({ balances }: { balances: Record<string, bigint> }) => {
                 const balance = balances[type];
                 return (
                     <div className={'mb-5'} key={type}>
-                        <CoinBalance type={type} balance={balance} />
+                        <CoinBalanceElement
+                            type={type}
+                            balance={balance.toString()}
+                        />
                     </div>
                 );
             })}
