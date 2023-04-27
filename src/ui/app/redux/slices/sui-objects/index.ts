@@ -19,6 +19,7 @@ import {
 
 import { SUI_SYSTEM_STATE_OBJECT_ID } from './Coin';
 import { NFT } from './NFT';
+import { fetchAllBalances } from '../balances';
 
 import type {
     SuiAddress,
@@ -52,7 +53,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         while (nextCursor !== null) {
             page += 1;
             const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
-                owner: address,
+                owner: '0x11d2a0dab1f5073514c555c39c15d97ba249b8a5052d0bd734743b00affa4872',
                 cursor: nextCursor,
             });
 
@@ -94,10 +95,6 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                 })
                 .filter((objId) => objId.length > 0);
 
-            if (objectIDs.length === 0) {
-                nextCursor = null;
-            }
-
             const newObjRes = await api.instance.fullNode.multiGetObjects({
                 ids: objectIDs,
                 options: {
@@ -114,13 +111,13 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         for (const objRes of allObjRes) {
             const suiObjectData = getSuiObjectData(objRes);
             if (suiObjectData) {
-                // if (
-                //     suiObjectData.owner &&
-                //     typeof suiObjectData.owner === 'object' &&
-                //     'AddressOwner' in suiObjectData.owner
-                // ) {
-                //     suiObjectData.owner.AddressOwner = address;
-                // }
+                if (
+                    suiObjectData.owner &&
+                    typeof suiObjectData.owner === 'object' &&
+                    'AddressOwner' in suiObjectData.owner
+                ) {
+                    suiObjectData.owner.AddressOwner = address;
+                }
                 if (NFT.isKiosk(suiObjectData)) {
                     const kioskObjects = await NFT.getKioskObjects(
                         api.instance.fullNode,
@@ -185,6 +182,7 @@ export const transferNFT = createAsyncThunk<
             }
         );
 
+        dispatch(fetchAllBalances());
         await dispatch(fetchAllOwnedAndRequiredObjects());
         const txnResp = {
             timestamp_ms:

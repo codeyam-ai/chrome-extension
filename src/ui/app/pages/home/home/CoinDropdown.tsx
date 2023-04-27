@@ -117,7 +117,7 @@ export const CoinSelect = ({
                                                     >
                                                         <CoinBalance
                                                             type={coinType}
-                                                            balance={balance}
+                                                            balance={balance.toString()}
                                                             replaceUrl
                                                         />
                                                     </div>

@@ -5,6 +5,7 @@ import { combineReducers } from '@reduxjs/toolkit';
 
 import account from './slices/account';
 import app from './slices/app';
+import balances from './slices/balances';
 import contacts from './slices/contacts';
 import forms from './slices/forms';
 import permissions from './slices/permissions';
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
     account,
     app,
     suiObjects,
+    balances,
     transactions,
     //txresults,
     permissions,

@@ -5,7 +5,7 @@ import { CircleStackIcon } from '@heroicons/react/24/solid';
 
 import CoinList from './home/CoinList';
 import Loading from '../../components/loading';
-import sortTokens from '../../helpers/sortCoins';
+import sortCoins from '../../helpers/sortCoins';
 import { Icon } from '../../shared/icons/Icon';
 import { useAppSelector } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
@@ -17,7 +17,7 @@ function TokensPage() {
     const balLength = Object.keys(balances).length || 0;
     const empty = !balances || balLength === 0;
 
-    balances = sortTokens(balances);
+    balances = sortCoins(balances);
 
     return (
         <>

@@ -13,6 +13,7 @@ import {
     createSlice,
 } from '@reduxjs/toolkit';
 
+import { fetchAllBalances } from '../balances';
 import { accountCoinsSelector } from '_redux/slices/account';
 import {
     fetchAllOwnedAndRequiredObjects,
@@ -209,6 +210,7 @@ export const sendTokens = createAsyncThunk<
         });
 
         // TODO: better way to sync latest objects
+        dispatch(fetchAllBalances());
         dispatch(fetchAllOwnedAndRequiredObjects());
         return response;
     }

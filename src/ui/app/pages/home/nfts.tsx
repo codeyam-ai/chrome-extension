@@ -3,8 +3,9 @@
 
 import { PhotoIcon } from '@heroicons/react/24/solid';
 
+import Loading from '../../components/loading';
 import { Icon } from '../../shared/icons/Icon';
-import { useAppSelector } from '_hooks';
+import { useAppSelector, useObjectsState } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account';
 import { NFT_EXPERIMENT_LINK } from '_src/shared/constants';
 import NftGrid from '_src/ui/app/shared/content/rows-and-lists/NftGrid';
@@ -12,9 +13,11 @@ import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
 function NftsPage() {
+    const { loading } = useObjectsState();
+
     const nfts = useAppSelector(accountNftsSelector) || [];
     return (
-        <div>
+        <Loading loading={loading} big>
             {nfts.length <= 0 ? (
                 <EmptyPageState
                     iconWithNoClasses={<Icon displayIcon={<PhotoIcon />} />}
@@ -29,7 +32,7 @@ function NftsPage() {
                     <NftGrid nfts={nfts} />
                 </>
             )}
-        </div>
+        </Loading>
     );
 }
 

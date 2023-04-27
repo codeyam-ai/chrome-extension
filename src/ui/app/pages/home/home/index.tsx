@@ -25,7 +25,7 @@ function HomePage() {
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
 
     const balances = useAppSelector(accountAggregateBalancesSelector);
-    const mistBalance = balances[SUI_TYPE_ARG]; //sumCoinBalances(balances);
+    const mistBalance = balances[SUI_TYPE_ARG];
 
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex } }) =>

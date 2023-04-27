@@ -8,6 +8,7 @@ import {
 } from '@reduxjs/toolkit';
 
 import { api, type AppThunkConfig } from '../../store/thunk-extras';
+import { suiBalancesAdapterSelectors } from '../balances';
 import { NFT } from '../sui-objects/NFT';
 import { Ticket } from '../sui-objects/Ticket';
 import { isLocked, setLocked, setUnlocked } from '_app/helpers/lock-wallet';
@@ -840,6 +841,12 @@ export const ownedObjects = createSelector(
     }
 );
 
+export const balances = createSelector(
+    suiBalancesAdapterSelectors.selectAll,
+    activeAccountSelector,
+    (balances) => balances
+);
+
 export const accountCoinsSelector = createSelector(
     ownedObjects,
     (allSuiObjects) => {
@@ -849,21 +856,13 @@ export const accountCoinsSelector = createSelector(
     }
 );
 
-// return an aggregate balance for each coin type
 export const accountAggregateBalancesSelector = createSelector(
-    accountCoinsSelector,
-    (coins) => {
-        return coins.reduce((acc, aCoin) => {
-            const coinType = Coin.getCoinTypeArg(aCoin);
-            if (coinType) {
-                if (typeof acc[coinType] === 'undefined') {
-                    acc[coinType] = BigInt(0);
-                }
-                acc[coinType] += Coin.getBalance(aCoin);
-            }
+    balances,
+    (balances) =>
+        balances.reduce((acc, balance) => {
+            acc[balance.coinType] = BigInt(balance.totalBalance);
             return acc;
-        }, {} as Record<string, bigint>);
-    }
+        }, {} as Record<string, bigint>)
 );
 
 // return a list of balances for each coin object for each coin type
