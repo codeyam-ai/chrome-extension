@@ -28,32 +28,6 @@ import suins from '_images/dapps/logos/suins.png';
 import tokens from '_images/dapps/logos/tokens.png';
 import turbos from '_images/dapps/logos/turbos.png';
 import typus from '_images/dapps/logos/typus.png';
-import aPassScreenshot1 from '_images/dapps/screenshots/aPass-1.jpg';
-import aPassScreenshot2 from '_images/dapps/screenshots/aPass-2.jpg';
-import addressScreenshot1 from '_images/dapps/screenshots/address-1.png';
-import assetsScreenshot1 from '_images/dapps/screenshots/assets-1.png';
-import assetsScreenshot2 from '_images/dapps/screenshots/assets-2.png';
-import bayswapScreenshot1 from '_images/dapps/screenshots/bayswap-1.png';
-import bayswapScreenshot2 from '_images/dapps/screenshots/bayswap-2.png';
-import displayScreenshot1 from '_images/dapps/screenshots/display-1.png';
-import finalStardustScreenshot1 from '_images/dapps/screenshots/final-stardust-1.jpg';
-import finalStardustScreenshot2 from '_images/dapps/screenshots/final-stardust-2.jpg';
-import gotbeefscreenshot1 from '_images/dapps/screenshots/gotbeef-1.png';
-import gotbeefscreenshot2 from '_images/dapps/screenshots/gotbeef-2.png';
-import interestProtocolScreenshot1 from '_images/dapps/screenshots/interest-protocol-1.png';
-import interestProtocolScreenshot2 from '_images/dapps/screenshots/interest-protocol-2.png';
-import interestProtocolScreenshot3 from '_images/dapps/screenshots/interest-protocol-3.png';
-import keepsakeScreenshot1 from '_images/dapps/screenshots/keepsake-1.jpg';
-import keepsakeScreenshot2 from '_images/dapps/screenshots/keepsake-2.jpg';
-import keepsakeScreenshot3 from '_images/dapps/screenshots/keepsake-3.jpg';
-import movexScreenshot1 from '_images/dapps/screenshots/movex-1.png';
-import movexScreenshot2 from '_images/dapps/screenshots/movex-2.png';
-import polymediascreenshot1 from '_images/dapps/screenshots/polymedia-1.png';
-import polymediascreenshot2 from '_images/dapps/screenshots/polymedia-2.png';
-import sui8192screenshot1 from '_images/dapps/screenshots/sui8192-1.png';
-import sui8192screenshot2 from '_images/dapps/screenshots/sui8192-2.png';
-import typusScreenshot1 from '_images/dapps/screenshots/typus-1.png';
-import typusScreenshot2 from '_images/dapps/screenshots/typus-2.png';
 import { LINK_URL } from '_src/shared/constants';
 
 import type { DappData } from 'src/types/DappData';
@@ -115,7 +89,6 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.TESTNET]: 'address-book',
             },
             tags: [TagName.TOOLS],
-            images: [addressScreenshot1],
         } as DappData,
     ],
     [
@@ -130,7 +103,6 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.TESTNET]: 'staking',
             },
             tags: [TagName.TOOLS],
-            images: [addressScreenshot1],
         } as DappData,
     ],
     [
@@ -146,7 +118,6 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.TESTNET]: `${LINK_URL}/dapps/assets`,
             },
             tags: [TagName.TOOLS],
-            images: [assetsScreenshot1, assetsScreenshot2],
         } as DappData,
     ],
     [
@@ -162,7 +133,6 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.TESTNET]: '/dapps/display',
             },
             tags: [TagName.TOOLS],
-            images: [displayScreenshot1],
         } as DappData,
     ],
     [
@@ -233,7 +203,6 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.DEVNET]: 'https://ethoswallet.github.io/Sui8192',
                 [NetworkName.TESTNET]: 'https://ethoswallet.github.io/Sui8192',
             },
-            images: [sui8192screenshot1, sui8192screenshot2],
             tags: [TagName.GAMES],
         } as DappData,
     ],
@@ -307,7 +276,6 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.TESTNET]:
                     'https://chat.polymedia.app/@sui-fans?network=testnet',
             },
-            images: [polymediascreenshot1, polymediascreenshot2],
             tags: [TagName.SOCIAL],
         } as DappData,
     ],
@@ -323,7 +291,6 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.DEVNET]: 'https://gotbeef.app/?network=devnet',
                 [NetworkName.TESTNET]: 'https://gotbeef.app/?network=testnet',
             },
-            images: [gotbeefscreenshot1, gotbeefscreenshot2],
             tags: [TagName.SOCIAL],
         } as DappData,
     ],
@@ -339,11 +306,6 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.DEVNET]: 'https://keepsake.gg/',
                 [NetworkName.TESTNET]: 'https://beta.keepsake.gg/',
             },
-            images: [
-                keepsakeScreenshot1,
-                keepsakeScreenshot2,
-                keepsakeScreenshot3,
-            ],
             tags: [TagName.MARKETPLACE, TagName.GAMES, TagName.NFTS],
         } as DappData,
     ],
@@ -453,7 +415,6 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.DEVNET]: 'https://app.bayswap.io/',
                 [NetworkName.TESTNET]: 'https://app.bayswap.io/',
             },
-            images: [bayswapScreenshot1, bayswapScreenshot2],
             tags: [TagName.FINANCE, TagName.TOOLS],
         } as DappData,
     ],
@@ -469,7 +430,6 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.TESTNET]:
                     'https://testnet.typus.finance/vault/coveredcall/',
             },
-            images: [typusScreenshot1, typusScreenshot2],
             tags: [TagName.FINANCE],
         } as DappData,
     ],
@@ -485,7 +445,6 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.TESTNET]:
                     'https://testnet.typus.finance/vault/coveredcall/',
             },
-            images: [typusScreenshot1, typusScreenshot2],
             tags: [TagName.FINANCE],
         } as DappData,
     ],
@@ -503,11 +462,6 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.TESTNET]:
                     'https://sui.interestprotocol.com/en-US/dapp/dex',
             },
-            images: [
-                interestProtocolScreenshot1,
-                interestProtocolScreenshot2,
-                interestProtocolScreenshot3,
-            ],
             tags: [TagName.FINANCE],
         } as DappData,
     ],
@@ -523,7 +477,6 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.DEVNET]: 'https://sui.apass.network',
                 [NetworkName.TESTNET]: 'https://sui.apass.network',
             },
-            images: [aPassScreenshot1, aPassScreenshot2],
             tags: [TagName.GAMES, TagName.NFTS],
         } as DappData,
     ],
@@ -536,7 +489,6 @@ const dappsMap: Map<string, DappData> = new Map([
             description:
                 'Final Stardust is a media franchise in the making, with its first installment being "Final Stardust: Cosmic Nexus", a digital collectible card game inspired by big Japanese/Anime TCG games.',
             urls: {},
-            images: [finalStardustScreenshot1, finalStardustScreenshot2],
             tags: [TagName.GAMES, TagName.NFTS],
         } as DappData,
     ],
@@ -549,7 +501,6 @@ const dappsMap: Map<string, DappData> = new Map([
             description:
                 'MovEX,  #1 Hyper Defi Platform built to provide the best trading and liquidity provision experience for users and project developers on Sui. We serve our users throughout the lifecycle of a token from initial liquidity offering service to trading on AMM swap and DeepBook, the central limit order book on Sui. MovEX built DeepBook, the central limit order book as a public good for whole Sui ecosystem and now DeepBook is part of Sui framework and serves as the foundational liquidity layer on Sui.',
             urls: {},
-            images: [movexScreenshot1, movexScreenshot2],
             tags: [TagName.FINANCE],
         } as DappData,
     ],
