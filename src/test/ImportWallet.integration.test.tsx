@@ -1,7 +1,6 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import truncateMiddle from '../ui/app/helpers/truncate-middle';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 
@@ -10,6 +9,7 @@ describe('Importing a wallet using a seed phrase', () => {
     beforeEach(() => {
         mockchain = new Mockchain();
         mockchain.mockCommonCalls();
+        mockchain.mockSuiObjects();
     });
 
     test('Entire flow works', async () => {
