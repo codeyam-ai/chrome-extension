@@ -48,15 +48,22 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
     if (address) {
         let allObjRes: SuiObjectResponse[] = [];
         let nextCursor: PaginatedObjectsResponse['nextCursor'] | undefined;
+        let page = 0;
         while (nextCursor !== null) {
+            page += 1;
             const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
                 owner: address,
                 cursor: nextCursor,
             });
-            if (allObjectRefs.hasNextPage) {
-                nextCursor = allObjectRefs.nextCursor;
-            } else {
+
+            if (page > 20) {
                 nextCursor = null;
+            } else {
+                if (allObjectRefs.hasNextPage) {
+                    nextCursor = allObjectRefs.nextCursor;
+                } else {
+                    nextCursor = null;
+                }
             }
 
             const objectIDs = allObjectRefs.data
@@ -86,6 +93,10 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                     }
                 })
                 .filter((objId) => objId.length > 0);
+
+            if (objectIDs.length === 0) {
+                nextCursor = null;
+            }
 
             const newObjRes = await api.instance.fullNode.multiGetObjects({
                 ids: objectIDs,
