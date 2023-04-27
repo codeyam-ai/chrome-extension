@@ -55,10 +55,9 @@ const DappListItem: React.FC<ListItemProps> = ({
     return (
         <div
             className={classNames(
-                'flex flex-col items-center mx-2 relative',
+                'flex flex-col items-center relative',
                 isCursorDefault ? '' : 'cursor-pointer'
             )}
-            // onClick={onClick}
             onMouseUp={onClick}
             onMouseEnter={setIsHoveredTrue}
             onMouseLeave={setIsHoveredFalse}
@@ -72,7 +71,7 @@ const DappListItem: React.FC<ListItemProps> = ({
                 />
                 <div
                     className={classNames(
-                        'absolute -top-[8px] right-[6px] p-1 rounded-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default transition ease-in-out duration-200',
+                        'absolute -top-[8px] -right-[4px] p-1 rounded-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default transition ease-in-out duration-200',
                         showArrowOnHover && !isLocal && isHovered
                             ? 'opacity-100'
                             : 'opacity-0'
@@ -81,12 +80,12 @@ const DappListItem: React.FC<ListItemProps> = ({
                     <ArrowUpRightIcon className="w-4 h-4 text-ethos-light-primary-light dark:bg-ethos-dark-primary-dark" />
                 </div>
             </div>
-            <p
-                className="mt-1 text-center text-xs w-[60px] text-clip overflow-hidden"
-                title={dapp.title}
-            >
-                {dapp.title}
-            </p>
+            <div className="relative mt-1 w-[60px] overflow-hidden">
+                <p className="text-center text-xs text-clip" title={dapp.title}>
+                    {dapp.title}
+                </p>
+                <div className="absolute top-0 right-0 w-6 h-full bg-gradient-to-r from-transparent via-transparent to-ethos-light-gray dark:to-ethos-dark-background-secondary" />
+            </div>
         </div>
     );
 };

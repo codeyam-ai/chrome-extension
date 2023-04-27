@@ -104,8 +104,15 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
 
     const favoriteItems = useMemo(
         () =>
-            favoritesState.map((item) => (
-                <div key={item.id} className="inline-block">
+            favoritesState.map((item, index) => (
+                <div
+                    key={item.id}
+                    className={`inline-block ${
+                        index === 0 ? 'ml-4' : '' // Add left margin to the first element
+                    } ${
+                        index === favoritesState.length - 1 ? 'mr-4' : '' // Add right margin to the last element
+                    }`}
+                >
                     <DappListItem dapp={item} dragMode />
                 </div>
             )),
@@ -188,7 +195,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
             </Body>
             <div
                 ref={favoriteScrollContainerRef}
-                className="flex overflow-x-auto no-scrollbar whitespace-nowrap py-2 h-[85px] w-full bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
+                className="flex overflow-x-auto no-scrollbar whitespace-nowrap w-full py-2 h-[85px] bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
             >
                 <ReactSortable
                     group={{ name: 'shared' }}
@@ -200,7 +207,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                     ghostClass="opacity-50"
                     onStart={handleDragStart}
                     onEnd={handleDragEnd}
-                    className="FavoriteListIndicator"
+                    className="FavoriteListIndicator space-x-3"
                 >
                     {favoriteItems}
                 </ReactSortable>

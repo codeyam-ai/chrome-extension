@@ -20,12 +20,16 @@ export const DappList: React.FC<DappListProps> = ({ dapps }) => {
 
     const listItems = useMemo(() => {
         return dapps.map((dapp, index) => (
-            <DappListItem
+            <div
                 key={index}
-                dapp={dapp}
-                showArrowOnHover
-                dragged={dragged}
-            />
+                className={`${
+                    index === 0 ? 'ml-4' : '' // Add left margin to the first element
+                } ${
+                    index === dapps.length - 1 ? 'mr-4' : '' // Add right margin to the last element
+                }`}
+            >
+                <DappListItem dapp={dapp} showArrowOnHover dragged={dragged} />
+            </div>
         ));
     }, [dapps, dragged]);
 
@@ -65,7 +69,10 @@ export const DappList: React.FC<DappListProps> = ({ dapps }) => {
             onMouseUp={onMouseUp}
             onMouseLeave={onMouseUp}
         >
-            {listItems}
+            {/* whitespace-nowrap w-min respects the right margin on the last element */}
+            <div className="flex gap-3 whitespace-nowrap w-min">
+                {listItems}
+            </div>
         </div>
     );
 };
