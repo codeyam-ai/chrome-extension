@@ -171,8 +171,9 @@ const dappsMap: Map<string, DappData> = new Map([
             title: 'Sui Explorer',
             description: 'View transactions on the Sui blockchain.',
             urls: {
-                [NetworkName.DEVNET]: 'https://explorer.sui.io',
-                [NetworkName.TESTNET]: 'https://explorer.sui.io',
+                [NetworkName.DEVNET]: 'https://explorer.sui.io/?network=devnet',
+                [NetworkName.TESTNET]:
+                    'https://explorer.sui.io/?network=testnet',
             },
             tags: [],
         } as DappData,
