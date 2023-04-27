@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { DappWrapper } from './DappWrapper';
 import { useAppSelector } from '_src/ui/app/hooks';
+import useDappUrl from '_src/ui/app/hooks/useDappUrl';
 import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
 
 import type { DappData } from '_src/types/DappData';
@@ -13,13 +14,14 @@ interface DappViewProps {
 }
 
 const DappView: React.FC<DappViewProps> = ({ dapp, onClose }) => {
-    const { favoriteDapps } = useFavoriteDapps();
+    const { isLocal } = useDappUrl(dapp?.urls);
+    const { allFavorites } = useFavoriteDapps();
     const address = useAppSelector(({ account: { address } }) => address);
     const iframeRef = useRef<HTMLIFrameElement>(null);
 
     const isFavorite = useMemo(() => {
-        return favoriteDapps.some((fav) => fav.name === dapp?.name);
-    }, [dapp?.name, favoriteDapps]);
+        return allFavorites.some((fav) => fav.id === dapp?.id);
+    }, [dapp?.id, allFavorites]);
 
     const closeDapp = useCallback(() => {
         onClose();
@@ -27,8 +29,8 @@ const DappView: React.FC<DappViewProps> = ({ dapp, onClose }) => {
 
     const extensionMessageListener = useCallback(
         (event: MessageEvent) => {
-            if (event.data.type === 'IFRAME_READY' && dapp?.url) {
-                const targetOrigin = new URL(dapp?.url).origin;
+            if (event.data.type === 'IFRAME_READY' && dapp?.urls[0]) {
+                const targetOrigin = new URL(dapp?.urls[0]).origin;
 
                 iframeRef.current?.contentWindow?.postMessage(
                     address,
@@ -54,23 +56,21 @@ const DappView: React.FC<DappViewProps> = ({ dapp, onClose }) => {
                 dapp ? 'scale-y-100' : 'scale-y-0'
             )}
         >
-            {dapp?.url ? (
+            {isLocal ? (
+                <div>SHOW DAPP COMPONENT</div>
+            ) : (
                 <DappWrapper
-                    dappTitle={dapp.name}
+                    dappTitle={dapp?.title ?? ''}
                     isFavorite={isFavorite}
                     closeDapp={closeDapp}
                 >
                     <iframe
                         ref={iframeRef}
-                        src={dapp?.url ?? 'about:blank'}
+                        src={dapp?.urls[0] ?? 'about:blank'}
                         title="Content"
                         height={400}
                     />
                 </DappWrapper>
-            ) : dapp?.component ? (
-                <dapp.component />
-            ) : (
-                <></>
             )}
         </div>
     );

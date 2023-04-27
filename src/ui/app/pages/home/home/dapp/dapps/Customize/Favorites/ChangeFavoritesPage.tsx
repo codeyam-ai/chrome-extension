@@ -10,17 +10,31 @@ const ChangeFavoritesPage: React.FC = () => {
     const [tempFavoriteDappsKeys, setTempFavoriteDappsKeys] = useState<
         string[]
     >([]);
-    const { setFavoriteDappsKeys } = useFavoriteDapps();
+    const [tempRemovedNftKeys, setTempRemovedNftKeys] = useState<string[]>([]);
+
+    const { setFavoriteDappsKeys, setExcludedDappsKeys } = useFavoriteDapps();
     const navigate = useNavigate();
 
-    const onFavoritesChosen = useCallback((favoriteDappsKeys: string[]) => {
-        setTempFavoriteDappsKeys(favoriteDappsKeys);
-    }, []);
+    const onFavoritesChosen = useCallback(
+        (favoriteDappsKeys: string[], removedNftKeys: string[]) => {
+            setTempFavoriteDappsKeys(favoriteDappsKeys);
+            setTempRemovedNftKeys(removedNftKeys);
+        },
+        []
+    );
 
-    const handleOnContinue = useCallback(() => {
-        setFavoriteDappsKeys(tempFavoriteDappsKeys);
+    const handleOnContinue = useCallback(async () => {
+        await setFavoriteDappsKeys(tempFavoriteDappsKeys);
+        await setExcludedDappsKeys(tempRemovedNftKeys);
+
         navigate('/home/customize/completed');
-    }, [navigate, setFavoriteDappsKeys, tempFavoriteDappsKeys]);
+    }, [
+        navigate,
+        setExcludedDappsKeys,
+        setFavoriteDappsKeys,
+        tempFavoriteDappsKeys,
+        tempRemovedNftKeys,
+    ]);
 
     const goBack = useCallback(() => {
         navigate('/home/customize/color');
@@ -28,9 +42,8 @@ const ChangeFavoritesPage: React.FC = () => {
 
     return (
         <div className="relative flex flex-col items-center pt-6">
-            <Title className="pb-6">Choose your favorite apps</Title>
-            <FavoritesSortableList onFavoritesChosen={onFavoritesChosen} />
-            <div className="flex gap-2 w-full mt-6 px-6">
+            <Title>Choose your favorite apps</Title>
+            <div className="flex gap-2 w-full mb-2 px-6">
                 <button
                     onClick={goBack}
                     className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-4 mt-6 mb-2 bg-ethos-light-primary-light/20"
@@ -51,6 +64,7 @@ const ChangeFavoritesPage: React.FC = () => {
                     </BodyLarge>
                 </button>
             </div>
+            <FavoritesSortableList onFavoritesChosen={onFavoritesChosen} />
         </div>
     );
 };

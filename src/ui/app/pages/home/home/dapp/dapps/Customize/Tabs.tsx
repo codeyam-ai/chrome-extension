@@ -62,7 +62,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs, currentTab }) => {
                         to={tab.href}
                         className={classNames(
                             currentTab === tab.name
-                                ? 'border-ethos-light-primary-light dark:border-ethos-dark-primary-dark text-ethos-light-primary-light dark:bg-ethos-dark-primary-dark'
+                                ? 'border-ethos-light-primary-light dark:border-ethos-dark-primary-dark text-ethos-light-primary-light dark:text-ethos-dark-primary-dark'
                                 : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
                             'whitespace-nowrap border-b-2 py-3 px-1 text-sm font-medium transition-all'
                         )}

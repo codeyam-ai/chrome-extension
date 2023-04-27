@@ -19,6 +19,12 @@ import { Coin } from '_redux/slices/sui-objects/Coin';
 import { generateMnemonic } from '_shared/cryptography/mnemonics';
 import Authentication from '_src/background/Authentication';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
+import {
+    ADDRESS_BOOK_ID,
+    CUSTOMIZE_ID,
+    MY_ASSETS_ID,
+    STAKING_ID,
+} from '_src/data/dappsMap';
 import { AccountType, PASSPHRASE_TEST } from '_src/shared/constants';
 import {
     deleteEncrypted,
@@ -591,7 +597,26 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
                 strong: false,
             })) || '[]'
         );
-        return favoriteDappsKeys;
+
+        const automaticKeys = [
+            CUSTOMIZE_ID,
+            ADDRESS_BOOK_ID,
+            MY_ASSETS_ID,
+            STAKING_ID,
+        ];
+
+        const allFavoriteDappsKeys = [...favoriteDappsKeys];
+        for (const key of automaticKeys) {
+            if (!favoriteDappsKeys.includes(key)) {
+                allFavoriteDappsKeys.push(key);
+            }
+        }
+
+        if (allFavoriteDappsKeys.length !== favoriteDappsKeys.length) {
+            await saveFavoriteDappsKeys(allFavoriteDappsKeys);
+        }
+
+        return allFavoriteDappsKeys;
     }
 );
 
@@ -604,7 +629,37 @@ export const saveFavoriteDappsKeys = createAsyncThunk(
             session: false,
             strong: false,
         });
+
         return favoriteDappsKeys;
+    }
+);
+
+export const loadExcludedDappsKeysFromStorage = createAsyncThunk(
+    'account/getExcludedDappsKeys',
+    async (): Promise<string[]> => {
+        const excludedFavoriteDappsKeys = JSON.parse(
+            (await getEncrypted({
+                key: 'excludedDappsKeys',
+                session: false,
+                strong: false,
+            })) || '[]'
+        );
+
+        return excludedFavoriteDappsKeys;
+    }
+);
+
+export const saveExcludedDappsKeys = createAsyncThunk(
+    'account/saveExcludedDappsKeys',
+    async (excludedDappsKeys: string[]): Promise<string[]> => {
+        await setEncrypted({
+            key: 'excludedDappsKeys',
+            value: JSON.stringify(excludedDappsKeys),
+            session: false,
+            strong: false,
+        });
+
+        return excludedDappsKeys;
     }
 );
 
@@ -622,6 +677,7 @@ type AccountState = {
     accountType: AccountType;
     locked: boolean;
     favoriteDappsKeys: string[];
+    excludedDappsKeys: string[];
 };
 
 const initialState: AccountState = {
@@ -638,6 +694,7 @@ const initialState: AccountState = {
     accountType: AccountType.UNINITIALIZED,
     locked: false,
     favoriteDappsKeys: [],
+    excludedDappsKeys: [],
 };
 
 const accountSlice = createSlice({
@@ -746,6 +803,15 @@ const accountSlice = createSlice({
             )
             .addCase(saveFavoriteDappsKeys.fulfilled, (state, action) => {
                 state.favoriteDappsKeys = action.payload;
+            })
+            .addCase(
+                loadExcludedDappsKeysFromStorage.fulfilled,
+                (state, action) => {
+                    state.excludedDappsKeys = action.payload;
+                }
+            )
+            .addCase(saveExcludedDappsKeys.fulfilled, (state, action) => {
+                state.excludedDappsKeys = action.payload;
             }),
 });
 

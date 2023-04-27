@@ -65,10 +65,7 @@ import type { GetThemeResponse } from '_src/shared/messaging/messages/payloads/a
 import type { SwitchAccountResponse } from '_src/shared/messaging/messages/payloads/account/SwitchAccountResponse';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
-import type {
-    Favorite,
-    AccountCustomization,
-} from '_src/types/AccountCustomization';
+import type { AccountCustomization } from '_src/types/AccountCustomization';
 import type { Contact } from '_src/ui/app/redux/slices/contacts';
 import type { Runtime } from 'webextension-polyfill';
 
@@ -296,8 +293,8 @@ export class ContentScriptConnection extends Connection {
                 ) {
                     this.sendNotAllowedError(msg.id);
                 } else {
-                    const contacts = await this.getFavorites();
-                    this.sendFavorites(contacts, msg.id);
+                    const favorites = await this.getFavorites();
+                    this.sendFavorites(favorites, msg.id);
                 }
             } else if (isSetFavorites(payload)) {
                 const activeAccount = await this.getActiveAccount();
@@ -542,18 +539,18 @@ export class ContentScriptConnection extends Connection {
         });
     }
 
-    private async getFavorites(): Promise<Favorite[]> {
+    private async getFavorites(): Promise<string[]> {
         const favoritesString = await getEncrypted({
-            key: 'favorites',
+            key: 'favoriteDappsKeys',
             session: false,
             strong: false,
         });
         return JSON.parse(favoritesString || '[]');
     }
 
-    private async setFavorites(updates: Favorite[]) {
+    private async setFavorites(updates: string[]) {
         await setEncrypted({
-            key: 'favorites',
+            key: 'favoriteDappsKeys',
             value: JSON.stringify(updates),
             session: false,
             strong: false,
@@ -677,7 +674,7 @@ export class ContentScriptConnection extends Connection {
         );
     }
 
-    private sendFavorites(favorites: Favorite[], responseForID?: string) {
+    private sendFavorites(favorites: string[], responseForID?: string) {
         this.send(
             createMessage<GetFavoritesResponse>(
                 {

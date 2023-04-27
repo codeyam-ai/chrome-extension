@@ -12,6 +12,7 @@ import OnboardingButton from '../shared/buttons/OnboardingButton';
 import OnboardingHeader from '../shared/headers/page-headers/OnboardingHeader';
 import OnboardingLayout from '../shared/layouts/OnboardingLayout';
 import Title from '../shared/typography/Title';
+import { ADDRESS_BOOK_ID, STAKING_ID } from '_src/data/dappsMap';
 
 import type { OnboardingButtonProps } from '../shared/buttons/OnboardingButton';
 
@@ -50,8 +51,9 @@ const WelcomePage = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        // save Staking dapp as favorite by default, but it is not locked like Customize or Address Book
-        dispatch(saveFavoriteDappsKeys(['id3']));
+        // save Staking and Address Book dapps are favorite by default, but it is not locked like Customize or Address Book
+        dispatch(saveFavoriteDappsKeys([STAKING_ID]));
+        dispatch(saveFavoriteDappsKeys([ADDRESS_BOOK_ID]));
     }, [dispatch]);
     return (
         <OnboardingLayout>
