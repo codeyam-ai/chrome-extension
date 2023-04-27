@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import getDisplay from '../helpers/getDisplay';
 import capyart from '_images/dapps/logos/capyart.png';
@@ -93,6 +93,16 @@ export const useFavoriteDapps = () => {
                 self.findIndex((d) => d.id === dapp.id) === index
         );
     }, [favoriteNfts, favoriteDapps]);
+
+    useEffect(() => {
+        const allFavoriteDappsKeys = allFavorites.map((dapp) => dapp.id);
+        if (
+            JSON.stringify(allFavoriteDappsKeys) !==
+            JSON.stringify(favoriteDappsKeys)
+        ) {
+            setFavoriteDappsKeys(allFavoriteDappsKeys);
+        }
+    }, [allFavorites, favoriteDappsKeys, setFavoriteDappsKeys]);
 
     return {
         favoriteDapps,
