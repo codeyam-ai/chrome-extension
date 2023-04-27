@@ -7,6 +7,8 @@ import { makeCoinObject } from '_src/test/utils/mockchain-templates/coinObject';
 import { makeDryRunTransactionResponse } from '_src/test/utils/mockchain-templates/dryRunTransaction';
 import { suiSystemStateObject } from '_src/test/utils/mockchain-templates/sui-system-state';
 
+import type { CoinBalance } from '@mysten/sui.js';
+
 interface ExpectedCall {
     method: string;
     params?: unknown[];
@@ -86,6 +88,7 @@ export class Mockchain {
     ) {
         const fullObjects = [];
         const objectInfos = [];
+        const coinBalances = [];
         if (options.suiBalance) {
             const objId = '0xfd9cff9fd6befa0e7d6481d0eeae02056b2ca46e';
             const coinObject = makeCoinObject(options.suiBalance, objId);
@@ -103,8 +106,15 @@ export class Mockchain {
                         '2joDzF1sDVAVv9ej7j8197ZwiZ1hX73kSFW48c1nNxv3',
                 },
             };
+            const coinBalance: CoinBalance = {
+                coinType: '0x2::sui::SUI',
+                totalBalance: options.suiBalance.toString(),
+                coinObjectCount: 1,
+                lockedBalance: { number: 0 },
+            };
             objectInfos.push(coinObjectInfo);
             fullObjects.push(coinObject);
+            coinBalances.push(coinBalance);
         }
         if (options.nftDetails) {
             const renderedNftResult = renderTemplate('nftObject', {
@@ -133,6 +143,12 @@ export class Mockchain {
                 },
                 hasNextPage: false,
             },
+            true
+        );
+
+        this.mockBlockchainCall(
+            { method: 'suix_getAllBalances' },
+            coinBalances,
             true
         );
 
