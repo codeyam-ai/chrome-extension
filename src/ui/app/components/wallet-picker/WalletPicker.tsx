@@ -37,7 +37,7 @@ const WalletPicker = ({
             {!selectOnly && (
                 <div>
                     {!isWalletEditing ? (
-                        <div className="pt-6">
+                        <div className="py-3 flex flex-col">
                             <CreateWalletProvider
                                 setCreateWallet={setCreateWallet}
                                 setLoading={setLoading}
@@ -54,6 +54,15 @@ const WalletPicker = ({
                                     )}
                                 </Button>
                             </CreateWalletProvider>
+                            <div className="flex">
+                                <Button
+                                    buttonStyle="secondary"
+                                    to="/"
+                                    disabled={loading}
+                                >
+                                    Import / Manage Imported Wallets
+                                </Button>
+                            </div>
                         </div>
                     ) : (
                         <div className="flex gap-2 py-4 px-5 place-content-center">
