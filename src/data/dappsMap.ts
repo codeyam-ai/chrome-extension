@@ -10,6 +10,7 @@ import capyart from '_images/dapps/logos/capyart.png';
 import cetus from '_images/dapps/logos/cetus.png';
 import clutchy from '_images/dapps/logos/clutchy.jpg';
 import collectibles from '_images/dapps/logos/collectibles.png';
+import cubic from '_images/dapps/logos/cubic.png';
 import customize from '_images/dapps/logos/customize.png';
 import display from '_images/dapps/logos/display.png';
 import explorer from '_images/dapps/logos/explorer.png';
@@ -18,6 +19,7 @@ import gotbeef from '_images/dapps/logos/gotbeef.png';
 import interestProtocol from '_images/dapps/logos/interest-protocol.png';
 import keepsake from '_images/dapps/logos/keepsake.png';
 import kriya from '_images/dapps/logos/kriya.png';
+import movePad from '_images/dapps/logos/movepad.jpg';
 import { default as movex } from '_images/dapps/logos/movex.png';
 import polymediachat from '_images/dapps/logos/polymediachat.png';
 import staking from '_images/dapps/logos/staking.png';
@@ -373,6 +375,7 @@ const dappsMap: Map<string, DappData> = new Map([
             description: 'NFT Marketplace',
             urls: {
                 [NetworkName.DEVNET]: 'https://clutchy.io/',
+                [NetworkName.TESTNET]: 'https://clutchy.io/',
             },
             tags: [TagName.MARKETPLACE],
         } as DappData,
@@ -503,6 +506,35 @@ const dappsMap: Map<string, DappData> = new Map([
                 'MovEX,  #1 Hyper Defi Platform built to provide the best trading and liquidity provision experience for users and project developers on Sui. We serve our users throughout the lifecycle of a token from initial liquidity offering service to trading on AMM swap and DeepBook, the central limit order book on Sui. MovEX built DeepBook, the central limit order book as a public good for whole Sui ecosystem and now DeepBook is part of Sui framework and serves as the foundational liquidity layer on Sui.',
             urls: {},
             tags: [TagName.FINANCE],
+        } as DappData,
+    ],
+    [
+        'fcc2f17a-0ce6-4066-bcf1-7ed72ee8422c',
+        {
+            id: 'fcc2f17a-0ce6-4066-bcf1-7ed72ee8422c',
+            image: movePad,
+            title: 'MovePad',
+            description:
+                'Movepad is the first security focused gamified launchpad on Sui Ecosystem',
+            urls: {
+                [NetworkName.TESTNET]: 'https://movepad.io/project/0',
+            },
+            tags: [TagName.TOOLS],
+        } as DappData,
+    ],
+    [
+        '51908a51-c1f6-4692-870c-2885fae65ddb',
+        {
+            id: '51908a51-c1f6-4692-870c-2885fae65ddb',
+            image: cubic,
+            title: 'Cubic',
+            description:
+                'Cubic is a Web3 gaming infrastructure that empowers games with seamless blockchain integration, intuitive Web2-like UX and game-changing Web3 features.',
+            urls: {
+                [NetworkName.DEVNET]: 'https://www.cubicgames.xyz/games',
+                [NetworkName.TESTNET]: 'https://www.cubicgames.xyz/games',
+            },
+            tags: [TagName.GAMES, TagName.TOOLS],
         } as DappData,
     ],
 ]);
