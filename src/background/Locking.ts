@@ -1,7 +1,8 @@
 import Browser from 'webextension-polyfill';
 
 import { connections } from '_src/background/index';
-import { getEncrypted } from '_src/shared/storagex/store';
+import { AUTO_LOCK_TIMEOUT_KEY } from '_src/shared/constants';
+import { getEncrypted, getLocal } from '_src/shared/storagex/store';
 
 const alarmName = 'lockAlarm';
 
@@ -27,5 +28,8 @@ Browser.alarms.onAlarm.addListener((alarm) => {
 });
 
 export const resetLockTimeout = async () => {
-    Browser.alarms.create(alarmName, { delayInMinutes: 15 });
+    const timeout = (await getLocal(AUTO_LOCK_TIMEOUT_KEY)) as number;
+    Browser.alarms.create(alarmName, {
+        delayInMinutes: timeout,
+    });
 };

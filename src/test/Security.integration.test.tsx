@@ -188,7 +188,7 @@ describe('The Security Settings page', () => {
             const lockOption = await screen.findByText('Lock Ethos');
             await userEvent.click(lockOption);
 
-            const lockWalletButton = await screen.findByText('Lock Wallet');
+            const lockWalletButton = await screen.findByText('Lock Wallet Now');
             await userEvent.click(lockWalletButton);
 
             const paswwordInput = await screen.findByTestId('password');
