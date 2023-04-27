@@ -54,14 +54,10 @@ export const useFavoriteDapps = () => {
                 if (!dapp?.urls[selectedApiEnv]) {
                     return undefined;
                 }
-                if (!dapp) {
-                    const projectNFTs = getProjectNftsFromAllNfts(nfts);
-                    return projectNFTs[key];
-                }
                 return dapp;
             })
             .filter(Boolean) as DappData[];
-    }, [favoriteDappsKeys, nfts, selectedApiEnv]);
+    }, [favoriteDappsKeys, selectedApiEnv]);
 
     const favoriteNfts: DappData[] = useMemo(() => {
         let projectNFTs: Record<string, DappData> = {};
@@ -70,13 +66,10 @@ export const useFavoriteDapps = () => {
         }
         return Object.keys(projectNFTs)
             .filter((nftKey) => {
-                return (
-                    !excludedNFTKeys.includes(nftKey) &&
-                    !favoriteDappsKeys.includes(nftKey)
-                );
+                return !excludedNFTKeys.includes(nftKey);
             })
             .map((key) => projectNFTs[key]);
-    }, [nfts, excludedNFTKeys, favoriteDappsKeys]);
+    }, [nfts, excludedNFTKeys]);
 
     const allFavorites: DappData[] = useMemo(() => {
         return [...favoriteNfts, ...favoriteDapps];

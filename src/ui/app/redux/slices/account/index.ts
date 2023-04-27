@@ -639,6 +639,7 @@ export const loadExcludedNftKeysFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
+        console.log('excludedFavoriteDappsKeys', excludedFavoriteDappsKeys);
         return excludedFavoriteDappsKeys;
     }
 );
