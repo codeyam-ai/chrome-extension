@@ -43,9 +43,15 @@ export const useFavoriteDapps = () => {
     );
 
     const favoriteDapps: DappData[] = useMemo(() => {
+        let projectNFTs: Record<string, DappData> = {};
+        if (nfts) {
+            projectNFTs = getProjectNftsFromAllNfts(nfts);
+        }
+
         const allFavoriteDappsKeys = [...favoriteDappsKeys].filter(
             (key) => !excludedDappsKeys.includes(key)
         );
+
         if (!favoriteDappsKeys.includes(CUSTOMIZE_ID)) {
             allFavoriteDappsKeys.push(CUSTOMIZE_ID);
         }
@@ -53,13 +59,18 @@ export const useFavoriteDapps = () => {
         return allFavoriteDappsKeys
             .map((key) => {
                 const dapp = dappsMap.get(key);
+
+                if (projectNFTs[key]) {
+                    return projectNFTs[key];
+                }
+
                 if (!dapp?.urls[selectedApiEnv]) {
                     return undefined;
                 }
                 return dapp;
             })
             .filter(Boolean) as DappData[];
-    }, [excludedDappsKeys, favoriteDappsKeys, selectedApiEnv]);
+    }, [excludedDappsKeys, favoriteDappsKeys, nfts, selectedApiEnv]);
 
     const favoriteNfts: DappData[] = useMemo(() => {
         let projectNFTs: Record<string, DappData> = {};
@@ -68,13 +79,19 @@ export const useFavoriteDapps = () => {
         }
         return Object.keys(projectNFTs)
             .filter((nftKey) => {
-                return !excludedDappsKeys.includes(nftKey);
+                return (
+                    !excludedDappsKeys.includes(nftKey) &&
+                    !favoriteDappsKeys.includes(nftKey)
+                );
             })
             .map((key) => projectNFTs[key]);
-    }, [nfts, excludedDappsKeys]);
+    }, [nfts, excludedDappsKeys, favoriteDappsKeys]);
 
     const allFavorites: DappData[] = useMemo(() => {
-        return [...favoriteNfts, ...favoriteDapps];
+        return [...favoriteNfts, ...favoriteDapps].filter(
+            (dapp, index, self) =>
+                self.findIndex((d) => d.id === dapp.id) === index
+        );
     }, [favoriteNfts, favoriteDapps]);
 
     return {

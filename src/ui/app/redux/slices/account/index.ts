@@ -645,7 +645,6 @@ export const loadExcludedDappsKeysFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
-        console.log('excludedFavoriteDappsKeys', excludedFavoriteDappsKeys);
         return excludedFavoriteDappsKeys;
     }
 );
