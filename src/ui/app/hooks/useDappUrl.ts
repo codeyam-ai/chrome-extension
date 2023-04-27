@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
 
 import useAppSelector from './useAppSelector';
-import { NetworkName } from '_src/enums/network';
 
 export default function useDappUrl(
     dappUrls: Record<string, string> | undefined
 ): { dappUrl: string | undefined; isLocal: boolean } {
-    const [selectedApiEnv, customRPC] = useAppSelector(({ app }) => [
+    const [selectedApiEnv] = useAppSelector(({ app }) => [
         app.apiEnv,
         app.customRPC,
     ]);
@@ -15,17 +14,8 @@ export default function useDappUrl(
         if (!dappUrls) {
             return undefined;
         }
-        if (customRPC) {
-            return dappUrls[NetworkName.TESTNET];
-        }
-        if (selectedApiEnv === 'testNet') {
-            return dappUrls[NetworkName.TESTNET];
-        }
-        if (selectedApiEnv === 'devNet') {
-            return dappUrls[NetworkName.DEVNET];
-        }
-        return undefined;
-    }, [customRPC, dappUrls, selectedApiEnv]);
+        return dappUrls[selectedApiEnv];
+    }, [dappUrls, selectedApiEnv]);
 
     const isLocal = useMemo(() => {
         if (!dappUrl) {

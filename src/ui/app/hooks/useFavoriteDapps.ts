@@ -15,6 +15,10 @@ import type { DappData } from '_src/types/DappData';
 
 export const useFavoriteDapps = () => {
     const dispatch = useAppDispatch();
+    const [selectedApiEnv] = useAppSelector(({ app }) => [
+        app.apiEnv,
+        app.customRPC,
+    ]);
 
     const favoriteDappsKeys = useAppSelector(
         ({ account }) => account.favoriteDappsKeys
@@ -47,6 +51,9 @@ export const useFavoriteDapps = () => {
         return allFavoriteDappsKeys
             .map((key) => {
                 const dapp = dappsMap.get(key);
+                if (!dapp?.urls[selectedApiEnv]) {
+                    return undefined;
+                }
                 if (!dapp) {
                     const projectNFTs = getProjectNftsFromAllNfts(nfts);
                     return projectNFTs[key];
@@ -54,7 +61,7 @@ export const useFavoriteDapps = () => {
                 return dapp;
             })
             .filter(Boolean) as DappData[];
-    }, [favoriteDappsKeys, nfts]);
+    }, [favoriteDappsKeys, nfts, selectedApiEnv]);
 
     const favoriteNfts: DappData[] = useMemo(() => {
         let projectNFTs: Record<string, DappData> = {};

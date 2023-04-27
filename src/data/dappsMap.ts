@@ -59,8 +59,8 @@ import { LINK_URL } from '_src/shared/constants';
 import type { DappData } from 'src/types/DappData';
 
 export enum NetworkName {
-    DEVNET = 'devnet',
-    TESTNET = 'testnet',
+    DEVNET = 'devNet',
+    TESTNET = 'testNet',
 }
 export enum TagName {
     ALL = 'All',
@@ -96,7 +96,6 @@ const dappsMap: Map<string, DappData> = new Map([
             title: 'Customize',
             description: 'NOT YET IMPLEMENTED IN EXPLORER',
             urls: {
-                CUSTOM_RPC: 'customize',
                 [NetworkName.DEVNET]: 'customize',
                 [NetworkName.TESTNET]: 'customize',
             },
@@ -112,7 +111,6 @@ const dappsMap: Map<string, DappData> = new Map([
             description:
                 'Manage all of the addresses you frequently interact with. Easily send coins and assets to an address.',
             urls: {
-                CUSTOM_RPC: 'address-book',
                 [NetworkName.DEVNET]: 'address-book',
                 [NetworkName.TESTNET]: 'address-book',
             },

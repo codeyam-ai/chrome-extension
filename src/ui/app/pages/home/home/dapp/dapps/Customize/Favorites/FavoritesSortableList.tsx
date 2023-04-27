@@ -43,6 +43,10 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
         const projectNftsRecord = getProjectNftsFromAllNfts(nfts);
         return Object.values(projectNftsRecord);
     }, [nfts]);
+    const [selectedApiEnv] = useAppSelector(({ app }) => [
+        app.apiEnv,
+        app.customRPC,
+    ]);
 
     const favoriteScrollContainerRef = useRef<HTMLDivElement>(null);
     useConvertVerticalScrollToHorizontal(favoriteScrollContainerRef);
@@ -52,7 +56,11 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
     // Each item needs a number ID to work with react-sortablejs
     const dappsWithSortIds: SortableItem[] = useMemo(() => {
         const sortableDapps = Array.from(dappsMap.values())
-            .filter((item) => !EXPLORER_ONLY_KEYS.includes(item.id))
+            .filter(
+                (dapp) =>
+                    !EXPLORER_ONLY_KEYS.includes(dapp.id) &&
+                    dapp.urls[selectedApiEnv]
+            )
             .map(
                 (item) =>
                     ({
@@ -76,7 +84,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
             );
 
         return [...sortableDapps, ...sortableNfts];
-    }, [projectNfts]);
+    }, [projectNfts, selectedApiEnv]);
 
     const [favoritesState, setFavoritesState] = useState<SortableItem[]>([
         ...favoriteNfts.map(
