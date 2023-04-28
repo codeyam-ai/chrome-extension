@@ -240,7 +240,10 @@ export const getEmail = createAsyncThunk(
 export const createMnemonic = createAsyncThunk(
     'account/createMnemonic',
     async (
-        existingMnemonic: string | undefined,
+        {
+            existingMnemonic,
+            name,
+        }: { existingMnemonic?: string; name?: string },
         { getState }
     ): Promise<string | null> => {
         const mnemonic = existingMnemonic || generateMnemonic();
@@ -251,7 +254,7 @@ export const createMnemonic = createAsyncThunk(
 
         if (passphrase) {
             await setEncrypted({
-                key: 'mnemonic',
+                key: `mnemonic${name}`,
                 value: mnemonic,
                 session: false,
                 strong: true,

@@ -88,7 +88,9 @@ const ImportSeedPage = () => {
                 setError(true);
                 return;
             }
-            await dispatch(createMnemonic(formattedMnemonic));
+            await dispatch(
+                createMnemonic({ existingMnemonic: formattedMnemonic })
+            );
             dispatch(setMnemonic(formattedMnemonic));
             navigate('/initialize/import/confirm');
         },

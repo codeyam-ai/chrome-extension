@@ -91,10 +91,6 @@ const SeedPhraseForm = ({
         [onChange, words]
     );
 
-    const focusOnFirstWord = useCallback(() => {
-        document.getElementById(idPrefix + 0)?.focus();
-    }, []);
-
     const updateWord = useCallback(
         (index: number, newWord: string) => {
             const newWords = words;
@@ -118,10 +114,6 @@ const SeedPhraseForm = ({
 
         setWords(wordList);
     }, []);
-
-    useEffect(() => {
-        focusOnFirstWord();
-    }, [focusOnFirstWord]);
 
     return (
         <form onSubmit={onSubmit} className="flex flex-col gap-6 px-6">
@@ -156,17 +148,6 @@ const SeedPhraseForm = ({
                 hide={passwordMode}
                 onToggle={togglePasswordMode}
             />
-            <div className="pb-10">
-                <Button
-                    id="continue"
-                    type="submit"
-                    data-testid="submit"
-                    disabled={!areAllWordsChosen}
-                    removeContainerPadding
-                >
-                    Continue
-                </Button>
-            </div>
         </form>
     );
 };

@@ -22,14 +22,17 @@ const NameForm = ({
     );
 
     return (
-        <div className="flex flex-col gap-6 py-6">
-            <Body className="px-6">Enter a name for this {nameFor}.</Body>
+        <div className="flex flex-col gap-6">
+            <Body className="px-6">
+                Enter an identifying name for this {nameFor}.
+            </Body>
             <div className="flex flex-col gap-2 px-6">
                 <Input
                     id="name"
-                    placeholder="Name"
+                    placeholder="Identifying Name"
                     value={name}
                     onChange={handleChange}
+                    autoFocus
                 />
             </div>
         </div>

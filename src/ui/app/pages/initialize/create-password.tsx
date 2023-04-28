@@ -25,7 +25,7 @@ const CreatePasswordPage = () => {
             if (mnemonic) {
                 navigate('/initialize/complete');
             } else {
-                await dispatch(createMnemonic());
+                await dispatch(createMnemonic({}));
                 navigate('/initialize/save-phrase');
             }
         },
