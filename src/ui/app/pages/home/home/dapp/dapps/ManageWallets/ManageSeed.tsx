@@ -10,6 +10,7 @@ import {
 } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Header from '_src/ui/app/shared/typography/Header';
+import WalletList from '_src/ui/app/shared/wallet-list/WalletList';
 
 const ManageSeed = () => {
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
@@ -53,14 +54,15 @@ const ManageSeed = () => {
 
         const address = keypair.getPublicKey().toSuiAddress();
 
-        accountInfos.push({
+        const mutableAccountInfos = JSON.parse(JSON.stringify(accountInfos));
+        mutableAccountInfos.push({
             index: -1,
             address,
             importedMnemonicName: name,
             importedMnemonicIndex: nextIndex,
         });
 
-        await dispatch(saveAccountInfos(accountInfos));
+        await dispatch(saveAccountInfos(mutableAccountInfos));
     }, [mnemonic, name, relevantAccountInfos, accountInfos, dispatch]);
 
     return (
@@ -73,6 +75,11 @@ const ManageSeed = () => {
             >
                 {mnemonic}
             </Loading>
+            <WalletList
+                hasTopPadding
+                wallets={relevantAccountInfos}
+                isWalletEditing={false}
+            />
             <Button
                 buttonStyle="primary"
                 removeContainerPadding

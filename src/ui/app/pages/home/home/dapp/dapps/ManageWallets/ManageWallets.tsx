@@ -8,10 +8,6 @@ const ManageWallets = () => {
         (state) => state.account.importNames
     );
 
-    const importNames = useAppSelector((state) => state.account.importNames);
-
-    console.log('importNames', importNames);
-
     return (
         <div className="flex flex-col gap-6 py-6">
             <div className="px-6">
@@ -23,8 +19,17 @@ const ManageWallets = () => {
             <div className="mx-6 p-6 flex flex-col gap-3 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-xl">
                 <Header>Seed & Recovery Phrases</Header>
                 {mnemonics.length > 0 ? (
-                    <div className="mx-6 p-3 rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
-                        {mnemonics.length} imported seed phrases.
+                    <div className="p-3 flex gap-3 flex-wrap rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
+                        {mnemonics.map((mnemonic, index) => (
+                            <Button
+                                key={`${mnemonic}-${index}`}
+                                buttonStyle="primary"
+                                removeContainerPadding
+                                to={`/home/manage-wallets/manage-seed?name=${mnemonic}`}
+                            >
+                                {mnemonic}
+                            </Button>
+                        ))}
                     </div>
                 ) : (
                     <div className="mx-6 p-3 rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
@@ -41,7 +46,7 @@ const ManageWallets = () => {
             </div>
             <div className="mx-6 p-6 flex flex-col gap-3 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-xl">
                 <Header>Private Keys</Header>
-                {mnemonics.length > 0 ? (
+                {privateKeys.length > 0 ? (
                     <div className="mx-6 p-3 rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
                         {privateKeys.length} imported private keys.
                     </div>

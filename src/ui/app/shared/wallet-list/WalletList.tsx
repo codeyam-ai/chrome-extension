@@ -6,7 +6,7 @@ export type WalletListProps = {
     header?: string;
     hasTopPadding?: boolean;
     wallets: AccountInfo[];
-    activeAccountIndex: number;
+    activeAccountIndex?: number;
     isWalletEditing: boolean;
 };
 
@@ -31,7 +31,7 @@ const WalletList = ({
                 {header}
             </BodyLarge>
             {wallets.map((wallet, key) => {
-                const isActive = (wallet.index || 0) === activeAccountIndex;
+                const isActive = (wallet.index ?? 0) === activeAccountIndex;
                 return (
                     <div key={key}>
                         <WalletButton
