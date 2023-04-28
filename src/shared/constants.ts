@@ -23,6 +23,7 @@ export const PASSPHRASE_TEST = 'PASSPHRASE_TEST';
 export const TX_STORE_KEY = 'transactions';
 export const PREAPPROVAL_KEY = 'preapprovals';
 export const AUTO_LOCK_TIMEOUT_KEY = 'autoLockTimeout';
+export const DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES = 15;
 
 export const NUM_OF_EPOCH_BEFORE_EARNING = 2;
 

@@ -30,6 +30,6 @@ Browser.alarms.onAlarm.addListener((alarm) => {
 export const resetLockTimeout = async () => {
     const timeout = (await getLocal(AUTO_LOCK_TIMEOUT_KEY)) as number;
     Browser.alarms.create(alarmName, {
-        delayInMinutes: timeout,
+        delayInMinutes: timeout || 15,
     });
 };
