@@ -130,12 +130,14 @@ const TransactionsPage = () => {
     return (
         <React.Fragment>
             <Loading loading={!suiTxns} big={true}>
-                {formattedTxns.length > 0 && (
-                    <div className={'flex flex-col'}>
-                        <TextPageTitle title="Activity" />
-                        <TransactionRows transactions={formattedTxns} />
-                    </div>
-                )}
+                {suiTxns &&
+                    suiTxns.pages[0].blocks.length > 0 &&
+                    formattedTxns.length > 0 && (
+                        <div className={'flex flex-col'}>
+                            <TextPageTitle title="Activity" />
+                            <TransactionRows transactions={formattedTxns} />
+                        </div>
+                    )}
                 <div>
                     {isFetchingNextPage && (
                         <div className={'pb-8'}>
