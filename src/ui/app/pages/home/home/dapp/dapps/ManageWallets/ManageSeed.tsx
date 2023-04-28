@@ -18,6 +18,7 @@ const ManageSeed = () => {
     const dispatch = useAppDispatch();
     const location = useLocation();
     const name = new URLSearchParams(location.search).get('name');
+    const { mnemonics } = useAppSelector(({ account }) => account.importNames);
 
     const relevantAccountInfos = useMemo(() => {
         return accountInfos.filter(
@@ -44,6 +45,7 @@ const ManageSeed = () => {
         const keypairVault = new KeypairVault();
         keypairVault.mnemonic = mnemonic;
 
+        const baseIndex = mnemonics.findIndex((m) => m === name);
         const nextIndex =
             (relevantAccountInfos.sort(
                 (a, b) =>
@@ -56,14 +58,14 @@ const ManageSeed = () => {
 
         const mutableAccountInfos = JSON.parse(JSON.stringify(accountInfos));
         mutableAccountInfos.push({
-            index: -1,
+            index: (baseIndex * 10000) + nextIndex,
             address,
             importedMnemonicName: name,
             importedMnemonicIndex: nextIndex,
         });
 
         await dispatch(saveAccountInfos(mutableAccountInfos));
-    }, [mnemonic, name, relevantAccountInfos, accountInfos, dispatch]);
+    }, [mnemonic, name, mnemonics, relevantAccountInfos, accountInfos, dispatch]);
 
     return (
         <div className="p-6 gap-6 flex flex-col items-center">

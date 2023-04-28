@@ -33,7 +33,7 @@ const WalletList = ({
             {wallets.map((wallet, key) => {
                 const isActive = (wallet.index ?? 0) === activeAccountIndex;
                 return (
-                    <div key={key}>
+                    <div key={`wallet-${key}`}>
                         <WalletButton
                             wallet={wallet}
                             isActive={isActive}
