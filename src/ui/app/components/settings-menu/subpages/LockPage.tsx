@@ -22,6 +22,8 @@ const AutoLockTimeoutForm = () => {
         <Form className="flex flex-col gap-3 items-center">
             <Input
                 {...timeoutField}
+                min="1"
+                max="30"
                 type="number"
                 label="Auto Lock Timeout"
                 data-testid="timeout-input"
