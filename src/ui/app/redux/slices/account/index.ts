@@ -50,7 +50,7 @@ type InitialAccountInfo = {
     activeAccountIndex: number;
     locked: boolean;
     accountType: AccountType;
-    importNames: { mnemonics?: string[]; privateKeys?: string[] };
+    importNames: { mnemonics: string[]; privateKeys: string[] };
 };
 
 export const loadAccountInformationFromStorage = createAsyncThunk(
@@ -101,7 +101,10 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 activeAccountIndex,
                 locked: false,
                 accountType,
-                importNames: {},
+                importNames: {
+                    mnemonics: [],
+                    privateKeys: [],
+                },
             };
         }
 
@@ -120,7 +123,10 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 activeAccountIndex: 0,
                 locked: false,
                 accountType,
-                importNames: {},
+                importNames: {
+                    mnemonics: [],
+                    privateKeys: [],
+                },
             };
         }
 
@@ -142,7 +148,8 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 key: 'importNames',
                 session: false,
                 strong: false,
-            })) || '{}'
+                passphrase,
+            })) || '{ "mnemonics": [], "privateKeys": [] }'
         );
 
         if (mnemonic) {
@@ -287,13 +294,14 @@ export const saveImportedMnemonic = createAsyncThunk(
         const {
             account: { passphrase, importNames },
         } = getState() as RootState;
+        const mutableImportNames = JSON.parse(JSON.stringify(importNames));
 
         if (passphrase) {
             if (name) {
-                importNames.mnemonics.push(name);
+                mutableImportNames.mnemonics.push(name);
                 await setEncrypted({
-                    key: `importNames`,
-                    value: JSON.stringify(importNames),
+                    key: 'importNames',
+                    value: JSON.stringify(mutableImportNames),
                     session: false,
                     strong: false,
                     passphrase,
@@ -887,6 +895,15 @@ const accountSlice = createSlice({
         setEmail: (state, action: PayloadAction<string | null>) => {
             state.email = action.payload;
         },
+        saveImportedMnemonic: (state, action: PayloadAction<string | null>) => {
+            state.importNames.mnemonics.push(action.payload || '');
+        },
+        saveImportedPrivateKey: (
+            state,
+            action: PayloadAction<string | null>
+        ) => {
+            state.importNames.privateKeys.push(action.payload || '');
+        },
         lockWalletUI: (state, action: PayloadAction<boolean>) => {
             if (action.payload) {
                 state.authentication = null;
@@ -915,6 +932,7 @@ const accountSlice = createSlice({
                                 state.activeAccountIndex
                         )?.address || null;
                     state.accountType = action.payload.accountType;
+                    state.importNames = action.payload.importNames;
                     state.locked = action.payload.locked;
                 }
             )

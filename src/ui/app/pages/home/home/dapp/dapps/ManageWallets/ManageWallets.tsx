@@ -8,6 +8,10 @@ const ManageWallets = () => {
         (state) => state.account.importNames
     );
 
+    const importNames = useAppSelector((state) => state.account.importNames);
+
+    console.log('importNames', importNames);
+
     return (
         <div className="flex flex-col gap-6 py-6">
             <div className="px-6">
