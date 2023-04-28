@@ -11,7 +11,7 @@ const ManageWallets = () => {
                     to use in your Ethos wallet.
                 </Body>
             </div>
-            <div className="mx-6 p-6 flex flex-col gap-3 bg-ethos-light-background-secondary dark:bg-ethos-light-background-secondary rounded-xl">
+            <div className="mx-6 p-6 flex flex-col gap-3 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-xl">
                 <Header>Seed & Recovery Phrases</Header>
                 <div className="mx-6 p-3 rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
                     No imported seed phrases yet.
@@ -24,7 +24,7 @@ const ManageWallets = () => {
                     Import Seed Phrase
                 </Button>
             </div>
-            <div className="mx-6 p-6 flex flex-col gap-3 bg-ethos-light-background-secondary dark:bg-ethos-light-background-secondary rounded-xl">
+            <div className="mx-6 p-6 flex flex-col gap-3 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-xl">
                 <Header>Private Keys</Header>
                 <div className="mx-6 p-3 rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
                     No imported private keys yet.

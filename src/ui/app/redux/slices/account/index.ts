@@ -254,7 +254,7 @@ export const createMnemonic = createAsyncThunk(
 
         if (passphrase) {
             await setEncrypted({
-                key: `mnemonic${name}`,
+                key: `mnemonic${name ?? ''}`,
                 value: mnemonic,
                 session: false,
                 strong: true,
