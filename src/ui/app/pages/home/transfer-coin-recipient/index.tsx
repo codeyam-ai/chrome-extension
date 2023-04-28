@@ -42,8 +42,9 @@ function TransferCoinRecipientPage() {
                     setSuiRecipient({
                         to: to,
                         from:
-                            account.accountInfos[activeAccountIndex].name ||
-                            'Wallet',
+                            account.accountInfos.find(
+                                (a) => a.index === activeAccountIndex
+                            )?.name || 'Wallet',
                     })
                 );
 

@@ -81,7 +81,9 @@ const WalletAvatarItem = ({
     const { activeAccountIndex, accountInfos } = useAppSelector(
         ({ account }) => account
     );
-    const activeAccount = accountInfos[activeAccountIndex];
+    const activeAccount =
+        accountInfos.find((a) => a.index === activeAccountIndex) ??
+        accountInfos[0];
     const header = fullHeader ? undefined : wallet?.name ?? address;
     const subheader = header === address ? undefined : address;
 

@@ -211,8 +211,8 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             })) || '0'
         );
 
-        if (activeAccountIndex >= (accountInfos?.length || 0)) {
-            activeAccountIndex = (accountInfos?.length || 1) - 1;
+        if (!accountInfos.find((a) => a.index === activeAccountIndex)) {
+            activeAccountIndex = accountInfos[0].index;
         }
 
         const {
