@@ -196,7 +196,7 @@ const StakeRow = ({ stake }: { stake: Stake }) => {
                 <div className="flex gap-1">
                     <Body isTextColorMedium>Est. Reward:</Body>
                     <Body isSemibold>
-                        {mistToSui(Number(stake.estimatedReward), 2)} SUI
+                        {mistToSui(Number(stake.estimatedReward), 9)} SUI
                     </Body>
                 </div>
             </div>
