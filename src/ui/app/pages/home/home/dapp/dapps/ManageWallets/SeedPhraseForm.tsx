@@ -40,7 +40,7 @@ const WordInput = ({
 
     return (
         <div
-            className="flex gap-1 py-3 px-4 bg-ethos-light-background-secondary rounded-xl"
+            className="flex gap-1 py-3 px-4 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-xl"
             key={index}
             onClick={focusOnThisInput}
         >
@@ -51,7 +51,7 @@ const WordInput = ({
                 type={password ? 'password' : 'text'}
                 id={idPrefix + index}
                 data-testid={idPrefix + index}
-                className="w-full bg-ethos-light-background-secondary border-none focus:outline-none focus:ring-transparent p-0 m-0"
+                className="w-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary border-none focus:outline-none focus:ring-transparent p-0 m-0"
                 autoComplete="off"
                 defaultValue={defaultValue}
                 onPaste={handlePaste}
