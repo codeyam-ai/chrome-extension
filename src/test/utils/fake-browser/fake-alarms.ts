@@ -3,23 +3,20 @@ import { FakeEvent } from '_src/test/utils/fake-browser/fake-runtime';
 import type { Alarms } from 'webextension-polyfill/namespaces/alarms';
 
 export class FakeAlarms {
-    names: string[] = [];
-    all: Alarms.CreateAlarmInfoType[] = [];
+    alarmsCreated: { name: string; alarmInfo: Alarms.CreateAlarmInfoType }[] =
+        [];
     create(
         name: string | undefined,
         alarmInfo: Alarms.CreateAlarmInfoType
     ): void {
         if (name) {
-            // TODO: get rid of 'names'
-            this.names.push(name);
-            this.all.push(alarmInfo);
+            this.alarmsCreated.push({ name, alarmInfo });
         }
     }
 
     onAlarm: FakeEvent<(name: Alarms.Alarm) => void> = new FakeEvent();
 
     clear() {
-        this.all = [];
-        this.names = [];
+        this.alarmsCreated = [];
     }
 }

@@ -10,7 +10,10 @@ import {
 import { makeTestDeps } from './utils/test-dependencies';
 import { fakeAlarms } from './utils/fake-browser/fake-browser';
 import Browser from 'webextension-polyfill';
-import { AUTO_LOCK_TIMEOUT_KEY } from '_src/shared/constants';
+import {
+    AUTO_LOCK_TIMEOUT_KEY,
+    DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES,
+} from '_src/shared/constants';
 
 describe('Lock Wallet Page', () => {
     let mockchain: Mockchain;
@@ -71,7 +74,9 @@ describe('Lock Wallet Page', () => {
             const lockOption = await screen.findByText('Lock Ethos');
             await userEvent.click(lockOption);
 
-            await screen.findByText(/15 minutes/);
+            await screen.findByText(
+                new RegExp(`${DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES} minutes`)
+            );
             const editAutolockLink = await screen.findByText(
                 'Edit Auto-Lock time'
             );
@@ -84,8 +89,10 @@ describe('Lock Wallet Page', () => {
 
             await screen.findByText(/7 minutes/);
 
-            expect(fakeAlarms.all).toHaveLength(1);
-            expect(fakeAlarms.all[0].delayInMinutes).toEqual(7);
+            expect(fakeAlarms.alarmsCreated).toHaveLength(1);
+            expect(
+                fakeAlarms.alarmsCreated[0].alarmInfo.delayInMinutes
+            ).toEqual(7);
         });
 
         test('allows user to lock the wallet manually', async () => {

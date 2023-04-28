@@ -45,13 +45,13 @@ const ManageSeed = () => {
         const keypairVault = new KeypairVault();
         keypairVault.mnemonic = mnemonic;
 
-        const baseIndex = mnemonics.findIndex((m) => m === name);
+        const baseIndex = (mnemonics.findIndex((m) => m === name) ?? 0) + 1;
         const nextIndex =
             (relevantAccountInfos.sort(
                 (a, b) =>
                     (b.importedMnemonicIndex ?? 0) -
                     (a.importedMnemonicIndex ?? 0)
-            )?.[0]?.importedMnemonicIndex ?? -1) + 1;
+            )?.[0]?.importedMnemonicIndex ?? 0) + 1;
         const keypair = keypairVault.addKeyPair(nextIndex);
 
         const address = keypair.getPublicKey().toSuiAddress();
@@ -74,6 +74,15 @@ const ManageSeed = () => {
         dispatch,
     ]);
 
+    const deleteMnemonic = useCallback(() => {
+        if (
+            typeof window !== 'undefined' &&
+            window.confirm('Are you sure you want to delete this seed phrase?')
+        ) {
+            console.log('DELETE!');
+        }
+    }, []);
+
     return (
         <div className="p-6 gap-6 flex flex-col items-center">
             <Header>&#34;{name}&#34; Seed Phrase</Header>
@@ -95,6 +104,13 @@ const ManageSeed = () => {
                 onClick={createAddress}
             >
                 Create New Wallet Address
+            </Button>
+            <Button
+                buttonStyle="secondary"
+                removeContainerPadding
+                onClick={deleteMnemonic}
+            >
+                Delete Seed Phrase
             </Button>
         </div>
     );

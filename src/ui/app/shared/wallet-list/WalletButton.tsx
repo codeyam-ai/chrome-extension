@@ -10,6 +10,7 @@ import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import { clearForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
+import useWalletName from '../../hooks/useWalletName';
 
 interface WalletButtonProps {
     wallet: AccountInfo;
@@ -42,20 +43,7 @@ const WalletButton = ({
         navigate(editWalletUrl);
     }, [navigate, editWalletUrl]);
 
-    const name = useMemo(() => {
-        if (wallet.name) return wallet.name;
-        if (
-            wallet.importedMnemonicName !== undefined &&
-            wallet.importedMnemonicIndex !== undefined
-        ) {
-            return `${wallet.importedMnemonicName} ${
-                wallet.importedMnemonicIndex + 1
-            }`;
-        }
-        if (wallet.importedPrivateKeyName) return wallet.importedPrivateKeyName;
-
-        return '';
-    }, [wallet]);
+    const name = useWalletName(wallet);
 
     return (
         <div

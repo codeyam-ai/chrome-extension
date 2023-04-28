@@ -4,6 +4,7 @@ import Browser from 'webextension-polyfill';
 import * as Yup from 'yup';
 
 import { useDependencies } from '_shared/utils/dependenciesContext';
+import { DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES } from '_src/shared/constants';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Well from '_src/ui/app/shared/content/Well';
 import Input from '_src/ui/app/shared/inputs/Input';
@@ -58,16 +59,19 @@ const LockPage = () => {
         setAutoLockFormShowing(false);
     }, []);
 
-    const defaultTimeout = 15;
     useEffect(() => {
         Browser.storage.local
             .get('autoLockTimeout')
             .then(({ autoLockTimeout }) => {
-                setCurrentTimeout(autoLockTimeout || defaultTimeout);
+                setCurrentTimeout(
+                    autoLockTimeout || DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES
+                );
             });
     }, []);
 
-    const [currentTimeout, setCurrentTimeout] = useState(defaultTimeout);
+    const [currentTimeout, setCurrentTimeout] = useState(
+        DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES
+    );
     interface FormValues {
         timeout: number;
     }

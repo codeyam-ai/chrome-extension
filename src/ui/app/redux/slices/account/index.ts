@@ -41,6 +41,7 @@ import type { SuiAddress, SuiMoveObject } from '@mysten/sui.js';
 import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import { privateKeys } from '../../../../../test/utils/storage';
 
 type InitialAccountInfo = {
     authentication: string | null;
@@ -273,7 +274,7 @@ export const createMnemonic = createAsyncThunk(
 
         if (passphrase) {
             await setEncrypted({
-                key: `mnemonic${name ?? ''}`,
+                key: `importedMnemonic${name ?? ''}`,
                 value: mnemonic,
                 session: false,
                 strong: true,
@@ -309,7 +310,7 @@ export const saveImportedMnemonic = createAsyncThunk(
             }
 
             await setEncrypted({
-                key: `mnemonic${name ?? ''}`,
+                key: `importedMnemonic${name ?? ''}`,
                 value: mnemonic,
                 session: false,
                 strong: true,
@@ -344,7 +345,7 @@ export const saveImportedPrivateKey = createAsyncThunk(
             }
 
             await setEncrypted({
-                key: `privateKey${name ?? ''}`,
+                key: `importedPrivateKey${name ?? ''}`,
                 value: privateKey,
                 session: false,
                 strong: true,
@@ -368,7 +369,7 @@ export const getImportedMnemonic = createAsyncThunk(
 
         if (passphrase) {
             const mnemonic = await getEncrypted({
-                key: `mnemonic${name ?? ''}`,
+                key: `importedMnemonic${name ?? ''}`,
                 session: false,
                 strong: true,
                 passphrase,
@@ -393,7 +394,7 @@ export const getImportedPrivateKey = createAsyncThunk(
 
         if (passphrase) {
             const privateKey = await getEncrypted({
-                key: `privateKey${name ?? ''}`,
+                key: `importedPrivateKey${name ?? ''}`,
                 session: false,
                 strong: true,
                 passphrase,
@@ -403,6 +404,104 @@ export const getImportedPrivateKey = createAsyncThunk(
         }
 
         return null;
+    }
+);
+
+export const deleteImportedMnemonic = createAsyncThunk(
+    'account/deleteImportedMnemonic',
+    async (
+        { name }: { name: string },
+        { getState }
+    ): Promise<void> => {
+        const {
+            account: { passphrase, importNames, accountInfos },
+        } = getState() as RootState;
+
+        if (passphrase) {
+            const mutableImportNames = JSON.parse(JSON.stringify(importNames));
+            let mutableAccountInfos = JSON.parse(
+                JSON.stringify(accountInfos)
+            );
+
+            mutableImportNames.mnemonics = mutableImportNames.mnemonics.filter(
+                (mnemonicName: string) => mnemonicName !== name
+            );
+
+            mutableAccountInfos = mutableAccountInfos.filter(
+                (accountInfo: AccountInfo) => accountInfo.importedMnemonicName !== name
+            );
+
+            await setEncrypted({
+                key: 'importNames',
+                value: JSON.stringify(mutableImportNames),
+                session: false,
+                strong: false,
+                passphrase,
+            });
+
+            await setEncrypted({
+                key: 'accountInfos',
+                value: JSON.stringify(mutableAccountInfos),
+                session: false,
+                strong: false,
+            });
+            
+            await deleteEncrypted({
+                key: `importedMnemonic${name ?? ''}`,
+                session: false,
+                strong: true,
+                passphrase,
+            });            
+        }
+    }
+);
+
+export const deletePrivateKey = createAsyncThunk(
+    'account/deletePrivateKey',
+    async (
+        { name }: { name: string },
+        { getState }
+    ): Promise<void> => {
+        const {
+            account: { passphrase, importNames, accountInfos },
+        } = getState() as RootState;
+
+        if (passphrase) {
+            const mutableImportNames = JSON.parse(JSON.stringify(importNames));
+            let mutableAccountInfos = JSON.parse(
+                JSON.stringify(accountInfos)
+            );
+
+            mutableImportNames.mnemonics = mutableImportNames.privateKeys.filter(
+                (privateKey: string) => privateKey !== name
+            );
+
+            mutableAccountInfos = mutableAccountInfos.filter(
+                (accountInfo: AccountInfo) => accountInfo.importedPrivateKeyName !== name
+            );
+
+            await setEncrypted({
+                key: 'importNames',
+                value: JSON.stringify(mutableImportNames),
+                session: false,
+                strong: false,
+                passphrase,
+            });
+
+            await setEncrypted({
+                key: 'accountInfos',
+                value: JSON.stringify(mutableAccountInfos),
+                session: false,
+                strong: false,
+            });
+            
+            await deleteEncrypted({
+                key: `importedPrivateKey${name ?? ''}`,
+                session: false,
+                strong: true,
+                passphrase,
+            });            
+        }
     }
 );
 
@@ -649,7 +748,7 @@ export const reset = createAsyncThunk(
         if (passphrase) {
             for (const name of importNames.mnemonics || []) {
                 await deleteEncrypted({
-                    key: `mnemonic${name}`,
+                    key: `importedMnemonic${name}`,
                     passphrase,
                     session: false,
                     strong: true,
@@ -657,7 +756,7 @@ export const reset = createAsyncThunk(
             }
             for (const name of importNames.privateKeys || []) {
                 await deleteEncrypted({
-                    key: `privateKey${name}`,
+                    key: `importedPrivateKey${name}`,
                     passphrase,
                     session: false,
                     strong: true,

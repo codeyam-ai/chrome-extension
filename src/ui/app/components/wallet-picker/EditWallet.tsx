@@ -17,6 +17,7 @@ import Authentication from '_src/background/Authentication';
 
 import type { AccountInfo } from '../../KeypairVault';
 import type { EmojiPickerResult } from '../../shared/inputs/emojis/EmojiPickerMenu';
+import useWalletName from '../../hooks/useWalletName';
 
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -34,17 +35,14 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     if (indexFromParam !== null) {
         walletIndex = +indexFromParam;
     }
-    const currentAccountInfo = _accountInfos[walletIndex];
+    const currentAccountInfo =
+        _accountInfos.find(
+            (accountInfo) => accountInfo.index === walletIndex
+        ) ?? _accountInfos[0];
     const draftAccountInfos = useRef<AccountInfo[]>(_accountInfos);
 
-    const [draftName, setDraftName] = useState<string>(
-        currentAccountInfo.name ||
-            `Wallet${
-                currentAccountInfo.index > 0
-                    ? ' ' + currentAccountInfo.index + 1
-                    : ''
-            }`
-    );
+    const name = useWalletName(currentAccountInfo);
+    const [draftName, setDraftName] = useState<string>(name);
 
     const [draftColor, setDraftColor] = useState<string>(
         currentAccountInfo.color || getNextWalletColor(0)
