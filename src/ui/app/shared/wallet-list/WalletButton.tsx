@@ -1,16 +1,16 @@
 import { CheckCircleIcon, PencilIcon } from '@heroicons/react/24/solid';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
 import { useEditWalletUrl } from '../../components/settings-menu/hooks';
 import { useAppDispatch, useMiddleEllipsis } from '../../hooks';
+import useWalletName from '../../hooks/useWalletName';
 import { saveActiveAccountIndex } from '../../redux/slices/account';
 import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import { clearForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
-import useWalletName from '../../hooks/useWalletName';
 
 interface WalletButtonProps {
     wallet: AccountInfo;

@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import KeypairVault from '_src/ui/app/KeypairVault';
 import Loading from '_src/ui/app/components/loading';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import {
+    deleteImportedMnemonic,
     getImportedMnemonic,
     saveAccountInfos,
 } from '_src/ui/app/redux/slices/account';
@@ -17,6 +18,7 @@ const ManageSeed = () => {
     const [mnemonic, setMnemonic] = useState<string | undefined>();
     const dispatch = useAppDispatch();
     const location = useLocation();
+    const navigate = useNavigate();
     const name = new URLSearchParams(location.search).get('name');
     const { mnemonics } = useAppSelector(({ account }) => account.importNames);
 
@@ -45,20 +47,21 @@ const ManageSeed = () => {
         const keypairVault = new KeypairVault();
         keypairVault.mnemonic = mnemonic;
 
-        const baseIndex = (mnemonics.findIndex((m) => m === name) ?? 0) + 1;
+        let baseIndex = mnemonics.findIndex((m) => m === name);
+        if (baseIndex === -1) baseIndex = 0;
         const nextIndex =
             (relevantAccountInfos.sort(
                 (a, b) =>
                     (b.importedMnemonicIndex ?? 0) -
                     (a.importedMnemonicIndex ?? 0)
-            )?.[0]?.importedMnemonicIndex ?? 0) + 1;
+            )?.[0]?.importedMnemonicIndex ?? -1) + 1;
         const keypair = keypairVault.addKeyPair(nextIndex);
 
         const address = keypair.getPublicKey().toSuiAddress();
 
         const mutableAccountInfos = JSON.parse(JSON.stringify(accountInfos));
         mutableAccountInfos.push({
-            index: baseIndex * 10000 + nextIndex,
+            index: (baseIndex + 1) * 10000 + nextIndex,
             address,
             importedMnemonicName: name,
             importedMnemonicIndex: nextIndex,
@@ -74,14 +77,16 @@ const ManageSeed = () => {
         dispatch,
     ]);
 
-    const deleteMnemonic = useCallback(() => {
+    const deleteMnemonic = useCallback(async () => {
+        if (!name) return;
         if (
             typeof window !== 'undefined' &&
             window.confirm('Are you sure you want to delete this seed phrase?')
         ) {
-            console.log('DELETE!');
+            await dispatch(deleteImportedMnemonic({ name }));
+            navigate('/home/manage-wallets');
         }
-    }, []);
+    }, [dispatch, name, navigate]);
 
     return (
         <div className="p-6 gap-6 flex flex-col items-center">

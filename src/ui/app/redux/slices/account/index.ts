@@ -41,7 +41,6 @@ import type { SuiAddress, SuiMoveObject } from '@mysten/sui.js';
 import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-import { privateKeys } from '../../../../../test/utils/storage';
 
 type InitialAccountInfo = {
     authentication: string | null;
@@ -137,7 +136,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             passphrase,
             strong: true,
         });
-        let accountInfos = JSON.parse(
+        let accountInfos: AccountInfo[] = JSON.parse(
             (await getEncrypted({
                 key: 'accountInfos',
                 session: false,
@@ -165,7 +164,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                         name: 'Wallet',
                         color: getNextWalletColor(0),
                         emoji: getNextEmoji(0),
-                        address: keypairVault.getAddress(0),
+                        address: keypairVault.getAddress(0) ?? '',
                     },
                 ];
                 seeds = [
@@ -176,7 +175,13 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 ];
             } else {
                 for (let i = 0; i < accountInfos.length; i++) {
-                    accountInfos[i].address = keypairVault.getAddress(i);
+                    if (
+                        accountInfos[i].importedMnemonicName ||
+                        accountInfos[i].importedPrivateKeyName
+                    ) {
+                        continue;
+                    }
+                    accountInfos[i].address = keypairVault.getAddress(i) ?? '';
                     seeds.push({
                         address: keypairVault.getAddress(i),
                         seed: (keypairVault.getSeed(i) || '').toString(),
@@ -274,7 +279,7 @@ export const createMnemonic = createAsyncThunk(
 
         if (passphrase) {
             await setEncrypted({
-                key: `importedMnemonic${name ?? ''}`,
+                key: `mnemonic`,
                 value: mnemonic,
                 session: false,
                 strong: true,
@@ -412,23 +417,22 @@ export const deleteImportedMnemonic = createAsyncThunk(
     async (
         { name }: { name: string },
         { getState }
-    ): Promise<void> => {
+    ): Promise<string | null> => {
         const {
             account: { passphrase, importNames, accountInfos },
         } = getState() as RootState;
 
         if (passphrase) {
             const mutableImportNames = JSON.parse(JSON.stringify(importNames));
-            let mutableAccountInfos = JSON.parse(
-                JSON.stringify(accountInfos)
-            );
+            let mutableAccountInfos = JSON.parse(JSON.stringify(accountInfos));
 
             mutableImportNames.mnemonics = mutableImportNames.mnemonics.filter(
                 (mnemonicName: string) => mnemonicName !== name
             );
 
             mutableAccountInfos = mutableAccountInfos.filter(
-                (accountInfo: AccountInfo) => accountInfo.importedMnemonicName !== name
+                (accountInfo: AccountInfo) =>
+                    accountInfo.importedMnemonicName !== name
             );
 
             await setEncrypted({
@@ -445,39 +449,43 @@ export const deleteImportedMnemonic = createAsyncThunk(
                 session: false,
                 strong: false,
             });
-            
+
             await deleteEncrypted({
                 key: `importedMnemonic${name ?? ''}`,
                 session: false,
                 strong: true,
                 passphrase,
-            });            
+            });
+
+            return name;
         }
+
+        return null;
     }
 );
 
-export const deletePrivateKey = createAsyncThunk(
-    'account/deletePrivateKey',
+export const deleteImportedPrivateKey = createAsyncThunk(
+    'account/deleteImportedPrivateKey',
     async (
         { name }: { name: string },
         { getState }
-    ): Promise<void> => {
+    ): Promise<string | null> => {
         const {
             account: { passphrase, importNames, accountInfos },
         } = getState() as RootState;
 
         if (passphrase) {
             const mutableImportNames = JSON.parse(JSON.stringify(importNames));
-            let mutableAccountInfos = JSON.parse(
-                JSON.stringify(accountInfos)
-            );
+            let mutableAccountInfos = JSON.parse(JSON.stringify(accountInfos));
 
-            mutableImportNames.mnemonics = mutableImportNames.privateKeys.filter(
-                (privateKey: string) => privateKey !== name
-            );
+            mutableImportNames.mnemonics =
+                mutableImportNames.privateKeys.filter(
+                    (privateKey: string) => privateKey !== name
+                );
 
             mutableAccountInfos = mutableAccountInfos.filter(
-                (accountInfo: AccountInfo) => accountInfo.importedPrivateKeyName !== name
+                (accountInfo: AccountInfo) =>
+                    accountInfo.importedPrivateKeyName !== name
             );
 
             await setEncrypted({
@@ -494,14 +502,18 @@ export const deletePrivateKey = createAsyncThunk(
                 session: false,
                 strong: false,
             });
-            
+
             await deleteEncrypted({
                 key: `importedPrivateKey${name ?? ''}`,
                 session: false,
                 strong: true,
                 passphrase,
-            });            
+            });
+
+            return name;
         }
+
+        return null;
     }
 );
 
@@ -542,7 +554,6 @@ export const saveAccountInfos = createAsyncThunk(
             session: false,
             strong: false,
         });
-
         return accountInfos;
     }
 );
@@ -994,15 +1005,6 @@ const accountSlice = createSlice({
         setEmail: (state, action: PayloadAction<string | null>) => {
             state.email = action.payload;
         },
-        saveImportedMnemonic: (state, action: PayloadAction<string | null>) => {
-            state.importNames.mnemonics.push(action.payload || '');
-        },
-        saveImportedPrivateKey: (
-            state,
-            action: PayloadAction<string | null>
-        ) => {
-            state.importNames.privateKeys.push(action.payload || '');
-        },
         lockWalletUI: (state, action: PayloadAction<boolean>) => {
             if (action.payload) {
                 state.authentication = null;
@@ -1091,6 +1093,29 @@ const accountSlice = createSlice({
             )
             .addCase(saveExcludedDappsKeys.fulfilled, (state, action) => {
                 state.excludedDappsKeys = action.payload;
+            })
+            .addCase(saveImportedMnemonic.fulfilled, (state, action) => {
+                state.importNames.mnemonics.push(action.payload || '');
+            })
+            .addCase(saveImportedPrivateKey.fulfilled, (state, action) => {
+                state.importNames.privateKeys.push(action.payload || '');
+            })
+            .addCase(deleteImportedMnemonic.fulfilled, (state, action) => {
+                if (action.payload) {
+                    state.importNames.mnemonics =
+                        state.importNames.mnemonics.filter(
+                            (mnemonicName) => mnemonicName !== action.payload
+                        );
+                }
+            })
+            .addCase(deleteImportedPrivateKey.fulfilled, (state, action) => {
+                if (action.payload) {
+                    state.importNames.privateKeys =
+                        state.importNames.privateKeys.filter(
+                            (privateKeyName) =>
+                                privateKeyName !== action.payload
+                        );
+                }
             }),
 });
 
