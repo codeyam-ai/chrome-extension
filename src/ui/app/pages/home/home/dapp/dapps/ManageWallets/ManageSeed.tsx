@@ -51,21 +51,28 @@ const ManageSeed = () => {
                 (a, b) =>
                     (b.importedMnemonicIndex ?? 0) -
                     (a.importedMnemonicIndex ?? 0)
-            )?.[0]?.index ?? -1) + 1;
+            )?.[0]?.importedMnemonicIndex ?? -1) + 1;
         const keypair = keypairVault.addKeyPair(nextIndex);
 
         const address = keypair.getPublicKey().toSuiAddress();
 
         const mutableAccountInfos = JSON.parse(JSON.stringify(accountInfos));
         mutableAccountInfos.push({
-            index: (baseIndex * 10000) + nextIndex,
+            index: baseIndex * 10000 + nextIndex,
             address,
             importedMnemonicName: name,
             importedMnemonicIndex: nextIndex,
         });
 
         await dispatch(saveAccountInfos(mutableAccountInfos));
-    }, [mnemonic, name, mnemonics, relevantAccountInfos, accountInfos, dispatch]);
+    }, [
+        mnemonic,
+        name,
+        mnemonics,
+        relevantAccountInfos,
+        accountInfos,
+        dispatch,
+    ]);
 
     return (
         <div className="p-6 gap-6 flex flex-col items-center">

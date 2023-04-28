@@ -1,5 +1,5 @@
 import { CheckCircleIcon, PencilIcon } from '@heroicons/react/24/solid';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
@@ -42,6 +42,21 @@ const WalletButton = ({
         navigate(editWalletUrl);
     }, [navigate, editWalletUrl]);
 
+    const name = useMemo(() => {
+        if (wallet.name) return wallet.name;
+        if (
+            wallet.importedMnemonicName !== undefined &&
+            wallet.importedMnemonicIndex !== undefined
+        ) {
+            return `${wallet.importedMnemonicName} ${
+                wallet.importedMnemonicIndex + 1
+            }`;
+        }
+        if (wallet.importedPrivateKeyName) return wallet.importedPrivateKeyName;
+
+        return '';
+    }, [wallet]);
+
     return (
         <div
             data-testid={`wallet${wallet.index + 1}`}
@@ -56,12 +71,7 @@ const WalletButton = ({
                     emojiSizeInPx={22}
                 />
                 <div className="flex flex-col text-left" title={wallet.address}>
-                    <BodyLarge>
-                        {wallet.name ||
-                            `Wallet${
-                                wallet.index > 0 ? ' ' + wallet.index + 1 : ''
-                            }`}
-                    </BodyLarge>
+                    <BodyLarge>{name}</BodyLarge>
                     <Body isTextColorMedium>{shortenedAddress}</Body>
                 </div>
             </div>
