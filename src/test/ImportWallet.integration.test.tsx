@@ -9,7 +9,7 @@ describe('Importing a wallet using a seed phrase', () => {
     beforeEach(() => {
         mockchain = new Mockchain();
         mockchain.mockCommonCalls();
-        mockchain.mockSuiObjects();
+        mockchain.mockSuiObjects({ suiBalance: 40000000000 });
     });
 
     test('Entire flow works', async () => {
@@ -81,5 +81,6 @@ describe('Importing a wallet using a seed phrase', () => {
 
         await userEvent.click(screen.getByTestId('submit'));
         await screen.findByText('Wallet Set Up');
+        await screen.findByText('40');
     }
 });
