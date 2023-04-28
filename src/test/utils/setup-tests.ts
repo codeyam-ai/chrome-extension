@@ -120,6 +120,8 @@ process.env.EXPLORER_URL_DEVNET = 'http://www.explorer.sui.io/';
 
 process.env.EXPLORER_URL_TESTNET = 'http://www.explorer.sui.io/';
 
+process.env.MOONPAY_TEST_API_KEY = 'pk_test_8S6mtnLjTUJf4PWM2Ts5lhA08g12P';
+
 nock('https://cdn.growthbook.io')
     .persist()
     .get(`/api/features/test`)

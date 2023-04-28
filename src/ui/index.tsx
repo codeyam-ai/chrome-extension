@@ -68,7 +68,11 @@ function renderApp() {
             window.close();
         },
         heartbeat: makeHeartbeat(),
-        featureFlags: { showUsd: false, showWipFeatures: isDevMode() },
+        featureFlags: {
+            showUsd: false,
+            showWipFeatures: isDevMode(),
+            showMoonpayOnboarding: false,
+        },
     };
 
     root.render(

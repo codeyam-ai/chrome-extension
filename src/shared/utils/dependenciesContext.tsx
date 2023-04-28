@@ -11,6 +11,7 @@ export interface Heartbeat {
 export interface FeatureFlags {
     showUsd: boolean;
     showWipFeatures: boolean;
+    showMoonpayOnboarding: boolean;
 }
 
 export interface Dependencies {

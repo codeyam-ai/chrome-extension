@@ -29,7 +29,7 @@ function TokensPage() {
                     title="You have no tokens yet"
                     subtitle="This is where your tokens will appear..."
                     linkText="Buy Tokens"
-                    linkUrl="/home"
+                    linkUrl="/home/buy"
                     internal={true}
                 />
             ) : (
