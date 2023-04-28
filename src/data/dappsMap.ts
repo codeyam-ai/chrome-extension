@@ -360,9 +360,10 @@ const dappsMap: Map<string, DappData> = new Map([
             id: 'e15d733b-d62b-41f4-a3cf-6bbd256881f2',
             image: kriya,
             title: 'KriyaDEX',
-            description: 'Decentralized Exchange',
+            description: 'Kriya is building institutional-grade infra for on-chain trading. The current product suite includes Kriya Swap: a spot AMM with a native bridge, KriyaDEX: an orderbook-based perp DEX where users can trade with 20x leverage, auto cross-margined. More features like OTC and options trading launching soon!',
             urls: {
-                [NetworkName.DEVNET]: 'https://www.kriya.finance/',
+                [NetworkName.DEVNET]: 'https://app.kriya.finance',
+                [NetworkName.TESTNET]: 'https://app.kriya.finance',
             },
             tags: [TagName.FINANCE],
         } as DappData,
