@@ -18,14 +18,13 @@ const AutoLockTimeoutForm = () => {
     const [timeoutField] = useField('timeout');
 
     return (
-        <Form>
+        <Form className="flex flex-col gap-3 items-center">
             <Input
                 {...timeoutField}
                 type="number"
                 label="Auto Lock Timeout"
                 data-testid="timeout-input"
                 required={true}
-                className="!px-10 !pb-[128px]"
                 autoFocus
             />
             <Button buttonStyle="primary" type="submit" removeContainerPadding>

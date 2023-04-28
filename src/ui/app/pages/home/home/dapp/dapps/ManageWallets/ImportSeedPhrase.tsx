@@ -17,19 +17,23 @@ const ImportSeedPhrase = () => {
     const save = useCallback(async () => {
         await dispatch(createMnemonic({ existingMnemonic: seedPhrase, name }));
         // dispatch(setMnemonic(formattedMnemonic));
-        // navigate('/initialize/import/confirm');
-    }, []);
+        navigate('/home/manage-wallets/manage-seed?name=' + name);
+    }, [dispatch, name, navigate, seedPhrase]);
 
+    console.log('seedPhrase', seedPhrase, name);
     return (
         <div className="flex flex-col gap-6 py-6">
             <NameForm nameFor="seed phrase" name={name} onChange={setName} />
             <SeedPhraseForm onChange={setSeedPhrase} />
-            <Button
-                disabled={!seedPhrase || name.length === 0}
-                removeContainerPadding
-            >
-                Save
-            </Button>
+            <div className="flex justify-center">
+                <Button
+                    disabled={!seedPhrase || name.length === 0}
+                    removeContainerPadding
+                    onClick={save}
+                >
+                    Save
+                </Button>
+            </div>
         </div>
     );
 };

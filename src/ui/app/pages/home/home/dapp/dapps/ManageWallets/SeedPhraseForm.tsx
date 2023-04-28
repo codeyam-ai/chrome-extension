@@ -74,22 +74,20 @@ const SeedPhraseForm = ({
         return words.length === 12;
     }, [words]);
 
-    const onSubmit = useCallback(
-        async (e: FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-            let mnemonic = '';
-            for (const word of words) {
-                mnemonic = mnemonic + word + ' ';
-            }
-            const formattedMnemonic = normalizeMnemonics(mnemonic.trim());
-            if (!validateMnemonics(formattedMnemonic)) {
-                setError(true);
-                return;
-            }
-            onChange(formattedMnemonic);
-        },
-        [onChange, words]
-    );
+    useEffect(() => {
+        if (!areAllWordsChosen) return;
+
+        let mnemonic = '';
+        for (const word of words) {
+            mnemonic = mnemonic + word + ' ';
+        }
+        const formattedMnemonic = normalizeMnemonics(mnemonic.trim());
+        if (!validateMnemonics(formattedMnemonic)) {
+            setError(true);
+            return;
+        }
+        onChange(formattedMnemonic);
+    }, [areAllWordsChosen, onChange, words]);
 
     const updateWord = useCallback(
         (index: number, newWord: string) => {
@@ -116,7 +114,7 @@ const SeedPhraseForm = ({
     }, []);
 
     return (
-        <form onSubmit={onSubmit} className="flex flex-col gap-6 px-6">
+        <form className="flex flex-col gap-6 px-6">
             <Body className="px-6">
                 Enter the 12-word recovery phrase to import your wallet.
             </Body>
