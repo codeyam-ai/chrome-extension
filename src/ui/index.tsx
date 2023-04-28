@@ -71,7 +71,6 @@ function renderApp() {
         featureFlags: {
             showUsd: false,
             showWipFeatures: isDevMode(),
-            showMoonpayOnboarding: false,
         },
     };
 

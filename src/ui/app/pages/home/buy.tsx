@@ -30,7 +30,7 @@ export default function MoonpayOnboarding() {
             ? encodeURIComponent('#9C78F7')
             : encodeURIComponent('#6D28D9');
 
-    return featureFlags.showMoonpayOnboarding ? (
+    return featureFlags.showWipFeatures ? (
         <iframe
             title="Moonpay Onboarding: Buy Sui"
             allow="accelerometer; autoplay; camera; gyroscope; payment"

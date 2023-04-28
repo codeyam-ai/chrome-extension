@@ -41,7 +41,6 @@ describe('Buy coin flow', () => {
                 ...makeTestDeps(),
                 featureFlags: {
                     showUsd: false,
-                    showMoonpayOnboarding: false,
                     showWipFeatures: true,
                 },
             },
@@ -56,7 +55,6 @@ describe('Buy coin flow', () => {
                 ...makeTestDeps(),
                 featureFlags: {
                     showUsd: false,
-                    showMoonpayOnboarding: true,
                     showWipFeatures: true,
                 },
             },

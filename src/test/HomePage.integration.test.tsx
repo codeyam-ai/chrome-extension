@@ -47,7 +47,6 @@ describe('Rendering the Home page', () => {
                     featureFlags: {
                         ...testDeps.featureFlags,
                         showUsd: false,
-                        showMoonpayOnboarding: false,
                     },
                 },
             });

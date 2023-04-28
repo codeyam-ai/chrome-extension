@@ -5,7 +5,6 @@ export const makeTestDeps = () => {
         featureFlags: {
             showUsd: true,
             showWipFeatures: true,
-            showMoonpayOnboarding: true,
         },
     };
 };
