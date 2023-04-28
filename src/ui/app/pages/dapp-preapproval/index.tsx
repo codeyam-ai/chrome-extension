@@ -111,7 +111,7 @@ const PermissionInput = ({
                         </Tooltip>
                     )}
                 </div>
-                <div className="flex justify-end items-center bg-ethos-pale-purple text-base pl-3 text-right border rounded-md w-[150px]">
+                <div className="flex justify-end items-center bg-ethos-pale-purple dark:bg-ethos-dark-background-secondary text-base pl-3 text-right border rounded-md w-[150px]">
                     <input
                         onChange={_handleChange}
                         value={value}
@@ -344,7 +344,7 @@ export function DappPreapprovalPage() {
                         </div>
                     ) : (
                         <div className="flex flex-col gap-3">
-                            <div className="flex flex-col justify-center items-center gap-2 bg-ethos-pale-purple mx-6 p-3 rounded-xl">
+                            <div className="flex flex-col justify-center items-center gap-2 bg-ethos-pale-purple dark:bg-ethos-dark-background-secondary mx-6 p-3 rounded-xl">
                                 <Body isTextColorMedium>
                                     Transactions can only {modifier} this NFT:
                                 </Body>
