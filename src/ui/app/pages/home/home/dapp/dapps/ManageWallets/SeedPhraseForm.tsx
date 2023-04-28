@@ -4,11 +4,10 @@ import {
     normalizeMnemonics,
     validateMnemonics,
 } from '_src/shared/cryptography/mnemonics';
-import Button from '_src/ui/app/shared/buttons/Button';
 import HideShowToggle from '_src/ui/app/shared/buttons/HideShowToggle';
 import Body from '_src/ui/app/shared/typography/Body';
 
-import type { ClipboardEvent, FormEvent } from 'react';
+import type { ClipboardEvent } from 'react';
 
 const idPrefix = 'word-';
 

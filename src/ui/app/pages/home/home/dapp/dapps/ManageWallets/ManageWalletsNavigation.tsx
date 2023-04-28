@@ -2,6 +2,7 @@ import { Outlet, Route, Routes } from 'react-router-dom';
 
 import ImportPrivateKey from './ImportPrivateKey';
 import ImportSeedPhrase from './ImportSeedPhrase';
+import ManageSeed from './ManageSeed';
 import ManageWallets from './ManageWallets';
 import { DappWrapper } from '../../DappWrapper';
 
@@ -13,6 +14,8 @@ function CustomizeNavigation() {
                     <Route path="/" element={<ManageWallets />} />
                     <Route path="/import-seed" element={<ImportSeedPhrase />} />
                     <Route path="/import-key" element={<ImportPrivateKey />} />
+                    <Route path="/manage-seed" element={<ManageSeed />} />
+                    <Route path="/manage-key" element={<ManageSeed />} />
                 </Routes>
                 <Outlet />
             </div>

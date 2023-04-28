@@ -1,8 +1,13 @@
+import { useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
 import Header from '_src/ui/app/shared/typography/Header';
 
 const ManageWallets = () => {
+    const { mnemonics, privateKeys } = useAppSelector(
+        (state) => state.account.importNames
+    );
+
     return (
         <div className="flex flex-col gap-6 py-6">
             <div className="px-6">
@@ -13,9 +18,15 @@ const ManageWallets = () => {
             </div>
             <div className="mx-6 p-6 flex flex-col gap-3 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-xl">
                 <Header>Seed & Recovery Phrases</Header>
-                <div className="mx-6 p-3 rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
-                    No imported seed phrases yet.
-                </div>
+                {mnemonics.length > 0 ? (
+                    <div className="mx-6 p-3 rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
+                        {mnemonics.length} imported seed phrases.
+                    </div>
+                ) : (
+                    <div className="mx-6 p-3 rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
+                        No imported seed phrases yet.
+                    </div>
+                )}
                 <Button
                     buttonStyle="primary"
                     removeContainerPadding
@@ -26,9 +37,15 @@ const ManageWallets = () => {
             </div>
             <div className="mx-6 p-6 flex flex-col gap-3 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-xl">
                 <Header>Private Keys</Header>
-                <div className="mx-6 p-3 rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
-                    No imported private keys yet.
-                </div>
+                {mnemonics.length > 0 ? (
+                    <div className="mx-6 p-3 rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
+                        {privateKeys.length} imported private keys.
+                    </div>
+                ) : (
+                    <div className="mx-6 p-3 rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
+                        No imported private keys yet.
+                    </div>
+                )}
                 <Button
                     buttonStyle="primary"
                     removeContainerPadding
