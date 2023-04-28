@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 
 import { fakeAlarms } from '_src/test/utils/fake-browser/fake-browser';
 import { Mockchain } from '_src/test/utils/mockchain';
@@ -34,7 +34,9 @@ describe('Rendering the Tokens page', () => {
 
         // this sends the heartbeat to the background task
         fakeHeartbeat.capturedListener && fakeHeartbeat.capturedListener();
-        expect(fakeAlarms.names).toContain('lockAlarm');
+        await waitFor(() => {
+            expect(fakeAlarms.names).toContain('lockAlarm');
+        });
 
         // now invoke the alarm, which should trigger the UI to lock
         act(() => {

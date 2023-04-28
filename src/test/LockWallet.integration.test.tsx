@@ -7,6 +7,10 @@ import {
     simulateEmailUser,
     simulateMnemonicUser,
 } from '_src/test/utils/storage';
+import { makeTestDeps } from './utils/test-dependencies';
+import { fakeAlarms } from './utils/fake-browser/fake-browser';
+import Browser from 'webextension-polyfill';
+import { AUTO_LOCK_TIMEOUT_KEY } from '_src/shared/constants';
 
 describe('Lock Wallet Page', () => {
     let mockchain: Mockchain;
@@ -31,7 +35,7 @@ describe('Lock Wallet Page', () => {
             const lockOption = await screen.findByText('Lock Ethos');
             await userEvent.click(lockOption);
 
-            const lockWalletButton = await screen.findByText('Lock Wallet');
+            const lockWalletButton = await screen.findByText('Lock Wallet Now');
             await userEvent.click(lockWalletButton);
 
             await screen.findAllByText('Sign in with Email');
@@ -43,7 +47,22 @@ describe('Lock Wallet Page', () => {
             simulateMnemonicUser();
         });
 
+        test('shows the currently set timeout', async () => {
+            Browser.storage.local.set({ [AUTO_LOCK_TIMEOUT_KEY]: 6 });
+            await renderApp();
+            await screen.findByText('Get started with Sui');
+            const settingsButton = await screen.findByTestId('settings-toggle');
+            await userEvent.click(settingsButton);
+
+            const lockOption = await screen.findByText('Lock Ethos');
+            await userEvent.click(lockOption);
+
+            await screen.findByText(/6 minutes/);
+        });
+
         test('allows user to set the lock timeout', async () => {
+            // - styling
+            // - figure out max and min values and validate both in the input and in the background
             await renderApp();
             await screen.findByText('Get started with Sui');
             const settingsButton = await screen.findByTestId('settings-toggle');
@@ -53,18 +72,20 @@ describe('Lock Wallet Page', () => {
             await userEvent.click(lockOption);
 
             await screen.findByText(/15 minutes/);
-            const changeAutolockButton = await screen.findByText(
-                'Change Auto-Lock time'
+            const editAutolockLink = await screen.findByText(
+                'Edit Auto-Lock time'
             );
-            await userEvent.click(changeAutolockButton);
+            await userEvent.click(editAutolockLink);
 
-            await screen.findByText('HI');
+            const timeoutInput = await screen.findByTestId('timeout-input');
+            await userEvent.clear(timeoutInput);
+            await userEvent.type(timeoutInput, '7');
+            await userEvent.click(await screen.findByText('Save'));
 
-            // const timeoutInput = await screen.findByText('timeout-input');
-            // await userEvent.type(timeoutInput, '7');
-            // await userEvent.click(await screen.findByText('Save'));
-            //
-            // await screen.findByText('7 minutes');
+            await screen.findByText(/7 minutes/);
+
+            expect(fakeAlarms.all).toHaveLength(1);
+            expect(fakeAlarms.all[0].delayInMinutes).toEqual(7);
         });
 
         test('allows user to lock the wallet manually', async () => {
@@ -76,7 +97,7 @@ describe('Lock Wallet Page', () => {
             const lockOption = await screen.findByText('Lock Ethos');
             await userEvent.click(lockOption);
 
-            const lockWalletButton = await screen.findByText('Lock Wallet');
+            const lockWalletButton = await screen.findByText('Lock Wallet Now');
             await userEvent.click(lockWalletButton);
 
             await screen.findAllByText('Unlock Wallet');

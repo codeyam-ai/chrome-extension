@@ -45,7 +45,7 @@ export const useFavoriteDapps = () => {
     const favoriteDapps: DappData[] = useMemo(() => {
         let projectNFTs: Record<string, DappData> = {};
         if (nfts) {
-            projectNFTs = getProjectNftsFromAllNfts(nfts);
+            projectNFTs = getProjectNftsFromAllNfts(nfts, selectedApiEnv);
         }
 
         const allFavoriteDappsKeys = [...favoriteDappsKeys].filter(
@@ -64,9 +64,6 @@ export const useFavoriteDapps = () => {
                     return projectNFTs[key];
                 }
 
-                if (!dapp?.urls[selectedApiEnv]) {
-                    return undefined;
-                }
                 return dapp;
             })
             .filter(Boolean) as DappData[];
@@ -75,7 +72,7 @@ export const useFavoriteDapps = () => {
     const favoriteNfts: DappData[] = useMemo(() => {
         let projectNFTs: Record<string, DappData> = {};
         if (nfts) {
-            projectNFTs = getProjectNftsFromAllNfts(nfts);
+            projectNFTs = getProjectNftsFromAllNfts(nfts, selectedApiEnv);
         }
         return Object.keys(projectNFTs)
             .filter((nftKey) => {
@@ -85,7 +82,7 @@ export const useFavoriteDapps = () => {
                 );
             })
             .map((key) => projectNFTs[key]);
-    }, [nfts, excludedDappsKeys, favoriteDappsKeys]);
+    }, [nfts, selectedApiEnv, excludedDappsKeys, favoriteDappsKeys]);
 
     const allFavorites: DappData[] = useMemo(() => {
         return [...favoriteNfts, ...favoriteDapps].filter(
@@ -114,7 +111,10 @@ export const useFavoriteDapps = () => {
     };
 };
 
-export const getProjectNftsFromAllNfts = (allNfts: SuiObjectData[]) => {
+export const getProjectNftsFromAllNfts = (
+    allNfts: SuiObjectData[],
+    selectedApiEnv?: string
+) => {
     return allNfts
         .map((nft) => ({ ...(getDisplay(nft.display) ?? {}) }))
         .filter((display) => {
@@ -142,8 +142,8 @@ export const getProjectNftsFromAllNfts = (allNfts: SuiObjectData[]) => {
                     description: display.project_description,
                     image: display.project_image_url,
                     urls: {
-                        [NetworkName.DEVNET]: display.project_url,
-                        [NetworkName.TESTNET]: display.project_url,
+                        [selectedApiEnv ?? NetworkName.TESTNET]:
+                            display.project_url,
                     },
                     tags: [],
                 },
