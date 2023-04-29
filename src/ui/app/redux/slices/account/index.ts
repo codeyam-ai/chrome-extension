@@ -392,13 +392,14 @@ export const saveImportedPrivateKey = createAsyncThunk(
         const {
             account: { passphrase, importNames },
         } = getState() as RootState;
+        const mutableImportNames = JSON.parse(JSON.stringify(importNames));
 
         if (passphrase) {
             if (name) {
-                importNames.privateKeys.push(name);
+                mutableImportNames.privateKeys.push(name);
                 await setEncrypted({
                     key: `importNames`,
-                    value: JSON.stringify(importNames),
+                    value: JSON.stringify(mutableImportNames),
                     session: false,
                     strong: false,
                     passphrase,

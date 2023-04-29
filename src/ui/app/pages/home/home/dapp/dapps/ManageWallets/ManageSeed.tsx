@@ -15,6 +15,8 @@ import Button from '_src/ui/app/shared/buttons/Button';
 import Header from '_src/ui/app/shared/typography/Header';
 import WalletList from '_src/ui/app/shared/wallet-list/WalletList';
 
+const IMPORTED_SEED_BUFFER = 100000;
+
 const ManageSeed = () => {
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);
     const [mnemonic, setMnemonic] = useState<string | undefined>();
@@ -64,7 +66,7 @@ const ManageSeed = () => {
         const mutableAccountInfos: AccountInfo[] = JSON.parse(
             JSON.stringify(accountInfos)
         );
-        const index = (baseIndex + 1) * 10000 + nextIndex;
+        const index = (baseIndex + 1) * IMPORTED_SEED_BUFFER + nextIndex;
         mutableAccountInfos.push({
             index,
             address,
