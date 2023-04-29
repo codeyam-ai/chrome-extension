@@ -281,6 +281,7 @@ class Transactions {
         options?: SuiSignAndExecuteTransactionBlockInput['options'];
     }) {
         const activeSeed = await this.getActiveSeed();
+
         if (activeSeed.address !== address) {
             throw new Error('Requested address for transaction is not active.');
         }
@@ -450,6 +451,7 @@ class Transactions {
             session: true,
             strong: false,
         });
+
         return JSON.parse(activeSeedString || '[]');
     }
 

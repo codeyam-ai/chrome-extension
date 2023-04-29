@@ -222,7 +222,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                             address:
                                 importedKeyPairVault.getAddress(index) ?? '',
                             seed: (
-                                keypairVault.getSeed(index) || ''
+                                importedKeyPairVault.getSeed(index) || ''
                             ).toString(),
                         };
                     }
