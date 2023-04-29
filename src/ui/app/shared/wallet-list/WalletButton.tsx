@@ -16,12 +16,14 @@ interface WalletButtonProps {
     wallet: AccountInfo;
     isActive: boolean;
     isWalletEditing: boolean;
+    destination?: string;
 }
 
 const WalletButton = ({
     wallet,
     isActive,
     isWalletEditing,
+    destination,
 }: WalletButtonProps) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -30,14 +32,29 @@ const WalletButton = ({
 
     const switchToThisWallet = useCallback(async () => {
         if (isActive) {
-            navigate(-1);
+            if (destination) {
+                navigate(destination);
+            } else {
+                navigate(-1);
+            }
             return;
         }
         if (isWalletEditing) return;
         await dispatch(clearForNetworkOrWalletSwitch());
         await dispatch(saveActiveAccountIndex(wallet.index));
-        navigate(-1);
-    }, [wallet.index, isWalletEditing, isActive, dispatch, navigate]);
+        if (destination) {
+            navigate(destination);
+        } else {
+            navigate(-1);
+        }
+    }, [
+        isActive,
+        isWalletEditing,
+        dispatch,
+        wallet.index,
+        destination,
+        navigate,
+    ]);
 
     const editThisWallet = useCallback(() => {
         navigate(editWalletUrl);

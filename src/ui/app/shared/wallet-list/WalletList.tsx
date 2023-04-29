@@ -8,6 +8,7 @@ export type WalletListProps = {
     wallets: AccountInfo[];
     activeAccountIndex?: number;
     isWalletEditing: boolean;
+    destination?: string;
 };
 
 const WalletList = ({
@@ -16,6 +17,7 @@ const WalletList = ({
     wallets,
     activeAccountIndex,
     isWalletEditing,
+    destination,
 }: WalletListProps) => {
     return (
         <div
@@ -38,6 +40,7 @@ const WalletList = ({
                             wallet={wallet}
                             isActive={isActive}
                             isWalletEditing={isWalletEditing}
+                            destination={destination}
                         />
                     </div>
                 );

@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import KeypairVault from '_src/ui/app/KeypairVault';
+import KeypairVault, { type AccountInfo } from '_src/ui/app/KeypairVault';
 import Loading from '_src/ui/app/components/loading';
+import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
+import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import {
     deleteImportedMnemonic,
@@ -59,12 +61,18 @@ const ManageSeed = () => {
 
         const address = keypair.getPublicKey().toSuiAddress();
 
-        const mutableAccountInfos = JSON.parse(JSON.stringify(accountInfos));
+        const mutableAccountInfos: AccountInfo[] = JSON.parse(
+            JSON.stringify(accountInfos)
+        );
+        const index = (baseIndex + 1) * 10000 + nextIndex;
         mutableAccountInfos.push({
-            index: (baseIndex + 1) * 10000 + nextIndex,
+            index,
             address,
             importedMnemonicName: name,
             importedMnemonicIndex: nextIndex,
+            color: getNextWalletColor(index),
+            emoji: getNextEmoji(index),
+            name: `${name} ${nextIndex + 1}`,
         });
 
         await dispatch(saveAccountInfos(mutableAccountInfos));
@@ -102,13 +110,14 @@ const ManageSeed = () => {
                 hasTopPadding
                 wallets={relevantAccountInfos}
                 isWalletEditing={false}
+                destination="/home"
             />
             <Button
                 buttonStyle="primary"
                 removeContainerPadding
                 onClick={createAddress}
             >
-                Create New Wallet Address
+                Load Next Wallet Address
             </Button>
             <Button
                 buttonStyle="secondary"
