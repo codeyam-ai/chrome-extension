@@ -471,10 +471,7 @@ export const getImportedPrivateKey = createAsyncThunk(
 
 export const deleteImportedMnemonic = createAsyncThunk(
     'account/deleteImportedMnemonic',
-    async (
-        { name }: { name: string },
-        { getState }
-    ): Promise<string | null> => {
+    async ({ name }: { name: string }, { getState }) => {
         const {
             account: { passphrase, importNames, accountInfos },
         } = getState() as RootState;
@@ -500,13 +497,6 @@ export const deleteImportedMnemonic = createAsyncThunk(
                 passphrase,
             });
 
-            await setEncrypted({
-                key: 'accountInfos',
-                value: JSON.stringify(mutableAccountInfos),
-                session: false,
-                strong: false,
-            });
-
             await deleteEncrypted({
                 key: `importedMnemonic${name ?? ''}`,
                 session: false,
@@ -514,7 +504,17 @@ export const deleteImportedMnemonic = createAsyncThunk(
                 passphrase,
             });
 
-            return name;
+            await setEncrypted({
+                key: 'accountInfos',
+                value: JSON.stringify(mutableAccountInfos),
+                session: false,
+                strong: false,
+            });
+
+            return {
+                importNames: mutableImportNames,
+                accountInfos: mutableAccountInfos,
+            };
         }
 
         return null;
@@ -523,10 +523,7 @@ export const deleteImportedMnemonic = createAsyncThunk(
 
 export const deleteImportedPrivateKey = createAsyncThunk(
     'account/deleteImportedPrivateKey',
-    async (
-        { name }: { name: string },
-        { getState }
-    ): Promise<string | null> => {
+    async ({ name }: { name: string }, { getState }) => {
         const {
             account: { passphrase, importNames, accountInfos },
         } = getState() as RootState;
@@ -553,13 +550,6 @@ export const deleteImportedPrivateKey = createAsyncThunk(
                 passphrase,
             });
 
-            await setEncrypted({
-                key: 'accountInfos',
-                value: JSON.stringify(mutableAccountInfos),
-                session: false,
-                strong: false,
-            });
-
             await deleteEncrypted({
                 key: `importedPrivateKey${name ?? ''}`,
                 session: false,
@@ -567,7 +557,17 @@ export const deleteImportedPrivateKey = createAsyncThunk(
                 passphrase,
             });
 
-            return name;
+            await setEncrypted({
+                key: 'accountInfos',
+                value: JSON.stringify(mutableAccountInfos),
+                session: false,
+                strong: false,
+            });
+
+            return {
+                importNames: mutableImportNames,
+                accountInfos: mutableAccountInfos,
+            };
         }
 
         return null;
@@ -1159,19 +1159,14 @@ const accountSlice = createSlice({
             })
             .addCase(deleteImportedMnemonic.fulfilled, (state, action) => {
                 if (action.payload) {
-                    state.importNames.mnemonics =
-                        state.importNames.mnemonics.filter(
-                            (mnemonicName) => mnemonicName !== action.payload
-                        );
+                    state.importNames = action.payload.importNames;
+                    state.accountInfos = action.payload.accountInfos;
                 }
             })
             .addCase(deleteImportedPrivateKey.fulfilled, (state, action) => {
                 if (action.payload) {
-                    state.importNames.privateKeys =
-                        state.importNames.privateKeys.filter(
-                            (privateKeyName) =>
-                                privateKeyName !== action.payload
-                        );
+                    state.importNames = action.payload.importNames;
+                    state.accountInfos = action.payload.accountInfos;
                 }
             }),
 });
