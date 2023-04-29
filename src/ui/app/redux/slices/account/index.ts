@@ -323,7 +323,7 @@ export const saveImportedMnemonic = createAsyncThunk(
             });
         }
 
-        return mnemonic;
+        return name;
     }
 );
 
