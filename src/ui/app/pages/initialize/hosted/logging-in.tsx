@@ -26,11 +26,27 @@ const LoggingInPage = () => {
         const setAccessToken = async () => {
             let accessToken = (await getSession('accessToken')) as string;
             if (!accessToken) {
+                setTimeout(() => {
+                    setLoading(false);
+                    setAuthenticationSlow(true);
+                }, 1500);
                 accessToken = await iframe.listenForAccessToken();
+            }
+            if (!accessToken) {
+                setLoading(false);
+                setAuthenticationSlow(true);
             }
             Authentication.set(accessToken);
 
-            const accountInfos = await Authentication.getAccountInfos();
+            let accountInfos = await Authentication.getAccountInfos();
+
+            if (!accountInfos || accountInfos.length === 0) {
+                const newAccountInfo = await Authentication.createAccount(0);
+                if (newAccountInfo) {
+                    accountInfos = [newAccountInfo];
+                }
+            }
+
             if (accountInfos && accountInfos.length > 0) {
                 await dispatch(saveAccountInfos(accountInfos));
                 await dispatch(setAddress(accountInfos[0]?.address));

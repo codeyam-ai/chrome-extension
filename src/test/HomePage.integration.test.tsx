@@ -44,7 +44,10 @@ describe('Rendering the Home page', () => {
             renderApp({
                 dependencies: {
                     ...testDeps,
-                    featureFlags: { ...testDeps.featureFlags, showUsd: false },
+                    featureFlags: {
+                        ...testDeps.featureFlags,
+                        showUsd: false,
+                    },
                 },
             });
 

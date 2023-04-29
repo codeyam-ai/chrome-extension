@@ -121,7 +121,7 @@ const SendReceiveButtonGroup = ({
                             )}
                         </>
                     }
-                    buttonSecondaryTo={isBalanceZero ? '/receive' : sendUrl}
+                    buttonSecondaryTo={isBalanceZero ? '/home/buy' : sendUrl}
                     buttonSecondaryTestId={isBalanceZero ? 'buy' : 'send'}
                     buttonSecondaryChildren={
                         <>

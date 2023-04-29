@@ -8,7 +8,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 
 import useSizeWindow from './hooks/useSizeWindow';
 import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
-import BuyPage from './pages/home/buy';
+import MoonpayOnboarding from './pages/home/buy';
 import AddressBookNavigation from './pages/home/home/dapp/dapps/AddressBook/AddressBookNavigation';
 import CustomizeNavigation from './pages/home/home/dapp/dapps/Customize/CustomizeNavigation';
 import ManageWallets from './pages/home/home/dapp/dapps/ManageWallets/ManageWalletsNavigation';
@@ -104,6 +104,10 @@ const App = () => {
                             element={<StakingNavigation />}
                         />
                         <Route
+                            path="home/buy"
+                            element={<MoonpayOnboarding />}
+                        />
+                        <Route
                             path="home/manage-wallets/*"
                             element={<ManageWallets />}
                         />
@@ -154,7 +158,6 @@ const App = () => {
                             />
                         </Route>
                         <Route path="receive" element={<ReceivePage />} />
-                        <Route path="buy" element={<BuyPage />} />
                         <Route
                             path="tx/:txDigest"
                             element={<TransactionDetailsPage />}

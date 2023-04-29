@@ -2,11 +2,13 @@ import {
     ChatBubbleOvalLeftIcon,
     GlobeAltIcon,
 } from '@heroicons/react/24/solid';
-import { type ReactNode, useCallback, useState } from 'react';
-import AnimatedNumbers from 'react-animated-numbers';
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { useCallback, useState, type ReactNode, useEffect } from 'react';
 
 import ConfettiPop from '../../components/Confetti';
-import { useAppSelector } from '../../hooks';
+import { useAppDispatch, useAppSelector, useFormatCoin } from '../../hooks';
+import { accountAggregateBalancesSelector } from '../../redux/slices/account';
+import { fetchAllBalances } from '../../redux/slices/balances';
 import OnboardingButton from '../../shared/buttons/OnboardingButton';
 import Alert from '../../shared/feedback/Alert';
 import OnboardingCard from '../../shared/layouts/OnboardingCard';
@@ -60,23 +62,15 @@ const CompletePage = () => {
     const [hasUsedFaucet, setHasUsedFaucet] = useState(false);
     const [faucetCompletedSuccessfully, setFaucetCompletedSuccessfully] =
         useState(false);
-    const [suiAmount, setSuiAmount] = useState(0);
     const address = useAppSelector(({ account }) => account.address);
+    const balances = useAppSelector(accountAggregateBalancesSelector);
+    const mistBalance = balances[SUI_TYPE_ARG];
 
-    const generateCascadingAnimationConfig = useCallback(
-        (_: number, index: number) => {
-            return {
-                mass: 1,
-                tension: 230 * (index + 1),
-                friction: 140,
-            };
-        },
-        []
-    );
+    const [balanceFormatted] = useFormatCoin(mistBalance, SUI_TYPE_ARG);
+    const dispatch = useAppDispatch();
 
     const onFaucetClicked = useCallback(async () => {
         setHasUsedFaucet(true);
-        setSuiAmount(0.05);
 
         setTimeout(async () => {
             if (!faucetCompletedSuccessfully) {
@@ -100,7 +94,6 @@ const CompletePage = () => {
         setFaucetCompletedSuccessfully(true);
         if (result.status !== 201 && result.status !== 200) {
             setError(true);
-            setSuiAmount(0);
             return;
         }
     }, [address, faucetCompletedSuccessfully]);
@@ -131,22 +124,8 @@ const CompletePage = () => {
                 <SuiIcon width={50} height={50} color="black" />
             </div>
             <div className="flex flex-col gap-2 text-center">
-                <JumboTitle forceLightMode>
-                    {suiAmount === 0 && !error ? (
-                        '0'
-                    ) : (
-                        // https://www.npmjs.com/package/react-animated-numbers
-                        <div className="flex place-content-center place-items-center">
-                            <AnimatedNumbers
-                                includeComma
-                                fontStyle={{
-                                    textAlign: 'center',
-                                }}
-                                animateToNumber={suiAmount || 0}
-                                configs={generateCascadingAnimationConfig}
-                            />
-                        </div>
-                    )}
+                <JumboTitle data-testid="suiBalance" forceLightMode>
+                    {balanceFormatted}
                 </JumboTitle>
                 <Header isTextColorMedium forceLightMode>
                     Sui Balance
@@ -154,6 +133,10 @@ const CompletePage = () => {
             </div>
         </div>
     );
+
+    useEffect(() => {
+        dispatch(fetchAllBalances());
+    }, [dispatch]);
 
     return (
         <OnboardingCard
