@@ -532,7 +532,7 @@ export const deleteImportedPrivateKey = createAsyncThunk(
             const mutableImportNames = JSON.parse(JSON.stringify(importNames));
             let mutableAccountInfos = JSON.parse(JSON.stringify(accountInfos));
 
-            mutableImportNames.mnemonics =
+            mutableImportNames.privateKeys =
                 mutableImportNames.privateKeys.filter(
                     (privateKey: string) => privateKey !== name
                 );
@@ -1161,12 +1161,32 @@ const accountSlice = createSlice({
                 if (action.payload) {
                     state.importNames = action.payload.importNames;
                     state.accountInfos = action.payload.accountInfos;
+
+                    const activeAccountIndex = state.accountInfos.findIndex(
+                        (accountInfo) => accountInfo.address === state.address
+                    );
+
+                    if (activeAccountIndex === -1) {
+                        state.address = state.accountInfos[0]?.address || null;
+                        state.activeAccountIndex =
+                            state.accountInfos[0]?.index || 0;
+                    }
                 }
             })
             .addCase(deleteImportedPrivateKey.fulfilled, (state, action) => {
                 if (action.payload) {
                     state.importNames = action.payload.importNames;
                     state.accountInfos = action.payload.accountInfos;
+
+                    const activeAccountIndex = state.accountInfos.findIndex(
+                        (accountInfo) => accountInfo.address === state.address
+                    );
+
+                    if (activeAccountIndex === -1) {
+                        state.address = state.accountInfos[0]?.address || null;
+                        state.activeAccountIndex =
+                            state.accountInfos[0]?.index || 0;
+                    }
                 }
             }),
 });
