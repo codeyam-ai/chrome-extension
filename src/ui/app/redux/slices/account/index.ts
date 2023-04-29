@@ -358,7 +358,7 @@ export const saveImportedPrivateKey = createAsyncThunk(
             });
         }
 
-        return privateKey;
+        return name;
     }
 );
 
