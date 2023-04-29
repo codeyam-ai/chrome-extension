@@ -13,7 +13,9 @@ import {
 } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
+import CopyBody from '_src/ui/app/shared/typography/CopyBody';
 import Header from '_src/ui/app/shared/typography/Header';
+import Subheader from '_src/ui/app/shared/typography/Subheader';
 import WalletList from '_src/ui/app/shared/wallet-list/WalletList';
 
 const IMPORTED_SEED_BUFFER = 100000;
@@ -25,7 +27,27 @@ const ManageSeed = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const name = new URLSearchParams(location.search).get('name');
-    const { mnemonics } = useAppSelector(({ account }) => account.importNames);
+    const {
+        importNames: { mnemonics },
+        passphrase,
+    } = useAppSelector(({ account }) => account);
+    const [password, setPassword] = useState('');
+    const [showSeedPhrase, setShowSeedPhrase] = useState(false);
+
+    const handlePasswordChange = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            setPassword(e.target.value);
+        },
+        [setPassword]
+    );
+
+    const toggleShowSeedPhrase = useCallback(async () => {
+        if (passphrase !== password) {
+            return;
+        }
+
+        setShowSeedPhrase((prev) => !prev);
+    }, [passphrase, password]);
 
     const relevantAccountInfos = useMemo(() => {
         return accountInfos.filter(
@@ -133,6 +155,45 @@ const ManageSeed = () => {
                 >
                     Delete Seed Phrase
                 </Button>
+
+                <div className="m-3 border rounded-lg p-3 flex flex-col gap-3 items-center">
+                    <Subheader>Show Seed Phrase</Subheader>
+
+                    <Body>
+                        Enter your password to reveal this seed phrase. Be
+                        careful not to let anyone see it.
+                    </Body>
+
+                    <div className="flex items-center gap-3">
+                        <input
+                            type="password"
+                            placeholder="Enter password"
+                            className="border rounded-lg p-3"
+                            value={password}
+                            onChange={handlePasswordChange}
+                        />
+                        <Button
+                            buttonStyle="primary"
+                            onClick={toggleShowSeedPhrase}
+                            removeContainerPadding
+                            disabled={passphrase !== password}
+                        >
+                            Show
+                        </Button>
+                    </div>
+
+                    {showSeedPhrase && (
+                        <>
+                            <CopyBody txt={mnemonic ?? ''}>{mnemonic}</CopyBody>
+                            <Button
+                                buttonStyle="secondary"
+                                onClick={toggleShowSeedPhrase}
+                            >
+                                Hide
+                            </Button>
+                        </>
+                    )}
+                </div>
             </Loading>
         </div>
     );
