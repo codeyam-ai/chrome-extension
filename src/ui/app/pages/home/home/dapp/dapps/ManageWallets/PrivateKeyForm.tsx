@@ -25,7 +25,7 @@ const PrivateKeyForm = ({
                 value={privateKey}
                 onChange={handleChange}
                 placeholder="Private Key (in hex form)"
-                className="w-10/12 mx-auto rounded-lg"
+                className="w-10/12 mx-auto rounded-lg text-sm"
             />
         </form>
     );

@@ -19,12 +19,12 @@ const ManageWallets = () => {
             <div className="mx-6 p-6 flex flex-col gap-3 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-xl">
                 <Header>Seed & Recovery Phrases</Header>
                 {mnemonics.length > 0 ? (
-                    <div className="p-3 flex gap-3 flex-wrap rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
+                    <div className="p-3 flex flex-col gap-1 flex-wrap rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
                         {mnemonics.map((mnemonic, index) => (
                             <Button
                                 key={`${mnemonic}-${index}`}
-                                buttonStyle="primary"
-                                removeContainerPadding
+                                removeContainerPadding={true}
+                                buttonStyle="secondary"
                                 to={`/home/manage-wallets/manage-seed?name=${mnemonic}`}
                             >
                                 {mnemonic}
@@ -47,8 +47,17 @@ const ManageWallets = () => {
             <div className="mx-6 p-6 flex flex-col gap-3 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-xl">
                 <Header>Private Keys</Header>
                 {privateKeys.length > 0 ? (
-                    <div className="mx-6 p-3 rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
-                        {privateKeys.length} imported private keys.
+                    <div className="p-3 flex flex-col gap-1 flex-wrap rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
+                        {privateKeys.map((privateKey, index) => (
+                            <Button
+                                key={`${privateKey}-${index}`}
+                                removeContainerPadding={true}
+                                buttonStyle="secondary"
+                                to={`/home/manage-wallets/manage-private-key?name=${privateKey}`}
+                            >
+                                {privateKey}
+                            </Button>
+                        ))}
                     </div>
                 ) : (
                     <div className="mx-6 p-3 rounded-xl bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
