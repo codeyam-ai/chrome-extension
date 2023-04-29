@@ -50,7 +50,7 @@
         "@types/react-dom": "^18.0.10",
         "@types/sortablejs": "^1.15.1",
         "@types/uuid": "^9.0.0",
-        "@types/webextension-polyfill": "^0.9.0",
+        "@types/webextension-polyfill": "^0.10.0",
         "@types/webpack": "^5.28.0",
         "concurrently": "^7.6.0",
         "copy-webpack-plugin": "^11.0.0",
@@ -141,7 +141,7 @@
         "stream-browserify": "^3.0.0",
         "tweetnacl": "^1.0.3",
         "uuid": "^9.0.0",
-        "webextension-polyfill": "^0.9.0",
+        "webextension-polyfill": "^0.10.0",
         "yup": "^0.32.11",
         "zxcvbn": "^4.4.2"
     }
