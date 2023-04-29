@@ -60,6 +60,8 @@ function TransferNFTReview() {
                 })
             ).unwrap();
 
+            if (!resp) return;
+
             dispatch(resettransferNftForm());
 
             if (resp.txId) {

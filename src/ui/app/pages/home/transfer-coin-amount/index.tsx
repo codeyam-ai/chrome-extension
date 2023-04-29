@@ -115,7 +115,13 @@ function useOnHandleSubmit({
     formState,
 }: UseOnHandleSubmit) {
     const {
-        account: { authentication, address, activeAccountIndex },
+        account: {
+            authentication,
+            address,
+            activeAccountIndex,
+            accountInfos,
+            passphrase,
+        },
     } = useAppSelector((state) => state);
     const state = useAppSelector((state) => state);
     const dispatch = useAppDispatch();
@@ -148,10 +154,14 @@ function useOnHandleSubmit({
             );
 
             const signer = await getSigner(
+                passphrase,
+                accountInfos,
                 address,
                 authentication,
                 activeAccountIndex
             );
+
+            if (!signer) return;
 
             const allCoins: SuiMoveObject[] = accountCoinsSelector(state);
             const [primaryCoin, ...mergeCoins] = allCoins.filter(
@@ -220,17 +230,19 @@ function useOnHandleSubmit({
             }
         },
         [
-            dispatch,
-            navigate,
             coin.type,
-            activeAccountIndex,
+            coin.decimals,
+            locale,
+            passphrase,
+            accountInfos,
             address,
             authentication,
-            formState.to,
-            coin.decimals,
+            activeAccountIndex,
             state,
+            dispatch,
             setSendError,
-            locale,
+            formState.to,
+            navigate,
         ]
     );
 

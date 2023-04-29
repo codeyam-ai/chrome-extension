@@ -15,11 +15,11 @@ import SimpleAssetMint from './types/SimpleAssetMint';
 import SimpleAssetTransfer from './types/SimpleAssetTransfer';
 import SimpleBase from './types/SimpleBase';
 import SimpleCoinTransfer from './types/SimpleCoinTransfer';
+import { getSigner } from '../../helpers/getSigner';
 import { AppState } from '../../hooks/useInitializedGuard';
 import Loading from '_components/loading';
 import { useAppSelector, useInitializedGuard } from '_hooks';
 import { txRequestsSelectors } from '_redux/slices/transaction-requests';
-import { thunkExtras } from '_redux/store/thunk-extras';
 import { useDependencies } from '_shared/utils/dependenciesContext';
 
 import type { AnalyzeChangesResult } from './lib/analyzeChanges';
@@ -59,7 +59,13 @@ export function DappTxApprovalPage() {
     }, [selectedApiEnv]);
 
     const [signer, setSigner] = useState<RawSigner | EthosSigner | undefined>();
-    const accountInfos = useAppSelector(({ account }) => account.accountInfos);
+    const {
+        activeAccountIndex,
+        address,
+        authentication,
+        accountInfos,
+        passphrase,
+    } = useAppSelector(({ account }) => account);
 
     const { txID } = useParams();
     const guardLoading = useInitializedGuard([
@@ -68,9 +74,6 @@ export function DappTxApprovalPage() {
     ]);
     const txRequestsLoading = useAppSelector(
         ({ transactionRequests }) => !transactionRequests.initialized
-    );
-    const { activeAccountIndex, address, authentication } = useAppSelector(
-        ({ account }) => account
     );
 
     const txRequestSelector = useMemo(
@@ -125,24 +128,27 @@ export function DappTxApprovalPage() {
     useEffect(() => {
         if (!accountInfos || accountInfos.length === 0) return;
 
-        let signer;
-        if (authentication) {
-            signer = thunkExtras.api.getEthosSignerInstance(
-                address || '',
-                authentication
+        const retrieveSigner = async () => {
+            const signer = await getSigner(
+                passphrase,
+                accountInfos,
+                address,
+                authentication,
+                activeAccountIndex
             );
-        } else {
-            signer = thunkExtras.api.getSignerInstance(
-                thunkExtras.keypairVault.getKeyPair(activeAccountIndex),
-                true
-            );
-        }
-        setSigner(signer);
+
+            if (signer) {
+                setSigner(signer);
+            }
+        };
+
+        retrieveSigner();
     }, [
         accountInfos,
         activeAccountIndex,
         address,
         authentication,
+        passphrase,
         selectedApiEnv,
     ]);
 
@@ -248,8 +254,10 @@ export function DappTxApprovalPage() {
                 transactionBlock ?? null,
                 txID,
                 approved,
+                passphrase,
                 authentication ?? null,
                 address,
+                accountInfos,
                 activeAccountIndex,
                 justSign,
                 options,
@@ -258,13 +266,14 @@ export function DappTxApprovalPage() {
             setDone(true);
         },
         [
-            txRequest?.tx,
+            txRequest,
             transactionBlock,
             txID,
+            passphrase,
             authentication,
             address,
+            accountInfos,
             activeAccountIndex,
-            setDone,
         ]
     );
 
@@ -410,7 +419,9 @@ export function DappTxApprovalPage() {
                 objectChanges={analysis?.dryRunResponse?.objectChanges}
                 effects={analysis?.dryRunResponse?.effects}
                 authentication={authentication ?? null}
+                passphrase={passphrase}
                 activeAccountIndex={activeAccountIndex}
+                accountInfos={accountInfos}
                 transactionBlock={transactionBlock}
                 setDone={setDone}
             />
@@ -423,7 +434,9 @@ export function DappTxApprovalPage() {
         analysis,
         txID,
         authentication,
+        passphrase,
         activeAccountIndex,
+        accountInfos,
         transactionBlock,
         onComplete,
         explicitError,

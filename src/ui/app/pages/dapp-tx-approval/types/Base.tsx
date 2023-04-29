@@ -22,6 +22,7 @@ import type {
     TransactionEffects,
 } from '@mysten/sui.js';
 import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
+import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 export enum TxApprovalTab {
     SUMMARY = 'Summary',
@@ -35,7 +36,9 @@ export type TabSections = {
 
 export type BaseProps = {
     txID?: string;
+    passphrase: string | null;
     authentication: string | null;
+    accountInfos: AccountInfo[];
     activeAccountIndex: number;
     txRequest: ApprovalRequest | null;
     transactionBlock: TransactionBlock | null;
@@ -47,7 +50,9 @@ export type BaseProps = {
 
 const Base = ({
     address,
+    passphrase,
     authentication,
+    accountInfos,
     activeAccountIndex,
     txID,
     transactionBlock,
@@ -430,8 +435,10 @@ const Base = ({
                 transactionBlock ?? null,
                 txID,
                 approved,
+                passphrase,
                 authentication ?? null,
                 address,
+                accountInfos,
                 activeAccountIndex,
                 justSign,
                 options,
@@ -440,11 +447,13 @@ const Base = ({
             setDone(true);
         },
         [
-            txRequest?.tx,
+            txRequest,
             transactionBlock,
             txID,
+            passphrase,
             authentication,
             address,
+            accountInfos,
             activeAccountIndex,
             setDone,
         ]

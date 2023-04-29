@@ -9,11 +9,11 @@ import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+import { getSigner } from '_src/ui/app/helpers/getSigner';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import useGetDelegatedStakes from '_src/ui/app/hooks/staking/useGetDelegatedStakes';
 import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
-import { api, thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 import ConfirmDestructiveActionDialog from '_src/ui/app/shared/dialog/ConfirmDestructiveActionDialog';
 import Body from '_src/ui/app/shared/typography/Body';
@@ -107,9 +107,13 @@ const StakeDetail: React.FC = () => {
 };
 
 const StakeRow = ({ stake }: { stake: Stake }) => {
-    const { activeAccountIndex, address, authentication } = useAppSelector(
-        ({ account }) => account
-    );
+    const {
+        activeAccountIndex,
+        address,
+        authentication,
+        accountInfos,
+        passphrase,
+    } = useAppSelector(({ account }) => account);
 
     const { stakedSuiId } = stake;
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -130,14 +134,15 @@ const StakeRow = ({ stake }: { stake: Stake }) => {
 
         setLoading(true);
 
-        let signer;
-        if (authentication) {
-            signer = api.getEthosSignerInstance(address || '', authentication);
-        } else {
-            signer = api.getSignerInstance(
-                thunkExtras.keypairVault.getKeyPair(activeAccountIndex)
-            );
-        }
+        const signer = await getSigner(
+            passphrase,
+            accountInfos,
+            address,
+            authentication,
+            activeAccountIndex
+        );
+
+        if (!signer) return;
 
         const transactionBlock = revokeStakeTransaction(stakedSuiId);
 
@@ -164,7 +169,15 @@ const StakeRow = ({ stake }: { stake: Stake }) => {
             setLoading(false);
             setIsModalOpen(false);
         }
-    }, [activeAccountIndex, address, authentication, queryClient, stakedSuiId]);
+    }, [
+        accountInfos,
+        activeAccountIndex,
+        address,
+        authentication,
+        passphrase,
+        queryClient,
+        stakedSuiId,
+    ]);
 
     const onCancelConfirmRevokeStake = useCallback(() => {
         setIsModalOpen(false);

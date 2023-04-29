@@ -8,6 +8,8 @@ import {
     createSlice,
 } from '@reduxjs/toolkit';
 
+import { getSigner } from '_src/ui/app/helpers/getSigner';
+
 import type {
     SignedMessage,
     SignedTransaction,
@@ -57,20 +59,25 @@ export const respondToTransactionRequest = createAsyncThunk<
         let txResultError: string | undefined;
         if (approved) {
             const {
-                account: { activeAccountIndex, authentication },
+                account: {
+                    address,
+                    activeAccountIndex,
+                    authentication,
+                    accountInfos,
+                    passphrase,
+                },
             } = getState();
 
-            let signer;
+            const signer = await getSigner(
+                passphrase,
+                accountInfos,
+                address,
+                authentication,
+                activeAccountIndex
+            );
 
-            if (authentication) {
-                signer = api.getEthosSignerInstance(
-                    addressForTransaction || '',
-                    authentication
-                );
-            } else {
-                signer = api.getSignerInstance(
-                    keypairVault.getKeyPair(activeAccountIndex)
-                );
+            if (!signer) {
+                throw new Error(`Signer not found for ${txRequest.id}`);
             }
 
             try {

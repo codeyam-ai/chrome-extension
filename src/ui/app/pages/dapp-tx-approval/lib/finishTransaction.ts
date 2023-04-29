@@ -1,4 +1,5 @@
 import { thunkExtras } from '_redux/store/thunk-extras';
+import { getSigner } from '_src/ui/app/helpers/getSigner';
 
 import type {
     SignedTransaction,
@@ -6,13 +7,16 @@ import type {
     TransactionBlock,
 } from '@mysten/sui.js';
 import type { SuiSignAndExecuteTransactionBlockInput } from '@mysten/wallet-standard';
+import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 const finishTransaction = async (
     transactionBlock: TransactionBlock | null,
     txID: string | undefined,
     approved: boolean,
+    passphrase: string | null,
     authentication: string | null,
     address: string | null,
+    accountInfos: AccountInfo[],
     activeAccountIndex: number,
     justSign?: boolean,
     options?: SuiSignAndExecuteTransactionBlockInput['options'],
@@ -27,16 +31,16 @@ const finishTransaction = async (
     let txResult: SuiTransactionBlockResponse | undefined = undefined;
     let txResultError: string | undefined;
     if (approved) {
-        let signer;
-        if (authentication) {
-            signer = thunkExtras.api.getEthosSignerInstance(
-                address || '',
-                authentication
-            );
-        } else {
-            signer = thunkExtras.api.getSignerInstance(
-                thunkExtras.keypairVault.getKeyPair(activeAccountIndex)
-            );
+        const signer = await getSigner(
+            passphrase,
+            accountInfos,
+            address,
+            authentication,
+            activeAccountIndex
+        );
+
+        if (!signer) {
+            throw new Error(`Signer not found for ${txID}`);
         }
 
         try {
