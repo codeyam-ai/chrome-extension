@@ -280,7 +280,10 @@ class Transactions {
         requestType?: SuiSignAndExecuteTransactionBlockInput['requestType'];
         options?: SuiSignAndExecuteTransactionBlockInput['options'];
     }) {
-        const activeSeed = await this.getSeedInfo(address);
+        const activeSeed = await this.getActiveSeed();
+        if (activeSeed.address !== address) {
+            throw new Error('Requested address for transaction is not active.');
+        }
 
         let env;
         let envEndpoint;
@@ -441,17 +444,13 @@ class Transactions {
         this._preapprovalResponseMessages.next(msg);
     }
 
-    private async getSeedInfo(address: SuiAddress): Promise<SeedInfo> {
-        const seedInfoString = await getEncrypted({
-            key: 'seeds',
+    private async getActiveSeed(): Promise<SeedInfo> {
+        const activeSeedString = await getEncrypted({
+            key: 'activeSeed',
             session: true,
             strong: false,
         });
-        const seedInfos = JSON.parse(seedInfoString || '[]');
-
-        return seedInfos.find(
-            (seedInfo: SeedInfo) => seedInfo.address === address
-        );
+        return JSON.parse(activeSeedString || '[]');
     }
 
     private createTransactionRequest(

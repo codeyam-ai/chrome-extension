@@ -1,6 +1,12 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { fromHEX } from '@mysten/bcs';
+import {
+    Ed25519Keypair,
+    type SuiAddress,
+    type SuiMoveObject,
+} from '@mysten/sui.js';
 import {
     createAsyncThunk,
     createSelector,
@@ -37,7 +43,6 @@ import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
 import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 import { AUTHENTICATION_REQUESTED } from '_src/ui/app/pages/initialize/hosted';
 
-import type { SuiAddress, SuiMoveObject } from '@mysten/sui.js';
 import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
@@ -152,57 +157,6 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             })) || '{ "mnemonics": [], "privateKeys": [] }'
         );
 
-        if (mnemonic) {
-            const keypairVault = new KeypairVault();
-            keypairVault.mnemonic = mnemonic;
-
-            let seeds = [];
-            if (accountInfos.length === 0) {
-                accountInfos = [
-                    {
-                        index: 0,
-                        name: 'Wallet',
-                        color: getNextWalletColor(0),
-                        emoji: getNextEmoji(0),
-                        address: keypairVault.getAddress(0) ?? '',
-                    },
-                ];
-                seeds = [
-                    {
-                        address: keypairVault.getAddress(0),
-                        seed: (keypairVault.getSeed(0) || '').toString(),
-                    },
-                ];
-            } else {
-                for (let i = 0; i < accountInfos.length; i++) {
-                    if (
-                        accountInfos[i].importedMnemonicName ||
-                        accountInfos[i].importedPrivateKeyName
-                    ) {
-                        continue;
-                    }
-                    accountInfos[i].address = keypairVault.getAddress(i) ?? '';
-                    seeds.push({
-                        address: keypairVault.getAddress(i),
-                        seed: (keypairVault.getSeed(i) || '').toString(),
-                    });
-                }
-            }
-
-            await setEncrypted({
-                key: 'accountInfos',
-                value: JSON.stringify(accountInfos),
-                session: false,
-                strong: false,
-            });
-            await setEncrypted({
-                key: 'seeds',
-                value: JSON.stringify(seeds),
-                session: true,
-                strong: false,
-            });
-        }
-
         activeAccountIndex = parseInt(
             (await getEncrypted({
                 key: 'activeAccountIndex',
@@ -213,6 +167,108 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
 
         if (!accountInfos.find((a) => a.index === activeAccountIndex)) {
             activeAccountIndex = accountInfos[0].index;
+        }
+
+        if (mnemonic) {
+            const keypairVault = new KeypairVault();
+            keypairVault.mnemonic = mnemonic;
+
+            let activeSeed: { address: string; seed: string } | undefined =
+                undefined;
+            if (accountInfos.length === 0) {
+                accountInfos = [
+                    {
+                        index: 0,
+                        name: 'Wallet',
+                        color: getNextWalletColor(0),
+                        emoji: getNextEmoji(0),
+                        address: keypairVault.getAddress(0) ?? '',
+                    },
+                ];
+                activeSeed = {
+                    address: keypairVault.getAddress(0) ?? '',
+                    seed: (keypairVault.getSeed(0) ?? '').toString(),
+                };
+            } else {
+                for (let i = 0; i < accountInfos.length; i++) {
+                    if (
+                        accountInfos[i].importedMnemonicName ||
+                        accountInfos[i].importedPrivateKeyName
+                    ) {
+                        continue;
+                    }
+                    accountInfos[i].address = keypairVault.getAddress(i) ?? '';
+                }
+
+                const activeAccount = accountInfos.find(
+                    (a) => a.index === activeAccountIndex
+                );
+
+                if (activeAccount?.importedMnemonicName) {
+                    const importedKeyPairVault = new KeypairVault();
+
+                    const importedMnemonic = await getEncrypted({
+                        key: `importedMnemonic${activeAccount.importedMnemonicName}`,
+                        session: false,
+                        strong: true,
+                        passphrase,
+                    });
+
+                    if (importedMnemonic) {
+                        importedKeyPairVault.mnemonic = importedMnemonic;
+
+                        const index = activeAccount.importedMnemonicIndex;
+                        activeSeed = {
+                            address:
+                                importedKeyPairVault.getAddress(index) ?? '',
+                            seed: (
+                                keypairVault.getSeed(index) || ''
+                            ).toString(),
+                        };
+                    }
+                } else if (activeAccount?.importedPrivateKeyName) {
+                    const importedPrivateKey = await getEncrypted({
+                        key: `importedPrivateKey${activeAccount.importedPrivateKeyName}`,
+                        session: false,
+                        strong: true,
+                        passphrase,
+                    });
+
+                    if (importedPrivateKey) {
+                        const secretKey = fromHEX(importedPrivateKey);
+                        const importedKeyPair =
+                            Ed25519Keypair.fromSecretKey(secretKey);
+
+                        activeSeed = {
+                            address: importedKeyPair
+                                .getPublicKey()
+                                .toSuiAddress(),
+                            seed: secretKey.toString(),
+                        };
+                    }
+                } else {
+                    activeSeed = {
+                        address:
+                            keypairVault.getAddress(activeAccountIndex) ?? '',
+                        seed: (
+                            keypairVault.getSeed(activeAccountIndex) || ''
+                        ).toString(),
+                    };
+                }
+            }
+
+            await setEncrypted({
+                key: 'accountInfos',
+                value: JSON.stringify(accountInfos),
+                session: false,
+                strong: false,
+            });
+            await setEncrypted({
+                key: 'activeSeed',
+                value: JSON.stringify(activeSeed ?? '{}'),
+                session: true,
+                strong: false,
+            });
         }
 
         const {
