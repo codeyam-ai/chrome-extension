@@ -670,7 +670,7 @@ export const changePassword: AsyncThunk<
         }
 
         const {
-            account: { mnemonic },
+            account: { mnemonic, importNames },
         } = getState() as RootState;
 
         if (mnemonic) {
@@ -688,6 +688,68 @@ export const changePassword: AsyncThunk<
                 passphrase: newPassword,
             });
         }
+
+        for (const name of importNames.mnemonics) {
+            const importedMnemonic = await getEncrypted({
+                key: `importedMnemonic${name}`,
+                session: false,
+                strong: true,
+                passphrase: currentPassword,
+            });
+            if (importedMnemonic) {
+                await deleteEncrypted({
+                    key: `importedMnemonic${name}`,
+                    session: false,
+                    strong: true,
+                    passphrase: currentPassword,
+                });
+                await setEncrypted({
+                    key: `importedMnemonic${name}`,
+                    value: importedMnemonic,
+                    session: false,
+                    strong: true,
+                    passphrase: newPassword,
+                });
+            }
+        }
+
+        for (const name of importNames.privateKeys) {
+            const importedPrivateKey = await getEncrypted({
+                key: `importedPrivateKey${name}`,
+                session: false,
+                strong: true,
+                passphrase: currentPassword,
+            });
+            if (importedPrivateKey) {
+                await deleteEncrypted({
+                    key: `importedPrivateKey${name}`,
+                    session: false,
+                    strong: true,
+                    passphrase: currentPassword,
+                });
+                await setEncrypted({
+                    key: `importedPrivateKey${name}`,
+                    value: importedPrivateKey,
+                    session: false,
+                    strong: true,
+                    passphrase: newPassword,
+                });
+            }
+        }
+
+        await deleteEncrypted({
+            key: 'importNames',
+            session: false,
+            strong: false,
+            passphrase: currentPassword,
+        });
+        await setEncrypted({
+            key: 'importNames',
+            value: JSON.stringify(importNames),
+            session: false,
+            strong: false,
+            passphrase: newPassword,
+        });
 
         await deleteEncrypted({
             key: 'passphrase',
@@ -834,6 +896,7 @@ export const reset = createAsyncThunk(
                 key: 'importNames',
                 session: false,
                 strong: false,
+                passphrase,
             });
             await deleteEncrypted({
                 key: 'passphrase',
@@ -851,6 +914,11 @@ export const reset = createAsyncThunk(
                 session: false,
                 strong: false,
             });
+            await deleteEncrypted({
+                key: 'activeSeed',
+                session: true,
+                strong: false,
+            });
         }
         await deleteEncrypted({
             key: 'authentication',
@@ -865,6 +933,11 @@ export const reset = createAsyncThunk(
         });
         await deleteEncrypted({
             key: PERMISSIONS_STORAGE_KEY,
+            session: false,
+            strong: false,
+        });
+        await deleteEncrypted({
+            key: 'account-type',
             session: false,
             strong: false,
         });

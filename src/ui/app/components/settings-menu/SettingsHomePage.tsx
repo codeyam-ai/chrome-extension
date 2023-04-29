@@ -112,7 +112,7 @@ const SettingsHomePage = () => {
                                 to: SubpageUrls.permissions,
                             },
                             {
-                                text: 'Lock Ethos',
+                                text: 'Lock / Reset Ethos',
                                 iconWithNoClasses: <LockClosedIcon />,
                                 to: SubpageUrls.lock,
                             },

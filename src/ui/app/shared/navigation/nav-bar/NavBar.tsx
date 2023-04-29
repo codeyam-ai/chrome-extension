@@ -166,7 +166,8 @@ const NavBar = () => {
     const isDappPage =
         pathname.includes('customize') ||
         pathname.includes('address-book') ||
-        pathname.includes('staking');
+        pathname.includes('staking') ||
+        pathname.includes('manage-wallets');
 
     const goBack = useCallback(() => {
         navigate(-1);

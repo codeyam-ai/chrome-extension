@@ -168,7 +168,7 @@ const ManageSeed = () => {
                         <input
                             type="password"
                             placeholder="Enter password"
-                            className="border rounded-lg p-3"
+                            className="border rounded-lg p-3 dark:bg-ethos-dark-background-secondary"
                             value={password}
                             onChange={handlePasswordChange}
                         />
