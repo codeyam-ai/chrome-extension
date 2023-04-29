@@ -12,6 +12,7 @@ import {
     saveAccountInfos,
 } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
+import Body from '_src/ui/app/shared/typography/Body';
 import Header from '_src/ui/app/shared/typography/Header';
 import WalletList from '_src/ui/app/shared/wallet-list/WalletList';
 
@@ -104,30 +105,35 @@ const ManageSeed = () => {
             <Loading
                 loading={!mnemonic}
                 big
-                className="flex justify-center py-6"
+                className="flex flex-col justify-center items-center gap-6"
             >
-                {mnemonic}
+                {relevantAccountInfos.length === 0 && (
+                    <Body className="px-6">
+                        You haven&#39;t loaded any wallet addresses from this
+                        seed phrase yet.
+                    </Body>
+                )}
+                <WalletList
+                    hasTopPadding
+                    wallets={relevantAccountInfos}
+                    isWalletEditing={false}
+                    destination="/home"
+                />
+                <Button
+                    buttonStyle="primary"
+                    removeContainerPadding
+                    onClick={createAddress}
+                >
+                    Load Next Wallet Address
+                </Button>
+                <Button
+                    buttonStyle="secondary"
+                    removeContainerPadding
+                    onClick={deleteMnemonic}
+                >
+                    Delete Seed Phrase
+                </Button>
             </Loading>
-            <WalletList
-                hasTopPadding
-                wallets={relevantAccountInfos}
-                isWalletEditing={false}
-                destination="/home"
-            />
-            <Button
-                buttonStyle="primary"
-                removeContainerPadding
-                onClick={createAddress}
-            >
-                Load Next Wallet Address
-            </Button>
-            <Button
-                buttonStyle="secondary"
-                removeContainerPadding
-                onClick={deleteMnemonic}
-            >
-                Delete Seed Phrase
-            </Button>
         </div>
     );
 };
