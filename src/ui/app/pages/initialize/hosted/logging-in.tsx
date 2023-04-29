@@ -26,7 +26,15 @@ const LoggingInPage = () => {
         const setAccessToken = async () => {
             let accessToken = (await getSession('accessToken')) as string;
             if (!accessToken) {
+                setTimeout(() => {
+                    setLoading(false);
+                    setAuthenticationSlow(true);
+                }, 1500);
                 accessToken = await iframe.listenForAccessToken();
+            }
+            if (!accessToken) {
+                setLoading(false);
+                setAuthenticationSlow(true);
             }
             Authentication.set(accessToken);
 
