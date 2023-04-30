@@ -24,7 +24,9 @@ const WalletPicker = ({
         () => () => null
     );
     const [loading, setLoading] = useState(false);
-    const { accountInfos, authentication } = useAppSelector(({ account }) => account);
+    const { accountInfos, authentication } = useAppSelector(
+        ({ account }) => account
+    );
     const activeAccountIndex = useAppSelector(
         ({ account: { activeAccountIndex } }) => activeAccountIndex
     );
@@ -57,15 +59,16 @@ const WalletPicker = ({
                                     )}
                                 </Button>
                             </CreateWalletProvider>
-                            {!authentication && featureFlags.showWipFeatures && (
-                                <Button
-                                    buttonStyle="secondary"
-                                    to="/home/manage-wallets"
-                                    disabled={loading}
-                                >
-                                    Import / Manage External Wallets
-                                </Button>
-                            )}
+                            {!authentication &&
+                                featureFlags.showWipFeatures && (
+                                    <Button
+                                        buttonStyle="secondary"
+                                        to="/home/manage-wallets"
+                                        disabled={loading}
+                                    >
+                                        Import / Manage External Wallets
+                                    </Button>
+                                )}
                         </div>
                     ) : (
                         <div className="flex gap-2 py-4 px-5 place-content-center">
