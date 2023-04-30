@@ -63,7 +63,7 @@ const WalletButton = ({
 
     useEffect(() => {
         if (isActive && ref.current?.scrollIntoView) {
-            ref.current.scrollIntoView();
+            ref.current.scrollIntoView({ block: 'nearest', inline: 'nearest' });
         }
     }, [isActive]);
 

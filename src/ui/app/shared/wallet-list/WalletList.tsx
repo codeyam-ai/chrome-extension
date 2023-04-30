@@ -22,7 +22,7 @@ const WalletList = ({
     return (
         <div
             className={`${hasTopPadding ? 'pt-3' : 'pt-0'} ${
-                isWalletEditing ? 'max-h-[482px]' : 'max-h-[432px]'
+                isWalletEditing ? 'max-h-[482px]' : 'max-h-[384px]'
             } px-3 pb-4 flex flex-col gap-1 overflow-scroll no-scrollbar`}
         >
             <BodyLarge
