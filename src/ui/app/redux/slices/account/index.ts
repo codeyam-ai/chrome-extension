@@ -1003,6 +1003,14 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
+        const excludeDappKeys = JSON.parse(
+            (await getEncrypted({
+                key: 'excludedDappsKeys',
+                session: false,
+                strong: false,
+            })) || '[]'
+        );
+
         const automaticKeys = [
             CUSTOMIZE_ID,
             ADDRESS_BOOK_ID,
@@ -1017,6 +1025,13 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
             }
         }
 
+        for (const key of excludeDappKeys) {
+            const index = allFavoriteDappsKeys.indexOf(key);
+            if (index !== -1) {
+                allFavoriteDappsKeys.splice(index, 1);
+            }
+        }
+
         if (allFavoriteDappsKeys.length !== favoriteDappsKeys.length) {
             await saveFavoriteDappsKeys(allFavoriteDappsKeys);
         }
@@ -1028,6 +1043,10 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
 export const saveFavoriteDappsKeys = createAsyncThunk(
     'account/setFavoriteDappsKeys',
     async (favoriteDappsKeys: string[]): Promise<string[]> => {
+        if (!favoriteDappsKeys.includes(CUSTOMIZE_ID)) {
+            favoriteDappsKeys.push(CUSTOMIZE_ID);
+        }
+
         await setEncrypted({
             key: 'favoriteDappsKeys',
             value: JSON.stringify(favoriteDappsKeys),
@@ -1215,12 +1234,6 @@ const accountSlice = createSlice({
             .addCase(saveFavoriteDappsKeys.fulfilled, (state, action) => {
                 state.favoriteDappsKeys = action.payload;
             })
-            .addCase(
-                loadExcludedDappsKeysFromStorage.fulfilled,
-                (state, action) => {
-                    state.excludedDappsKeys = action.payload;
-                }
-            )
             .addCase(saveExcludedDappsKeys.fulfilled, (state, action) => {
                 state.excludedDappsKeys = action.payload;
             })
