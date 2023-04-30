@@ -55,7 +55,7 @@ const StepOne = ({
                 <SendAssetImage imageUrl={imageUrl} name={name} />
                 <div className="flex flex-col items-center gap-1 text-lg py-3">
                     <BodyLarge className="font-light">
-                        Confirm your want to send
+                        Confirm you want to send
                     </BodyLarge>
                     {name && <BodyLarge isSemibold>{name}</BodyLarge>}
                     <Body className="text-ethos-light-text-medium text-sm">
