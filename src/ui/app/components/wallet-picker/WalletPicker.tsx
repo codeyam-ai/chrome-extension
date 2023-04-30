@@ -24,7 +24,7 @@ const WalletPicker = ({
         () => () => null
     );
     const [loading, setLoading] = useState(false);
-    const accountInfos = useAppSelector(({ account }) => account.accountInfos);
+    const { accountInfos, authentication } = useAppSelector(({ account }) => account);
     const activeAccountIndex = useAppSelector(
         ({ account: { activeAccountIndex } }) => activeAccountIndex
     );
@@ -57,7 +57,7 @@ const WalletPicker = ({
                                     )}
                                 </Button>
                             </CreateWalletProvider>
-                            {featureFlags.showWipFeatures && (
+                            {!authentication && featureFlags.showWipFeatures && (
                                 <Button
                                     buttonStyle="secondary"
                                     to="/home/manage-wallets"
