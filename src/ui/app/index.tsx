@@ -11,6 +11,7 @@ import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval'
 import MoonpayOnboarding from './pages/home/buy';
 import AddressBookNavigation from './pages/home/home/dapp/dapps/AddressBook/AddressBookNavigation';
 import CustomizeNavigation from './pages/home/home/dapp/dapps/Customize/CustomizeNavigation';
+import ManageWallets from './pages/home/home/dapp/dapps/ManageWallets/ManageWalletsNavigation';
 import StakingNavigation from './pages/home/home/dapp/dapps/Staking/StakingNavigation';
 import TransferNftRecipient from './pages/home/nft-details/transfer-nft-recipient';
 import TransferNftReview from './pages/home/nft-details/transfer-nft-review';
@@ -105,6 +106,10 @@ const App = () => {
                         <Route
                             path="home/buy"
                             element={<MoonpayOnboarding />}
+                        />
+                        <Route
+                            path="home/manage-wallets/*"
+                            element={<ManageWallets />}
                         />
                         <Route path="tokens" element={<TokensPage />} />
                         <Route path="nfts">

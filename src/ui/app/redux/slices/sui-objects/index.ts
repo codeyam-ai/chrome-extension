@@ -20,6 +20,7 @@ import {
 import { SUI_SYSTEM_STATE_OBJECT_ID } from './Coin';
 import { NFT } from './NFT';
 import { fetchAllBalances } from '../balances';
+import { getSigner } from '_src/ui/app/helpers/getSigner';
 
 import type {
     SuiAddress,
@@ -147,56 +148,59 @@ type NFTTxResponse = {
 };
 
 export const transferNFT = createAsyncThunk<
-    NFTTxResponse,
+    NFTTxResponse | undefined,
     { nftId: ObjectId; recipientAddress: SuiAddress; transferCost: number },
     AppThunkConfig
->(
-    'transferNFT',
-    async (data, { extra: { api, keypairVault }, getState, dispatch }) => {
-        const {
-            account: { activeAccountIndex, authentication, address },
-        } = getState();
-        let signer;
-        if (authentication) {
-            signer = api.getEthosSignerInstance(address || '', authentication);
-        } else {
-            signer = api.getSignerInstance(
-                keypairVault.getKeyPair(activeAccountIndex)
-            );
-        }
-        const transactionBlock = new TransactionBlock();
-        transactionBlock.add(
-            TransactionBlock.Transactions.TransferObjects(
-                [transactionBlock.object(data.nftId)],
-                transactionBlock.pure(data.recipientAddress)
-            )
-        );
-        const executedTransaction = await signer.signAndExecuteTransactionBlock(
-            {
-                transactionBlock,
-                options: {
-                    showEffects: true,
-                    showEvents: true,
-                    showInput: true,
-                },
-            }
-        );
+>('transferNFT', async (data, { getState, dispatch }) => {
+    const {
+        account: {
+            activeAccountIndex,
+            authentication,
+            address,
+            accountInfos,
+            passphrase,
+        },
+    } = getState();
 
-        dispatch(fetchAllBalances());
-        await dispatch(fetchAllOwnedAndRequiredObjects());
-        const txnResp = {
-            timestamp_ms:
-                getTimestampFromTransactionResponse(executedTransaction),
-            status: getExecutionStatusType(executedTransaction),
-            gasFee: executedTransaction
-                ? getTotalGasUsed(executedTransaction)?.toString()
-                : '0',
-            txId: getTransactionDigest(executedTransaction),
-        };
+    const signer = await getSigner(
+        passphrase,
+        accountInfos,
+        address,
+        authentication,
+        activeAccountIndex
+    );
 
-        return txnResp as NFTTxResponse;
-    }
-);
+    if (!signer) return;
+
+    const transactionBlock = new TransactionBlock();
+    transactionBlock.add(
+        TransactionBlock.Transactions.TransferObjects(
+            [transactionBlock.object(data.nftId)],
+            transactionBlock.pure(data.recipientAddress)
+        )
+    );
+    const executedTransaction = await signer.signAndExecuteTransactionBlock({
+        transactionBlock,
+        options: {
+            showEffects: true,
+            showEvents: true,
+            showInput: true,
+        },
+    });
+
+    dispatch(fetchAllBalances());
+    await dispatch(fetchAllOwnedAndRequiredObjects());
+    const txnResp = {
+        timestamp_ms: getTimestampFromTransactionResponse(executedTransaction),
+        status: getExecutionStatusType(executedTransaction),
+        gasFee: executedTransaction
+            ? getTotalGasUsed(executedTransaction)?.toString()
+            : '0',
+        txId: getTransactionDigest(executedTransaction),
+    };
+
+    return txnResp as NFTTxResponse;
+});
 interface SuiObjectsManualState {
     loading: boolean;
     error: false | { code?: string; message?: string; name?: string };

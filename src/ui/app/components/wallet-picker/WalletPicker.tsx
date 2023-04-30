@@ -7,6 +7,7 @@ import Button from '../../shared/buttons/Button';
 import Body from '../../shared/typography/Body';
 import WalletList from '../../shared/wallet-list/WalletList';
 import LoadingIndicator from '../loading/LoadingIndicator';
+import { useDependencies } from '_src/shared/utils/dependenciesContext';
 
 interface WalletPickerProps {
     selectOnly?: boolean;
@@ -17,11 +18,13 @@ const WalletPicker = ({
     selectOnly = false,
     isWalletEditing = false,
 }: WalletPickerProps) => {
+    const { featureFlags } = useDependencies();
+
     const [createWallet, setCreateWallet] = useState<() => void>(
         () => () => null
     );
     const [loading, setLoading] = useState(false);
-    const accountInfos = useAppSelector(({ account }) => account.accountInfos);
+    const { accountInfos, authentication } = useAppSelector(({ account }) => account);
     const activeAccountIndex = useAppSelector(
         ({ account: { activeAccountIndex } }) => activeAccountIndex
     );
@@ -37,7 +40,7 @@ const WalletPicker = ({
             {!selectOnly && (
                 <div>
                     {!isWalletEditing ? (
-                        <div className="pt-6">
+                        <div className="py-3 flex flex-col">
                             <CreateWalletProvider
                                 setCreateWallet={setCreateWallet}
                                 setLoading={setLoading}
@@ -54,6 +57,15 @@ const WalletPicker = ({
                                     )}
                                 </Button>
                             </CreateWalletProvider>
+                            {!authentication && featureFlags.showWipFeatures && (
+                                <Button
+                                    buttonStyle="secondary"
+                                    to="/home/manage-wallets"
+                                    disabled={loading}
+                                >
+                                    Import / Manage External Wallets
+                                </Button>
+                            )}
                         </div>
                     ) : (
                         <div className="flex gap-2 py-4 px-5 place-content-center">

@@ -72,7 +72,9 @@ function TransferCoinRecipientForm({
             dispatch(
                 setSuiRecipient({
                     to: e.target.name,
-                    from: accountInfos[activeAccountIndex].name || 'Wallet',
+                    from:
+                        accountInfos.find((a) => a.index === activeAccountIndex)
+                            ?.name || 'Wallet',
                 })
             );
         },

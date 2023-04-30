@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { FavoritesSortableList } from './FavoritesSortableList';
+import { CUSTOMIZE_ID } from '_src/data/dappsMap';
 import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
@@ -25,7 +26,13 @@ const ChangeFavoritesPage: React.FC = () => {
 
     const handleOnContinue = useCallback(async () => {
         await setFavoriteDappsKeys(tempFavoriteDappsKeys);
-        await setExcludedDappsKeys(tempRemovedNftKeys);
+        if (tempRemovedNftKeys.includes(CUSTOMIZE_ID)) {
+            const tempRemovedNftKeysWithoutCustomize =
+                tempRemovedNftKeys.filter((key) => key !== CUSTOMIZE_ID);
+            await setExcludedDappsKeys(tempRemovedNftKeysWithoutCustomize);
+        } else {
+            await setExcludedDappsKeys(tempRemovedNftKeys);
+        }
 
         navigate('/home/customize/completed');
     }, [

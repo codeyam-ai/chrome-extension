@@ -185,7 +185,7 @@ describe('The Security Settings page', () => {
             await userEvent.click(await screen.findByText('Save'));
             await screen.findByText('Settings');
 
-            const lockOption = await screen.findByText('Lock Ethos');
+            const lockOption = await screen.findByText('Lock / Reset Ethos');
             await userEvent.click(lockOption);
 
             const lockWalletButton = await screen.findByText('Lock Wallet Now');

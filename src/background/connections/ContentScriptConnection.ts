@@ -575,7 +575,10 @@ export class ContentScriptConnection extends Connection {
             strong: false,
         });
 
-        return accountInfos[activeAccountIndex].address;
+        return (
+            accountInfos.find((a) => a.index === activeAccountIndex) ??
+            accountInfos[0]
+        ).address;
     }
 
     private async getActiveAccount(): Promise<AccountInfo> {
@@ -589,7 +592,10 @@ export class ContentScriptConnection extends Connection {
             })) || '0'
         );
 
-        return accountInfos[activeAccountIndex];
+        return (
+            accountInfos.find((a) => a.index === activeAccountIndex) ??
+            accountInfos[0]
+        );
     }
 
     private sendError<Error extends ErrorPayload>(

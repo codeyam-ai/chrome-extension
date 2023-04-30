@@ -14,6 +14,9 @@ export type AccountInfo = {
     color?: string;
     emoji?: string;
     chain?: string;
+    importedMnemonicName?: string;
+    importedMnemonicIndex?: number;
+    importedPrivateKeyName?: string;
 };
 
 export type SeedInfo = {

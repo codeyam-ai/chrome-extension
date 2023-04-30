@@ -3,13 +3,12 @@ import { useCallback, useEffect, useState } from 'react';
 import Browser from 'webextension-polyfill';
 import * as Yup from 'yup';
 
-import { useDependencies } from '_shared/utils/dependenciesContext';
 import { DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES } from '_src/shared/constants';
+import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
+import { reset as resetWallet } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
-import Well from '_src/ui/app/shared/content/Well';
 import Input from '_src/ui/app/shared/inputs/Input';
 import Body from '_src/ui/app/shared/typography/Body';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Header from '_src/ui/app/shared/typography/Header';
@@ -38,21 +37,30 @@ const AutoLockTimeoutForm = () => {
 };
 
 const LockPage = () => {
+    const dispatch = useAppDispatch();
+    const { passphrase } = useAppSelector(({ account }) => account);
     const lockWallet = useCallback(async () => {
         thunkExtras.background.lockWallet();
     }, []);
 
-    const { featureFlags } = useDependencies();
-
     const [isAutoLockFormShowing, setAutoLockFormShowing] = useState(false);
 
-    const openSetAutoLockForm = useCallback(() => {
-        setAutoLockFormShowing(true);
+    const toggleSetAutoLock = useCallback(() => {
+        setAutoLockFormShowing((prev) => !prev);
     }, []);
 
     const validationSchema = Yup.object().shape({
         timeout: Yup.number().required(),
     });
+
+    const [password, setPassword] = useState('');
+
+    const handlePasswordChange = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            setPassword(e.target.value);
+        },
+        [setPassword]
+    );
 
     const onHandleSubmit = useCallback(({ timeout }: FormValues) => {
         Browser.storage.local.set({ autoLockTimeout: timeout });
@@ -60,6 +68,13 @@ const LockPage = () => {
         setCurrentTimeout(timeout);
         setAutoLockFormShowing(false);
     }, []);
+
+    const reset = useCallback(async () => {
+        if (password !== passphrase) return;
+        if (window.confirm('Are you sure you want to reset your wallet?')) {
+            await dispatch(resetWallet());
+        }
+    }, [dispatch, password, passphrase]);
 
     useEffect(() => {
         Browser.storage.local
@@ -82,19 +97,19 @@ const LockPage = () => {
         timeout: currentTimeout,
     };
 
-    return featureFlags.showWipFeatures ? (
-        <div className="flex flex-col">
-            <ContentBlock className="!py-6">
+    return (
+        <div className="flex flex-col gap-6 py-6">
+            <ContentBlock>
                 <Header>Lock Ethos</Header>
-                <BodyLarge isTextColorMedium>
+                <Body isTextColorMedium>
                     You&apos;ll need to enter your password to unlock your
                     wallet.
-                </BodyLarge>
+                </Body>
             </ContentBlock>
             <Button onClick={lockWallet}>Lock Wallet Now</Button>
-            <ContentBlock className="!py-6">
+            <ContentBlock>
                 <Body>Ethos will Auto-lock after {currentTimeout} minutes</Body>
-                <EthosLink onClick={openSetAutoLockForm} type="external">
+                <EthosLink onClick={toggleSetAutoLock} type="external">
                     Edit Auto-Lock time
                 </EthosLink>
             </ContentBlock>
@@ -109,21 +124,33 @@ const LockPage = () => {
                     <AutoLockTimeoutForm />
                 </Formik>
             )}
-        </div>
-    ) : (
-        <div className="flex flex-col">
-            <ContentBlock className="!py-6">
-                <Header>Lock Ethos</Header>
-                <BodyLarge isTextColorMedium>
-                    You&apos;ll need to enter your password to unlock your
-                    wallet.
-                </BodyLarge>
-            </ContentBlock>
-            <Well
-                header="Wallet Autolock"
-                subHeader="Ethos will autolock after 15 minutes."
-            />
-            <Button onClick={lockWallet}>Lock Wallet Now</Button>
+            <div className="py-6 flex flex-col gap-6">
+                <ContentBlock>
+                    <Header>Reset Ethos</Header>
+                    <Body isTextColorMedium>
+                        Resetting Ethos will delete all of your wallets and
+                        information. This can not be be undone. Please proceed
+                        with caution.
+                    </Body>
+                </ContentBlock>
+                <div className="flex justify-center items-center gap-3">
+                    <input
+                        type="password"
+                        placeholder="Enter password"
+                        className="border rounded-lg p-3 dark:bg-ethos-dark-background-secondary"
+                        value={password}
+                        onChange={handlePasswordChange}
+                    />
+                    <Button
+                        buttonStyle="primary"
+                        onClick={reset}
+                        removeContainerPadding
+                        disabled={passphrase !== password}
+                    >
+                        Reset
+                    </Button>
+                </div>
+            </div>
         </div>
     );
 };

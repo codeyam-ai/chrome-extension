@@ -13,6 +13,7 @@ import {
 } from '_src/ui/app/components/settings-menu/hooks';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector } from '_src/ui/app/hooks';
+import useWalletName from '_src/ui/app/hooks/useWalletName';
 
 interface WalletProfileProps {
     onClick?: () => void;
@@ -31,7 +32,8 @@ const WalletProfile = ({ onClick, inlineWalletPicker }: WalletProfileProps) => {
     const isWalletPickerOpen = useWalletPickerIsOpen();
     const walletPickerUrl = useNextWalletPickerUrl(true, 'open');
     const closeWalletPickerUrl = useNextWalletPickerUrl(false);
-    const shortenedName = truncateString(accountInfo?.name || 'Wallet', 8);
+    const name = useWalletName(accountInfo);
+    const shortenedName = truncateString(name, 8);
 
     const CurrentWallet = () => (
         <div

@@ -8,12 +8,12 @@ import { toast } from 'react-toastify';
 import StakeSummary from './StakeSummary';
 import { ToS_LINK } from '_src/shared/constants';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
+import { getSigner } from '_src/ui/app/helpers/getSigner';
 import { calculateStakeRewardStart } from '_src/ui/app/helpers/staking/calculateStakeRewardStart';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { useSystemState } from '_src/ui/app/hooks/staking/useSystemState';
 import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
-import { api, thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
@@ -36,9 +36,13 @@ function createStakeTransaction(amount: bigint, validator: string) {
 
 const ReviewStake: React.FC = () => {
     const [loading, setLoading] = useState(false);
-    const { activeAccountIndex, address, authentication } = useAppSelector(
-        ({ account }) => account
-    );
+    const {
+        activeAccountIndex,
+        address,
+        authentication,
+        accountInfos,
+        passphrase,
+    } = useAppSelector(({ account }) => account);
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const validatorSuiAddress = searchParams.get('validator');
@@ -61,15 +65,16 @@ const ReviewStake: React.FC = () => {
     const onConfirm = useCallback(async () => {
         if (!amount) return;
         setLoading(true);
-        let signer;
 
-        if (authentication) {
-            signer = api.getEthosSignerInstance(address || '', authentication);
-        } else {
-            signer = api.getSignerInstance(
-                thunkExtras.keypairVault.getKeyPair(activeAccountIndex)
-            );
-        }
+        const signer = await getSigner(
+            passphrase,
+            accountInfos,
+            address,
+            authentication,
+            activeAccountIndex
+        );
+
+        if (!signer) return;
 
         const transactionBlock = createStakeTransaction(
             BigInt(new BigNumber(amount).shiftedBy(9).toString()),
@@ -116,11 +121,13 @@ const ReviewStake: React.FC = () => {
         }
         setLoading(false);
     }, [
+        accountInfos,
         activeAccountIndex,
         address,
         amount,
         authentication,
         navigate,
+        passphrase,
         queryClient,
         validatorSuiAddress,
     ]);

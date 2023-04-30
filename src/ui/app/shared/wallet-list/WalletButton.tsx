@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { type AccountInfo } from '../../KeypairVault';
 import { useEditWalletUrl } from '../../components/settings-menu/hooks';
 import { useAppDispatch, useMiddleEllipsis } from '../../hooks';
+import useWalletName from '../../hooks/useWalletName';
 import { saveActiveAccountIndex } from '../../redux/slices/account';
 import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
 import Body from '../typography/Body';
@@ -15,12 +16,14 @@ interface WalletButtonProps {
     wallet: AccountInfo;
     isActive: boolean;
     isWalletEditing: boolean;
+    destination?: string;
 }
 
 const WalletButton = ({
     wallet,
     isActive,
     isWalletEditing,
+    destination,
 }: WalletButtonProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
@@ -30,14 +33,29 @@ const WalletButton = ({
 
     const switchToThisWallet = useCallback(async () => {
         if (isActive) {
-            navigate(-1);
+            if (destination) {
+                navigate(destination);
+            } else {
+                navigate(-1);
+            }
             return;
         }
         if (isWalletEditing) return;
         await dispatch(clearForNetworkOrWalletSwitch());
         await dispatch(saveActiveAccountIndex(wallet.index));
-        navigate(-1);
-    }, [wallet.index, isWalletEditing, isActive, dispatch, navigate]);
+        if (destination) {
+            navigate(destination);
+        } else {
+            navigate(-1);
+        }
+    }, [
+        isActive,
+        isWalletEditing,
+        dispatch,
+        wallet.index,
+        destination,
+        navigate,
+    ]);
 
     const editThisWallet = useCallback(() => {
         navigate(editWalletUrl);
@@ -45,9 +63,11 @@ const WalletButton = ({
 
     useEffect(() => {
         if (isActive && ref.current?.scrollIntoView) {
-            ref.current.scrollIntoView();
+            ref.current.scrollIntoView({ block: 'nearest', inline: 'nearest' });
         }
     }, [isActive]);
+
+    const name = useWalletName(wallet);
 
     return (
         <div
@@ -64,12 +84,7 @@ const WalletButton = ({
                     emojiSizeInPx={22}
                 />
                 <div className="flex flex-col text-left" title={wallet.address}>
-                    <BodyLarge>
-                        {wallet.name ||
-                            `Wallet${
-                                wallet.index > 0 ? ' ' + wallet.index + 1 : ''
-                            }`}
-                    </BodyLarge>
+                    <BodyLarge>{name}</BodyLarge>
                     <Body isTextColorMedium>{shortenedAddress}</Body>
                 </div>
             </div>

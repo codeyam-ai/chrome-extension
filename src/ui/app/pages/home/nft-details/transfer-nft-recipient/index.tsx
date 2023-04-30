@@ -31,13 +31,18 @@ const initialValues = {
 export type FormValues = typeof initialValues;
 
 function TransferNFTRecipient() {
-    const address = useAppSelector(({ account: { address } }) => address);
+    const {
+        account: {
+            address,
+            authentication,
+            activeAccountIndex,
+            accountInfos,
+            passphrase,
+        },
+    } = useAppSelector((state) => state);
     const formData = useAppSelector(
         ({ forms: { transferNft } }) => transferNft
     );
-    const {
-        account: { authentication, activeAccountIndex },
-    } = useAppSelector((state) => state);
     const dispatch = useAppDispatch();
     const [searchParams] = useSearchParams();
     const objectId = searchParams.get('objectId');
@@ -77,10 +82,14 @@ function TransferNFTRecipient() {
             }
 
             const signer = await getSigner(
+                passphrase,
+                accountInfos,
                 address,
                 authentication,
                 activeAccountIndex
             );
+
+            if (!signer) return;
 
             const transactionBlock = new TransactionBlock();
             transactionBlock.add(
@@ -122,13 +131,14 @@ function TransferNFTRecipient() {
             }
         },
         [
+            objectId,
+            passphrase,
+            accountInfos,
+            address,
+            authentication,
+            activeAccountIndex,
             dispatch,
             navigate,
-            objectId,
-            address,
-
-            activeAccountIndex,
-            authentication,
         ]
     );
 

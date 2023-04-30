@@ -35,7 +35,7 @@ describe('Lock Wallet Page', () => {
             const settingsButton = await screen.findByTestId('settings-toggle');
             await userEvent.click(settingsButton);
 
-            const lockOption = await screen.findByText('Lock Ethos');
+            const lockOption = await screen.findByText('Lock / Reset Ethos');
             await userEvent.click(lockOption);
 
             const lockWalletButton = await screen.findByText('Lock Wallet Now');
@@ -57,7 +57,7 @@ describe('Lock Wallet Page', () => {
             const settingsButton = await screen.findByTestId('settings-toggle');
             await userEvent.click(settingsButton);
 
-            const lockOption = await screen.findByText('Lock Ethos');
+            const lockOption = await screen.findByText('Lock / Reset Ethos');
             await userEvent.click(lockOption);
 
             await screen.findByText(/6 minutes/);
@@ -71,7 +71,7 @@ describe('Lock Wallet Page', () => {
             const settingsButton = await screen.findByTestId('settings-toggle');
             await userEvent.click(settingsButton);
 
-            const lockOption = await screen.findByText('Lock Ethos');
+            const lockOption = await screen.findByText('Lock / Reset Ethos');
             await userEvent.click(lockOption);
 
             await screen.findByText(
@@ -101,7 +101,7 @@ describe('Lock Wallet Page', () => {
             const settingsButton = await screen.findByTestId('settings-toggle');
             await userEvent.click(settingsButton);
 
-            const lockOption = await screen.findByText('Lock Ethos');
+            const lockOption = await screen.findByText('Lock / Reset Ethos');
             await userEvent.click(lockOption);
 
             const lockWalletButton = await screen.findByText('Lock Wallet Now');

@@ -1,6 +1,12 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { fromHEX } from '@mysten/bcs';
+import {
+    Ed25519Keypair,
+    type SuiAddress,
+    type SuiMoveObject,
+} from '@mysten/sui.js';
 import {
     createAsyncThunk,
     createSelector,
@@ -37,7 +43,6 @@ import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
 import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 import { AUTHENTICATION_REQUESTED } from '_src/ui/app/pages/initialize/hosted';
 
-import type { SuiAddress, SuiMoveObject } from '@mysten/sui.js';
 import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
@@ -50,6 +55,7 @@ type InitialAccountInfo = {
     activeAccountIndex: number;
     locked: boolean;
     accountType: AccountType;
+    importNames: { mnemonics: string[]; privateKeys: string[] };
 };
 
 export const loadAccountInformationFromStorage = createAsyncThunk(
@@ -100,6 +106,10 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 activeAccountIndex,
                 locked: false,
                 accountType,
+                importNames: {
+                    mnemonics: [],
+                    privateKeys: [],
+                },
             };
         }
 
@@ -118,6 +128,10 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 activeAccountIndex: 0,
                 locked: false,
                 accountType,
+                importNames: {
+                    mnemonics: [],
+                    privateKeys: [],
+                },
             };
         }
 
@@ -127,19 +141,40 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             passphrase,
             strong: true,
         });
-        let accountInfos = JSON.parse(
+        let accountInfos: AccountInfo[] = JSON.parse(
             (await getEncrypted({
                 key: 'accountInfos',
                 session: false,
                 strong: false,
             })) || '[]'
         );
+        const importNames = JSON.parse(
+            (await getEncrypted({
+                key: 'importNames',
+                session: false,
+                strong: false,
+                passphrase,
+            })) || '{ "mnemonics": [], "privateKeys": [] }'
+        );
+
+        activeAccountIndex = parseInt(
+            (await getEncrypted({
+                key: 'activeAccountIndex',
+                session: false,
+                strong: false,
+            })) || '0'
+        );
+
+        if (!accountInfos.find((a) => a.index === activeAccountIndex)) {
+            activeAccountIndex = accountInfos[0].index;
+        }
 
         if (mnemonic) {
             const keypairVault = new KeypairVault();
             keypairVault.mnemonic = mnemonic;
 
-            let seeds = [];
+            let activeSeed: { address: string; seed: string } | undefined =
+                undefined;
             if (accountInfos.length === 0) {
                 accountInfos = [
                     {
@@ -147,22 +182,78 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                         name: 'Wallet',
                         color: getNextWalletColor(0),
                         emoji: getNextEmoji(0),
-                        address: keypairVault.getAddress(0),
+                        address: keypairVault.getAddress(0) ?? '',
                     },
                 ];
-                seeds = [
-                    {
-                        address: keypairVault.getAddress(0),
-                        seed: (keypairVault.getSeed(0) || '').toString(),
-                    },
-                ];
+                activeSeed = {
+                    address: keypairVault.getAddress(0) ?? '',
+                    seed: (keypairVault.getSeed(0) ?? '').toString(),
+                };
             } else {
                 for (let i = 0; i < accountInfos.length; i++) {
-                    accountInfos[i].address = keypairVault.getAddress(i);
-                    seeds.push({
-                        address: keypairVault.getAddress(i),
-                        seed: (keypairVault.getSeed(i) || '').toString(),
+                    if (
+                        accountInfos[i].importedMnemonicName ||
+                        accountInfos[i].importedPrivateKeyName
+                    ) {
+                        continue;
+                    }
+                    accountInfos[i].address = keypairVault.getAddress(i) ?? '';
+                }
+
+                const activeAccount = accountInfos.find(
+                    (a) => a.index === activeAccountIndex
+                );
+
+                if (activeAccount?.importedMnemonicName) {
+                    const importedKeyPairVault = new KeypairVault();
+
+                    const importedMnemonic = await getEncrypted({
+                        key: `importedMnemonic${activeAccount.importedMnemonicName}`,
+                        session: false,
+                        strong: true,
+                        passphrase,
                     });
+
+                    if (importedMnemonic) {
+                        importedKeyPairVault.mnemonic = importedMnemonic;
+
+                        const index = activeAccount.importedMnemonicIndex;
+                        activeSeed = {
+                            address:
+                                importedKeyPairVault.getAddress(index) ?? '',
+                            seed: (
+                                importedKeyPairVault.getSeed(index) || ''
+                            ).toString(),
+                        };
+                    }
+                } else if (activeAccount?.importedPrivateKeyName) {
+                    const importedPrivateKey = await getEncrypted({
+                        key: `importedPrivateKey${activeAccount.importedPrivateKeyName}`,
+                        session: false,
+                        strong: true,
+                        passphrase,
+                    });
+
+                    if (importedPrivateKey) {
+                        const secretKey = fromHEX(importedPrivateKey);
+                        const importedKeyPair =
+                            Ed25519Keypair.fromSecretKey(secretKey);
+
+                        activeSeed = {
+                            address: importedKeyPair
+                                .getPublicKey()
+                                .toSuiAddress(),
+                            seed: secretKey.toString(),
+                        };
+                    }
+                } else {
+                    activeSeed = {
+                        address:
+                            keypairVault.getAddress(activeAccountIndex) ?? '',
+                        seed: (
+                            keypairVault.getSeed(activeAccountIndex) || ''
+                        ).toString(),
+                    };
                 }
             }
 
@@ -173,23 +264,11 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 strong: false,
             });
             await setEncrypted({
-                key: 'seeds',
-                value: JSON.stringify(seeds),
+                key: 'activeSeed',
+                value: JSON.stringify(activeSeed ?? '{}'),
                 session: true,
                 strong: false,
             });
-        }
-
-        activeAccountIndex = parseInt(
-            (await getEncrypted({
-                key: 'activeAccountIndex',
-                session: false,
-                strong: false,
-            })) || '0'
-        );
-
-        if (activeAccountIndex >= (accountInfos?.length || 0)) {
-            activeAccountIndex = (accountInfos?.length || 1) - 1;
         }
 
         const {
@@ -211,6 +290,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 activeAccountIndex,
                 locked: true,
                 accountType,
+                importNames,
             };
         }
 
@@ -222,6 +302,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             activeAccountIndex,
             locked: false,
             accountType,
+            importNames,
         };
     }
 );
@@ -240,7 +321,10 @@ export const getEmail = createAsyncThunk(
 export const createMnemonic = createAsyncThunk(
     'account/createMnemonic',
     async (
-        existingMnemonic: string | undefined,
+        {
+            existingMnemonic,
+            name,
+        }: { existingMnemonic?: string; name?: string },
         { getState }
     ): Promise<string | null> => {
         const mnemonic = existingMnemonic || generateMnemonic();
@@ -251,7 +335,7 @@ export const createMnemonic = createAsyncThunk(
 
         if (passphrase) {
             await setEncrypted({
-                key: 'mnemonic',
+                key: `mnemonic`,
                 value: mnemonic,
                 session: false,
                 strong: true,
@@ -260,6 +344,233 @@ export const createMnemonic = createAsyncThunk(
         }
 
         return mnemonic;
+    }
+);
+
+export const saveImportedMnemonic = createAsyncThunk(
+    'account/saveImportedMnemonic',
+    async (
+        { mnemonic, name }: { mnemonic: string; name: string },
+        { getState }
+    ): Promise<string | null> => {
+        const {
+            account: { passphrase, importNames },
+        } = getState() as RootState;
+        const mutableImportNames = JSON.parse(JSON.stringify(importNames));
+
+        if (passphrase) {
+            if (name) {
+                mutableImportNames.mnemonics.push(name);
+                await setEncrypted({
+                    key: 'importNames',
+                    value: JSON.stringify(mutableImportNames),
+                    session: false,
+                    strong: false,
+                    passphrase,
+                });
+            }
+
+            await setEncrypted({
+                key: `importedMnemonic${name ?? ''}`,
+                value: mnemonic,
+                session: false,
+                strong: true,
+                passphrase,
+            });
+        }
+
+        return name;
+    }
+);
+
+export const saveImportedPrivateKey = createAsyncThunk(
+    'account/saveImportedPrivateKey',
+    async (
+        { privateKey, name }: { privateKey: string; name: string },
+        { getState }
+    ): Promise<string | null> => {
+        const {
+            account: { passphrase, importNames },
+        } = getState() as RootState;
+        const mutableImportNames = JSON.parse(JSON.stringify(importNames));
+
+        if (passphrase) {
+            if (name) {
+                mutableImportNames.privateKeys.push(name);
+                await setEncrypted({
+                    key: `importNames`,
+                    value: JSON.stringify(mutableImportNames),
+                    session: false,
+                    strong: false,
+                    passphrase,
+                });
+            }
+
+            await setEncrypted({
+                key: `importedPrivateKey${name ?? ''}`,
+                value: privateKey,
+                session: false,
+                strong: true,
+                passphrase,
+            });
+        }
+
+        return name;
+    }
+);
+
+export const getImportedMnemonic = createAsyncThunk(
+    'account/getImportedMnemonic',
+    async (
+        { name }: { name: string },
+        { getState }
+    ): Promise<string | null> => {
+        const {
+            account: { passphrase },
+        } = getState() as RootState;
+
+        if (passphrase) {
+            const mnemonic = await getEncrypted({
+                key: `importedMnemonic${name ?? ''}`,
+                session: false,
+                strong: true,
+                passphrase,
+            });
+
+            return mnemonic;
+        }
+
+        return null;
+    }
+);
+
+export const getImportedPrivateKey = createAsyncThunk(
+    'account/getImportedPrivateKey',
+    async (
+        { name }: { name: string },
+        { getState }
+    ): Promise<string | null> => {
+        const {
+            account: { passphrase },
+        } = getState() as RootState;
+
+        if (passphrase) {
+            const privateKey = await getEncrypted({
+                key: `importedPrivateKey${name ?? ''}`,
+                session: false,
+                strong: true,
+                passphrase,
+            });
+
+            return privateKey;
+        }
+
+        return null;
+    }
+);
+
+export const deleteImportedMnemonic = createAsyncThunk(
+    'account/deleteImportedMnemonic',
+    async ({ name }: { name: string }, { getState }) => {
+        const {
+            account: { passphrase, importNames, accountInfos },
+        } = getState() as RootState;
+
+        if (passphrase) {
+            const mutableImportNames = JSON.parse(JSON.stringify(importNames));
+            let mutableAccountInfos = JSON.parse(JSON.stringify(accountInfos));
+
+            mutableImportNames.mnemonics = mutableImportNames.mnemonics.filter(
+                (mnemonicName: string) => mnemonicName !== name
+            );
+
+            mutableAccountInfos = mutableAccountInfos.filter(
+                (accountInfo: AccountInfo) =>
+                    accountInfo.importedMnemonicName !== name
+            );
+
+            await setEncrypted({
+                key: 'importNames',
+                value: JSON.stringify(mutableImportNames),
+                session: false,
+                strong: false,
+                passphrase,
+            });
+
+            await deleteEncrypted({
+                key: `importedMnemonic${name ?? ''}`,
+                session: false,
+                strong: true,
+                passphrase,
+            });
+
+            await setEncrypted({
+                key: 'accountInfos',
+                value: JSON.stringify(mutableAccountInfos),
+                session: false,
+                strong: false,
+            });
+
+            return {
+                importNames: mutableImportNames,
+                accountInfos: mutableAccountInfos,
+            };
+        }
+
+        return null;
+    }
+);
+
+export const deleteImportedPrivateKey = createAsyncThunk(
+    'account/deleteImportedPrivateKey',
+    async ({ name }: { name: string }, { getState }) => {
+        const {
+            account: { passphrase, importNames, accountInfos },
+        } = getState() as RootState;
+
+        if (passphrase) {
+            const mutableImportNames = JSON.parse(JSON.stringify(importNames));
+            let mutableAccountInfos = JSON.parse(JSON.stringify(accountInfos));
+
+            mutableImportNames.privateKeys =
+                mutableImportNames.privateKeys.filter(
+                    (privateKey: string) => privateKey !== name
+                );
+
+            mutableAccountInfos = mutableAccountInfos.filter(
+                (accountInfo: AccountInfo) =>
+                    accountInfo.importedPrivateKeyName !== name
+            );
+
+            await setEncrypted({
+                key: 'importNames',
+                value: JSON.stringify(mutableImportNames),
+                session: false,
+                strong: false,
+                passphrase,
+            });
+
+            await deleteEncrypted({
+                key: `importedPrivateKey${name ?? ''}`,
+                session: false,
+                strong: true,
+                passphrase,
+            });
+
+            await setEncrypted({
+                key: 'accountInfos',
+                value: JSON.stringify(mutableAccountInfos),
+                session: false,
+                strong: false,
+            });
+
+            return {
+                importNames: mutableImportNames,
+                accountInfos: mutableAccountInfos,
+            };
+        }
+
+        return null;
     }
 );
 
@@ -300,7 +611,6 @@ export const saveAccountInfos = createAsyncThunk(
             session: false,
             strong: false,
         });
-
         return accountInfos;
     }
 );
@@ -360,7 +670,7 @@ export const changePassword: AsyncThunk<
         }
 
         const {
-            account: { mnemonic },
+            account: { mnemonic, importNames },
         } = getState() as RootState;
 
         if (mnemonic) {
@@ -378,6 +688,68 @@ export const changePassword: AsyncThunk<
                 passphrase: newPassword,
             });
         }
+
+        for (const name of importNames.mnemonics) {
+            const importedMnemonic = await getEncrypted({
+                key: `importedMnemonic${name}`,
+                session: false,
+                strong: true,
+                passphrase: currentPassword,
+            });
+            if (importedMnemonic) {
+                await deleteEncrypted({
+                    key: `importedMnemonic${name}`,
+                    session: false,
+                    strong: true,
+                    passphrase: currentPassword,
+                });
+                await setEncrypted({
+                    key: `importedMnemonic${name}`,
+                    value: importedMnemonic,
+                    session: false,
+                    strong: true,
+                    passphrase: newPassword,
+                });
+            }
+        }
+
+        for (const name of importNames.privateKeys) {
+            const importedPrivateKey = await getEncrypted({
+                key: `importedPrivateKey${name}`,
+                session: false,
+                strong: true,
+                passphrase: currentPassword,
+            });
+            if (importedPrivateKey) {
+                await deleteEncrypted({
+                    key: `importedPrivateKey${name}`,
+                    session: false,
+                    strong: true,
+                    passphrase: currentPassword,
+                });
+                await setEncrypted({
+                    key: `importedPrivateKey${name}`,
+                    value: importedPrivateKey,
+                    session: false,
+                    strong: true,
+                    passphrase: newPassword,
+                });
+            }
+        }
+
+        await deleteEncrypted({
+            key: 'importNames',
+            session: false,
+            strong: false,
+            passphrase: currentPassword,
+        });
+        await setEncrypted({
+            key: 'importNames',
+            value: JSON.stringify(importNames),
+            session: false,
+            strong: false,
+            passphrase: newPassword,
+        });
 
         await deleteEncrypted({
             key: 'passphrase',
@@ -501,9 +873,31 @@ export const reset = createAsyncThunk(
     'account/reset',
     async (_args, { getState }): Promise<void> => {
         const {
-            account: { passphrase },
+            account: { passphrase, importNames },
         } = getState() as RootState;
         if (passphrase) {
+            for (const name of importNames.mnemonics || []) {
+                await deleteEncrypted({
+                    key: `importedMnemonic${name}`,
+                    passphrase,
+                    session: false,
+                    strong: true,
+                });
+            }
+            for (const name of importNames.privateKeys || []) {
+                await deleteEncrypted({
+                    key: `importedPrivateKey${name}`,
+                    passphrase,
+                    session: false,
+                    strong: true,
+                });
+            }
+            await deleteEncrypted({
+                key: 'importNames',
+                session: false,
+                strong: false,
+                passphrase,
+            });
             await deleteEncrypted({
                 key: 'passphrase',
                 session: true,
@@ -520,6 +914,11 @@ export const reset = createAsyncThunk(
                 session: false,
                 strong: false,
             });
+            await deleteEncrypted({
+                key: 'activeSeed',
+                session: true,
+                strong: false,
+            });
         }
         await deleteEncrypted({
             key: 'authentication',
@@ -534,6 +933,11 @@ export const reset = createAsyncThunk(
         });
         await deleteEncrypted({
             key: PERMISSIONS_STORAGE_KEY,
+            session: false,
+            strong: false,
+        });
+        await deleteEncrypted({
+            key: 'account-type',
             session: false,
             strong: false,
         });
@@ -599,6 +1003,14 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
+        const excludeDappKeys = JSON.parse(
+            (await getEncrypted({
+                key: 'excludedDappsKeys',
+                session: false,
+                strong: false,
+            })) || '[]'
+        );
+
         const automaticKeys = [
             CUSTOMIZE_ID,
             ADDRESS_BOOK_ID,
@@ -613,6 +1025,13 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
             }
         }
 
+        for (const key of excludeDappKeys) {
+            const index = allFavoriteDappsKeys.indexOf(key);
+            if (index !== -1) {
+                allFavoriteDappsKeys.splice(index, 1);
+            }
+        }
+
         if (allFavoriteDappsKeys.length !== favoriteDappsKeys.length) {
             await saveFavoriteDappsKeys(allFavoriteDappsKeys);
         }
@@ -624,6 +1043,10 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
 export const saveFavoriteDappsKeys = createAsyncThunk(
     'account/setFavoriteDappsKeys',
     async (favoriteDappsKeys: string[]): Promise<string[]> => {
+        if (!favoriteDappsKeys.includes(CUSTOMIZE_ID)) {
+            favoriteDappsKeys.push(CUSTOMIZE_ID);
+        }
+
         await setEncrypted({
             key: 'favoriteDappsKeys',
             value: JSON.stringify(favoriteDappsKeys),
@@ -679,6 +1102,7 @@ type AccountState = {
     locked: boolean;
     favoriteDappsKeys: string[];
     excludedDappsKeys: string[];
+    importNames: { mnemonics: string[]; privateKeys: string[] };
 };
 
 const initialState: AccountState = {
@@ -696,6 +1120,10 @@ const initialState: AccountState = {
     locked: false,
     favoriteDappsKeys: [],
     excludedDappsKeys: [],
+    importNames: {
+        mnemonics: [],
+        privateKeys: [],
+    },
 };
 
 const accountSlice = createSlice({
@@ -754,6 +1182,7 @@ const accountSlice = createSlice({
                                 state.activeAccountIndex
                         )?.address || null;
                     state.accountType = action.payload.accountType;
+                    state.importNames = action.payload.importNames;
                     state.locked = action.payload.locked;
                 }
             )
@@ -805,14 +1234,46 @@ const accountSlice = createSlice({
             .addCase(saveFavoriteDappsKeys.fulfilled, (state, action) => {
                 state.favoriteDappsKeys = action.payload;
             })
-            .addCase(
-                loadExcludedDappsKeysFromStorage.fulfilled,
-                (state, action) => {
-                    state.excludedDappsKeys = action.payload;
-                }
-            )
             .addCase(saveExcludedDappsKeys.fulfilled, (state, action) => {
                 state.excludedDappsKeys = action.payload;
+            })
+            .addCase(saveImportedMnemonic.fulfilled, (state, action) => {
+                state.importNames.mnemonics.push(action.payload || '');
+            })
+            .addCase(saveImportedPrivateKey.fulfilled, (state, action) => {
+                state.importNames.privateKeys.push(action.payload || '');
+            })
+            .addCase(deleteImportedMnemonic.fulfilled, (state, action) => {
+                if (action.payload) {
+                    state.importNames = action.payload.importNames;
+                    state.accountInfos = action.payload.accountInfos;
+
+                    const activeAccountIndex = state.accountInfos.findIndex(
+                        (accountInfo) => accountInfo.address === state.address
+                    );
+
+                    if (activeAccountIndex === -1) {
+                        state.address = state.accountInfos[0]?.address || null;
+                        state.activeAccountIndex =
+                            state.accountInfos[0]?.index || 0;
+                    }
+                }
+            })
+            .addCase(deleteImportedPrivateKey.fulfilled, (state, action) => {
+                if (action.payload) {
+                    state.importNames = action.payload.importNames;
+                    state.accountInfos = action.payload.accountInfos;
+
+                    const activeAccountIndex = state.accountInfos.findIndex(
+                        (accountInfo) => accountInfo.address === state.address
+                    );
+
+                    if (activeAccountIndex === -1) {
+                        state.address = state.accountInfos[0]?.address || null;
+                        state.activeAccountIndex =
+                            state.accountInfos[0]?.index || 0;
+                    }
+                }
             }),
 });
 
