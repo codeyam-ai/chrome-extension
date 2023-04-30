@@ -44,7 +44,7 @@ const WalletButton = ({
     }, [navigate, editWalletUrl]);
 
     useEffect(() => {
-        if (isActive && ref.current) {
+        if (isActive && ref.current?.scrollIntoView) {
             ref.current.scrollIntoView();
         }
     }, [isActive]);
