@@ -112,6 +112,9 @@ process.env.API_ENDPOINT_TESTNET_FULLNODE =
     'http://testNet-fullnode.example.com/';
 process.env.API_ENDPOINT_TESTNET_FAUCET = 'http://testNet-faucet.example.com/';
 
+process.env.API_ENDPOINT_MAINNET_FULLNODE =
+    'http://mainNet-fullnode.example.com/';
+
 process.env.BASE_URL = 'http://ethos-base-url.example.com/';
 
 process.env.EXPLORER_URL_LOCAL = 'http://www.explorer.sui.io/';
