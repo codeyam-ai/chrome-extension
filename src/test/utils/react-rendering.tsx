@@ -43,7 +43,7 @@ export async function renderApp({
         createStore({
             app: {
                 appType: AppType.fullscreen,
-                apiEnv: API_ENV.testNet,
+                apiEnv: API_ENV.mainNet,
             },
             ...preloadedState,
         });
