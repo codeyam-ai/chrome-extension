@@ -3,7 +3,6 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { defer, filter, from, of, repeat, switchMap } from 'rxjs';
 
-import { growthbook } from '../../experimentation/feature-gating';
 import { useBalancesState } from '../../hooks/useBalancesState';
 import { AppState } from '../../hooks/useInitializedGuard';
 import { fetchAllBalances } from '../../redux/slices/balances';
@@ -18,6 +17,7 @@ import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
 import PageLayout from '_src/ui/app/pages/PageLayout';
 
 import type { AppDispatch } from '../../redux/store';
+import featureGating from '_src/background/FeatureGating';
 
 export const POLL_SUI_OBJECTS_INTERVAL = 4000;
 
@@ -47,17 +47,20 @@ const AppContainer = () => {
     }, [guardChecking, dispatch]);
 
     useEffect(() => {
-        if (growthbook.isOn('devnet-issues')) {
-            toast(
-                <WarningAlert
-                    text={'Sui Devnet is having technical issues.'}
-                />,
-                {
-                    autoClose: false,
-                    closeOnClick: true,
-                }
-            );
-        }
+        (async () => {
+            const growthbook = await featureGating.getGrowthBook();
+            if (growthbook.isOn('devnet-issues')) {
+                toast(
+                    <WarningAlert
+                        text={'Sui Devnet is having technical issues.'}
+                    />,
+                    {
+                        autoClose: false,
+                        closeOnClick: true,
+                    }
+                );
+            }
+        })();
     }, []);
 
     useEffect(() => {
