@@ -17,7 +17,6 @@ const WalletPicker = ({
     selectOnly = false,
     isWalletEditing = false,
 }: WalletPickerProps) => {
-
     const [createWallet, setCreateWallet] = useState<() => void>(
         () => () => null
     );
