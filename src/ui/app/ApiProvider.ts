@@ -9,10 +9,10 @@ import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { Keypair, SuiAddress } from '@mysten/sui.js';
 
 export enum API_ENV {
-    local = 'local',
-    devNet = 'devNet',
-    testNet = 'testNet',
     mainNet = 'mainNet',
+    testNet = 'testNet',
+    devNet = 'devNet',
+    local = 'local',
     customRPC = 'customRPC',
 }
 

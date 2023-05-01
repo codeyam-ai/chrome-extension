@@ -1,5 +1,9 @@
 import { SignalIcon } from '@heroicons/react/24/outline';
-import { SUI_DEVNET_CHAIN, SUI_MAINNET_CHAIN, SUI_TESTNET_CHAIN } from '@mysten/wallet-standard';
+import {
+    SUI_DEVNET_CHAIN,
+    SUI_MAINNET_CHAIN,
+    SUI_TESTNET_CHAIN,
+} from '@mysten/wallet-standard';
 
 import { API_ENV } from '_src/ui/app/ApiProvider';
 import Body from '_src/ui/app/shared/typography/Body';
@@ -21,7 +25,7 @@ const ChainIndicator = ({ apiEnv }: { apiEnv: API_ENV }) => {
             break;
     }
 
-    if (!chain) return <></>;
+    if (!chain || chain === SUI_MAINNET_CHAIN) return <></>;
 
     const [chainName, network] = chain.split(':');
 
