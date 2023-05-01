@@ -3,7 +3,6 @@
 
 import { Connection, JsonRpcProvider, RawSigner } from '@mysten/sui.js';
 
-import { growthbook } from './experimentation/feature-gating';
 import { queryClient } from './helpers/queryClient';
 import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
@@ -44,10 +43,13 @@ export const ENV_TO_API: Record<string, Connection | null> = {
 };
 
 function getDefaultAPI(env: API_ENV) {
-    const dynamicApiEnvs = growthbook.getFeatureValue(
-        'api-endpoints',
-        {} as Record<string, Record<string, string>>
-    );
+    // TODO: use the new, async, Growthbook code to load API endpoints from the server
+
+    // const dynamicApiEnvs = growthbook.getFeatureValue(
+    //     'api-endpoints',
+    //     {} as Record<string, Record<string, string>>
+    // );
+    const dynamicApiEnvs = {} as Record<string, Record<string, string>>;
 
     const mergedApiEnvs = ENV_TO_API;
     for (const env of Object.keys(ENV_TO_API)) {
