@@ -19,7 +19,6 @@ import PageLayout from '_src/ui/app/pages/PageLayout';
 
 import type { AppDispatch } from '../../redux/store';
 
-
 export const POLL_SUI_OBJECTS_INTERVAL = 4000;
 
 const AppContainer = () => {
