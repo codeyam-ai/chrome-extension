@@ -20,6 +20,7 @@ import {
     type SuiSignMessageMethod,
     type StandardDisconnectFeature,
     type StandardDisconnectMethod,
+    SUI_MAINNET_CHAIN,
 } from '@mysten/wallet-standard';
 import mitt, { type Emitter } from 'mitt';
 import { filter, map, type Observable } from 'rxjs';
@@ -78,7 +79,7 @@ const API_ENV_TO_CHAIN: Record<
     [API_ENV.local]: SUI_LOCALNET_CHAIN,
     [API_ENV.devNet]: SUI_DEVNET_CHAIN,
     [API_ENV.testNet]: SUI_TESTNET_CHAIN,
-    [API_ENV.mainNet]: 'sui:mainnet',
+    [API_ENV.mainNet]: SUI_MAINNET_CHAIN,
 };
 
 export class EthosWallet implements Wallet {
