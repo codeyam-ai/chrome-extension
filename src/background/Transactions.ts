@@ -8,6 +8,14 @@ import {
     RawSigner,
     TransactionBlock,
 } from '@mysten/sui.js';
+import {
+    SUI_MAINNET_CHAIN,
+    type IdentifierString,
+    type SuiSignAndExecuteTransactionBlockInput,
+    type SuiSignMessageOutput,
+    SUI_TESTNET_CHAIN,
+    SUI_DEVNET_CHAIN,
+} from '@mysten/wallet-standard';
 import { filter, lastValueFrom, map, race, Subject, take } from 'rxjs';
 import { v4 as uuidV4 } from 'uuid';
 import Browser from 'webextension-polyfill';
@@ -23,11 +31,6 @@ import type {
     SuiAddress,
     SuiTransactionBlockResponse,
 } from '@mysten/sui.js';
-import type {
-    IdentifierString,
-    SuiSignAndExecuteTransactionBlockInput,
-    SuiSignMessageOutput,
-} from '@mysten/wallet-standard';
 import type {
     PreapprovalRequest,
     PreapprovalResponse,
@@ -289,11 +292,14 @@ class Transactions {
         let env;
         let envEndpoint;
         switch (chain) {
-            case 'sui:devnet':
-                env = API_ENV.devNet;
+            case SUI_MAINNET_CHAIN:
+                env = API_ENV.mainNet;
                 break;
-            case 'sui:testnet':
+            case SUI_TESTNET_CHAIN:
                 env = API_ENV.testNet;
+                break;
+            case SUI_DEVNET_CHAIN:
+                env = API_ENV.devNet;
                 break;
             case 'sui:local':
                 env = API_ENV.local;
@@ -302,7 +308,7 @@ class Transactions {
                 env = API_ENV.customRPC;
                 break;
             default: {
-                env = API_ENV.testNet;
+                env = API_ENV.mainNet;
             }
         }
 

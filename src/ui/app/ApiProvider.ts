@@ -12,6 +12,7 @@ export enum API_ENV {
     local = 'local',
     devNet = 'devNet',
     testNet = 'testNet',
+    mainNet = 'mainNet',
     customRPC = 'customRPC',
 }
 
@@ -20,10 +21,11 @@ type EnvInfo = {
 };
 
 export const API_ENV_TO_INFO: Record<string, EnvInfo> = {
-    [API_ENV.local.toString()]: { name: 'Local' },
-    [API_ENV.devNet.toString()]: { name: 'Devnet' },
-    [API_ENV.customRPC.toString()]: { name: 'Custom RPC URL' },
+    [API_ENV.mainNet.toString()]: { name: 'Mainnet' },
     [API_ENV.testNet.toString()]: { name: 'Testnet' },
+    [API_ENV.devNet.toString()]: { name: 'Devnet' },
+    [API_ENV.local.toString()]: { name: 'Local' },
+    [API_ENV.customRPC.toString()]: { name: 'Custom RPC URL' },
 };
 
 export const ENV_TO_API: Record<string, Connection | null> = {

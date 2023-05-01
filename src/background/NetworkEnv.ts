@@ -53,9 +53,9 @@ class NetworkEnv {
     async #isNetworkAvailable(apiEnv: API_ENV) {
         const growthBook = await FeatureGating.getGrowthBook();
         return (
-            (apiEnv === API_ENV.testNet &&
+            (apiEnv === API_ENV.mainNet &&
                 growthBook.isOn(FEATURES.USE_MAINNET_ENDPOINT)) ||
-            apiEnv !== API_ENV.testNet
+            apiEnv !== API_ENV.mainNet
         );
     }
 }
