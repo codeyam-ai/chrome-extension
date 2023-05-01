@@ -44,10 +44,11 @@ export const ENV_TO_API: Record<string, Connection | null> = {
 };
 
 function getDefaultApiEnv() {
-    const apiEnv = growthbook.getFeatureValue(
-        'default-api-env',
-        API_ENV.testNet
-    );
+    // this used to be controlled by Growthbook but now it's hardcoded
+    // TODO: use Growthbook to control this again. Will require some refactoring,
+    //   as this code is called at module-load time, when growthbook features are
+    //   not necessarily downloaded yet.
+    const apiEnv = API_ENV.testNet;
     if (apiEnv && !Object.keys(API_ENV).includes(apiEnv)) {
         throw new Error(`Unknown environment variable API_ENV, ${apiEnv}`);
     }
