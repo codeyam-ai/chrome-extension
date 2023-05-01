@@ -14,10 +14,11 @@ import TabBar from '../../shared/navigation/tab-bar/TabBar';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
 import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
+import featureGating from '_src/background/FeatureGating';
 import PageLayout from '_src/ui/app/pages/PageLayout';
 
 import type { AppDispatch } from '../../redux/store';
-import featureGating from '_src/background/FeatureGating';
+
 
 export const POLL_SUI_OBJECTS_INTERVAL = 4000;
 
