@@ -1,7 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { RawSigner, JsonRpcProvider, Connection } from '@mysten/sui.js';
+import { Connection, JsonRpcProvider, RawSigner } from '@mysten/sui.js';
 
 import { growthbook } from './experimentation/feature-gating';
 import { queryClient } from './helpers/queryClient';
@@ -43,18 +43,6 @@ export const ENV_TO_API: Record<string, Connection | null> = {
     }),
 };
 
-function getDefaultApiEnv() {
-    // this used to be controlled by Growthbook but now it's hardcoded
-    // TODO: use Growthbook to control this again. Will require some refactoring,
-    //   as this code is called at module-load time, when growthbook features are
-    //   not necessarily downloaded yet.
-    const apiEnv = API_ENV.testNet;
-    if (apiEnv && !Object.keys(API_ENV).includes(apiEnv)) {
-        throw new Error(`Unknown environment variable API_ENV, ${apiEnv}`);
-    }
-    return apiEnv ? API_ENV[apiEnv as keyof typeof API_ENV] : API_ENV.testNet;
-}
-
 function getDefaultAPI(env: API_ENV) {
     const dynamicApiEnvs = growthbook.getFeatureValue(
         'api-endpoints',
@@ -93,7 +81,7 @@ function getDefaultAPI(env: API_ENV) {
     return apiEndpoint;
 }
 
-export const DEFAULT_API_ENV = getDefaultApiEnv();
+export const DEFAULT_API_ENV = API_ENV.testNet;
 
 type NetworkTypes = keyof typeof API_ENV;
 
