@@ -3,17 +3,19 @@
 
 import { GrowthBookProvider } from '@growthbook/growthbook-react';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { createRoot } from 'react-dom/client';
+import { type Root, createRoot } from 'react-dom/client';
 import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import { HashRouter } from 'react-router-dom';
 
 import App from './app';
+import Loading from './app/components/loading';
 import { queryClient } from './app/helpers/queryClient';
 import { growthbook } from '_app/experimentation/feature-gating';
 import { initAppType, initNetworkFromStorage } from '_redux/slices/app';
 import { getFromLocationSearch } from '_redux/slices/app/AppType';
 import { DependenciesContext } from '_shared/utils/dependenciesContext';
+import { ThemeProvider } from '_src/shared/utils/themeContext';
 import store from '_store';
 import { thunkExtras } from '_store/thunk-extras';
 
@@ -57,12 +59,32 @@ function makeHeartbeat() {
     return heartbeat;
 }
 
-function renderApp() {
+function renderTemp() {
     const rootDom = document.getElementById('root');
     if (!rootDom) {
         throw new Error('Root element not found');
     }
     const root = createRoot(rootDom);
+    root.render(
+        <ThemeProvider initialTheme={undefined}>
+            <Loading
+                loading={true}
+                big
+                className="w-[360px] h-[420px] flex justify-center items-center"
+            >
+                Loading
+            </Loading>
+        </ThemeProvider>
+    );
+    return root;
+}
+
+function renderApp(root: Root) {
+    const rootDom = document.getElementById('root');
+    if (!rootDom) {
+        throw new Error('Root element not found');
+    }
+
     const appDependencies: Dependencies = {
         closeWindow: () => {
             window.close();
@@ -92,6 +114,7 @@ function renderApp() {
 }
 
 (async () => {
+    const root = renderTemp();
     await init();
-    renderApp();
+    renderApp(root);
 })();

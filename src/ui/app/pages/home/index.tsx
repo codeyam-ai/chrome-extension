@@ -66,7 +66,11 @@ const AppContainer = () => {
 
     return (
         <PageLayout>
-            <Loading loading={guardChecking} big={true} className="p-36">
+            <Loading
+                loading={guardChecking}
+                big={true}
+                className="w-[360px] h-[420px] flex justify-center items-center"
+            >
                 <BaseLayout>
                     <NavBar />
                     <main className="flex-grow h-[471px] overflow-scroll no-scrollbar">
