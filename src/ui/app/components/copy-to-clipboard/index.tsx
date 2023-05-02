@@ -6,6 +6,7 @@ import { memo, useCallback, useEffect, useState } from 'react';
 import Tooltip, { type TooltipDirection } from '../Tooltip';
 
 import type { ReactNode, MouseEventHandler } from 'react';
+import classNames from 'classnames';
 
 const COPY_CHECKMARK_MILLIS = 2000;
 
@@ -60,7 +61,10 @@ function CopyToClipboard({
         >
             <span
                 title={txt}
-                className="cursor-pointer flex items-center"
+                className={classNames(
+                    'cursor-pointer flex items-center',
+                    className
+                )}
                 onClick={!copyOnlyOnIconClick ? copyToClipboard : undefined}
             >
                 {children}

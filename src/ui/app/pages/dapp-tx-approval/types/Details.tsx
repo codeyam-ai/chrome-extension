@@ -17,6 +17,8 @@ import type {
 import type { RawSigner, SuiAddress, SuiObjectChange } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { ReactNode } from 'react';
+import Subheader from '_src/ui/app/shared/typography/Subheader';
+import { getTheme } from '_src/ui/app/helpers/getTheme';
 
 const Row = ({
     title,
@@ -61,12 +63,9 @@ const Section = ({
 }) => {
     return (
         <div className="flex flex-col gap-3">
-            <BodyLarge
-                isSemibold
-                className="text-size-ethos-subheader text-[#9040F5]"
-            >
+            <Subheader className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark">
                 {title}
-            </BodyLarge>
+            </Subheader>
             {children}
         </div>
     );
@@ -241,8 +240,14 @@ const RawOutput = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
 
     return (
         <Section title="Raw Output">
-            <CopyToClipboard txt={jsonDryRun} direction={TooltipDirection.DOWN}>
-                <textarea className="rounded-lg text-sm">{jsonDryRun}</textarea>
+            <CopyToClipboard
+                txt={jsonDryRun}
+                direction={TooltipDirection.DOWN}
+                className="w-full"
+            >
+                <textarea className="rounded-lg text-sm w-[320px] h-[100px] bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
+                    {jsonDryRun}
+                </textarea>
             </CopyToClipboard>
         </Section>
     );
@@ -255,6 +260,7 @@ const Details = ({
     analysis: AnalyzeChangesResult;
     signer: EthosSigner | RawSigner;
 }) => {
+    const theme = getTheme();
     const [details, setDetails] = useState(false);
     const [address, setAddress] = useState<SuiAddress | undefined>(undefined);
 
@@ -272,13 +278,19 @@ const Details = ({
                 className="flex flex-row justify-between items-center cursor-pointer"
                 onClick={toggleDetails}
             >
-                <BodyLarge className="text-[#9040F5] underline">
+                <BodyLarge className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark underline">
                     {details ? 'Less' : 'More'} Details
                 </BodyLarge>
                 {details ? (
-                    <ChevronUpIcon color="#9040F5" width={20} />
+                    <ChevronUpIcon
+                        color={theme === 'light' ? '#9040F5' : '#9C78F7'}
+                        width={20}
+                    />
                 ) : (
-                    <ChevronDownIcon color="#9040F5" width={20} />
+                    <ChevronDownIcon
+                        color={theme === 'light' ? '#9040F5' : '#9C78F7'}
+                        width={20}
+                    />
                 )}
             </div>
             {details && (
