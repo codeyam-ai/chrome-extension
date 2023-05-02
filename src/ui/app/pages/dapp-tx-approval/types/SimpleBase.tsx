@@ -31,7 +31,8 @@ const SimpleBase = ({
                 iconSrc={approval?.originFavIcon}
                 iconAlt={`${approval?.origin} icon`}
                 isConnectingToEthosDashboard={
-                    origin === BASE_URL || origin === LINK_URL
+                    approval?.origin === BASE_URL ||
+                    approval?.origin === LINK_URL
                 }
             />
             <ChainIndicator apiEnv={selectedApiEnv} />

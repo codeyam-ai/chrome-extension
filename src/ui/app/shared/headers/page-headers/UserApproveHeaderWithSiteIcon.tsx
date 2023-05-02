@@ -37,11 +37,16 @@ const UserApproveHeaderWithSiteIcon = ({
         []
     );
 
+    const EthosLogoWithCircle = (
+        <div className="rounded-full p-1 h-10 w-10 border-[0.5px] border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
+            <EthosLogo className="h-full w-full" />
+        </div>
+    );
     return (
         <HeaderWithIcons
             firstIcon={
                 isConnectingToEthosDashboard ? (
-                    <EthosLogo className="h-10 w-10" />
+                    EthosLogoWithCircle
                 ) : iconSrc ? (
                     <img
                         src={iconSrc}
@@ -57,11 +62,7 @@ const UserApproveHeaderWithSiteIcon = ({
                 )
             }
             secondIcon={
-                isConnectingToEthosDashboard ? null : (
-                    <div className="rounded-full p-1 h-10 w-10 border-[0.5px] border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
-                        <EthosLogo className="h-full w-full" />
-                    </div>
-                )
+                isConnectingToEthosDashboard ? null : EthosLogoWithCircle
             }
             title={title}
             description={description}
