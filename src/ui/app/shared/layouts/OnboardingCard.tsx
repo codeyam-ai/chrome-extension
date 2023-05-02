@@ -114,8 +114,7 @@ const OnboardingCard = ({
 
     return (
         <>
-            {/* <EthosLogoWithText className="h-[48px] w-[112px] mb-4 tall:mb-8" /> */}
-            <EthosLogoWithText className="mb-4 tall:mb-8" />
+            <EthosLogoWithText className="mb-4 tall:mb-8" forceLightTheme />
 
             <div className="flex mx-6 lg:w-[928px]">
                 <div className="md:basis-1/2 flex-col rounded-2xl md:rounded-l-2xl md:rounded-r-none bg-ethos-light-background-default">
