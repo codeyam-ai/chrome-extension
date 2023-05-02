@@ -16,7 +16,9 @@ import {
 } from '_redux/slices/account';
 import { DEFAULT_NFT_TRANSFER_GAS_FEE } from '_redux/slices/sui-objects/Coin';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
+import transferObjectTransactionBlock from '_src/ui/app/helpers/transferObjectTransactionBlock';
 import { setNftDetails } from '_src/ui/app/redux/slices/forms';
+import { api } from '_src/ui/app/redux/store/thunk-extras';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 
 import type { SerializedError } from '@reduxjs/toolkit';
@@ -91,12 +93,12 @@ function TransferNFTRecipient() {
 
             if (!signer) return;
 
-            const transactionBlock = new TransactionBlock();
-            transactionBlock.add(
-                TransactionBlock.Transactions.TransferObjects(
-                    [transactionBlock.object(objectId)],
-                    transactionBlock.pure(to)
-                )
+            let transactionBlock = new TransactionBlock();
+            transactionBlock = await transferObjectTransactionBlock(
+                transactionBlock,
+                selectedNFTObj,
+                to,
+                api.instance.fullNode
             );
 
             const signedTx = await signer.dryRunTransactionBlock({
@@ -137,6 +139,7 @@ function TransferNFTRecipient() {
             address,
             authentication,
             activeAccountIndex,
+            selectedNFTObj,
             dispatch,
             navigate,
         ]

@@ -26,6 +26,10 @@ export type BagNFT = {
 export class NFT {
     public static isNFT(data: SuiObjectData): boolean {
         if (this.isBagNFT(data)) return true;
+        if ((data.type ?? '').indexOf('playground') > -1) {
+            console.log(data);
+            return true;
+        }
         if (
             data.display?.data &&
             typeof data.display.data === 'object' &&
