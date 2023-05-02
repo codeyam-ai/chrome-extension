@@ -166,7 +166,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
         );
 
         if (!accountInfos.find((a) => a.index === activeAccountIndex)) {
-            activeAccountIndex = accountInfos[0].index;
+            activeAccountIndex = accountInfos[0]?.index ?? 0;
         }
 
         if (mnemonic) {
