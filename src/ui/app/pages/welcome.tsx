@@ -5,16 +5,16 @@ import {
 } from '@heroicons/react/24/solid';
 import { useEffect } from 'react';
 
-import { ADDRESS_BOOK_ID, STAKING_ID } from '_src/data/dappsMap';
 import { useAppDispatch, useInitializedGuard } from '../hooks';
 import { AppState } from '../hooks/useInitializedGuard';
 import { saveFavoriteDappsKeys } from '../redux/slices/account';
 import OnboardingButton from '../shared/buttons/OnboardingButton';
+import HeaderWithLargeEthosIcon from '../shared/headers/page-headers/HeaderWithLargeEthosIcon';
 import OnboardingLayout from '../shared/layouts/OnboardingLayout';
 import Title from '../shared/typography/Title';
+import { ADDRESS_BOOK_ID, STAKING_ID } from '_src/data/dappsMap';
 
 import type { OnboardingButtonProps } from '../shared/buttons/OnboardingButton';
-import HeaderWithLargeEthosIcon from '../shared/headers/page-headers/HeaderWithLargeEthosIcon';
 
 const setupButtons: OnboardingButtonProps[] = [
     {

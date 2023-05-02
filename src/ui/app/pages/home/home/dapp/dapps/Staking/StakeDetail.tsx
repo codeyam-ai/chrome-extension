@@ -1,4 +1,3 @@
-import { MinusCircleIcon } from '@heroicons/react/24/outline';
 import { InformationCircleIcon } from '@heroicons/react/24/solid';
 import {
     SUI_SYSTEM_STATE_OBJECT_ID,

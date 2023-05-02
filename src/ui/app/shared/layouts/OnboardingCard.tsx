@@ -6,7 +6,7 @@ import {
 import { type ReactNode } from 'react';
 
 import EthosLogo from '../../components/logos/EthosLogo';
-import EthosLogoGrayscaleWithText from '../../components/logos/EthosLogoGrayscaleWithText';
+import EthosLogoWithText from '../../components/logos/EthosLogoWithText';
 import BackButton from '../buttons/BackButton';
 import BigPinIcon from '../svg/BigPinIcon';
 import SmallPinIcon from '../svg/SmallPinIcon';
@@ -15,7 +15,6 @@ import BodyLarge from '../typography/BodyLarge';
 import JumboTitle from '../typography/JumboTitle';
 import Subheader from '../typography/Subheader';
 import texture from '_assets/images/onboarding-card-texture.png';
-import EthosLogoWithText from '../../components/logos/EthosLogoWithText';
 
 interface OnboardingCardProps {
     title: string;
