@@ -48,10 +48,7 @@ const LockedPage = () => {
                 className="p-36"
             >
                 <BaseLayout className="!min-h-0">
-                    <HeaderWithLargeEthosIcon
-                        title="Ethos"
-                        description="Unlock Wallet"
-                    />
+                    <HeaderWithLargeEthosIcon description="Unlock Wallet" />
                     <UnlockWalletForm
                         onSubmit={_save}
                         isPasswordIncorrect={isPasswordIncorrect}

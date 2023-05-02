@@ -40,11 +40,11 @@ const UserApproveHeaderWithSiteIcon = ({
         <HeaderWithIcons
             firstIcon={
                 isConnectingToEthosDashboard ? (
-                    <EthosLogo width={42} />
+                    <EthosLogo className="h-10 w-10" />
                 ) : (
                     <img
                         src={iconSrc}
-                        className="w-[42px] aspect-square rounded-full hidden relative"
+                        className="w-10 aspect-square rounded-full hidden relative"
                         alt={iconAlt}
                         onError={hideIcon}
                         onLoad={showIcon}
@@ -52,7 +52,11 @@ const UserApproveHeaderWithSiteIcon = ({
                 )
             }
             secondIcon={
-                isConnectingToEthosDashboard ? null : <EthosLogo width={42} />
+                isConnectingToEthosDashboard ? null : (
+                    <div className="rounded-full p-1 h-10 w-10 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
+                        <EthosLogo className="h-full w-full" />
+                    </div>
+                )
             }
             title={title}
             description={description}
