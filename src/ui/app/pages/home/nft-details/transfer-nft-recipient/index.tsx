@@ -101,18 +101,21 @@ function TransferNFTRecipient() {
                 api.instance.fullNode
             );
 
-            const signedTx = await signer.dryRunTransactionBlock({
-                transactionBlock: transactionBlock,
-            });
-
-            const gasFee =
-                Number(signedTx.effects.gasUsed.computationCost) +
-                (Number(signedTx.effects.gasUsed.storageCost) -
-                    Number(signedTx.effects.gasUsed.storageRebate));
-
-            setSendError(null);
+            console.log('transactionBlock', transactionBlock);
 
             try {
+                const dryRun = await signer.dryRunTransactionBlock({
+                    transactionBlock: transactionBlock,
+                });
+                console.log('signedTx', dryRun);
+
+                const gasFee =
+                    Number(dryRun.effects.gasUsed.computationCost) +
+                    (Number(dryRun.effects.gasUsed.storageCost) -
+                        Number(dryRun.effects.gasUsed.storageRebate));
+
+                setSendError(null);
+
                 dispatch(
                     setNftDetails({
                         from: address || 'Wallet',
@@ -128,6 +131,7 @@ function TransferNFTRecipient() {
                     }).toString()}`
                 );
             } catch (e) {
+                console.log('e', e);
                 toast(<FailAlert text={'Could not set address'} />);
                 setSendError((e as SerializedError).message || null);
             }

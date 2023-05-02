@@ -17,6 +17,13 @@ const transferObjectTransactionBlock = async (
             transactionBlock.pure(recipient)
         );
     } else {
+        let kioskId: string | undefined;
+        if (object.kiosk.content?.dataType === 'moveObject') {
+            kioskId = object.kiosk.content.fields.kiosk;
+        }
+
+        if (!kioskId) return transactionBlock;
+
         const recipientKiosks = await provider.getOwnedObjects({
             owner: recipient,
             filter: {
@@ -27,22 +34,25 @@ const transferObjectTransactionBlock = async (
             const packageId = object.kiosk.type.split('::')[0] ?? '0x2';
             const recipientKiosk = recipientKiosks.data[0]?.data;
 
-            if (recipientKiosk) {                
+            if (recipientKiosk) {
                 transactionBlock.moveCall({
                     target: `${packageId}::ob_kiosk::p2p_transfer`,
                     arguments: [
-                        transactionBlock.object(object.kiosk.objectId),
+                        transactionBlock.object(kioskId),
                         transactionBlock.object(recipientKiosk.objectId),
-                        transactionBlock.pure(object.objectId)
+                        transactionBlock.pure(object.objectId),
                     ],
                 });
             } else {
+                console.log('kioskId', kioskId);
+                console.log('recipient', recipient);
+                console.log('object.objectId', object.objectId);
                 transactionBlock.moveCall({
                     target: `${packageId}::ob_kiosk::p2p_transfer_and_create_target_kiosk`,
                     arguments: [
-                        transactionBlock.object(object.kiosk.objectId),
+                        transactionBlock.object(kioskId),
                         transactionBlock.pure(recipient),
-                        transactionBlock.pure(object.objectId)
+                        transactionBlock.pure(object.objectId),
                     ],
                 });
             }
