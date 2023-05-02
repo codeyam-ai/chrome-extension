@@ -18,11 +18,13 @@ const HeaderWithLargeEthosIcon = ({
         <div className="flex flex-col py-8 px-6 place-content-center place-items-center text-center">
             <EthosLogo className="h-[104px] w-[104px]" />
             {theme === 'light' || forceLightTheme ? (
-                <EthosTextBlack className="h-[80px] w-[120px]" />
+                <EthosTextBlack className="h-[40px] w-[120px]" />
             ) : (
-                <EthosTextWhite className="h-[80px] w-[120px]" />
+                <EthosTextWhite className="h-[40px] w-[120px]" />
             )}
-            <Subheader isTextColorMedium>{description}</Subheader>
+            <Subheader isTextColorMedium className="mt-2">
+                {description}
+            </Subheader>
         </div>
     );
 };
