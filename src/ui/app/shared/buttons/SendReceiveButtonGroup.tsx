@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import InlineButtonGroup from './InlineButtonGroup';
 // import { API_ENV } from '../../ApiProvider';
+import { API_ENV } from '../../ApiProvider';
 import LoadingIndicator from '../../components/loading/LoadingIndicator';
 import { useAppSelector } from '../../hooks';
 import { accountAggregateBalancesSelector } from '../../redux/slices/account';
@@ -12,7 +13,7 @@ import { accountAggregateBalancesSelector } from '../../redux/slices/account';
 import Alert from '../feedback/Alert';
 import SuiIcon from '../svg/SuiIcon';
 import { api } from '_redux/store/thunk-extras';
-// import { API_ENV } from '../../ApiProvider';
+import { openInNewTab } from '_src/shared/utils';
 
 interface SendReceiveButtonGroupProps {
     mistBalance?: number | bigint;
@@ -43,6 +44,8 @@ const SendReceiveButtonGroup = ({
     const [balance, setBalance] = useState('');
     const address = useAppSelector(({ account }) => account.address);
     const suiBalance = useAppSelector(accountAggregateBalancesSelector);
+    const selectedApiEnv = useAppSelector(({ app }) => app.apiEnv);
+    const isMainnet = selectedApiEnv === API_ENV.mainNet;
 
     const sui = suiBalance['0x2::sui::SUI'];
     useEffect(() => {
@@ -83,6 +86,10 @@ const SendReceiveButtonGroup = ({
         faucet();
     }, [address, setIsFaucetInProgress, isFaucetInProgress]);
 
+    const openBuyTab = useCallback(() => {
+        openInNewTab(`/ui.html?type=popup#/home/buy?env=${selectedApiEnv}`);
+    }, [selectedApiEnv]);
+
     useEffect(() => {
         if (isFaucetInProgress && sui && sui.toString() !== balance) {
             setIsFaucetInProgress(false);
@@ -100,6 +107,24 @@ const SendReceiveButtonGroup = ({
                         subtitle="There could be an issue with the Sui network or the Sui faucet. Please try again later."
                     />
                 </div>
+            ) : isMainnet ? (
+                <InlineButtonGroup
+                    onClickButtonPrimary={openBuyTab}
+                    isButtonPrimaryDisabled={isFaucetInProgress}
+                    buttonPrimaryTestId={'buy'}
+                    buttonPrimaryChildren={
+                        <>
+                            <CreditCardIcon className={iconClasses} /> Buy
+                        </>
+                    }
+                    buttonSecondaryTo={sendUrl}
+                    buttonSecondaryTestId={'send'}
+                    buttonSecondaryChildren={
+                        <>
+                            <ArrowUpCircleIcon width={20} height={20} /> Send
+                        </>
+                    }
+                />
             ) : (
                 <InlineButtonGroup
                     onClickButtonPrimary={_faucet}
@@ -116,7 +141,10 @@ const SendReceiveButtonGroup = ({
                             )}
                         </>
                     }
-                    buttonSecondaryTo={isBalanceZero ? '/home/buy' : sendUrl}
+                    onClickButtonSecondary={
+                        isBalanceZero ? openBuyTab : undefined
+                    }
+                    buttonSecondaryTo={isBalanceZero ? undefined : sendUrl}
                     buttonSecondaryTestId={isBalanceZero ? 'buy' : 'send'}
                     buttonSecondaryChildren={
                         <>
@@ -131,10 +159,6 @@ const SendReceiveButtonGroup = ({
                     }
                 />
             )}
-            {/* <TestnetFaucetModal
-                isOpen={isOpenTestnetFaucetModal}
-                setIsOpen={setIsOpenTestnetFaucetModal}
-            /> */}
         </>
     );
 };

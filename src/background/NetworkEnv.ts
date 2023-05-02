@@ -39,6 +39,7 @@ class NetworkEnv {
         if (env === API_ENV.customRPC && !isValidUrl(customRpcUrl)) {
             throw new Error(`Invalid custom RPC url ${customRpcUrl}`);
         }
+
         await Browser.storage.local.set({
             sui_Env: env,
             sui_Env_RPC: customRpcUrl,

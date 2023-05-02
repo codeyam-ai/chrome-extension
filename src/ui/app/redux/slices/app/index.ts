@@ -54,6 +54,9 @@ export const changeRPCNetwork = createAsyncThunk<void, API_ENV, AppThunkConfig>(
         // don't switch if customRPC and empty input //handle default
         if (isCustomRPC && !customRPCURL) return;
 
+        // Set persistent network state
+        Browser.storage.local.set({ sui_Env: networkName });
+
         dispatch(setApiEnv(networkName));
 
         api.setNewJsonRpcProvider(networkName, customRPCURL);
@@ -61,8 +64,6 @@ export const changeRPCNetwork = createAsyncThunk<void, API_ENV, AppThunkConfig>(
         // dispatch(getTransactionsByAddress());
         dispatch(fetchAllBalances());
         dispatch(fetchAllOwnedAndRequiredObjects());
-        // Set persistent network state
-        Browser.storage.local.set({ sui_Env: networkName });
     }
 );
 

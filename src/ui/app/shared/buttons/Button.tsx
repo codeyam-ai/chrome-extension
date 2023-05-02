@@ -42,7 +42,7 @@ const dangerPrimaryButtonClassNames =
 const dangerSecondaryButtonClassNames =
     baseButtonClassNames +
     ' ' +
-    'bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary text-ethos-light-text-default dark:ethos-dark-text-default';
+    'bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary text-ethos-light-text-default dark:text-ethos-dark-text-default';
 
 const Button = (props: ButtonProps) => {
     const {

@@ -33,9 +33,9 @@ export const ENV_TO_API: Record<string, Connection | null> = {
         fullnode: process.env.API_ENDPOINT_MAINNET_FULLNODE || '',
         faucet: '',
     }),
-    [API_ENV.devNet.toString()]: new Connection({
-        fullnode: process.env.API_ENDPOINT_DEVNET_FULLNODE || '',
-        faucet: process.env.API_ENDPOINT_DEVNET_FAUCET || '',
+    [API_ENV.testNet.toString()]: new Connection({
+        fullnode: process.env.API_ENDPOINT_TESTNET_FULLNODE || '',
+        faucet: process.env.API_ENDPOINT_TESTNET_FAUCET || '',
     }),
     [API_ENV.devNet.toString()]: new Connection({
         fullnode: process.env.API_ENDPOINT_DEVNET_FULLNODE || '',

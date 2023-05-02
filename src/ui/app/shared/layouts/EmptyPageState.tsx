@@ -9,9 +9,10 @@ interface EmptyPageStateProps {
     iconWithNoClasses: ReactNode;
     title: string;
     subtitle: string;
-    linkText: string;
-    linkUrl: string;
+    linkText?: string;
+    linkUrl?: string;
     internal?: boolean;
+    onClick?: () => void;
 }
 
 const EmptyPageState = ({
@@ -21,6 +22,7 @@ const EmptyPageState = ({
     linkText,
     linkUrl,
     internal,
+    onClick,
 }: EmptyPageStateProps) => {
     return (
         <div className="flex flex-col gap-2 pt-8 px-6">
@@ -31,6 +33,7 @@ const EmptyPageState = ({
             <Body isTextColorMedium>{subtitle}</Body>
             <Body>
                 <EthosLink
+                    onClick={onClick}
                     to={linkUrl}
                     type={internal ? LinkType.Internal : LinkType.External}
                 >
