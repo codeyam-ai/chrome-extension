@@ -6,14 +6,14 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import StakeSummary from './StakeSummary';
-import { ToS_LINK } from '_src/shared/constants';
+import { LinkType } from '_src/enums/LinkType';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
-import { getSigner } from '_src/ui/app/helpers/getSigner';
 import { calculateStakeRewardStart } from '_src/ui/app/helpers/staking/calculateStakeRewardStart';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { useSystemState } from '_src/ui/app/hooks/staking/useSystemState';
 import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
+import { api, thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
@@ -36,13 +36,9 @@ function createStakeTransaction(amount: bigint, validator: string) {
 
 const ReviewStake: React.FC = () => {
     const [loading, setLoading] = useState(false);
-    const {
-        activeAccountIndex,
-        address,
-        authentication,
-        accountInfos,
-        passphrase,
-    } = useAppSelector(({ account }) => account);
+    const { activeAccountIndex, address, authentication } = useAppSelector(
+        ({ account }) => account
+    );
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const validatorSuiAddress = searchParams.get('validator');
@@ -65,16 +61,15 @@ const ReviewStake: React.FC = () => {
     const onConfirm = useCallback(async () => {
         if (!amount) return;
         setLoading(true);
+        let signer;
 
-        const signer = await getSigner(
-            passphrase,
-            accountInfos,
-            address,
-            authentication,
-            activeAccountIndex
-        );
-
-        if (!signer) return;
+        if (authentication) {
+            signer = api.getEthosSignerInstance(address || '', authentication);
+        } else {
+            signer = api.getSignerInstance(
+                thunkExtras.keypairVault.getKeyPair(activeAccountIndex)
+            );
+        }
 
         const transactionBlock = createStakeTransaction(
             BigInt(new BigNumber(amount).shiftedBy(9).toString()),
@@ -121,13 +116,11 @@ const ReviewStake: React.FC = () => {
         }
         setLoading(false);
     }, [
-        accountInfos,
         activeAccountIndex,
         address,
         amount,
         authentication,
         navigate,
-        passphrase,
         queryClient,
         validatorSuiAddress,
     ]);
@@ -150,16 +143,19 @@ const ReviewStake: React.FC = () => {
             </div>
             <div>
                 <Body className="pb-4 mx-6">
-                    By clicking confirm you agree to
-                    <br />
-                    <EthosLink type="external" to={ToS_LINK}>
-                        Ethos&apos;s Terms of Use
-                    </EthosLink>
-                    {/* , and understand the{' '}
-                    <EthosLink type="external" to="">
-                        Risk Disclosures
-                    </EthosLink> */}
-                    .
+                    Ethos is not a staking service provider, but is able to
+                    offer in-wallet access to Sui staking validators that meet
+                    minumum requirements as required by SUI implementation
+                    guidelines. Please ensure you are informed, and comfortable
+                    with all{' '}
+                    <EthosLink
+                        className={'text-sm underline'}
+                        to={'/home/staking/learn-more'}
+                        type={LinkType.Internal}
+                    >
+                        details
+                    </EthosLink>{' '}
+                    and risks associated with Staking.
                 </Body>
                 <Button onClick={onConfirm} disabled={loading}>
                     {loading ? <LoadingIndicator /> : 'Confirm'}
