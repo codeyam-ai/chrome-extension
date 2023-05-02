@@ -31,7 +31,7 @@ describe('Email Authentication', () => {
             });
 
         renderApp();
-        await screen.findByText('Welcome to Ethos');
+        await screen.findByText('A re-imagined wallet for discovering apps, games, and NFTs on Sui');
         await userEvent.click(screen.getByText('Sign in with Email'));
         await userEvent.type(
             screen.getByRole('textbox', { name: 'Email address' }),

@@ -1,10 +1,10 @@
+import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import { useCallback } from 'react';
 
 import HeaderWithIcons from './HeaderWithIcons';
 import EthosLogo from '_src/ui/app/components/logos/EthosLogo';
 
 import type { SyntheticEvent } from 'react';
-import { GlobeAltIcon } from '@heroicons/react/24/outline';
 
 interface UserApproveHeaderWithSiteIconProps {
     iconSrc?: string;
