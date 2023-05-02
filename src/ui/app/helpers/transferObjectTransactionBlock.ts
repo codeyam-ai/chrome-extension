@@ -17,7 +17,7 @@ const transferObjectTransactionBlock = async (
             transactionBlock.pure(recipient)
         );
     } else {
-        const recipientKiosk = await provider.getOwnedObjects({
+        const recipientKiosks = await provider.getOwnedObjects({
             owner: recipient,
             filter: {
                 StructType: object.kiosk.type,
@@ -25,15 +25,25 @@ const transferObjectTransactionBlock = async (
         });
         if (object.kiosk.type.indexOf('ob_kiosk') > -1) {
             const packageId = object.kiosk.type.split('::')[0] ?? '0x2';
-            if (recipientKiosk.data.length === 0) {
+            const recipientKiosk = recipientKiosks.data[0]?.data;
+
+            if (recipientKiosk) {                
                 transactionBlock.moveCall({
                     target: `${packageId}::ob_kiosk::p2p_transfer`,
-                    arguments: [],
+                    arguments: [
+                        transactionBlock.object(object.kiosk.objectId),
+                        transactionBlock.object(recipientKiosk.objectId),
+                        transactionBlock.pure(object.objectId)
+                    ],
                 });
             } else {
                 transactionBlock.moveCall({
                     target: `${packageId}::ob_kiosk::p2p_transfer_and_create_target_kiosk`,
-                    arguments: [],
+                    arguments: [
+                        transactionBlock.object(object.kiosk.objectId),
+                        transactionBlock.pure(recipient),
+                        transactionBlock.pure(object.objectId)
+                    ],
                 });
             }
         }
