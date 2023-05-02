@@ -9,7 +9,7 @@ import { useAppDispatch, useInitializedGuard } from '../hooks';
 import { AppState } from '../hooks/useInitializedGuard';
 import { saveFavoriteDappsKeys } from '../redux/slices/account';
 import OnboardingButton from '../shared/buttons/OnboardingButton';
-import OnboardingHeader from '../shared/headers/page-headers/OnboardingHeader';
+import HeaderWithLargeEthosIcon from '../shared/headers/page-headers/HeaderWithLargeEthosIcon';
 import OnboardingLayout from '../shared/layouts/OnboardingLayout';
 import Title from '../shared/typography/Title';
 import { ADDRESS_BOOK_ID, STAKING_ID } from '_src/data/dappsMap';
@@ -58,7 +58,12 @@ const WelcomePage = () => {
     return (
         <OnboardingLayout>
             <div className="flex flex-col w-[464px]">
-                <OnboardingHeader />
+                <HeaderWithLargeEthosIcon
+                    description="A re-imagined wallet for discovering apps, games, and NFTs on
+                    Sui"
+                    forceLightTheme
+                />
+
                 <div className="flex flex-col gap-8 text-center py-6 sm:py-10 px-6 sm:px-0 rounded-2xl bg-ethos-light-background-default">
                     <Title forceLightMode className="px-10">
                         Choose how you would like to setup your wallet.

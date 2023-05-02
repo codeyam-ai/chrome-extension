@@ -19,11 +19,11 @@ const HeaderWithIcons = ({
     return (
         <div className="flex flex-col py-3 px-6 gap-3 items-center text-center">
             {secondIcon ? (
-                <div className="flex -ml-3">
+                <div className="flex -ml-2">
                     <span className="z-10 border-ethos-light-background-default dark:border-ethos-dark-background-default rounded-full">
                         {firstIcon}
                     </span>
-                    <span className="-ml-3">{secondIcon}</span>
+                    <span className="-ml-2">{secondIcon}</span>
                 </div>
             ) : (
                 <span>{firstIcon}</span>
