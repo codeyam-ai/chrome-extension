@@ -1,3 +1,5 @@
+import { useSearchParams } from 'react-router-dom';
+
 import { getTheme } from '../../helpers/getTheme';
 import { useAppSelector } from '../../hooks';
 import BackButton from '../../shared/buttons/BackButton';
@@ -13,16 +15,22 @@ export default function MoonpayOnboarding() {
     // const address = useAppSelector((state) => state.account.address);
 
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+    const [searchParams] = useSearchParams();
+    const envParam = searchParams.get('env');
     const { featureFlags } = useDependencies();
 
     const isProduction = selectedApiEnv.toString() === API_ENV.mainNet;
-    const key = isProduction
-        ? process.env.MOONPAY_PRODUCTION_API_KEY
-        : process.env.MOONPAY_TEST_API_KEY;
+    const key =
+        isProduction || envParam === 'mainNet'
+            ? process.env.MOONPAY_PRODUCTION_API_KEY
+            : process.env.MOONPAY_TEST_API_KEY;
     const theme = getTheme();
     const baseTestingUrl = 'https://buy-staging.moonpay.io';
     const baseProductionUrl = 'https://buy.moonpay.com';
-    const baseUrl = isProduction ? baseProductionUrl : baseTestingUrl;
+    const baseUrl =
+        isProduction || envParam === 'mainNet'
+            ? baseProductionUrl
+            : baseTestingUrl;
     const coinCode = 'btc'; // TODO: Change to SUI when supported
     const redirect = '/home';
     const colorCode =

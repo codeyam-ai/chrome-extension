@@ -142,7 +142,7 @@ export const getProjectNftsFromAllNfts = (
                     description: display.project_description,
                     image: display.project_image_url,
                     urls: {
-                        [selectedApiEnv ?? NetworkName.TESTNET]:
+                        [selectedApiEnv ?? NetworkName.MAINNET]:
                             display.project_url,
                     },
                     tags: [],

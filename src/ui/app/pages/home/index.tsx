@@ -3,7 +3,6 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { defer, filter, from, of, repeat, switchMap } from 'rxjs';
 
-import { growthbook } from '../../experimentation/feature-gating';
 import { useBalancesState } from '../../hooks/useBalancesState';
 import { AppState } from '../../hooks/useInitializedGuard';
 import { fetchAllBalances } from '../../redux/slices/balances';
@@ -15,6 +14,7 @@ import TabBar from '../../shared/navigation/tab-bar/TabBar';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
 import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
+import featureGating from '_src/background/FeatureGating';
 import PageLayout from '_src/ui/app/pages/PageLayout';
 
 import type { AppDispatch } from '../../redux/store';
@@ -47,17 +47,20 @@ const AppContainer = () => {
     }, [guardChecking, dispatch]);
 
     useEffect(() => {
-        if (growthbook.isOn('devnet-issues')) {
-            toast(
-                <WarningAlert
-                    text={'Sui Devnet is having technical issues.'}
-                />,
-                {
-                    autoClose: false,
-                    closeOnClick: true,
-                }
-            );
-        }
+        (async () => {
+            const growthbook = await featureGating.getGrowthBook();
+            if (growthbook.isOn('devnet-issues')) {
+                toast(
+                    <WarningAlert
+                        text={'Sui Devnet is having technical issues.'}
+                    />,
+                    {
+                        autoClose: false,
+                        closeOnClick: true,
+                    }
+                );
+            }
+        })();
     }, []);
 
     useEffect(() => {

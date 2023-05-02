@@ -11,7 +11,7 @@ export function calculateStakeRewardStart(systemState?: SuiSystemStateSummary) {
         Number(systemState?.epoch || 0) + NUM_OF_EPOCH_BEFORE_EARNING;
     const timeToEarnStakeRewards =
         systemState &&
-        getTimeToEarnStakingRewards(systemState, startEarningRewardsEpoch);
+        getTimeToEarnStakingRewards(startEarningRewardsEpoch, systemState);
     const formattedDistanceToRewards = timeToEarnStakeRewards
         ? capitalize(
               formatRelative(new Date(timeToEarnStakeRewards), new Date())

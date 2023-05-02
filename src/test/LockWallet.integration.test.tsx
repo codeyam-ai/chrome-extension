@@ -1,19 +1,19 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import Browser from 'webextension-polyfill';
 
+import { fakeAlarms } from './utils/fake-browser/fake-browser';
+import { makeTestDeps } from './utils/test-dependencies';
+import {
+    AUTO_LOCK_TIMEOUT_KEY,
+    DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES,
+} from '_src/shared/constants';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import {
     simulateEmailUser,
     simulateMnemonicUser,
 } from '_src/test/utils/storage';
-import { makeTestDeps } from './utils/test-dependencies';
-import { fakeAlarms } from './utils/fake-browser/fake-browser';
-import Browser from 'webextension-polyfill';
-import {
-    AUTO_LOCK_TIMEOUT_KEY,
-    DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES,
-} from '_src/shared/constants';
 
 describe('Lock Wallet Page', () => {
     let mockchain: Mockchain;

@@ -112,6 +112,9 @@ process.env.API_ENDPOINT_TESTNET_FULLNODE =
     'http://testNet-fullnode.example.com/';
 process.env.API_ENDPOINT_TESTNET_FAUCET = 'http://testNet-faucet.example.com/';
 
+process.env.API_ENDPOINT_MAINNET_FULLNODE =
+    'http://mainNet-fullnode.example.com/';
+
 process.env.BASE_URL = 'http://ethos-base-url.example.com/';
 
 process.env.EXPLORER_URL_LOCAL = 'http://www.explorer.sui.io/';
@@ -119,6 +122,8 @@ process.env.EXPLORER_URL_LOCAL = 'http://www.explorer.sui.io/';
 process.env.EXPLORER_URL_DEVNET = 'http://www.explorer.sui.io/';
 
 process.env.EXPLORER_URL_TESTNET = 'http://www.explorer.sui.io/';
+
+process.env.EXPLORER_URL_MAINNET = 'http://www.explorer.sui.io/';
 
 process.env.MOONPAY_TEST_API_KEY = 'pk_test_8S6mtnLjTUJf4PWM2Ts5lhA08g12P';
 

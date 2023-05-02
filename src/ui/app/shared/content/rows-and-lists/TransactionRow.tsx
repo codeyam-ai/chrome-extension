@@ -27,7 +27,9 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
         >
             <div className="flex justify-between items-center">
                 <div className="w-full flex gap-3 items-center">
-                    {image ? (
+                    {analyzedTransaction.status === 'failure' || !action ? (
+                        <ExclamationTriangleIcon className="flex items-center h-10 w-10 rounded-full p-3 text-white bg-ethos-light-red dark:bg-ethos-dark-red" />
+                    ) : image ? (
                         typeof image === 'string' ? (
                             <img
                                 src={image}
@@ -37,8 +39,6 @@ const TransactionRow = ({ txn }: TransactionRowProps) => {
                         ) : (
                             image
                         )
-                    ) : analyzedTransaction.status === 'failure' || !action ? (
-                        <ExclamationTriangleIcon className="flex items-center h-10 w-10 rounded-full p-3 text-white bg-ethos-light-red dark:bg-ethos-dark-red" />
                     ) : (
                         <ActionIcon>{getIcon(action)}</ActionIcon>
                     )}

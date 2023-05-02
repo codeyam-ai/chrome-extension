@@ -1,6 +1,6 @@
 import { act, screen, waitFor } from '@testing-library/react';
-import { DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES } from '_src/shared/constants';
 
+import { DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES } from '_src/shared/constants';
 import { fakeAlarms } from '_src/test/utils/fake-browser/fake-browser';
 import { Mockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
