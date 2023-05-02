@@ -1,14 +1,14 @@
 import type { SuiSystemStateSummary } from '@mysten/sui.js';
 
 const getTimeToEarnStakingRewards = (
-    systemState: SuiSystemStateSummary,
-    startEarningEpoch: number
+    startEarningEpoch: number,
+    systemState?: SuiSystemStateSummary
 ) => {
-    const currentEpoch = Number(systemState.epoch || 0);
+    const currentEpoch = Number(systemState?.epoch || 0);
     const currentEpochStartTime = Number(
-        systemState.epochStartTimestampMs || 0
+        systemState?.epochStartTimestampMs || 0
     );
-    const epochPeriod = Number(systemState.epochDurationMs || 0);
+    const epochPeriod = Number(systemState?.epochDurationMs || 0);
     const timeBeforeSpecifiedEpoch =
         startEarningEpoch > currentEpoch &&
         startEarningEpoch > 0 &&
