@@ -37,7 +37,9 @@ describe('Importing a wallet using a seed phrase', () => {
 
     async function renderAndChooseImportOption() {
         renderApp();
-        await screen.findByText('A re-imagined wallet for discovering apps, games, and NFTs on Sui');
+        await screen.findByText(
+            'A re-imagined wallet for discovering apps, games, and NFTs on Sui'
+        );
         await userEvent.click(screen.getByText('Import', { exact: false }));
     }
 
