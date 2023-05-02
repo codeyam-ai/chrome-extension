@@ -1,4 +1,4 @@
-import { getTheme } from '../../helpers/getTheme';
+import { useTheme } from '_src/shared/utils/themeContext';
 
 export interface EthosLogoWithTextProps {
     className?: string;
@@ -9,9 +9,9 @@ const EthosLogoWithText: React.FC<EthosLogoWithTextProps> = ({
     className,
     forceLightTheme,
 }) => {
-    const theme = getTheme();
+    const { resolvedTheme } = useTheme();
 
-    return theme === 'light' || forceLightTheme ? (
+    return resolvedTheme === 'light' || forceLightTheme ? (
         <LightThemeLogoWithText className={className} />
     ) : (
         <DarkThemeLogoWithText className={className} />

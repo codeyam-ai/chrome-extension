@@ -1,4 +1,5 @@
 import { ArrowLeftIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Cog6ToothIcon } from '@heroicons/react/24/solid';
 import { useCallback, useState } from 'react';
 import {
     Link,
@@ -20,7 +21,6 @@ import {
 } from '_src/ui/app/components/settings-menu/hooks';
 import WalletPickerPage from '_src/ui/app/components/wallet-picker-menu/WalletPickerPage';
 import { useOnKeyboardEvent } from '_src/ui/app/hooks';
-import { Cog6ToothIcon } from '@heroicons/react/24/solid';
 
 const CLOSE_KEY_CODES: string[] = ['Escape'];
 

@@ -1,5 +1,5 @@
-import EthosLogoWithText from '_src/ui/app/components/logos/EthosLogoWithText';
 import Subheader from '../../typography/Subheader';
+import EthosLogoWithText from '_src/ui/app/components/logos/EthosLogoWithText';
 
 interface HeaderWithLargeEthosIconProps {
     description?: string;

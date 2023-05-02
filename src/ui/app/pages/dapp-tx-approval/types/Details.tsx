@@ -3,12 +3,14 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useCallback, useEffect, useState } from 'react';
 
 import owner from '../lib/owner';
+import { useTheme } from '_src/shared/utils/themeContext';
 import { TooltipDirection } from '_src/ui/app/components/Tooltip';
 import CopyToClipboard from '_src/ui/app/components/copy-to-clipboard';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type {
     AnalyzeChangesResult,
@@ -17,8 +19,6 @@ import type {
 import type { RawSigner, SuiAddress, SuiObjectChange } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { ReactNode } from 'react';
-import Subheader from '_src/ui/app/shared/typography/Subheader';
-import { getTheme } from '_src/ui/app/helpers/getTheme';
 
 const Row = ({
     title,
@@ -260,7 +260,7 @@ const Details = ({
     analysis: AnalyzeChangesResult;
     signer: EthosSigner | RawSigner;
 }) => {
-    const theme = getTheme();
+    const { resolvedTheme } = useTheme();
     const [details, setDetails] = useState(false);
     const [address, setAddress] = useState<SuiAddress | undefined>(undefined);
 
@@ -283,12 +283,16 @@ const Details = ({
                 </BodyLarge>
                 {details ? (
                     <ChevronUpIcon
-                        color={theme === 'light' ? '#9040F5' : '#9C78F7'}
+                        color={
+                            resolvedTheme === 'light' ? '#9040F5' : '#9C78F7'
+                        }
                         width={20}
                     />
                 ) : (
                     <ChevronDownIcon
-                        color={theme === 'light' ? '#9040F5' : '#9C78F7'}
+                        color={
+                            resolvedTheme === 'light' ? '#9040F5' : '#9C78F7'
+                        }
                         width={20}
                     />
                 )}
