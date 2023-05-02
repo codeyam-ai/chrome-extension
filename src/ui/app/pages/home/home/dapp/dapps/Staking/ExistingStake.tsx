@@ -115,14 +115,24 @@ const DelegatedStakeRow = ({
                 <div className="flex flex-col items-start">
                     <Body isSemibold>
                         {isInitialLoading ? (
-                            <Skeleton height={15} width={60} />
+                            <Skeleton
+                                height={15}
+                                width={60}
+                                baseColor="#1A1C26"
+                                highlightColor="#3e435b"
+                            />
                         ) : (
                             validator?.name
                         )}
                     </Body>
                     <Body isTextColorMedium>
                         {isInitialLoading ? (
-                            <Skeleton height={15} width={112} />
+                            <Skeleton
+                                height={15}
+                                width={112}
+                                baseColor="#1A1C26"
+                                highlightColor="#3e435b"
+                            />
                         ) : (
                             truncateMiddle(validator?.suiAddress || '')
                         )}
