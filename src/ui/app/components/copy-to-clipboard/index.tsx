@@ -1,6 +1,4 @@
-// Copyright (c) 2022, Mysten Labs, Inc.
-// SPDX-License-Identifier: Apache-2.0
-
+import classNames from 'classnames';
 import { memo, useCallback, useEffect, useState } from 'react';
 
 import Tooltip, { type TooltipDirection } from '../Tooltip';
@@ -60,7 +58,10 @@ function CopyToClipboard({
         >
             <span
                 title={txt}
-                className="cursor-pointer flex items-center"
+                className={classNames(
+                    'cursor-pointer flex items-center',
+                    className
+                )}
                 onClick={!copyOnlyOnIconClick ? copyToClipboard : undefined}
             >
                 {children}

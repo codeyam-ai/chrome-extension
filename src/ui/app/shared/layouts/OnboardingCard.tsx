@@ -6,7 +6,7 @@ import {
 import { type ReactNode } from 'react';
 
 import EthosLogo from '../../components/logos/EthosLogo';
-import EthosLogoGrayscaleWithText from '../../components/logos/EthosLogoGrayscaleWithText';
+import EthosLogoWithText from '../../components/logos/EthosLogoWithText';
 import BackButton from '../buttons/BackButton';
 import BigPinIcon from '../svg/BigPinIcon';
 import SmallPinIcon from '../svg/SmallPinIcon';
@@ -114,9 +114,7 @@ const OnboardingCard = ({
 
     return (
         <>
-            <span className="h-[48px] w-[112px] mb-4 tall:mb-8">
-                <EthosLogoGrayscaleWithText />
-            </span>
+            <EthosLogoWithText className="mb-4 tall:mb-8" forceLightTheme />
 
             <div className="flex mx-6 lg:w-[928px]">
                 <div className="md:basis-1/2 flex-col rounded-2xl md:rounded-l-2xl md:rounded-r-none bg-ethos-light-background-default">
@@ -164,9 +162,7 @@ const OnboardingCard = ({
                                 <div className="px-8 w-full">
                                     <div className="flex py-4 pl-5 pr-4 justify-between items-center rounded-2xl bg-ethos-light-background-secondary">
                                         <div className="flex gap-2 items-center">
-                                            <span className="h-8 w-8">
-                                                <EthosLogo />
-                                            </span>
+                                            <EthosLogo className="h-8 w-8" />
                                             <BodyLarge
                                                 isSemibold
                                                 forceLightMode

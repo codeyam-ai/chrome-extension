@@ -9,8 +9,8 @@ import { Navigate, useSearchParams } from 'react-router-dom';
 
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import { useDependencies } from '_shared/utils/dependenciesContext';
+import { useTheme } from '_src/shared/utils/themeContext';
 import WalletTo from '_src/ui/app/components/wallet-to';
-import { getTheme } from '_src/ui/app/helpers/getTheme';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
@@ -75,7 +75,7 @@ function TransferCoinForm({
         [coinType]
     );
 
-    const theme = getTheme();
+    const { resolvedTheme } = useTheme();
 
     const { featureFlags } = useDependencies();
     if (amount === '' || to === '' || !coinSymbol) {
@@ -86,7 +86,7 @@ function TransferCoinForm({
                 <div className="p-6 flex flex-col">
                     {coinSymbol && (
                         <AssetCard
-                            theme={theme}
+                            theme={resolvedTheme}
                             txType={'transfer'}
                             coinType={coinSymbol}
                             name={coinSymbol}

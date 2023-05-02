@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 
-import { getTheme } from '../../helpers/getTheme';
 import truncateString from '../../helpers/truncate-string';
 import SuiIcon from '../svg/SuiIcon';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
+import { useTheme } from '_src/shared/utils/themeContext';
 
 import type { TxAction } from '../../helpers/transactions/getTxAction';
 
@@ -21,7 +21,7 @@ const CoinDetails = ({
     usdAmount,
 }: CoinDetailsProps) => {
     const send = parseFloat(balanceFormatted) < 0;
-    const theme = getTheme();
+    const { resolvedTheme } = useTheme();
 
     return (
         <div className="flex flex-col justify-end text-right">
@@ -41,7 +41,7 @@ const CoinDetails = ({
                     <SuiIcon
                         height={16}
                         width={16}
-                        color={theme === 'dark' ? 'white' : 'black'}
+                        color={resolvedTheme === 'dark' ? 'white' : 'black'}
                     />
                 </BodyLarge>
             </div>

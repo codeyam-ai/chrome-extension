@@ -13,6 +13,7 @@ interface DappListProps {
 
 export const DappList: React.FC<DappListProps> = ({ dapps }) => {
     const [dragged, setDragged] = useState(false);
+    const [mouseDown, setMouseDown] = useState(false);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const mouseXRef = useRef<number | null>(null);
     const totalMovementXRef = useRef(0);
@@ -33,10 +34,6 @@ export const DappList: React.FC<DappListProps> = ({ dapps }) => {
         ));
     }, [dapps, dragged]);
 
-    const onMouseDown = useCallback((e: React.MouseEvent) => {
-        mouseXRef.current = e.nativeEvent.clientX;
-    }, []);
-
     const onMouseMove = useCallback((e: React.MouseEvent) => {
         if (mouseXRef.current === null) return;
 
@@ -54,20 +51,34 @@ export const DappList: React.FC<DappListProps> = ({ dapps }) => {
         mouseXRef.current = e.nativeEvent.clientX;
     }, []);
 
+    const onMouseDown = useCallback((e: React.MouseEvent) => {
+        mouseXRef.current = e.nativeEvent.clientX;
+        setMouseDown(true);
+    }, []);
+
     const onMouseUp = useCallback(() => {
         mouseXRef.current = null;
         totalMovementXRef.current = 0;
         setDragged(false);
+        setMouseDown(false);
     }, []);
 
+    const onMouseLeave = useCallback(() => {
+        mouseXRef.current = null;
+        totalMovementXRef.current = 0;
+        setDragged(false);
+        setMouseDown(false);
+    }, []);
     return (
         <div
             ref={scrollContainerRef}
-            className="flex overflow-x-auto cursor-grab select-none no-scrollbar whitespace-nowrap py-2 bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
+            className={`flex overflow-x-auto select-none no-scrollbar whitespace-nowrap py-2 bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default ${
+                mouseDown ? 'cursor-grabbing' : 'cursor-grab'
+            }`}
             onMouseDown={onMouseDown}
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
-            onMouseLeave={onMouseUp}
+            onMouseLeave={onMouseLeave}
         >
             {/* whitespace-nowrap w-min respects the right margin on the last element */}
             <div className="flex gap-3 whitespace-nowrap w-min">
