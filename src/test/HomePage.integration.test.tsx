@@ -1,27 +1,28 @@
 import { screen, within } from '@testing-library/react';
 
-import { Mockchain } from '_src/test/utils/mockchain';
+import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Rendering the Home page', () => {
-    let mockchain: Mockchain;
+    let mockchain: MockJsonRpc;
     beforeEach(async () => {
-        mockchain = new Mockchain();
+        mockchain = new MockJsonRpc();
         simulateMnemonicUser();
-        mockchain.mockCommonCalls();
+        mockCommonCalls(mockchain);
     });
 
     test('when wallet has no coins', async () => {
-        mockchain.mockSuiObjects();
+        mockSuiObjects(mockchain);
         renderApp();
         await screen.findByText('Get started with Sui');
     });
 
     describe('when the wallet has some coins', () => {
         beforeEach(async () => {
-            mockchain.mockSuiObjects({
+            mockSuiObjects(mockchain, {
                 suiBalance: 40000000000,
             });
         });

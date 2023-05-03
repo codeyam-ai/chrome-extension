@@ -2,22 +2,23 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { renderTemplate } from '_src/test/utils/json-templates';
-import { Mockchain } from '_src/test/utils/mockchain';
+import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { makeCoinObject } from '_src/test/utils/mockchain-templates/coinObject';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { preventActWarning } from '_src/test/utils/test-helpers';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 xdescribe('The Transaction History Page', () => {
-    let mockchain: Mockchain;
+    let mockchain: MockJsonRpc;
     beforeEach(async () => {
-        mockchain = new Mockchain();
+        mockchain = new MockJsonRpc();
         simulateMnemonicUser();
-        mockchain.mockCommonCalls();
+        mockCommonCalls(mockchain);
     });
 
     test('Handles a wallet that has no transactions', async () => {
-        mockchain.mockSuiObjects();
+        mockSuiObjects(mockchain);
         mockchain.mockBlockchainCall(
             {
                 method: 'suix_getTransactions',
@@ -54,7 +55,7 @@ xdescribe('The Transaction History Page', () => {
     });
 
     test('Shows transactions TO the current wallet', async () => {
-        mockchain.mockSuiObjects();
+        mockSuiObjects(mockchain);
         mockTransactionHistory();
         renderApp({ initialRoute: '/transactions' });
         await screen.findByText('$1.00', {}, { timeout: 2000 });
@@ -67,7 +68,7 @@ xdescribe('The Transaction History Page', () => {
     });
 
     test('Shows correct transactions when switching wallet', async () => {
-        mockchain.mockSuiObjects();
+        mockSuiObjects(mockchain);
         mockTransactionHistory();
         renderApp({ initialRoute: '/transactions' });
         await screen.findByText('$1.00', {}, { timeout: 2000 });
