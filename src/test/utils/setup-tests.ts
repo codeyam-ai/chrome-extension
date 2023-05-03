@@ -117,13 +117,13 @@ process.env.API_ENDPOINT_MAINNET_FULLNODE =
 
 process.env.BASE_URL = 'http://ethos-base-url.example.com/';
 
-process.env.EXPLORER_URL_LOCAL = 'http://www.explorer.sui.io/';
+process.env.EXPLORER_URL_LOCAL = 'https://suiexplorer.com/';
 
-process.env.EXPLORER_URL_DEVNET = 'http://www.explorer.sui.io/';
+process.env.EXPLORER_URL_DEVNET = 'https://suiexplorer.com/';
 
-process.env.EXPLORER_URL_TESTNET = 'http://www.explorer.sui.io/';
+process.env.EXPLORER_URL_TESTNET = 'https://suiexplorer.com/';
 
-process.env.EXPLORER_URL_MAINNET = 'http://www.explorer.sui.io/';
+process.env.EXPLORER_URL_MAINNET = 'https://suiexplorer.com/';
 
 process.env.MOONPAY_TEST_API_KEY = 'pk_test_8S6mtnLjTUJf4PWM2Ts5lhA08g12P';
 
