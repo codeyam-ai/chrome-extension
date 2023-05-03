@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { Coin } from '@mysten/sui.js';
+import { Coin, SUI_TYPE_ARG } from '@mysten/sui.js';
 import { BigNumber } from 'bignumber.js';
 import { Form, useFormikContext } from 'formik';
 import { memo, useEffect, useMemo, useRef } from 'react';
@@ -65,6 +65,11 @@ function TransferCoinForm({
         .toString();
 
     const [, , dollars, , icon] = useFormatCoin(unformattedAmount, coinType);
+
+    const [formattedGasFee, gasSymbol] = useFormatCoin(
+        formData.gasFee,
+        SUI_TYPE_ARG
+    );
 
     useEffect(() => {
         onClearRef.current();
@@ -138,7 +143,7 @@ function TransferCoinForm({
                         },
                         {
                             keyName: 'Transaction Fee',
-                            value: formData.gasFee || '',
+                            value: `${formattedGasFee ?? ''} ${gasSymbol}`,
                         },
                     ]}
                 />

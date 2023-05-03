@@ -118,7 +118,7 @@ function TransferNFTRecipient() {
                         from: address || 'Wallet',
                         to: to,
                         nftId: objectId,
-                        gasFee: `${gasFee} MIST`,
+                        gasFee: gasFee.toString(),
                     })
                 );
 
