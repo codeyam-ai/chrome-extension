@@ -1,3 +1,4 @@
+import { useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 
 import { useAppSelector } from '../../hooks';
@@ -5,7 +6,6 @@ import BackButton from '../../shared/buttons/BackButton';
 import Alert from '../../shared/feedback/Alert';
 import { API_ENV } from '_src/shared/api-env';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
-import { useIntl } from 'react-intl';
 import { useTheme } from '_src/shared/utils/themeContext';
 
 export default function MoonpayOnboarding() {
