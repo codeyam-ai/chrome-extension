@@ -2,7 +2,7 @@ import {
     ClockIcon as ClockIconOutline,
     HomeIcon as HomeIconOutline,
     Squares2X2Icon as Squares2X2IconOutline,
-    TicketIcon as TicketIconOutline,
+    // TicketIcon as TicketIconOutline,
     WalletIcon as WalletIconOutline,
 } from '@heroicons/react/24/outline';
 import {
@@ -10,19 +10,19 @@ import {
     ClockIcon as ClockIconSolid,
     HomeIcon as HomeIconSolid,
     Squares2X2Icon as Squares2X2IconSolid,
-    TicketIcon as TicketIconSolid,
+    // TicketIcon as TicketIconSolid,
     WalletIcon as WalletIconSolid,
 } from '@heroicons/react/24/solid';
 import classNames from 'classnames';
-import { useEffect, useMemo, type ReactNode } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
 import Body from '../../typography/Body';
-import featureGating from '_src/background/FeatureGating';
+// import featureGating from '_src/background/FeatureGating';
 import { DASHBOARD_LINK } from '_src/shared/constants';
-import { FEATURES } from '_src/shared/experimentation/features';
-import { useAppSelector } from '_src/ui/app/hooks';
-import { api } from '_src/ui/app/redux/store/thunk-extras';
+// import { FEATURES } from '_src/shared/experimentation/features';
+// import { useAppSelector } from '_src/ui/app/hooks';
+// import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 const iconClasses = 'w-6 h-6';
 const navItems: NavItem[] = [
@@ -88,67 +88,67 @@ const NavItemElement = ({ to, title, outlineIcon, solidIcon }: NavItem) => {
 };
 
 const TabBar = () => {
-    const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+    // const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
 
-    useEffect(() => {
-        const checkTickets = async () => {
-            const growthBook = await featureGating.getGrowthBook();
+    // useEffect(() => {
+    //     const checkTickets = async () => {
+    //         const growthBook = await featureGating.getGrowthBook();
 
-            if (!growthBook.isOn(FEATURES.USE_TICKETS)) return;
+    //         if (!growthBook.isOn(FEATURES.USE_TICKETS)) return;
 
-            const ticketIndex = navItems.findIndex(
-                (navItem) => navItem.title === 'Tickets'
-            );
-            if (ticketIndex === -1) {
-                try {
-                    const ticketProjectIds: string[] =
-                        await growthBook.getFeatureValue('ticket-projects', []);
+    //         const ticketIndex = navItems.findIndex(
+    //             (navItem) => navItem.title === 'Tickets'
+    //         );
+    //         if (ticketIndex === -1) {
+    //             try {
+    //                 const ticketProjectIds: string[] =
+    //                     await growthBook.getFeatureValue('ticket-projects', []);
 
-                    const ticketProjectObjects =
-                        await api.instance.fullNode.multiGetObjects({
-                            ids: ticketProjectIds,
-                            options: {
-                                showContent: true,
-                                showType: true,
-                                showDisplay: true,
-                                showOwner: true,
-                            },
-                        });
+    //                 const ticketProjectObjects =
+    //                     await api.instance.fullNode.multiGetObjects({
+    //                         ids: ticketProjectIds,
+    //                         options: {
+    //                             showContent: true,
+    //                             showType: true,
+    //                             showDisplay: true,
+    //                             showOwner: true,
+    //                         },
+    //                     });
 
-                    const ticketIndex2 = navItems.findIndex(
-                        (navItem) => navItem.title === 'Tickets'
-                    );
+    //                 const ticketIndex2 = navItems.findIndex(
+    //                     (navItem) => navItem.title === 'Tickets'
+    //                 );
 
-                    if (
-                        ticketIndex2 === -1 &&
-                        ticketProjectObjects.length > 0
-                    ) {
-                        navItems.splice(2, 0, {
-                            title: 'Tickets',
-                            to: './tickets',
-                            outlineIcon: (
-                                <TicketIconOutline className={iconClasses} />
-                            ),
-                            solidIcon: (
-                                <TicketIconSolid className={iconClasses} />
-                            ),
-                        });
-                    } else if (
-                        ticketIndex > -1 &&
-                        ticketProjectObjects.length === 0
-                    ) {
-                        navItems.splice(ticketIndex, 1);
-                    }
-                } catch (e) {
-                    if (ticketIndex > -1) {
-                        navItems.splice(ticketIndex, 1);
-                    }
-                }
-            }
-        };
+    //                 if (
+    //                     ticketIndex2 === -1 &&
+    //                     ticketProjectObjects.length > 0
+    //                 ) {
+    //                     navItems.splice(2, 0, {
+    //                         title: 'Tickets',
+    //                         to: './tickets',
+    //                         outlineIcon: (
+    //                             <TicketIconOutline className={iconClasses} />
+    //                         ),
+    //                         solidIcon: (
+    //                             <TicketIconSolid className={iconClasses} />
+    //                         ),
+    //                     });
+    //                 } else if (
+    //                     ticketIndex > -1 &&
+    //                     ticketProjectObjects.length === 0
+    //                 ) {
+    //                     navItems.splice(ticketIndex, 1);
+    //                 }
+    //             } catch (e) {
+    //                 if (ticketIndex > -1) {
+    //                     navItems.splice(ticketIndex, 1);
+    //                 }
+    //             }
+    //         }
+    //     };
 
-        checkTickets();
-    }, [selectedApiEnv]);
+    //     checkTickets();
+    // }, [selectedApiEnv]);
 
     return (
         <nav className="px-6 flex flex-row justify-between h-[56px] sm:rounded-b-2xl items-center shadow-ethos-shadow-tab-bar-up dark:shadow-none dark:border-t dark:border-ethos-dark-text-stroke bg-ethos-super-light-purple dark:bg-ethos-dark-background-secondary">
