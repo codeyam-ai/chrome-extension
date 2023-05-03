@@ -19,7 +19,7 @@ describe('Buy coin flow', () => {
     });
 
     const ShouldClickBuy = async () => {
-        await screen.findByText('Wallet Balance');
+        await screen.findByText('My Balance');
         const buyButton = await screen.findByText('Buy');
         await userEvent.click(buyButton);
     };
@@ -28,7 +28,7 @@ describe('Buy coin flow', () => {
         await screen.findByText('Coming Soon');
         const backButton = await screen.findByText('Back');
         await userEvent.click(backButton);
-        await screen.findByText('Wallet Balance');
+        await screen.findByText('My Balance');
     };
 
     const enabledAndOnboard = async () => {

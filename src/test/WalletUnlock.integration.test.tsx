@@ -28,7 +28,7 @@ describe('Unlocking the wallet', () => {
     test('Entering a correct password will log the user in', async () => {
         await userEvent.type(screen.getByTestId('password'), correctPassword);
         await userEvent.click(screen.getByTestId('submit'));
-        await screen.findByText('Wallet Balance');
+        await screen.findByText('My Balance');
     });
 
     const createLockedWallet = async () => {
