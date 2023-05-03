@@ -10,10 +10,10 @@ import {
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Unlocking the wallet', () => {
-    let mockchain: MockJsonRpc;
+    let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
-        mockchain = new MockJsonRpc();
-        mockCommonCalls(mockchain);
+        mockJsonRpc = new MockJsonRpc();
+        mockCommonCalls(mockJsonRpc);
         await createLockedWallet();
     });
 
@@ -34,7 +34,7 @@ describe('Unlocking the wallet', () => {
 
     const createLockedWallet = async () => {
         await simulateMnemonicUser(false);
-        mockSuiObjects(mockchain);
+        mockSuiObjects(mockJsonRpc);
         renderApp();
         await screen.findAllByText('Unlock Wallet');
     };

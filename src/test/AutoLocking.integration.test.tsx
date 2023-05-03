@@ -9,11 +9,11 @@ import { makeTestDeps } from '_src/test/utils/test-dependencies';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('The home page', () => {
-    let mockchain: MockJsonRpc;
+    let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
-        mockchain = new MockJsonRpc();
+        mockJsonRpc = new MockJsonRpc();
         simulateMnemonicUser();
-        mockCommonCalls(mockchain);
+        mockCommonCalls(mockJsonRpc);
     });
 
     class FakeHeartbeat {
@@ -25,7 +25,7 @@ describe('The home page', () => {
 
     test('sends heartbeat and locks when background service says to', async () => {
         const fakeHeartbeat = new FakeHeartbeat();
-        mockSuiObjects(mockchain);
+        mockSuiObjects(mockJsonRpc);
         const deps = { ...makeTestDeps(), heartbeat: fakeHeartbeat };
         renderApp({ dependencies: deps });
         await screen.findByText('Get started with Sui');

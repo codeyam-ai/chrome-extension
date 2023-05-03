@@ -7,15 +7,15 @@ import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Minting an NFT', () => {
-    let mockchain: MockJsonRpc;
+    let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
-        mockchain = new MockJsonRpc();
+        mockJsonRpc = new MockJsonRpc();
         simulateMnemonicUser();
-        mockCommonCalls(mockchain);
+        mockCommonCalls(mockJsonRpc);
     });
 
     test('can mint an NFT', async () => {
-        mockSuiObjects(mockchain, {
+        mockSuiObjects(mockJsonRpc, {
             suiBalance: 500000,
         });
         renderApp();

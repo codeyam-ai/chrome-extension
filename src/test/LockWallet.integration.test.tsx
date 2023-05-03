@@ -17,12 +17,12 @@ import {
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Lock Wallet Page', () => {
-    let mockchain: MockJsonRpc;
+    let mockJsonRpc: MockJsonRpc;
 
     beforeEach(async () => {
-        mockchain = new MockJsonRpc();
-        mockCommonCalls(mockchain);
-        mockSuiObjects(mockchain);
+        mockJsonRpc = new MockJsonRpc();
+        mockCommonCalls(mockJsonRpc);
+        mockSuiObjects(mockJsonRpc);
     });
 
     describe('for an email user', () => {

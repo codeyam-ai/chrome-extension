@@ -9,15 +9,15 @@ import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Creating and sending an NFT', () => {
-    let mockchain: MockJsonRpc;
+    let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
-        mockchain = new MockJsonRpc();
+        mockJsonRpc = new MockJsonRpc();
         simulateMnemonicUser();
-        mockCommonCalls(mockchain);
+        mockCommonCalls(mockJsonRpc);
     });
 
     test('rendering an empty state for the nfts page', async () => {
-        mockSuiObjects(mockchain, {
+        mockSuiObjects(mockJsonRpc, {
             suiBalance: 500000,
         });
         renderApp({ initialRoute: '/nfts' });
@@ -25,7 +25,7 @@ describe('Creating and sending an NFT', () => {
     });
 
     test('rendering the nfts page with an nft populated', async () => {
-        mockSuiObjects(mockchain, {
+        mockSuiObjects(mockJsonRpc, {
             nftDetails: {
                 name: 'nft-test',
             },
@@ -39,14 +39,14 @@ describe('Creating and sending an NFT', () => {
     test('Transfer the NFT', async () => {
         const nftName = 'nft-test';
 
-        mockSuiObjects(mockchain, {
+        mockSuiObjects(mockJsonRpc, {
             suiBalance: 500000,
             nftDetails: {
                 name: 'nft-test',
             },
         });
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'suix_getCoins',
                 params: [
@@ -60,13 +60,13 @@ describe('Creating and sending an NFT', () => {
             true
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             { method: 'suix_getReferenceGasPrice', params: [] },
             '1',
             true
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
@@ -77,7 +77,7 @@ describe('Creating and sending an NFT', () => {
             true
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
@@ -88,7 +88,7 @@ describe('Creating and sending an NFT', () => {
             true
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_executeTransactionBlock',
                 params: [

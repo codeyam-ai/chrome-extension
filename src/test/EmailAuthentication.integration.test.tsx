@@ -10,10 +10,10 @@ import { renderApp } from '_src/test/utils/react-rendering';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Email Authentication', () => {
-    let mockchain: MockJsonRpc;
+    let mockJsonRpc: MockJsonRpc;
     beforeEach(() => {
-        mockchain = new MockJsonRpc();
-        mockCommonCalls(mockchain);
+        mockJsonRpc = new MockJsonRpc();
+        mockCommonCalls(mockJsonRpc);
     });
 
     test('User can enter email and is prompted to wait for the magic login link', async () => {
@@ -57,7 +57,7 @@ describe('Email Authentication', () => {
     test('User can see tokens page after logged in via the iframe', async () => {
         const fakeAccessToken = '12345';
         await setSession({ accessToken: fakeAccessToken });
-        mockSuiObjects(mockchain);
+        mockSuiObjects(mockJsonRpc);
         nock(BASE_URL, {
             reqheaders: { 'x-supabase-access-token': fakeAccessToken },
         })

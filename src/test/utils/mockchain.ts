@@ -5,8 +5,8 @@ import { suiSystemStateObject } from '_src/test/utils/mockchain-templates/sui-sy
 import type { CoinBalance } from '@mysten/sui.js';
 import type { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
-export const mockCommonCalls = (mockchain: MockJsonRpc) => {
-    mockchain.mockBlockchainCall(
+export const mockCommonCalls = (mockJsonRpc: MockJsonRpc) => {
+    mockJsonRpc.mockBlockchainCall(
         { method: 'rpc.discover' },
         { info: { version: '0.20.1' } },
         true
@@ -20,7 +20,7 @@ export const mockCommonCalls = (mockchain: MockJsonRpc) => {
         iconUrl: null,
         id: null,
     };
-    mockchain.mockBlockchainCall(
+    mockJsonRpc.mockBlockchainCall(
         { method: 'suix_getCoinMetadata' },
         coinMetadataResponse,
         true
@@ -28,7 +28,7 @@ export const mockCommonCalls = (mockchain: MockJsonRpc) => {
 };
 
 export const mockSuiObjects = (
-    mockchain: MockJsonRpc,
+    mockJsonRpc: MockJsonRpc,
     options: {
         suiBalance?: number;
         nftDetails?: { name: string };
@@ -81,7 +81,7 @@ export const mockSuiObjects = (
         fullObjects.push(renderedNftResult);
     }
 
-    mockchain.mockBlockchainCall(
+    mockJsonRpc.mockBlockchainCall(
         { method: 'suix_getOwnedObjects' },
         {
             data: objectInfos,
@@ -94,7 +94,7 @@ export const mockSuiObjects = (
         true
     );
 
-    mockchain.mockBlockchainCall(
+    mockJsonRpc.mockBlockchainCall(
         { method: 'suix_getAllBalances' },
         coinBalances,
         true
@@ -102,7 +102,7 @@ export const mockSuiObjects = (
 
     fullObjects.push(suiSystemStateObject);
     fullObjects.forEach((fullObject) => {
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'suix_getObject',
                 params: [fullObject.data.objectId],
@@ -112,7 +112,7 @@ export const mockSuiObjects = (
         );
     });
 
-    mockchain.mockBlockchainCall(
+    mockJsonRpc.mockBlockchainCall(
         { method: 'sui_multiGetObjects' },
         fullObjects,
         true
@@ -125,37 +125,37 @@ export const mockSuiObjects = (
  * Use the returned object to build up one or more mocks
  * you know you need specifically.
  */
-export const rpcMocks = (mockchain: MockJsonRpc) => {
+export const rpcMocks = (mockJsonRpc: MockJsonRpc) => {
     return {
         sui_getNormalizedMoveFunction: () => {
-            mockchain.mockBlockchainCall(
+            mockJsonRpc.mockBlockchainCall(
                 { method: 'sui_getNormalizedMoveFunction' },
                 renderTemplate('getNormalizedMoveFunction', {}),
                 true
             );
         },
         suix_getNormalizedMoveFunction: () => {
-            mockchain.mockBlockchainCall(
+            mockJsonRpc.mockBlockchainCall(
                 { method: 'sui_getNormalizedMoveFunction' },
                 renderTemplate('getNormalizedMoveFunction', {}),
                 true
             );
         },
         sui_devInspectTransactionBlock: () => {
-            mockchain.mockBlockchainCall(
+            mockJsonRpc.mockBlockchainCall(
                 { method: 'sui_devInspectTransactionBlock' },
                 renderTemplate('devInspectTransaction', {})
             );
         },
         suix_getReferenceGasPrice: () => {
-            mockchain.mockBlockchainCall(
+            mockJsonRpc.mockBlockchainCall(
                 { method: 'suix_getReferenceGasPrice', params: [] },
                 '1',
                 true
             );
         },
         suix_getCoins: () => {
-            mockchain.mockBlockchainCall(
+            mockJsonRpc.mockBlockchainCall(
                 {
                     method: 'suix_getCoins',
                     params: [
@@ -170,7 +170,7 @@ export const rpcMocks = (mockchain: MockJsonRpc) => {
             );
         },
         sui_dryRunTransactionBlock: (digest: string) => {
-            mockchain.mockBlockchainCall(
+            mockJsonRpc.mockBlockchainCall(
                 {
                     method: 'sui_dryRunTransactionBlock',
                     params: [digest],
@@ -180,7 +180,7 @@ export const rpcMocks = (mockchain: MockJsonRpc) => {
             );
         },
         sui_executeTransactionBlock: (params: (string | string[] | null)[]) => {
-            mockchain.mockBlockchainCall(
+            mockJsonRpc.mockBlockchainCall(
                 {
                     method: 'sui_executeTransactionBlock',
                     params: params ?? [

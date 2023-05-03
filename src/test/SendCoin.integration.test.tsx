@@ -11,16 +11,16 @@ import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('send coin flow', () => {
-    let mockchain: MockJsonRpc;
+    let mockJsonRpc: MockJsonRpc;
 
     beforeEach(async () => {
-        mockchain = new MockJsonRpc();
+        mockJsonRpc = new MockJsonRpc();
         await simulateMnemonicUser();
-        mockCommonCalls(mockchain);
-        mockSuiObjects(mockchain, {
+        mockCommonCalls(mockJsonRpc);
+        mockSuiObjects(mockJsonRpc, {
             suiBalance: 4_000_000_000, // MIST units
         });
-        const mocks = rpcMocks(mockchain);
+        const mocks = rpcMocks(mockJsonRpc);
         mocks.suix_getNormalizedMoveFunction();
         mocks.sui_dryRunTransactionBlock(
             'AAACAAgAypo7AAAAAAAg7JbTIOl80QFG+VOnnPncBaizXEaz6EKPeF7Drhtvj6YCAgABAQAAAQECAAABAQD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gEAAAAAAAAAAHQ7pAsAAAAA'

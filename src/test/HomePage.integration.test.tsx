@@ -7,22 +7,22 @@ import { makeTestDeps } from '_src/test/utils/test-dependencies';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Rendering the Home page', () => {
-    let mockchain: MockJsonRpc;
+    let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
-        mockchain = new MockJsonRpc();
+        mockJsonRpc = new MockJsonRpc();
         simulateMnemonicUser();
-        mockCommonCalls(mockchain);
+        mockCommonCalls(mockJsonRpc);
     });
 
     test('when wallet has no coins', async () => {
-        mockSuiObjects(mockchain);
+        mockSuiObjects(mockJsonRpc);
         renderApp();
         await screen.findByText('Get started with Sui');
     });
 
     describe('when the wallet has some coins', () => {
         beforeEach(async () => {
-            mockSuiObjects(mockchain, {
+            mockSuiObjects(mockJsonRpc, {
                 suiBalance: 40000000000,
             });
         });

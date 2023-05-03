@@ -11,14 +11,14 @@ import { makeTestDeps } from '_src/test/utils/test-dependencies';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('transaction pre-approval flow', () => {
-    let mockchain: MockJsonRpc;
+    let mockJsonRpc: MockJsonRpc;
     const id = '46987523-cadf-47c1-906a-baa0ce5b62c5';
 
     beforeEach(async () => {
-        mockchain = new MockJsonRpc();
-        mockCommonCalls(mockchain);
+        mockJsonRpc = new MockJsonRpc();
+        mockCommonCalls(mockJsonRpc);
         simulateMnemonicUser();
-        rpcMocks(mockchain).sui_getNormalizedMoveFunction();
+        rpcMocks(mockJsonRpc).sui_getNormalizedMoveFunction();
 
         await setEncrypted({
             key: PREAPPROVAL_KEY,

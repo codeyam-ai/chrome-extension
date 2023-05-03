@@ -10,14 +10,14 @@ import {
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('The Permissions page', () => {
-    let mockchain: MockJsonRpc;
+    let mockJsonRpc: MockJsonRpc;
 
     beforeEach(async () => {
-        mockchain = new MockJsonRpc();
+        mockJsonRpc = new MockJsonRpc();
         await simulateMnemonicUser();
         await simulateConnectedApps();
-        mockCommonCalls(mockchain);
-        mockSuiObjects(mockchain);
+        mockCommonCalls(mockJsonRpc);
+        mockSuiObjects(mockJsonRpc);
     });
 
     test('Allows the user to revoke permissions to connected apps', async () => {

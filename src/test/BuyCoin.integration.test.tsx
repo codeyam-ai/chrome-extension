@@ -8,13 +8,13 @@ import { makeTestDeps } from '_src/test/utils/test-dependencies';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Buy coin flow', () => {
-    let mockchain: MockJsonRpc;
+    let mockJsonRpc: MockJsonRpc;
 
     beforeEach(async () => {
-        mockchain = new MockJsonRpc();
+        mockJsonRpc = new MockJsonRpc();
         await simulateMnemonicUser();
-        mockCommonCalls(mockchain);
-        mockSuiObjects(mockchain, {
+        mockCommonCalls(mockJsonRpc);
+        mockSuiObjects(mockJsonRpc, {
             suiBalance: 0,
         });
     });

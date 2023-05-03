@@ -6,11 +6,11 @@ import { renderApp } from '_src/test/utils/react-rendering';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Importing a wallet using a seed phrase', () => {
-    let mockchain: MockJsonRpc;
+    let mockJsonRpc: MockJsonRpc;
     beforeEach(() => {
-        mockchain = new MockJsonRpc();
-        mockCommonCalls(mockchain);
-        mockSuiObjects(mockchain, { suiBalance: 40000000000 });
+        mockJsonRpc = new MockJsonRpc();
+        mockCommonCalls(mockJsonRpc);
+        mockSuiObjects(mockJsonRpc, { suiBalance: 40000000000 });
     });
 
     test('Entire flow works', async () => {

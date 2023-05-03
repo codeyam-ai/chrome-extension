@@ -7,12 +7,12 @@ import { renderApp } from '_src/test/utils/react-rendering';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Top Nav Wallet Management', () => {
-    let mockchain: MockJsonRpc;
+    let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
         simulateMnemonicUser();
-        mockchain = new MockJsonRpc();
-        mockCommonCalls(mockchain);
-        mockSuiObjects(mockchain);
+        mockJsonRpc = new MockJsonRpc();
+        mockCommonCalls(mockJsonRpc);
+        mockSuiObjects(mockJsonRpc);
     });
 
     test('Switching current wallet', async () => {

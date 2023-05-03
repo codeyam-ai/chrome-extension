@@ -18,14 +18,14 @@ import {
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('The Security Settings page', () => {
-    let mockchain: MockJsonRpc;
+    let mockJsonRpc: MockJsonRpc;
 
     beforeEach(() => {
-        mockchain = new MockJsonRpc();
+        mockJsonRpc = new MockJsonRpc();
     });
 
     const init = async () => {
-        await mockSuiObjects(mockchain);
+        await mockSuiObjects(mockJsonRpc);
         await renderApp();
 
         await screen.findByText('Get started with Sui');
@@ -47,7 +47,7 @@ describe('The Security Settings page', () => {
     describe('mnemonic user', () => {
         beforeEach(async () => {
             simulateMnemonicUser();
-            mockCommonCalls(mockchain);
+            mockCommonCalls(mockJsonRpc);
         });
 
         test('requires a valid password to view the recovery phrase', async () => {
@@ -280,7 +280,7 @@ describe('The Security Settings page', () => {
                 });
 
             simulateEmailUser();
-            mockCommonCalls(mockchain);
+            mockCommonCalls(mockJsonRpc);
         });
 
         test('shows the seed phrase for email accounts', async () => {
