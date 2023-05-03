@@ -211,7 +211,7 @@ export const transferNFT = createAsyncThunk<
 
     if (!signer) return;
 
-    let transactionBlock = new TransactionBlock();
+    let transactionBlock: TransactionBlock | null = new TransactionBlock();
 
     transactionBlock = await transferObjectTransactionBlock(
         transactionBlock,
@@ -219,6 +219,8 @@ export const transferNFT = createAsyncThunk<
         data.recipientAddress,
         api.instance.fullNode
     );
+
+    if (!transactionBlock) return;
 
     const executedTransaction = await signer.signAndExecuteTransactionBlock({
         transactionBlock,

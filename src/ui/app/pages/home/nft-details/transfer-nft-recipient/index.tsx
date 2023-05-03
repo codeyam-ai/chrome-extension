@@ -93,13 +93,16 @@ function TransferNFTRecipient() {
 
             if (!signer) return;
 
-            let transactionBlock = new TransactionBlock();
+            let transactionBlock: TransactionBlock | null =
+                new TransactionBlock();
             transactionBlock = await transferObjectTransactionBlock(
                 transactionBlock,
                 selectedNFTObj,
                 to,
                 api.instance.fullNode
             );
+
+            if (!transactionBlock) return;
 
             try {
                 const dryRun = await signer.dryRunTransactionBlock({
