@@ -2,10 +2,7 @@ import { useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 
 import { useAppSelector } from '../../hooks';
-import BackButton from '../../shared/buttons/BackButton';
-import Alert from '../../shared/feedback/Alert';
 import { API_ENV } from '_src/shared/api-env';
-import { useDependencies } from '_src/shared/utils/dependenciesContext';
 import { useTheme } from '_src/shared/utils/themeContext';
 
 export default function MoonpayOnboarding() {
@@ -22,7 +19,6 @@ export default function MoonpayOnboarding() {
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
     const [searchParams] = useSearchParams();
     const envParam = searchParams.get('env');
-    const { featureFlags } = useDependencies();
 
     const isProduction = selectedApiEnv.toString() === API_ENV.mainNet;
     const key =
@@ -43,7 +39,7 @@ export default function MoonpayOnboarding() {
             ? encodeURIComponent('#9C78F7')
             : encodeURIComponent('#6D28D9');
 
-    return featureFlags.showWipFeatures ? (
+    return (
         <>
             {isInSupportedCountries && (
                 <div className="absolute w-full p-3 bg-ethos-light-background-secondary dark:bg-[#1C1C1E]">
@@ -64,17 +60,5 @@ export default function MoonpayOnboarding() {
                 </p>
             </iframe>
         </>
-    ) : (
-        <div className={'p-6'}>
-            <div className={'mb-6'}>
-                <BackButton />
-            </div>
-            <Alert
-                title={'Coming Soon'}
-                subtitle={
-                    'Ethos will support SUI purchases with Visa, Debit or Mastercard soon.'
-                }
-            />
-        </div>
-    );
+    )
 }
