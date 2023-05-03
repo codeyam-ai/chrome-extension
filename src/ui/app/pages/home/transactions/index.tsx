@@ -1,7 +1,7 @@
 import { QueueListIcon } from '@heroicons/react/24/solid';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import _ from 'lodash';
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 
 import { useAppSelector } from '_hooks';
 import Loading from '_src/ui/app/components/loading';
@@ -10,7 +10,7 @@ import { queryTransactionsByAddress } from '_src/ui/app/hooks/useQueryTransactio
 import Button from '_src/ui/app/shared/buttons/Button';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import Alert from '_src/ui/app/shared/feedback/Alert';
-import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
+import SubpageHeader from '_src/ui/app/shared/headers/SubpageHeader';
 import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
@@ -128,15 +128,13 @@ const TransactionsPage = () => {
     }
 
     return (
-        <React.Fragment>
-            <Loading loading={!suiTxns} big={true}>
+        <Loading loading={!suiTxns} big={true}>
+            <div className="flex flex-col gap-4">
+                <SubpageHeader title="My Activity" />
                 {suiTxns &&
                     suiTxns.pages[0].blocks.length > 0 &&
                     formattedTxns.length > 0 && (
-                        <div className={'flex flex-col'}>
-                            <TextPageTitle title="Activity" />
-                            <TransactionRows transactions={formattedTxns} />
-                        </div>
+                        <TransactionRows transactions={formattedTxns} />
                     )}
                 <div>
                     {isFetchingNextPage && (
@@ -172,8 +170,8 @@ const TransactionsPage = () => {
                         internal={true}
                     />
                 )}
-            </Loading>
-        </React.Fragment>
+            </div>
+        </Loading>
     );
 };
 
