@@ -38,7 +38,7 @@ export default function MoonpayOnboarding() {
         isProduction || envParam === 'mainNet'
             ? baseProductionUrl
             : baseTestingUrl;
-    const coinCode = 'btc'; // TODO: Change to SUI when supported
+    const coinCode = 'sui'; // TODO: Change to SUI when supported
     const redirect = '/home';
     const colorCode =
         theme === 'dark'
