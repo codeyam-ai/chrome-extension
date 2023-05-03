@@ -388,7 +388,8 @@ const dappsMap: Map<string, DappData> = new Map([
             id: '39d3a866-033c-43ac-906d-d7417c10ccfb',
             image: clutchy,
             title: 'Clutchy',
-            description: 'NFT Marketplace',
+            description:
+                'Gaming and NFT Marketplace - aligning incentives with creators and communities.',
             urls: {
                 [NetworkName.DEVNET]: 'https://clutchy.io/',
                 [NetworkName.TESTNET]: 'https://clutchy.io/',
