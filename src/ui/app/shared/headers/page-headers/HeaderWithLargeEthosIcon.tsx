@@ -1,23 +1,24 @@
 import Subheader from '../../typography/Subheader';
-import Title from '../../typography/Title';
-import EthosLogo from '_src/ui/app/components/logos/EthosLogo';
+import EthosLogoWithText from '_src/ui/app/components/logos/EthosLogoWithText';
 
 interface HeaderWithLargeEthosIconProps {
-    title: string;
     description?: string;
+    forceLightTheme?: boolean;
 }
 
 const HeaderWithLargeEthosIcon = ({
-    title,
     description,
+    forceLightTheme,
 }: HeaderWithLargeEthosIconProps) => {
     return (
-        <div className="flex flex-col py-8 px-6 gap-3 place-content-center place-items-center text-center">
-            <div className="h-[104px] w-[104px]">
-                <EthosLogo />
-            </div>
-            <Title as="h1">{title}</Title>
-            <Subheader isTextColorMedium>{description}</Subheader>
+        <div className="flex flex-col py-8 px-6 place-content-center place-items-center text-center">
+            <EthosLogoWithText
+                className="h-[100px] w-[200px]"
+                forceLightTheme={forceLightTheme}
+            />
+            <Subheader isTextColorMedium className="mt-2">
+                {description}
+            </Subheader>
         </div>
     );
 };

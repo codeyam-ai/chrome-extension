@@ -1,11 +1,11 @@
 import { useSearchParams } from 'react-router-dom';
 
-import { getTheme } from '../../helpers/getTheme';
 import { useAppSelector } from '../../hooks';
 import BackButton from '../../shared/buttons/BackButton';
 import Alert from '../../shared/feedback/Alert';
 import { API_ENV } from '_src/shared/api-env';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
+import { useTheme } from '_src/shared/utils/themeContext';
 
 export default function MoonpayOnboarding() {
     // When SUI is added as a supported currency we can pass the users
@@ -24,7 +24,7 @@ export default function MoonpayOnboarding() {
         isProduction || envParam === 'mainNet'
             ? process.env.MOONPAY_PRODUCTION_API_KEY
             : process.env.MOONPAY_TEST_API_KEY;
-    const theme = getTheme();
+    const { resolvedTheme } = useTheme();
     const baseTestingUrl = 'https://buy-staging.moonpay.io';
     const baseProductionUrl = 'https://buy.moonpay.com';
     const baseUrl =
@@ -34,7 +34,7 @@ export default function MoonpayOnboarding() {
     const coinCode = 'btc'; // TODO: Change to SUI when supported
     const redirect = '/home';
     const colorCode =
-        theme === 'dark'
+        resolvedTheme === 'dark'
             ? encodeURIComponent('#9C78F7')
             : encodeURIComponent('#6D28D9');
 
@@ -44,7 +44,7 @@ export default function MoonpayOnboarding() {
             allow="accelerometer; autoplay; camera; gyroscope; payment"
             height="100%"
             width="100%"
-            src={`${baseUrl}?apiKey=${key}&currencyCode=${coinCode}&colorCode=${colorCode}&theme=${theme}&redirectUrl=${redirect}`}
+            src={`${baseUrl}?apiKey=${key}&currencyCode=${coinCode}&colorCode=${colorCode}&theme=${resolvedTheme}&redirectUrl=${redirect}`}
         >
             <p>
                 We could not display this page in your browser. Please update or

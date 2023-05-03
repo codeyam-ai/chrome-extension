@@ -1,8 +1,5 @@
-import {
-    ArrowLeftIcon,
-    Cog6ToothIcon,
-    XMarkIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Cog6ToothIcon } from '@heroicons/react/24/solid';
 import { useCallback, useState } from 'react';
 import {
     Link,
@@ -222,7 +219,7 @@ const NavBar = () => {
     }
 
     return (
-        <div className="flex flex-row items-center justify-between px-6 py-4 border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
+        <div className="flex flex-row items-center justify-between px-6 h-[50px] border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
             {!isDappPage && isDetailsPage ? (
                 <button
                     onClick={goBack}
