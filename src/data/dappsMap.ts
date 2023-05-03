@@ -289,6 +289,7 @@ const dappsMap: Map<string, DappData> = new Map([
                     'https://chat.polymedia.app/@sui-fans?network=devnet',
                 [NetworkName.TESTNET]:
                     'https://chat.polymedia.app/@sui-fans?network=testnet',
+                [NetworkName.MAINNET]: 'https://chat.polymedia.app/',
             },
             tags: [TagName.SOCIAL],
         } as DappData,
@@ -304,6 +305,7 @@ const dappsMap: Map<string, DappData> = new Map([
             urls: {
                 [NetworkName.DEVNET]: 'https://gotbeef.app/?network=devnet',
                 [NetworkName.TESTNET]: 'https://gotbeef.app/?network=testnet',
+                [NetworkName.MAINNET]: 'https://gotbeef.app/',
             },
             tags: [TagName.SOCIAL],
         } as DappData,
@@ -375,6 +377,7 @@ const dappsMap: Map<string, DappData> = new Map([
             urls: {
                 [NetworkName.DEVNET]: 'https://app.kriya.finance',
                 [NetworkName.TESTNET]: 'https://app.kriya.finance',
+                [NetworkName.MAINNET]: 'https://app.kriya.finance',
             },
             tags: [TagName.FINANCE],
         } as DappData,
@@ -389,6 +392,7 @@ const dappsMap: Map<string, DappData> = new Map([
             urls: {
                 [NetworkName.DEVNET]: 'https://clutchy.io/',
                 [NetworkName.TESTNET]: 'https://clutchy.io/',
+                [NetworkName.MAINNET]: 'https://clutchy.io/',
             },
             tags: [TagName.MARKETPLACE],
         } as DappData,
@@ -416,6 +420,7 @@ const dappsMap: Map<string, DappData> = new Map([
                 'Cetus is a pioneer DEX and concentrated liquidity protocol focusing on Move-based ecosystems like Aptos and Sui.',
             urls: {
                 [NetworkName.TESTNET]: 'https://app.cetus.zone',
+                // [NetworkName.MAINNET]: 'https://app.cetus.zone',
             },
             tags: [TagName.FINANCE],
         } as DappData,
