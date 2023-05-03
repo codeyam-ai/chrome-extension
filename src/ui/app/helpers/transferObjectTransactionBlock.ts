@@ -34,12 +34,19 @@ const transferObjectTransactionBlock = async (
             const packageId = object.kiosk.type.split('::')[0] ?? '0x2';
             const recipientKiosk = recipientKiosks.data[0]?.data;
 
+            let recipientKioskId: string | undefined;
+            if (recipientKiosk?.content?.dataType === 'moveObject') {
+                recipientKioskId = recipientKiosk.content.fields.kiosk;
+            }
+
+            if (!recipientKioskId) return transactionBlock;
+
             if (recipientKiosk) {
                 transactionBlock.moveCall({
                     target: `${packageId}::ob_kiosk::p2p_transfer`,
                     arguments: [
                         transactionBlock.object(kioskId),
-                        transactionBlock.object(recipientKiosk.objectId),
+                        transactionBlock.object(recipientKioskId),
                         transactionBlock.pure(object.objectId),
                     ],
                 });
