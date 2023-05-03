@@ -19,6 +19,7 @@ import {
 import { Coin } from '_redux/slices/sui-objects/Coin';
 import ns from '_shared/namespace';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
+import safeAddress from '_src/ui/app/helpers/safeAddress';
 import {
     useCoinDecimals,
     useFormatCoin,
@@ -163,6 +164,8 @@ function useOnHandleSubmit({
 
             if (!signer) return;
 
+            const safeTo = safeAddress(formState.to);
+
             const allCoins: SuiMoveObject[] = accountCoinsSelector(state);
             const [primaryCoin, ...mergeCoins] = allCoins.filter(
                 (c) => c.type === `0x2::coin::Coin<${coin.type}>`
@@ -175,7 +178,7 @@ function useOnHandleSubmit({
                 ]);
                 transactionBlock.transferObjects(
                     [coin],
-                    transactionBlock.pure(formState.to)
+                    transactionBlock.pure(safeTo)
                 );
             } else {
                 const primaryCoinInput = transactionBlock.object(
@@ -195,7 +198,7 @@ function useOnHandleSubmit({
                 );
                 transactionBlock.transferObjects(
                     [coinToTransfer],
-                    transactionBlock.pure(formState.to)
+                    transactionBlock.pure(safeTo)
                 );
             }
 

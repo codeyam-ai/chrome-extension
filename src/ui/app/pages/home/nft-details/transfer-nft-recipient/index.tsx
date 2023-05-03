@@ -16,6 +16,7 @@ import {
 } from '_redux/slices/account';
 import { DEFAULT_NFT_TRANSFER_GAS_FEE } from '_redux/slices/sui-objects/Coin';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
+import safeAddress from '_src/ui/app/helpers/safeAddress';
 import transferObjectTransactionBlock from '_src/ui/app/helpers/transferObjectTransactionBlock';
 import { setNftDetails } from '_src/ui/app/redux/slices/forms';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
@@ -83,6 +84,10 @@ function TransferNFTRecipient() {
                 return;
             }
 
+            const safeTo = safeAddress(to);
+
+            if (!safeTo) return;
+
             const signer = await getSigner(
                 passphrase,
                 accountInfos,
@@ -98,7 +103,7 @@ function TransferNFTRecipient() {
             transactionBlock = await transferObjectTransactionBlock(
                 transactionBlock,
                 selectedNFTObj,
-                to,
+                safeTo,
                 api.instance.fullNode
             );
 
