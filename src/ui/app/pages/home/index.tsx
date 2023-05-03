@@ -76,7 +76,7 @@ const AppContainer = () => {
             >
                 <BaseLayout>
                     <NavBar />
-                    <main className="flex-grow h-[471px] overflow-scroll no-scrollbar">
+                    <main className="flex-grow h-[494px] overflow-scroll no-scrollbar">
                         {showError && error ? (
                             <div className="px-6 py-6">
                                 <Alert

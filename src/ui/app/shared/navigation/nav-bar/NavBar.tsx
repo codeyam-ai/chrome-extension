@@ -1,8 +1,5 @@
-import {
-    ArrowLeftIcon,
-    Cog6ToothIcon,
-    XMarkIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Cog6ToothIcon } from '@heroicons/react/24/solid';
 import { useCallback, useState } from 'react';
 import {
     Link,
@@ -52,7 +49,7 @@ const WalletPickerNavBar = ({
     return (
         <>
             {isEditorOpen ? (
-                <div className="flex justify-between py-5 px-6 items-center border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
+                <div className="flex justify-between px-6 h-[50px] items-center border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
                     <button
                         onClick={goBack}
                         className="flex gap-2 items-center"
@@ -62,7 +59,7 @@ const WalletPickerNavBar = ({
                     </button>
                 </div>
             ) : (
-                <div className="relative flex flex-row items-center justify-between px-6 py-4 rounded-t-[20px] border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
+                <div className="relative flex flex-row items-center justify-between px-6 h-[50px] rounded-t-[20px] border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
                     <div className="flex flex-row gap-4 items-center">
                         <button onClick={onCloseWalletPicker}>
                             <XMarkIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
@@ -112,7 +109,7 @@ const SettingsNavBar = ({
             ) : (
                 <>
                     {!settingsIsOpenOnSubPage ? (
-                        <div className="flex justify-between px-6 py-4 text-left border-b border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
+                        <div className="flex justify-between items-center px-6 h-[50px] text-left border-b border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
                             <Header>Settings</Header>
                             <button onClick={goBack}>
                                 <XMarkIcon className="h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
@@ -222,7 +219,7 @@ const NavBar = () => {
     }
 
     return (
-        <div className="flex flex-row items-center justify-between px-6 py-4 border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
+        <div className="flex flex-row items-center justify-between px-6 h-[50px] sm:rounded-t-[20px] border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke dark:bg-ethos-dark-background-secondary">
             {!isDappPage && isDetailsPage ? (
                 <button
                     onClick={goBack}

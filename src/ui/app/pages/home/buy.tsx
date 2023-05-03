@@ -1,12 +1,12 @@
 import { useSearchParams } from 'react-router-dom';
 
-import { getTheme } from '../../helpers/getTheme';
 import { useAppSelector } from '../../hooks';
 import BackButton from '../../shared/buttons/BackButton';
 import Alert from '../../shared/feedback/Alert';
 import { API_ENV } from '_src/shared/api-env';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
 import { useIntl } from 'react-intl';
+import { useTheme } from '_src/shared/utils/themeContext';
 
 export default function MoonpayOnboarding() {
     // When SUI is added as a supported currency we can pass the users
@@ -14,8 +14,6 @@ export default function MoonpayOnboarding() {
     // network and used if it is valid. We need to Sign the URL in this case
     // https://docs.moonpay.com/moonpay/implementation-guide/on-ramp/sign-the-url-server-side
     // const address = useAppSelector((state) => state.account.address);
-
-    // Banner text: "MoonPay is a recommended partner for their services in the USA, Europe, UK, Australia, Brazil, and Canada."
 
     const { locale } = useIntl();
     const countryCode = locale.split('-')[1];
@@ -31,7 +29,7 @@ export default function MoonpayOnboarding() {
         isProduction || envParam === 'mainNet'
             ? process.env.MOONPAY_PRODUCTION_API_KEY
             : process.env.MOONPAY_TEST_API_KEY;
-    const theme = getTheme();
+    const { theme } = useTheme();
     const baseTestingUrl = 'https://buy-staging.moonpay.io';
     const baseProductionUrl = 'https://buy.moonpay.com';
     const baseUrl =

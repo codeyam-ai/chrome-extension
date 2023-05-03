@@ -9,10 +9,10 @@ import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { Keypair, SuiAddress } from '@mysten/sui.js';
 
 export enum API_ENV {
-    local = 'local',
-    devNet = 'devNet',
-    testNet = 'testNet',
     mainNet = 'mainNet',
+    testNet = 'testNet',
+    devNet = 'devNet',
+    local = 'local',
     customRPC = 'customRPC',
 }
 
@@ -21,27 +21,31 @@ type EnvInfo = {
 };
 
 export const API_ENV_TO_INFO: Record<string, EnvInfo> = {
-    [API_ENV.local.toString()]: { name: 'Local' },
-    [API_ENV.devNet.toString()]: { name: 'Devnet' },
     [API_ENV.mainNet.toString()]: { name: 'Mainnet' },
-    [API_ENV.customRPC.toString()]: { name: 'Custom RPC URL' },
     [API_ENV.testNet.toString()]: { name: 'Testnet' },
+    [API_ENV.devNet.toString()]: { name: 'Devnet' },
+    [API_ENV.local.toString()]: { name: 'Local' },
+    [API_ENV.customRPC.toString()]: { name: 'Custom RPC URL' },
 };
 
 export const ENV_TO_API: Record<string, Connection | null> = {
-    [API_ENV.local.toString()]: new Connection({
-        fullnode: process.env.API_ENDPOINT_LOCAL_FULLNODE || '',
-        faucet: process.env.API_ENDPOINT_LOCAL_FAUCET || '',
+    [API_ENV.mainNet.toString()]: new Connection({
+        fullnode: process.env.API_ENDPOINT_MAINNET_FULLNODE || '',
+        faucet: '',
+    }),
+    [API_ENV.testNet.toString()]: new Connection({
+        fullnode: process.env.API_ENDPOINT_TESTNET_FULLNODE || '',
+        faucet: process.env.API_ENDPOINT_TESTNET_FAUCET || '',
     }),
     [API_ENV.devNet.toString()]: new Connection({
         fullnode: process.env.API_ENDPOINT_DEVNET_FULLNODE || '',
         faucet: process.env.API_ENDPOINT_DEVNET_FAUCET || '',
     }),
-    [API_ENV.customRPC.toString()]: null,
-    [API_ENV.testNet.toString()]: new Connection({
-        fullnode: process.env.API_ENDPOINT_TESTNET_FULLNODE || '',
-        faucet: process.env.API_ENDPOINT_TESTNET_FAUCET || '',
+    [API_ENV.local.toString()]: new Connection({
+        fullnode: process.env.API_ENDPOINT_LOCAL_FULLNODE || '',
+        faucet: process.env.API_ENDPOINT_LOCAL_FAUCET || '',
     }),
+    [API_ENV.customRPC.toString()]: null,
 };
 
 function getDefaultAPI(env: API_ENV) {
@@ -75,17 +79,13 @@ function getDefaultAPI(env: API_ENV) {
 
     const apiEndpoint = mergedApiEnvs[env];
 
-    if (
-        !apiEndpoint ||
-        apiEndpoint.fullnode === '' ||
-        apiEndpoint.faucet === ''
-    ) {
+    if (!apiEndpoint || apiEndpoint.fullnode === '') {
         throw new Error(`API endpoint not found for API_ENV ${env}`);
     }
     return apiEndpoint;
 }
 
-export const DEFAULT_API_ENV = API_ENV.testNet;
+export const DEFAULT_API_ENV = API_ENV.mainNet;
 
 type NetworkTypes = keyof typeof API_ENV;
 

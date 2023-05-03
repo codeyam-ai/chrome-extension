@@ -213,7 +213,7 @@ function useOnHandleSubmit({
             dispatch(
                 setSuiAmount({
                     amount: amount,
-                    gasFee: `${gasFee} MIST`,
+                    gasFee: gasFee.toString(),
                 })
             );
 

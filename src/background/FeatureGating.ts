@@ -21,7 +21,7 @@ class FeatureGating {
     }
 
     private async loadFeatures() {
-        if (!global.fetch) return;
+        if (!global.fetch || !GROWTHBOOK_API_KEY) return;
 
         setAttributes(this.#growthBook);
         try {

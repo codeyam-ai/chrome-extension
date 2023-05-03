@@ -3,12 +3,14 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useCallback, useEffect, useState } from 'react';
 
 import owner from '../lib/owner';
+import { useTheme } from '_src/shared/utils/themeContext';
 import { TooltipDirection } from '_src/ui/app/components/Tooltip';
 import CopyToClipboard from '_src/ui/app/components/copy-to-clipboard';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type {
     AnalyzeChangesResult,
@@ -61,12 +63,9 @@ const Section = ({
 }) => {
     return (
         <div className="flex flex-col gap-3">
-            <BodyLarge
-                isSemibold
-                className="text-size-ethos-subheader text-[#9040F5]"
-            >
+            <Subheader className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark">
                 {title}
-            </BodyLarge>
+            </Subheader>
             {children}
         </div>
     );
@@ -241,8 +240,14 @@ const RawOutput = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
 
     return (
         <Section title="Raw Output">
-            <CopyToClipboard txt={jsonDryRun} direction={TooltipDirection.DOWN}>
-                <textarea className="rounded-lg text-sm">{jsonDryRun}</textarea>
+            <CopyToClipboard
+                txt={jsonDryRun}
+                direction={TooltipDirection.DOWN}
+                className="w-full"
+            >
+                <textarea className="rounded-lg text-sm w-[320px] h-[100px] bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
+                    {jsonDryRun}
+                </textarea>
             </CopyToClipboard>
         </Section>
     );
@@ -255,6 +260,7 @@ const Details = ({
     analysis: AnalyzeChangesResult;
     signer: EthosSigner | RawSigner;
 }) => {
+    const { resolvedTheme } = useTheme();
     const [details, setDetails] = useState(false);
     const [address, setAddress] = useState<SuiAddress | undefined>(undefined);
 
@@ -272,13 +278,23 @@ const Details = ({
                 className="flex flex-row justify-between items-center cursor-pointer"
                 onClick={toggleDetails}
             >
-                <BodyLarge className="text-[#9040F5] underline">
+                <BodyLarge className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark underline">
                     {details ? 'Less' : 'More'} Details
                 </BodyLarge>
                 {details ? (
-                    <ChevronUpIcon color="#9040F5" width={20} />
+                    <ChevronUpIcon
+                        color={
+                            resolvedTheme === 'light' ? '#9040F5' : '#9C78F7'
+                        }
+                        width={20}
+                    />
                 ) : (
-                    <ChevronDownIcon color="#9040F5" width={20} />
+                    <ChevronDownIcon
+                        color={
+                            resolvedTheme === 'light' ? '#9040F5' : '#9C78F7'
+                        }
+                        width={20}
+                    />
                 )}
             </div>
             {details && (

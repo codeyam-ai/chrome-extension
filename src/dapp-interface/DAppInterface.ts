@@ -1,7 +1,12 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { ReadonlyWalletAccount } from '@mysten/wallet-standard';
+import {
+    ReadonlyWalletAccount,
+    SUI_DEVNET_CHAIN,
+    SUI_MAINNET_CHAIN,
+    SUI_TESTNET_CHAIN,
+} from '@mysten/wallet-standard';
 import { filter, map } from 'rxjs';
 
 import { mapToPromise } from './utils';
@@ -111,7 +116,11 @@ export class DAppInterface {
                         new ReadonlyWalletAccount({
                             address,
                             publicKey: new Uint8Array(),
-                            chains: ['sui:devnet', 'sui:testnet'],
+                            chains: [
+                                SUI_DEVNET_CHAIN,
+                                SUI_TESTNET_CHAIN,
+                                SUI_MAINNET_CHAIN,
+                            ],
                             features: [
                                 'standard:connect',
                                 'standard:disconnect',

@@ -10,7 +10,8 @@ import { saveActiveAccountIndex } from '../../redux/slices/account';
 import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
-import { clearForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
+import { clearForNetworkOrWalletSwitch as clearBalancesForNetworkOrWalletSwitch } from '_redux/slices/balances';
+import { clearForNetworkOrWalletSwitch as clearTokensForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
 
 interface WalletButtonProps {
     wallet: AccountInfo;
@@ -41,7 +42,8 @@ const WalletButton = ({
             return;
         }
         if (isWalletEditing) return;
-        await dispatch(clearForNetworkOrWalletSwitch());
+        await dispatch(clearBalancesForNetworkOrWalletSwitch());
+        await dispatch(clearTokensForNetworkOrWalletSwitch());
         await dispatch(saveActiveAccountIndex(wallet.index));
         if (destination) {
             navigate(destination);

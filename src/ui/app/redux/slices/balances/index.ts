@@ -19,6 +19,32 @@ export const fetchAllBalances = createAsyncThunk<
     AppThunkConfig
 >('balances/fetch-all', async (_, { getState, extra: { api } }) => {
     const state = getState();
+
+    if (!state.balances.lastSync) {
+        try {
+            const response = await fetch(
+                api.instance.fullNode.connection.fullnode,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        jsonrpc: '2.0',
+                        id: 1,
+                        method: 'rpc.discover',
+                    }),
+                }
+            );
+
+            if (response.status !== 200) {
+                throw new Error('RPC not responding');
+            }
+        } catch (e) {
+            throw new Error('RPC not responding');
+        }
+    }
+
     const {
         account: { address },
     } = state;

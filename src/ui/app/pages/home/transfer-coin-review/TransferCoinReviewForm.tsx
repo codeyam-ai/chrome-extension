@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { Coin } from '@mysten/sui.js';
+import { Coin, SUI_TYPE_ARG } from '@mysten/sui.js';
 import { BigNumber } from 'bignumber.js';
 import { Form, useFormikContext } from 'formik';
 import { memo, useEffect, useMemo, useRef } from 'react';
@@ -9,8 +9,8 @@ import { Navigate, useSearchParams } from 'react-router-dom';
 
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import { useDependencies } from '_shared/utils/dependenciesContext';
+import { useTheme } from '_src/shared/utils/themeContext';
 import WalletTo from '_src/ui/app/components/wallet-to';
-import { getTheme } from '_src/ui/app/helpers/getTheme';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
@@ -66,6 +66,11 @@ function TransferCoinForm({
 
     const [, , dollars, , icon] = useFormatCoin(unformattedAmount, coinType);
 
+    const [formattedGasFee, gasSymbol] = useFormatCoin(
+        formData.gasFee,
+        SUI_TYPE_ARG
+    );
+
     useEffect(() => {
         onClearRef.current();
     }, [amount, to]);
@@ -75,7 +80,7 @@ function TransferCoinForm({
         [coinType]
     );
 
-    const theme = getTheme();
+    const { resolvedTheme } = useTheme();
 
     const { featureFlags } = useDependencies();
     if (amount === '' || to === '' || !coinSymbol) {
@@ -86,7 +91,7 @@ function TransferCoinForm({
                 <div className="p-6 flex flex-col">
                     {coinSymbol && (
                         <AssetCard
-                            theme={theme}
+                            theme={resolvedTheme}
                             txType={'transfer'}
                             coinType={coinSymbol}
                             name={coinSymbol}
@@ -138,7 +143,7 @@ function TransferCoinForm({
                         },
                         {
                             keyName: 'Transaction Fee',
-                            value: formData.gasFee || '',
+                            value: `${formattedGasFee ?? ''} ${gasSymbol}`,
                         },
                     ]}
                 />

@@ -37,6 +37,7 @@ import type { DappData } from 'src/types/DappData';
 export enum NetworkName {
     DEVNET = 'devNet',
     TESTNET = 'testNet',
+    MAINNET = 'mainNet',
 }
 export enum TagName {
     ALL = 'All',
@@ -74,6 +75,7 @@ const dappsMap: Map<string, DappData> = new Map([
             urls: {
                 [NetworkName.DEVNET]: 'customize',
                 [NetworkName.TESTNET]: 'customize',
+                [NetworkName.MAINNET]: 'customize',
             },
             tags: [TagName.TOOLS],
         } as DappData,
@@ -89,6 +91,7 @@ const dappsMap: Map<string, DappData> = new Map([
             urls: {
                 [NetworkName.DEVNET]: 'address-book',
                 [NetworkName.TESTNET]: 'address-book',
+                [NetworkName.MAINNET]: 'address-book',
             },
             tags: [TagName.TOOLS],
         } as DappData,
@@ -103,6 +106,7 @@ const dappsMap: Map<string, DappData> = new Map([
             urls: {
                 [NetworkName.DEVNET]: 'staking',
                 [NetworkName.TESTNET]: 'staking',
+                [NetworkName.MAINNET]: 'staking',
             },
             tags: [TagName.TOOLS],
         } as DappData,
@@ -118,6 +122,7 @@ const dappsMap: Map<string, DappData> = new Map([
             urls: {
                 [NetworkName.DEVNET]: `${LINK_URL}/dapps/assets`,
                 [NetworkName.TESTNET]: `${LINK_URL}/dapps/assets`,
+                [NetworkName.MAINNET]: `${LINK_URL}/dapps/assets`,
             },
             tags: [TagName.TOOLS],
         } as DappData,
@@ -131,8 +136,9 @@ const dappsMap: Map<string, DappData> = new Map([
             description:
                 'Manage how all of your projects display throught the Display Object (primarily for creators and developers).',
             urls: {
-                [NetworkName.DEVNET]: '/dapps/display',
-                [NetworkName.TESTNET]: '/dapps/display',
+                [NetworkName.DEVNET]: `${LINK_URL}/dapps/display`,
+                [NetworkName.TESTNET]: `${LINK_URL}/dapps/display`,
+                [NetworkName.MAINNET]: `${LINK_URL}/dapps/display`,
             },
             tags: [TagName.TOOLS],
         } as DappData,
@@ -145,8 +151,9 @@ const dappsMap: Map<string, DappData> = new Map([
             title: 'Tokens',
             description: 'Manage all of your tokens, view history, etc.',
             urls: {
-                [NetworkName.DEVNET]: '/dashboard/tokens',
-                [NetworkName.TESTNET]: '/dashboard/tokens',
+                [NetworkName.DEVNET]: `${LINK_URL}/dashboard/tokens`,
+                [NetworkName.TESTNET]: `${LINK_URL}/dashboard/tokens`,
+                [NetworkName.MAINNET]: `${LINK_URL}/dashboard/tokens`,
             },
             tags: [],
         } as DappData,
@@ -159,8 +166,9 @@ const dappsMap: Map<string, DappData> = new Map([
             title: 'Collectibles',
             description: 'Show case your favorite collectibles.',
             urls: {
-                [NetworkName.DEVNET]: '/dashboard/collectibles',
-                [NetworkName.TESTNET]: '/dashboard/collectibles',
+                [NetworkName.DEVNET]: `${LINK_URL}/dashboard/collectibles`,
+                [NetworkName.TESTNET]: `${LINK_URL}/dashboard/collectibles`,
+                [NetworkName.MAINNET]: `${LINK_URL}/dashboard/collectibles`,
             },
             tags: [],
         } as DappData,
@@ -173,9 +181,11 @@ const dappsMap: Map<string, DappData> = new Map([
             title: 'Sui Explorer',
             description: 'View transactions on the Sui blockchain.',
             urls: {
-                [NetworkName.DEVNET]: 'https://explorer.sui.io/?network=devnet',
+                [NetworkName.DEVNET]:
+                    'https://https://suiexplorer.com/?network=devnet',
                 [NetworkName.TESTNET]:
-                    'https://explorer.sui.io/?network=testnet',
+                    'https://https://suiexplorer.com/?network=testnet',
+                [NetworkName.MAINNET]: 'https://suiexplorer.com/',
             },
             tags: [],
         } as DappData,
@@ -203,8 +213,8 @@ const dappsMap: Map<string, DappData> = new Map([
             description:
                 'The fastest fully on-chain game this side of the Mississippi. Compete for the high score!',
             urls: {
-                [NetworkName.DEVNET]: 'https://ethoswallet.github.io/Sui8192',
                 [NetworkName.TESTNET]: 'https://ethoswallet.github.io/Sui8192',
+                [NetworkName.MAINNET]: 'https://ethoswallet.github.io/Sui8192',
             },
             tags: [TagName.GAMES],
         } as DappData,

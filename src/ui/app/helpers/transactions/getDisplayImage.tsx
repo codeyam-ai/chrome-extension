@@ -3,7 +3,7 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useValidatorsWithApy } from '../../hooks/staking/useValidatorsWithApy';
 import useDisplayDatas from '../../hooks/useDisplayDatas';
 import { useFormatCoin } from '../../hooks/useFormatCoin';
-import SuiIcon from '../../shared/svg/SuiIcon';
+import Sui from '../../pages/home/home/Sui';
 import ActionIcon from '../../shared/transactions/ActionIcon';
 import { getIcon } from '_src/ui/app/helpers/transactions';
 
@@ -36,7 +36,7 @@ const CoinIcon = ({
     } else if (coinType === SUI_TYPE_ARG) {
         return (
             <ActionIcon>
-                <SuiIcon width={18} height={18} />
+                <Sui />
             </ActionIcon>
         );
     }
@@ -91,11 +91,7 @@ const getDisplayImage = (
     txAction: TxAction
 ): ReactNode | null => {
     if (analyzedTransaction.important.faucet) {
-        return (
-            <div className="bg-blue-600 flex items-center justify-center rounded-full w-[48px] h-[42px]">
-                <SuiIcon height={18} width={18} />
-            </div>
-        );
+        return <Sui />;
     }
 
     if (analyzedTransaction.important.staking) {

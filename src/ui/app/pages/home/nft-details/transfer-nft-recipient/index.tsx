@@ -16,7 +16,9 @@ import {
 } from '_redux/slices/account';
 import { DEFAULT_NFT_TRANSFER_GAS_FEE } from '_redux/slices/sui-objects/Coin';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
+import transferObjectTransactionBlock from '_src/ui/app/helpers/transferObjectTransactionBlock';
 import { setNftDetails } from '_src/ui/app/redux/slices/forms';
+import { api } from '_src/ui/app/redux/store/thunk-extras';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 
 import type { SerializedError } from '@reduxjs/toolkit';
@@ -91,32 +93,35 @@ function TransferNFTRecipient() {
 
             if (!signer) return;
 
-            const transactionBlock = new TransactionBlock();
-            transactionBlock.add(
-                TransactionBlock.Transactions.TransferObjects(
-                    [transactionBlock.object(objectId)],
-                    transactionBlock.pure(to)
-                )
+            let transactionBlock: TransactionBlock | null =
+                new TransactionBlock();
+            transactionBlock = await transferObjectTransactionBlock(
+                transactionBlock,
+                selectedNFTObj,
+                to,
+                api.instance.fullNode
             );
 
-            const signedTx = await signer.dryRunTransactionBlock({
-                transactionBlock: transactionBlock,
-            });
-
-            const gasFee =
-                Number(signedTx.effects.gasUsed.computationCost) +
-                (Number(signedTx.effects.gasUsed.storageCost) -
-                    Number(signedTx.effects.gasUsed.storageRebate));
-
-            setSendError(null);
+            if (!transactionBlock) return;
 
             try {
+                const dryRun = await signer.dryRunTransactionBlock({
+                    transactionBlock: transactionBlock,
+                });
+
+                const gasFee =
+                    Number(dryRun.effects.gasUsed.computationCost) +
+                    (Number(dryRun.effects.gasUsed.storageCost) -
+                        Number(dryRun.effects.gasUsed.storageRebate));
+
+                setSendError(null);
+
                 dispatch(
                     setNftDetails({
                         from: address || 'Wallet',
                         to: to,
                         nftId: objectId,
-                        gasFee: `${gasFee} MIST`,
+                        gasFee: gasFee.toString(),
                     })
                 );
 
@@ -137,6 +142,7 @@ function TransferNFTRecipient() {
             address,
             authentication,
             activeAccountIndex,
+            selectedNFTObj,
             dispatch,
             navigate,
         ]

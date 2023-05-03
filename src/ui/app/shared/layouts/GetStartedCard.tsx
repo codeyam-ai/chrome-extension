@@ -14,10 +14,7 @@ const GetStartedCard = ({ showBack, children }: GetStartedCardProps) => {
         <>
             <BaseLayout>
                 <SignInFlowNavBar showBackButton={showBack || false} />
-                <HeaderWithLargeEthosIcon
-                    title="Ethos"
-                    description="The new web awaits"
-                />
+                <HeaderWithLargeEthosIcon description="The new web awaits" />
                 {children}
             </BaseLayout>
         </>

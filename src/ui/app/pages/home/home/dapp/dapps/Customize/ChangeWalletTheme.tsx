@@ -4,17 +4,22 @@ import {
     SunIcon,
 } from '@heroicons/react/24/solid';
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useTheme } from '_src/shared/utils/themeContext';
-import SegmentedControl from '_src/ui/app/shared/inputs/SegmentedControl';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
-import Header from '_src/ui/app/shared/typography/Header';
+import Button from '_src/ui/app/shared/buttons/Button';
+import SegmentedControl, {
+    type SegmentedControlItem,
+} from '_src/ui/app/shared/inputs/SegmentedControl';
+import Body from '_src/ui/app/shared/typography/Body';
 
-import type { SegmentedControlItem } from '_src/ui/app/shared/inputs/SegmentedControl';
-
-const ThemePage = () => {
+const ChangeWalletTheme: React.FC = () => {
     const { theme, setTheme } = useTheme();
+    const navigate = useNavigate();
+
+    const handleOnContinue = useCallback(() => {
+        navigate('/home/customize/favorites');
+    }, [navigate]);
 
     const setThemeToSystem = useCallback(() => {
         setTheme('system');
@@ -50,17 +55,21 @@ const ThemePage = () => {
     ];
 
     return (
-        <div className="flex flex-col">
-            <ContentBlock className="!py-6">
-                <Header>Theme</Header>
-                <BodyLarge isTextColorMedium>
-                    Choose if you&apos;d like to have the lights on or off by
-                    toggling your theme below.
-                </BodyLarge>
-            </ContentBlock>
+        <div className="relative flex flex-col items-center pt-6 px-6">
+            <Body isSemibold className="pb-6">
+                Choose if you&apos;d like to have the lights on or off by
+                toggling your theme below.
+            </Body>
             <SegmentedControl items={themeOptions} />
+            <Button
+                onClick={handleOnContinue}
+                wrapperClassName="w-full"
+                isInline
+            >
+                Next
+            </Button>
         </div>
     );
 };
 
-export default ThemePage;
+export default ChangeWalletTheme;

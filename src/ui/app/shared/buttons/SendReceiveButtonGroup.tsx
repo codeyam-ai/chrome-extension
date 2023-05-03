@@ -26,10 +26,8 @@ const SendReceiveButtonGroup = ({
     const [error, setError] = useState(false);
     // const [isOpenTestnetFaucetModal, setIsOpenTestnetFaucetModal] =
     //     useState(false);
-    // const [selectedApiEnv] = useAppSelector(({ app }) => [
-    //     app.apiEnv,
-    //     app.customRPC,
-    // ]);
+    // const selectedApiEnv = useAppSelector(({ app }) => app.apiEnv);
+
     const isBalanceZero = useMemo(
         () => (mistBalance || 0).toString() === '0',
         [mistBalance]
@@ -56,10 +54,6 @@ const SendReceiveButtonGroup = ({
     }, [sui]);
 
     const _faucet = useCallback(() => {
-        // if (selectedApiEnv === API_ENV.testNet) {
-        //     setIsOpenTestnetFaucetModal(true);
-        //     return;
-        // }
         setIsFaucetInProgress(true);
         const faucet = async () => {
             const result = await fetch(`${api.getEndPoints().faucet}gas`, {
