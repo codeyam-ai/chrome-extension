@@ -2,9 +2,8 @@ import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import Title from '_src/ui/app/shared/typography/Title';
 import Button from '_src/ui/app/shared/buttons/Button';
+import Title from '_src/ui/app/shared/typography/Title';
 
 const CustomizeCompleted: React.FC = () => {
     const navigate = useNavigate();

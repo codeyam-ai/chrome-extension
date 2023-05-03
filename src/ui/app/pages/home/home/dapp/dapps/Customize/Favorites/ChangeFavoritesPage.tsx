@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { FavoritesSortableList } from './FavoritesSortableList';
 import { CUSTOMIZE_ID } from '_src/data/dappsMap';
 import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Title from '_src/ui/app/shared/typography/Title';
-import { FavoritesSortableList } from './FavoritesSortableList';
 
 const ChangeFavoritesPage: React.FC = () => {
     const [tempFavoriteDappsKeys, setTempFavoriteDappsKeys] = useState<
