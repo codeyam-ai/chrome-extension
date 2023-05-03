@@ -1,8 +1,6 @@
 import { type ReactNode } from 'react';
-import Browser from 'webextension-polyfill';
 
 import SettingsListItem from './SettingsListItem';
-import EthosLogoGrayscale from '_src/ui/app/components/logos/EthosLogoGrayscale';
 
 export interface SettingsListSectionItem {
     text: string;
@@ -41,16 +39,6 @@ const SettingsList = ({ listSections }: SettingsListProps) => {
                     </div>
                 );
             })}
-            <div className="pt-4 px-4 pb-2">
-                <SettingsListItem
-                    item={{
-                        text: 'Ethos Wallet',
-                        iconWithNoClasses: <EthosLogoGrayscale />,
-                        detailText: 'v' + Browser.runtime.getManifest().version,
-                    }}
-                    color=""
-                />
-            </div>
         </div>
     );
 };

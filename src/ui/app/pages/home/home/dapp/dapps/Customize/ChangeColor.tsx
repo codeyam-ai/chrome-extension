@@ -5,8 +5,8 @@ import { type AccountInfo } from '_src/ui/app/KeypairVault';
 import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { useUpdateCurrentAccountInfo } from '_src/ui/app/hooks/useUpdateCurrentAccountInfo';
+import Button from '_src/ui/app/shared/buttons/Button';
 import ColorPickerMenu from '_src/ui/app/shared/inputs/colors/ColorPickerMenu';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 
 const ChangeColor: React.FC = () => {
@@ -41,12 +41,8 @@ const ChangeColor: React.FC = () => {
 
     const handleOnContinue = useCallback(() => {
         updateCurrentAccountInfo({ color: draftColor });
-        navigate('/home/customize/favorites');
+        navigate('/home/customize/theme');
     }, [draftColor, navigate, updateCurrentAccountInfo]);
-
-    const goBack = useCallback(() => {
-        navigate('/home/customize/emoji');
-    }, [navigate]);
 
     return (
         <div className="relative flex flex-col items-center pt-6 px-6">
@@ -63,27 +59,13 @@ const ChangeColor: React.FC = () => {
                 closeColorPickerMenu={closeColorPickerMenu}
                 leftAbsoluteClassNames="left-[24px] top-[180px]"
             />
-            <div className="flex gap-2 w-full mt-6">
-                <button
-                    onClick={goBack}
-                    className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-4 mt-6 mb-2 bg-ethos-light-primary-light/20"
-                >
-                    <BodyLarge
-                        isSemibold
-                        className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark"
-                    >
-                        Back
-                    </BodyLarge>
-                </button>
-                <button
-                    onClick={handleOnContinue}
-                    className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-4 mt-6 mb-2 bg-ethos-light-primary-light"
-                >
-                    <BodyLarge isSemibold className="text-white">
-                        Continue
-                    </BodyLarge>
-                </button>
-            </div>
+            <Button
+                onClick={handleOnContinue}
+                wrapperClassName="w-full mt-6"
+                isInline
+            >
+                Next
+            </Button>
         </div>
     );
 };

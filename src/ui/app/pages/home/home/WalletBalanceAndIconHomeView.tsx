@@ -3,9 +3,9 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useFormatCoin } from '_hooks';
 import { useDependencies } from '_shared/utils/dependenciesContext';
 import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import Header from '_src/ui/app/shared/typography/Header';
+import Body from '_src/ui/app/shared/typography/Body';
 import JumboTitle from '_src/ui/app/shared/typography/JumboTitle';
+import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
@@ -31,27 +31,25 @@ const WalletBalanceAndIconHomeView = ({
 
     return (
         <div
-            className="flex flex-col gap-3 place-items-center"
+            className="flex flex-col place-items-center"
             data-testid="wallet-and-balance"
         >
-            <div className="p-3">
+            <div className="pb-2">
                 <WalletColorAndEmojiCircle
                     color={accountInfo?.color}
                     emoji={accountInfo?.emoji}
-                    circleSizeClasses="h-[90px] w-[90px]"
-                    emojiSizeInPx={45}
+                    circleSizeClasses="h-[60px] w-[60px]"
+                    emojiSizeInPx={32}
                 />
             </div>
-            <div className="flex flex-col gap-1">
-                <BodyLarge isSemibold isTextColorMedium>
-                    Wallet Balance
-                </BodyLarge>
+            <div className="flex flex-col">
+                <Body>My Balance</Body>
                 {featureFlags.showUsd ? (
                     <JumboTitle>{formatted}</JumboTitle>
                 ) : (
-                    <span className="flex gap-1 place-content-center items-baseline">
+                    <span className="flex gap-2 place-content-center items-baseline">
                         <JumboTitle>{balanceFormatted}</JumboTitle>
-                        <Header>{symbol}</Header>
+                        <Subheader>{symbol}</Subheader>
                     </span>
                 )}
             </div>

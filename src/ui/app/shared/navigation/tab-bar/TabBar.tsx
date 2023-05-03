@@ -1,15 +1,25 @@
 import {
-    ClockIcon,
-    HomeIcon,
-    CircleStackIcon,
-    SparklesIcon,
-    TicketIcon,
+    ClockIcon as ClockIconOutline,
+    HomeIcon as HomeIconOutline,
+    Squares2X2Icon as Squares2X2IconOutline,
+    TicketIcon as TicketIconOutline,
+    WalletIcon as WalletIconOutline,
+} from '@heroicons/react/24/outline';
+import {
+    ArrowUpRightIcon,
+    ClockIcon as ClockIconSolid,
+    HomeIcon as HomeIconSolid,
+    Squares2X2Icon as Squares2X2IconSolid,
+    TicketIcon as TicketIconSolid,
+    WalletIcon as WalletIconSolid,
 } from '@heroicons/react/24/solid';
-import { useCallback, useMemo, type ReactNode, useEffect } from 'react';
+import classNames from 'classnames';
+import { useEffect, useMemo, type ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
-import ExploreButton from './ExploreButton';
+import Body from '../../typography/Body';
 import featureGating from '_src/background/FeatureGating';
+import { DASHBOARD_LINK } from '_src/shared/constants';
 import { FEATURES } from '_src/shared/experimentation/features';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
@@ -19,52 +29,61 @@ const navItems: NavItem[] = [
     {
         title: 'Home',
         to: './home',
-        icon: <HomeIcon className={iconClasses} />,
+        outlineIcon: <HomeIconOutline className={iconClasses} />,
+        solidIcon: <HomeIconSolid className={iconClasses} />,
     },
     {
         title: 'NFTs',
         to: './nfts',
-        icon: <SparklesIcon className={iconClasses} />,
+        outlineIcon: <Squares2X2IconOutline className={iconClasses} />,
+        solidIcon: <Squares2X2IconSolid className={iconClasses} />,
     },
     {
         title: 'Tokens',
         to: './tokens',
-        icon: <CircleStackIcon className={iconClasses} />,
+        outlineIcon: <WalletIconOutline className={iconClasses} />,
+        solidIcon: <WalletIconSolid className={iconClasses} />,
     },
     {
         title: 'History',
         to: './transactions',
-        icon: <ClockIcon className={iconClasses} />,
+        outlineIcon: <ClockIconOutline className={iconClasses} />,
+        solidIcon: <ClockIconSolid className={iconClasses} />,
     },
 ];
 
 type NavItem = {
     to: string;
     title: string;
-    icon: ReactNode;
+    outlineIcon: ReactNode;
+    solidIcon: ReactNode;
 };
 
-const NavItemElement = ({ to, title, icon }: NavItem) => {
+const NavItemElement = ({ to, title, outlineIcon, solidIcon }: NavItem) => {
     const location = useLocation();
-    const isActive = useCallback(
-        (to: string) => {
-            // to starts with "./", location.pathname starts with just a "/"
-            return location.pathname.includes(to.replace(/[^\w\s]/gi, ''));
-        },
-        [location]
-    );
-
-    const navLinkClass = useMemo(() => {
-        return isActive(to)
-            ? 'text-ethos-light-primary-light dark:text-ethos-dark-primary-dark'
-            : 'text-ethos-light-text-medium dark:text-ethos-dark-text-medium';
-    }, [isActive, to]);
+    const isActive = useMemo(() => {
+        // to starts with "./", location.pathname starts with just a "/"
+        return location.pathname.includes(to.replace(/[^\w\s]/gi, ''));
+    }, [location, to]);
 
     return (
-        <NavLink to={to} title={title} className={navLinkClass}>
-            <span className="sr-only">{title}</span>
-            {icon}
-        </NavLink>
+        <div
+            className={classNames(
+                'h-full w-8 flex items-center place-content-center',
+                isActive
+                    ? 'border-b-2 border-ethos-light-primary-light dark:border-ethos-dark-primary-dark'
+                    : ''
+            )}
+        >
+            <NavLink
+                to={to}
+                title={title}
+                className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark"
+            >
+                <span className="sr-only">{title}</span>
+                {isActive ? solidIcon : outlineIcon}
+            </NavLink>
+        </div>
     );
 };
 
@@ -107,7 +126,12 @@ const TabBar = () => {
                         navItems.splice(2, 0, {
                             title: 'Tickets',
                             to: './tickets',
-                            icon: <TicketIcon className={iconClasses} />,
+                            outlineIcon: (
+                                <TicketIconOutline className={iconClasses} />
+                            ),
+                            solidIcon: (
+                                <TicketIconSolid className={iconClasses} />
+                            ),
                         });
                     } else if (
                         ticketIndex > -1 &&
@@ -127,18 +151,27 @@ const TabBar = () => {
     }, [selectedApiEnv]);
 
     return (
-        <nav className="px-6 flex flex-row justify-between h-16 sm:rounded-b-2xl items-center border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
+        <nav className="px-6 flex flex-row justify-between h-[56px] sm:rounded-b-2xl items-center shadow-ethos-shadow-tab-bar-up dark:shadow-none dark:border-t dark:border-ethos-dark-text-stroke bg-ethos-super-light-purple dark:bg-ethos-dark-background-secondary">
             {navItems.map((item, key) => {
                 return (
                     <NavItemElement
                         title={item.title}
                         to={item.to}
-                        icon={item.icon}
+                        outlineIcon={item.outlineIcon}
+                        solidIcon={item.solidIcon}
                         key={key}
                     />
                 );
             })}
-            <ExploreButton />
+            <a
+                href={DASHBOARD_LINK}
+                target="_blank"
+                rel="noreferrer"
+                className="flex gap-2 items-center rounded-[10px] px-2 py-1 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark border border-ethos-light-primary-light dark:border-ethos-dark-primary-dark"
+            >
+                <Body isSemibold>Explorer</Body>
+                <ArrowUpRightIcon className="w-4 h-4" />
+            </a>
         </nav>
     );
 };
