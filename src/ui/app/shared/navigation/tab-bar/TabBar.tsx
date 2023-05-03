@@ -17,12 +17,12 @@ import classNames from 'classnames';
 import { useEffect, useMemo, type ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
+import Body from '../../typography/Body';
 import featureGating from '_src/background/FeatureGating';
 import { DASHBOARD_LINK } from '_src/shared/constants';
 import { FEATURES } from '_src/shared/experimentation/features';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
-import Body from '../../typography/Body';
 
 const iconClasses = 'w-6 h-6';
 const navItems: NavItem[] = [
