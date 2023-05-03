@@ -3,16 +3,14 @@ import {
     GlobeAltIcon,
 } from '@heroicons/react/24/solid';
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
-import { useCallback, useState, type ReactNode, useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 
 import ConfettiPop from '../../components/Confetti';
 import { useAppDispatch, useAppSelector, useFormatCoin } from '../../hooks';
 import { accountAggregateBalancesSelector } from '../../redux/slices/account';
 import { fetchAllBalances } from '../../redux/slices/balances';
 import OnboardingButton from '../../shared/buttons/OnboardingButton';
-import Alert from '../../shared/feedback/Alert';
 import OnboardingCard from '../../shared/layouts/OnboardingCard';
-import SuiIcon from '../../shared/svg/SuiIcon';
 import TwitterIcon from '../../shared/svg/TwitterIcon';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Header from '../../shared/typography/Header';
@@ -59,56 +57,13 @@ const SocialLink = ({ title, iconWithNoClasses, to }: SocialLinkProps) => {
 };
 
 const CompletePage = () => {
-    const [error, setError] = useState(false);
-    const [hasUsedFaucet, setHasUsedFaucet] = useState(false);
-    const [faucetCompletedSuccessfully, setFaucetCompletedSuccessfully] =
-        useState(false);
-    const address = useAppSelector(({ account }) => account.address);
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const mistBalance = balances[SUI_TYPE_ARG];
 
     const [balanceFormatted] = useFormatCoin(mistBalance, SUI_TYPE_ARG);
     const dispatch = useAppDispatch();
 
-    const onFaucetClicked = useCallback(async () => {
-        setHasUsedFaucet(true);
-
-        setTimeout(async () => {
-            if (!faucetCompletedSuccessfully) {
-                setError(true);
-            }
-        }, 5000);
-
-        const result = await fetch('https://faucet.devnet.sui.io/gas', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                FixedAmountRequest: {
-                    recipient: address,
-                },
-            }),
-        });
-
-        setFaucetCompletedSuccessfully(true);
-        if (result.status !== 201 && result.status !== 200) {
-            setError(true);
-            return;
-        }
-    }, [address, faucetCompletedSuccessfully]);
-
     const setupButtons: OnboardingButtonProps[] = [
-        {
-            title: 'Use Faucet',
-            linkType: 'none',
-            onClick: onFaucetClicked,
-            iconWithNoClasses: <SuiIcon width={20} height={20} />,
-            iconBackgroundColor: '#4CA2FF',
-            buttonGradientColor: '#DDEEFA',
-            disabled: hasUsedFaucet,
-        },
         {
             title: 'Explore Ethos',
             to: DASHBOARD_LINK,
@@ -151,16 +106,6 @@ const CompletePage = () => {
                 <ConfettiPop />
             </div>
             <div className="flex flex-col gap-3 px-6 sm:px-10 pb-6">
-                {error && (
-                    <div className="pb-4">
-                        <Alert
-                            title="The faucet isn't working"
-                            subtitle="There could be an issue with the Sui network or the Sui faucet. Please try again later."
-                            borderRadius={16}
-                            forceLightMode
-                        />
-                    </div>
-                )}
                 {setupButtons.map((b, key) => {
                     return (
                         <OnboardingButton
