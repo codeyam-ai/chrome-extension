@@ -185,21 +185,15 @@ export const transferNFT = createAsyncThunk<
 
     if (!signer) return;
 
-    const transactionBlock = new TransactionBlock();
+    let transactionBlock = new TransactionBlock();
 
-    transferObjectTransactionBlock(
+    transactionBlock = await transferObjectTransactionBlock(
         transactionBlock,
         nft,
         data.recipientAddress,
         api.instance.fullNode
     );
 
-    transactionBlock.add(
-        TransactionBlock.Transactions.TransferObjects(
-            [transactionBlock.object(data.nftId)],
-            transactionBlock.pure(data.recipientAddress)
-        )
-    );
     const executedTransaction = await signer.signAndExecuteTransactionBlock({
         transactionBlock,
         options: {

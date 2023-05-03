@@ -26,13 +26,7 @@ export type BagNFT = {
 export class NFT {
     public static isNFT(data: SuiObjectData): boolean {
         if (this.isBagNFT(data)) return true;
-        if (
-            data.objectId ===
-            '0xadc9c94d47ecf41fc68e6fb2582c2bd10a01f4807b8fb17a6eeff49ffdf7e466'
-        ) {
-            console.log(data);
-            return true;
-        }
+
         if (
             data.display?.data &&
             typeof data.display.data === 'object' &&

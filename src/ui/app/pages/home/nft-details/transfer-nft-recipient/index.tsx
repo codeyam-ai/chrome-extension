@@ -101,13 +101,10 @@ function TransferNFTRecipient() {
                 api.instance.fullNode
             );
 
-            console.log('transactionBlock', transactionBlock);
-
             try {
                 const dryRun = await signer.dryRunTransactionBlock({
                     transactionBlock: transactionBlock,
                 });
-                console.log('signedTx', dryRun);
 
                 const gasFee =
                     Number(dryRun.effects.gasUsed.computationCost) +
@@ -131,7 +128,6 @@ function TransferNFTRecipient() {
                     }).toString()}`
                 );
             } catch (e) {
-                console.log('e', e);
                 toast(<FailAlert text={'Could not set address'} />);
                 setSendError((e as SerializedError).message || null);
             }

@@ -44,11 +44,9 @@ const transferObjectTransactionBlock = async (
                     ],
                 });
             } else {
-                console.log('kioskId', kioskId);
-                console.log('recipient', recipient);
-                console.log('object.objectId', object.objectId);
                 transactionBlock.moveCall({
                     target: `${packageId}::ob_kiosk::p2p_transfer_and_create_target_kiosk`,
+                    typeArguments: [object.type ?? ''],
                     arguments: [
                         transactionBlock.object(kioskId),
                         transactionBlock.pure(recipient),
