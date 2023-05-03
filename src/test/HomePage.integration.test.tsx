@@ -36,7 +36,7 @@ describe('Rendering the Home page', () => {
 
             const coinList = await screen.findByTestId('coin-list');
             await within(coinList).findByText('$4,000.00');
-            await within(coinList).findByText('40');
+            await within(coinList).findByText('40 SUI');
         });
 
         test('shows just the SUI amount when configured to do so', async () => {
@@ -61,7 +61,7 @@ describe('Rendering the Home page', () => {
 
             const coinList = await screen.findByTestId('coin-list');
             expect(within(coinList).queryByText('$4,000.00')).toBeNull();
-            await within(coinList).findByText('40');
+            await within(coinList).findByText('40 SUI');
         });
     });
 });

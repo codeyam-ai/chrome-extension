@@ -17,6 +17,7 @@ import TwitterIcon from '../../shared/svg/TwitterIcon';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Header from '../../shared/typography/Header';
 import JumboTitle from '../../shared/typography/JumboTitle';
+import Sui from '../home/home/Sui';
 import {
     DASHBOARD_LINK,
     MAILTO_SUPPORT_URL,
@@ -104,7 +105,7 @@ const CompletePage = () => {
             linkType: 'none',
             onClick: onFaucetClicked,
             iconWithNoClasses: <SuiIcon width={20} height={20} />,
-            iconBackgroundColor: '#3D5FF2',
+            iconBackgroundColor: '#4CA2FF',
             buttonGradientColor: '#DDEEFA',
             disabled: hasUsedFaucet,
         },
@@ -120,9 +121,7 @@ const CompletePage = () => {
 
     const rightCardContent = (
         <div className="flex flex-col gap-3 p-4 place-items-center">
-            <div className="flex place-content-center place-items-center h-[104px] w-[104px] rounded-full bg-ethos-light-background-default">
-                <SuiIcon width={50} height={50} color="black" />
-            </div>
+            <Sui width={80} />
             <div className="flex flex-col gap-2 text-center">
                 <JumboTitle data-testid="suiBalance" forceLightMode>
                     {balanceFormatted}

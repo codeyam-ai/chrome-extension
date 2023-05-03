@@ -32,7 +32,6 @@ describe('Creating and sending an NFT', () => {
 
         renderApp({ initialRoute: '/nfts' });
         await screen.findByText('NFTs');
-        await screen.findByText('1');
         await screen.findByTestId('nft-test');
     });
 

@@ -38,13 +38,15 @@ function HomePage() {
     const showDappList = true;
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col">
             {showDappList && <DappList dapps={allFavorites} />}
-            <ChainIndicator apiEnv={selectedApiEnv} />
-            <WalletBalanceAndIconHomeView
-                accountInfo={accountInfo}
-                mistBalance={mistBalance}
-            />
+            <ChainIndicator apiEnv={selectedApiEnv} className="mt-3" />
+            <div className="pt-5 pb-4">
+                <WalletBalanceAndIconHomeView
+                    accountInfo={accountInfo}
+                    mistBalance={mistBalance}
+                />
+            </div>
 
             <SendReceiveButtonGroup mistBalance={mistBalance} />
             <div className="flex flex-col gap-6 overflow-auto">
