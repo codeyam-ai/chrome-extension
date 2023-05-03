@@ -1,26 +1,28 @@
 import {
-    WalletIcon as WalletIconOutline,
     ClockIcon as ClockIconOutline,
     HomeIcon as HomeIconOutline,
     Squares2X2Icon as Squares2X2IconOutline,
     TicketIcon as TicketIconOutline,
+    WalletIcon as WalletIconOutline,
 } from '@heroicons/react/24/outline';
 import {
-    WalletIcon as WalletIconSolid,
+    ArrowUpRightIcon,
     ClockIcon as ClockIconSolid,
     HomeIcon as HomeIconSolid,
     Squares2X2Icon as Squares2X2IconSolid,
     TicketIcon as TicketIconSolid,
+    WalletIcon as WalletIconSolid,
 } from '@heroicons/react/24/solid';
 import classNames from 'classnames';
 import { useEffect, useMemo, type ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
-import ExploreButton from './ExploreButton';
 import featureGating from '_src/background/FeatureGating';
+import { DASHBOARD_LINK } from '_src/shared/constants';
 import { FEATURES } from '_src/shared/experimentation/features';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
+import Body from '../../typography/Body';
 
 const iconClasses = 'w-6 h-6';
 const navItems: NavItem[] = [
@@ -161,7 +163,15 @@ const TabBar = () => {
                     />
                 );
             })}
-            <ExploreButton />
+            <a
+                href={DASHBOARD_LINK}
+                target="_blank"
+                rel="noreferrer"
+                className="flex gap-2 items-center rounded-[10px] px-2 py-1 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark border border-ethos-light-primary-light dark:border-ethos-dark-primary-dark"
+            >
+                <Body isSemibold>Explorer</Body>
+                <ArrowUpRightIcon className="w-4 h-4" />
+            </a>
         </nav>
     );
 };
