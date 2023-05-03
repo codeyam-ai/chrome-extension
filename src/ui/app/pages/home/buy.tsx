@@ -60,5 +60,5 @@ export default function MoonpayOnboarding() {
                 </p>
             </iframe>
         </>
-    )
+    );
 }
