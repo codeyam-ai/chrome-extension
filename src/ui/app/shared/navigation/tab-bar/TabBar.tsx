@@ -12,6 +12,7 @@ import {
     Squares2X2Icon as Squares2X2IconSolid,
     TicketIcon as TicketIconSolid,
 } from '@heroicons/react/24/solid';
+import classNames from 'classnames';
 import { useEffect, useMemo, type ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
@@ -63,17 +64,24 @@ const NavItemElement = ({ to, title, outlineIcon, solidIcon }: NavItem) => {
         return location.pathname.includes(to.replace(/[^\w\s]/gi, ''));
     }, [location, to]);
 
-    const navLinkClass = useMemo(() => {
-        return isActive
-            ? 'text-ethos-light-primary-light dark:text-ethos-dark-primary-dark'
-            : 'text-ethos-light-text-medium dark:text-ethos-dark-text-medium';
-    }, [isActive]);
-
     return (
-        <NavLink to={to} title={title} className={navLinkClass}>
-            <span className="sr-only">{title}</span>
-            {isActive ? solidIcon : outlineIcon}
-        </NavLink>
+        <div
+            className={classNames(
+                'h-full w-8 flex items-center place-content-center',
+                isActive
+                    ? 'border-b-2 border-ethos-light-primary-light dark:border-ethos-dark-primary-dark'
+                    : ''
+            )}
+        >
+            <NavLink
+                to={to}
+                title={title}
+                className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark"
+            >
+                <span className="sr-only">{title}</span>
+                {isActive ? solidIcon : outlineIcon}
+            </NavLink>
+        </div>
     );
 };
 
