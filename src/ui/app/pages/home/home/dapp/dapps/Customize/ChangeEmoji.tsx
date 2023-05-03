@@ -6,10 +6,10 @@ import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { useUpdateCurrentAccountInfo } from '_src/ui/app/hooks/useUpdateCurrentAccountInfo';
 import EmojiDisplay from '_src/ui/app/shared/EmojiDisplay';
+import Button from '_src/ui/app/shared/buttons/Button';
 import EmojiPickerMenu, {
     type EmojiPickerResult,
 } from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 
 const ChangeEmoji: React.FC = () => {
@@ -50,10 +50,6 @@ const ChangeEmoji: React.FC = () => {
         navigate('/home/customize/color');
     }, [draftEmoji, navigate, updateCurrentAccountInfo]);
 
-    const goBack = useCallback(() => {
-        navigate('/home/customize');
-    }, [navigate]);
-
     return (
         <div className="flex flex-col items-center pt-6 px-6">
             <Title className="pb-6">Choose your wallet&apos;s emoji</Title>
@@ -69,27 +65,13 @@ const ChangeEmoji: React.FC = () => {
                 setSelectedEmoji={_handleEmojiChange}
                 closeEmojiPickerMenu={closeEmojiPickerMenu}
             />
-            <div className="flex gap-2 w-full mt-6">
-                <button
-                    onClick={goBack}
-                    className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-4 mt-6 mb-2 bg-ethos-light-primary-light/20"
-                >
-                    <BodyLarge
-                        isSemibold
-                        className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark"
-                    >
-                        Back
-                    </BodyLarge>
-                </button>
-                <button
-                    onClick={handleOnContinue}
-                    className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-4 mt-6 mb-2 bg-ethos-light-primary-light"
-                >
-                    <BodyLarge isSemibold className="text-white">
-                        Continue
-                    </BodyLarge>
-                </button>
-            </div>
+            <Button
+                onClick={handleOnContinue}
+                wrapperClassName="w-full mt-6"
+                isInline
+            >
+                Next
+            </Button>
         </div>
     );
 };

@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { FavoritesSortableList } from './FavoritesSortableList';
 import { CUSTOMIZE_ID } from '_src/data/dappsMap';
 import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import Button from '_src/ui/app/shared/buttons/Button';
 import Title from '_src/ui/app/shared/typography/Title';
+import { FavoritesSortableList } from './FavoritesSortableList';
 
 const ChangeFavoritesPage: React.FC = () => {
     const [tempFavoriteDappsKeys, setTempFavoriteDappsKeys] = useState<
@@ -43,34 +43,13 @@ const ChangeFavoritesPage: React.FC = () => {
         tempRemovedNftKeys,
     ]);
 
-    const goBack = useCallback(() => {
-        navigate('/home/customize/color');
-    }, [navigate]);
-
     return (
         <div className="relative flex flex-col items-center pt-6">
             <Title>Choose your favorite apps</Title>
-            <div className="flex gap-2 w-full mb-2 px-6">
-                <button
-                    onClick={goBack}
-                    className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-4 mt-6 mb-2 bg-ethos-light-primary-light/20"
-                >
-                    <BodyLarge
-                        isSemibold
-                        className="text-ethos-light-primary-light dark:text-ethos-dark-primary-dark"
-                    >
-                        Back
-                    </BodyLarge>
-                </button>
-                <button
-                    onClick={handleOnContinue}
-                    className="flex w-full items-center place-content-center gap-2 rounded-xl py-3 px-4 mt-6 mb-2 bg-ethos-light-primary-light"
-                >
-                    <BodyLarge isSemibold className="text-white">
-                        Continue
-                    </BodyLarge>
-                </button>
-            </div>
+            <Button onClick={handleOnContinue} wrapperClassName="w-full mt-6">
+                Next
+            </Button>
+
             <FavoritesSortableList onFavoritesChosen={onFavoritesChosen} />
         </div>
     );
