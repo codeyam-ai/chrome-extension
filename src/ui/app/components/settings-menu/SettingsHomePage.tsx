@@ -70,7 +70,7 @@ const SettingsHomePage = () => {
 
     return (
         <div>
-            <div className="h-[536px] flex flex-col justify-between">
+            <div className="h-[550px] flex flex-col justify-between">
                 <SettingsList
                     listSections={[
                         {

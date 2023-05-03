@@ -127,7 +127,7 @@ const TabBar = () => {
     }, [selectedApiEnv]);
 
     return (
-        <nav className="px-6 flex flex-row justify-between h-16 sm:rounded-b-2xl items-center border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
+        <nav className="px-6 flex flex-row justify-between h-[56px] sm:rounded-b-2xl items-center border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
             {navItems.map((item, key) => {
                 return (
                     <NavItemElement

@@ -52,7 +52,7 @@ const DappView: React.FC<DappViewProps> = ({ dapp, onClose }) => {
     return (
         <div
             className={classNames(
-                'absolute h-[471px] flex flex-col w-full overflow-y-auto z-10 transition-transform duration-300 ease-in-out transform origin-top bg-ethos-light-background-default dark:bg-ethos-dark-background-default',
+                'absolute h-[494px] flex flex-col w-full overflow-y-auto z-10 transition-transform duration-300 ease-in-out transform origin-top bg-ethos-light-background-default dark:bg-ethos-dark-background-default',
                 dapp ? 'scale-y-100' : 'scale-y-0'
             )}
         >
