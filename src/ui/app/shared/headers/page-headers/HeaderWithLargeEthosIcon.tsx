@@ -16,7 +16,11 @@ const HeaderWithLargeEthosIcon = ({
                 className="h-[100px] w-[200px]"
                 forceLightTheme={forceLightTheme}
             />
-            <Subheader isTextColorMedium className="mt-2">
+            <Subheader
+                isTextColorMedium
+                className="mt-2"
+                forceLightMode={forceLightTheme}
+            >
                 {description}
             </Subheader>
         </div>
