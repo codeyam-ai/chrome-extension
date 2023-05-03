@@ -6,6 +6,7 @@ import BackButton from '../../shared/buttons/BackButton';
 import Alert from '../../shared/feedback/Alert';
 import { API_ENV } from '_src/shared/api-env';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
+import { useIntl } from 'react-intl';
 
 export default function MoonpayOnboarding() {
     // When SUI is added as a supported currency we can pass the users
@@ -14,6 +15,12 @@ export default function MoonpayOnboarding() {
     // https://docs.moonpay.com/moonpay/implementation-guide/on-ramp/sign-the-url-server-side
     // const address = useAppSelector((state) => state.account.address);
 
+    // Banner text: "MoonPay is a recommended partner for their services in the USA, Europe, UK, Australia, Brazil, and Canada."
+
+    const { locale } = useIntl();
+    const countryCode = locale.split('-')[1];
+    const supportedCountries = ['GB', 'AU', 'BR', 'CA'];
+    const isInSupportedCountries = supportedCountries.includes(countryCode);
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
     const [searchParams] = useSearchParams();
     const envParam = searchParams.get('env');
@@ -39,18 +46,26 @@ export default function MoonpayOnboarding() {
             : encodeURIComponent('#6D28D9');
 
     return featureFlags.showWipFeatures ? (
-        <iframe
-            title="Moonpay Onboarding: Buy Sui"
-            allow="accelerometer; autoplay; camera; gyroscope; payment"
-            height="100%"
-            width="100%"
-            src={`${baseUrl}?apiKey=${key}&currencyCode=${coinCode}&colorCode=${colorCode}&theme=${theme}&redirectUrl=${redirect}`}
-        >
-            <p>
-                We could not display this page in your browser. Please update or
-                try another browser to view.
-            </p>
-        </iframe>
+        <>
+            {isInSupportedCountries && (
+                <div className="absolute w-full p-3 bg-ethos-light-background-secondary dark:bg-[#1C1C1E]">
+                    MoonPay is a recommended partner for their services in the
+                    Europe, UK, Australia, Brazil, and Canada.
+                </div>
+            )}
+            <iframe
+                title="Moonpay Onboarding: Buy Sui"
+                allow="accelerometer; autoplay; camera; gyroscope; payment"
+                height="100%"
+                width="100%"
+                src={`${baseUrl}?apiKey=${key}&currencyCode=${coinCode}&colorCode=${colorCode}&theme=${theme}&redirectUrl=${redirect}`}
+            >
+                <p>
+                    We could not display this page in your browser. Please
+                    update or try another browser to view.
+                </p>
+            </iframe>
+        </>
     ) : (
         <div className={'p-6'}>
             <div className={'mb-6'}>
