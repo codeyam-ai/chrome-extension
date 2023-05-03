@@ -62,13 +62,6 @@ const NavItemElement = ({ to, title, outlineIcon, solidIcon }: NavItem) => {
         // to starts with "./", location.pathname starts with just a "/"
         return location.pathname.includes(to.replace(/[^\w\s]/gi, ''));
     }, [location, to]);
-    // const isActive = useCallback(
-    //     (to: string) => {
-    //         // to starts with "./", location.pathname starts with just a "/"
-    //         return location.pathname.includes(to.replace(/[^\w\s]/gi, ''));
-    //     },
-    //     [location]
-    // );
 
     const navLinkClass = useMemo(() => {
         return isActive
@@ -148,7 +141,7 @@ const TabBar = () => {
     }, [selectedApiEnv]);
 
     return (
-        <nav className="px-6 flex flex-row justify-between h-[56px] sm:rounded-b-2xl items-center border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
+        <nav className="px-6 flex flex-row justify-between h-[56px] sm:rounded-b-2xl items-center shadow-ethos-shadow-tab-bar-up dark:shadow-none dark:border-t dark:border-ethos-dark-text-stroke bg-ethos-super-light-purple dark:bg-ethos-dark-background-secondary">
             {navItems.map((item, key) => {
                 return (
                     <NavItemElement

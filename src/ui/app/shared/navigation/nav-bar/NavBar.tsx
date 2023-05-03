@@ -219,7 +219,7 @@ const NavBar = () => {
     }
 
     return (
-        <div className="flex flex-row items-center justify-between px-6 h-[50px] border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke">
+        <div className="flex flex-row items-center justify-between px-6 h-[50px] sm:rounded-t-[20px] border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke dark:bg-ethos-dark-background-secondary">
             {!isDappPage && isDetailsPage ? (
                 <button
                     onClick={goBack}
