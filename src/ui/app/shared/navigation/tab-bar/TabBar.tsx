@@ -1,11 +1,18 @@
 import {
-    ClockIcon,
-    HomeIcon,
-    CircleStackIcon,
-    SparklesIcon,
-    TicketIcon,
+    WalletIcon as WalletIconOutline,
+    ClockIcon as ClockIconOutline,
+    HomeIcon as HomeIconOutline,
+    Squares2X2Icon as Squares2X2IconOutline,
+    TicketIcon as TicketIconOutline,
+} from '@heroicons/react/24/outline';
+import {
+    WalletIcon as WalletIconSolid,
+    ClockIcon as ClockIconSolid,
+    HomeIcon as HomeIconSolid,
+    Squares2X2Icon as Squares2X2IconSolid,
+    TicketIcon as TicketIconSolid,
 } from '@heroicons/react/24/solid';
-import { useCallback, useMemo, type ReactNode, useEffect } from 'react';
+import { useEffect, useMemo, type ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
 import ExploreButton from './ExploreButton';
@@ -19,51 +26,60 @@ const navItems: NavItem[] = [
     {
         title: 'Home',
         to: './home',
-        icon: <HomeIcon className={iconClasses} />,
+        outlineIcon: <HomeIconOutline className={iconClasses} />,
+        solidIcon: <HomeIconSolid className={iconClasses} />,
     },
     {
         title: 'NFTs',
         to: './nfts',
-        icon: <SparklesIcon className={iconClasses} />,
+        outlineIcon: <Squares2X2IconOutline className={iconClasses} />,
+        solidIcon: <Squares2X2IconSolid className={iconClasses} />,
     },
     {
         title: 'Tokens',
         to: './tokens',
-        icon: <CircleStackIcon className={iconClasses} />,
+        outlineIcon: <WalletIconOutline className={iconClasses} />,
+        solidIcon: <WalletIconSolid className={iconClasses} />,
     },
     {
         title: 'History',
         to: './transactions',
-        icon: <ClockIcon className={iconClasses} />,
+        outlineIcon: <ClockIconOutline className={iconClasses} />,
+        solidIcon: <ClockIconSolid className={iconClasses} />,
     },
 ];
 
 type NavItem = {
     to: string;
     title: string;
-    icon: ReactNode;
+    outlineIcon: ReactNode;
+    solidIcon: ReactNode;
 };
 
-const NavItemElement = ({ to, title, icon }: NavItem) => {
+const NavItemElement = ({ to, title, outlineIcon, solidIcon }: NavItem) => {
     const location = useLocation();
-    const isActive = useCallback(
-        (to: string) => {
-            // to starts with "./", location.pathname starts with just a "/"
-            return location.pathname.includes(to.replace(/[^\w\s]/gi, ''));
-        },
-        [location]
-    );
+    const isActive = useMemo(() => {
+        // to starts with "./", location.pathname starts with just a "/"
+        return location.pathname.includes(to.replace(/[^\w\s]/gi, ''));
+    }, [location, to]);
+    // const isActive = useCallback(
+    //     (to: string) => {
+    //         // to starts with "./", location.pathname starts with just a "/"
+    //         return location.pathname.includes(to.replace(/[^\w\s]/gi, ''));
+    //     },
+    //     [location]
+    // );
 
     const navLinkClass = useMemo(() => {
-        return isActive(to)
+        return isActive
             ? 'text-ethos-light-primary-light dark:text-ethos-dark-primary-dark'
             : 'text-ethos-light-text-medium dark:text-ethos-dark-text-medium';
-    }, [isActive, to]);
+    }, [isActive]);
 
     return (
         <NavLink to={to} title={title} className={navLinkClass}>
             <span className="sr-only">{title}</span>
-            {icon}
+            {isActive ? solidIcon : outlineIcon}
         </NavLink>
     );
 };
@@ -107,7 +123,12 @@ const TabBar = () => {
                         navItems.splice(2, 0, {
                             title: 'Tickets',
                             to: './tickets',
-                            icon: <TicketIcon className={iconClasses} />,
+                            outlineIcon: (
+                                <TicketIconOutline className={iconClasses} />
+                            ),
+                            solidIcon: (
+                                <TicketIconSolid className={iconClasses} />
+                            ),
                         });
                     } else if (
                         ticketIndex > -1 &&
@@ -133,7 +154,8 @@ const TabBar = () => {
                     <NavItemElement
                         title={item.title}
                         to={item.to}
-                        icon={item.icon}
+                        outlineIcon={item.outlineIcon}
+                        solidIcon={item.solidIcon}
                         key={key}
                     />
                 );
