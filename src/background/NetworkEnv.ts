@@ -39,6 +39,7 @@ class NetworkEnv {
         if (env === API_ENV.customRPC && !isValidUrl(customRpcUrl)) {
             throw new Error(`Invalid custom RPC url ${customRpcUrl}`);
         }
+
         await Browser.storage.local.set({
             sui_Env: env,
             sui_Env_RPC: customRpcUrl,
@@ -53,9 +54,9 @@ class NetworkEnv {
     async #isNetworkAvailable(apiEnv: API_ENV) {
         const growthBook = await FeatureGating.getGrowthBook();
         return (
-            (apiEnv === API_ENV.testNet &&
+            (apiEnv === API_ENV.mainNet &&
                 growthBook.isOn(FEATURES.USE_MAINNET_ENDPOINT)) ||
-            apiEnv !== API_ENV.testNet
+            apiEnv !== API_ENV.mainNet
         );
     }
 }

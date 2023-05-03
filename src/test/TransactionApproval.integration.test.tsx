@@ -1,4 +1,5 @@
 import { TransactionBlock } from '@mysten/sui.js';
+import { SUI_MAINNET_CHAIN } from '@mysten/wallet-standard';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Browser from 'webextension-polyfill';
@@ -147,7 +148,7 @@ describe('The Transaction Approval popup', () => {
                 type: 'transaction',
                 data: transactionBlock.serialize(),
                 account: accountInfos[0].address,
-                chain: 'sui:testnet',
+                chain: SUI_MAINNET_CHAIN,
             },
         };
 
@@ -169,7 +170,7 @@ describe('The Transaction Approval popup', () => {
                 type: 'transaction',
                 data,
                 account: accountInfos[0].address,
-                chain: 'sui:testnet',
+                chain: SUI_MAINNET_CHAIN,
             },
         };
 
@@ -191,7 +192,7 @@ describe('The Transaction Approval popup', () => {
                 type: 'transaction',
                 data,
                 account: accountInfos[0].address,
-                chain: 'sui:testnet',
+                chain: SUI_MAINNET_CHAIN,
             },
         };
 

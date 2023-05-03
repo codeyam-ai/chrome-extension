@@ -21,6 +21,7 @@ import { SUI_SYSTEM_STATE_OBJECT_ID } from './Coin';
 import { NFT } from './NFT';
 import { fetchAllBalances } from '../balances';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
+import transferObjectTransactionBlock from '_src/ui/app/helpers/transferObjectTransactionBlock';
 
 import type {
     SuiAddress,
@@ -32,21 +33,51 @@ import type {
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
-const objectsAdapter = createEntityAdapter<SuiObjectData>({
+export interface ExtendedSuiObjectData extends SuiObjectData {
+    kiosk?: SuiObjectData;
+}
+
+const objectsAdapter = createEntityAdapter<ExtendedSuiObjectData>({
     selectId: (info) => info.objectId,
     sortComparer: (a, b) => a.objectId.localeCompare(b.objectId),
 });
 
 export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
-    SuiObjectData[],
+    ExtendedSuiObjectData[],
     void,
     AppThunkConfig
 >('sui-objects/fetch-all', async (_, { getState, extra: { api } }) => {
     const state = getState();
+
+    if (!state.balances.lastSync) {
+        try {
+            const response = await fetch(
+                api.instance.fullNode.connection.fullnode,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        jsonrpc: '2.0',
+                        id: 1,
+                        method: 'rpc.discover',
+                    }),
+                }
+            );
+
+            if (response.status !== 200) {
+                throw new Error('RPC not responding');
+            }
+        } catch (e) {
+            throw new Error('RPC not responding');
+        }
+    }
+
     const {
         account: { address },
     } = state;
-    const allSuiObjects: SuiObjectData[] = [];
+    const allSuiObjects: ExtendedSuiObjectData[] = [];
     if (address) {
         let allObjRes: SuiObjectResponse[] = [];
         let nextCursor: PaginatedObjectsResponse['nextCursor'] | undefined;
@@ -127,7 +158,10 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                     for (const kioskObject of kioskObjects) {
                         const kioskObjectData = getSuiObjectData(kioskObject);
                         if (kioskObjectData) {
-                            allSuiObjects.push(kioskObjectData);
+                            allSuiObjects.push({
+                                kiosk: suiObjectData,
+                                ...kioskObjectData,
+                            });
                         }
                     }
                 } else {
@@ -151,7 +185,7 @@ export const transferNFT = createAsyncThunk<
     NFTTxResponse | undefined,
     { nftId: ObjectId; recipientAddress: SuiAddress; transferCost: number },
     AppThunkConfig
->('transferNFT', async (data, { getState, dispatch }) => {
+>('transferNFT', async (data, { getState, dispatch, extra: { api } }) => {
     const {
         account: {
             activeAccountIndex,
@@ -160,7 +194,12 @@ export const transferNFT = createAsyncThunk<
             accountInfos,
             passphrase,
         },
+        suiObjects: { entities },
     } = getState();
+
+    const nft = entities[data.nftId];
+
+    if (!nft) return;
 
     const signer = await getSigner(
         passphrase,
@@ -172,13 +211,15 @@ export const transferNFT = createAsyncThunk<
 
     if (!signer) return;
 
-    const transactionBlock = new TransactionBlock();
-    transactionBlock.add(
-        TransactionBlock.Transactions.TransferObjects(
-            [transactionBlock.object(data.nftId)],
-            transactionBlock.pure(data.recipientAddress)
-        )
+    let transactionBlock = new TransactionBlock();
+
+    transactionBlock = await transferObjectTransactionBlock(
+        transactionBlock,
+        nft,
+        data.recipientAddress,
+        api.instance.fullNode
     );
+
     const executedTransaction = await signer.signAndExecuteTransactionBlock({
         transactionBlock,
         options: {

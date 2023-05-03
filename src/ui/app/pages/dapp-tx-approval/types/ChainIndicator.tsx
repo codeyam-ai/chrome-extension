@@ -1,4 +1,9 @@
 import { SignalIcon } from '@heroicons/react/24/outline';
+import {
+    SUI_DEVNET_CHAIN,
+    SUI_MAINNET_CHAIN,
+    SUI_TESTNET_CHAIN,
+} from '@mysten/wallet-standard';
 import classNames from 'classnames';
 
 import { API_ENV } from '_src/ui/app/ApiProvider';
@@ -16,14 +21,17 @@ const ChainIndicator = ({ apiEnv, className }: ChainIndicatorProps) => {
             chain = 'sui:custom';
             break;
         case API_ENV.devNet:
-            chain = 'sui:devnet';
+            chain = SUI_DEVNET_CHAIN;
             break;
         case API_ENV.testNet:
-            chain = 'sui:testnet';
+            chain = SUI_TESTNET_CHAIN;
+            break;
+        case API_ENV.mainNet:
+            chain = SUI_MAINNET_CHAIN;
             break;
     }
 
-    if (!chain) return <></>;
+    if (!chain || chain === SUI_MAINNET_CHAIN) return <></>;
 
     const [chainName, network] = chain.split(':');
 

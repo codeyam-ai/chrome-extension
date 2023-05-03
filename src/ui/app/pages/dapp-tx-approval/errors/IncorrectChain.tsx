@@ -1,3 +1,8 @@
+import {
+    SUI_DEVNET_CHAIN,
+    SUI_MAINNET_CHAIN,
+    SUI_TESTNET_CHAIN,
+} from '@mysten/wallet-standard';
 import { useCallback } from 'react';
 
 import { API_ENV } from '_src/ui/app/ApiProvider';
@@ -28,17 +33,20 @@ const IncorrectChain = ({
     const switchChain = useCallback(async () => {
         let correctNetwork;
         switch (correctChain) {
-            // case 'sui:mainnet':
-            //     correctNetwork = API_ENV.mainNet;
-            //     break;
-            case 'sui:testnet':
+            case SUI_MAINNET_CHAIN:
+                correctNetwork = API_ENV.mainNet;
+                break;
+            case SUI_TESTNET_CHAIN:
                 correctNetwork = API_ENV.testNet;
+                break;
+            case SUI_DEVNET_CHAIN:
+                correctNetwork = API_ENV.devNet;
                 break;
             case 'sui:local':
                 correctNetwork = API_ENV.local;
                 break;
             default:
-                correctNetwork = API_ENV.devNet;
+                correctNetwork = API_ENV.mainNet;
         }
         await dispatch(changeRPCNetwork(correctNetwork));
     }, [dispatch, correctChain]);
