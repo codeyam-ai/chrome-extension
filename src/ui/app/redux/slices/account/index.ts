@@ -18,8 +18,9 @@ import { suiBalancesAdapterSelectors } from '../balances';
 import { NFT } from '../sui-objects/NFT';
 import { Ticket } from '../sui-objects/Ticket';
 import { isLocked, setLocked, setUnlocked } from '_app/helpers/lock-wallet';
+import { clearForNetworkOrWalletSwitch as clearBalancesForNetworkOrWalletSwitch } from '_redux/slices/balances';
 import {
-    clearForNetworkOrWalletSwitch,
+    clearForNetworkOrWalletSwitch as clearTokensForNetworkOrWalletSwitch,
     suiObjectsAdapterSelectors,
 } from '_redux/slices/sui-objects';
 import { Coin } from '_redux/slices/sui-objects/Coin';
@@ -624,7 +625,8 @@ export const saveActiveAccountIndex = createAsyncThunk(
             session: false,
             strong: false,
         });
-        await clearForNetworkOrWalletSwitch();
+        await clearTokensForNetworkOrWalletSwitch();
+        await clearBalancesForNetworkOrWalletSwitch();
         api.resetSignerInstance();
         return activeAccountIndex;
     }

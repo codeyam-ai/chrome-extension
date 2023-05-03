@@ -9,8 +9,9 @@ import {
     saveActiveAccountIndex,
     setAccountInfos,
 } from '../../redux/slices/account';
-import { clearForNetworkOrWalletSwitch } from '../../redux/slices/sui-objects';
 import { thunkExtras } from '../../redux/store/thunk-extras';
+import { clearForNetworkOrWalletSwitch as clearBalancesForNetworkOrWalletSwitch } from '_redux/slices/balances';
+import { clearForNetworkOrWalletSwitch as clearTokensForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
 import Authentication from '_src/background/Authentication';
 import Permissions from '_src/background/Permissions';
 
@@ -74,7 +75,8 @@ const CreateWalletProvider = ({
             await dispatch(setAccountInfos(draftAccountInfos.current));
             await Authentication.getAccountInfos(true);
         } else {
-            await dispatch(clearForNetworkOrWalletSwitch());
+            await dispatch(clearTokensForNetworkOrWalletSwitch());
+            await dispatch(clearBalancesForNetworkOrWalletSwitch());
             await dispatch(saveAccountInfos(draftAccountInfos.current));
             await dispatch(
                 saveActiveAccountIndex(draftAccountInfos.current.length - 1)
