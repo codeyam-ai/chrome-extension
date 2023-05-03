@@ -1,22 +1,25 @@
 import { PhotoIcon } from '@heroicons/react/24/solid';
 
 import ipfs from '../../helpers/ipfs';
+import Sui from '../../pages/home/home/Sui';
 import UnknownToken from '../../pages/home/home/UnknownToken';
-import TxSui from '../svg/TxSui';
 
-export const AssetCard = ({
-    theme,
-    txType,
-    imgUrl,
-    name,
-    icon,
-}: {
+interface AssetCardProps {
     theme?: string;
     txType: string;
     imgUrl?: string;
     name: string;
     icon?: JSX.Element;
     coinType?: string;
+}
+
+export const AssetCard: React.FC<AssetCardProps> = ({
+    theme,
+    txType,
+    imgUrl,
+    name,
+    icon,
+    coinType,
 }) => {
     const safeImageUrl = imgUrl ? ipfs(imgUrl) : null;
 
@@ -41,10 +44,9 @@ export const AssetCard = ({
                             <PhotoIcon width={28} height={28} />
                         </div>
                     )
-                ) : txType === 'sui' ? (
-                    <TxSui
-                        borderColor={theme === 'light' ? 'white' : '#111111'}
-                    />
+                ) : txType === 'sui' ||
+                  (txType === 'transfer' && coinType === 'SUI') ? (
+                    <Sui width={56} />
                 ) : safeImageUrl ? (
                     <img
                         className={

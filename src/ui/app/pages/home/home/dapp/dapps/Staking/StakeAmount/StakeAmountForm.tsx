@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import { Form, useField, useFormikContext } from 'formik';
 import { useMemo } from 'react';
 
+import Sui from '../../../../Sui';
 import StakeSummary from '../StakeSummary';
 import { type SuiValidatorSummaryWithApy } from '../ValidatorList';
 import ClickableTooltip from '_src/ui/app/components/ClickableTooltip';
@@ -14,7 +15,6 @@ import { useSystemState } from '_src/ui/app/hooks/staking/useSystemState';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
-import SuiIcon from '_src/ui/app/shared/svg/SuiIcon';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
@@ -125,9 +125,7 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                             </div>
                             <div className="flex px-3 py-2 justify-between items-center place-content-center rounded-xl border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
                                 <div className="flex">
-                                    <div className="p-2 rounded-full bg-ethos-sui-blue">
-                                        <SuiIcon height={24} width={24} />
-                                    </div>
+                                    <Sui />
                                     <input
                                         {...amountField}
                                         name="amount"
