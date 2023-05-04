@@ -10,6 +10,7 @@ import type { SuiAddress, SuiValidatorSummary } from '@mysten/sui.js';
 
 export interface SuiValidatorSummaryWithApy extends SuiValidatorSummary {
     apy: number;
+    isApyApproxZero: boolean;
 }
 
 interface ValidatorListProps {
