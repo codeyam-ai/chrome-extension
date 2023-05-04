@@ -44,10 +44,6 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
         const projectNftsRecord = getProjectNftsFromAllNfts(nfts);
         return Object.values(projectNftsRecord);
     }, [nfts]);
-    const [selectedApiEnv] = useAppSelector(({ app }) => [
-        app.apiEnv,
-        app.customRPC,
-    ]);
 
     const favoriteScrollContainerRef = useRef<HTMLDivElement>(null);
     useConvertVerticalScrollToHorizontal(favoriteScrollContainerRef);
@@ -55,13 +51,9 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
     const allDappsContainerRef = useRef<HTMLDivElement>(null);
 
     // Each item needs a number ID to work with react-sortablejs
-    const dappsWithSortIds: SortableItem[] = useMemo(() => {
+    const allDappsAndNftsWithSortIds: SortableItem[] = useMemo(() => {
         const sortableDapps = Array.from(dappsMap.values())
-            .filter(
-                (dapp) =>
-                    !EXPLORER_ONLY_KEYS.includes(dapp.id) &&
-                    dapp.urls[selectedApiEnv]
-            )
+            .filter((dapp) => !EXPLORER_ONLY_KEYS.includes(dapp.id))
             .map(
                 (item) =>
                     ({
@@ -85,7 +77,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
             );
 
         return [...sortableDapps, ...sortableNfts];
-    }, [projectNfts, selectedApiEnv]);
+    }, [projectNfts]);
 
     const [favoritesState, setFavoritesState] = useState<SortableItem[]>([
         ...favoriteNfts.map(
@@ -130,7 +122,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
 
     const allDappsItems = useMemo(
         () =>
-            dappsWithSortIds.map((item) => {
+            allDappsAndNftsWithSortIds.map((item) => {
                 const isFavorite = favoritesState.some(
                     (fav) => fav.id === item.id
                 );
@@ -154,7 +146,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                     </div>
                 );
             }),
-        [dappsWithSortIds, favoritesState]
+        [allDappsAndNftsWithSortIds, favoritesState]
     );
 
     const handleDragStart = useCallback((evt: SortableEvent) => {
@@ -271,7 +263,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                             sort={false}
                             bubbleScroll
                             group="shared"
-                            list={dappsWithSortIds}
+                            list={allDappsAndNftsWithSortIds}
                             // eslint-disable-next-line react/jsx-no-bind, @typescript-eslint/no-empty-function
                             setList={() => {}}
                             animation={200}

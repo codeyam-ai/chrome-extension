@@ -42,7 +42,10 @@ export const useFavoriteDapps = () => {
         [dispatch]
     );
 
-    const favoriteDapps: DappData[] = useMemo(() => {
+    const favoriteDapps: {
+        allFavoriteDapps: DappData[];
+        favoriteDappsForCurrentNetwork: DappData[];
+    } = useMemo(() => {
         let projectNFTs: Record<string, DappData> = {};
         if (nfts) {
             projectNFTs = getProjectNftsFromAllNfts(nfts, selectedApiEnv);
@@ -56,7 +59,7 @@ export const useFavoriteDapps = () => {
             allFavoriteDappsKeys.push(CUSTOMIZE_ID);
         }
 
-        return allFavoriteDappsKeys
+        const allFavoriteDapps = allFavoriteDappsKeys
             .map((key) => {
                 const dapp = dappsMap.get(key);
 
@@ -67,6 +70,20 @@ export const useFavoriteDapps = () => {
                 return dapp;
             })
             .filter(Boolean) as DappData[];
+
+        const favoriteDappsForCurrentNetwork = allFavoriteDapps.filter(
+            (dapp) => {
+                if (!dapp?.urls[selectedApiEnv]) {
+                    return null;
+                }
+                return dapp;
+            }
+        );
+
+        return {
+            allFavoriteDapps,
+            favoriteDappsForCurrentNetwork,
+        };
     }, [excludedDappsKeys, favoriteDappsKeys, nfts, selectedApiEnv]);
 
     const favoriteNfts: DappData[] = useMemo(() => {
@@ -85,24 +102,34 @@ export const useFavoriteDapps = () => {
     }, [nfts, selectedApiEnv, excludedDappsKeys, favoriteDappsKeys]);
 
     const allFavorites: DappData[] = useMemo(() => {
-        return [...favoriteNfts, ...favoriteDapps].filter(
+        return [
+            ...favoriteNfts,
+            ...favoriteDapps.favoriteDappsForCurrentNetwork,
+        ].filter(
             (dapp, index, self) =>
                 self.findIndex((d) => d.id === dapp.id) === index
         );
     }, [favoriteNfts, favoriteDapps]);
 
     useEffect(() => {
-        const allFavoriteDappsKeys = allFavorites.map((dapp) => dapp.id);
+        const allFavoriteDappsKeys = favoriteDapps.allFavoriteDapps.map(
+            (dapp) => dapp.id
+        );
         if (
             JSON.stringify(allFavoriteDappsKeys) !==
             JSON.stringify(favoriteDappsKeys)
         ) {
             setFavoriteDappsKeys(allFavoriteDappsKeys);
         }
-    }, [allFavorites, favoriteDappsKeys, setFavoriteDappsKeys]);
+    }, [
+        allFavorites,
+        favoriteDapps.allFavoriteDapps,
+        favoriteDappsKeys,
+        setFavoriteDappsKeys,
+    ]);
 
     return {
-        favoriteDapps,
+        favoriteDapps: favoriteDapps.allFavoriteDapps,
         favoriteNfts,
         allFavorites,
         excludedDappsKeys,

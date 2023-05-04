@@ -450,6 +450,8 @@ const dappsMap: Map<string, DappData> = new Map([
             description:
                 'Typus is a real yield infrastructure that integrates swap, lending, and derivatives building on top of the Sui ecosystem.',
             urls: {
+                [NetworkName.DEVNET]:
+                    'https://devnet.typus.finance/vault/coveredcall/',
                 [NetworkName.TESTNET]:
                     'https://testnet.typus.finance/vault/coveredcall/',
             },
