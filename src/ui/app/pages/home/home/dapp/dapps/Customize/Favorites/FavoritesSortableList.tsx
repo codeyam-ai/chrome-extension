@@ -234,6 +234,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                     ghostClass="hidden"
                     onEnd={handleDragEnd}
                     className="RemoveFromFavoritesIndicator"
+                    disabled={draggedItemId === CUSTOMIZE_ID}
                 >
                     <div
                         className="flex w-full"
