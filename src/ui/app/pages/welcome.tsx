@@ -12,9 +12,14 @@ import OnboardingButton from '../shared/buttons/OnboardingButton';
 import HeaderWithLargeEthosIcon from '../shared/headers/page-headers/HeaderWithLargeEthosIcon';
 import OnboardingLayout from '../shared/layouts/OnboardingLayout';
 import Title from '../shared/typography/Title';
-import { ADDRESS_BOOK_ID, STAKING_ID } from '_src/data/dappsMap';
+import {
+    ADDRESS_BOOK_ID,
+    STAKING_ID,
+    automaticDappKeys,
+} from '_src/data/dappsMap';
 
 import type { OnboardingButtonProps } from '../shared/buttons/OnboardingButton';
+import { useFavoriteDapps } from '../hooks/useFavoriteDapps';
 
 const setupButtons: OnboardingButtonProps[] = [
     {
@@ -48,13 +53,11 @@ const setupButtons: OnboardingButtonProps[] = [
 
 const WelcomePage = () => {
     useInitializedGuard([AppState.UNINITIALIZED, AppState.LOCKED]);
-    const dispatch = useAppDispatch();
+    const { setFavoriteDappsKeys } = useFavoriteDapps();
 
     useEffect(() => {
-        // save Staking and Address Book dapps are favorite by default, but it is not locked like Customize or Address Book
-        dispatch(saveFavoriteDappsKeys([STAKING_ID]));
-        dispatch(saveFavoriteDappsKeys([ADDRESS_BOOK_ID]));
-    }, [dispatch]);
+        setFavoriteDappsKeys(automaticDappKeys);
+    }, [setFavoriteDappsKeys]);
     return (
         <OnboardingLayout>
             <div className="flex flex-col w-[464px]">

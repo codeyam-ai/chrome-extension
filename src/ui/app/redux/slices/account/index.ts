@@ -32,6 +32,7 @@ import {
     CUSTOMIZE_ID,
     MY_ASSETS_ID,
     STAKING_ID,
+    automaticDappKeys,
 } from '_src/data/dappsMap';
 import { AccountType, PASSPHRASE_TEST } from '_src/shared/constants';
 import {
@@ -1005,7 +1006,8 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
-        const excludeDappKeys = JSON.parse(
+        // Excluded dapps are NFTs and "automatic" dapps (address book, staking, etc.)
+        const excludedDappKeys = JSON.parse(
             (await getEncrypted({
                 key: 'excludedDappsKeys',
                 session: false,
@@ -1013,21 +1015,18 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
-        const automaticKeys = [
-            CUSTOMIZE_ID,
-            ADDRESS_BOOK_ID,
-            MY_ASSETS_ID,
-            STAKING_ID,
-        ];
-
         const allFavoriteDappsKeys = [...favoriteDappsKeys];
-        for (const key of automaticKeys) {
-            if (!favoriteDappsKeys.includes(key)) {
-                allFavoriteDappsKeys.push(key);
-            }
-        }
+        // for (const key of automaticDappKeys) {
+        //     if (!favoriteDappsKeys.includes(key)) {
+        //         console.log(
+        //             'key not included in favoriteDappsKeys, adding :>> ',
+        //             key
+        //         );
+        //         allFavoriteDappsKeys.push(key);
+        //     }
+        // }
 
-        for (const key of excludeDappKeys) {
+        for (const key of excludedDappKeys) {
             const index = allFavoriteDappsKeys.indexOf(key);
             if (index !== -1) {
                 allFavoriteDappsKeys.splice(index, 1);
@@ -1060,6 +1059,7 @@ export const saveFavoriteDappsKeys = createAsyncThunk(
     }
 );
 
+// Excluded dapps are NFTs and "automatic" dapps (address book, staking, etc.)
 export const loadExcludedDappsKeysFromStorage = createAsyncThunk(
     'account/getExcludedDappsKeys',
     async (): Promise<string[]> => {
