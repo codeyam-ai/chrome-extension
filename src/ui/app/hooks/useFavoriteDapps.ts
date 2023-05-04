@@ -23,13 +23,10 @@ export const useFavoriteDapps = () => {
     const favoriteDappsKeys = useAppSelector(
         ({ account }) => account.favoriteDappsKeys
     );
-    console.log('favoriteDappsKeys :>> ', favoriteDappsKeys);
 
-    // Excluded dapps are NFTs and "automatic" dapps (address book, staking, etc.)
     const excludedDappsKeys = useAppSelector(
         ({ account }) => account.excludedDappsKeys
     );
-    console.log('excludedDappsKeys :>> ', excludedDappsKeys);
     const nfts = useAppSelector(accountNftsSelector);
 
     const setExcludedDappsKeys = useCallback(
@@ -123,8 +120,6 @@ export const useFavoriteDapps = () => {
             JSON.stringify(allFavoriteDappsKeys) !==
             JSON.stringify(favoriteDappsKeys)
         ) {
-            console.log('setting fav dapps keys in useFavoriteDapps uef');
-
             setFavoriteDappsKeys(allFavoriteDappsKeys);
         }
     }, [

@@ -27,13 +27,7 @@ import { Coin } from '_redux/slices/sui-objects/Coin';
 import { generateMnemonic } from '_shared/cryptography/mnemonics';
 import Authentication from '_src/background/Authentication';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
-import {
-    ADDRESS_BOOK_ID,
-    CUSTOMIZE_ID,
-    MY_ASSETS_ID,
-    STAKING_ID,
-    automaticDappKeys,
-} from '_src/data/dappsMap';
+import { CUSTOMIZE_ID } from '_src/data/dappsMap';
 import { AccountType, PASSPHRASE_TEST } from '_src/shared/constants';
 import {
     deleteEncrypted,
@@ -1006,7 +1000,6 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
-        // Excluded dapps are NFTs and "automatic" dapps (address book, staking, etc.)
         const excludedDappKeys = JSON.parse(
             (await getEncrypted({
                 key: 'excludedDappsKeys',
@@ -1059,7 +1052,6 @@ export const saveFavoriteDappsKeys = createAsyncThunk(
     }
 );
 
-// Excluded dapps are NFTs and "automatic" dapps (address book, staking, etc.)
 export const loadExcludedDappsKeysFromStorage = createAsyncThunk(
     'account/getExcludedDappsKeys',
     async (): Promise<string[]> => {
