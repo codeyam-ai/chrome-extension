@@ -16,6 +16,7 @@ import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 import Title from '_src/ui/app/shared/typography/Title';
+import { useTheme } from '_src/shared/utils/themeContext';
 
 export interface Stake {
     status: 'Active' | 'Pending' | 'Unstaked';
@@ -81,6 +82,7 @@ const DelegatedStakeRow = ({
     delegatedStake: DelegatedStake;
 }) => {
     const navigate = useNavigate();
+    const { resolvedTheme } = useTheme();
 
     const navigateToStakeDetail = useCallback(() => {
         navigate(`validator-details/${delegatedStake.validatorAddress}`);
@@ -118,8 +120,16 @@ const DelegatedStakeRow = ({
                             <Skeleton
                                 height={15}
                                 width={60}
-                                baseColor="#1A1C26"
-                                highlightColor="#3e435b"
+                                baseColor={
+                                    resolvedTheme === 'dark'
+                                        ? '#1A1C26'
+                                        : undefined
+                                }
+                                highlightColor={
+                                    resolvedTheme === 'dark'
+                                        ? '#3e435b'
+                                        : undefined
+                                }
                             />
                         ) : (
                             validator?.name
@@ -130,8 +140,16 @@ const DelegatedStakeRow = ({
                             <Skeleton
                                 height={15}
                                 width={112}
-                                baseColor="#1A1C26"
-                                highlightColor="#3e435b"
+                                baseColor={
+                                    resolvedTheme === 'dark'
+                                        ? '#1A1C26'
+                                        : undefined
+                                }
+                                highlightColor={
+                                    resolvedTheme === 'dark'
+                                        ? '#3e435b'
+                                        : undefined
+                                }
                             />
                         ) : (
                             truncateMiddle(validator?.suiAddress || '')
