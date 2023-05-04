@@ -8,6 +8,7 @@ import { useCallback } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
 
+import { useTheme } from '_src/shared/utils/themeContext';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
@@ -16,7 +17,6 @@ import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 import Title from '_src/ui/app/shared/typography/Title';
-import { useTheme } from '_src/shared/utils/themeContext';
 
 export interface Stake {
     status: 'Active' | 'Pending' | 'Unstaked';
