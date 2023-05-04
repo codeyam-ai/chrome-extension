@@ -1,20 +1,21 @@
+import { CircleStackIcon } from '@heroicons/react/24/solid';
 import {
     SUI_TYPE_ARG,
     type DelegatedStake,
     type SuiAddress,
 } from '@mysten/sui.js';
+import classNames from 'classnames';
 import { type PropsWithChildren, useCallback, useMemo } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
 
 import { useTheme } from '_src/shared/utils/themeContext';
-import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useFormatCoin } from '_src/ui/app/hooks';
+import { useDistanceToStartEarningRewards } from '_src/ui/app/hooks/staking/useDistanceToStartEarningRewards';
+import { useSystemState } from '_src/ui/app/hooks/staking/useSystemState';
 import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
-import classNames from 'classnames';
-import { CircleStackIcon } from '@heroicons/react/24/solid';
 
 export interface Stake {
     status: 'Active' | 'Pending' | 'Unstaked';
@@ -104,7 +105,7 @@ const ExistingStake: React.FC<ExistingStakeProps> = ({
                     >{`${delegatedStakes.length} Validators`}</Body>
                 </div>
                 {stakes.map((stake) => (
-                    <StakeRow key={stake.validatorAddress} stake={stake} />
+                    <StakeRow key={stake.stakedSuiId} stake={stake} />
                 ))}
             </div>
         </div>
@@ -114,6 +115,8 @@ const ExistingStake: React.FC<ExistingStakeProps> = ({
 const StakeRow = ({ stake }: { stake: StakeWithValidatorAddress }) => {
     const navigate = useNavigate();
     const { resolvedTheme } = useTheme();
+    const { data: systemState } = useSystemState();
+    const { data: validators, isInitialLoading } = useValidatorsWithApy();
 
     const navigateToStakeDetail = useCallback(() => {
         navigate(
@@ -132,13 +135,14 @@ const StakeRow = ({ stake }: { stake: StakeWithValidatorAddress }) => {
         9
     );
 
-    const { data: validators, isInitialLoading } = useValidatorsWithApy();
+    const { isEarningRewards, timeToRewardsStart } =
+        useDistanceToStartEarningRewards(stake, systemState);
+
     const validator = validators?.[stake.validatorAddress];
 
     return (
         <button
             onClick={navigateToStakeDetail}
-            key={stake.stakedSuiId}
             className="w-full flex flex-row items-center place-content-center justify-between py-4 px-6 hover:bg-ethos-super-light-purple dark:hover:bg-ethos-dark-background-secondary/50 border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke"
         >
             <div className="flex items-center place-content-center gap-3">
@@ -187,12 +191,30 @@ const StakeRow = ({ stake }: { stake: StakeWithValidatorAddress }) => {
                 </div>
             </div>
             <div className="flex flex-col items-end">
-                <Body className="ethos-light-text-medium !text-xs">
-                    Staking Rewards
-                </Body>
-                <Body isSemibold className="ethos-light-text-medium">
-                    {formattedReward} {rewardSymbol}
-                </Body>
+                {isEarningRewards ? (
+                    <>
+                        <Body className="ethos-light-text-medium !text-xs">
+                            Staking Rewards
+                        </Body>
+                        <Body
+                            isSemibold
+                            className={classNames(
+                                isEarningRewards
+                                    ? 'text-ethos-success-green'
+                                    : undefined
+                            )}
+                        >
+                            {formattedReward} {rewardSymbol}
+                        </Body>
+                    </>
+                ) : (
+                    <>
+                        <Body className="ethos-light-text-medium !text-xs">
+                            Staking Rewards
+                        </Body>
+                        <Body>{timeToRewardsStart}</Body>
+                    </>
+                )}
             </div>
         </button>
     );

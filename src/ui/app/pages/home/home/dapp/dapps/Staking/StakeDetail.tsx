@@ -5,16 +5,14 @@ import {
     TransactionBlock,
 } from '@mysten/sui.js';
 import { useQueryClient } from '@tanstack/react-query';
-import { formatRelative } from 'date-fns';
 import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { NUM_OF_EPOCH_BEFORE_EARNING } from '_src/shared/constants';
 import ClickableTooltip from '_src/ui/app/components/ClickableTooltip';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
-import getTimeToEarnStakeRewards from '_src/ui/app/helpers/staking/getTimeToEarnStakeRewards';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
+import { useDistanceToStartEarningRewards } from '_src/ui/app/hooks/staking/useDistanceToStartEarningRewards';
 import useGetDelegatedStakes from '_src/ui/app/hooks/staking/useGetDelegatedStakes';
 import { useSystemState } from '_src/ui/app/hooks/staking/useSystemState';
 import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
@@ -114,6 +112,7 @@ const StakeDetail: React.FC = () => {
 
 const REMOVE_STAKE_INFO_TEXT =
     'Rewards are not earned until you have Unstaked.';
+
 const StakeRow = ({ stake }: { stake: Stake }) => {
     const {
         activeAccountIndex,
@@ -194,20 +193,10 @@ const StakeRow = ({ stake }: { stake: Stake }) => {
 
     const { data: systemState } = useSystemState();
 
-    const earningRewardsEpoch =
-        Number(stake?.stakeRequestEpoch) + NUM_OF_EPOCH_BEFORE_EARNING;
-    const isEarnedRewards =
-        Number(systemState?.epoch) >= Number(earningRewardsEpoch);
+    const { isEarningRewards, timeToRewardsStart } =
+        useDistanceToStartEarningRewards(stake, systemState);
 
-    const formattedDistanceToRewards = useMemo(() => {
-        const timeToRewardsStart = getTimeToEarnStakeRewards(
-            earningRewardsEpoch,
-            systemState
-        );
-        return formatRelative(new Date(timeToRewardsStart), new Date());
-    }, [systemState, earningRewardsEpoch]);
-
-    const estimatedReward = isEarnedRewards
+    const estimatedReward = isEarningRewards
         ? mistToSui(Number(stake.estimatedReward), 9)
         : 0.0;
 
@@ -229,9 +218,9 @@ const StakeRow = ({ stake }: { stake: Stake }) => {
                 </div>
             </div>
             <div className="flex w-full justify-end items-center">
-                {!isEarnedRewards && (
+                {!isEarningRewards && (
                     <div className="pr-2">
-                        <Body>Starts earning {formattedDistanceToRewards}</Body>
+                        <Body>Starts earning {timeToRewardsStart}</Body>
                     </div>
                 )}
                 <Button
