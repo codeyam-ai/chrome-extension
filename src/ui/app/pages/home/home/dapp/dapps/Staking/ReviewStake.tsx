@@ -135,6 +135,7 @@ const ReviewStake: React.FC = () => {
                     <StakeSummary
                         amount={amount || undefined}
                         stakingAPY={validator?.apy?.toString()}
+                        commissionRate={validator?.commissionRate}
                         rewardsStart={formattedDistanceToRewards}
                         gasPrice={mistToSui(+(validator?.gasPrice || '0'), 4)}
                         showRowDividers

@@ -92,7 +92,12 @@ const ValidatorRow: React.FC<ValidatorRowProps> = ({
                         </Body>
                     </div>
                 </div>
-                <Body isSemibold>{validator.apy || 0}%</Body>
+                <div className="flex flex-col text-right">
+                    <Body isSemibold>{validator.apy || 0}% APY</Body>
+                    <Body>
+                        {Number(validator.commissionRate) / 100}% Commission
+                    </Body>
+                </div>
             </div>
         </button>
     );
