@@ -1,10 +1,9 @@
-import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import {
     SUI_TYPE_ARG,
     type DelegatedStake,
     type SuiAddress,
 } from '@mysten/sui.js';
-import { useCallback } from 'react';
+import { type PropsWithChildren, useCallback, useMemo } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,9 +13,8 @@ import { useFormatCoin } from '_src/ui/app/hooks';
 import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import Subheader from '_src/ui/app/shared/typography/Subheader';
-import Title from '_src/ui/app/shared/typography/Title';
+import classNames from 'classnames';
+import { CircleStackIcon } from '@heroicons/react/24/solid';
 
 export interface Stake {
     status: 'Active' | 'Pending' | 'Unstaked';
@@ -24,7 +22,7 @@ export interface Stake {
     stakeRequestEpoch: string;
     stakeActiveEpoch: string;
     principal: string;
-    estimatedReward?: number | undefined;
+    estimatedReward?: string | undefined;
 }
 
 export interface StakeWithValidatorAddress extends Stake {
@@ -34,87 +32,138 @@ export interface StakeWithValidatorAddress extends Stake {
 interface ExistingStakeProps {
     amountStaked: bigint;
     delegatedStakes: DelegatedStake[];
+    totalStakeEarnedRewards: bigint;
 }
 
-const ExistingStake: React.FC<ExistingStakeProps> = ({
-    amountStaked,
-    delegatedStakes,
-}) => {
-    const [formatted, symbol] = useFormatCoin(amountStaked, SUI_TYPE_ARG);
+interface StakingCardProps {
+    backgroundColor?: string;
+}
 
+const Card: React.FC<PropsWithChildren<StakingCardProps>> = ({
+    children,
+    backgroundColor,
+}) => {
     return (
-        <div className="w-full flex flex-col h-full justify-between">
-            <div>
-                <div className="flex gap-2 items-center place-content-center py-5 bg-ethos-light-green/10 dark:bg-ethos-dark-green/10 ">
-                    <CheckCircleIcon className="h-5 w-5 text-ethos-light-green dark:text-ethos-dark-green" />
-                    <BodyLarge
-                        className="text-ethos-light-green dark:text-ethos-dark-green"
-                        isSemibold
-                    >
-                        Your staked SUI is earning rewards!
-                    </BodyLarge>
-                </div>
-                <div className="flex flex-col items-center place-content-center my-4">
-                    <Subheader isTextColorMedium>Total staked:</Subheader>
-                    <Title>
-                        {formatted} {symbol}
-                    </Title>
-                </div>
-                <div>
-                    {delegatedStakes.map((delegatedStake) => (
-                        <DelegatedStakeRow
-                            key={delegatedStake.validatorAddress}
-                            delegatedStake={delegatedStake}
-                        />
-                    ))}
-                </div>
-            </div>
-            <Button to={'/home/staking/select-validator'} className="mt-2">
-                Stake More
-            </Button>
+        <div
+            className={classNames(
+                'flex flex-col items-center place-content-center mx-6 my-4 py-4  rounded-xl border border-white/[.04]',
+                backgroundColor ??
+                    'bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey'
+            )}
+        >
+            {children}
         </div>
     );
 };
 
-const DelegatedStakeRow = ({
-    delegatedStake,
-}: {
-    delegatedStake: DelegatedStake;
+const ExistingStake: React.FC<ExistingStakeProps> = ({
+    amountStaked,
+    delegatedStakes,
+    totalStakeEarnedRewards,
 }) => {
+    const [formatted, symbol] = useFormatCoin(amountStaked, SUI_TYPE_ARG);
+    const [formattedRewards, earnedRewardssymbol] = useFormatCoin(
+        totalStakeEarnedRewards,
+        SUI_TYPE_ARG,
+        9
+    );
+
+    const stakes = useMemo(() => {
+        return delegatedStakes.flatMap((delegatedStake) =>
+            delegatedStake.stakes.map((stake) => ({
+                validatorAddress: delegatedStake.validatorAddress,
+                ...stake,
+            }))
+        );
+    }, [delegatedStakes]);
+
+    return (
+        <div className="w-full flex flex-col h-full justify-between">
+            <div>
+                <Card>
+                    <Body isTextColorMedium>Total staked</Body>
+                    <Body isSemibold>
+                        {formatted} {symbol}
+                    </Body>
+                </Card>
+                <Card backgroundColor="bg-ethos-light-background-green">
+                    <Body isTextColorMedium>Earned</Body>
+                    <Body isSemibold>
+                        {formattedRewards} {earnedRewardssymbol}
+                    </Body>
+                </Card>
+                <Button to={'/home/staking/select-validator'} className="mt-2">
+                    <CircleStackIcon width={15} height={15} />
+                    Stake More
+                </Button>
+                <div className="flex mx-6 mb-4">
+                    <Body>Currently staking</Body>
+                    <Body
+                        isSemibold
+                        className="pl-1"
+                    >{`${delegatedStakes.length} Validators`}</Body>
+                </div>
+                {stakes.map((stake) => (
+                    <StakeRow key={stake.validatorAddress} stake={stake} />
+                ))}
+            </div>
+        </div>
+    );
+};
+
+const StakeRow = ({ stake }: { stake: StakeWithValidatorAddress }) => {
     const navigate = useNavigate();
     const { resolvedTheme } = useTheme();
 
     const navigateToStakeDetail = useCallback(() => {
-        navigate(`validator-details/${delegatedStake.validatorAddress}`);
-    }, [navigate, delegatedStake.validatorAddress]);
+        navigate(
+            `validator-details/${stake.validatorAddress}/${stake.stakedSuiId}`
+        );
+    }, [navigate, stake.stakedSuiId, stake.validatorAddress]);
 
-    const amountStaked = delegatedStake?.stakes.reduce(
-        (total, { principal }) => total + BigInt(principal),
-        BigInt(0)
+    const [formattedAmount, symbol] = useFormatCoin(
+        stake.principal,
+        SUI_TYPE_ARG
     );
 
-    const [formattedAmount, symbol] = useFormatCoin(amountStaked, SUI_TYPE_ARG);
+    const [formattedReward, rewardSymbol] = useFormatCoin(
+        stake.estimatedReward,
+        SUI_TYPE_ARG,
+        9
+    );
 
     const { data: validators, isInitialLoading } = useValidatorsWithApy();
-    const validator = validators?.[delegatedStake.validatorAddress];
+    const validator = validators?.[stake.validatorAddress];
 
     return (
         <button
             onClick={navigateToStakeDetail}
-            key={delegatedStake.validatorAddress}
-            className="w-full flex flex-row items-center place-content-center justify-between py-3 px-4 hover:bg-ethos-super-light-purple dark:hover:bg-ethos-dark-background-secondary/50 border-b border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke"
+            key={stake.stakedSuiId}
+            className="w-full flex flex-row items-center place-content-center justify-between py-4 px-6 hover:bg-ethos-super-light-purple dark:hover:bg-ethos-dark-background-secondary/50 border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke"
         >
             <div className="flex items-center place-content-center gap-3">
                 {validator?.imageUrl ? (
                     <img
                         src={validator.imageUrl}
                         alt={validator.name}
-                        className="h-9 w-9 rounded-full"
+                        className="h-10 w-10 rounded-full"
                     />
                 ) : (
-                    <div className="h-9 w-9 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
+                    <div className="h-10 w-10 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
                 )}
                 <div className="flex flex-col items-start">
+                    <Body isTextColorMedium>
+                        {isInitialLoading ? (
+                            <Skeleton
+                                height={15}
+                                width={112}
+                                baseColor="#1A1C26"
+                                highlightColor="#3e435b"
+                            />
+                        ) : (
+                            `${formattedAmount} ${symbol}`
+                        )}
+                    </Body>
                     <Body isSemibold>
                         {isInitialLoading ? (
                             <Skeleton
@@ -135,31 +184,14 @@ const DelegatedStakeRow = ({
                             validator?.name
                         )}
                     </Body>
-                    <Body isTextColorMedium>
-                        {isInitialLoading ? (
-                            <Skeleton
-                                height={15}
-                                width={112}
-                                baseColor={
-                                    resolvedTheme === 'dark'
-                                        ? '#1A1C26'
-                                        : undefined
-                                }
-                                highlightColor={
-                                    resolvedTheme === 'dark'
-                                        ? '#3e435b'
-                                        : undefined
-                                }
-                            />
-                        ) : (
-                            truncateMiddle(validator?.suiAddress || '')
-                        )}
-                    </Body>
                 </div>
             </div>
             <div className="flex flex-col items-end">
-                <Body isSemibold>
-                    {formattedAmount} {symbol}
+                <Body className="ethos-light-text-medium !text-xs">
+                    Staking Rewards
+                </Body>
+                <Body isSemibold className="ethos-light-text-medium">
+                    {formattedReward} {rewardSymbol}
                 </Body>
             </div>
         </button>

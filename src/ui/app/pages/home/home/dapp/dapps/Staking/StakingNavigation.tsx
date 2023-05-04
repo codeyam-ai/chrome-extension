@@ -23,7 +23,7 @@ function StakingNavigation() {
                 <Route path="review" element={<ReviewStake />} />
                 <Route path="complete" element={<CompletedStake />} />
                 <Route
-                    path="validator-details/:validatorAddress"
+                    path="validator-details/:validatorAddress/:stakeSuiId"
                     element={<StakeDetail />}
                 />
             </Routes>

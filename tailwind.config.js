@@ -122,6 +122,8 @@ module.exports = {
                 'ethos-dark-background-light-grey': '#1A1C26',
                 'ethos-dark-fullscreen-backdrop': '#000',
 
+                'ethos-light-background-green': 'rgba(56, 206, 110, 0.08)',
+
                 // Text and stroke
                 'ethos-dark-text-default': '#FFFFFF',
                 'ethos-dark-text-medium': '#9CA3AF',
