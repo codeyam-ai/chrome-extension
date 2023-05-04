@@ -87,7 +87,12 @@ const CreateWalletProvider = ({
 
     const createWallet = useCallback(() => {
         const loadAccFromStorage = async () => {
-            const sortedAccountIndices = accountInfos
+            const relevantAccountInfos = accountInfos.filter(
+                (a) =>
+                    a.importedMnemonicIndex === undefined &&
+                    a.importedPrivateKeyName === undefined
+            );
+            const sortedAccountIndices = relevantAccountInfos
                 .map((a) => a.index || 0)
                 .sort(function (a, b) {
                     return a - b;
@@ -101,7 +106,9 @@ const CreateWalletProvider = ({
                     nextAccountIndex
                 );
                 if (newAccount) {
-                    newAccount.name = `Wallet ${accountInfos.length + 1}`;
+                    newAccount.name = `Wallet ${
+                        relevantAccountInfos.length + 1
+                    }`;
                     newAccount.color = getNextWalletColor(nextAccountIndex);
                     newAccount.emoji = getNextEmoji(nextAccountIndex);
                 }
@@ -116,7 +123,7 @@ const CreateWalletProvider = ({
                     ...accountInfos,
                     {
                         index: nextAccountIndex,
-                        name: `Wallet ${accountInfos.length + 1}`,
+                        name: `Wallet ${relevantAccountInfos.length + 1}`,
                         color: getNextWalletColor(nextAccountIndex),
                         emoji: getNextEmoji(nextAccountIndex),
                         address:
