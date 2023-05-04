@@ -1,11 +1,11 @@
 import { MinusCircleIcon } from '@heroicons/react/24/outline';
-import { StarIcon } from '@heroicons/react/24/solid';
+import { NoSymbolIcon, StarIcon } from '@heroicons/react/24/solid';
 import _ from 'lodash';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { ReactSortable, type SortableEvent } from 'react-sortablejs';
 
 import DappListItem from '../../../DappListItem';
-import dappsMap from '_src/data/dappsMap';
+import dappsMap, { CUSTOMIZE_ID } from '_src/data/dappsMap';
 import { EXPLORER_ONLY_KEYS } from '_src/data/explorerOnlyDapps';
 import { useAppSelector } from '_src/ui/app/hooks';
 import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVerticalScrollToHorizontal';
@@ -36,6 +36,7 @@ interface FavoritesSortableListProps {
 export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
     onFavoritesChosen,
 }) => {
+    const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
     const { favoriteDapps, favoriteNfts, excludedDappsKeys } =
         useFavoriteDapps();
 
@@ -154,11 +155,13 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
         setDraggedFromFavorites(
             evt.from.className.includes('FavoriteListIndicator')
         );
+        setDraggedItemId(evt.item.dataset.id ?? null);
     }, []);
 
     const handleDragEnd = useCallback(() => {
         setIsDragging(false);
         setDraggedFromFavorites(false);
+        setDraggedItemId(null);
     }, []);
 
     const handleClone = useCallback((evt: SortableEvent) => {
@@ -240,9 +243,16 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                         }}
                     >
                         <div className="flex flex-col items-center justify-center gap-2 w-full h-28 m-4 rounded-lg border-2 border-dashed border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
-                            <MinusCircleIcon className="w-5 h-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                            {draggedItemId === CUSTOMIZE_ID ? (
+                                <NoSymbolIcon className="w-5 h-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                            ) : (
+                                <MinusCircleIcon className="w-5 h-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                            )}
+
                             <Body isTextColorMedium>
-                                Drag here to remove from favorites
+                                {draggedItemId === CUSTOMIZE_ID
+                                    ? "This app can't be unfavorited"
+                                    : 'Drag here to remove from favorites'}
                             </Body>
                         </div>
                     </div>
