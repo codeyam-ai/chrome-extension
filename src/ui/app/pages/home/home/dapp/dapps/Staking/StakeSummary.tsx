@@ -1,7 +1,8 @@
+import { useMemo } from 'react';
+
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 
 import type { KeyNameAndValue } from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
-import { useMemo } from 'react';
 
 interface StakeSummaryProps {
     amount?: string;

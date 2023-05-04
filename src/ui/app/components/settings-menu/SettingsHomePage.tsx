@@ -8,6 +8,7 @@ import {
     SignalIcon,
 } from '@heroicons/react/24/solid';
 import { useContext, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import Browser from 'webextension-polyfill';
 
 import { API_ENV_TO_INFO } from '../../ApiProvider';
@@ -21,12 +22,11 @@ import {
     IFRAME_URL,
     MAILTO_SUPPORT_URL,
     ToS_LINK,
+    BASE_URL,
 } from '_src/shared/constants';
 import { ThemeContext } from '_src/shared/utils/themeContext';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { reset } from '_src/ui/app/redux/slices/account';
-import { Link } from 'react-router-dom';
-import { BASE_URL } from '_src/shared/constants';
 
 export const SubpageUrls = {
     network: '/settings/network',
