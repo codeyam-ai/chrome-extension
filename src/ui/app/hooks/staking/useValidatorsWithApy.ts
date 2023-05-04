@@ -1,35 +1,67 @@
+import { type SuiAddress, type SuiValidatorSummary } from '@mysten/sui.js';
 import { useQuery } from '@tanstack/react-query';
 
-import { getRollingAverageApys } from '../../helpers/staking/getRollingAverageApys';
+import { useSystemState } from './useSystemState';
+import { roundFloat } from '../../helpers/roundFloat';
 import { api } from '../../redux/store/thunk-extras';
 
 import type { SuiValidatorSummaryWithApy } from '../../pages/home/home/dapp/dapps/Staking/ValidatorList';
-import type { SuiAddress } from '@mysten/sui.js';
 
-interface SuiValidatorWithApyMap {
+const DEFAULT_APY_DECIMALS = 2;
+
+export interface ApyWithValidatorMap {
     [validatorAddress: SuiAddress]: SuiValidatorSummaryWithApy;
 }
 
-const getValidatorsWithApy = async () => {
+// For small APY or epoch before stakeSubsidyStartEpoch, show ~0% instead of 0%
+// If APY falls below 0.001, show ~0% instead of 0% since we round to 2 decimal places
+const MINIMUM_THRESHOLD = 0.001;
+
+export function useValidatorsWithApy() {
     const provider = api.instance.fullNode;
-    const res = await provider.getLatestSuiSystemState();
-    // Current max: 1000 validators
-    const rollingAverageApys = await getRollingAverageApys(1000, res);
+    const { data: systemState, isFetched } = useSystemState();
 
-    const validatorsWithApy: SuiValidatorWithApyMap =
-        res.activeValidators.reduce((acc, validator) => {
-            acc[validator.suiAddress] = {
-                ...validator,
-                apy: rollingAverageApys.data?.[validator.suiAddress] ?? 0,
+    return useQuery(
+        ['get-rolling-average-apys'],
+        async () => {
+            const apy = await provider.getValidatorsApy();
+
+            // check if stakeSubsidyStartEpoch is greater than current epoch, flag for UI to show ~0% instead of 0%
+            const currentEpoch = Number(systemState?.epoch);
+            const stakeSubsidyStartEpoch = Number(
+                systemState?.stakeSubsidyStartEpoch
+            );
+
+            const activeValidators =
+                systemState?.activeValidators.reduce((acc, validator) => {
+                    acc[validator.suiAddress] = validator;
+                    return acc;
+                }, {} as { [suiAdress: string]: SuiValidatorSummary }) || {};
+
+            return {
+                activeValidators,
+                validatorApys: apy,
+                isStakeSubsidyStarted: currentEpoch > stakeSubsidyStartEpoch,
             };
-
-            return acc;
-        }, {} as SuiValidatorWithApyMap);
-    return validatorsWithApy;
-};
-
-export const useValidatorsWithApy = () => {
-    return useQuery(['validators-with-apy'], getValidatorsWithApy, {
-        staleTime: 3 * 1000,
-    });
-};
+        },
+        {
+            enabled: isFetched,
+            select: ({
+                activeValidators,
+                validatorApys,
+                isStakeSubsidyStarted,
+            }) => {
+                return validatorApys?.apys.reduce((acc, { apy, address }) => {
+                    const validator = activeValidators[address];
+                    acc[address] = {
+                        ...validator,
+                        apy: roundFloat(apy * 100, DEFAULT_APY_DECIMALS),
+                        isApyApproxZero:
+                            !isStakeSubsidyStarted || apy < MINIMUM_THRESHOLD,
+                    };
+                    return acc;
+                }, {} as ApyWithValidatorMap);
+            },
+        }
+    );
+}

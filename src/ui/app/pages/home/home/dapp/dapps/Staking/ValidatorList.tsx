@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import Loading from '_src/ui/app/components/loading';
 import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
@@ -10,6 +10,7 @@ import type { SuiAddress, SuiValidatorSummary } from '@mysten/sui.js';
 
 export interface SuiValidatorSummaryWithApy extends SuiValidatorSummary {
     apy: number;
+    isApyApproxZero: boolean;
 }
 
 interface ValidatorListProps {
@@ -23,12 +24,17 @@ const ValidatorList: React.FC<ValidatorListProps> = ({
 }) => {
     const { isFetching, data: validators } = useValidatorsWithApy();
 
+    const sortedValidators = useMemo(() => {
+        if (!validators) return;
+        return Object.values(validators).sort((a, b) => b.apy - a.apy);
+    }, [validators]);
+
     return (
         <Loading loading={isFetching} big={true}>
             <div className="flex flex-col">
                 {!isFetching &&
-                    validators &&
-                    Object.values(validators).map((validator, key) => (
+                    sortedValidators &&
+                    sortedValidators.map((validator, key) => (
                         <ValidatorRow
                             onSelect={onSelectValidator}
                             validator={validator}

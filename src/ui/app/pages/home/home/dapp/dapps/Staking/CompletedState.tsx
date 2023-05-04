@@ -1,15 +1,20 @@
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
-import { useMemo, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useMemo, useCallback, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import StakeSummary from './StakeSummary';
 import StakingIcon from '_assets/images/staking-icon.png';
+import { useAppSelector } from '_src/ui/app/hooks';
 import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 const CompletedStake: React.FC = () => {
+    const queryClient = useQueryClient();
+    const { address } = useAppSelector(({ account }) => account);
+
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const validatorSuiAddress = searchParams.get('validator');
@@ -21,9 +26,13 @@ const CompletedStake: React.FC = () => {
         return validators && validators[validatorSuiAddress || ''];
     }, [validatorSuiAddress, validators]);
 
-    const onNavigateToTokens = useCallback(() => {
-        navigate('/tokens');
+    const onNavigateToTokens = useCallback(async () => {
+        navigate('/home/staking');
     }, [navigate]);
+
+    useEffect(() => {
+        queryClient.refetchQueries({ queryKey: ['validator', address] });
+    }, [address, queryClient]);
 
     return (
         <div className="flex flex-col h-full justify-between">
@@ -53,7 +62,7 @@ const CompletedStake: React.FC = () => {
                 </div>
             </div>
             <div>
-                <Button onClick={onNavigateToTokens}>Go to SUI Balance</Button>
+                <Button onClick={onNavigateToTokens}>View your stakes</Button>
             </div>
         </div>
     );

@@ -2,17 +2,18 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 
-import { Mockchain } from './utils/mockchain';
+import { mockCommonCalls, mockSuiObjects } from './utils/mockchain';
 import { fakeAccessToken } from './utils/storage';
 import { BASE_URL } from '_src/shared/constants';
 import { setSession } from '_src/shared/storagex/store';
 import { renderApp } from '_src/test/utils/react-rendering';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Email Authentication', () => {
-    let mockchain: Mockchain;
+    let mockJsonRpc: MockJsonRpc;
     beforeEach(() => {
-        mockchain = new Mockchain();
-        mockchain.mockCommonCalls();
+        mockJsonRpc = new MockJsonRpc();
+        mockCommonCalls(mockJsonRpc);
     });
 
     test('User can enter email and is prompted to wait for the magic login link', async () => {
@@ -56,7 +57,7 @@ describe('Email Authentication', () => {
     test('User can see tokens page after logged in via the iframe', async () => {
         const fakeAccessToken = '12345';
         await setSession({ accessToken: fakeAccessToken });
-        mockchain.mockSuiObjects();
+        mockSuiObjects(mockJsonRpc);
         nock(BASE_URL, {
             reqheaders: { 'x-supabase-access-token': fakeAccessToken },
         })

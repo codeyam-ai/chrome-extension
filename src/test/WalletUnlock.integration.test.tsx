@@ -1,18 +1,19 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { Mockchain } from '_src/test/utils/mockchain';
+import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import {
     password as correctPassword,
     simulateMnemonicUser,
 } from '_src/test/utils/storage';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Unlocking the wallet', () => {
-    let mockchain: Mockchain;
+    let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
-        mockchain = new Mockchain();
-        mockchain.mockCommonCalls();
+        mockJsonRpc = new MockJsonRpc();
+        mockCommonCalls(mockJsonRpc);
         await createLockedWallet();
     });
 
@@ -33,7 +34,7 @@ describe('Unlocking the wallet', () => {
 
     const createLockedWallet = async () => {
         await simulateMnemonicUser(false);
-        mockchain.mockSuiObjects();
+        mockSuiObjects(mockJsonRpc);
         renderApp();
         await screen.findAllByText('Unlock Wallet');
     };

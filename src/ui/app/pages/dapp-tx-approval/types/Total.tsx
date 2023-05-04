@@ -3,7 +3,6 @@ import BigNumber from 'bignumber.js';
 
 import CardRow from './CardRow';
 import { useDependencies } from '_shared/utils/dependenciesContext';
-import { useTheme } from '_src/shared/utils/themeContext';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
@@ -12,7 +11,6 @@ import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 
 const Total = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
     const bnTotalFee = new BigNumber(analysis.totalFee);
-    const { resolvedTheme } = useTheme();
     const [formatted, symbol, dollars] = useFormatCoin(
         bnTotalFee.abs().toString(),
         SUI_TYPE_ARG
@@ -23,8 +21,6 @@ const Total = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
     return (
         <CardRow
             style={{
-                backgroundColor:
-                    resolvedTheme === 'light' ? '#F0EBFE' : '#1A1C26',
                 padding: '24px 12px',
             }}
         >

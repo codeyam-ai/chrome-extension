@@ -1,19 +1,20 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { Mockchain } from '_src/test/utils/mockchain';
+import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Buy coin flow', () => {
-    let mockchain: Mockchain;
+    let mockJsonRpc: MockJsonRpc;
 
     beforeEach(async () => {
-        mockchain = new Mockchain();
+        mockJsonRpc = new MockJsonRpc();
         await simulateMnemonicUser();
-        mockchain.mockCommonCalls();
-        mockchain.mockSuiObjects({
+        mockCommonCalls(mockJsonRpc);
+        mockSuiObjects(mockJsonRpc, {
             suiBalance: 0,
         });
     });

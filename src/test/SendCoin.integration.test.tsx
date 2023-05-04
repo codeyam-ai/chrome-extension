@@ -1,31 +1,36 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { Mockchain } from '_src/test/utils/mockchain';
+import {
+    mockCommonCalls,
+    mockSuiObjects,
+    rpcMocks,
+} from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('send coin flow', () => {
-    let mockchain: Mockchain;
+    let mockJsonRpc: MockJsonRpc;
 
     beforeEach(async () => {
-        mockchain = new Mockchain();
+        mockJsonRpc = new MockJsonRpc();
         await simulateMnemonicUser();
-        mockchain.mockCommonCalls();
-        mockchain.mockSuiObjects({
+        mockCommonCalls(mockJsonRpc);
+        mockSuiObjects(mockJsonRpc, {
             suiBalance: 4_000_000_000, // MIST units
         });
-        const rpcMocks = mockchain.rpcMocks();
-        rpcMocks.suix_getNormalizedMoveFunction();
-        rpcMocks.sui_dryRunTransactionBlock(
+        const mocks = rpcMocks(mockJsonRpc);
+        mocks.suix_getNormalizedMoveFunction();
+        mocks.sui_dryRunTransactionBlock(
             'AAACAAgAypo7AAAAAAAg7JbTIOl80QFG+VOnnPncBaizXEaz6EKPeF7Drhtvj6YCAgABAQAAAQECAAABAQD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gEAAAAAAAAAAHQ7pAsAAAAA'
         );
-        rpcMocks.suix_getReferenceGasPrice();
-        rpcMocks.suix_getCoins();
-        rpcMocks.sui_dryRunTransactionBlock(
+        mocks.suix_getReferenceGasPrice();
+        mocks.suix_getCoins();
+        mocks.sui_dryRunTransactionBlock(
             'AAACAAgAypo7AAAAAAAg7JbTIOl80QFG+VOnnPncBaizXEaz6EKPeF7Drhtvj6YCAgABAQAAAQECAAABAQD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gH1G/x9mNhvvXXxnRbDdISw8Pc4LrbJv8rS/kqUviyIIgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwf/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4BAAAAAAAAAOoHAAAAAAAAAA=='
         );
-        rpcMocks.sui_executeTransactionBlock([
+        mocks.sui_executeTransactionBlock([
             'AAACAAgAypo7AAAAAAAg7JbTIOl80QFG+VOnnPncBaizXEaz6EKPeF7Drhtvj6YCAgABAQAAAQECAAABAQD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gH1G/x9mNhvvXXxnRbDdISw8Pc4LrbJv8rS/kqUviyIIgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwf/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4BAAAAAAAAAOoHAAAAAAAAAA==',
             [
                 'ANxsS6HbawTiWXyO7YUEIqDMnQUkGXO7sBEAMbCurjec/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4=',
