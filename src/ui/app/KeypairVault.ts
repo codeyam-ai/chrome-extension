@@ -17,6 +17,7 @@ export type AccountInfo = {
     importedMnemonicName?: string;
     importedMnemonicIndex?: number;
     importedPrivateKeyName?: string;
+    importedLedgerIndex?: number;
 };
 
 export type SeedInfo = {

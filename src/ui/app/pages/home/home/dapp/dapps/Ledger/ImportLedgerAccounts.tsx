@@ -15,17 +15,20 @@ import Loading from '_src/ui/app/components/loading';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
 import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
-import { useAppSelector } from '_src/ui/app/hooks';
+import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
+import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 import WalletButton from '_src/ui/app/shared/wallet-list/WalletButton';
 
 import type { SerializedLedgerAccount } from '_src/shared/cryptography/LedgerAccount';
-import Button from '_src/ui/app/shared/buttons/Button';
+import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import { saveAccountInfos } from '_src/ui/app/redux/slices/account';
 
 const numLedgerAccountsToDeriveByDefault = 10;
 
 const LEDGER_HOME = '/home/ledger';
+const LEDGER_OFFSET = 100_000_000;
 
 const LedgerItem = ({
     account,
@@ -64,6 +67,7 @@ const LedgerItem = ({
 
 export function ImportLedgerAccounts() {
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
     const { accountInfos } = useAppSelector(({ account }) => account);
     const [selectedLedgerAccounts, setSelectedLedgerAccounts] = useState<
@@ -106,9 +110,31 @@ export function ImportLedgerAccounts() {
         [setSelectedLedgerAccounts]
     );
 
-    const addSelected = useCallback(() => {
-        console.log(selectedLedgerAccounts);
-    }, [selectedLedgerAccounts]);
+    const addSelected = useCallback(async () => {
+        let mutableAccountInfos: AccountInfo[] = JSON.parse(
+            JSON.stringify(accountInfos)
+        );
+
+        mutableAccountInfos = mutableAccountInfos.filter(
+            (account) => account.importedLedgerIndex === undefined
+        );
+
+        for (const account of selectedLedgerAccounts) {
+            const { index, address } = account;
+            const rawIndex = LEDGER_OFFSET + index;
+            mutableAccountInfos.push({
+                index: rawIndex,
+                address,
+                importedLedgerIndex: index,
+                color: getNextWalletColor(index),
+                emoji: getNextEmoji(index),
+                name: `Ledger ${index}`,
+            });
+        }
+
+        await dispatch(saveAccountInfos(mutableAccountInfos));
+        navigate(LEDGER_HOME);
+    }, [accountInfos, dispatch, navigate, selectedLedgerAccounts]);
 
     return (
         <Loading
