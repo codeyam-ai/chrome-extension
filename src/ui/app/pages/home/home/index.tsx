@@ -19,6 +19,7 @@ import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import { StakedInfo } from './StakedInfo';
 
 function HomePage() {
     const { favoriteDappsForCurrentNetwork, favoriteDapps } =
@@ -56,6 +57,8 @@ function HomePage() {
             <SendReceiveButtonGroup mistBalance={mistBalance} />
             <div className="flex flex-col gap-6 overflow-auto">
                 <ContentBlock>
+                    <StakedInfo />
+
                     <CoinList balances={balances} />
 
                     {(!balances || Object.keys(balances).length < 2) && (
