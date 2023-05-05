@@ -8,6 +8,7 @@ import {
     SignalIcon,
 } from '@heroicons/react/24/solid';
 import { useContext, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import Browser from 'webextension-polyfill';
 
 import { API_ENV_TO_INFO } from '../../ApiProvider';
@@ -21,6 +22,7 @@ import {
     IFRAME_URL,
     MAILTO_SUPPORT_URL,
     ToS_LINK,
+    BASE_URL,
 } from '_src/shared/constants';
 import { ThemeContext } from '_src/shared/utils/themeContext';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
@@ -146,7 +148,9 @@ const SettingsHomePage = () => {
                     ]}
                 />
                 <div className="flex justify-between items-center pr-6 pl-2 py-4 border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
-                    <EthosLogoWithText className="h-8" />
+                    <Link to={BASE_URL} target="_blank">
+                        <EthosLogoWithText className="h-8" />
+                    </Link>
                     <BodyLarge isTextColorMedium>
                         {'v' + Browser.runtime.getManifest().version}
                     </BodyLarge>

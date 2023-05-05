@@ -15,7 +15,7 @@ const StakingIntro: React.FC = () => {
                     className={'h-[200px] mx-auto'}
                 />
                 <Header className={'pt-2 mb-1'}>
-                    Staking allows you to earn interest on your SUI
+                    Staking allows you to earn a reward with your SUI
                 </Header>
 
                 <EthosLink

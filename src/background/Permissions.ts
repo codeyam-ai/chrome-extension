@@ -32,7 +32,8 @@ class Permissions {
 
     public async acquirePermissions(
         permissionTypes: readonly PermissionType[],
-        connection: ContentScriptConnection
+        connection: ContentScriptConnection,
+        address: SuiAddress
     ): Promise<Permission> {
         const { origin } = connection;
         const existingPermission = await this.getPermission({ origin });
@@ -46,7 +47,8 @@ class Permissions {
         const alreadyAllowed = await this.hasPermissions(
             origin,
             permissionTypes,
-            existingPermission
+            existingPermission,
+            address
         );
         if (alreadyAllowed && existingPermission) {
             return existingPermission;

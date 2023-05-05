@@ -1,4 +1,9 @@
 import { TransactionBlock } from '@mysten/sui.js';
+import {
+    SUI_DEVNET_CHAIN,
+    SUI_MAINNET_CHAIN,
+    SUI_TESTNET_CHAIN,
+} from '@mysten/wallet-standard';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -50,11 +55,11 @@ export function DappTxApprovalPage() {
             case 'local':
                 return 'sui:local';
             case 'testNet':
-                return 'sui:testnet';
-            // case 'mainNet':
-            //     return 'sui:mainnet';
+                return SUI_TESTNET_CHAIN;
+            case 'devNet':
+                return SUI_DEVNET_CHAIN;
             default:
-                return 'sui:devnet';
+                return SUI_MAINNET_CHAIN;
         }
     }, [selectedApiEnv]);
 
@@ -162,8 +167,16 @@ export function DappTxApprovalPage() {
             (txRequest &&
                 'chain' in txRequest.tx &&
                 txRequest.tx.chain &&
-                ['sui:devnet', 'sui:testnet'].includes(txRequest.tx.chain) &&
-                ['sui:devnet', 'sui:testnet'].includes(activeChain) &&
+                [
+                    SUI_DEVNET_CHAIN,
+                    SUI_TESTNET_CHAIN,
+                    SUI_MAINNET_CHAIN,
+                ].includes(txRequest.tx.chain) &&
+                [
+                    SUI_DEVNET_CHAIN,
+                    SUI_TESTNET_CHAIN,
+                    SUI_MAINNET_CHAIN,
+                ].includes(activeChain) &&
                 txRequest.tx.chain !== activeChain)
         ) {
             setAnalysis(null);
@@ -309,8 +322,12 @@ export function DappTxApprovalPage() {
             txRequest &&
             'chain' in txRequest.tx &&
             txRequest.tx.chain &&
-            ['sui:devnet', 'sui:testnet'].includes(txRequest.tx.chain) &&
-            ['sui:devnet', 'sui:testnet'].includes(activeChain) &&
+            [SUI_DEVNET_CHAIN, SUI_TESTNET_CHAIN, SUI_MAINNET_CHAIN].includes(
+                txRequest.tx.chain
+            ) &&
+            [SUI_DEVNET_CHAIN, SUI_TESTNET_CHAIN, SUI_MAINNET_CHAIN].includes(
+                activeChain
+            ) &&
             txRequest.tx.chain !== activeChain
         ) {
             return (

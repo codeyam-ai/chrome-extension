@@ -319,23 +319,30 @@ export class ContentScriptConnection extends Connection {
                 const network = await networkEnv.getActiveNetwork();
                 this.sendNetwork(network, msg.id);
             } else if (isHasPermissionRequest(payload)) {
+                const activeAccount = await this.getActiveAccount();
+
                 this.send(
                     createMessage<HasPermissionsResponse>(
                         {
                             type: 'has-permissions-response',
                             result: await Permissions.hasPermissions(
                                 this.origin,
-                                payload.permissions
+                                payload.permissions,
+                                null,
+                                activeAccount?.address
                             ),
                         },
                         msg.id
                     )
                 );
             } else if (isAcquirePermissionsRequest(payload)) {
+                const activeAccount = await this.getActiveAccount();
+
                 try {
                     const permission = await Permissions.acquirePermissions(
                         payload.permissions,
-                        this
+                        this,
+                        activeAccount?.address
                     );
                     this.send(
                         createMessage<AcquirePermissionsResponse>(

@@ -150,6 +150,13 @@ const analyzeChanges = async ({
 
         const { effects, balanceChanges, objectChanges } = dryRunResponse;
 
+        if (effects.status.status === 'failure') {
+            return {
+                type: 'Contract Error',
+                message: `${effects.status.error}`,
+            };
+        }
+
         const gas = {
             ...effects.gasUsed,
             total: (getTotalGasUsed(effects) ?? 0).toString(),
