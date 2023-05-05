@@ -18,6 +18,7 @@ interface WalletButtonProps {
     isActive: boolean;
     isWalletEditing: boolean;
     destination?: string;
+    onClick?: () => void;
 }
 
 const WalletButton = ({
@@ -25,6 +26,7 @@ const WalletButton = ({
     isActive,
     isWalletEditing,
     destination,
+    onClick,
 }: WalletButtonProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
@@ -32,7 +34,12 @@ const WalletButton = ({
     const shortenedAddress = useMiddleEllipsis(wallet.address, 24, 12);
     const editWalletUrl = useEditWalletUrl(wallet.index);
 
-    const switchToThisWallet = useCallback(async () => {
+    const handleClick = useCallback(async () => {
+        if (onClick) {
+            onClick();
+            return;
+        }
+
         if (isActive) {
             if (destination) {
                 navigate(destination);
@@ -51,6 +58,7 @@ const WalletButton = ({
             navigate(-1);
         }
     }, [
+        onClick,
         isActive,
         isWalletEditing,
         dispatch,
@@ -76,7 +84,7 @@ const WalletButton = ({
             ref={ref}
             data-testid={`wallet${wallet.index + 1}`}
             className="py-[10px] px-3 flex justify-between items-center cursor-pointer"
-            onClick={isWalletEditing ? editThisWallet : switchToThisWallet}
+            onClick={isWalletEditing ? editThisWallet : handleClick}
         >
             <div className="flex gap-3">
                 <WalletColorAndEmojiCircle

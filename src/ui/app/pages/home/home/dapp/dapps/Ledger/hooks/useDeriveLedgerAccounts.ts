@@ -53,18 +53,18 @@ async function deriveAccountsFromLedger(
     const ledgerAccounts: SerializedLedgerAccount[] = [];
     const derivationPaths = getDerivationPathsForLedger(numAccountsToDerive);
 
-    for (const derivationPath of derivationPaths) {
+    for (let index = 0; index < derivationPaths.length; ++index) {
+        const derivationPath = derivationPaths[index];
         const publicKeyResult = await suiLedgerClient.getPublicKey(
             derivationPath
         );
         const publicKey = new Ed25519PublicKey(publicKeyResult.publicKey);
         const suiAddress = publicKey.toSuiAddress();
-        console.log('ADDRESS', suiAddress);
-        // ledgerAccounts.push({
-        //     type: AccountType.LEDGER,
-        //     address: suiAddress,
-        //     derivationPath,
-        // });
+        ledgerAccounts.push({
+            address: suiAddress,
+            derivationPath,
+            index,
+        });
     }
 
     return ledgerAccounts;

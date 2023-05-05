@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { HandThumbUpIcon } from '@heroicons/react/24/solid';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // import {
@@ -11,15 +11,56 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { useDeriveLedgerAccounts } from './hooks/useDeriveLedgerAccounts';
+import Loading from '_src/ui/app/components/loading';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
+import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
+import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 import { useAppSelector } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
+import Subheader from '_src/ui/app/shared/typography/Subheader';
+import WalletButton from '_src/ui/app/shared/wallet-list/WalletButton';
 
 import type { SerializedLedgerAccount } from '_src/shared/cryptography/LedgerAccount';
+import Button from '_src/ui/app/shared/buttons/Button';
 
 const numLedgerAccountsToDeriveByDefault = 10;
 
 const LEDGER_HOME = '/home/ledger';
+
+const LedgerItem = ({
+    account,
+    selected,
+    index,
+    onSelect,
+}: {
+    account: any;
+    selected: boolean;
+    index: number;
+    onSelect: (account: any) => void;
+}) => {
+    const wallet = useMemo(() => {
+        return {
+            index,
+            address: account.address,
+            name: `Ledger ${index + 1}`,
+            color: getNextWalletColor(index + 1),
+            emoji: getNextEmoji(index + 1),
+        };
+    }, [account, index]);
+
+    const handleSelect = useCallback(() => {
+        onSelect(account);
+    }, [account, onSelect]);
+
+    return (
+        <WalletButton
+            wallet={wallet}
+            isActive={selected}
+            isWalletEditing={false}
+            onClick={handleSelect}
+        />
+    );
+};
 
 export function ImportLedgerAccounts() {
     const navigate = useNavigate();
@@ -46,76 +87,59 @@ export function ImportLedgerAccounts() {
             navigate(LEDGER_HOME);
         },
     });
-    console.log('ledgerAccounts', ledgerAccounts);
 
-    // const onAccountClick = useCallback(
-    //     (targetAccount: SelectableLedgerAccount) => {
-    //         if (targetAccount.isSelected) {
-    //             setSelectedLedgerAccounts((prevState) =>
-    //                 prevState.filter((ledgerAccount) => {
-    //                     return ledgerAccount.address !== targetAccount.address;
-    //                 })
-    //             );
-    //         } else {
-    //             setSelectedLedgerAccounts((prevState) => [
-    //                 ...prevState,
-    //                 targetAccount,
-    //             ]);
-    //         }
-    //     },
-    //     [setSelectedLedgerAccounts]
-    // );
+    const onAccountClick = useCallback(
+        (targetAccount: any) => {
+            if (targetAccount.isSelected) {
+                setSelectedLedgerAccounts((prevState) =>
+                    prevState.filter((ledgerAccount) => {
+                        return ledgerAccount.address !== targetAccount.address;
+                    })
+                );
+            } else {
+                setSelectedLedgerAccounts((prevState) => [
+                    ...prevState,
+                    targetAccount,
+                ]);
+            }
+        },
+        [setSelectedLedgerAccounts]
+    );
 
-    const numImportableAccounts = ledgerAccounts?.length;
-    const numSelectedAccounts = selectedLedgerAccounts.length;
+    const addSelected = useCallback(() => {
+        console.log(selectedLedgerAccounts);
+    }, [selectedLedgerAccounts]);
 
-    const areAllAccountsImported = numImportableAccounts === 0;
-    const areAllAccountsSelected =
-        numSelectedAccounts === numImportableAccounts;
-
-    const isUnlockButtonDisabled = numSelectedAccounts === 0;
-    const isSelectAllButtonDisabled =
-        areAllAccountsImported || areAllAccountsSelected;
-
-    // let summaryCardBody: JSX.Element | null = null;
-    // if (areLedgerAccountsLoading) {
-    //     summaryCardBody = (
-    //         <div className="w-full h-full flex flex-col justify-center items-center gap-2">
-    //             <LoadingIndicator />
-    //             <Body>
-    //                 Looking for accounts
-    //             </Body>
-    //         </div>
-    //     );
-    // } else if (areAllAccountsImported) {
-    //     summaryCardBody = (
-    //         <div className="w-full h-full flex flex-col justify-center items-center gap-2">
-    //             <HandThumbUpIcon width={30} />
-    //             <Body>
-    //                 All Ledger accounts have been imported.
-    //             </Body>
-    //         </div>
-    //     );
-    // } else if (!encounteredDerviceAccountsError) {
-    //     const selectedLedgerAddresses = selectedLedgerAccounts.map(
-    //         ({ address }) => address
-    //     );
-    //     summaryCardBody = (
-    //         <div className="max-h-[272px] -mr-2 mt-1 pr-2 overflow-auto custom-scrollbar">
-    //             <LedgerAccountList
-    //                 accounts={ledgerAccounts.map((ledgerAccount) => ({
-    //                     ...ledgerAccount,
-    //                     isSelected: selectedLedgerAddresses.includes(
-    //                         ledgerAccount.address
-    //                     ),
-    //                 }))}
-    //                 onAccountClick={onAccountClick}
-    //             />
-    //         </div>
-    //     );
-    // }
-
-    return <div>HI</div>;
+    return (
+        <Loading
+            loading={areLedgerAccountsLoading}
+            big
+            className="flex justify-center py-12"
+        >
+            <div className="flex flex-col gap-3 py-6">
+                <Subheader>Select A Ledger Account</Subheader>
+                <Body>Click on an account to import it.</Body>
+                <Body>Click &#34;Save&#34; at the bottom when complete.</Body>
+                <Body isTextColorMedium>
+                    (colors and emojis are generated randomly)
+                </Body>
+                {(ledgerAccounts ?? []).map((account, index) => (
+                    <LedgerItem
+                        key={account.address}
+                        account={account}
+                        index={index}
+                        selected={selectedLedgerAccounts.includes(account)}
+                        onSelect={onAccountClick}
+                    />
+                ))}
+                <div className="flex flex-col py-3">
+                    <Button buttonStyle="primary" onClick={addSelected}>
+                        Save
+                    </Button>
+                </div>
+            </div>
+        </Loading>
+    );
 
     // return (
     //     <Overlay
