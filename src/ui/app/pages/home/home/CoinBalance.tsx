@@ -6,6 +6,7 @@ import UnknownToken from './UnknownToken';
 import { useDependencies } from '_shared/utils/dependenciesContext';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
+import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 export type CoinProps = {
@@ -17,10 +18,14 @@ export type CoinProps = {
 function CoinBalance({ type, balance, replaceUrl }: CoinProps) {
     const navigate = useNavigate();
     const location = useLocation();
-    const [balanceFormatted, symbol, usdAmount, name, icon] = useFormatCoin(
-        balance,
-        type
-    );
+    const [
+        balanceFormatted,
+        symbol,
+        usdAmount,
+        name,
+        icon,
+        verifiedBridgeToken,
+    ] = useFormatCoin(balance, type);
 
     const isSendAmountPage = useMemo(
         () => location.pathname === '/send/amount',
@@ -59,7 +64,20 @@ function CoinBalance({ type, balance, replaceUrl }: CoinProps) {
                 ) : (
                     <UnknownToken />
                 )}
-                <BodyLarge isSemibold>{truncateString(name, 12)}</BodyLarge>
+                <div className="flex flex-col justify-start text-left">
+                    <BodyLarge isSemibold>{truncateString(name, 12)}</BodyLarge>
+                    {verifiedBridgeToken && (
+                        <Body isTextColorMedium className="!text-xs">
+                            <a
+                                href="https://docs.sui.io/learn/sui-bridging"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                Verified Bridge Token
+                            </a>
+                        </Body>
+                    )}
+                </div>
             </div>
 
             <div className="flex flex-col">

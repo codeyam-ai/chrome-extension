@@ -53,7 +53,7 @@ function TransferCoinForm({
     const onClearRef = useRef(onClearSubmitError);
     onClearRef.current = onClearSubmitError;
 
-    const [, , , , , queryResult] = useFormatCoin(null, coinType);
+    const [, , , , , , queryResult] = useFormatCoin(null, coinType);
     const decimals =
         queryResult?.data &&
         typeof queryResult.data === 'object' &&
