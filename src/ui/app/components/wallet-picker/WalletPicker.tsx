@@ -1,5 +1,5 @@
 import { ArrowLongUpIcon } from '@heroicons/react/24/solid';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import CreateWalletProvider from './CreateWalletProvider';
 import { useAppSelector } from '../../hooks';
@@ -26,6 +26,16 @@ const WalletPicker = ({
     );
     const activeAccountIndex = useAppSelector(
         ({ account: { activeAccountIndex } }) => activeAccountIndex
+    );
+
+    const importedAccounts = useMemo(
+        () =>
+            accountInfos.filter(
+                (account) =>
+                    account.importedMnemonicName ||
+                    account.importedPrivateKeyName
+            ),
+        [accountInfos]
     );
 
     return (
@@ -62,9 +72,19 @@ const WalletPicker = ({
                                     to="/home/manage-wallets"
                                     disabled={loading}
                                 >
-                                    Import / Manage External Wallets
+                                    {importedAccounts.length > 0
+                                        ? 'Manage'
+                                        : 'Import'}{' '}
+                                    External Wallets
                                 </Button>
                             )}
+                            <Button
+                                buttonStyle="secondary"
+                                to="/home/ledger"
+                                disabled={loading}
+                            >
+                                Connect Ledger Wallet
+                            </Button>
                         </div>
                     ) : (
                         <div className="flex gap-2 py-4 px-5 place-content-center">
