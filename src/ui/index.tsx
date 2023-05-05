@@ -28,6 +28,7 @@ import './styles/toastify.css';
 import '_font-icons/output/sui-icons.scss';
 import 'bootstrap-icons/font/bootstrap-icons.scss';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { SuiLedgerClientProvider } from './app/components/ledger/SuiLedgerClientProvider';
 
 function isDevMode() {
     return process.env.NODE_ENV === 'development';
@@ -96,15 +97,17 @@ function renderApp(root: Root) {
 
     root.render(
         <DependenciesContext.Provider value={appDependencies}>
-            <HashRouter>
-                <Provider store={store}>
-                    <IntlProvider locale={navigator.language}>
-                        <QueryClientProvider client={queryClient}>
-                            <App />
-                        </QueryClientProvider>
-                    </IntlProvider>
-                </Provider>
-            </HashRouter>
+            <SuiLedgerClientProvider>
+                <HashRouter>
+                    <Provider store={store}>
+                        <IntlProvider locale={navigator.language}>
+                            <QueryClientProvider client={queryClient}>
+                                <App />
+                            </QueryClientProvider>
+                        </IntlProvider>
+                    </Provider>
+                </HashRouter>
+            </SuiLedgerClientProvider>
         </DependenciesContext.Provider>
     );
 }

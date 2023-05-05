@@ -1,20 +1,33 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import LedgerLogo from './LedgerLogo';
 import { useTheme } from '_src/shared/utils/themeContext';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
+import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 
 const LedgerHome = () => {
     const navigate = useNavigate();
     const { resolvedTheme } = useTheme();
 
-    const onCancel = useCallback(() => {
-        navigate('/home/ledger');
-    }, [navigate]);
+    const [isConnectingToLedger, setConnectingToLedger] = useState(false);
+    const { connectToLedger } = useSuiLedgerClient();
 
-    const onContinue = useCallback(() => {
+    const onContinueClick = useCallback(async () => {
+        try {
+            setConnectingToLedger(true);
+            await connectToLedger(true);
+            console.log('CONFIRMED!');
+        } catch (error) {
+            console.log('ERROR', error);
+        } finally {
+            setConnectingToLedger(false);
+        }
+    }, [connectToLedger]);
+
+    const onCancel = useCallback(() => {
         navigate('/home/ledger');
     }, [navigate]);
 
@@ -52,11 +65,11 @@ const LedgerHome = () => {
                 </Button>
                 <Button
                     buttonStyle="primary"
-                    onClick={onContinue}
+                    onClick={onContinueClick}
                     className="w-[120px]"
                     removeContainerPadding
                 >
-                    Continue
+                    {isConnectingToLedger ? <LoadingIndicator /> : 'Continue'}
                 </Button>
             </div>
         </div>
