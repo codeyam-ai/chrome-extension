@@ -58,6 +58,8 @@ async function deriveAccountsFromLedger(
         const publicKeyResult = await suiLedgerClient.getPublicKey(
             derivationPath
         );
+        console.log('derivationPath', derivationPath, publicKeyResult);
+
         const publicKey = new Ed25519PublicKey(publicKeyResult.publicKey);
         const suiAddress = publicKey.toSuiAddress();
         ledgerAccounts.push({
@@ -73,5 +75,9 @@ async function deriveAccountsFromLedger(
 function getDerivationPathsForLedger(numDerivations: number) {
     return Array.from({
         length: numDerivations,
-    }).map((_, index) => `m/44'/784'/${index}'/0'/0'`);
+    }).map((_, index) => derivationPathForLedger(index));
+}
+
+export function derivationPathForLedger(index: number) {
+    return `m/44'/784'/${index}'/0'/0'`;
 }

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { HandThumbUpIcon } from '@heroicons/react/24/solid';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // import {
@@ -10,7 +10,10 @@ import { useNavigate } from 'react-router-dom';
 // } from './LedgerAccountList';
 import { toast } from 'react-toastify';
 
-import { useDeriveLedgerAccounts } from './hooks/useDeriveLedgerAccounts';
+import {
+    derivationPathForLedger,
+    useDeriveLedgerAccounts,
+} from './hooks/useDeriveLedgerAccounts';
 import Loading from '_src/ui/app/components/loading';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
@@ -70,9 +73,6 @@ export function ImportLedgerAccounts() {
     const dispatch = useAppDispatch();
 
     const { accountInfos } = useAppSelector(({ account }) => account);
-    const [selectedLedgerAccounts, setSelectedLedgerAccounts] = useState<
-        SerializedLedgerAccount[]
-    >([]);
 
     const {
         data: ledgerAccounts,
@@ -91,6 +91,32 @@ export function ImportLedgerAccounts() {
             navigate(LEDGER_HOME);
         },
     });
+
+    const [selectedLedgerAccounts, setSelectedLedgerAccounts] = useState<
+        SerializedLedgerAccount[]
+    >([]);
+
+    useEffect(() => {
+        if (!ledgerAccounts) return;
+        console.log('ledgerAccounts', ledgerAccounts, accountInfos);
+        const _selected = accountInfos
+            .filter(
+                ({ address }) =>
+                    !!ledgerAccounts.find(
+                        (ledgerAccount) => ledgerAccount.address === address
+                    )
+            )
+            .map((accountInfo) => ({
+                address: accountInfo.address,
+                index: accountInfo.importedLedgerIndex ?? 0,
+                derivationPath: derivationPathForLedger(
+                    accountInfo.importedLedgerIndex ?? 0
+                ),
+            }));
+
+        console.log('_selected', _selected);
+        setSelectedLedgerAccounts(_selected);
+    }, [accountInfos, ledgerAccounts]);
 
     const onAccountClick = useCallback(
         (targetAccount: any) => {
@@ -126,9 +152,9 @@ export function ImportLedgerAccounts() {
                 index: rawIndex,
                 address,
                 importedLedgerIndex: index,
-                color: getNextWalletColor(index),
-                emoji: getNextEmoji(index),
-                name: `Ledger ${index}`,
+                color: getNextWalletColor(index + 1),
+                emoji: getNextEmoji(index + 1),
+                name: `Ledger ${index + 1}`,
             });
         }
 
