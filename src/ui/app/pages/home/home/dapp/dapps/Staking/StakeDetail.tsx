@@ -1,4 +1,7 @@
-import { MinusCircleIcon } from '@heroicons/react/24/outline';
+import {
+    MinusCircleIcon,
+    QuestionMarkCircleIcon,
+} from '@heroicons/react/24/outline';
 import {
     SUI_SYSTEM_STATE_OBJECT_ID,
     SUI_TYPE_ARG,
@@ -21,8 +24,14 @@ import Button from '_src/ui/app/shared/buttons/Button';
 import ConfirmDestructiveActionDialog from '_src/ui/app/shared/dialog/ConfirmDestructiveActionDialog';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import ClickableLargeTooltip from '_src/ui/app/components/ClickableTooltip';
 
 import type { SuiAddress } from '@mysten/sui.js';
+
+const APY_HELP_TEXT =
+    "Annualized Percentage Yield of validator's past operations. Note, there is no guarantee APY will true indefinitely";
+const COMMISSION_HELP_TEXT =
+    'Fee charged against earned rewards by the validator for staking services';
 
 function revokeStakeTransaction(stakedSuiId: SuiAddress) {
     const tx = new TransactionBlock();
@@ -212,7 +221,15 @@ const StakeDetail: React.FC = () => {
                 <div className="basis-1/2">
                     <Card className="w-full">
                         <div className="py-2">
-                            <Body>APY</Body>
+                            <div className="flex items-center place-content-center">
+                                <Body>APY</Body>
+                                <ClickableLargeTooltip
+                                    message={APY_HELP_TEXT}
+                                    tooltipPosition="above"
+                                >
+                                    <QuestionMarkCircleIcon className="h-4 w-4 ml-1 mt-1 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
+                                </ClickableLargeTooltip>
+                            </div>
                             <div className="flex justify-center place-content-center">
                                 <Body isSemibold>{validator?.apy}</Body>
                                 <Body>%</Body>
@@ -223,8 +240,15 @@ const StakeDetail: React.FC = () => {
                 <div className="basis-1/2">
                     <Card className="w-full">
                         <div className="py-2">
-                            <Body>Commission</Body>
-
+                            <div className="flex items-center place-content-center">
+                                <Body>Commission</Body>
+                                <ClickableLargeTooltip
+                                    message={COMMISSION_HELP_TEXT}
+                                    tooltipPosition="above"
+                                >
+                                    <QuestionMarkCircleIcon className="h-4 w-4 ml-1 mt-1 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
+                                </ClickableLargeTooltip>
+                            </div>
                             <div className="flex justify-center place-content-center">
                                 <Body isSemibold>
                                     {(
