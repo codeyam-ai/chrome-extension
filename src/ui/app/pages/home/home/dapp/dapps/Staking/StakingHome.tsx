@@ -27,6 +27,19 @@ const StakingHome: React.FC = () => {
         );
     }, [delegatedStakes]);
 
+    const totalStakeEarnedRewards = useMemo(() => {
+        if (!delegatedStakes) return BigInt(0);
+
+        return delegatedStakes.reduce(
+            (acc, curr) =>
+                curr.stakes.reduce((total, { estimatedReward }) => {
+                    return total + BigInt(estimatedReward ?? 0);
+                }, acc),
+
+            BigInt(0)
+        );
+    }, [delegatedStakes]);
+
     return (
         <div className="flex w-full h-full items-center place-content-center">
             <Loading loading={isLoading} big={true}>
@@ -34,6 +47,7 @@ const StakingHome: React.FC = () => {
                     <ExistingStake
                         delegatedStakes={delegatedStakes}
                         amountStaked={totalActivePendingStake}
+                        totalStakeEarnedRewards={totalStakeEarnedRewards}
                     />
                 ) : (
                     <StakingIntro />
