@@ -65,14 +65,16 @@ function CoinBalance({ type, balance, replaceUrl }: CoinProps) {
                     <UnknownToken />
                 )}
                 <div className="flex flex-col justify-start text-left">
-                    <BodyLarge isSemibold>
-                        {verifiedBridgeToken
-                            ? verifiedBridgeToken
-                            : truncateString(name, 12)}
-                    </BodyLarge>
+                    <BodyLarge isSemibold>{truncateString(name, 12)}</BodyLarge>
                     {verifiedBridgeToken && (
                         <Body isTextColorMedium className="!text-xs">
-                            Verified Bridge Token
+                            <a
+                                href="https://docs.sui.io/learn/sui-bridging"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                Verified Bridge Token
+                            </a>
                         </Body>
                     )}
                 </div>
