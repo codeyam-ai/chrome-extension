@@ -38,16 +38,19 @@ interface ExistingStakeProps {
 
 interface StakingCardProps {
     backgroundColor?: string;
+    className?: string;
 }
 
-const Card: React.FC<PropsWithChildren<StakingCardProps>> = ({
+export const Card: React.FC<PropsWithChildren<StakingCardProps>> = ({
     children,
     backgroundColor,
+    className,
 }) => {
     return (
         <div
             className={classNames(
-                'flex flex-col items-center place-content-center mx-6 my-4 py-4  rounded-xl border border-white/[.04]',
+                'flex flex-col items-center place-content-center py-4 rounded-xl border border-white/[.04]',
+                className,
                 backgroundColor ??
                     'bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey'
             )}
@@ -81,22 +84,31 @@ const ExistingStake: React.FC<ExistingStakeProps> = ({
     return (
         <div className="w-full flex flex-col h-full justify-between">
             <div>
-                <Card>
-                    <Body isTextColorMedium>Total staked</Body>
-                    <Body isSemibold>
-                        {formatted} {symbol}
-                    </Body>
-                </Card>
-                <Card backgroundColor="bg-ethos-light-background-green">
-                    <Body isTextColorMedium>Earned</Body>
-                    <Body isSemibold>
-                        {formattedRewards} {earnedRewardssymbol}
-                    </Body>
-                </Card>
-                <Button to={'/home/staking/select-validator'} className="mt-2">
-                    <CircleStackIcon width={15} height={15} />
-                    Stake More
-                </Button>
+                <div className="mx-6 my-4 gap-2">
+                    <Card>
+                        <Body isTextColorMedium>Total staked</Body>
+                        <Body isSemibold>
+                            {formatted} {symbol}
+                        </Body>
+                    </Card>
+                    <Card
+                        className="my-2"
+                        backgroundColor="bg-ethos-light-background-green"
+                    >
+                        <Body isTextColorMedium>Earned</Body>
+                        <Body isSemibold>
+                            {formattedRewards} {earnedRewardssymbol}
+                        </Body>
+                    </Card>
+                    <Button
+                        to={'/home/staking/select-validator'}
+                        className="mt-4"
+                        removeContainerPadding
+                    >
+                        <CircleStackIcon width={15} height={15} />
+                        Stake More
+                    </Button>
+                </div>
                 <div className="flex mx-6 mb-4">
                     <Body>Currently staking</Body>
                     <Body
@@ -210,7 +222,7 @@ const StakeRow = ({ stake }: { stake: StakeWithValidatorAddress }) => {
                 ) : (
                     <>
                         <Body className="ethos-light-text-medium !text-xs">
-                            Staking Rewards
+                            Start earning in
                         </Body>
                         <Body>{timeToRewardsStart}</Body>
                     </>

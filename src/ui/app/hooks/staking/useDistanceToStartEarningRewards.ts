@@ -1,4 +1,4 @@
-import { formatRelative } from 'date-fns';
+import { formatDistanceToNowStrict } from 'date-fns';
 import { useMemo } from 'react';
 
 import getTimeToEarnStakeRewards from '../../helpers/staking/getTimeToEarnStakeRewards';
@@ -8,7 +8,7 @@ import type { Stake } from '../../pages/home/home/dapp/dapps/Staking/ExistingSta
 import type { SuiSystemStateSummary } from '@mysten/sui.js';
 
 export const useDistanceToStartEarningRewards = (
-    stake: Stake,
+    stake?: Stake,
     systemState?: SuiSystemStateSummary
 ) => {
     return useMemo(() => {
@@ -27,7 +27,7 @@ export const useDistanceToStartEarningRewards = (
 
         const formattedRelativeRewardsStart = isEarningRewards
             ? null
-            : formatRelative(new Date(timeToRewardsStart), new Date());
+            : formatDistanceToNowStrict(new Date(timeToRewardsStart));
 
         return {
             isEarningRewards,
