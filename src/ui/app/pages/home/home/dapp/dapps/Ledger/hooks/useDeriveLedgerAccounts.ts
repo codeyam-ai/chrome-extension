@@ -4,11 +4,10 @@
 import { Ed25519PublicKey } from '@mysten/sui.js';
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 
-import { useSuiLedgerClient } from './SuiLedgerClientProvider';
-import { AccountType } from '_src/background/keyring/Account';
-import { type SerializedLedgerAccount } from '_src/background/keyring/LedgerAccount';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
+import type { SerializedLedgerAccount } from '_src/shared/cryptography/LedgerAccount';
 
 type UseDeriveLedgerAccountOptions = {
     numAccountsToDerive: number;
@@ -60,11 +59,12 @@ async function deriveAccountsFromLedger(
         );
         const publicKey = new Ed25519PublicKey(publicKeyResult.publicKey);
         const suiAddress = publicKey.toSuiAddress();
-        ledgerAccounts.push({
-            type: AccountType.LEDGER,
-            address: suiAddress,
-            derivationPath,
-        });
+        console.log('ADDRESS', suiAddress);
+        // ledgerAccounts.push({
+        //     type: AccountType.LEDGER,
+        //     address: suiAddress,
+        //     derivationPath,
+        // });
     }
 
     return ledgerAccounts;

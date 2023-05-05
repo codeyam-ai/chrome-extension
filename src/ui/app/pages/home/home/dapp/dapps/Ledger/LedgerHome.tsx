@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import LedgerLogo from './LedgerLogo';
 import { useTheme } from '_src/shared/utils/themeContext';
 import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
+import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
-import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 
 const LedgerHome = () => {
     const navigate = useNavigate();
@@ -19,13 +19,13 @@ const LedgerHome = () => {
         try {
             setConnectingToLedger(true);
             await connectToLedger(true);
-            console.log('CONFIRMED!');
+            navigate('/home/ledger/import');
         } catch (error) {
             console.log('ERROR', error);
         } finally {
             setConnectingToLedger(false);
         }
-    }, [connectToLedger]);
+    }, [connectToLedger, navigate]);
 
     const onCancel = useCallback(() => {
         navigate('/home/ledger');

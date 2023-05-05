@@ -94,10 +94,13 @@ export function useSuiLedgerClient() {
 }
 
 async function requestLedgerConnection() {
+    console.log('HI1');
     const ledgerTransportClass = await getLedgerTransportClass();
+    console.log('HI2', ledgerTransportClass);
     try {
         return await ledgerTransportClass.request();
     } catch (error) {
+        console.log('ERROR', error);
         throw convertErrorToLedgerConnectionFailedError(error);
     }
 }
