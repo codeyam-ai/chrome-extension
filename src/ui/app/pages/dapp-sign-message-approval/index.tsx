@@ -8,6 +8,8 @@ import { AppState } from '../../hooks/useInitializedGuard';
 import { respondToTransactionRequest } from '../../redux/slices/transaction-requests';
 import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';
+import IncorrectSigner from '../dapp-tx-approval/errors/IncorrectSigner';
+import SimpleBase from '../dapp-tx-approval/types/SimpleBase';
 import Loading from '_components/loading';
 import UserApproveContainer from '_components/user-approve-container';
 import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
@@ -22,6 +24,7 @@ export function DappSignMessageApprovalPage() {
         AppState.MNEMONIC,
         AppState.HOSTED,
     ]);
+    const activeAddress = useAppSelector(({ account }) => account.address);
     const signMessageRequestLoading = useAppSelector(
         ({ transactionRequests }) => !transactionRequests.initialized
     );
@@ -80,6 +83,27 @@ export function DappSignMessageApprovalPage() {
             window.close();
         }
     }, [loading, signMessageRequest]);
+
+    if (
+        activeAddress &&
+        signMessageRequest?.tx?.type === 'sign-message' &&
+        signMessageRequest?.tx?.accountAddress !== activeAddress
+    ) {
+        return (
+            <SimpleBase
+                approval={signMessageRequest}
+                onComplete={handleOnSubmit}
+            >
+                <div className="py-12">
+                    <IncorrectSigner
+                        txID={signMessageRequest.id}
+                        txRequest={signMessageRequest}
+                        correctAddress={signMessageRequest.tx.accountAddress}
+                    />
+                </div>
+            </SimpleBase>
+        );
+    }
 
     return (
         <Loading loading={loading} big={true} resize={true}>
