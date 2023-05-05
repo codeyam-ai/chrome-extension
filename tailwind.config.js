@@ -89,6 +89,7 @@ module.exports = {
                 'ethos-super-light-purple': '#FBFAFF',
                 'ethos-light-gray': '#F9F9FB',
                 'ethos-success-green': '#238044',
+                'ethos-failure-red': '#CE3838',
 
                 // ==========
                 // Light mode

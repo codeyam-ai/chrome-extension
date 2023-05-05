@@ -1,4 +1,5 @@
 import {
+    ExclamationTriangleIcon,
     MinusCircleIcon,
     QuestionMarkCircleIcon,
 } from '@heroicons/react/24/outline';
@@ -8,11 +9,13 @@ import {
     TransactionBlock,
 } from '@mysten/sui.js';
 import { useQueryClient } from '@tanstack/react-query';
+import classNames from 'classnames';
 import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { Card } from './ExistingStake';
+import ClickableLargeTooltip from '_src/ui/app/components/ClickableTooltip';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { useDistanceToStartEarningRewards } from '_src/ui/app/hooks/staking/useDistanceToStartEarningRewards';
@@ -24,7 +27,6 @@ import Button from '_src/ui/app/shared/buttons/Button';
 import ConfirmDestructiveActionDialog from '_src/ui/app/shared/dialog/ConfirmDestructiveActionDialog';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import ClickableLargeTooltip from '_src/ui/app/components/ClickableTooltip';
 
 import type { SuiAddress } from '@mysten/sui.js';
 
@@ -87,6 +89,10 @@ const StakeDetail: React.FC = () => {
 
     const { data: validators } = useValidatorsWithApy();
     const validator = validators?.[validatorAddress ?? ''];
+
+    const hasInactiveValidatorDelegation = !systemState?.activeValidators?.find(
+        ({ stakingPoolId }) => stakingPoolId === validator?.stakingPoolId
+    );
 
     const onClickRevokeStake = useCallback(
         () => setIsModalOpen(true),
@@ -154,7 +160,13 @@ const StakeDetail: React.FC = () => {
     return (
         <div className="w-full flex flex-col h-full items-center px-6 mt-4">
             <div className="w-full">
-                <Card>
+                <Card
+                    className={classNames(
+                        hasInactiveValidatorDelegation
+                            ? 'bg-ethos-failure-red/20'
+                            : ''
+                    )}
+                >
                     <Body>Validator</Body>
                     <div className="flex justify-center place-content-center py-2">
                         {validator?.imageUrl ? (
@@ -170,6 +182,14 @@ const StakeDetail: React.FC = () => {
                             {validator?.name}
                         </BodyLarge>
                     </div>
+                    {hasInactiveValidatorDelegation && (
+                        <div className="flex items-center justify-center">
+                            <ExclamationTriangleIcon className="w-3 h-3 mr-1 text-ethos-failure-red" />
+                            <Body className="text-ethos-failure-red !text-xs">
+                                Validator is no longer valid. Please Unstake.
+                            </Body>
+                        </div>
+                    )}
                 </Card>
             </div>
             <div className="flex w-full gap-3 mt-3">
@@ -208,7 +228,7 @@ const StakeDetail: React.FC = () => {
                                 </>
                             ) : (
                                 <>
-                                    <Body>Start earning in</Body>
+                                    <Body>Starts earning in</Body>
                                     <Body isSemibold>{timeToRewardsStart}</Body>
                                 </>
                             )}

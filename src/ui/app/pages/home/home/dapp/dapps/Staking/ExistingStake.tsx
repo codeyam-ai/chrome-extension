@@ -1,3 +1,4 @@
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { CircleStackIcon } from '@heroicons/react/24/solid';
 import {
     SUI_TYPE_ARG,
@@ -127,7 +128,8 @@ const ExistingStake: React.FC<ExistingStakeProps> = ({
 const StakeRow = ({ stake }: { stake: StakeWithValidatorAddress }) => {
     const navigate = useNavigate();
     const { resolvedTheme } = useTheme();
-    const { data: systemState } = useSystemState();
+    const { data: systemState, isFetched: isSystemStateFetched } =
+        useSystemState();
     const { data: validators, isInitialLoading } = useValidatorsWithApy();
 
     const navigateToStakeDetail = useCallback(() => {
@@ -152,83 +154,100 @@ const StakeRow = ({ stake }: { stake: StakeWithValidatorAddress }) => {
 
     const validator = validators?.[stake.validatorAddress];
 
+    const hasInactiveValidatorDelegation =
+        isSystemStateFetched &&
+        !isInitialLoading &&
+        !systemState?.activeValidators?.find(
+            ({ stakingPoolId }) => stakingPoolId === validator?.stakingPoolId
+        );
+
     return (
-        <button
-            onClick={navigateToStakeDetail}
-            className="w-full flex flex-row items-center place-content-center justify-between py-4 px-6 hover:bg-ethos-super-light-purple dark:hover:bg-ethos-dark-background-secondary/50 border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke"
-        >
-            <div className="flex items-center place-content-center gap-3">
-                {validator?.imageUrl ? (
-                    <img
-                        src={validator.imageUrl}
-                        alt={validator.name}
-                        className="h-10 w-10 rounded-full"
-                    />
-                ) : (
-                    <div className="h-10 w-10 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
-                )}
-                <div className="flex flex-col items-start">
-                    <Body isTextColorMedium>
-                        {isInitialLoading ? (
-                            <Skeleton
-                                height={15}
-                                width={112}
-                                baseColor="#1A1C26"
-                                highlightColor="#3e435b"
-                            />
-                        ) : (
-                            `${formattedAmount} ${symbol}`
-                        )}
-                    </Body>
-                    <Body isSemibold>
-                        {isInitialLoading ? (
-                            <Skeleton
-                                height={15}
-                                width={60}
-                                baseColor={
-                                    resolvedTheme === 'dark'
-                                        ? '#1A1C26'
+        <div>
+            <button
+                onClick={navigateToStakeDetail}
+                className="w-full flex flex-row items-center place-content-center justify-between py-4 px-6 hover:bg-ethos-super-light-purple dark:hover:bg-ethos-dark-background-secondary/50 border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke"
+            >
+                <div className="flex items-center place-content-center gap-3">
+                    {validator?.imageUrl ? (
+                        <img
+                            src={validator.imageUrl}
+                            alt={validator.name}
+                            className="h-10 w-10 rounded-full"
+                        />
+                    ) : (
+                        <div className="h-10 w-10 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
+                    )}
+                    <div className="flex flex-col items-start">
+                        <Body isTextColorMedium>
+                            {isInitialLoading ? (
+                                <Skeleton
+                                    height={15}
+                                    width={112}
+                                    baseColor="#1A1C26"
+                                    highlightColor="#3e435b"
+                                />
+                            ) : (
+                                `${formattedAmount} ${symbol}`
+                            )}
+                        </Body>
+                        <Body isSemibold>
+                            {isInitialLoading ? (
+                                <Skeleton
+                                    height={15}
+                                    width={60}
+                                    baseColor={
+                                        resolvedTheme === 'dark'
+                                            ? '#1A1C26'
+                                            : undefined
+                                    }
+                                    highlightColor={
+                                        resolvedTheme === 'dark'
+                                            ? '#3e435b'
+                                            : undefined
+                                    }
+                                />
+                            ) : (
+                                validator?.name
+                            )}
+                        </Body>
+                    </div>
+                </div>
+                <div className="flex flex-col items-end">
+                    {isEarningRewards ? (
+                        <>
+                            <Body className="ethos-light-text-medium !text-xs">
+                                Staking Rewards
+                            </Body>
+                            <Body
+                                isSemibold
+                                className={classNames(
+                                    isEarningRewards
+                                        ? 'text-ethos-success-green'
                                         : undefined
-                                }
-                                highlightColor={
-                                    resolvedTheme === 'dark'
-                                        ? '#3e435b'
-                                        : undefined
-                                }
-                            />
-                        ) : (
-                            validator?.name
-                        )}
+                                )}
+                            >
+                                {formattedReward} {rewardSymbol}
+                            </Body>
+                        </>
+                    ) : (
+                        <>
+                            <Body className="ethos-light-text-medium !text-xs">
+                                Starts earning in
+                            </Body>
+                            <Body>{timeToRewardsStart}</Body>
+                        </>
+                    )}
+                </div>
+            </button>
+            {hasInactiveValidatorDelegation && (
+                <div className="flex items-center justify-center bg-ethos-failure-red/20 mx-6 mb-2 rounded-md p-1 ">
+                    <ExclamationTriangleIcon className="w-3 h-3 mr-1 text-ethos-failure-red" />
+                    <Body className="text-ethos-failure-red !text-xs">
+                        No longer Valid. Please Unstake.
                     </Body>
                 </div>
-            </div>
-            <div className="flex flex-col items-end">
-                {isEarningRewards ? (
-                    <>
-                        <Body className="ethos-light-text-medium !text-xs">
-                            Staking Rewards
-                        </Body>
-                        <Body
-                            isSemibold
-                            className={classNames(
-                                isEarningRewards
-                                    ? 'text-ethos-success-green'
-                                    : undefined
-                            )}
-                        >
-                            {formattedReward} {rewardSymbol}
-                        </Body>
-                    </>
-                ) : (
-                    <>
-                        <Body className="ethos-light-text-medium !text-xs">
-                            Start earning in
-                        </Body>
-                        <Body>{timeToRewardsStart}</Body>
-                    </>
-                )}
-            </div>
-        </button>
+            )}
+        </div>
     );
 };
 
