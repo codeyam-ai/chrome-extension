@@ -43,13 +43,13 @@ const objectsAdapter = createEntityAdapter<ExtendedSuiObjectData>({
 });
 
 export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
-    ExtendedSuiObjectData[],
+    ExtendedSuiObjectData[] | null,
     void,
     AppThunkConfig
 >('sui-objects/fetch-all', async (_, { getState, extra: { api } }) => {
     const state = getState();
 
-    if (!state.balances.lastSync) {
+    if (!state.suiObjects.lastSync) {
         try {
             const response = await fetch(
                 api.instance.fullNode.connection.fullnode,
@@ -77,6 +77,11 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
     const {
         account: { address },
     } = state;
+
+    if (!address) {
+        return null;
+    }
+
     const allSuiObjects: ExtendedSuiObjectData[] = [];
     if (address) {
         let allObjRes: SuiObjectResponse[] = [];
