@@ -5,6 +5,7 @@ import nock from 'nock';
 
 import { getEncrypted } from '_shared/storagex/store';
 import { BASE_URL } from '_src/shared/constants';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import {
@@ -15,7 +16,6 @@ import {
     simulateMnemonicUser,
     simulateEmailUser,
 } from '_src/test/utils/storage';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('The Security Settings page', () => {
     let mockJsonRpc: MockJsonRpc;

@@ -1,8 +1,9 @@
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+
 import { useAppSelector } from '../../../../hooks';
 import { API_ENV } from '_src/shared/api-env';
 import { useTheme } from '_src/shared/utils/themeContext';
-import { useEffect, useState } from 'react';
 import checkMoonpaySupport from '_src/ui/app/helpers/checkMoonpaySupport';
 
 export default function MoonpayOnboarding() {

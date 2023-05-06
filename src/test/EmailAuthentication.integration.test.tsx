@@ -6,8 +6,8 @@ import { mockCommonCalls, mockSuiObjects } from './utils/mockchain';
 import { fakeAccessToken } from './utils/storage';
 import { BASE_URL } from '_src/shared/constants';
 import { setSession } from '_src/shared/storagex/store';
-import { renderApp } from '_src/test/utils/react-rendering';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('Email Authentication', () => {
     let mockJsonRpc: MockJsonRpc;

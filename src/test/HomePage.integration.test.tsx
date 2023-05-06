@@ -1,10 +1,10 @@
 import { screen, within } from '@testing-library/react';
 
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Rendering the Home page', () => {
     let mockJsonRpc: MockJsonRpc;

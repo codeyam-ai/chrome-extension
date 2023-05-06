@@ -1,17 +1,17 @@
+import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import moonpayDark from '_images/payments/logos/moonpay-dark.png';
+import moonpayLight from '_images/payments/logos/moonpay-light.png';
+import transakDark from '_images/payments/logos/transak-dark.png';
+import transakLight from '_images/payments/logos/transak-light.png';
 import { LinkType } from '_src/enums/LinkType';
+import { useTheme } from '_src/shared/utils/themeContext';
+import checkMoonpaySupport from '_src/ui/app/helpers/checkMoonpaySupport';
 import Body from '_src/ui/app/shared/typography/Body';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Header from '_src/ui/app/shared/typography/Header';
-
-import transakLight from '_images/payments/logos/transak-light.png';
-import transakDark from '_images/payments/logos/transak-dark.png';
-import moonpayLight from '_images/payments/logos/moonpay-light.png';
-import moonpayDark from '_images/payments/logos/moonpay-dark.png';
-import { useTheme } from '_src/shared/utils/themeContext';
-import { useNavigate } from 'react-router-dom';
-import checkMoonpaySupport from '_src/ui/app/helpers/checkMoonpaySupport';
-import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 
 const providers = [
     {
@@ -58,9 +58,10 @@ interface ProviderSelectProps {
 
 const ProviderSelect = ({ theme, provider }: ProviderSelectProps) => {
     const navigate = useNavigate();
+
     const selectProvider = useCallback(() => {
         navigate(provider.path);
-    }, []);
+    }, [navigate, provider.path]);
 
     return (
         <button
