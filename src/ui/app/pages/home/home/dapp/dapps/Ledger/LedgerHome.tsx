@@ -1,24 +1,32 @@
+import { Ed25519PublicKey } from '@mysten/sui.js';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import LedgerLogo from './LedgerLogo';
+import { derivationPathForLedger } from './hooks/useDeriveLedgerAccounts';
 import { useTheme } from '_src/shared/utils/themeContext';
 import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import { useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
-import WalletButton from '_src/ui/app/shared/wallet-list/WalletButton';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
+import WalletButton from '_src/ui/app/shared/wallet-list/WalletButton';
+import Loading from '_src/ui/app/components/loading';
 
 const LedgerHome = () => {
+    const { connectToLedger } = useSuiLedgerClient();
     const { accountInfos } = useAppSelector((state) => state.account);
 
     const navigate = useNavigate();
     const { resolvedTheme } = useTheme();
 
     const [isConnectingToLedger, setConnectingToLedger] = useState(false);
-    const { connectToLedger } = useSuiLedgerClient();
+    const [testingConnection, setTestingConnection] = useState(false);
+    const [successfulConnection, setSuccessfulConnection] = useState(false);
+    const [connectionError, setConnectionError] = useState<
+        string | undefined
+    >();
 
     const onContinueClick = useCallback(async () => {
         try {
@@ -36,11 +44,48 @@ const LedgerHome = () => {
         navigate('/home/ledger');
     }, [navigate]);
 
+    const testConnection = useCallback(async () => {
+        setTestingConnection(true);
+        try {
+            const suiLedgerClient = await connectToLedger();
+            const publicKeyResult = await suiLedgerClient.getPublicKey(
+                derivationPathForLedger(0),
+                true
+            );
+            const publicKey = new Ed25519PublicKey(publicKeyResult.publicKey);
+            const suiAddress = publicKey.toSuiAddress();
+
+            if (suiAddress) {
+                setSuccessfulConnection(true);
+            }
+        } catch (error: unknown) {
+            console.log('ERROR', error);
+            setConnectionError(`${error}`);
+            setSuccessfulConnection(false);
+        } finally {
+            setTestingConnection(false);
+        }
+    }, [connectToLedger]);
+
     const ledgerAccounts = useMemo(() => {
         return accountInfos.filter(
             (account) => account.importedLedgerIndex !== undefined
         );
     }, [accountInfos]);
+
+    if (testingConnection || connectionError) {
+        return (
+            <Loading
+                big={true}
+                loading={testingConnection}
+                className="py-12 flex justify-center"
+            >
+                <div className="mt-12 nx-6 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary p-6 rounded-lg">
+                    {`${connectionError}`}
+                </div>
+            </Loading>
+        );
+    }
 
     return (
         <div
@@ -57,6 +102,9 @@ const LedgerHome = () => {
             {ledgerAccounts.length > 0 ? (
                 <div className="flex flex-col gap-3">
                     <Subheader>Selected Ledger Accounts</Subheader>
+                    <Body>
+                        To edit your selected accounts click &#34;Connect&#34;
+                    </Body>
                     {ledgerAccounts.map((account) => {
                         return (
                             <div
@@ -71,8 +119,15 @@ const LedgerHome = () => {
                             </div>
                         );
                     })}
-                    <Body className="pt-6">
-                        To edit your selected accounts click &#34;Connect&#34;
+                    <Body>
+                        Your ledger accounts are read-only right now. Please{' '}
+                        <span
+                            onClick={testConnection}
+                            className="text-ethos-light-primary-light dark:text-ethos-dark-primary-light cursor-pointer underline"
+                        >
+                            test your connection
+                        </span>{' '}
+                        to enable signing transactions.
                     </Body>
                 </div>
             ) : (
