@@ -33,7 +33,8 @@ const WalletPicker = ({
             accountInfos.filter(
                 (account) =>
                     account.importedMnemonicName ||
-                    account.importedPrivateKeyName
+                    account.importedPrivateKeyName ||
+                    account.importedLedgerIndex !== undefined
             ),
         [accountInfos]
     );

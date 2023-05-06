@@ -19,6 +19,7 @@ import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
 import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
+import { saveAccountInfos } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
@@ -26,7 +27,6 @@ import WalletButton from '_src/ui/app/shared/wallet-list/WalletButton';
 
 import type { SerializedLedgerAccount } from '_src/shared/cryptography/LedgerAccount';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-import { saveAccountInfos } from '_src/ui/app/redux/slices/account';
 
 const numLedgerAccountsToDeriveByDefault = 10;
 
@@ -49,8 +49,8 @@ const LedgerItem = ({
             index,
             address: account.address,
             name: `Ledger ${index + 1}`,
-            color: getNextWalletColor(index + 1),
-            emoji: getNextEmoji(index + 1),
+            color: getNextWalletColor(index),
+            emoji: getNextEmoji(index),
         };
     }, [account, index]);
 
@@ -80,12 +80,6 @@ export function ImportLedgerAccounts() {
         isError: encounteredDerviceAccountsError,
     } = useDeriveLedgerAccounts({
         numAccountsToDerive: numLedgerAccountsToDeriveByDefault,
-        select: (ledgerAccounts) => {
-            return ledgerAccounts.filter(
-                ({ address }) =>
-                    !accountInfos.some((account) => account.address === address)
-            );
-        },
         onError: (error) => {
             toast.error(`Something went wrong. ${error}`);
             navigate(LEDGER_HOME);
@@ -98,7 +92,6 @@ export function ImportLedgerAccounts() {
 
     useEffect(() => {
         if (!ledgerAccounts) return;
-        console.log('ledgerAccounts', ledgerAccounts, accountInfos);
         const _selected = accountInfos
             .filter(
                 ({ address }) =>
@@ -114,24 +107,26 @@ export function ImportLedgerAccounts() {
                 ),
             }));
 
-        console.log('_selected', _selected);
         setSelectedLedgerAccounts(_selected);
     }, [accountInfos, ledgerAccounts]);
 
     const onAccountClick = useCallback(
         (targetAccount: any) => {
-            if (targetAccount.isSelected) {
-                setSelectedLedgerAccounts((prevState) =>
-                    prevState.filter((ledgerAccount) => {
-                        return ledgerAccount.address !== targetAccount.address;
-                    })
+            setSelectedLedgerAccounts((prevState) => {
+                const existing = prevState.find(
+                    (ledgerAccount) =>
+                        ledgerAccount.address === targetAccount.address
                 );
-            } else {
-                setSelectedLedgerAccounts((prevState) => [
-                    ...prevState,
-                    targetAccount,
-                ]);
-            }
+
+                if (existing) {
+                    return prevState.filter(
+                        (ledgerAccount) =>
+                            ledgerAccount.address !== targetAccount.address
+                    );
+                } else {
+                    return [...prevState, targetAccount];
+                }
+            });
         },
         [setSelectedLedgerAccounts]
     );
@@ -152,9 +147,9 @@ export function ImportLedgerAccounts() {
                 index: rawIndex,
                 address,
                 importedLedgerIndex: index,
-                color: getNextWalletColor(index + 1),
-                emoji: getNextEmoji(index + 1),
-                name: `Ledger ${index + 1}`,
+                color: getNextWalletColor(index),
+                emoji: getNextEmoji(index),
+                name: `Ledger ${index}`,
             });
         }
 
@@ -180,7 +175,12 @@ export function ImportLedgerAccounts() {
                         key={account.address}
                         account={account}
                         index={index}
-                        selected={selectedLedgerAccounts.includes(account)}
+                        selected={
+                            !!selectedLedgerAccounts.find(
+                                (selected) =>
+                                    account.address === selected.address
+                            )
+                        }
                         onSelect={onAccountClick}
                     />
                 ))}

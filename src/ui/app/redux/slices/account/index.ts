@@ -195,7 +195,8 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 for (let i = 0; i < accountInfos.length; i++) {
                     if (
                         accountInfos[i].importedMnemonicName ||
-                        accountInfos[i].importedPrivateKeyName
+                        accountInfos[i].importedPrivateKeyName ||
+                        accountInfos[i].importedLedgerIndex !== undefined
                     ) {
                         continue;
                     }
@@ -248,6 +249,8 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                             seed: secretKey.toString(),
                         };
                     }
+                } else if (activeAccount?.importedLedgerIndex !== undefined) {
+                    console.log('LEDGER');
                 } else {
                     activeSeed = {
                         address:

@@ -55,6 +55,10 @@ export const getSigner = async (
             if (!importedPrivateKey) return null;
 
             keypair = Ed25519Keypair.fromSecretKey(fromHEX(importedPrivateKey));
+        } else if (activeAccount.importedLedgerIndex) {
+            console.log('LEDGER');
+            const keypairVault = thunkExtras.keypairVault;
+            keypair = keypairVault.getKeyPair(activeAccountIndex);
         } else {
             const keypairVault = thunkExtras.keypairVault;
 
