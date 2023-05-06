@@ -25,7 +25,7 @@ function CoinBalance({ type, balance, replaceUrl }: CoinProps) {
         name,
         icon,
         verifiedBridgeToken,
-    ] = useFormatCoin(balance, type);
+    ] = useFormatCoin(balance, type, 4);
 
     const isSendAmountPage = useMemo(
         () => location.pathname === '/send/amount',
@@ -80,7 +80,7 @@ function CoinBalance({ type, balance, replaceUrl }: CoinProps) {
                 </div>
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col items-end text-right">
                 <BodyLarge>
                     {balanceFormatted} {symbol}
                 </BodyLarge>

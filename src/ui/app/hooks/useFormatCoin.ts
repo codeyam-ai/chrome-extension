@@ -141,7 +141,8 @@ export function useFormatCoin(
         if (
             formattedLength &&
             decimalsBalance.lt(1) &&
-            decimalsBalance.toString().split('.')[1].length > formattedLength
+            (decimalsBalance.toString().split('.')[1]?.length ?? 0) >
+                formattedLength
         ) {
             return ns.format.coinBalance(
                 balance,
@@ -174,7 +175,7 @@ export function useFormatCoin(
 
     return [
         formatted,
-        coinMetadata?.symbol || symbol,
+        verifiedBridgeToken ?? coinMetadata?.symbol ?? symbol,
         dollars,
         verifiedBridgeToken ?? coinMetadata?.name ?? symbol,
         coinMetadata?.iconUrl || null,
