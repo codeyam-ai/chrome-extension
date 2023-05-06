@@ -30,6 +30,7 @@ import type { SuiMoveObject } from '@mysten/sui.js';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { RootState } from '_src/ui/app/redux/RootReducer';
 import type { FormikHelpers } from 'formik';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 
 const initialValues = {
     amount: '',
@@ -115,6 +116,7 @@ function useOnHandleSubmit({
     setSendError,
     formState,
 }: UseOnHandleSubmit) {
+    const { connectToLedger } = useSuiLedgerClient();
     const {
         account: {
             authentication,
@@ -159,7 +161,8 @@ function useOnHandleSubmit({
                 accountInfos,
                 address,
                 authentication,
-                activeAccountIndex
+                activeAccountIndex,
+                connectToLedger
             );
 
             if (!signer) return;
@@ -241,10 +244,11 @@ function useOnHandleSubmit({
             address,
             authentication,
             activeAccountIndex,
+            connectToLedger,
+            formState.to,
             state,
             dispatch,
             setSendError,
-            formState.to,
             navigate,
         ]
     );

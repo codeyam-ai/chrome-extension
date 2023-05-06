@@ -23,6 +23,7 @@ import type {
 } from '@mysten/sui.js';
 import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 
 export enum TxApprovalTab {
     SUMMARY = 'Summary',
@@ -61,6 +62,7 @@ const Base = ({
     effects,
     setDone,
 }: BaseProps) => {
+    const { connectToLedger } = useSuiLedgerClient();
     const [tab, setTab] = useState(TxApprovalTab.SUMMARY);
 
     const summaryKey = useCustomSummary(txRequest);
@@ -432,6 +434,7 @@ const Base = ({
                     ? txRequest.tx.requestType
                     : undefined;
             await finishTransaction(
+                connectToLedger,
                 transactionBlock ?? null,
                 txID,
                 approved,

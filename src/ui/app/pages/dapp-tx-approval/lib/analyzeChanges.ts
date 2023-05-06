@@ -11,9 +11,10 @@ import type {
     DryRunTransactionBlockResponse,
 } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 
 export type AnalyzeChangesArgs = {
-    signer: RawSigner | EthosSigner;
+    signer: RawSigner | EthosSigner | LedgerSigner;
     transactionBlock: string | TransactionBlock | Uint8Array;
 };
 

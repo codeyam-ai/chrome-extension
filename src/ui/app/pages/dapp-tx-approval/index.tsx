@@ -20,6 +20,7 @@ import SimpleAssetMint from './types/SimpleAssetMint';
 import SimpleAssetTransfer from './types/SimpleAssetTransfer';
 import SimpleBase from './types/SimpleBase';
 import SimpleCoinTransfer from './types/SimpleCoinTransfer';
+import { useSuiLedgerClient } from '../../components/ledger/SuiLedgerClientProvider';
 import { getSigner } from '../../helpers/getSigner';
 import { AppState } from '../../hooks/useInitializedGuard';
 import Loading from '_components/loading';
@@ -31,6 +32,7 @@ import type { AnalyzeChangesResult } from './lib/analyzeChanges';
 import type { RawSigner, SuiMoveNormalizedType } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 import type { ReactNode } from 'react';
 
 export type Permission = {
@@ -46,6 +48,7 @@ export type DistilledEffect = {
 };
 
 export function DappTxApprovalPage() {
+    const { connectToLedger } = useSuiLedgerClient();
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
 
     const activeChain = useMemo(() => {
@@ -63,7 +66,9 @@ export function DappTxApprovalPage() {
         }
     }, [selectedApiEnv]);
 
-    const [signer, setSigner] = useState<RawSigner | EthosSigner | undefined>();
+    const [signer, setSigner] = useState<
+        RawSigner | EthosSigner | LedgerSigner | undefined
+    >();
     const {
         activeAccountIndex,
         address,
@@ -139,7 +144,8 @@ export function DappTxApprovalPage() {
                 accountInfos,
                 address,
                 authentication,
-                activeAccountIndex
+                activeAccountIndex,
+                connectToLedger
             );
 
             if (signer) {
@@ -153,6 +159,7 @@ export function DappTxApprovalPage() {
         activeAccountIndex,
         address,
         authentication,
+        connectToLedger,
         passphrase,
         selectedApiEnv,
     ]);
@@ -264,6 +271,7 @@ export function DappTxApprovalPage() {
                     ? txRequest.tx.requestType
                     : undefined;
             await finishTransaction(
+                connectToLedger,
                 transactionBlock ?? null,
                 txID,
                 approved,
@@ -280,6 +288,7 @@ export function DappTxApprovalPage() {
         },
         [
             txRequest,
+            connectToLedger,
             transactionBlock,
             txID,
             passphrase,

@@ -15,12 +15,16 @@ import getErrorDisplaySuiForMist from '../../dapp-tx-approval/lib/getErrorDispla
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { resetSendSuiForm } from '_redux/slices/forms';
-import { sendTokens } from '_redux/slices/transactions';
+// import { sendTokens } from '_redux/slices/transactions';
 import ns from '_shared/namespace';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
+import sendTokens from '_src/ui/app/helpers/sendTokens';
 import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
+import { accountCoinsSelector } from '_src/ui/app/redux/slices/account';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 
+import type { SuiMoveObject } from '@mysten/sui.js';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
 
@@ -33,6 +37,8 @@ export type FormValues = typeof initialValues;
 
 // TODO: show out of sync when sui objects locally might be outdated
 function TransferCoinReviewPage() {
+    const { connectToLedger } = useSuiLedgerClient();
+    const state = useAppSelector((state) => state);
     const [searchParams] = useSearchParams();
     const [formSubmitted, setFormSubmitted] = useState(false);
     const coinType = searchParams.get('type');
@@ -72,13 +78,24 @@ function TransferCoinReviewPage() {
                         .toString()
                 );
 
-                const tx = await dispatch(
-                    sendTokens({
-                        amount: bigIntAmount,
-                        recipientAddress: to,
-                        tokenTypeArg: coinType,
-                    })
-                ).unwrap();
+                const allCoins: SuiMoveObject[] = accountCoinsSelector(state);
+
+                const tx = await sendTokens({
+                    ...state.account,
+                    connectToLedger,
+                    allCoins,
+                    recipientAddress: to,
+                    tokenTypeArg: coinType,
+                    amount: bigIntAmount,
+                });
+
+                // const tx = await dispatch(
+                //     sendTokens({
+                //         amount: bigIntAmount,
+                //         recipientAddress: to,
+                //         tokenTypeArg: coinType,
+                //     })
+                // ).unwrap();
 
                 resetForm();
                 dispatch(resetSendSuiForm());

@@ -25,6 +25,7 @@ import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 import type { SerializedError } from '@reduxjs/toolkit';
 
 import st from './TransferNFTForm.module.scss';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 
 const initialValues = {
     to: '',
@@ -34,6 +35,7 @@ const initialValues = {
 export type FormValues = typeof initialValues;
 
 function TransferNFTRecipient() {
+    const { connectToLedger } = useSuiLedgerClient();
     const {
         account: {
             address,
@@ -93,7 +95,8 @@ function TransferNFTRecipient() {
                 accountInfos,
                 address,
                 authentication,
-                activeAccountIndex
+                activeAccountIndex,
+                connectToLedger
             );
 
             if (!signer) return;
@@ -147,6 +150,7 @@ function TransferNFTRecipient() {
             address,
             authentication,
             activeAccountIndex,
+            connectToLedger,
             selectedNFTObj,
             dispatch,
             navigate,

@@ -29,6 +29,7 @@ import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { SuiAddress } from '@mysten/sui.js';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 
 const APY_HELP_TEXT =
     "Annualized Percentage Yield of validator's past operations. Note, there is no guarantee APY will true indefinitely";
@@ -48,6 +49,7 @@ function revokeStakeTransaction(stakedSuiId: SuiAddress) {
 }
 
 const StakeDetail: React.FC = () => {
+    const { connectToLedger } = useSuiLedgerClient();
     const { validatorAddress, stakedSuiId } = useParams();
 
     const {
@@ -113,7 +115,8 @@ const StakeDetail: React.FC = () => {
             accountInfos,
             address,
             authentication,
-            activeAccountIndex
+            activeAccountIndex,
+            connectToLedger
         );
 
         if (!signer) return;
@@ -148,6 +151,7 @@ const StakeDetail: React.FC = () => {
         activeAccountIndex,
         address,
         authentication,
+        connectToLedger,
         passphrase,
         queryClient,
         stakedSuiId,

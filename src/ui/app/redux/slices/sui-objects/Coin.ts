@@ -94,7 +94,7 @@ export class Coin {
      * @param validator The sui address of the chosen validator
      */
     // public static async stakeCoin(
-    //     signer: RawSigner | EthosSigner,
+    //     signer: RawSigner | EthosSigner | LedgerSigner,
     //     coins: SuiMoveObject[],
     //     amount: bigint,
     //     validator: SuiAddress
@@ -116,7 +116,7 @@ export class Coin {
     // }
 
     // private static async requestSuiCoinWithExactAmount(
-    //     signer: RawSigner | EthosSigner,
+    //     signer: RawSigner | EthosSigner | LedgerSigner,
     //     coins: SuiMoveObject[],
     //     amount: bigint
     // ): Promise<ObjectId> {
@@ -152,7 +152,7 @@ export class Coin {
     // }
 
     // private static async selectSuiCoinWithExactAmount(
-    //     signer: RawSigner | EthosSigner,
+    //     signer: RawSigner | EthosSigner | LedgerSigner,
     //     coins: SuiMoveObject[],
     //     amount: bigint,
     //     refreshData = false

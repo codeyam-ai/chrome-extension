@@ -1,6 +1,7 @@
 import { thunkExtras } from '_redux/store/thunk-extras';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 
+import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
 import type {
     SignedTransaction,
     SuiTransactionBlockResponse,
@@ -10,6 +11,7 @@ import type { SuiSignAndExecuteTransactionBlockInput } from '@mysten/wallet-stan
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 const finishTransaction = async (
+    connectToLedger: () => Promise<SuiLedgerClient>,
     transactionBlock: TransactionBlock | null,
     txID: string | undefined,
     approved: boolean,
@@ -36,7 +38,8 @@ const finishTransaction = async (
             accountInfos,
             address,
             authentication,
-            activeAccountIndex
+            activeAccountIndex,
+            connectToLedger
         );
 
         if (!signer) {
