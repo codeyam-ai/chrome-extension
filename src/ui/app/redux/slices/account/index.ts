@@ -34,6 +34,7 @@ import {
     STAKING_ID,
 } from '_src/data/dappsMap';
 import { AccountType, PASSPHRASE_TEST } from '_src/shared/constants';
+import { LedgerAccount } from '_src/shared/cryptography/LedgerAccount';
 import {
     deleteEncrypted,
     getEncrypted,
@@ -47,7 +48,6 @@ import { AUTHENTICATION_REQUESTED } from '_src/ui/app/pages/initialize/hosted';
 import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-import { LedgerAccount } from '_src/shared/cryptography/LedgerAccount';
 
 type InitialAccountInfo = {
     authentication: string | null;

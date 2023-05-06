@@ -149,7 +149,7 @@ export function ImportLedgerAccounts() {
                 importedLedgerIndex: index,
                 color: getNextWalletColor(index),
                 emoji: getNextEmoji(index),
-                name: `Ledger ${index}`,
+                name: `Ledger ${index + 1}`,
             });
         }
 

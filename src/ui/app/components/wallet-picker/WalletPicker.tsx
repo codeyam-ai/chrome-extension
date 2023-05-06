@@ -1,5 +1,6 @@
 import { ArrowLongUpIcon } from '@heroicons/react/24/solid';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import CreateWalletProvider from './CreateWalletProvider';
 import { useAppSelector } from '../../hooks';
@@ -7,6 +8,7 @@ import Button from '../../shared/buttons/Button';
 import Body from '../../shared/typography/Body';
 import WalletList from '../../shared/wallet-list/WalletList';
 import LoadingIndicator from '../loading/LoadingIndicator';
+import { openInNewTab } from '_src/shared/utils';
 
 interface WalletPickerProps {
     selectOnly?: boolean;
@@ -17,6 +19,8 @@ const WalletPicker = ({
     selectOnly = false,
     isWalletEditing = false,
 }: WalletPickerProps) => {
+    const location = useLocation();
+    const navigate = useNavigate();
     const [createWallet, setCreateWallet] = useState<() => void>(
         () => () => null
     );
@@ -38,6 +42,14 @@ const WalletPicker = ({
             ),
         [accountInfos]
     );
+
+    const openLedgerTab = useCallback(() => {
+        if (location.pathname === '/home/ledger') {
+            navigate('/home/ledger');
+        } else {
+            openInNewTab(`/ui.html#/home/ledger`);
+        }
+    }, [location, navigate]);
 
     return (
         <div className="flex flex-col h-full">
@@ -81,7 +93,7 @@ const WalletPicker = ({
                             )}
                             <Button
                                 buttonStyle="secondary"
-                                to="/home/ledger"
+                                onClick={openLedgerTab}
                                 disabled={loading}
                             >
                                 Connect Ledger Wallet
