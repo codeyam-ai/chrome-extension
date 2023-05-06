@@ -53,7 +53,7 @@ export const fetchAllBalances = createAsyncThunk<
 
     if (address) {
         allBalances = await api.instance.fullNode.getAllBalances({
-            owner: '0x9c21fc706b1453c1bc4255bea8c1b87f041afaaee7c622c98bb4178843f04ee2',
+            owner: address,
         });
     }
 
