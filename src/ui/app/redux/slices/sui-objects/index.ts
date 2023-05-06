@@ -143,18 +143,12 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         for (const objRes of allObjRes) {
             const suiObjectData = getSuiObjectData(objRes);
             if (suiObjectData) {
-                // if (
-                //     suiObjectData.owner &&
-                //     typeof suiObjectData.owner === 'object' &&
-                //     'AddressOwner' in suiObjectData.owner
-                // ) {
-                //     suiObjectData.owner.AddressOwner = address;
-                // }
                 if (NFT.isKiosk(suiObjectData)) {
                     const kioskObjects = await NFT.getKioskObjects(
                         api.instance.fullNode,
                         suiObjectData
                     );
+
                     for (const kioskObject of kioskObjects) {
                         const kioskObjectData = getSuiObjectData(kioskObject);
                         if (kioskObjectData) {
@@ -169,6 +163,16 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                 }
             }
         }
+
+        // for (const o of allSuiObjects) {
+        //     if (
+        //         o.owner &&
+        //         typeof o.owner === 'object' &&
+        //         'AddressOwner' in o.owner
+        //     ) {
+        //         o.owner.AddressOwner = address;
+        //     }
+        // }
     }
 
     return allSuiObjects;
