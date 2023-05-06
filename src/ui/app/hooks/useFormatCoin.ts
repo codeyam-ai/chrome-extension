@@ -174,7 +174,7 @@ export function useFormatCoin(
 
     return [
         formatted,
-        coinMetadata?.symbol || symbol,
+        verifiedBridgeToken ?? coinMetadata?.symbol ?? symbol,
         dollars,
         verifiedBridgeToken ?? coinMetadata?.name ?? symbol,
         coinMetadata?.iconUrl || null,
