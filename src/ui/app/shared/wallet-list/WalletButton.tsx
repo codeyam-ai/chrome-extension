@@ -94,7 +94,12 @@ const WalletButton = ({
                     emojiSizeInPx={22}
                 />
                 <div className="flex flex-col text-left" title={wallet.address}>
-                    <BodyLarge>{name}</BodyLarge>
+                    <BodyLarge>
+                        {name}
+                        {wallet.importedLedgerIndex !== undefined && (
+                            <> (read-only)</>
+                        )}
+                    </BodyLarge>
                     <Body isTextColorMedium>{shortenedAddress}</Body>
                 </div>
             </div>
