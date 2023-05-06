@@ -1,21 +1,36 @@
-import { useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
-
-import { useAppSelector } from '../../hooks';
+import { useAppSelector } from '../../../../hooks';
 import { API_ENV } from '_src/shared/api-env';
 import { useTheme } from '_src/shared/utils/themeContext';
+import { useEffect, useState } from 'react';
+import checkMoonpaySupport from '_src/ui/app/helpers/checkMoonpaySupport';
 
 export default function MoonpayOnboarding() {
-    // When SUI is added as a supported currency we can pass the users
-    // active address in, that address is checked for validtity on the Sui
-    // network and used if it is valid. We need to Sign the URL in this case
-    // https://docs.moonpay.com/moonpay/implementation-guide/on-ramp/sign-the-url-server-side
-    // const address = useAppSelector((state) => state.account.address);
+    const address = useAppSelector((state) => state.account.address);
+    const [allowed, setAllowed] = useState(undefined);
+    const [countryChecked, setCountryChecked] = useState(false);
 
-    const { locale } = useIntl();
-    const countryCode = locale.split('-')[1];
-    const supportedCountries = ['GB', 'AU', 'BR', 'CA'];
-    const isInSupportedCountries = supportedCountries.includes(countryCode);
+    useEffect(() => {
+        /*fetch('https://dev-api.ethoswallet.xyz/api/v1/payments/sign', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                address: address,
+                apiKey: '6319babc-bf35-44d5-a9ba-de08badfa80a',
+            }),
+        }).then((res) => console.log('results => ', res.json()));*/
+
+        const checkCountrySupport = async () => {
+            const countryAllowed = await checkMoonpaySupport();
+            setAllowed(countryAllowed);
+            setCountryChecked(true);
+        };
+
+        checkCountrySupport();
+    }, [address]);
+
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
     const [searchParams] = useSearchParams();
     const envParam = searchParams.get('env');
@@ -41,10 +56,10 @@ export default function MoonpayOnboarding() {
 
     return (
         <>
-            {isInSupportedCountries && (
+            {countryChecked && !allowed && (
                 <div className="absolute w-full p-3 bg-ethos-light-background-secondary dark:bg-[#1C1C1E]">
-                    MoonPay is a recommended partner for their services in the
-                    Europe, UK, Australia, Brazil, and Canada.
+                    Moonpay is not supported in your country. Please use another
+                    provider.
                 </div>
             )}
             <iframe
