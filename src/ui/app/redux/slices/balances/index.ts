@@ -14,7 +14,7 @@ const balancesAdapter = createEntityAdapter<CoinBalance>({
 });
 
 export const fetchAllBalances = createAsyncThunk<
-    CoinBalance[],
+    CoinBalance[] | null,
     void,
     AppThunkConfig
 >('balances/fetch-all', async (_, { getState, extra: { api } }) => {
@@ -49,13 +49,13 @@ export const fetchAllBalances = createAsyncThunk<
         account: { address },
     } = state;
 
-    let allBalances: CoinBalance[] = [];
-
-    if (address) {
-        allBalances = await api.instance.fullNode.getAllBalances({
-            owner: address,
-        });
+    if (!address) {
+        return null;
     }
+
+    const allBalances = await api.instance.fullNode.getAllBalances({
+        owner: address,
+    });
 
     return allBalances;
 });

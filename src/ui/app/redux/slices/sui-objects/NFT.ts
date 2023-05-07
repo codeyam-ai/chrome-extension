@@ -14,6 +14,7 @@ import type {
     JsonRpcProvider,
     SuiMoveObject,
 } from '@mysten/sui.js';
+import type { DynamicFieldInfo } from '@mysten/sui.js/dist/types/dynamic_fields';
 
 export type BagNFT = {
     id: string;
@@ -60,23 +61,44 @@ export class NFT {
         if (!this.isKiosk(data)) return [];
         const kiosk = get(data, 'content.fields.kiosk');
         if (!kiosk) return [];
-        const allKioskObjets = await provider.getDynamicFields({
-            parentId: kiosk,
-        });
-        const relevantKioskObjects = allKioskObjets.data.filter(
+        let allKioskObjects: DynamicFieldInfo[] = [];
+        let cursor: string | undefined | null;
+        while (cursor !== null) {
+            const response = await provider.getDynamicFields({
+                parentId: kiosk,
+            });
+            if (!response.data) return [];
+            allKioskObjects = [...(allKioskObjects || []), ...response.data];
+            if (!response.hasNextPage) {
+                cursor = null;
+            } else {
+                cursor = response.nextCursor;
+            }
+        }
+
+        const relevantKioskObjects = allKioskObjects.filter(
             (kioskObject) => kioskObject.name.type === '0x2::kiosk::Item'
         );
         const objectIds = relevantKioskObjects.map((item) => item.objectId);
 
-        const objects = await provider.multiGetObjects({
-            ids: objectIds,
-            options: {
-                showContent: true,
-                showType: true,
-                showDisplay: true,
-                showOwner: true,
-            },
-        });
+        let objects: SuiObjectResponse[] = [];
+        const groupSize = 30;
+        for (let i = 0; i < objectIds.length; i += groupSize) {
+            const group = objectIds.slice(i, i + groupSize);
+
+            const groupObjects = await provider.multiGetObjects({
+                ids: group,
+                options: {
+                    showContent: true,
+                    showType: true,
+                    showDisplay: true,
+                    showOwner: true,
+                },
+            });
+
+            objects = [...objects, ...groupObjects];
+        }
+
         return objects;
     }
 
