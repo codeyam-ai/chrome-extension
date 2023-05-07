@@ -13,6 +13,7 @@ import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 import WalletButton from '_src/ui/app/shared/wallet-list/WalletButton';
+import ledgerReadableError from './lib/ledgerReadableError';
 
 const LedgerHome = () => {
     const { connectToLedger } = useSuiLedgerClient();
@@ -78,28 +79,7 @@ const LedgerHome = () => {
     }, [accountInfos]);
 
     const readableError = useMemo(() => {
-        if (!connectionError) return;
-
-        console.log('connectionError', connectionError);
-        if (
-            connectionError ===
-            "Error: The user doesn't have a Ledger device connected to their machine"
-        ) {
-            return {
-                title: 'Not Connected',
-                message:
-                    'Please connect your ledger to your computer, enter your passcode, and launch the Sui app.',
-            };
-        } else if (
-            connectionError ===
-            'TransportStatusError: Ledger device: INS_NOT_SUPPORTED (0x6d00)'
-        ) {
-            return {
-                title: 'Ledger Error',
-                message:
-                    'The connection with Ledger does not yet support your device. It is in active development and should improve soon.',
-            };
-        }
+        return ledgerReadableError(connectionError)
     }, [connectionError]);
 
     if (testingConnection || connectionError) {
