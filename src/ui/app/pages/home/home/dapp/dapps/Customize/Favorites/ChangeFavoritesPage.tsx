@@ -47,7 +47,7 @@ const ChangeFavoritesPage: React.FC = () => {
         <div className="relative flex flex-col items-center pt-6">
             <Title>Choose your favorite apps</Title>
             <Button onClick={handleOnContinue} wrapperClassName="w-full mt-6">
-                Next
+                Save
             </Button>
 
             <FavoritesSortableList onFavoritesChosen={onFavoritesChosen} />

@@ -46,10 +46,12 @@ export const useFavoriteDapps = () => {
     const excludedDappsKeys = useAppSelector(
         ({ account }) => account.excludedDappsKeys
     );
+    console.log('excludedDappsKeys', excludedDappsKeys);
     const nfts = useAppSelector(accountNftsSelector);
 
     const setExcludedDappsKeys = useCallback(
         async (keys: string[]) => {
+            console.log('EXCLUDE', keys);
             await dispatch(saveExcludedDappsKeys(keys));
         },
         [dispatch]
@@ -57,6 +59,7 @@ export const useFavoriteDapps = () => {
 
     const setFavoriteDappsKeys = useCallback(
         async (keys: string[]) => {
+            console.log('SAVE', keys);
             await dispatch(saveFavoriteDappsKeys(keys));
         },
         [dispatch]
@@ -93,6 +96,8 @@ export const useFavoriteDapps = () => {
             allFavorites.push(dappsMap.get(CUSTOMIZE_ID) as DappData);
         }
 
+        console.log('allFavorites', allFavorites, excludedDappsKeys);
+
         const favoriteNfts = Object.values(projectNFTs);
         const favoriteDapps = allFavorites.filter(
             (dapp) => !projectNFTs[dapp.id]
@@ -119,7 +124,6 @@ export const useFavoriteDapps = () => {
             JSON.stringify(finalFavoriteDappKeys) !==
             JSON.stringify(favoriteDappsKeys)
         ) {
-            console.log('HI', finalFavoriteDappKeys, favoriteDappsKeys, nfts);
             setFavoriteDappsKeys(finalFavoriteDappKeys);
         }
     }, [nfts, favoriteDappsKeys, allFavorites, setFavoriteDappsKeys]);

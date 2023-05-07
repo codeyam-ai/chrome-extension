@@ -1195,6 +1195,12 @@ const accountSlice = createSlice({
                     state.favoriteDappsKeys = action.payload;
                 }
             )
+            .addCase(
+                loadExcludedDappsKeysFromStorage.fulfilled,
+                (state, action) => {
+                    state.excludedDappsKeys = action.payload;
+                }
+            )
             .addCase(saveFavoriteDappsKeys.fulfilled, (state, action) => {
                 state.favoriteDappsKeys = action.payload;
             })
