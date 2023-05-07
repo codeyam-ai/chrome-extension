@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo } from 'react';
+import { type SyntheticEvent, memo, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import Sui from './Sui';
@@ -46,6 +46,10 @@ function CoinBalance({ type, balance, replaceUrl }: CoinProps) {
 
     const { featureFlags } = useDependencies();
 
+    const onImageError = useCallback((e: SyntheticEvent<HTMLImageElement>) => {
+        e.currentTarget.style.opacity = '0';
+    }, []);
+
     return (
         <button
             onClick={updateUrl}
@@ -58,6 +62,7 @@ function CoinBalance({ type, balance, replaceUrl }: CoinProps) {
                         alt={`coin-${symbol}`}
                         height={39}
                         width={39}
+                        onError={onImageError}
                     />
                 ) : symbol === 'SUI' ? (
                     <Sui />
