@@ -361,7 +361,7 @@ const dappsMap: Map<string, DappData> = new Map([
             title: 'Turbos',
             description: 'Perpetuals Exchange',
             urls: {
-                // [NetworkName.DEVNET]: 'https://turbos.finance/',
+                [NetworkName.MAINNET]: 'https://turbos.finance/',
             },
             tags: [TagName.FINANCE],
         } as DappData,
