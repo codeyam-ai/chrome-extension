@@ -138,15 +138,15 @@ export const useFavoriteDapps = () => {
     }, [nfts, favoriteDappsKeys, allFavorites, setFavoriteDappsKeys]);
 
     const favoriteDappsForCurrentNetwork = useMemo(() => {
-        if (!allFavorites) return [];
+        if (!allFavorites && !favoriteDapps) return [];
 
-        return allFavorites.filter((dapp) => {
+        return (allFavorites ?? favoriteDapps).filter((dapp) => {
             if (!dapp?.urls[selectedApiEnv]) {
                 return null;
             }
             return dapp;
         });
-    }, [allFavorites, selectedApiEnv]);
+    }, [allFavorites, favoriteDapps, selectedApiEnv]);
 
     return {
         favoriteDappsForCurrentNetwork,
