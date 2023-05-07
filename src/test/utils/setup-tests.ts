@@ -21,7 +21,7 @@ global.chrome = {
     },
 };
 
-configure({ asyncUtilTimeout: 10000 });
+configure({ asyncUtilTimeout: 3000 });
 
 jest.mock('webextension-polyfill', () => {
     return fakeBrowser;
