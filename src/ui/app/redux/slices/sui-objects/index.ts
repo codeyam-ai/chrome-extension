@@ -97,7 +97,10 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
             if (page > 20) {
                 nextCursor = null;
             } else {
-                if (allObjectRefs.hasNextPage) {
+                if (
+                    allObjectRefs.hasNextPage &&
+                    nextCursor !== allObjectRefs.nextCursor
+                ) {
                     nextCursor = allObjectRefs.nextCursor;
                 } else {
                     nextCursor = null;
@@ -169,15 +172,15 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
             }
         }
 
-        // for (const o of allSuiObjects) {
-        //     if (
-        //         o.owner &&
-        //         typeof o.owner === 'object' &&
-        //         'AddressOwner' in o.owner
-        //     ) {
-        //         o.owner.AddressOwner = address;
-        //     }
-        // }
+        for (const o of allSuiObjects) {
+            if (
+                o.owner &&
+                typeof o.owner === 'object' &&
+                'AddressOwner' in o.owner
+            ) {
+                o.owner.AddressOwner = address;
+            }
+        }
     }
 
     return allSuiObjects;
