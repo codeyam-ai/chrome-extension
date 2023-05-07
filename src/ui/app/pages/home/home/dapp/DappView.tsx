@@ -20,7 +20,7 @@ const DappView: React.FC<DappViewProps> = ({ dapp, onClose }) => {
     const iframeRef = useRef<HTMLIFrameElement>(null);
 
     const isFavorite = useMemo(() => {
-        return allFavorites.some((fav) => fav.id === dapp?.id);
+        return (allFavorites ?? []).some((fav) => fav.id === dapp?.id);
     }, [dapp?.id, allFavorites]);
 
     const closeDapp = useCallback(() => {

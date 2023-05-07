@@ -80,7 +80,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
     }, [projectNfts]);
 
     const [favoritesState, setFavoritesState] = useState<SortableItem[]>([
-        ...allFavorites.map(
+        ...(allFavorites ?? []).map(
             (item) =>
                 ({
                     ...item,
