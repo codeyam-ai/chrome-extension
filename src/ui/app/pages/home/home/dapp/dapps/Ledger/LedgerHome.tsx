@@ -6,13 +6,13 @@ import LedgerLogo from './LedgerLogo';
 import { derivationPathForLedger } from './hooks/useDeriveLedgerAccounts';
 import { useTheme } from '_src/shared/utils/themeContext';
 import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
+import Loading from '_src/ui/app/components/loading';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import { useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 import WalletButton from '_src/ui/app/shared/wallet-list/WalletButton';
-import Loading from '_src/ui/app/components/loading';
 
 const LedgerHome = () => {
     const { connectToLedger } = useSuiLedgerClient();
@@ -67,11 +67,30 @@ const LedgerHome = () => {
         }
     }, [connectToLedger]);
 
+    const reset = useCallback(() => {
+        setConnectionError(undefined);
+    }, []);
+
     const ledgerAccounts = useMemo(() => {
         return accountInfos.filter(
             (account) => account.importedLedgerIndex !== undefined
         );
     }, [accountInfos]);
+
+    const readableError = useMemo(() => {
+        if (!connectionError) return;
+
+        if (
+            connectionError ===
+            "Error: The user doesn't have a Ledger device connected to their machine"
+        ) {
+            return {
+                title: 'Not Connected',
+                message:
+                    'Please connect your ledger to your computer, enter your passcode, and launch the Sui app.',
+            };
+        }
+    }, [connectionError]);
 
     if (testingConnection || connectionError) {
         return (
@@ -80,8 +99,14 @@ const LedgerHome = () => {
                 loading={testingConnection}
                 className="py-12 flex justify-center"
             >
-                <div className="mt-12 nx-6 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary p-6 rounded-lg">
-                    {`${connectionError}`}
+                <div className="flex flex-col mt-12 mx-6 gap-3 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary p-6 rounded-lg">
+                    <Subheader>{readableError?.title}</Subheader>
+                    <Body>{readableError?.message}</Body>
+                </div>
+                <div className="py-6">
+                    <Button buttonStyle="primary" onClick={reset}>
+                        Back
+                    </Button>
                 </div>
             </Loading>
         );
