@@ -29,9 +29,15 @@ const ChangeFavoritesPage: React.FC = () => {
         if (tempRemovedNftKeys.includes(CUSTOMIZE_ID)) {
             const tempRemovedNftKeysWithoutCustomize =
                 tempRemovedNftKeys.filter((key) => key !== CUSTOMIZE_ID);
-            await setExcludedDappsKeys(tempRemovedNftKeysWithoutCustomize);
+            await setExcludedDappsKeys(
+                tempRemovedNftKeysWithoutCustomize,
+                tempFavoriteDappsKeys
+            );
         } else {
-            await setExcludedDappsKeys(tempRemovedNftKeys);
+            await setExcludedDappsKeys(
+                tempRemovedNftKeys,
+                tempFavoriteDappsKeys
+            );
         }
 
         navigate('/home/customize/completed');

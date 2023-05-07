@@ -1,6 +1,5 @@
 import { MinusCircleIcon } from '@heroicons/react/24/outline';
 import { NoSymbolIcon, StarIcon } from '@heroicons/react/24/solid';
-import _ from 'lodash';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { ReactSortable, type SortableEvent } from 'react-sortablejs';
 
@@ -164,17 +163,21 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
 
     const onSetFavoritesList = useCallback(
         (newListState: SortableItem[]) => {
-            const existingRemovedNfts = excludedDappsKeys.filter(
-                (key) => !newListState.some((item) => item.key === key)
+            if (!allFavorites) return;
+
+            const removedNfts = excludedDappsKeys.filter(
+                (id) => !newListState.some((item) => item.id === id)
             );
-            const removedNfts = [
-                ...existingRemovedNfts,
-                ..._.differenceWith(
-                    favoritesState,
-                    newListState,
-                    _.isEqual
-                ).map((nft) => nft.key),
-            ].filter((item, index, self) => self.indexOf(item) === index);
+
+            for (const previousFavorite of allFavorites) {
+                if (
+                    !newListState.some(
+                        (item) => item.id === previousFavorite.id
+                    )
+                ) {
+                    removedNfts.push(previousFavorite.id);
+                }
+            }
 
             setFavoritesState(newListState);
             onFavoritesChosen(
@@ -182,7 +185,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                 removedNfts
             );
         },
-        [excludedDappsKeys, favoritesState, onFavoritesChosen]
+        [allFavorites, excludedDappsKeys, onFavoritesChosen]
     );
 
     return (
