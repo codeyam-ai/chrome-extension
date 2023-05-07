@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import getDisplay from '../helpers/getDisplay';
 import capyart from '_images/dapps/logos/capyart.png';
@@ -33,6 +33,7 @@ const DEFAULT_DAPP_KEYS = [
 export const useFavoriteDapps = () => {
     const dispatch = useAppDispatch();
     const { loading: nftsLoading } = useObjectsState();
+    const newState = useRef<string[]>([]);
 
     const [selectedApiEnv] = useAppSelector(({ app }) => [
         app.apiEnv,
@@ -65,6 +66,7 @@ export const useFavoriteDapps = () => {
 
     const setFavoriteDappsKeys = useCallback(
         async (keys: string[]) => {
+            newState.current = keys;
             await dispatch(saveFavoriteDappsKeys(keys));
         },
         [dispatch]
@@ -106,6 +108,8 @@ export const useFavoriteDapps = () => {
             (dapp) => !projectNFTs[dapp.id]
         );
 
+        newState.current = favoriteNfts.map((f) => f.id);
+
         return {
             favoriteNfts,
             favoriteDapps,
@@ -124,8 +128,10 @@ export const useFavoriteDapps = () => {
 
         const finalFavoriteDappKeys = allFavorites.map((f) => f.id);
         if (
+            JSON.stringify(finalFavoriteDappKeys) ===
+                JSON.stringify(newState.current) &&
             JSON.stringify(finalFavoriteDappKeys) !==
-            JSON.stringify(favoriteDappsKeys)
+                JSON.stringify(favoriteDappsKeys)
         ) {
             setFavoriteDappsKeys(finalFavoriteDappKeys);
         }
