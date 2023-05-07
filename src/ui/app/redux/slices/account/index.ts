@@ -1000,37 +1000,7 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
-        const excludedDappKeys = JSON.parse(
-            (await getEncrypted({
-                key: 'excludedDappsKeys',
-                session: false,
-                strong: false,
-            })) || '[]'
-        );
-
-        const allFavoriteDappsKeys = [...favoriteDappsKeys];
-        // for (const key of automaticDappKeys) {
-        //     if (!favoriteDappsKeys.includes(key)) {
-        //         console.log(
-        //             'key not included in favoriteDappsKeys, adding :>> ',
-        //             key
-        //         );
-        //         allFavoriteDappsKeys.push(key);
-        //     }
-        // }
-
-        for (const key of excludedDappKeys) {
-            const index = allFavoriteDappsKeys.indexOf(key);
-            if (index !== -1) {
-                allFavoriteDappsKeys.splice(index, 1);
-            }
-        }
-
-        if (allFavoriteDappsKeys.length !== favoriteDappsKeys.length) {
-            await saveFavoriteDappsKeys(allFavoriteDappsKeys);
-        }
-
-        return allFavoriteDappsKeys;
+        return favoriteDappsKeys;
     }
 );
 

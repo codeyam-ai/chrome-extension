@@ -37,8 +37,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
     onFavoritesChosen,
 }) => {
     const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
-    const { favoriteDapps, favoriteNfts, excludedDappsKeys } =
-        useFavoriteDapps();
+    const { allFavorites, excludedDappsKeys } = useFavoriteDapps();
 
     const nfts = useAppSelector(accountNftsSelector);
     const projectNfts = useMemo(() => {
@@ -81,22 +80,13 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
     }, [projectNfts]);
 
     const [favoritesState, setFavoritesState] = useState<SortableItem[]>([
-        ...favoriteNfts.map(
+        ...allFavorites.map(
             (item) =>
                 ({
                     ...item,
                     sortId: uuidToNumber(item.id),
                     key: item.id,
                     type: 'nft',
-                } as SortableItem)
-        ),
-        ...favoriteDapps.map(
-            (item) =>
-                ({
-                    ...item,
-                    sortId: uuidToNumber(item.id),
-                    key: item.id,
-                    type: 'dapp',
                 } as SortableItem)
         ),
     ]);

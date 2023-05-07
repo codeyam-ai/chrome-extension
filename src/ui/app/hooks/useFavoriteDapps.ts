@@ -2,7 +2,13 @@ import { useCallback, useEffect, useMemo } from 'react';
 
 import getDisplay from '../helpers/getDisplay';
 import capyart from '_images/dapps/logos/capyart.png';
-import dappsMap, { CUSTOMIZE_ID, NetworkName } from '_src/data/dappsMap';
+import dappsMap, {
+    ADDRESS_BOOK_ID,
+    CUSTOMIZE_ID,
+    MY_ASSETS_ID,
+    NetworkName,
+    STAKING_ID,
+} from '_src/data/dappsMap';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import {
     accountNftsSelector,
@@ -12,6 +18,13 @@ import {
 
 import type { SuiObjectData } from '@mysten/sui.js';
 import type { DappData } from '_src/types/DappData';
+
+const DEFAULT_DAPP_KEYS = [
+    CUSTOMIZE_ID,
+    ADDRESS_BOOK_ID,
+    MY_ASSETS_ID,
+    STAKING_ID,
+];
 
 export const useFavoriteDapps = () => {
     const dispatch = useAppDispatch();
@@ -43,94 +56,66 @@ export const useFavoriteDapps = () => {
         [dispatch]
     );
 
-    const favoriteDapps: {
-        allFavoriteDapps: DappData[];
-        favoriteDappsForCurrentNetwork: DappData[];
-    } = useMemo(() => {
+    const { favoriteNfts, allFavorites } = useMemo(() => {
         let projectNFTs: Record<string, DappData> = {};
         if (nfts) {
             projectNFTs = getProjectNftsFromAllNfts(nfts, selectedApiEnv);
         }
 
-        const allFavoriteDappsKeys = [...favoriteDappsKeys].filter(
+        const allFavoriteDappsKeys = [...favoriteDappsKeys];
+        for (const defaultDappKey of DEFAULT_DAPP_KEYS) {
+            if (!allFavoriteDappsKeys.includes(defaultDappKey)) {
+                allFavoriteDappsKeys.push(defaultDappKey);
+            }
+        }
+
+        for (const projectId of Object.keys(projectNFTs)) {
+            if (!allFavoriteDappsKeys.includes(projectId)) {
+                allFavoriteDappsKeys.splice(0, 0, projectId);
+            }
+        }
+
+        const finalFavoriteDappsKeys = allFavoriteDappsKeys.filter(
             (key) => !excludedDappsKeys.includes(key)
         );
 
-        if (!favoriteDappsKeys.includes(CUSTOMIZE_ID)) {
-            allFavoriteDappsKeys.push(CUSTOMIZE_ID);
+        const allFavorites = finalFavoriteDappsKeys
+            .map((key) => (dappsMap.get(key) ?? projectNFTs[key]) as DappData)
+            .filter((dapp) => !excludedDappsKeys.includes(dapp.id));
+
+        if (!allFavorites.find((f) => f.id === CUSTOMIZE_ID)) {
+            allFavorites.push(dappsMap.get(CUSTOMIZE_ID) as DappData);
         }
 
-        const allFavoriteDapps = allFavoriteDappsKeys
-            .map((key) => {
-                const dapp = dappsMap.get(key);
+        const favoriteNfts = Object.values(projectNFTs);
 
-                if (projectNFTs[key]) {
-                    return projectNFTs[key];
-                }
+        return { favoriteNfts, allFavorites };
+    }, [excludedDappsKeys, favoriteDappsKeys, nfts, selectedApiEnv]);
 
-                return dapp;
-            })
-            .filter(Boolean) as DappData[];
+    useEffect(() => {
+        const finalFavoriteDappKeys = favoriteNfts.map((f) => f.id);
+        if (
+            JSON.stringify(finalFavoriteDappKeys) !==
+            JSON.stringify(favoriteDappsKeys)
+        ) {
+            console.log('HI', finalFavoriteDappKeys, favoriteDappsKeys);
+            // setFavoriteDappsKeys(finalFavoriteDappKeys);
+        }
+    }, [favoriteDappsKeys, favoriteNfts, setFavoriteDappsKeys]);
 
-        const favoriteDappsForCurrentNetwork = allFavoriteDapps.filter(
-            (dapp) => {
+    const favoriteDappsForCurrentNetwork = useMemo(
+        () =>
+            allFavorites.filter((dapp) => {
                 if (!dapp?.urls[selectedApiEnv]) {
                     return null;
                 }
                 return dapp;
-            }
-        );
-
-        return {
-            allFavoriteDapps,
-            favoriteDappsForCurrentNetwork,
-        };
-    }, [excludedDappsKeys, favoriteDappsKeys, nfts, selectedApiEnv]);
-
-    const favoriteNfts: DappData[] = useMemo(() => {
-        let projectNFTs: Record<string, DappData> = {};
-        if (nfts) {
-            projectNFTs = getProjectNftsFromAllNfts(nfts, selectedApiEnv);
-        }
-        return Object.keys(projectNFTs)
-            .filter((nftKey) => {
-                return (
-                    !excludedDappsKeys.includes(nftKey) &&
-                    !favoriteDappsKeys.includes(nftKey)
-                );
-            })
-            .map((key) => projectNFTs[key]);
-    }, [nfts, selectedApiEnv, excludedDappsKeys, favoriteDappsKeys]);
-
-    const allFavorites: DappData[] = useMemo(() => {
-        return [
-            ...favoriteNfts,
-            ...favoriteDapps.favoriteDappsForCurrentNetwork,
-        ].filter(
-            (dapp, index, self) =>
-                self.findIndex((d) => d.id === dapp.id) === index
-        );
-    }, [favoriteNfts, favoriteDapps]);
-
-    useEffect(() => {
-        const allFavoriteDappsKeys = favoriteDapps.allFavoriteDapps.map(
-            (dapp) => dapp.id
-        );
-        if (
-            JSON.stringify(allFavoriteDappsKeys) !==
-            JSON.stringify(favoriteDappsKeys)
-        ) {
-            setFavoriteDappsKeys(allFavoriteDappsKeys);
-        }
-    }, [
-        allFavorites,
-        favoriteDapps.allFavoriteDapps,
-        favoriteDappsKeys,
-        setFavoriteDappsKeys,
-    ]);
+            }),
+        [allFavorites, selectedApiEnv]
+    );
 
     return {
-        favoriteDapps: favoriteDapps.allFavoriteDapps,
+        favoriteDappsForCurrentNetwork,
         favoriteNfts,
         allFavorites,
         excludedDappsKeys,
