@@ -108,7 +108,7 @@ export const useFavoriteDapps = () => {
             (dapp) => !projectNFTs[dapp.id]
         );
 
-        newState.current = favoriteNfts.map((f) => f.id);
+        newState.current = allFavorites.map((f) => f.id);
 
         return {
             favoriteNfts,
