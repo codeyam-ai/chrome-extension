@@ -69,7 +69,7 @@ export class NFT {
             });
             if (!response.data) return [];
             allKioskObjects = [...(allKioskObjects || []), ...response.data];
-            if (!response.hasNextPage) {
+            if (!response.hasNextPage || response.nextCursor === cursor) {
                 cursor = null;
             } else {
                 cursor = response.nextCursor;
