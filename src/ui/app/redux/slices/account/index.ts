@@ -27,12 +27,7 @@ import { Coin } from '_redux/slices/sui-objects/Coin';
 import { generateMnemonic } from '_shared/cryptography/mnemonics';
 import Authentication from '_src/background/Authentication';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
-import {
-    ADDRESS_BOOK_ID,
-    CUSTOMIZE_ID,
-    MY_ASSETS_ID,
-    STAKING_ID,
-} from '_src/data/dappsMap';
+import { CUSTOMIZE_ID } from '_src/data/dappsMap';
 import { AccountType, PASSPHRASE_TEST } from '_src/shared/constants';
 import {
     deleteEncrypted,
@@ -1005,40 +1000,7 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
-        const excludeDappKeys = JSON.parse(
-            (await getEncrypted({
-                key: 'excludedDappsKeys',
-                session: false,
-                strong: false,
-            })) || '[]'
-        );
-
-        const automaticKeys = [
-            CUSTOMIZE_ID,
-            ADDRESS_BOOK_ID,
-            MY_ASSETS_ID,
-            STAKING_ID,
-        ];
-
-        const allFavoriteDappsKeys = [...favoriteDappsKeys];
-        for (const key of automaticKeys) {
-            if (!favoriteDappsKeys.includes(key)) {
-                allFavoriteDappsKeys.push(key);
-            }
-        }
-
-        for (const key of excludeDappKeys) {
-            const index = allFavoriteDappsKeys.indexOf(key);
-            if (index !== -1) {
-                allFavoriteDappsKeys.splice(index, 1);
-            }
-        }
-
-        if (allFavoriteDappsKeys.length !== favoriteDappsKeys.length) {
-            await saveFavoriteDappsKeys(allFavoriteDappsKeys);
-        }
-
-        return allFavoriteDappsKeys;
+        return favoriteDappsKeys;
     }
 );
 
@@ -1231,6 +1193,12 @@ const accountSlice = createSlice({
                 loadFavoriteDappsKeysFromStorage.fulfilled,
                 (state, action) => {
                     state.favoriteDappsKeys = action.payload;
+                }
+            )
+            .addCase(
+                loadExcludedDappsKeysFromStorage.fulfilled,
+                (state, action) => {
+                    state.excludedDappsKeys = action.payload;
                 }
             )
             .addCase(saveFavoriteDappsKeys.fulfilled, (state, action) => {
