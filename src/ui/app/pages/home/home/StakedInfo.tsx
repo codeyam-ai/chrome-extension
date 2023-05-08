@@ -1,21 +1,25 @@
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { memo } from 'react';
+
 import StakingLogo from '_images/dapps/logos/staking.png';
 import { useFormatCoin } from '_src/ui/app/hooks';
-import { useTotalStakedSUI } from '_src/ui/app/hooks/staking/useTotalStakedSUI';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
-export const StakedInfo = () => {
-    const { totalActivePendingStakedSUI } = useTotalStakedSUI();
-
+interface StakedInfoProps {
+    totalActivePendingStakedSUI: bigint;
+}
+const StakedInfo: React.FC<StakedInfoProps> = ({
+    totalActivePendingStakedSUI,
+}) => {
     const [formattedStakedSui, symbol] = useFormatCoin(
         totalActivePendingStakedSUI,
         SUI_TYPE_ARG
     );
 
     return (
-        <>
+        <div data-testid="staked-sui-info">
             <Body className="ml-1">Currently Staked SUI</Body>
             <div className="flex w-full mb-4 rounded-lg bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
                 <img
@@ -32,10 +36,14 @@ export const StakedInfo = () => {
                         to="/home/staking"
                         className="text-sm"
                     >
-                        Go to Staking
+                        {totalActivePendingStakedSUI
+                            ? 'Go to Staking'
+                            : 'Stake'}
                     </EthosLink>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
+
+export default memo(StakedInfo);

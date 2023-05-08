@@ -5,7 +5,7 @@ import useAppSelector from '../useAppSelector';
 
 export const useTotalStakedSUI = () => {
     const { address } = useAppSelector(({ account }) => account);
-    const { data: delegatedStakes, isLoading } = useGetDelegatedStakes(
+    const { data: delegatedStakes, ...queryResults } = useGetDelegatedStakes(
         address || ''
     );
 
@@ -24,8 +24,12 @@ export const useTotalStakedSUI = () => {
         );
     }, [delegatedStakes]);
 
+    console.log('delegatedStakes', delegatedStakes);
+    console.log('status', queryResults.status);
+    console.log('delegatedStakes isLoading', queryResults.isLoading);
+
     return {
-        isLoading,
+        ...queryResults,
         delegatedStakes,
         totalActivePendingStakedSUI,
     };
