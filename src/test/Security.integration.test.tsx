@@ -5,6 +5,7 @@ import nock from 'nock';
 
 import { getEncrypted } from '_shared/storagex/store';
 import { BASE_URL } from '_src/shared/constants';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import {
@@ -15,7 +16,11 @@ import {
     simulateMnemonicUser,
     simulateEmailUser,
 } from '_src/test/utils/storage';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+
+jest.mock('_shared/encryption/password', () => ({
+    encrypt: jest.fn((data) => data.text),
+    decrypt: jest.fn((data) => data.encryptedData),
+}));
 
 describe('The Security Settings page', () => {
     let mockJsonRpc: MockJsonRpc;
@@ -133,11 +138,7 @@ describe('The Security Settings page', () => {
             await within(currentWallet).findByText('Wallet 1');
             await userEvent.click(currentWallet);
 
-            const wallet2Link = await screen.findByText(
-                'Wallet 2',
-                {},
-                { timeout: 30000 }
-            );
+            const wallet2Link = await screen.findByText('Wallet 2');
             await userEvent.click(wallet2Link);
 
             await navigateToSecurity();
@@ -372,11 +373,7 @@ describe('The Security Settings page', () => {
             await within(currentWallet).findByText('Wallet 1');
             await userEvent.click(currentWallet);
 
-            const wallet2Link = await screen.findByText(
-                'Wallet 2',
-                {},
-                { timeout: 30000 }
-            );
+            const wallet2Link = await screen.findByText('Wallet 2');
             await userEvent.click(wallet2Link);
 
             await navigateToSecurity();
