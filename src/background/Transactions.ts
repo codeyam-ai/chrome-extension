@@ -588,7 +588,7 @@ class Transactions {
                             txRequest.txResult = txResult;
                             txRequest.txResultError = txResultError;
                             txRequest.txSigned = txSigned;
-                            await this.storeTransactionRequest(txRequest);
+                            await this.removeTransactionRequest(txRequest.id);
                             return txRequest;
                         }
                     }

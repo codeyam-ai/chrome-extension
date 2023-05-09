@@ -1,5 +1,4 @@
 import { thunkExtras } from '_redux/store/thunk-extras';
-import transactions from '_src/background/Transactions';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 
 import type {
@@ -56,10 +55,6 @@ const finishTransaction = async (
                     options: options,
                     requestType: requestType,
                 });
-
-                if (txID) {
-                    await transactions.removeTransactionRequest(txID);
-                }
             }
         } catch (e) {
             txResultError = (e as Error).message;
