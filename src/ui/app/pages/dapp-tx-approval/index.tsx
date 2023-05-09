@@ -9,6 +9,7 @@ import { useParams } from 'react-router-dom';
 
 import IncorrectChain from './errors/IncorrectChain';
 import IncorrectSigner from './errors/IncorrectSigner';
+import LockedNFT from './errors/LockedNFT';
 import NotEnoughGas from './errors/NotEnoughGas';
 import UnknownError from './errors/UnknownError';
 import analyzeChanges from './lib/analyzeChanges';
@@ -216,6 +217,8 @@ export function DappTxApprovalPage() {
                                 gasRequired={analysis.errorInfo.gasRequired}
                             />
                         );
+                    } else if (analysis.type === 'NFT is locked') {
+                        setExplicitError(<LockedNFT />);
                     } else {
                         setDryRunError(analysis.message);
                     }
