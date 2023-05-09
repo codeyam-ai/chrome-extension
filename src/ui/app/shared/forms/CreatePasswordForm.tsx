@@ -65,6 +65,7 @@ const CustomFormikForm = () => {
                     forceLightTheme
                 />
                 <HideShowToggle
+                    forceLightTheme
                     name="Password"
                     hide={passwordMode}
                     onToggle={togglePasswordMode}

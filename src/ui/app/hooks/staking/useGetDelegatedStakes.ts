@@ -9,7 +9,8 @@ export default function useGetDelegatedStakes(
     address: string
 ): UseQueryResult<DelegatedStake[], Error> {
     const rpc = api.instance.fullNode;
-    return useQuery(['validator', address], () =>
-        rpc.getStakes({ owner: address })
-    );
+
+    return useQuery(['validator', address], () => {
+        return rpc.getStakes({ owner: address });
+    });
 }

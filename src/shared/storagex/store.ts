@@ -53,6 +53,7 @@ export async function setEncrypted({
         strong: false,
         masterSalt: MASTER_SALT,
     });
+
     const encryptedValue = encrypt({
         text: value,
         strong,
