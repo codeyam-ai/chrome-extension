@@ -125,10 +125,10 @@ describe('The Transaction Approval popup', () => {
         txRequest: ApprovalRequest
     ) {
         await setEncrypted({
-            key: TX_STORE_KEY, 
+            key: TX_STORE_KEY,
             value: JSON.stringify({ [txRequestId]: txRequest }),
             session: false,
-            strong: false   
+            strong: false,
         });
     }
 

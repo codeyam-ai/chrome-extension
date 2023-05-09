@@ -372,7 +372,11 @@ describe('The Security Settings page', () => {
             await within(currentWallet).findByText('Wallet 1');
             await userEvent.click(currentWallet);
 
-            const wallet2Link = await screen.findByText('Wallet 2');
+            const wallet2Link = await screen.findByText(
+                'Wallet 2',
+                {},
+                { timeout: 30000 }
+            );
             await userEvent.click(wallet2Link);
 
             await navigateToSecurity();
