@@ -58,13 +58,14 @@ function HomePage() {
             <SendReceiveButtonGroup mistBalance={mistBalance} />
             <div className="flex flex-col gap-6 overflow-auto">
                 <ContentBlock>
-                    {!isLoadingStakedSui && (
-                        <StakedInfo
-                            totalActivePendingStakedSUI={
-                                totalActivePendingStakedSUI
-                            }
-                        />
-                    )}
+                    {!isLoadingStakedSui &&
+                        totalActivePendingStakedSUI > BigInt('0') && (
+                            <StakedInfo
+                                totalActivePendingStakedSUI={
+                                    totalActivePendingStakedSUI
+                                }
+                            />
+                        )}
 
                     <CoinList balances={balances} />
 
