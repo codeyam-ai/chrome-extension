@@ -121,9 +121,25 @@ const LedgerHome = () => {
             {ledgerAccounts.length > 0 ? (
                 <div className="flex flex-col gap-3">
                     <Subheader>Selected Ledger Accounts</Subheader>
-                    <Body>
-                        To edit your selected accounts click &#34;Connect&#34;
-                    </Body>
+                    {successfulConnection ? (
+                        <Body>Your ledger is successfully connected!</Body>
+                    ) : (
+                        <>
+                            <Body>
+                                Your ledger accounts are read-only right now.
+                            </Body>
+                            <Body>
+                                Test the connection to enable transactions.
+                            </Body>
+
+                            <Button
+                                buttonStyle="primary"
+                                onClick={testConnection}
+                            >
+                                Test Connection
+                            </Button>
+                        </>
+                    )}
                     {ledgerAccounts.map((account) => {
                         return (
                             <div
@@ -138,20 +154,10 @@ const LedgerHome = () => {
                             </div>
                         );
                     })}
-                    {successfulConnection ? (
-                        <Body>Your ledger is successfully connected!</Body>
-                    ) : (
-                        <Body>
-                            Your ledger accounts are read-only right now. Please{' '}
-                            <span
-                                onClick={testConnection}
-                                className="text-ethos-light-primary-light dark:text-ethos-dark-primary-light cursor-pointer underline"
-                            >
-                                test your connection
-                            </span>{' '}
-                            to enable signing transactions.
-                        </Body>
-                    )}
+
+                    <Body>
+                        To edit your selected accounts click &#34;Connect&#34;
+                    </Body>
                 </div>
             ) : (
                 <>
