@@ -3,12 +3,11 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import getDisplay from '../helpers/getDisplay';
 import capyart from '_images/dapps/logos/capyart.png';
 import dappsMap, {
-    ADDRESS_BOOK_ID,
     CUSTOMIZE_ID,
-    MY_ASSETS_ID,
+    DEFAULT_DAPP_KEYS,
     NetworkName,
-    STAKING_ID,
 } from '_src/data/dappsMap';
+import { API_ENV } from '_src/shared/api-env';
 import {
     useAppDispatch,
     useAppSelector,
@@ -23,22 +22,12 @@ import {
 import type { SuiObjectData } from '@mysten/sui.js';
 import type { DappData } from '_src/types/DappData';
 
-const DEFAULT_DAPP_KEYS = [
-    CUSTOMIZE_ID,
-    ADDRESS_BOOK_ID,
-    MY_ASSETS_ID,
-    STAKING_ID,
-];
-
 export const useFavoriteDapps = () => {
     const dispatch = useAppDispatch();
     const { loading: nftsLoading } = useObjectsState();
     const newState = useRef<string[]>([]);
 
-    const [selectedApiEnv] = useAppSelector(({ app }) => [
-        app.apiEnv,
-        app.customRPC,
-    ]);
+    const selectedApiEnv = useAppSelector(({ app }) => app.apiEnv);
 
     const favoriteDappsKeys = useAppSelector(
         ({ account }) => account.favoriteDappsKeys
@@ -140,7 +129,10 @@ export const useFavoriteDapps = () => {
     const favoriteDappsForCurrentNetwork = useMemo(() => {
         if (!allFavorites && !favoriteDapps) return [];
 
-        return (allFavorites ?? favoriteDapps).filter((dapp) => {
+        const relevantDapps = allFavorites ?? favoriteDapps;
+        if (selectedApiEnv === API_ENV.customRPC) return relevantDapps;
+
+        return relevantDapps.filter((dapp) => {
             if (!dapp?.urls[selectedApiEnv]) {
                 return null;
             }

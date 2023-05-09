@@ -17,6 +17,7 @@ import resizeWindow from './lib/resizeWindow';
 import Base from './types/Base';
 import ComplexMoveCall from './types/ComplexMoveCall';
 import SimpleAssetMint from './types/SimpleAssetMint';
+import SimpleAssetSwap from './types/SimpleAssetSwap';
 import SimpleAssetTransfer from './types/SimpleAssetTransfer';
 import SimpleBase from './types/SimpleBase';
 import SimpleCoinTransfer from './types/SimpleCoinTransfer';
@@ -202,6 +203,8 @@ export function DappTxApprovalPage() {
                     transactionBlock,
                 });
 
+                console.log('ANALYSIS', analysis);
+
                 if ('type' in analysis) {
                     if (
                         analysis.type === 'Insufficient Gas' &&
@@ -362,6 +365,24 @@ export function DappTxApprovalPage() {
 
         try {
             if (
+                analysis.moveCalls.length === 1 &&
+                analysis.balanceAdditions.length === 1 &&
+                analysis.balanceReductions.length === 1 &&
+                analysis.assetTransfers.length === 0
+            ) {
+                return (
+                    <SimpleBase approval={txRequest} onComplete={onComplete}>
+                        <SimpleAssetSwap
+                            signer={signer}
+                            addition={analysis.balanceAdditions[0]}
+                            reduction={analysis.balanceReductions[0]}
+                            analysis={analysis}
+                            onCancel={onComplete}
+                            onApprove={onApprove}
+                        />
+                    </SimpleBase>
+                );
+            } else if (
                 analysis.moveCalls.length === 1 &&
                 analysis.assetMints.length === 1 &&
                 analysis.assetTransfers.length === 0
