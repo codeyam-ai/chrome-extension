@@ -421,7 +421,7 @@ const dappsMap: Map<string, DappData> = new Map([
                 'Cetus is a pioneer DEX and concentrated liquidity protocol focusing on Move-based ecosystems like Aptos and Sui.',
             urls: {
                 [NetworkName.TESTNET]: 'https://app.cetus.zone',
-                // [NetworkName.MAINNET]: 'https://app.cetus.zone',
+                [NetworkName.MAINNET]: 'https://app.cetus.zone',
             },
             tags: [TagName.FINANCE],
         } as DappData,
