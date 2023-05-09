@@ -11,6 +11,7 @@ import type {
 } from '../lib/analyzeChanges';
 import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 
 export type StepInformation = {
     addition: BalanceAddition;
@@ -31,7 +32,7 @@ const SimpleAssetSwap = ({
     analysis: AnalyzeChangesResult;
     onApprove: () => void;
     onCancel: () => void;
-    signer: EthosSigner | RawSigner;
+    signer: EthosSigner | LedgerSigner | RawSigner;
 }) => {
     const stepInformation = useMemo(
         () => ({ addition, reduction, analysis }),
