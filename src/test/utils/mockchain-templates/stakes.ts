@@ -1,5 +1,3 @@
-import type { DelegatedStake } from '@mysten/sui.js';
-
 interface MakeStakeObjectParams {
     stakeCount: number;
     stakePrincipal: string;
