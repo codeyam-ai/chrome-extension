@@ -18,6 +18,7 @@ import {
 } from '_redux/slices/account';
 import { Coin } from '_redux/slices/sui-objects/Coin';
 import ns from '_shared/namespace';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 import safeAddress from '_src/ui/app/helpers/safeAddress';
 import {
@@ -30,7 +31,6 @@ import type { SuiMoveObject } from '@mysten/sui.js';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { RootState } from '_src/ui/app/redux/RootReducer';
 import type { FormikHelpers } from 'formik';
-import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 
 const initialValues = {
     amount: '',

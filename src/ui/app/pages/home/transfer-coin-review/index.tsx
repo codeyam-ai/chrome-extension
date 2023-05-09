@@ -135,7 +135,15 @@ function TransferCoinReviewPage() {
                 setSendError((e as SerializedError).message || null);
             }
         },
-        [locale, coinType, coinDecimals, dispatch, navigate]
+        [
+            locale,
+            coinType,
+            coinDecimals,
+            state,
+            connectToLedger,
+            dispatch,
+            navigate,
+        ]
     );
     const handleOnClearSubmitError = useCallback(() => {
         setSendError(null);

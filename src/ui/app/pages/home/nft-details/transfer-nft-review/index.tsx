@@ -107,7 +107,15 @@ function TransferNFTReview() {
                 delay: 500,
             });
         }
-    }, [dispatch, navigate, formState]);
+    }, [
+        formState.nftId,
+        formState.to,
+        account,
+        connectToLedger,
+        selectedNFTObj,
+        dispatch,
+        navigate,
+    ]);
 
     if (!formState.to) {
         return <Navigate to={'/nfts'} />;

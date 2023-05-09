@@ -1,21 +1,23 @@
 import { Ed25519PublicKey } from '@mysten/sui.js';
 import { useCallback, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import LedgerLogo from './LedgerLogo';
 import { derivationPathForLedger } from './hooks/useDeriveLedgerAccounts';
+import ledgerReadableError from './lib/ledgerReadableError';
 import { useTheme } from '_src/shared/utils/themeContext';
 import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import Loading from '_src/ui/app/components/loading';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
-import { useAppSelector } from '_src/ui/app/hooks';
+import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
+import { setLedgerConnected } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 import WalletButton from '_src/ui/app/shared/wallet-list/WalletButton';
-import ledgerReadableError from './lib/ledgerReadableError';
 
 const LedgerHome = () => {
+    const dispatch = useAppDispatch();
     const { connectToLedger } = useSuiLedgerClient();
     const { accountInfos } = useAppSelector((state) => state.account);
 
@@ -57,16 +59,18 @@ const LedgerHome = () => {
             const suiAddress = publicKey.toSuiAddress();
 
             if (suiAddress) {
+                await dispatch(setLedgerConnected(true));
                 setSuccessfulConnection(true);
             }
         } catch (error: unknown) {
             console.log('ERROR', error);
             setConnectionError(`${error}`);
+            await dispatch(setLedgerConnected(false));
             setSuccessfulConnection(false);
         } finally {
             setTestingConnection(false);
         }
-    }, [connectToLedger]);
+    }, [connectToLedger, dispatch]);
 
     const reset = useCallback(() => {
         setConnectionError(undefined);
@@ -79,7 +83,7 @@ const LedgerHome = () => {
     }, [accountInfos]);
 
     const readableError = useMemo(() => {
-        return ledgerReadableError(connectionError)
+        return ledgerReadableError(connectionError);
     }, [connectionError]);
 
     if (testingConnection || connectionError) {
@@ -134,16 +138,20 @@ const LedgerHome = () => {
                             </div>
                         );
                     })}
-                    <Body>
-                        Your ledger accounts are read-only right now. Please{' '}
-                        <span
-                            onClick={testConnection}
-                            className="text-ethos-light-primary-light dark:text-ethos-dark-primary-light cursor-pointer underline"
-                        >
-                            test your connection
-                        </span>{' '}
-                        to enable signing transactions.
-                    </Body>
+                    {successfulConnection ? (
+                        <Body>Your ledger is successfully connected!</Body>
+                    ) : (
+                        <Body>
+                            Your ledger accounts are read-only right now. Please{' '}
+                            <span
+                                onClick={testConnection}
+                                className="text-ethos-light-primary-light dark:text-ethos-dark-primary-light cursor-pointer underline"
+                            >
+                                test your connection
+                            </span>{' '}
+                            to enable signing transactions.
+                        </Body>
+                    )}
                 </div>
             ) : (
                 <>

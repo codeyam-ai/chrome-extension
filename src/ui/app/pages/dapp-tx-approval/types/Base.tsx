@@ -10,6 +10,7 @@ import TabElement from '../TabElement';
 import { useCategorizedEvents, useCustomSummary } from '../lib';
 import finishTransaction from '../lib/finishTransaction';
 import * as summaries from '../summaries';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 import { useFormatCoin } from '_src/ui/app/hooks';
 
@@ -23,7 +24,6 @@ import type {
 } from '@mysten/sui.js';
 import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 
 export enum TxApprovalTab {
     SUMMARY = 'Summary',
@@ -451,6 +451,7 @@ const Base = ({
         },
         [
             txRequest,
+            connectToLedger,
             transactionBlock,
             txID,
             passphrase,

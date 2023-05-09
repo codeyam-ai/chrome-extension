@@ -109,6 +109,14 @@ export function useFormatCoin(
     formattedLength?: number
 ): FormattedCoin {
     // const intl = useIntl();
+    const verifiedBridgeToken = useMemo<string | undefined>(() => {
+        if (!coinType) return;
+        const packageObjectId = coinType.split('::')[0];
+        if (!packageObjectId) return;
+
+        return VERIFIED_TOKENS[packageObjectId];
+    }, [coinType]);
+
     const symbol = useMemo(
         () => (coinType ? Coin.getCoinSymbol(coinType) : ''),
         [coinType]
@@ -132,7 +140,7 @@ export function useFormatCoin(
         //     return '...';
         // }
 
-        const safeDecimals = decimals ?? 9;
+        const safeDecimals = decimals ?? (verifiedBridgeToken ? 6 : 9);
 
         const decimalsBalance = new BigNumber(balance.toString()).shiftedBy(
             -1 * safeDecimals
@@ -152,7 +160,7 @@ export function useFormatCoin(
         }
 
         return ns.format.coinBalance(balance, safeDecimals);
-    }, [balance, decimals, formattedLength]);
+    }, [balance, decimals, formattedLength, verifiedBridgeToken]);
 
     const dollars = useMemo(() => {
         if (
@@ -164,14 +172,6 @@ export function useFormatCoin(
         }
         return ns.format.dollars(balance, decimals);
     }, [balance, decimals]);
-
-    const verifiedBridgeToken = useMemo<string | undefined>(() => {
-        if (!coinType) return;
-        const packageObjectId = coinType.split('::')[0];
-        if (!packageObjectId) return;
-
-        return VERIFIED_TOKENS[packageObjectId];
-    }, [coinType]);
 
     return [
         formatted,

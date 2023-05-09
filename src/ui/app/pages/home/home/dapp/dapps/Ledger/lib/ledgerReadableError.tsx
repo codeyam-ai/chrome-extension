@@ -20,6 +20,6 @@ const ledgerReadableError = (error?: string) => {
                 'The connection with Ledger does not yet support your device. It is in active development and should improve soon.',
         };
     }
-}
+};
 
 export default ledgerReadableError;

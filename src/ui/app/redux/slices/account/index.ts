@@ -27,14 +27,8 @@ import { Coin } from '_redux/slices/sui-objects/Coin';
 import { generateMnemonic } from '_shared/cryptography/mnemonics';
 import Authentication from '_src/background/Authentication';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
-import {
-    ADDRESS_BOOK_ID,
-    CUSTOMIZE_ID,
-    MY_ASSETS_ID,
-    STAKING_ID,
-} from '_src/data/dappsMap';
+import { CUSTOMIZE_ID } from '_src/data/dappsMap';
 import { AccountType, PASSPHRASE_TEST } from '_src/shared/constants';
-import { LedgerAccount } from '_src/shared/cryptography/LedgerAccount';
 import {
     deleteEncrypted,
     getEncrypted,
@@ -250,7 +244,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                         };
                     }
                 } else if (activeAccount?.importedLedgerIndex !== undefined) {
-                    console.log('LEDGER');
+                    activeSeed = undefined;
                 } else {
                     activeSeed = {
                         address:
@@ -1009,40 +1003,7 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
-        const excludeDappKeys = JSON.parse(
-            (await getEncrypted({
-                key: 'excludedDappsKeys',
-                session: false,
-                strong: false,
-            })) || '[]'
-        );
-
-        const automaticKeys = [
-            CUSTOMIZE_ID,
-            ADDRESS_BOOK_ID,
-            MY_ASSETS_ID,
-            STAKING_ID,
-        ];
-
-        const allFavoriteDappsKeys = [...favoriteDappsKeys];
-        for (const key of automaticKeys) {
-            if (!favoriteDappsKeys.includes(key)) {
-                allFavoriteDappsKeys.push(key);
-            }
-        }
-
-        for (const key of excludeDappKeys) {
-            const index = allFavoriteDappsKeys.indexOf(key);
-            if (index !== -1) {
-                allFavoriteDappsKeys.splice(index, 1);
-            }
-        }
-
-        if (allFavoriteDappsKeys.length !== favoriteDappsKeys.length) {
-            await saveFavoriteDappsKeys(allFavoriteDappsKeys);
-        }
-
-        return allFavoriteDappsKeys;
+        return favoriteDappsKeys;
     }
 );
 
@@ -1109,6 +1070,7 @@ type AccountState = {
     favoriteDappsKeys: string[];
     excludedDappsKeys: string[];
     importNames: { mnemonics: string[]; privateKeys: string[] };
+    ledgerConnected: boolean;
 };
 
 const initialState: AccountState = {
@@ -1130,6 +1092,7 @@ const initialState: AccountState = {
         mnemonics: [],
         privateKeys: [],
     },
+    ledgerConnected: false,
 };
 
 const accountSlice = createSlice({
@@ -1159,6 +1122,9 @@ const accountSlice = createSlice({
         },
         setEmail: (state, action: PayloadAction<string | null>) => {
             state.email = action.payload;
+        },
+        setLedgerConnected: (state, action: PayloadAction<boolean>) => {
+            state.ledgerConnected = action.payload;
         },
         lockWalletUI: (state, action: PayloadAction<boolean>) => {
             if (action.payload) {
@@ -1237,6 +1203,12 @@ const accountSlice = createSlice({
                     state.favoriteDappsKeys = action.payload;
                 }
             )
+            .addCase(
+                loadExcludedDappsKeysFromStorage.fulfilled,
+                (state, action) => {
+                    state.excludedDappsKeys = action.payload;
+                }
+            )
             .addCase(saveFavoriteDappsKeys.fulfilled, (state, action) => {
                 state.favoriteDappsKeys = action.payload;
             })
@@ -1283,8 +1255,13 @@ const accountSlice = createSlice({
             }),
 });
 
-export const { setMnemonic, setAddress, setAccountInfos, lockWalletUI } =
-    accountSlice.actions;
+export const {
+    setMnemonic,
+    setAddress,
+    setAccountInfos,
+    setLedgerConnected,
+    lockWalletUI,
+} = accountSlice.actions;
 
 export default accountSlice.reducer;
 

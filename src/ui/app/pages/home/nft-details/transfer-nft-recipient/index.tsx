@@ -15,6 +15,7 @@ import {
     accountNftsSelector,
 } from '_redux/slices/account';
 import { DEFAULT_NFT_TRANSFER_GAS_FEE } from '_redux/slices/sui-objects/Coin';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 import safeAddress from '_src/ui/app/helpers/safeAddress';
 import transferObjectTransactionBlock from '_src/ui/app/helpers/transferObjectTransactionBlock';
@@ -25,7 +26,6 @@ import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 import type { SerializedError } from '@reduxjs/toolkit';
 
 import st from './TransferNFTForm.module.scss';
-import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 
 const initialValues = {
     to: '',

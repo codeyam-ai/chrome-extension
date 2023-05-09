@@ -5,14 +5,14 @@ import {
 } from '@heroicons/react/24/solid';
 import { useEffect } from 'react';
 
-import { useAppDispatch, useInitializedGuard } from '../hooks';
+import { useInitializedGuard } from '../hooks';
+import { useFavoriteDapps } from '../hooks/useFavoriteDapps';
 import { AppState } from '../hooks/useInitializedGuard';
-import { saveFavoriteDappsKeys } from '../redux/slices/account';
 import OnboardingButton from '../shared/buttons/OnboardingButton';
 import HeaderWithLargeEthosIcon from '../shared/headers/page-headers/HeaderWithLargeEthosIcon';
 import OnboardingLayout from '../shared/layouts/OnboardingLayout';
 import Title from '../shared/typography/Title';
-import { ADDRESS_BOOK_ID, STAKING_ID } from '_src/data/dappsMap';
+import { automaticDappKeys } from '_src/data/dappsMap';
 
 import type { OnboardingButtonProps } from '../shared/buttons/OnboardingButton';
 
@@ -48,13 +48,11 @@ const setupButtons: OnboardingButtonProps[] = [
 
 const WelcomePage = () => {
     useInitializedGuard([AppState.UNINITIALIZED, AppState.LOCKED]);
-    const dispatch = useAppDispatch();
+    const { setFavoriteDappsKeys } = useFavoriteDapps();
 
     useEffect(() => {
-        // save Staking and Address Book dapps are favorite by default, but it is not locked like Customize or Address Book
-        dispatch(saveFavoriteDappsKeys([STAKING_ID]));
-        dispatch(saveFavoriteDappsKeys([ADDRESS_BOOK_ID]));
-    }, [dispatch]);
+        setFavoriteDappsKeys(automaticDappKeys);
+    }, [setFavoriteDappsKeys]);
     return (
         <OnboardingLayout>
             <div className="flex flex-col w-[464px]">

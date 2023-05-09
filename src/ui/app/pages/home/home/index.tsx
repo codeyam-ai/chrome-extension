@@ -21,7 +21,8 @@ import Subheader from '_src/ui/app/shared/typography/Subheader';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 function HomePage() {
-    const { allFavorites } = useFavoriteDapps();
+    const { favoriteDappsForCurrentNetwork, favoriteDapps } =
+        useFavoriteDapps();
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
 
     const balances = useAppSelector(accountAggregateBalancesSelector);
@@ -39,7 +40,11 @@ function HomePage() {
 
     return (
         <div className="flex flex-col">
-            {showDappList && <DappList dapps={allFavorites} />}
+            {showDappList && (
+                <DappList
+                    dapps={favoriteDappsForCurrentNetwork ?? favoriteDapps}
+                />
+            )}
             <ChainIndicator apiEnv={selectedApiEnv} className="mt-3" />
             <div className="pt-5 pb-4">
                 <WalletBalanceAndIconHomeView
