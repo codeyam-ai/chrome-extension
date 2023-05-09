@@ -12,7 +12,7 @@ import OnboardingButton from '../shared/buttons/OnboardingButton';
 import HeaderWithLargeEthosIcon from '../shared/headers/page-headers/HeaderWithLargeEthosIcon';
 import OnboardingLayout from '../shared/layouts/OnboardingLayout';
 import Title from '../shared/typography/Title';
-import { automaticDappKeys } from '_src/data/dappsMap';
+import { DEFAULT_DAPP_KEYS } from '_src/data/dappsMap';
 
 import type { OnboardingButtonProps } from '../shared/buttons/OnboardingButton';
 
@@ -51,7 +51,7 @@ const WelcomePage = () => {
     const { setFavoriteDappsKeys } = useFavoriteDapps();
 
     useEffect(() => {
-        setFavoriteDappsKeys(automaticDappKeys);
+        setFavoriteDappsKeys(DEFAULT_DAPP_KEYS);
     }, [setFavoriteDappsKeys]);
     return (
         <OnboardingLayout>
