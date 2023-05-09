@@ -214,6 +214,14 @@ const analyzeChanges = async ({
             totalFee,
         };
     } catch (error: unknown) {
+        if (`${error}`.includes('not_exclusively_listed')) {
+            return {
+                type: 'NFT is locked',
+                message:
+                    'This NFT has been listed in a marketplace and therefore can not be transferred. Please unlist the NFT from the marketplace and try again.',
+            };
+        }
+
         const address = await signer.getAddress();
         const {
             totalBalance,
