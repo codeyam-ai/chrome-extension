@@ -1,4 +1,4 @@
-import { Coin, SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useMemo } from 'react';
 
 import { Costs, Gains } from './Amount';
@@ -21,21 +21,13 @@ const SwapTransactionCard = ({
     stepInformation: StepInformation;
 }) => {
     const { addition, reduction, analysis } = stepInformation;
-    const additionCoinType = useMemo(
-        () => Coin.getCoinType(addition.type ?? SUI_TYPE_ARG),
+    const additionPrimaryType = useMemo(
+        () => addition.type ?? SUI_TYPE_ARG,
         [addition]
     );
-    const reductionCoinType = useMemo(
-        () => Coin.getCoinType(reduction.type ?? SUI_TYPE_ARG),
-        [reduction]
-    );
-    const additionPrimaryType = useMemo(
-        () => additionCoinType ?? addition.type ?? SUI_TYPE_ARG,
-        [additionCoinType, addition]
-    );
     const reductionPrimaryType = useMemo(
-        () => reductionCoinType ?? reduction.type ?? SUI_TYPE_ARG,
-        [reductionCoinType, reduction]
+        () => reduction.type ?? SUI_TYPE_ARG,
+        [reduction]
     );
     const simpleAdditionType = useMemo(
         () => additionPrimaryType.split('::')[2],
@@ -45,13 +37,12 @@ const SwapTransactionCard = ({
         () => reductionPrimaryType.split('::')[2],
         [reductionPrimaryType]
     );
-    console.log('additionCoinType', additionCoinType);
     const [, additionSymbol, , additionName, additionIconUrl] = useFormatCoin(
         0,
-        additionCoinType
+        addition.type
     );
     const [, reductionSymbol, , reductionName, reductionIconUrl] =
-        useFormatCoin(0, reductionCoinType);
+        useFormatCoin(0, reduction.type);
 
     return (
         <TransactionBody>

@@ -147,7 +147,6 @@ const analyzeChanges = async ({
         const dryRunResponse = await signer.dryRunTransactionBlock({
             transactionBlock,
         });
-        console.log('DRY RUN RESPONSE: ', dryRunResponse);
 
         const { effects, balanceChanges, objectChanges } = dryRunResponse;
 

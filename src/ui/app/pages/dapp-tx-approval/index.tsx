@@ -203,8 +203,6 @@ export function DappTxApprovalPage() {
                     transactionBlock,
                 });
 
-                console.log('ANALYSIS', analysis);
-
                 if ('type' in analysis) {
                     if (
                         analysis.type === 'Insufficient Gas' &&
