@@ -424,7 +424,7 @@ class Transactions {
     > {
         const resultsString = await getEncrypted({
             key: TX_STORE_KEY,
-            session: true,
+            session: false,
             strong: false,
         });
         return JSON.parse(resultsString || '{}');
@@ -504,7 +504,7 @@ class Transactions {
             key: TX_STORE_KEY,
             value: JSON.stringify(txRequests),
             strong: false,
-            session: true,
+            session: false,
         });
 
         Browser.storage.local.remove(TX_STORE_KEY);

@@ -2,11 +2,12 @@ import { TransactionBlock } from '@mysten/sui.js';
 import { SUI_MAINNET_CHAIN } from '@mysten/wallet-standard';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import Browser from 'webextension-polyfill';
 
 import { TX_STORE_KEY } from '_shared/constants';
+import { setEncrypted } from '_src/shared/storagex/store';
 import { renderTemplate } from '_src/test/utils/json-templates';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import { mockCommonCalls } from '_src/test/utils/mockchain';
 import { makeCoinObject } from '_src/test/utils/mockchain-templates/coinObject';
 import { makeDryRunTransactionResponse } from '_src/test/utils/mockchain-templates/dryRunTransaction';
 import { renderApp } from '_src/test/utils/react-rendering';
@@ -14,7 +15,6 @@ import { accountInfos, simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
 import type { ApprovalRequest } from '_payloads/transactions';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('The Transaction Approval popup', () => {
     const txRequestId = '95ae4a0d-0b7b-478b-ab70-bc3fe291540e';
@@ -36,7 +36,7 @@ describe('The Transaction Approval popup', () => {
             dependencies: testDeps,
         });
 
-        await screen.findByText('Cost', {}, { timeout: 5000 });
+        await screen.findByText('Cost', {}, { timeout: 50000 });
         const approveButton = await screen.findByText('Approve');
 
         await userEvent.click(approveButton);
@@ -124,8 +124,11 @@ describe('The Transaction Approval popup', () => {
         txRequestId: string,
         txRequest: ApprovalRequest
     ) {
-        await Browser.storage.local.set({
-            [TX_STORE_KEY]: { [txRequestId]: txRequest },
+        await setEncrypted({
+            key: TX_STORE_KEY, 
+            value: JSON.stringify({ [txRequestId]: txRequest }),
+            session: false,
+            strong: false   
         });
     }
 
