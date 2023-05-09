@@ -174,6 +174,7 @@ const ImportSeedPage = () => {
                     )}
                 </div>
                 <HideShowToggle
+                    forceLightTheme
                     name="Phrase"
                     hide={passwordMode}
                     onToggle={togglePasswordMode}
