@@ -1,10 +1,10 @@
 import { screen, within } from '@testing-library/react';
 
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Rendering the Home page', () => {
     let mockJsonRpc: MockJsonRpc;
@@ -15,7 +15,16 @@ describe('Rendering the Home page', () => {
     });
 
     test('when wallet has no coins', async () => {
-        mockSuiObjects(mockJsonRpc);
+        mockSuiObjects(mockJsonRpc, {
+            stakedSui: [
+                {
+                    principal: '1000000000',
+                },
+                {
+                    principal: '1000000000',
+                },
+            ],
+        });
         renderApp();
         await screen.findByText('Get started with Sui');
     });
@@ -24,6 +33,14 @@ describe('Rendering the Home page', () => {
         beforeEach(async () => {
             mockSuiObjects(mockJsonRpc, {
                 suiBalance: 40000000000,
+                stakedSui: [
+                    {
+                        principal: '1000000000',
+                    },
+                    {
+                        principal: '1000000000',
+                    },
+                ],
             });
         });
         test('shows the USD amount when configured to do so', async () => {
@@ -63,6 +80,30 @@ describe('Rendering the Home page', () => {
             const coinList = await screen.findByTestId('coin-list');
             expect(within(coinList).queryByText('$4,000.00')).toBeNull();
             await within(coinList).findByText('40 SUI');
+        });
+    });
+
+    describe('when the wallet has staked SUI', () => {
+        beforeEach(async () => {
+            mockSuiObjects(mockJsonRpc, {
+                stakedSui: [
+                    {
+                        principal: '1000000000',
+                    },
+                    {
+                        principal: '1000000000',
+                    },
+                ],
+            });
+        });
+
+        test('shows staked SUI total', async () => {
+            renderApp();
+
+            const stakedInfo = await screen.findByTestId('staked-sui-info');
+
+            await within(stakedInfo).findByText('Go to Staking');
+            await within(stakedInfo).findByText('2 SUI');
         });
     });
 });
