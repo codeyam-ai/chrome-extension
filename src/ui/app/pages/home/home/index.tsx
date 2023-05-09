@@ -18,6 +18,7 @@ import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import TestBiometrics from './TEST_biometrics';
 
 function HomePage() {
     const { favoriteDappsForCurrentNetwork, favoriteDapps } =
