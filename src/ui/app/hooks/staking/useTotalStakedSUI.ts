@@ -14,19 +14,16 @@ export const useTotalStakedSUI = () => {
         if (!delegatedStakes) return BigInt(0);
 
         return delegatedStakes.reduce(
-            (acc, curr) =>
-                curr.stakes.reduce(
+            (acc, curr) => {
+                return curr.stakes.reduce(
                     (total, { principal }) => total + BigInt(principal),
                     acc
-                ),
+                );
+            },
 
             BigInt(0)
         );
     }, [delegatedStakes]);
-
-    console.log('delegatedStakes', delegatedStakes);
-    console.log('status', queryResults.status);
-    console.log('delegatedStakes isLoading', queryResults.isLoading);
 
     return {
         ...queryResults,
