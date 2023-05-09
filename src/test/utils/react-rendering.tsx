@@ -21,6 +21,7 @@ import type { RootState } from '_redux/RootReducer';
 import type { Dependencies } from '_shared/utils/dependenciesContext';
 import type { AppStore } from '_store';
 import type { PropsWithChildren } from 'react';
+import { SuiLedgerClientProvider } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: PreloadedState<RootState>;
@@ -53,21 +54,23 @@ export async function renderApp({
 
     function Wrapper({ children }: PropsWithChildren<unknown>): JSX.Element {
         return (
-            <MemoryRouter
-                // we start at '/home' because if we use the index route of '/' it will navigate to '/home'
-                // at some point after the initial render, which causes havoc in tests.
-                initialEntries={initialRoute ? [initialRoute] : ['/home']}
-            >
-                <Provider store={storeToUse}>
-                    <IntlProvider locale={locale}>
-                        <QueryClientProvider client={queryClient}>
-                            <DependenciesContext.Provider value={dependencies}>
-                                {children}
-                            </DependenciesContext.Provider>
-                        </QueryClientProvider>
-                    </IntlProvider>
-                </Provider>
-            </MemoryRouter>
+            <SuiLedgerClientProvider>
+                <MemoryRouter
+                    // we start at '/home' because if we use the index route of '/' it will navigate to '/home'
+                    // at some point after the initial render, which causes havoc in tests.
+                    initialEntries={initialRoute ? [initialRoute] : ['/home']}
+                >
+                    <Provider store={storeToUse}>
+                        <IntlProvider locale={locale}>
+                            <QueryClientProvider client={queryClient}>
+                                <DependenciesContext.Provider value={dependencies}>
+                                    {children}
+                                </DependenciesContext.Provider>
+                            </QueryClientProvider>
+                        </IntlProvider>
+                    </Provider>
+                </MemoryRouter>
+            </SuiLedgerClientProvider>
         );
     }
 
