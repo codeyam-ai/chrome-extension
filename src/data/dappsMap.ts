@@ -64,7 +64,7 @@ export const CUSTOMIZE_ID = '5bbe5c3d-88a2-4537-92a5-20b6021e2ea3';
 export const STAKING_ID = 'c97b5592-ae1f-4dd4-a903-050a97c4d84a';
 export const DISPLAY_ID = '8154ebc4-035c-4133-ba09-e6b07b7c2040';
 
-export const automaticDappKeys = [
+export const DEFAULT_DAPP_KEYS = [
     CUSTOMIZE_ID,
     ADDRESS_BOOK_ID,
     MY_ASSETS_ID,
