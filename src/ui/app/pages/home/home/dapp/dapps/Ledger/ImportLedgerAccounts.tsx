@@ -1,13 +1,8 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { HandThumbUpIcon } from '@heroicons/react/24/solid';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-// import {
-//     LedgerAccountList,
-// } from './LedgerAccountList';
 import { toast } from 'react-toastify';
 
 import {
@@ -15,7 +10,6 @@ import {
     useDeriveLedgerAccounts,
 } from './hooks/useDeriveLedgerAccounts';
 import Loading from '_src/ui/app/components/loading';
-import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
 import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
@@ -27,6 +21,7 @@ import WalletButton from '_src/ui/app/shared/wallet-list/WalletButton';
 
 import type { SerializedLedgerAccount } from '_src/shared/cryptography/LedgerAccount';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import humanReadableTransactionErrors from '_src/ui/app/helpers/humanReadableTransactionError';
 
 const numLedgerAccountsToDeriveByDefault = 10;
 
@@ -74,17 +69,14 @@ export function ImportLedgerAccounts() {
 
     const { accountInfos } = useAppSelector(({ account }) => account);
 
-    const {
-        data: ledgerAccounts,
-        isLoading: areLedgerAccountsLoading,
-        isError: encounteredDerviceAccountsError,
-    } = useDeriveLedgerAccounts({
-        numAccountsToDerive: numLedgerAccountsToDeriveByDefault,
-        onError: (error) => {
-            toast.error(`Something went wrong. ${error}`);
-            navigate(LEDGER_HOME);
-        },
-    });
+    const { data: ledgerAccounts, isLoading: areLedgerAccountsLoading } =
+        useDeriveLedgerAccounts({
+            numAccountsToDerive: numLedgerAccountsToDeriveByDefault,
+            onError: (error) => {
+                toast.error(humanReadableTransactionErrors(`${error}`));
+                navigate(LEDGER_HOME);
+            },
+        });
 
     const [selectedLedgerAccounts, setSelectedLedgerAccounts] = useState<
         SerializedLedgerAccount[]

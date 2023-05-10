@@ -28,7 +28,6 @@ const WalletButton = ({
     destination,
     onClick,
 }: WalletButtonProps) => {
-    const { ledgerConnected } = useAppSelector(({ account }) => account);
     const ref = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -95,11 +94,7 @@ const WalletButton = ({
                     emojiSizeInPx={22}
                 />
                 <div className="flex flex-col text-left" title={wallet.address}>
-                    <BodyLarge>
-                        {name}
-                        {wallet.importedLedgerIndex !== undefined &&
-                            !ledgerConnected && <>(read-only)</>}
-                    </BodyLarge>
+                    <BodyLarge>{name}</BodyLarge>
                     <Body isTextColorMedium>{shortenedAddress}</Body>
                 </div>
             </div>
