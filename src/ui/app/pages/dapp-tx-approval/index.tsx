@@ -151,7 +151,6 @@ export function DappTxApprovalPage() {
 
         if (!accountInfos || accountInfos.length === 0) return;
 
-        console.log('RETRIEVE SIGNER');
         const retrieveSigner = async () => {
             const signer = await getSigner(
                 passphrase,
@@ -305,17 +304,6 @@ export function DappTxApprovalPage() {
     }, [handleOnSubmit]);
 
     const content = useMemo(() => {
-        // if (
-        //     activeAccount?.importedLedgerIndex !== undefined &&
-        //     !ledgerConnection
-        // ) {
-        //     return (
-        //         <SimpleBase approval={txRequest} onComplete={onComplete}>
-        //             <ConnectLedger onConnect={setLedgerConnection} />
-        //         </SimpleBase>
-        //     );
-        // }
-
         if (
             txRequest &&
             'account' in txRequest.tx &&

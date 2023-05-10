@@ -1,3 +1,7 @@
+import { isErrorCausedByUserNotHavingEnoughSuiToPayForGas } from '../pages/dapp-tx-approval/lib';
+import { getGasDataFromError } from '../pages/dapp-tx-approval/lib/extractGasData';
+import getErrorDisplaySuiForMist from '../pages/dapp-tx-approval/lib/getErrorDisplaySuiForMist';
+
 const humanReadableTransactionErrors = (errorMessage: string) => {
     if (
         errorMessage &&
@@ -17,6 +21,12 @@ const humanReadableTransactionErrors = (errorMessage: string) => {
         errorMessage.indexOf('Ledger device: INS_NOT_SUPPORTED (0x6d00)') > -1
     ) {
         return 'The Ledger did not sign the transaction. Please try again. Be sure to scroll all the way to the right until you see the "Confirm" button.';
+    }
+
+    if (isErrorCausedByUserNotHavingEnoughSuiToPayForGas(errorMessage)) {
+        return `You don't have enough SUI to pay the transaction cost of ${getErrorDisplaySuiForMist(
+            getGasDataFromError(errorMessage)?.gasBudget
+        )} SUI.`;
     }
 
     return errorMessage;

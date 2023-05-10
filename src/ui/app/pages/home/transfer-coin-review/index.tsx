@@ -9,9 +9,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import TransferCoinReviewForm from './TransferCoinReviewForm';
-import { isErrorCausedByUserNotHavingEnoughSuiToPayForGas } from '../../dapp-tx-approval/lib';
-import { getGasDataFromError } from '../../dapp-tx-approval/lib/extractGasData';
-import getErrorDisplaySuiForMist from '../../dapp-tx-approval/lib/getErrorDisplaySuiForMist';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { resetSendSuiForm } from '_redux/slices/forms';
@@ -21,7 +18,6 @@ import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClien
 import sendTokens from '_src/ui/app/helpers/sendTokens';
 import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
 import { accountCoinsSelector } from '_src/ui/app/redux/slices/account';
-import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 
 import type { SuiMoveObject } from '@mysten/sui.js';

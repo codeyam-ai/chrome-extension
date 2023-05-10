@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
 import { useEditWalletUrl } from '../../components/settings-menu/hooks';
-import { useAppDispatch, useAppSelector, useMiddleEllipsis } from '../../hooks';
+import { useAppDispatch, useMiddleEllipsis } from '../../hooks';
 import useWalletName from '../../hooks/useWalletName';
 import { saveActiveAccountIndex } from '../../redux/slices/account';
 import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';

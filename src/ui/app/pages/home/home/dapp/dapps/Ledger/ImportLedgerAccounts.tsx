@@ -12,6 +12,7 @@ import {
 import Loading from '_src/ui/app/components/loading';
 import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
 import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
+import humanReadableTransactionErrors from '_src/ui/app/helpers/humanReadableTransactionError';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { saveAccountInfos } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
@@ -21,7 +22,6 @@ import WalletButton from '_src/ui/app/shared/wallet-list/WalletButton';
 
 import type { SerializedLedgerAccount } from '_src/shared/cryptography/LedgerAccount';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-import humanReadableTransactionErrors from '_src/ui/app/helpers/humanReadableTransactionError';
 
 const numLedgerAccountsToDeriveByDefault = 10;
 

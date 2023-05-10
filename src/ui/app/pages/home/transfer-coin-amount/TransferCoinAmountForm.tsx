@@ -11,6 +11,7 @@ import LoadingIndicator from '_components/loading/LoadingIndicator';
 import ns from '_shared/namespace';
 import { useDependencies } from '_shared/utils/dependenciesContext';
 import WalletTo from '_src/ui/app/components/wallet-to';
+import humanReadableTransactionErrors from '_src/ui/app/helpers/humanReadableTransactionError';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
 import { CoinSelect } from '_src/ui/app/pages/home/home/CoinDropdown';
@@ -22,7 +23,6 @@ import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import CopyBody from '_src/ui/app/shared/typography/CopyBody';
 
 import type { FormValues } from '.';
-import humanReadableTransactionErrors from '_src/ui/app/helpers/humanReadableTransactionError';
 
 export type TransferCoinFormProps = {
     submitError: string | null;

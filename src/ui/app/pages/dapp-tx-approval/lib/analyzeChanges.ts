@@ -144,13 +144,10 @@ const analyzeChanges = async ({
     transactionBlock,
 }: AnalyzeChangesArgs): Promise<AnalyzeChangesResult | AnalyzeError> => {
     try {
-        console.log('analyzeChanges GET ADDRESS');
         const address = await signer.getAddress();
-        console.log('analyzeChanges DRY RUN', address);
         const dryRunResponse = await signer.dryRunTransactionBlock({
             transactionBlock,
         });
-        console.log('analyzeChanges DRY RUN COMPLETE', dryRunResponse);
 
         const { effects, balanceChanges, objectChanges } = dryRunResponse;
 

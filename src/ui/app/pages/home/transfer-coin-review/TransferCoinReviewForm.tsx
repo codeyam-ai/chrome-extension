@@ -11,6 +11,7 @@ import LoadingIndicator from '_components/loading/LoadingIndicator';
 import { useDependencies } from '_shared/utils/dependenciesContext';
 import { useTheme } from '_src/shared/utils/themeContext';
 import WalletTo from '_src/ui/app/components/wallet-to';
+import humanReadableTransactionErrors from '_src/ui/app/helpers/humanReadableTransactionError';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
@@ -22,7 +23,6 @@ import Header from '_src/ui/app/shared/typography/Header';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { FormValues } from '.';
-import humanReadableTransactionErrors from '_src/ui/app/helpers/humanReadableTransactionError';
 
 export type TransferCoinFormProps = {
     submitted: boolean;
