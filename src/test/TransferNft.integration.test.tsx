@@ -2,11 +2,11 @@ import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { renderTemplate } from './utils/json-templates';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { makeDryRunTransactionResponse } from '_src/test/utils/mockchain-templates/dryRunTransaction';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Creating and sending an NFT', () => {
     let mockJsonRpc: MockJsonRpc;
@@ -142,7 +142,11 @@ describe('Creating and sending an NFT', () => {
         const confirmBtn = await screen.findByText('Confirm & Send');
         userEvent.click(confirmBtn);
 
-        await screen.findByText('Transaction submitted.');
+        await screen.findByText(
+            'Transaction submitted...',
+            {},
+            { timeout: 5000 }
+        );
 
         // Account for the delay in displaying the 'transaction successful alert'
         await new Promise((r) => setTimeout(r, 500));

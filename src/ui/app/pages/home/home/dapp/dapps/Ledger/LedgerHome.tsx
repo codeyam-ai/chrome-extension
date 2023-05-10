@@ -95,6 +95,8 @@ const LedgerHome = () => {
                 <div className="flex flex-col gap-3">
                     <Subheader>Selected Ledger Accounts</Subheader>
 
+                    <Body>Click an account to select it in the wallet.</Body>
+
                     {ledgerAccounts.map((account) => {
                         return (
                             <div
@@ -105,6 +107,7 @@ const LedgerHome = () => {
                                     wallet={account}
                                     isActive={false}
                                     isWalletEditing={false}
+                                    destination="/home"
                                 />
                             </div>
                         );
