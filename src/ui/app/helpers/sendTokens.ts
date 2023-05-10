@@ -80,17 +80,11 @@ const sendTokens = async ({
         );
     }
 
-    try {
-        const response = await signer.signAndExecuteTransactionBlock({
-            transactionBlock,
-        });
+    const response = await signer.signAndExecuteTransactionBlock({
+        transactionBlock,
+    });
 
-        console.log('RESPONSE', response);
-
-        return response;
-    } catch (e: unknown) {
-        console.log('TRANSACTIONERROR', e);
-    }
+    return response;
 };
 
 export default sendTokens;

@@ -46,7 +46,7 @@ function TransferNFTReview() {
     const navigate = useNavigate();
     const submitNftTransfer = useCallback(async () => {
         // Let the user know the transaction is en route
-        toast(<SuccessAlert text={'Transaction submitted.'} />);
+        toast(<SuccessAlert text={'Submitting transaction...'} />);
 
         if (formState.nftId === null) {
             return;

@@ -54,7 +54,6 @@ function TransferCoinReviewPage() {
             { to, amount }: FormValues,
             { resetForm }: FormikHelpers<FormValues>
         ) => {
-            toast(<SuccessAlert text={'Transaction submitted.'} />);
             const amountBigNumber = ns.parse.numberString({
                 numberString: amount,
                 locale,
@@ -89,13 +88,7 @@ function TransferCoinReviewPage() {
                     amount: bigIntAmount,
                 });
 
-                // const tx = await dispatch(
-                //     sendTokens({
-                //         amount: bigIntAmount,
-                //         recipientAddress: to,
-                //         tokenTypeArg: coinType,
-                //     })
-                // ).unwrap();
+                toast(<SuccessAlert text={'Transaction submitted...'} />);
 
                 resetForm();
                 dispatch(resetSendSuiForm());
@@ -118,20 +111,20 @@ function TransferCoinReviewPage() {
                 const receiptUrl = '/home';
                 navigate(receiptUrl);
             } catch (e) {
-                const error = e as { message: string };
-                const failAlertText =
-                    isErrorCausedByUserNotHavingEnoughSuiToPayForGas(
-                        error.message
-                    )
-                        ? `You don't have enough SUI to pay the transaction cost of ${getErrorDisplaySuiForMist(
-                              getGasDataFromError(error.message)?.gasBudget
-                          )} SUI.`
-                        : 'Transaction unsuccessful.';
-                const receiptUrl = '/home';
-                navigate(receiptUrl);
-                toast(<FailAlert text={failAlertText} />, {
-                    delay: 250,
-                });
+                // const error = e as { message: string };
+                // const failAlertText =
+                //     isErrorCausedByUserNotHavingEnoughSuiToPayForGas(
+                //         error.message
+                //     )
+                //         ? `You don't have enough SUI to pay the transaction cost of ${getErrorDisplaySuiForMist(
+                //               getGasDataFromError(error.message)?.gasBudget
+                //           )} SUI.`
+                //         : 'Transaction unsuccessful.';
+                // const receiptUrl = '/home';
+                // navigate(receiptUrl);
+                // toast(<FailAlert text={failAlertText} />, {
+                //     delay: 250,
+                // });
                 setSendError((e as SerializedError).message || null);
             }
         },

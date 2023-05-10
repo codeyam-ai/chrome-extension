@@ -22,6 +22,7 @@ import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import CopyBody from '_src/ui/app/shared/typography/CopyBody';
 
 import type { FormValues } from '.';
+import humanReadableTransactionErrors from '_src/ui/app/helpers/humanReadableTransactionError';
 
 export type TransferCoinFormProps = {
     submitError: string | null;
@@ -146,6 +147,7 @@ function TransferCoinForm({
     const dollarDisplay = isValid && amountBigNumber.gte(0) ? dollars : '$0.00';
 
     const { featureFlags } = useDependencies();
+
     return (
         <Form autoComplete="off" noValidate={false}>
             <div className="pt-6 px-6 text-left flex flex-col mb-2">
@@ -183,8 +185,13 @@ function TransferCoinForm({
                     component="div"
                 />
                 {submitError ? (
-                    <div className="flex flex-col mb-2">
-                        <Alert title="Transfer failed" subtitle={submitError} />
+                    <div className="flex flex-col m-3">
+                        <Alert
+                            title="Problem"
+                            subtitle={humanReadableTransactionErrors(
+                                submitError
+                            )}
+                        />
                     </div>
                 ) : null}
             </div>

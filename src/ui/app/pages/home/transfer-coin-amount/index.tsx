@@ -205,25 +205,31 @@ function useOnHandleSubmit({
                 );
             }
 
-            const signedTx = await signer.dryRunTransactionBlock({
-                transactionBlock,
-            });
+            try {
+                const signedTx = await signer.dryRunTransactionBlock({
+                    transactionBlock,
+                });
 
-            const { computationCost, storageCost, storageRebate } =
-                signedTx.effects.gasUsed;
+                const { computationCost, storageCost, storageRebate } =
+                    signedTx.effects.gasUsed;
 
-            const gasFee =
-                Number(computationCost) +
-                (Number(storageCost) - Number(storageRebate));
+                const gasFee =
+                    Number(computationCost) +
+                    (Number(storageCost) - Number(storageRebate));
 
-            dispatch(
-                setSuiAmount({
-                    amount: amount,
-                    gasFee: gasFee.toString(),
-                })
-            );
+                dispatch(
+                    setSuiAmount({
+                        amount: amount,
+                        gasFee: gasFee.toString(),
+                    })
+                );
 
-            setSendError(null);
+                setSendError(null);
+            } catch (e: unknown) {
+                const message = (e as SerializedError).message || null;
+                setSendError(message);
+                return;
+            }
 
             try {
                 resetForm();
