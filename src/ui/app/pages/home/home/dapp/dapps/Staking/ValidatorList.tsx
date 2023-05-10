@@ -85,34 +85,14 @@ const ValidatorList: React.FC<ValidatorListProps> = ({
     return (
         <Loading loading={isFetching} big={true}>
             <div className="flex flex-col">
-                <div className="flex w-full p-3.5 rounded-lg items-center bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
-                    <button
-                        onClick={onSortDirectionChange}
-                        className="flex pr-3"
-                    >
-                        <ArrowUpDownSort sortDirection={sortDirection} />
-                    </button>
-                    <fieldset className="flex justify-between w-full">
-                        <Radio
-                            label="Stake Share"
-                            id="stakeShare"
-                            onChange={onSortKeyChange}
-                            checked={sortKey === 'stakeShare'}
-                        />
-                        <Radio
-                            label="APY"
-                            id="apy"
-                            onChange={onSortKeyChange}
-                            checked={sortKey === 'apy'}
-                        />
-                        <Radio
-                            label="Name"
-                            id="name"
-                            onChange={onSortKeyChange}
-                            checked={sortKey === 'name'}
-                        />
-                    </fieldset>
-                </div>
+                {!isFetching && sortedValidators && (
+                    <ValidatorSort
+                        sortDirection={sortDirection}
+                        sortKey={sortKey}
+                        onSortDirectionChange={onSortDirectionChange}
+                        onSortKeyChange={onSortKeyChange}
+                    />
+                )}
                 {!isFetching &&
                     sortedValidators &&
                     sortedValidators.map((validator, key) => (
@@ -184,4 +164,44 @@ const ValidatorRow: React.FC<ValidatorRowProps> = ({
     );
 };
 
+interface ValidatorSortProps {
+    sortDirection: SortDirection;
+    onSortDirectionChange: () => void;
+    sortKey: SortKey;
+    onSortKeyChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+const ValidatorSort = ({
+    onSortDirectionChange,
+    sortDirection,
+    sortKey,
+    onSortKeyChange,
+}: ValidatorSortProps) => {
+    return (
+        <div className="flex w-full p-3.5 rounded-lg items-center bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
+            <button onClick={onSortDirectionChange} className="flex pr-3">
+                <ArrowUpDownSort sortDirection={sortDirection} />
+            </button>
+            <fieldset className="flex justify-between w-full">
+                <Radio
+                    label="Stake Share"
+                    id="stakeShare"
+                    onChange={onSortKeyChange}
+                    checked={sortKey === 'stakeShare'}
+                />
+                <Radio
+                    label="APY"
+                    id="apy"
+                    onChange={onSortKeyChange}
+                    checked={sortKey === 'apy'}
+                />
+                <Radio
+                    label="Name"
+                    id="name"
+                    onChange={onSortKeyChange}
+                    checked={sortKey === 'name'}
+                />
+            </fieldset>
+        </div>
+    );
+};
 export default ValidatorList;
