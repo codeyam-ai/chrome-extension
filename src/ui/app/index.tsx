@@ -32,7 +32,7 @@ import SavePhrasePage from './pages/initialize/save-phrase';
 import StylePage from './pages/initialize/style';
 import OnboardingThemePage from './pages/initialize/theme';
 import VerifyPhrasePage from './pages/initialize/verify-phrase';
-import LockedPage from './pages/locked';
+import LockedPage from './pages/locked/locked';
 import PasswordPage from './pages/password';
 import { AppType } from './redux/slices/app/AppType';
 import { loadContactsStorage } from './redux/slices/contacts';
@@ -62,6 +62,7 @@ import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
 import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
+import ForgotPasswordPage from './pages/locked/ForgotPasswordPage';
 
 const App = () => {
     const dispatch = useAppDispatch();
@@ -208,6 +209,10 @@ const App = () => {
                     </Route>
                     <Route path="password" element={<PasswordPage />} />
                     <Route path="locked" element={<LockedPage />} />
+                    <Route
+                        path="locked/forgot-password"
+                        element={<ForgotPasswordPage />}
+                    />
                     <Route path="locked/*" element={<LockedPage />} />
                     <Route
                         path="/connect/:requestID"

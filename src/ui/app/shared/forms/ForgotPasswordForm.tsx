@@ -22,7 +22,7 @@ const CustomFormikForm = ({
 }) => {
     // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
     // which we can spread on <input> and alse replace ErrorMessage entirely.
-    const [field, meta] = useField('password');
+    const [field, meta] = useField('mnemonic');
     const [passwordMode, setPasswordMode] = useState(true);
 
     const togglePasswordMode = useCallback(() => {
@@ -31,57 +31,50 @@ const CustomFormikForm = ({
 
     return (
         <div className="flex flex-col h-full justify-between">
+            FORGOT PASSWORD
             <Input
                 {...field}
-                label="Password"
-                id="password"
-                data-testid="password"
-                name="password"
+                label="Seed Phrase"
+                id="mnemonic"
+                data-testid="mnemonic"
+                name="mnemonic"
                 type={passwordMode ? 'password' : 'text'}
                 required={true}
                 autoFocus
                 errorText={
                     isPasswordIncorrect
-                        ? 'Password is incorrect'
+                        ? 'Seed Phrase is incorrect'
                         : meta.touched && meta.error
                         ? meta.error
                         : undefined
                 }
             />
-
             <div className={'mb-6'}>
                 <HideShowToggle
-                    name="Password"
+                    name="Seed Phrase"
                     hide={passwordMode}
                     onToggle={togglePasswordMode}
                 />
             </div>
-
             <Button
                 buttonStyle="primary"
                 data-testid="submit"
                 type="submit"
                 disabled={!meta.value || !!meta.error}
             >
-                Unlock Wallet
+                Reset Password
             </Button>
-
-            <Body className="pb-6">
-                <EthosLink type="internal" to="forgot-password">
-                    Forgot Password
-                </EthosLink>
-            </Body>
         </div>
     );
 };
 
-const UnlockWalletForm = ({
+const ForgotPasswordForm = ({
     onSubmit,
     isPasswordIncorrect = false,
 }: PassphraseFormProps) => {
     const _onSubmit = useCallback(
-        ({ password }: FormikValues) => {
-            onSubmit(password);
+        ({ mnemonic }: FormikValues) => {
+            onSubmit(mnemonic);
         },
         [onSubmit]
     );
@@ -89,10 +82,10 @@ const UnlockWalletForm = ({
         <div className="h-full">
             <Formik
                 initialValues={{
-                    password: '',
+                    mnemonic: '',
                 }}
                 validationSchema={Yup.object({
-                    password: Yup.string().required('Enter your password'),
+                    mnemonic: Yup.string().required('Enter your seed phrase'),
                 })}
                 onSubmit={_onSubmit}
             >
@@ -106,4 +99,4 @@ const UnlockWalletForm = ({
     );
 };
 
-export default UnlockWalletForm;
+export default ForgotPasswordForm;
