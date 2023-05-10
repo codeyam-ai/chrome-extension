@@ -17,10 +17,13 @@ import type { Detail } from '../DetailElement';
 import type { Section } from '../SectionElement';
 import type { SmallDetail } from '../SmallValue';
 import type {
+    RawSigner,
     SuiAddress,
     SuiObjectChange,
     TransactionEffects,
 } from '@mysten/sui.js';
+import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
 
 export enum TxApprovalTab {
@@ -34,9 +37,8 @@ export type TabSections = {
 };
 
 export type BaseProps = {
+    signer: RawSigner | EthosSigner | LedgerSigner;
     txID?: string;
-    authentication: string | null;
-    activeAccountIndex: number;
     txRequest: ApprovalRequest | null;
     transactionBlock: TransactionBlock | null;
     objectChanges?: SuiObjectChange[] | null;
@@ -46,9 +48,8 @@ export type BaseProps = {
 };
 
 const Base = ({
+    signer,
     address,
-    authentication,
-    activeAccountIndex,
     txID,
     transactionBlock,
     txRequest,
@@ -414,6 +415,12 @@ const Base = ({
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
+            if (!signer) return;
+
+            const justSign =
+                txRequest?.tx && 'justSign' in txRequest.tx
+                    ? txRequest.tx.justSign
+                    : undefined;
             const options =
                 txRequest?.tx && 'options' in txRequest.tx
                     ? txRequest.tx.options
@@ -423,26 +430,17 @@ const Base = ({
                     ? txRequest.tx.requestType
                     : undefined;
             await finishTransaction(
+                signer,
                 transactionBlock ?? null,
                 txID,
                 approved,
-                authentication ?? null,
-                address,
-                activeAccountIndex,
+                justSign,
                 options,
                 requestType
             );
             setDone(true);
         },
-        [
-            txRequest?.tx,
-            transactionBlock,
-            txID,
-            authentication,
-            address,
-            activeAccountIndex,
-            setDone,
-        ]
+        [signer, txRequest, transactionBlock, txID, setDone]
     );
 
     return txRequest ? (

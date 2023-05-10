@@ -35,7 +35,7 @@ const Tooltip = ({
                               marginLeft: right ? '15px' : 'auto',
                               marginTop: down ? '9px' : 'auto',
                               opacity: 1,
-                              zIndex: 20,
+                              zIndex: 51, //max tailwind class is z-50
                           }
                         : {
                               marginLeft: right ? '10px' : 0,

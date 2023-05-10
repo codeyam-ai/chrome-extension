@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getTheme } from '../../helpers/getTheme';
+import { useTheme } from '_src/shared/utils/themeContext';
 
 export const Icon = ({
     isRound,
@@ -13,10 +13,10 @@ export const Icon = ({
     iconColor?: string;
     displayIcon: JSX.Element;
 }) => {
-    const theme = getTheme();
+    const { resolvedTheme } = useTheme();
 
     const styles =
-        theme === 'light'
+        resolvedTheme === 'light'
             ? {
                   backgroundColor: '#F1EAFC',
                   iconColor: '#6D28D9',

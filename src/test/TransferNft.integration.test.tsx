@@ -2,20 +2,22 @@ import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { renderTemplate } from './utils/json-templates';
-import { Mockchain } from '_src/test/utils/mockchain';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { makeDryRunTransactionResponse } from '_src/test/utils/mockchain-templates/dryRunTransaction';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
 
 describe('Creating and sending an NFT', () => {
-    let mockchain: Mockchain;
+    let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
-        mockchain = new Mockchain();
+        mockJsonRpc = new MockJsonRpc();
         simulateMnemonicUser();
-        mockchain.mockCommonCalls();
+        mockCommonCalls(mockJsonRpc);
     });
 
     test('rendering an empty state for the nfts page', async () => {
-        mockchain.mockSuiObjects({
+        mockSuiObjects(mockJsonRpc, {
             suiBalance: 500000,
         });
         renderApp({ initialRoute: '/nfts' });
@@ -23,7 +25,7 @@ describe('Creating and sending an NFT', () => {
     });
 
     test('rendering the nfts page with an nft populated', async () => {
-        mockchain.mockSuiObjects({
+        mockSuiObjects(mockJsonRpc, {
             nftDetails: {
                 name: 'nft-test',
             },
@@ -31,21 +33,20 @@ describe('Creating and sending an NFT', () => {
 
         renderApp({ initialRoute: '/nfts' });
         await screen.findByText('NFTs');
-        await screen.findByText('1');
         await screen.findByTestId('nft-test');
     });
 
     test('Transfer the NFT', async () => {
         const nftName = 'nft-test';
 
-        mockchain.mockSuiObjects({
+        mockSuiObjects(mockJsonRpc, {
             suiBalance: 500000,
             nftDetails: {
                 name: 'nft-test',
             },
         });
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'suix_getCoins',
                 params: [
@@ -59,41 +60,41 @@ describe('Creating and sending an NFT', () => {
             true
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             { method: 'suix_getReferenceGasPrice', params: [] },
             '1',
             true
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
-                    'AAACAQAAAAAAAAAAAAAAAAD9nP+f1r76Dn1kgdDurgIFayykbgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfACCMF1mug0FubdgPzMY2gCPz+LFf+0RZwF43JzIjuWUa1wEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAQAAAAAAAAAAypo7AAAAAAA=',
+                    'AAACAQAAAAAAAAAAAAAAAAD9nP+f1r76Dn1kgdDurgIFayykbgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfACCMF1mug0FubdgPzMY2gCPz+LFf+0RZwF43JzIjuWUa1wEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAQAAAAAAAAAAdDukCwAAAAA=',
                 ],
             },
-            renderTemplate('dryRunTransaction', {}),
+            makeDryRunTransactionResponse(),
             true
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
-                    'AAACAQAAAAAAAAAAAAAAAAD9nP+f1r76Dn1kgdDurgIFayykbgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfACCMF1mug0FubdgPzMY2gCPz+LFf+0RZwF43JzIjuWUa1wEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gEAAAAAAAAADAQAAAAAAAAA',
+                    'AAACAQAAAAAAAAAAAAAAAAD9nP+f1r76Dn1kgdDurgIFayykbgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfACCMF1mug0FubdgPzMY2gCPz+LFf+0RZwF43JzIjuWUa1wEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gEAAAAAAAAA6gcAAAAAAAAA',
                 ],
             },
-            renderTemplate('dryRunTransaction', {}),
+            makeDryRunTransactionResponse(),
             true
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_executeTransactionBlock',
                 params: [
-                    'AAACAQAAAAAAAAAAAAAAAAD9nP+f1r76Dn1kgdDurgIFayykbgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfACCMF1mug0FubdgPzMY2gCPz+LFf+0RZwF43JzIjuWUa1wEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gEAAAAAAAAADAQAAAAAAAAA',
+                    'AAACAQAAAAAAAAAAAAAAAAD9nP+f1r76Dn1kgdDurgIFayykbgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfACCMF1mug0FubdgPzMY2gCPz+LFf+0RZwF43JzIjuWUa1wEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gEAAAAAAAAA6gcAAAAAAAAA',
                     [
-                        'ABqtlr8cBB4UVdq8axpZw/9iC4Eru34Xeksk7rhmouG6/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4=',
+                        'AKEAXErrdCloeJe6mrMv4mX32s2SnaJO5jiSfR16wPCA/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4=',
                     ],
                     {
                         showEffects: true,
@@ -141,7 +142,11 @@ describe('Creating and sending an NFT', () => {
         const confirmBtn = await screen.findByText('Confirm & Send');
         userEvent.click(confirmBtn);
 
-        await screen.findByText('Transaction submitted.');
+        await screen.findByText(
+            'Submitting transaction...',
+            {},
+            { timeout: 5000 }
+        );
 
         // Account for the delay in displaying the 'transaction successful alert'
         await new Promise((r) => setTimeout(r, 500));

@@ -23,15 +23,21 @@ export default function useNFTBasicData(nftObj: SuiObjectData) {
     const [nftFields, setNftFields] = useState(defaultNftFields);
 
     useEffect(() => {
-        if (nftObj.display && 'image_url' in nftObj.display) {
-            setNftFields({
-                ...nftObj.display,
-                url: nftObj.display.image_url,
-            });
-            setFilePath(nftObj.display.image_url);
-            return;
-        }
+        if (!nftObj.display?.data) return;
 
+        const displayData = nftObj.display.data;
+        setNftFields((prev) => {
+            if (displayData && typeof displayData === 'object') {
+                return {
+                    ...prev,
+                    ...displayData,
+                };
+            }
+            return prev;
+        });
+    }, [nftObj]);
+
+    useEffect(() => {
         if (!NFT.isBagNFT(nftObj)) return;
 
         const getBagNft = async () => {

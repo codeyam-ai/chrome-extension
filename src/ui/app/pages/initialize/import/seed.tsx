@@ -88,7 +88,9 @@ const ImportSeedPage = () => {
                 setError(true);
                 return;
             }
-            await dispatch(createMnemonic(formattedMnemonic));
+            await dispatch(
+                createMnemonic({ existingMnemonic: formattedMnemonic })
+            );
             dispatch(setMnemonic(formattedMnemonic));
             navigate('/initialize/import/confirm');
         },
@@ -172,11 +174,12 @@ const ImportSeedPage = () => {
                     )}
                 </div>
                 <HideShowToggle
+                    forceLightTheme
                     name="Phrase"
                     hide={passwordMode}
                     onToggle={togglePasswordMode}
                 />
-                <div className="px-10 pb-10">
+                <div className="pb-10">
                     <Button
                         id="continue"
                         type="submit"

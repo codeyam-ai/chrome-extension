@@ -2,16 +2,18 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 
-import { Mockchain } from './utils/mockchain';
+import { mockCommonCalls, mockSuiObjects } from './utils/mockchain';
 import { fakeAccessToken } from './utils/storage';
 import { BASE_URL } from '_src/shared/constants';
+import { setSession } from '_src/shared/storagex/store';
 import { renderApp } from '_src/test/utils/react-rendering';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Email Authentication', () => {
-    let mockchain: Mockchain;
+    let mockJsonRpc: MockJsonRpc;
     beforeEach(() => {
-        mockchain = new Mockchain();
-        mockchain.mockCommonCalls();
+        mockJsonRpc = new MockJsonRpc();
+        mockCommonCalls(mockJsonRpc);
     });
 
     test('User can enter email and is prompted to wait for the magic login link', async () => {
@@ -30,7 +32,9 @@ describe('Email Authentication', () => {
             });
 
         renderApp();
-        await screen.findByText('Welcome to Ethos');
+        await screen.findByText(
+            'A re-imagined wallet for discovering apps, games, and NFTs on Sui'
+        );
         await userEvent.click(screen.getByText('Sign in with Email'));
         await userEvent.type(
             screen.getByRole('textbox', { name: 'Email address' }),
@@ -52,7 +56,8 @@ describe('Email Authentication', () => {
 
     test('User can see tokens page after logged in via the iframe', async () => {
         const fakeAccessToken = '12345';
-        mockchain.mockSuiObjects();
+        await setSession({ accessToken: fakeAccessToken });
+        mockSuiObjects(mockJsonRpc);
         nock(BASE_URL, {
             reqheaders: { 'x-supabase-access-token': fakeAccessToken },
         })
@@ -69,23 +74,7 @@ describe('Email Authentication', () => {
         renderApp({
             initialRoute: '/initialize/hosted/logging-in',
         });
-        await screen.findByTitle('wallet');
-        simulateIframeSendingAccessCode(fakeAccessToken);
+
         await screen.findByText('Get started with Sui');
     });
-
-    function simulateIframeSendingAccessCode(fakeAccessToken: string) {
-        window.dispatchEvent(
-            new MessageEvent('message', {
-                source: window,
-                origin: 'http://localhost:3000',
-                data: {
-                    action: 'sendKey',
-                    data: {
-                        key: `{"currentSession": {"access_token": "${fakeAccessToken}"}}`,
-                    },
-                },
-            })
-        );
-    }
 });

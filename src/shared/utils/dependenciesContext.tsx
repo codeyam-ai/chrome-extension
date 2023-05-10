@@ -8,8 +8,14 @@ export interface Heartbeat {
     onBeat(listener: () => void): void;
 }
 
+export interface FeatureFlags {
+    showUsd: boolean;
+    showWipFeatures: boolean;
+}
+
 export interface Dependencies {
     closeWindow: WindowCloser;
+    featureFlags: FeatureFlags;
     heartbeat: Heartbeat;
 }
 export const DependenciesContext = createContext<Dependencies | undefined>(

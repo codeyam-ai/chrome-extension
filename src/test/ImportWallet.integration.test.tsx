@@ -1,15 +1,16 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import truncateMiddle from '../ui/app/helpers/truncate-middle';
-import { Mockchain } from '_src/test/utils/mockchain';
+import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Importing a wallet using a seed phrase', () => {
-    let mockchain: Mockchain;
+    let mockJsonRpc: MockJsonRpc;
     beforeEach(() => {
-        mockchain = new Mockchain();
-        mockchain.mockCommonCalls();
+        mockJsonRpc = new MockJsonRpc();
+        mockCommonCalls(mockJsonRpc);
+        mockSuiObjects(mockJsonRpc, { suiBalance: 40000000000 });
     });
 
     test('Entire flow works', async () => {
@@ -37,7 +38,9 @@ describe('Importing a wallet using a seed phrase', () => {
 
     async function renderAndChooseImportOption() {
         renderApp();
-        await screen.findByText('Welcome to Ethos');
+        await screen.findByText(
+            'A re-imagined wallet for discovering apps, games, and NFTs on Sui'
+        );
         await userEvent.click(screen.getByText('Import', { exact: false }));
     }
 
@@ -81,5 +84,6 @@ describe('Importing a wallet using a seed phrase', () => {
 
         await userEvent.click(screen.getByTestId('submit'));
         await screen.findByText('Wallet Set Up');
+        await screen.findByText('40');
     }
 });

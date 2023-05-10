@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Authentication from '_src/background/Authentication';
-import Permissions from '_src/background/Permissions';
 import { IFRAME_URL } from '_src/shared/constants';
+import { getSession } from '_src/shared/storagex/store';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import { iframe } from '_src/ui/app/helpers';
 import { useAppDispatch } from '_src/ui/app/hooks';
@@ -18,27 +18,47 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 const LoggingInPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [authenticationSlow, setAuthenticationSlow] = useState(false);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [authenticationSlow, setAuthenticationSlow] =
+        useState<boolean>(false);
 
     useEffect(() => {
-        const listenForSuccessfulLogin = async () => {
-            const accessToken = await iframe.listenForAccessToken();
+        const setAccessToken = async () => {
+            let accessToken = (await getSession('accessToken')) as string;
+            if (!accessToken) {
+                setTimeout(() => {
+                    setLoading(false);
+                    setAuthenticationSlow(true);
+                }, 1500);
+                accessToken = await iframe.listenForAccessToken();
+            }
+            if (!accessToken) {
+                setLoading(false);
+                setAuthenticationSlow(true);
+            }
             Authentication.set(accessToken);
-            const accountInfos = await Authentication.getAccountInfos();
+
+            let accountInfos = await Authentication.getAccountInfos();
+
+            if (!accountInfos || accountInfos.length === 0) {
+                const newAccountInfo = await Authentication.createAccount(0);
+                if (newAccountInfo) {
+                    accountInfos = [newAccountInfo];
+                }
+            }
+
             if (accountInfos && accountInfos.length > 0) {
                 await dispatch(saveAccountInfos(accountInfos));
                 await dispatch(setAddress(accountInfos[0]?.address));
-                await Permissions.grantEthosDashboardBasicPermissionsForAccount(
-                    accountInfos[0]?.address
-                );
                 dispatch(saveAuthentication(accessToken));
                 navigate('/');
             } else {
                 Authentication.set(null);
                 dispatch(saveAuthentication(null));
+                setLoading(false);
             }
         };
-        listenForSuccessfulLogin();
+        setAccessToken();
     }, [dispatch, navigate]);
 
     useEffect(() => {
@@ -61,7 +81,7 @@ const LoggingInPage = () => {
             <div className="flex flex-col items-center gap-6">
                 <BodyLarge isSemibold>Authenticating</BodyLarge>
                 <LoadingIndicator big />
-                {authenticationSlow && (
+                {!loading && authenticationSlow && (
                     <>
                         <BodyLarge>
                             Authentication is taking a while.

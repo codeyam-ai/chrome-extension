@@ -1,70 +1,40 @@
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
+import type { AnalyzedTransaction } from './analyzeTransactions';
 
-export type TxAction = string;
+export type TxAction =
+    | 'faucet'
+    | 'send'
+    | 'receive'
+    | 'staking'
+    | 'mint'
+    | 'transfer'
+    | 'function'
+    | 'clone'
+    | 'modify'
+    | 'burn'
+    | 'unknown';
 
-const getTxAction = (
-    ownerAddr: string,
-    txn: SuiTransactionBlockResponse
-): TxAction => {
-    let type = 'default';
+const getTxAction = (analyzedTransaction: AnalyzedTransaction): TxAction => {
+    if (analyzedTransaction.important?.faucet) {
+        return 'faucet';
+    }
 
-    const txDetails = txn?.transaction?.data;
+    if (analyzedTransaction.important?.staking) {
+        return 'staking';
+    }
 
-    if (!txDetails || !('inputs' in txDetails.transaction)) return type;
+    if (analyzedTransaction.important?.moveCalls) {
+        return 'function';
+    }
 
-    const addressInput = txDetails.transaction.inputs.find((input) => {
-        if ('valueType' in input) {
-            return input.valueType === 'address';
+    if (analyzedTransaction.important?.sending) {
+        if (analyzedTransaction.important.sending?.[0].isSender) {
+            return 'send';
         } else {
-            return false;
+            return 'receive';
         }
-    });
-
-    const isSender =
-        addressInput &&
-        'value' in addressInput &&
-        addressInput?.value !== ownerAddr;
-
-    let commands;
-
-    if ('transactions' in txDetails.transaction) {
-        commands = txDetails.transaction.transactions;
     }
 
-    if (txDetails && commands) {
-        commands.forEach((command) => {
-            // get command object key
-            const commandObj = command;
-            const commandKey = Object.keys(commandObj)[0];
-
-            // Set type based on obj key or movecall obj contents
-            if (commandKey === 'TransferObjects') {
-                if (isSender) {
-                    type = 'send';
-                } else {
-                    type = 'receive';
-                }
-            } else if (commandKey === 'MoveCall' && 'MoveCall' in commandObj) {
-                const call = commandObj['MoveCall'];
-                const func = call.function.toLowerCase();
-
-                if (func.includes('mint')) {
-                    type = 'mint';
-                }
-                if (func.includes('clone')) {
-                    type = 'clone';
-                }
-                if (func.includes('modify')) {
-                    type = 'modify';
-                }
-                if (func.includes('burn')) {
-                    type = 'burn';
-                }
-            }
-        });
-    }
-
-    return type;
+    return 'unknown';
 };
 
 export default getTxAction;

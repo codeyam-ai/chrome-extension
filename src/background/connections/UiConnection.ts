@@ -29,8 +29,13 @@ import type { GetPreapprovalResponse } from '_src/shared/messaging/messages/payl
 export class UiConnection extends Connection {
     public static readonly CHANNEL: PortChannelName = 'ethos_ui<->background';
 
-    public sendWalletLockedMessage() {
-        this.send(createMessage<WalletLocked>({ type: 'wallet-locked' }));
+    public sendWalletLockedMessage(hosted: boolean) {
+        this.send(
+            createMessage<WalletLocked>({
+                type: 'wallet-locked',
+                hosted,
+            })
+        );
     }
 
     protected async handleMessage(msg: Message) {

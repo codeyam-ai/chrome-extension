@@ -1,18 +1,21 @@
 import { thunkExtras } from '_redux/store/thunk-extras';
 
 import type {
+    RawSigner,
+    SignedTransaction,
     SuiTransactionBlockResponse,
     TransactionBlock,
 } from '@mysten/sui.js';
 import type { SuiSignAndExecuteTransactionBlockInput } from '@mysten/wallet-standard';
+import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 
 const finishTransaction = async (
+    signer: RawSigner | EthosSigner | LedgerSigner,
     transactionBlock: TransactionBlock | null,
     txID: string | undefined,
     approved: boolean,
-    authentication: string | null,
-    address: string | null,
-    activeAccountIndex: number,
+    justSign?: boolean,
     options?: SuiSignAndExecuteTransactionBlockInput['options'],
     requestType?: SuiSignAndExecuteTransactionBlockInput['requestType']
 ) => {
@@ -21,29 +24,25 @@ const finishTransaction = async (
         throw new Error(`Transaction ${txID} not found`);
     }
 
+    let txSigned: SignedTransaction | undefined = undefined;
     let txResult: SuiTransactionBlockResponse | undefined = undefined;
-    let tsResultError: string | undefined;
+    let txResultError: string | undefined;
     if (approved) {
-        let signer;
-        if (authentication) {
-            signer = thunkExtras.api.getEthosSignerInstance(
-                address || '',
-                authentication
-            );
-        } else {
-            signer = thunkExtras.api.getSignerInstance(
-                thunkExtras.keypairVault.getKeyPair(activeAccountIndex)
-            );
-        }
-
         try {
-            txResult = await signer.signAndExecuteTransactionBlock({
-                transactionBlock,
-                options,
-                requestType,
-            });
+            if (justSign) {
+                // Just a signing request, do not submit
+                txSigned = await signer.signTransactionBlock({
+                    transactionBlock,
+                });
+            } else {
+                txResult = await signer.signAndExecuteTransactionBlock({
+                    transactionBlock,
+                    options: options,
+                    requestType: requestType,
+                });
+            }
         } catch (e) {
-            tsResultError = (e as Error).message;
+            txResultError = (e as Error).message;
         }
     }
 
@@ -52,7 +51,8 @@ const finishTransaction = async (
         txID || '',
         approved,
         txResult,
-        tsResultError
+        txResultError,
+        txSigned
     );
 };
 

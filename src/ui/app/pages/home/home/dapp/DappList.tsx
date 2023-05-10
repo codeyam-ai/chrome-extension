@@ -1,73 +1,87 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 import DappListItem from './DappListItem';
-import DappView from './DappView';
+import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVerticalScrollToHorizontal';
 
-import type { DappData } from './dappData';
+import type { DappData } from '_src/types/DappData';
 
-interface ScrollingListProps {
-    data: DappData[];
+const DRAG_MOVEMENT_THRESHOLD = 5; // In px - anything less than this is considered a click
+
+interface DappListProps {
+    dapps: DappData[];
 }
 
-export const DappList: React.FC<ScrollingListProps> = ({ data }) => {
-    const [selectedDapp, setSelectedDapp] = useState<DappData | null>(null);
+export const DappList: React.FC<DappListProps> = ({ dapps }) => {
+    const [dragged, setDragged] = useState(false);
+    const [mouseDown, setMouseDown] = useState(false);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const navigate = useNavigate();
-
-    const handleItemClick = useCallback(
-        (dapp: DappData) => {
-            setSelectedDapp(dapp);
-            if (dapp.route) {
-                navigate(dapp.route, { replace: false });
-            }
-        },
-        [navigate]
-    );
+    const mouseXRef = useRef<number | null>(null);
+    const totalMovementXRef = useRef(0);
+    useConvertVerticalScrollToHorizontal(scrollContainerRef);
 
     const listItems = useMemo(() => {
-        return data.map((item, index) => (
-            <DappListItem key={index} item={item} onClick={handleItemClick} />
+        return dapps.map((dapp, index) => (
+            <div
+                key={index}
+                className={`${
+                    index === 0 ? 'ml-4' : '' // Add left margin to the first element
+                } ${
+                    index === dapps.length - 1 ? 'mr-4' : '' // Add right margin to the last element
+                }`}
+            >
+                <DappListItem dapp={dapp} showArrowOnHover dragged={dragged} />
+            </div>
         ));
-    }, [data, handleItemClick]);
+    }, [dapps, dragged]);
 
-    const handleWheel = useCallback((event: WheelEvent) => {
-        if (scrollContainerRef.current) {
-            const deltaY = event.deltaY;
-            const deltaX = event.deltaX;
-            const ratio = Math.abs(deltaY / deltaX);
+    const onMouseMove = useCallback((e: React.MouseEvent) => {
+        if (mouseXRef.current === null) return;
 
-            if (ratio > 1) {
-                scrollContainerRef.current.scrollLeft += event.deltaY;
-                event.preventDefault();
-            }
+        const movementX = Math.abs(mouseXRef.current - e.nativeEvent.clientX);
+        totalMovementXRef.current += movementX;
+
+        if (totalMovementXRef.current > DRAG_MOVEMENT_THRESHOLD) {
+            setDragged(true);
         }
+
+        scrollContainerRef.current?.scrollBy({
+            left: mouseXRef.current - e.nativeEvent.clientX,
+        });
+
+        mouseXRef.current = e.nativeEvent.clientX;
     }, []);
 
-    const closeDapp = useCallback(() => {
-        navigate(-1);
-    }, [navigate]);
+    const onMouseDown = useCallback((e: React.MouseEvent) => {
+        mouseXRef.current = e.nativeEvent.clientX;
+        setMouseDown(true);
+    }, []);
 
-    useEffect(() => {
-        const container = scrollContainerRef.current;
-        if (container) {
-            container.addEventListener('wheel', handleWheel);
-        }
+    const onMouseUp = useCallback(() => {
+        mouseXRef.current = null;
+        totalMovementXRef.current = 0;
+        setDragged(false);
+        setMouseDown(false);
+    }, []);
 
-        return () => {
-            if (container) {
-                container.removeEventListener('wheel', handleWheel);
-            }
-        };
-    }, [handleWheel]);
-
+    const onMouseLeave = useCallback(() => {
+        mouseXRef.current = null;
+        totalMovementXRef.current = 0;
+        setDragged(false);
+        setMouseDown(false);
+    }, []);
     return (
-        <div>
-            <DappView dapp={selectedDapp} onClose={closeDapp} />
-            <div
-                ref={scrollContainerRef}
-                className="flex overflow-x-auto whitespace-nowrap py-2 bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default"
-            >
+        <div
+            ref={scrollContainerRef}
+            className={`flex overflow-x-auto select-none no-scrollbar whitespace-nowrap py-2 bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default ${
+                mouseDown ? 'cursor-grabbing' : 'cursor-grab'
+            }`}
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+            onMouseLeave={onMouseLeave}
+        >
+            {/* whitespace-nowrap w-min respects the right margin on the last element */}
+            <div className="flex gap-3 whitespace-nowrap w-min">
                 {listItems}
             </div>
         </div>

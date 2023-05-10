@@ -8,6 +8,14 @@ import {
     RawSigner,
     TransactionBlock,
 } from '@mysten/sui.js';
+import {
+    SUI_MAINNET_CHAIN,
+    type IdentifierString,
+    type SuiSignAndExecuteTransactionBlockInput,
+    type SuiSignMessageOutput,
+    SUI_TESTNET_CHAIN,
+    SUI_DEVNET_CHAIN,
+} from '@mysten/wallet-standard';
 import { filter, lastValueFrom, map, race, Subject, take } from 'rxjs';
 import { v4 as uuidV4 } from 'uuid';
 import Browser from 'webextension-polyfill';
@@ -23,11 +31,6 @@ import type {
     SuiAddress,
     SuiTransactionBlockResponse,
 } from '@mysten/sui.js';
-import type {
-    IdentifierString,
-    SuiSignAndExecuteTransactionBlockInput,
-    SuiSignMessageOutput,
-} from '@mysten/wallet-standard';
 import type {
     PreapprovalRequest,
     PreapprovalResponse,
@@ -143,7 +146,6 @@ class Transactions {
                 connection.origin,
                 connection.originFavIcon
             );
-
         if (txResultError) {
             throw new Error(
                 `Transaction failed with the following error. ${txResultError}`
@@ -281,16 +283,23 @@ class Transactions {
         requestType?: SuiSignAndExecuteTransactionBlockInput['requestType'];
         options?: SuiSignAndExecuteTransactionBlockInput['options'];
     }) {
-        const activeSeed = await this.getSeedInfo(address);
+        const activeSeed = await this.getActiveSeed();
+
+        if (activeSeed.address !== address) {
+            throw new Error('Requested address for transaction is not active.');
+        }
 
         let env;
         let envEndpoint;
         switch (chain) {
-            case 'sui:devnet':
-                env = API_ENV.devNet;
+            case SUI_MAINNET_CHAIN:
+                env = API_ENV.mainNet;
                 break;
-            case 'sui:testnet':
+            case SUI_TESTNET_CHAIN:
                 env = API_ENV.testNet;
+                break;
+            case SUI_DEVNET_CHAIN:
+                env = API_ENV.devNet;
                 break;
             case 'sui:local':
                 env = API_ENV.local;
@@ -299,7 +308,7 @@ class Transactions {
                 env = API_ENV.customRPC;
                 break;
             default: {
-                env = API_ENV.testNet;
+                env = API_ENV.mainNet;
             }
         }
 
@@ -413,10 +422,14 @@ class Transactions {
     public async getTransactionRequests(): Promise<
         Record<string, ApprovalRequest>
     > {
-        return (await Browser.storage.local.get({ [TX_STORE_KEY]: {} }))[
-            TX_STORE_KEY
-        ];
+        const resultsString = await getEncrypted({
+            key: TX_STORE_KEY,
+            session: false,
+            strong: false,
+        });
+        return JSON.parse(resultsString || '{}');
     }
+
     public async getPreapprovalRequests(): Promise<
         Record<string, PreapprovalRequest>
     > {
@@ -442,17 +455,14 @@ class Transactions {
         this._preapprovalResponseMessages.next(msg);
     }
 
-    private async getSeedInfo(address: SuiAddress): Promise<SeedInfo> {
-        const seedInfoString = await getEncrypted({
-            key: 'seeds',
+    private async getActiveSeed(): Promise<SeedInfo> {
+        const activeSeedString = await getEncrypted({
+            key: 'activeSeed',
             session: true,
             strong: false,
         });
-        const seedInfos = JSON.parse(seedInfoString || '[]');
 
-        return seedInfos.find(
-            (seedInfo: SeedInfo) => seedInfo.address === address
-        );
+        return JSON.parse(activeSeedString || '[]');
     }
 
     private createTransactionRequest(
@@ -490,7 +500,14 @@ class Transactions {
     private async saveTransactionRequests(
         txRequests: Record<string, ApprovalRequest>
     ) {
-        await Browser.storage.local.set({ [TX_STORE_KEY]: txRequests });
+        await setEncrypted({
+            key: TX_STORE_KEY,
+            value: JSON.stringify(txRequests),
+            strong: false,
+            session: false,
+        });
+
+        Browser.storage.local.remove(TX_STORE_KEY);
     }
 
     private async savePreapprovalRequests(
@@ -510,7 +527,7 @@ class Transactions {
         await this.saveTransactionRequests(txs);
     }
 
-    private async removeTransactionRequest(txID: string) {
+    public async removeTransactionRequest(txID: string) {
         const txs = await this.getTransactionRequests();
         delete txs[txID];
         await this.saveTransactionRequests(txs);
@@ -571,7 +588,7 @@ class Transactions {
                             txRequest.txResult = txResult;
                             txRequest.txResultError = txResultError;
                             txRequest.txSigned = txSigned;
-                            await this.storeTransactionRequest(txRequest);
+                            await this.removeTransactionRequest(txRequest.id);
                             return txRequest;
                         }
                     }

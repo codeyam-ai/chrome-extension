@@ -9,7 +9,6 @@ import Authentication from '_src/background/Authentication';
 import { getEncrypted } from '_src/shared/storagex/store';
 import {
     saveAccountInfos,
-    saveActiveAccountIndex,
     setAccountInfos,
 } from '_src/ui/app/redux/slices/account';
 
@@ -55,7 +54,6 @@ export const useUpdateCurrentAccountInfo = () => {
             await Authentication.getAccountInfos(true);
         } else {
             await dispatch(saveAccountInfos(newAccountInfos));
-            await dispatch(saveActiveAccountIndex(newAccountInfos.length - 1));
         }
     };
 

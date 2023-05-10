@@ -3,9 +3,9 @@ import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import { Fragment, useMemo, useState } from 'react';
 
 import CoinBalance from './CoinBalance';
+import Sui from './Sui';
 import UnknownToken from './UnknownToken';
 import { useFormatCoin } from '../../../hooks/useFormatCoin';
-import SuiIcon from '../../../shared/svg/SuiIcon';
 import BodyLarge from '../../../shared/typography/BodyLarge';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
@@ -49,7 +49,7 @@ export const CoinSelect = ({
 
     const iconImage = useMemo(() => {
         if (name === 'Sui' || name === 'SUI') {
-            return <SuiIcon width={16} height={16} />;
+            return <Sui />;
         } else if (icon) {
             return <img src={icon} alt={name} />;
         } else {
@@ -117,7 +117,7 @@ export const CoinSelect = ({
                                                     >
                                                         <CoinBalance
                                                             type={coinType}
-                                                            balance={balance}
+                                                            balance={balance.toString()}
                                                             replaceUrl
                                                         />
                                                     </div>

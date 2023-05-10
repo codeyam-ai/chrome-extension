@@ -36,6 +36,8 @@ jobs:
                   ERROR_REPORT_PRIVATE_KEY: ${{ secrets.ERROR_REPORT_PRIVATE_KEY }}
                   API_ENDPOINT_DEVNET_FULLNODE: ${{ secrets.API_ENDPOINT_DEVNET_FULLNODE }}
                   API_ENDPOINT_TESTNET_FULLNODE: ${{ secrets.API_ENDPOINT_TESTNET_FULLNODE }}
+                  API_ENDPOINT_MAINNET_FULLNODE: ${{ secrets.API_ENDPOINT_MAINNET_FULLNODE }}
+                  ETHOS_API_KEY: ${{ secrets.ETHOS_API_KEY }}
               run: npm run build:prod
 
             # Archive build artifacts

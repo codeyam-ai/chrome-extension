@@ -5,6 +5,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import Browser from 'webextension-polyfill';
 
 import { AppType } from './AppType';
+import { fetchAllBalances } from '../balances';
 import { API_ENV, DEFAULT_API_ENV } from '_app/ApiProvider';
 import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
 // import { getTransactionsByAddress } from '_redux/slices/txresults';
@@ -53,14 +54,16 @@ export const changeRPCNetwork = createAsyncThunk<void, API_ENV, AppThunkConfig>(
         // don't switch if customRPC and empty input //handle default
         if (isCustomRPC && !customRPCURL) return;
 
+        // Set persistent network state
+        Browser.storage.local.set({ sui_Env: networkName });
+
         dispatch(setApiEnv(networkName));
 
         api.setNewJsonRpcProvider(networkName, customRPCURL);
 
         // dispatch(getTransactionsByAddress());
+        dispatch(fetchAllBalances());
         dispatch(fetchAllOwnedAndRequiredObjects());
-        // Set persistent network state
-        Browser.storage.local.set({ sui_Env: networkName });
     }
 );
 

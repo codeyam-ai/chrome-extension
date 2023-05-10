@@ -8,16 +8,21 @@ import {
     SignalIcon,
 } from '@heroicons/react/24/solid';
 import { useContext, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import Browser from 'webextension-polyfill';
 
 import { API_ENV_TO_INFO } from '../../ApiProvider';
 import { iframe } from '../../helpers';
 import SettingsList from '../../shared/navigation/nav-bar/SettingsList';
 import PaintBrushIcon from '../../shared/svg/PaintBrushIcon';
+import BodyLarge from '../../shared/typography/BodyLarge';
+import EthosLogoWithText from '../logos/EthosLogoWithText';
 import {
     DASHBOARD_LINK,
     IFRAME_URL,
     MAILTO_SUPPORT_URL,
     ToS_LINK,
+    BASE_URL,
 } from '_src/shared/constants';
 import { ThemeContext } from '_src/shared/utils/themeContext';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
@@ -32,12 +37,13 @@ export const SubpageUrls = {
     key: '/settings/security/view-private-key',
     permissions: '/settings/permissions',
     lock: '/settings/lock',
+    changeAutoLockTimeout: '/settings/change-auto-lock-timeout',
 };
 
 const SettingsHomePage = () => {
-    const orange = '#EE950F';
+    const teal = '#31BCC5';
     const purple = '#9040F5';
-    const green = '#01C57E';
+    const blue = '#6772FF';
 
     const dispatch = useAppDispatch();
     const { theme } = useContext(ThemeContext);
@@ -66,76 +72,90 @@ const SettingsHomePage = () => {
 
     return (
         <div>
-            <SettingsList
-                listSections={[
-                    {
-                        color: orange,
-                        items: [
-                            {
-                                text: 'View Explorer',
-                                iconWithNoClasses: <GlobeAltIcon />,
-                                to: DASHBOARD_LINK,
-                                isExternalLink: true,
-                            },
-                            {
-                                text: 'Open Expanded View',
-                                iconWithNoClasses: <ArrowsPointingOutIcon />,
-                                to: '/home',
-                                isExpandView: true,
-                            },
-                        ],
-                    },
-                    {
-                        color: purple,
-                        items: [
-                            {
-                                text: 'Network',
-                                iconWithNoClasses: <SignalIcon />,
-                                to: SubpageUrls.network,
-                                detailText: networkName,
-                            },
-                            {
-                                text: 'Theme',
-                                iconWithNoClasses: <PaintBrushIcon />,
-                                to: SubpageUrls.theme,
-                                detailText: themeDisplay,
-                            },
-                            {
-                                text: 'Security',
-                                iconWithNoClasses: <ShieldExclamationIcon />,
-                                to: SubpageUrls.security,
-                            },
-                            {
-                                text: 'Permissions',
-                                iconWithNoClasses: <DocumentCheckIcon />,
-                                to: SubpageUrls.permissions,
-                            },
-                            {
-                                text: 'Lock Ethos',
-                                iconWithNoClasses: <LockClosedIcon />,
-                                to: SubpageUrls.lock,
-                            },
-                        ],
-                    },
-                    {
-                        color: green,
-                        items: [
-                            {
-                                text: 'Terms of Service',
-                                iconWithNoClasses: <DocumentTextIcon />,
-                                to: ToS_LINK,
-                                isExternalLink: true,
-                            },
-                            {
-                                text: 'Contact Ethos Support',
-                                iconWithNoClasses: <DocumentTextIcon />,
-                                to: MAILTO_SUPPORT_URL,
-                                isExternalLink: true,
-                            },
-                        ],
-                    },
-                ]}
-            />
+            <div className="h-[550px] flex flex-col justify-between">
+                <SettingsList
+                    listSections={[
+                        {
+                            color: teal,
+                            items: [
+                                {
+                                    text: 'View Explorer',
+                                    iconWithNoClasses: <GlobeAltIcon />,
+                                    to: DASHBOARD_LINK,
+                                    isExternalLink: true,
+                                },
+                                {
+                                    text: 'Open Expanded View',
+                                    iconWithNoClasses: (
+                                        <ArrowsPointingOutIcon />
+                                    ),
+                                    to: '/home',
+                                    isExpandView: true,
+                                },
+                            ],
+                        },
+                        {
+                            color: purple,
+                            items: [
+                                {
+                                    text: 'Network',
+                                    iconWithNoClasses: <SignalIcon />,
+                                    to: SubpageUrls.network,
+                                    detailText: networkName,
+                                },
+                                {
+                                    text: 'Theme',
+                                    iconWithNoClasses: <PaintBrushIcon />,
+                                    to: SubpageUrls.theme,
+                                    detailText: themeDisplay,
+                                },
+                                {
+                                    text: 'Security',
+                                    iconWithNoClasses: (
+                                        <ShieldExclamationIcon />
+                                    ),
+                                    to: SubpageUrls.security,
+                                },
+                                {
+                                    text: 'Permissions',
+                                    iconWithNoClasses: <DocumentCheckIcon />,
+                                    to: SubpageUrls.permissions,
+                                },
+                                {
+                                    text: 'Lock / Reset Ethos',
+                                    iconWithNoClasses: <LockClosedIcon />,
+                                    to: SubpageUrls.lock,
+                                },
+                            ],
+                        },
+                        {
+                            color: blue,
+                            items: [
+                                {
+                                    text: 'Terms of Service',
+                                    iconWithNoClasses: <DocumentTextIcon />,
+                                    to: ToS_LINK,
+                                    isExternalLink: true,
+                                },
+                                {
+                                    text: 'Contact Ethos Support',
+                                    iconWithNoClasses: <DocumentTextIcon />,
+                                    to: MAILTO_SUPPORT_URL,
+                                    isExternalLink: true,
+                                },
+                            ],
+                        },
+                    ]}
+                />
+                <div className="flex justify-between items-center pr-6 pl-2 py-4 border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
+                    <Link to={BASE_URL} target="_blank">
+                        <EthosLogoWithText className="h-8" />
+                    </Link>
+                    <BodyLarge isTextColorMedium>
+                        {'v' + Browser.runtime.getManifest().version}
+                    </BodyLarge>
+                </div>
+            </div>
             <iframe
                 id="wallet-iframe"
                 src={IFRAME_URL}

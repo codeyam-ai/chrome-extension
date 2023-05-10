@@ -1,50 +1,127 @@
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
+
+import { useValidatorsWithApy } from '../../hooks/staking/useValidatorsWithApy';
+import useDisplayDatas from '../../hooks/useDisplayDatas';
+import { useFormatCoin } from '../../hooks/useFormatCoin';
+import Sui from '../../pages/home/home/Sui';
+import ActionIcon from '../../shared/transactions/ActionIcon';
+import { getIcon } from '_src/ui/app/helpers/transactions';
+
+import type { AnalyzedTransaction } from './analyzeTransactions';
+import type { TxAction } from './getTxAction';
+import type { SuiAddress } from '@mysten/sui.js';
+import type { ReactNode } from 'react';
 
 export type TxType = string;
 
-const getDisplayImage = (txn: SuiTransactionBlockResponse): string | null => {
-    // Iterate through the inputs for a transaction and check if
-    // each value in the input is a url and that url contains in image
-    // if so return the url, if not return null
+const CoinIcon = ({
+    coinType,
+    txAction,
+}: {
+    coinType: string;
+    txAction: TxAction;
+}) => {
+    const [, symbol, , coinName, iconUrl] = useFormatCoin('0', coinType);
 
-    // If there's no image val is falsy
-    let response = null;
-
-    const transaction = txn?.transaction?.data?.transaction;
-
-    if (transaction && 'transactions' in transaction) {
-        // input arguments for the movecall transaction
-        const inputs = transaction.inputs;
-
-        // iterate through the commands to check if it's a mint func
-        transaction.transactions.forEach((command) => {
-            const commandObj = command;
-            const commandKey = Object.keys(commandObj)[0];
-
-            // Check if the function has an input
-            // with a url value that contains an image
-            // Load the image to see if it's valid
-            if (commandKey === 'MoveCall') {
-                inputs.forEach((input) => {
-                    if ('value' in input) {
-                        const val = input.value;
-
-                        if (typeof val === 'string' && val.includes('http')) {
-                            response = val;
-                            const img = new Image();
-                            img.src = val;
-
-                            img.onload = () => {
-                                response = val;
-                            };
-                        }
-                    }
-                });
-            }
-        });
+    if (iconUrl) {
+        return (
+            <img
+                src={iconUrl}
+                alt={coinName ?? symbol}
+                width={42}
+                height={42}
+                className="rounded-full"
+            />
+        );
+    } else if (coinType === SUI_TYPE_ARG) {
+        return (
+            <ActionIcon>
+                <Sui />
+            </ActionIcon>
+        );
     }
 
-    return response;
+    return <ActionIcon>{getIcon(txAction)}</ActionIcon>;
+};
+
+const ObjectIcon = ({
+    objectIds,
+    txAction,
+}: {
+    objectIds: string[];
+    txAction: TxAction;
+}) => {
+    const displayDatas = useDisplayDatas(objectIds);
+    const { imageUrl, name } = Object.values(displayDatas)[0] ?? {};
+
+    if (imageUrl) {
+        return (
+            <img
+                src={imageUrl}
+                alt={name}
+                width={42}
+                height={42}
+                className="rounded-lg aspect-square"
+            />
+        );
+    }
+
+    return <ActionIcon>{getIcon(txAction)}</ActionIcon>;
+};
+
+const StakingIcon = ({ address }: { address: SuiAddress }) => {
+    const { data: validators } = useValidatorsWithApy();
+    const validator = validators?.[address ?? ''];
+
+    if (validator && validator.imageUrl) {
+        return (
+            <img
+                src={validator.imageUrl}
+                alt={validator.name}
+                className="h-10 w-10 rounded-full"
+            />
+        );
+    }
+
+    return <ActionIcon>{getIcon('staking')}</ActionIcon>;
+};
+
+const getDisplayImage = (
+    analyzedTransaction: AnalyzedTransaction,
+    txAction: TxAction
+): ReactNode | null => {
+    if (analyzedTransaction.important.faucet) {
+        return <Sui />;
+    }
+
+    if (analyzedTransaction.important.staking) {
+        const { validatorAddress } = analyzedTransaction.important.staking[0];
+        return <StakingIcon address={validatorAddress} />;
+    }
+
+    if (analyzedTransaction.important.sending) {
+        const { coinType, objectId } = analyzedTransaction.important.sending[0];
+        if (coinType) {
+            return <CoinIcon coinType={coinType} txAction={txAction} />;
+        } else if (objectId) {
+            return <ObjectIcon objectIds={[objectId]} txAction={txAction} />;
+        }
+    }
+
+    if (analyzedTransaction.important.moveCalls) {
+        const { possibleDisplayObjectIds } =
+            analyzedTransaction.important.moveCalls[0];
+        if (possibleDisplayObjectIds && possibleDisplayObjectIds.length > 0) {
+            return (
+                <ObjectIcon
+                    objectIds={possibleDisplayObjectIds}
+                    txAction={txAction}
+                />
+            );
+        }
+    }
+
+    return null;
 };
 
 export default getDisplayImage;

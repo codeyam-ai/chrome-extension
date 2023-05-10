@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { Costs, Gains } from './Amount';
+import { Costs, Gains, Receiving, Sending } from './Amount';
 import Gas from './Gas';
 import MoveCall from './MoveCall';
 import Total from './Total';
@@ -44,7 +44,15 @@ const GenericTransactionCard = ({
                     </div>
                 )}
                 <Costs balanceReductions={analysis.balanceReductions} />
+                <Sending
+                    owner={analysis.owner}
+                    transfers={analysis.assetTransfers}
+                />
                 <Gains balanceAdditions={analysis.balanceAdditions} />
+                <Receiving
+                    owner={analysis.owner}
+                    transfers={analysis.assetTransfers}
+                />
                 <Gas gasSummary={analysis.gas} />
                 <Total analysis={analysis} />
             </div>

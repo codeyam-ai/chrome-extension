@@ -165,7 +165,7 @@ export class BackgroundClient {
         } else if (isGetPreapprovalResponse(payload)) {
             this._dispatch(setPreapprovalRequests(payload.preapprovalRequests));
         } else if (isWalletLockedMessage(payload)) {
-            this._dispatch(lockWalletUI());
+            this._dispatch(lockWalletUI(payload.hosted));
         }
     }
 

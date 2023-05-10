@@ -1,13 +1,14 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { SUI_TYPE_ARG, type SuiObjectData } from '@mysten/sui.js';
 import { memo, useCallback } from 'react';
 
 import { Content } from '_app/shared/bottom-menu-layout';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 import WalletTo from '_src/ui/app/components/wallet-to';
 import getDisplay from '_src/ui/app/helpers/getDisplay';
-import { useAppSelector } from '_src/ui/app/hooks';
+import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 import { AssetCard } from '_src/ui/app/shared/nfts/AssetCard';
@@ -15,7 +16,6 @@ import Body from '_src/ui/app/shared/typography/Body';
 import Header from '_src/ui/app/shared/typography/Header';
 
 // import type { EnhancedSuiObject } from '../../../dapp-preapproval/index';
-import type { SuiObjectData } from '@mysten/sui.js';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -37,8 +37,16 @@ function TransferNftReviewForm({
     transferNft,
     submitted,
 }: TransferNFTFormProps) {
+    const [formattedGasFee, gasSymbol] = useFormatCoin(
+        formData.gasFee,
+        SUI_TYPE_ARG
+    );
     const walletTo = useAppSelector(({ account: { accountInfos } }) =>
         accountInfos.find((accountInfo) => accountInfo.address === formData.to)
+    );
+
+    const contactTo = useAppSelector(({ contacts: { contacts } }) =>
+        contacts.find((contact) => contact.address === formData.to)
     );
 
     const accountInfo = useAppSelector(
@@ -115,7 +123,13 @@ function TransferNftReviewForm({
                                             shortValue: (
                                                 <WalletTo
                                                     addressTo={formData.to}
-                                                    walletTo={walletTo}
+                                                    walletTo={
+                                                        walletTo
+                                                            ? walletTo
+                                                            : contactTo
+                                                            ? contactTo
+                                                            : undefined
+                                                    }
                                                     noTo={true}
                                                 />
                                             ),
@@ -127,7 +141,7 @@ function TransferNftReviewForm({
                                         },
                                         {
                                             keyName: 'Transaction Fee',
-                                            value: formData.gasFee,
+                                            value: `${formattedGasFee} ${gasSymbol}`,
                                         },
                                     ]}
                                 />

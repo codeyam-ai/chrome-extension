@@ -1,19 +1,22 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { Coin } from '@mysten/sui.js';
+import { Coin, SUI_TYPE_ARG } from '@mysten/sui.js';
 import { BigNumber } from 'bignumber.js';
 import { Form, useFormikContext } from 'formik';
 import { memo, useEffect, useMemo, useRef } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
 import LoadingIndicator from '_components/loading/LoadingIndicator';
+import { useDependencies } from '_shared/utils/dependenciesContext';
+import { useTheme } from '_src/shared/utils/themeContext';
 import WalletTo from '_src/ui/app/components/wallet-to';
-import { getTheme } from '_src/ui/app/helpers/getTheme';
+import humanReadableTransactionErrors from '_src/ui/app/helpers/humanReadableTransactionError';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
+import Alert from '_src/ui/app/shared/feedback/Alert';
 import { AssetCard } from '_src/ui/app/shared/nfts/AssetCard';
 import Body from '_src/ui/app/shared/typography/Body';
 import Header from '_src/ui/app/shared/typography/Header';
@@ -29,6 +32,7 @@ export type TransferCoinFormProps = {
 
 function TransferCoinForm({
     onClearSubmitError,
+    submitError,
     submitted,
 }: TransferCoinFormProps) {
     const {
@@ -52,16 +56,23 @@ function TransferCoinForm({
     const onClearRef = useRef(onClearSubmitError);
     onClearRef.current = onClearSubmitError;
 
-    const [, , , , , queryResult] = useFormatCoin(null, coinType);
-    const unformattedAmount =
+    const [, , , , , , queryResult] = useFormatCoin(null, coinType);
+    const decimals =
         queryResult?.data &&
         typeof queryResult.data === 'object' &&
         'decimals' in queryResult.data
-            ? new BigNumber(formData.amount)
-                  .shiftedBy(queryResult.data.decimals as number)
-                  .toString()
-            : null;
+            ? (queryResult.data.decimals as number)
+            : 9;
+    const unformattedAmount = new BigNumber(formData.amount)
+        .shiftedBy(decimals)
+        .toString();
+
     const [, , dollars, , icon] = useFormatCoin(unformattedAmount, coinType);
+
+    const [formattedGasFee, gasSymbol] = useFormatCoin(
+        formData.gasFee,
+        SUI_TYPE_ARG
+    );
 
     useEffect(() => {
         onClearRef.current();
@@ -72,8 +83,9 @@ function TransferCoinForm({
         [coinType]
     );
 
-    const theme = getTheme();
+    const { resolvedTheme } = useTheme();
 
+    const { featureFlags } = useDependencies();
     if (amount === '' || to === '' || !coinSymbol) {
         return <Navigate to={'/home'} />;
     } else {
@@ -82,7 +94,7 @@ function TransferCoinForm({
                 <div className="p-6 flex flex-col">
                     {coinSymbol && (
                         <AssetCard
-                            theme={theme}
+                            theme={resolvedTheme}
                             txType={'transfer'}
                             coinType={coinSymbol}
                             name={coinSymbol}
@@ -93,7 +105,9 @@ function TransferCoinForm({
                     <Header className={'font-weight-ethos-subheader'}>
                         {amount} {truncateString(coinSymbol, 8)}
                     </Header>
-                    <Subheader isTextColorMedium>{dollars}</Subheader>
+                    {featureFlags.showUsd && (
+                        <Subheader isTextColorMedium>{dollars}</Subheader>
+                    )}
                 </div>
                 <KeyValueList
                     keyNamesAndValues={[
@@ -132,13 +146,33 @@ function TransferCoinForm({
                         },
                         {
                             keyName: 'Transaction Fee',
-                            value: formData.gasFee || '',
+                            value: `${formattedGasFee ?? ''} ${gasSymbol}`,
                         },
                     ]}
                 />
+                {submitError ? (
+                    <div className="flex flex-col m-3">
+                        <Alert
+                            title="Problem"
+                            subtitle={humanReadableTransactionErrors(
+                                submitError
+                            )}
+                        />
+                    </div>
+                ) : null}
+                {walletFrom?.importedLedgerIndex !== undefined && (
+                    <div className="flex flex-col m-3">
+                        <Alert
+                            title="Check Your Ledger"
+                            subtitle={
+                                'Please approve the transaction on your Ledger device.'
+                            }
+                        />
+                    </div>
+                )}
                 <div className="flex flex-col mb-2 absolute w-full bottom-[-10px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4 rounded-b-2xl">
                     <Button
-                        disabled={submitted}
+                        disabled={submitted && !submitError}
                         buttonStyle="primary"
                         type="submit"
                         className="mt-2"

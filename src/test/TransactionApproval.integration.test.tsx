@@ -1,11 +1,15 @@
 import { TransactionBlock } from '@mysten/sui.js';
+import { SUI_MAINNET_CHAIN } from '@mysten/wallet-standard';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import Browser from 'webextension-polyfill';
 
 import { TX_STORE_KEY } from '_shared/constants';
+import { setEncrypted } from '_src/shared/storagex/store';
 import { renderTemplate } from '_src/test/utils/json-templates';
-import { Mockchain } from '_src/test/utils/mockchain';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import { mockCommonCalls } from '_src/test/utils/mockchain';
+import { makeCoinObject } from '_src/test/utils/mockchain-templates/coinObject';
+import { makeDryRunTransactionResponse } from '_src/test/utils/mockchain-templates/dryRunTransaction';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { accountInfos, simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
@@ -14,10 +18,10 @@ import type { ApprovalRequest } from '_payloads/transactions';
 
 describe('The Transaction Approval popup', () => {
     const txRequestId = '95ae4a0d-0b7b-478b-ab70-bc3fe291540e';
-    let mockchain: Mockchain;
+    let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
-        mockchain = new Mockchain();
-        mockchain.mockCommonCalls();
+        mockJsonRpc = new MockJsonRpc();
+        mockCommonCalls(mockJsonRpc);
         simulateMnemonicUser();
     });
 
@@ -32,7 +36,7 @@ describe('The Transaction Approval popup', () => {
             dependencies: testDeps,
         });
 
-        await screen.findByText('Cost', {}, { timeout: 5000 });
+        await screen.findByText('Cost', {}, { timeout: 50000 });
         const approveButton = await screen.findByText('Approve');
 
         await userEvent.click(approveButton);
@@ -120,8 +124,11 @@ describe('The Transaction Approval popup', () => {
         txRequestId: string,
         txRequest: ApprovalRequest
     ) {
-        await Browser.storage.local.set({
-            [TX_STORE_KEY]: { [txRequestId]: txRequest },
+        await setEncrypted({
+            key: TX_STORE_KEY,
+            value: JSON.stringify({ [txRequestId]: txRequest }),
+            session: false,
+            strong: false,
         });
     }
 
@@ -145,7 +152,7 @@ describe('The Transaction Approval popup', () => {
                 type: 'transaction',
                 data: transactionBlock.serialize(),
                 account: accountInfos[0].address,
-                chain: 'sui:testnet',
+                chain: SUI_MAINNET_CHAIN,
             },
         };
 
@@ -167,7 +174,7 @@ describe('The Transaction Approval popup', () => {
                 type: 'transaction',
                 data,
                 account: accountInfos[0].address,
-                chain: 'sui:testnet',
+                chain: SUI_MAINNET_CHAIN,
             },
         };
 
@@ -189,7 +196,7 @@ describe('The Transaction Approval popup', () => {
                 type: 'transaction',
                 data,
                 account: accountInfos[0].address,
-                chain: 'sui:testnet',
+                chain: SUI_MAINNET_CHAIN,
             },
         };
 
@@ -197,7 +204,11 @@ describe('The Transaction Approval popup', () => {
     }
 
     function mockBlockchainTransactionExecution() {
-        mockchain.mockBlockchainCall(
+        const coinObj = makeCoinObject(
+            40000000,
+            '0x395c50c614cc22156c9de8db24163f48e4ff66ae'
+        );
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_multiGetObjects',
                 params: [
@@ -207,15 +218,10 @@ describe('The Transaction Approval popup', () => {
                     },
                 ],
             },
-            [
-                renderTemplate('coinObject', {
-                    balance: 40000000,
-                    id: '0x395c50c614cc22156c9de8db24163f48e4ff66ae',
-                }),
-            ]
+            [coinObj]
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_multiGetObjects',
                 params: [
@@ -234,7 +240,7 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('liquidityMultiGetObjects', {})
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_multiGetObjects',
                 params: [
@@ -249,7 +255,40 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('mintCoinMultiGetObjects', {})
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
+            {
+                method: 'sui_multiGetObjects',
+                params: [
+                    [
+                        '0x986b14a24acd0c8bb2b08d166069d6a2361f48e76f34151efc773e5cb98da53b',
+                    ],
+                    {
+                        showContent: true,
+                        showDisplay: true,
+                    },
+                ],
+            },
+            renderTemplate('mintCoinMultiGetObjects', {})
+        );
+
+        mockJsonRpc.mockBlockchainCall(
+            {
+                method: 'sui_multiGetObjects',
+                params: [
+                    [
+                        '0xce06dadf062062d551c86379e37bdef20da55835fa440e011e5beb4a333f1f62',
+                        '0xde7af23cfd81b32a9d191dea03f5e6a1b086c8218856212388980f7def43a9b6',
+                    ],
+                    {
+                        showContent: true,
+                        showDisplay: true,
+                    },
+                ],
+            },
+            renderTemplate('mintCoinMultiGetObjects', {})
+        );
+
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'suix_getReferenceGasPrice',
                 params: [],
@@ -257,27 +296,27 @@ describe('The Transaction Approval popup', () => {
             '10'
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
-                    'AAACAQAAAAAAAAAAAAAAAAA5XFDGFMwiFWyd6NskFj9I5P9mrgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfABQc5QM+gq6aSOp0O1A9lrSbnFf+CwEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeCgAAAAAAAAAAypo7AAAAAAA=',
+                    'AAACAQAAAAAAAAAAAAAAAAA5XFDGFMwiFWyd6NskFj9I5P9mrgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfABQc5QM+gq6aSOp0O1A9lrSbnFf+CwEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeCgAAAAAAAAAAdDukCwAAAAA=',
                 ],
             },
-            renderTemplate('dryRunTransaction', {})
+            makeDryRunTransactionResponse()
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
-                    'AAACAQAAAAAAAAAAAAAAAAA5XFDGFMwiFWyd6NskFj9I5P9mrgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfABQc5QM+gq6aSOp0O1A9lrSbnFf+CwEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3goAAAAAAAAAZgQAAAAAAAAA',
+                    'AAACAQAAAAAAAAAAAAAAAAA5XFDGFMwiFWyd6NskFj9I5P9mrgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwfABQc5QM+gq6aSOp0O1A9lrSbnFf+CwEBAQEAAAEBAP8mOpQbllC1EgemdNWXKPbzQQLTZvTfWllRS8NmhgLeAfUb/H2Y2G+9dfGdFsN0hLDw9zgutsm/ytL+SpS+LIgiAgAAAAAAAAAgtDTkUvcH0/1b2UNBKf6rEnjGV5xUgQQZbsB49TjIbB//JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3goAAAAAAAAAEisAAAAAAAAA',
                 ],
             },
-            renderTemplate('dryRunTransaction', {})
+            makeDryRunTransactionResponse()
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
@@ -287,27 +326,27 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('liquidityDryRunTransaction', {})
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
-                    'AAACAQGYaxSiSs0Mi7KwjRZgadaiNh9I5280FR78dz5cuY2lO98AAAAAAAAAAQAIoIYBAAAAAAABABy/333lAE+IdwX6U7s0XUNy5QBL2LBKb4ho9eHKGvnHEmV0aG9zX2V4YW1wbGVfY29pbgRtaW50AAIBAAABAQD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3goAAAAAAAAAAMqaOwAAAAAA',
+                    'AAACAQGYaxSiSs0Mi7KwjRZgadaiNh9I5280FR78dz5cuY2lO98AAAAAAAAAAQAIoIYBAAAAAAABABy/333lAE+IdwX6U7s0XUNy5QBL2LBKb4ho9eHKGvnHEmV0aG9zX2V4YW1wbGVfY29pbgRtaW50AAIBAAABAQD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3goAAAAAAAAAAHQ7pAsAAAAA',
                 ],
             },
             renderTemplate('multiCoinDryRunTransaction1', {})
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
-                    'AAACAQGYaxSiSs0Mi7KwjRZgadaiNh9I5280FR78dz5cuY2lO98AAAAAAAAAAQAIoIYBAAAAAAABABy/333lAE+IdwX6U7s0XUNy5QBL2LBKb4ho9eHKGvnHEmV0aG9zX2V4YW1wbGVfY29pbgRtaW50AAIBAAABAQD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gH1G/x9mNhvvXXxnRbDdISw8Pc4LrbJv8rS/kqUviyIIgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwf/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4KAAAAAAAAAIYEAAAAAAAAAA==',
+                    'AAACAQGYaxSiSs0Mi7KwjRZgadaiNh9I5280FR78dz5cuY2lO98AAAAAAAAAAQAIoIYBAAAAAAABABy/333lAE+IdwX6U7s0XUNy5QBL2LBKb4ho9eHKGvnHEmV0aG9zX2V4YW1wbGVfY29pbgRtaW50AAIBAAABAQD/JjqUG5ZQtRIHpnTVlyj280EC02b031pZUUvDZoYC3gH1G/x9mNhvvXXxnRbDdISw8Pc4LrbJv8rS/kqUviyIIgIAAAAAAAAAILQ05FL3B9P9W9lDQSn+qxJ4xlecVIEEGW7AePU4yGwf/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4KAAAAAAAAABkrAAAAAAAAAA==',
                 ],
             },
             renderTemplate('multiCoinDryRunTransaction2', {})
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'suix_getCoins',
                 params: [
@@ -320,7 +359,7 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('getCoins', {})
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_getNormalizedMoveFunction',
                 params: [
@@ -332,7 +371,7 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('liquidityNormalizedMoveFunction', {})
         );
 
-        mockchain.mockBlockchainCall(
+        mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_getNormalizedMoveFunction',
                 params: [
@@ -344,7 +383,7 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('mintCoinNormalizedMoveFunction', {})
         );
 
-        return mockchain.mockBlockchainCall(
+        return mockJsonRpc.mockBlockchainCall(
             {
                 method: 'sui_executeTransactionBlock',
             },

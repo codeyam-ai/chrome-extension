@@ -10,6 +10,7 @@ export const ALL_PERMISSION_TYPES = [
     'setFavorites',
     'viewContacts',
     'viewFavorites',
+    'switchAccount',
 ] as const;
 
 export const EXPLORER_PERMISSIONS = [
@@ -18,6 +19,7 @@ export const EXPLORER_PERMISSIONS = [
     'setFavorites',
     'viewContacts',
     'viewFavorites',
+    'switchAccount',
 ];
 
 type AllPermissionsType = typeof ALL_PERMISSION_TYPES;

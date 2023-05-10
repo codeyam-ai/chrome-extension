@@ -1,52 +1,90 @@
 import { CheckCircleIcon, PencilIcon } from '@heroicons/react/24/solid';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { type AccountInfo } from '../../KeypairVault';
 import { useEditWalletUrl } from '../../components/settings-menu/hooks';
 import { useAppDispatch, useMiddleEllipsis } from '../../hooks';
+import useWalletName from '../../hooks/useWalletName';
 import { saveActiveAccountIndex } from '../../redux/slices/account';
 import WalletColorAndEmojiCircle from '../WalletColorAndEmojiCircle';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
-import { clearForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
+import { clearForNetworkOrWalletSwitch as clearBalancesForNetworkOrWalletSwitch } from '_redux/slices/balances';
+import { clearForNetworkOrWalletSwitch as clearTokensForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
 
 interface WalletButtonProps {
     wallet: AccountInfo;
     isActive: boolean;
     isWalletEditing: boolean;
+    destination?: string;
+    onClick?: () => void;
 }
 
 const WalletButton = ({
     wallet,
     isActive,
     isWalletEditing,
+    destination,
+    onClick,
 }: WalletButtonProps) => {
+    const ref = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const shortenedAddress = useMiddleEllipsis(wallet.address, 24, 12);
     const editWalletUrl = useEditWalletUrl(wallet.index);
 
-    const switchToThisWallet = useCallback(async () => {
+    const handleClick = useCallback(async () => {
+        if (onClick) {
+            onClick();
+            return;
+        }
+
         if (isActive) {
-            navigate(-1);
+            if (destination) {
+                navigate(destination);
+            } else {
+                navigate(-1);
+            }
             return;
         }
         if (isWalletEditing) return;
-        await dispatch(clearForNetworkOrWalletSwitch());
+        await dispatch(clearBalancesForNetworkOrWalletSwitch());
+        await dispatch(clearTokensForNetworkOrWalletSwitch());
         await dispatch(saveActiveAccountIndex(wallet.index));
-        navigate(-1);
-    }, [wallet.index, isWalletEditing, isActive, dispatch, navigate]);
+        if (destination) {
+            navigate(destination);
+        } else {
+            navigate(-1);
+        }
+    }, [
+        onClick,
+        isActive,
+        isWalletEditing,
+        dispatch,
+        wallet.index,
+        destination,
+        navigate,
+    ]);
 
     const editThisWallet = useCallback(() => {
         navigate(editWalletUrl);
     }, [navigate, editWalletUrl]);
 
+    useEffect(() => {
+        if (isActive && ref.current?.scrollIntoView) {
+            ref.current.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        }
+    }, [isActive]);
+
+    const name = useWalletName(wallet);
+
     return (
         <div
+            ref={ref}
             data-testid={`wallet${wallet.index + 1}`}
             className="py-[10px] px-3 flex justify-between items-center cursor-pointer"
-            onClick={isWalletEditing ? editThisWallet : switchToThisWallet}
+            onClick={isWalletEditing ? editThisWallet : handleClick}
         >
             <div className="flex gap-3">
                 <WalletColorAndEmojiCircle
@@ -56,12 +94,7 @@ const WalletButton = ({
                     emojiSizeInPx={22}
                 />
                 <div className="flex flex-col text-left" title={wallet.address}>
-                    <BodyLarge>
-                        {wallet.name ||
-                            `Wallet${
-                                wallet.index > 0 ? ' ' + wallet.index + 1 : ''
-                            }`}
-                    </BodyLarge>
+                    <BodyLarge>{name}</BodyLarge>
                     <Body isTextColorMedium>{shortenedAddress}</Body>
                 </div>
             </div>

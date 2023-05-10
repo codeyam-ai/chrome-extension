@@ -8,9 +8,12 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 
 import useSizeWindow from './hooks/useSizeWindow';
 import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
-import BuyPage from './pages/home/buy';
+import MoonpayOnboarding from './pages/home/buy';
 import AddressBookNavigation from './pages/home/home/dapp/dapps/AddressBook/AddressBookNavigation';
 import CustomizeNavigation from './pages/home/home/dapp/dapps/Customize/CustomizeNavigation';
+import LedgerNavigation from './pages/home/home/dapp/dapps/Ledger/LedgerNavigation';
+import ManageWallets from './pages/home/home/dapp/dapps/ManageWallets/ManageWalletsNavigation';
+import StakingNavigation from './pages/home/home/dapp/dapps/Staking/StakingNavigation';
 import TransferNftRecipient from './pages/home/nft-details/transfer-nft-recipient';
 import TransferNftReview from './pages/home/nft-details/transfer-nft-review';
 import ReceivePage from './pages/home/receive';
@@ -48,7 +51,11 @@ import AppContainer, {
     TransactionsPage,
 } from '_pages/home';
 import InitializePage from '_pages/initialize';
-import { loadAccountInformationFromStorage } from '_redux/slices/account';
+import {
+    loadAccountInformationFromStorage,
+    loadExcludedDappsKeysFromStorage,
+    loadFavoriteDappsKeysFromStorage,
+} from '_redux/slices/account';
 import { ThemeProvider } from '_src/shared/utils/themeContext';
 import { DappPreapprovalPage } from '_src/ui/app/pages/dapp-preapproval';
 import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
@@ -62,6 +69,8 @@ const App = () => {
 
     useEffect(() => {
         dispatch(loadAccountInformationFromStorage());
+        dispatch(loadFavoriteDappsKeysFromStorage());
+        dispatch(loadExcludedDappsKeysFromStorage());
         dispatch(loadContactsStorage());
     }, [dispatch]);
 
@@ -90,6 +99,22 @@ const App = () => {
                         <Route
                             path="home/address-book/*"
                             element={<AddressBookNavigation />}
+                        />
+                        <Route
+                            path="home/staking/*"
+                            element={<StakingNavigation />}
+                        />
+                        <Route
+                            path="home/buy"
+                            element={<MoonpayOnboarding />}
+                        />
+                        <Route
+                            path="home/manage-wallets/*"
+                            element={<ManageWallets />}
+                        />
+                        <Route
+                            path="home/ledger/*"
+                            element={<LedgerNavigation />}
                         />
                         <Route path="tokens" element={<TokensPage />} />
                         <Route path="nfts">
@@ -138,7 +163,6 @@ const App = () => {
                             />
                         </Route>
                         <Route path="receive" element={<ReceivePage />} />
-                        <Route path="buy" element={<BuyPage />} />
                         <Route
                             path="tx/:txDigest"
                             element={<TransactionDetailsPage />}

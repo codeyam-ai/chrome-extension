@@ -3,13 +3,16 @@ import {
     EnvelopeIcon,
     PlusCircleIcon,
 } from '@heroicons/react/24/solid';
+import { useEffect } from 'react';
 
 import { useInitializedGuard } from '../hooks';
+import { useFavoriteDapps } from '../hooks/useFavoriteDapps';
 import { AppState } from '../hooks/useInitializedGuard';
 import OnboardingButton from '../shared/buttons/OnboardingButton';
-import OnboardingHeader from '../shared/headers/page-headers/OnboardingHeader';
+import HeaderWithLargeEthosIcon from '../shared/headers/page-headers/HeaderWithLargeEthosIcon';
 import OnboardingLayout from '../shared/layouts/OnboardingLayout';
 import Title from '../shared/typography/Title';
+import { DEFAULT_DAPP_KEYS } from '_src/data/dappsMap';
 
 import type { OnboardingButtonProps } from '../shared/buttons/OnboardingButton';
 
@@ -45,11 +48,20 @@ const setupButtons: OnboardingButtonProps[] = [
 
 const WelcomePage = () => {
     useInitializedGuard([AppState.UNINITIALIZED, AppState.LOCKED]);
+    const { setFavoriteDappsKeys } = useFavoriteDapps();
 
+    useEffect(() => {
+        setFavoriteDappsKeys(DEFAULT_DAPP_KEYS);
+    }, [setFavoriteDappsKeys]);
     return (
         <OnboardingLayout>
             <div className="flex flex-col w-[464px]">
-                <OnboardingHeader />
+                <HeaderWithLargeEthosIcon
+                    description="A re-imagined wallet for discovering apps, games, and NFTs on
+                    Sui"
+                    forceLightTheme
+                />
+
                 <div className="flex flex-col gap-8 text-center py-6 sm:py-10 px-6 sm:px-0 rounded-2xl bg-ethos-light-background-default">
                     <Title forceLightMode className="px-10">
                         Choose how you would like to setup your wallet.

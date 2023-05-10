@@ -18,7 +18,9 @@ import {
 } from '_redux/slices/account';
 import { Coin } from '_redux/slices/sui-objects/Coin';
 import ns from '_shared/namespace';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
+import safeAddress from '_src/ui/app/helpers/safeAddress';
 import {
     useCoinDecimals,
     useFormatCoin,
@@ -40,12 +42,10 @@ type AggregateBalances = Record<string, bigint>;
 
 interface UseCoinInputs {
     aggregateBalances: AggregateBalances;
+    coinType: string | null;
 }
 
-function useCoin({ aggregateBalances }: UseCoinInputs) {
-    const [searchParams] = useSearchParams();
-    const coinType = searchParams.get('type');
-
+export function useCoin({ aggregateBalances, coinType }: UseCoinInputs) {
     const coinBalance = useMemo(
         () => (coinType && aggregateBalances[coinType]) || BigInt(0),
         [coinType, aggregateBalances]
@@ -60,7 +60,7 @@ function useCoin({ aggregateBalances }: UseCoinInputs) {
         type: coinType,
         balance: coinBalance,
         symbol: coinSymbol,
-        decimals: coinDecimals,
+        decimals: coinDecimals ?? 9,
     };
 
     return coin;
@@ -71,7 +71,7 @@ interface UseGasInputs {
     aggregateBalances: AggregateBalances;
 }
 
-function useGas({ coin, aggregateBalances }: UseGasInputs) {
+export function useGas({ coin, aggregateBalances }: UseGasInputs) {
     const gasAggregateBalance = useMemo(
         () => aggregateBalances[SUI_TYPE_ARG] || BigInt(0),
         [aggregateBalances]
@@ -116,8 +116,15 @@ function useOnHandleSubmit({
     setSendError,
     formState,
 }: UseOnHandleSubmit) {
+    const { connectToLedger } = useSuiLedgerClient();
     const {
-        account: { authentication, address, activeAccountIndex },
+        account: {
+            authentication,
+            address,
+            activeAccountIndex,
+            accountInfos,
+            passphrase,
+        },
     } = useAppSelector((state) => state);
     const state = useAppSelector((state) => state);
     const dispatch = useAppDispatch();
@@ -150,10 +157,17 @@ function useOnHandleSubmit({
             );
 
             const signer = await getSigner(
+                passphrase,
+                accountInfos,
                 address,
                 authentication,
-                activeAccountIndex
+                activeAccountIndex,
+                connectToLedger
             );
+
+            if (!signer) return;
+
+            const safeTo = safeAddress(formState.to);
 
             const allCoins: SuiMoveObject[] = accountCoinsSelector(state);
             const [primaryCoin, ...mergeCoins] = allCoins.filter(
@@ -167,7 +181,7 @@ function useOnHandleSubmit({
                 ]);
                 transactionBlock.transferObjects(
                     [coin],
-                    transactionBlock.pure(formState.to)
+                    transactionBlock.pure(safeTo)
                 );
             } else {
                 const primaryCoinInput = transactionBlock.object(
@@ -187,29 +201,35 @@ function useOnHandleSubmit({
                 );
                 transactionBlock.transferObjects(
                     [coinToTransfer],
-                    transactionBlock.pure(formState.to)
+                    transactionBlock.pure(safeTo)
                 );
             }
 
-            const signedTx = await signer.dryRunTransactionBlock({
-                transactionBlock,
-            });
+            try {
+                const signedTx = await signer.dryRunTransactionBlock({
+                    transactionBlock,
+                });
 
-            const { computationCost, storageCost, storageRebate } =
-                signedTx.effects.gasUsed;
+                const { computationCost, storageCost, storageRebate } =
+                    signedTx.effects.gasUsed;
 
-            const gasFee =
-                Number(computationCost) +
-                (Number(storageCost) - Number(storageRebate));
+                const gasFee =
+                    Number(computationCost) +
+                    (Number(storageCost) - Number(storageRebate));
 
-            dispatch(
-                setSuiAmount({
-                    amount: amount,
-                    gasFee: `${gasFee} MIST`,
-                })
-            );
+                dispatch(
+                    setSuiAmount({
+                        amount: amount,
+                        gasFee: gasFee.toString(),
+                    })
+                );
 
-            setSendError(null);
+                setSendError(null);
+            } catch (e: unknown) {
+                const message = (e as SerializedError).message || null;
+                setSendError(message);
+                return;
+            }
 
             try {
                 resetForm();
@@ -222,17 +242,20 @@ function useOnHandleSubmit({
             }
         },
         [
-            dispatch,
-            navigate,
             coin.type,
-            activeAccountIndex,
+            coin.decimals,
+            locale,
+            passphrase,
+            accountInfos,
             address,
             authentication,
+            activeAccountIndex,
+            connectToLedger,
             formState.to,
-            coin.decimals,
             state,
+            dispatch,
             setSendError,
-            locale,
+            navigate,
         ]
     );
 
@@ -241,16 +264,22 @@ function useOnHandleSubmit({
 
 // TODO: show out of sync when sui objects locally might be outdated
 function TransferCoinAmountPage() {
+    const [searchParams] = useSearchParams();
+    const coinType = searchParams.get('type');
+
     const aggregateBalances = useAppSelector(accountAggregateBalancesSelector);
-    const coin = useCoin({ aggregateBalances });
+    const coin = useCoin({ aggregateBalances, coinType });
     const gas = useGas({ coin, aggregateBalances });
+
     const formState = useAppSelector(({ forms: { sendSui } }) => sendSui);
     const [sendError, setSendError] = useState<string | null>(null);
     const onHandleSubmit = useOnHandleSubmit({ coin, setSendError, formState });
+
     const [formattedBalance] = useFormatCoin(
         coin.balance,
         coin.type || SUI_TYPE_ARG
     );
+
     const { locale } = useIntl();
 
     const validationSchema = useMemo(

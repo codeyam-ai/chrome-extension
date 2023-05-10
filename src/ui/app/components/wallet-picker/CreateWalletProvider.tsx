@@ -9,8 +9,9 @@ import {
     saveActiveAccountIndex,
     setAccountInfos,
 } from '../../redux/slices/account';
-import { clearForNetworkOrWalletSwitch } from '../../redux/slices/sui-objects';
 import { thunkExtras } from '../../redux/store/thunk-extras';
+import { clearForNetworkOrWalletSwitch as clearBalancesForNetworkOrWalletSwitch } from '_redux/slices/balances';
+import { clearForNetworkOrWalletSwitch as clearTokensForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
 import Authentication from '_src/background/Authentication';
 import Permissions from '_src/background/Permissions';
 
@@ -74,7 +75,8 @@ const CreateWalletProvider = ({
             await dispatch(setAccountInfos(draftAccountInfos.current));
             await Authentication.getAccountInfos(true);
         } else {
-            await dispatch(clearForNetworkOrWalletSwitch());
+            await dispatch(clearTokensForNetworkOrWalletSwitch());
+            await dispatch(clearBalancesForNetworkOrWalletSwitch());
             await dispatch(saveAccountInfos(draftAccountInfos.current));
             await dispatch(
                 saveActiveAccountIndex(draftAccountInfos.current.length - 1)
@@ -85,7 +87,13 @@ const CreateWalletProvider = ({
 
     const createWallet = useCallback(() => {
         const loadAccFromStorage = async () => {
-            const sortedAccountIndices = accountInfos
+            const relevantAccountInfos = accountInfos.filter(
+                (a) =>
+                    a.importedMnemonicIndex === undefined &&
+                    a.importedPrivateKeyName === undefined &&
+                    a.importedLedgerIndex === undefined
+            );
+            const sortedAccountIndices = relevantAccountInfos
                 .map((a) => a.index || 0)
                 .sort(function (a, b) {
                     return a - b;
@@ -99,7 +107,9 @@ const CreateWalletProvider = ({
                     nextAccountIndex
                 );
                 if (newAccount) {
-                    newAccount.name = `Wallet ${accountInfos.length + 1}`;
+                    newAccount.name = `Wallet ${
+                        relevantAccountInfos.length + 1
+                    }`;
                     newAccount.color = getNextWalletColor(nextAccountIndex);
                     newAccount.emoji = getNextEmoji(nextAccountIndex);
                 }
@@ -114,7 +124,7 @@ const CreateWalletProvider = ({
                     ...accountInfos,
                     {
                         index: nextAccountIndex,
-                        name: `Wallet ${accountInfos.length + 1}`,
+                        name: `Wallet ${relevantAccountInfos.length + 1}`,
                         color: getNextWalletColor(nextAccountIndex),
                         emoji: getNextEmoji(nextAccountIndex),
                         address:

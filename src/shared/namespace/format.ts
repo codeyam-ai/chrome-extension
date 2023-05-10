@@ -7,7 +7,8 @@ import BigNumber from 'bignumber.js';
  */
 export function coinBalance(
     balance: bigint | number | string,
-    decimals: number
+    decimals: number,
+    formatDecimals?: number
 ) {
     let postfix = '';
     let bn = new BigNumber(balance.toString()).shiftedBy(-1 * decimals);
@@ -27,7 +28,7 @@ export function coinBalance(
         bn = bn.decimalPlaces(2, BigNumber.ROUND_DOWN);
     }
 
-    return bn.toFormat() + postfix;
+    return bn.toFormat(formatDecimals) + postfix;
 }
 
 export function dollars(balance: bigint | number | string, decimals: number) {

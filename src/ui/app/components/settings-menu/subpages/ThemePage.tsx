@@ -3,9 +3,9 @@ import {
     MoonIcon,
     SunIcon,
 } from '@heroicons/react/24/solid';
-import { useContext, useCallback } from 'react';
+import { useCallback } from 'react';
 
-import { ThemeContext } from '_src/shared/utils/themeContext';
+import { useTheme } from '_src/shared/utils/themeContext';
 import SegmentedControl from '_src/ui/app/shared/inputs/SegmentedControl';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
@@ -14,7 +14,7 @@ import Header from '_src/ui/app/shared/typography/Header';
 import type { SegmentedControlItem } from '_src/ui/app/shared/inputs/SegmentedControl';
 
 const ThemePage = () => {
-    const { theme, setTheme } = useContext(ThemeContext);
+    const { theme, setTheme } = useTheme();
 
     const setThemeToSystem = useCallback(() => {
         setTheme('system');

@@ -1,5 +1,5 @@
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import StylePreviewCard from '../../components/onboarding/StylePreviewCard';
 import getNextEmoji from '../../helpers/getNextEmoji';
@@ -13,7 +13,7 @@ import darkSrc from '_assets/images/themePreview/dark.png';
 import lightSrc from '_assets/images/themePreview/light.png';
 import systemSrc from '_assets/images/themePreview/system.png';
 import { getEncrypted } from '_src/shared/storagex/store';
-import { ThemeContext } from '_src/shared/utils/themeContext';
+import { useTheme } from '_src/shared/utils/themeContext';
 
 import type { AccountInfo } from '../../KeypairVault';
 
@@ -57,7 +57,7 @@ const ThemeButton = ({
 
 const OnboardingThemePage = () => {
     const [isHostedWallet, setIsHostedWallet] = useState(false);
-    const { theme, setTheme } = useContext(ThemeContext);
+    const { theme, setTheme } = useTheme();
 
     const accountInfo = useAppSelector(
         ({ account: { accountInfos, activeAccountIndex } }) =>

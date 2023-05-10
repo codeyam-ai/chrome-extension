@@ -24,7 +24,9 @@ const ContactTransactions: React.FC<ContactTransactionsProps> = ({
 
     const txnsBetweenUserAndContact = useMemo(() => {
         return formattedTxns.filter(
-            (txn) => txn.humanReadable.addresses?.to === contactAddress
+            (txn) =>
+                txn.analyzedTransaction.important.sending?.[0]?.recipient ===
+                contactAddress
         );
     }, [formattedTxns, contactAddress]);
 

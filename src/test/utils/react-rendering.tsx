@@ -12,6 +12,7 @@ import App from '_app/index';
 import { AppType } from '_redux/slices/app/AppType';
 import { DependenciesContext } from '_shared/utils/dependenciesContext';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
+import { SuiLedgerClientProvider } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import { createStore } from '_store';
 import { thunkExtras } from '_store/thunk-extras';
 
@@ -43,7 +44,7 @@ export async function renderApp({
         createStore({
             app: {
                 appType: AppType.fullscreen,
-                apiEnv: API_ENV.testNet,
+                apiEnv: API_ENV.mainNet,
             },
             ...preloadedState,
         });
@@ -53,21 +54,25 @@ export async function renderApp({
 
     function Wrapper({ children }: PropsWithChildren<unknown>): JSX.Element {
         return (
-            <MemoryRouter
-                // we start at '/home' because if we use the index route of '/' it will navigate to '/home'
-                // at some point after the initial render, which causes havoc in tests.
-                initialEntries={initialRoute ? [initialRoute] : ['/home']}
-            >
-                <Provider store={storeToUse}>
-                    <IntlProvider locale={locale}>
-                        <QueryClientProvider client={queryClient}>
-                            <DependenciesContext.Provider value={dependencies}>
-                                {children}
-                            </DependenciesContext.Provider>
-                        </QueryClientProvider>
-                    </IntlProvider>
-                </Provider>
-            </MemoryRouter>
+            <SuiLedgerClientProvider>
+                <MemoryRouter
+                    // we start at '/home' because if we use the index route of '/' it will navigate to '/home'
+                    // at some point after the initial render, which causes havoc in tests.
+                    initialEntries={initialRoute ? [initialRoute] : ['/home']}
+                >
+                    <Provider store={storeToUse}>
+                        <IntlProvider locale={locale}>
+                            <QueryClientProvider client={queryClient}>
+                                <DependenciesContext.Provider
+                                    value={dependencies}
+                                >
+                                    {children}
+                                </DependenciesContext.Provider>
+                            </QueryClientProvider>
+                        </IntlProvider>
+                    </Provider>
+                </MemoryRouter>
+            </SuiLedgerClientProvider>
         );
     }
 

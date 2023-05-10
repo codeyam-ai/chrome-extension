@@ -41,6 +41,7 @@ interface AlertWithErrorExpandProps {
     body: ReactElement;
     fullErrorText?: string;
     txInfo?: TxInfo;
+    isExpanded?: boolean;
 }
 
 const AlertWithErrorExpand = ({
@@ -48,8 +49,9 @@ const AlertWithErrorExpand = ({
     body,
     fullErrorText,
     txInfo,
+    isExpanded = false,
 }: AlertWithErrorExpandProps) => {
-    const [expanded, setExpanded] = useState(false);
+    const [expanded, setExpanded] = useState(isExpanded);
     const [isReportFormOpen] = useState(false);
     const [comment, setComment] = useState('');
     const [reportId, setReportId] = useState('');

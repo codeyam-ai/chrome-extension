@@ -1,16 +1,19 @@
-import { act, screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 
+import { DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES } from '_src/shared/constants';
 import { fakeAlarms } from '_src/test/utils/fake-browser/fake-browser';
-import { Mockchain } from '_src/test/utils/mockchain';
+import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
+import { makeTestDeps } from '_src/test/utils/test-dependencies';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
-describe('Rendering the Tokens page', () => {
-    let mockchain: Mockchain;
+describe('The home page', () => {
+    let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
-        mockchain = new Mockchain();
+        mockJsonRpc = new MockJsonRpc();
         simulateMnemonicUser();
-        mockchain.mockCommonCalls();
+        mockCommonCalls(mockJsonRpc);
     });
 
     class FakeHeartbeat {
@@ -22,22 +25,23 @@ describe('Rendering the Tokens page', () => {
 
     test('sends heartbeat and locks when background service says to', async () => {
         const fakeHeartbeat = new FakeHeartbeat();
-        mockchain.mockSuiObjects();
-        renderApp({
-            dependencies: {
-                closeWindow: jest.fn(),
-                heartbeat: fakeHeartbeat,
-            },
-        });
+        mockSuiObjects(mockJsonRpc);
+        const deps = { ...makeTestDeps(), heartbeat: fakeHeartbeat };
+        renderApp({ dependencies: deps });
         await screen.findByText('Get started with Sui');
 
         // at this point we expect the heartbeat listener to be registered but no alarm to be set yet
         expect(fakeHeartbeat.capturedListener).not.toBeNull();
-        expect(fakeAlarms.names).not.toContain('lockAlarm');
+        expect(fakeAlarms.alarmsCreated).toHaveLength(0);
 
         // this sends the heartbeat to the background task
         fakeHeartbeat.capturedListener && fakeHeartbeat.capturedListener();
-        expect(fakeAlarms.names).toContain('lockAlarm');
+        await waitFor(() => {
+            expect(fakeAlarms.alarmsCreated).toHaveLength(1);
+            expect(
+                fakeAlarms.alarmsCreated[0].alarmInfo.delayInMinutes
+            ).toEqual(DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES);
+        });
 
         // now invoke the alarm, which should trigger the UI to lock
         act(() => {

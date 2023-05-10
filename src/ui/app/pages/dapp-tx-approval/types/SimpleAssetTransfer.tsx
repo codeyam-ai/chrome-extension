@@ -21,6 +21,7 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 import type { RawSigner, SuiObjectChange } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 
 export type StepInformation = {
     objectId: string;
@@ -55,7 +56,7 @@ const StepOne = ({
                 <SendAssetImage imageUrl={imageUrl} name={name} />
                 <div className="flex flex-col items-center gap-1 text-lg py-3">
                     <BodyLarge className="font-light">
-                        Confirm your want to send
+                        Confirm you want to send
                     </BodyLarge>
                     {name && <BodyLarge isSemibold>{name}</BodyLarge>}
                     <Body className="text-ethos-light-text-medium text-sm">
@@ -77,7 +78,7 @@ const StepTwo = ({
     onCancel,
     onSelectStep,
 }: {
-    signer: RawSigner | EthosSigner;
+    signer: RawSigner | EthosSigner | LedgerSigner;
     stepInformation: StepInformation;
     onApprove: () => void;
     onCancel: () => void;
@@ -110,7 +111,7 @@ const SimpleAssetTransfer = ({
     onApprove,
     onCancel,
 }: {
-    signer: RawSigner | EthosSigner;
+    signer: RawSigner | EthosSigner | LedgerSigner;
     assetTransfer: SuiObjectChange;
     analysis: AnalyzeChangesResult;
     onApprove: () => void;

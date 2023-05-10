@@ -1,3 +1,5 @@
+import safeAddress from '../safeAddress';
+
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 const getIsSender = (
@@ -6,7 +8,7 @@ const getIsSender = (
 ): boolean => {
     const senderAddress = txn?.transaction?.data.sender;
 
-    return address === senderAddress;
+    return safeAddress(address) === safeAddress(senderAddress);
 };
 
 export default getIsSender;

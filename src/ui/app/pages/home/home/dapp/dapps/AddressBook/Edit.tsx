@@ -3,18 +3,16 @@ import { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as Yup from 'yup';
 
-import ContactForm from './ContactForm';
+import ContactForm, { addressValidation, nameValidation } from './ContactForm';
 import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { useUpdateContacts } from '_src/ui/app/hooks/useUpdateContacts';
 
 import type { FormikValues } from 'formik';
 
-const nameValidation = Yup.string().required('Enter a name');
-
 const Edit: React.FC = () => {
     const navigate = useNavigate();
-    const { editContact } = useUpdateContacts();
+    const { editContact, removeContact, addContact } = useUpdateContacts();
     const { address } = useParams();
     const contact = useAppSelector(({ contacts }) =>
         contacts.contacts.find((contact) => contact.address === address)
@@ -27,18 +25,49 @@ const Edit: React.FC = () => {
     );
 
     const onSubmit = useCallback(
-        ({ name }: FormikValues) => {
+        async ({ name, address: newAddress }: FormikValues) => {
             if (!contact?.address) {
                 return;
             }
-            editContact(contact.address, {
-                color: draftColor,
-                emoji: draftEmoji,
-                name,
-            });
-            navigate(-1);
+
+            if (contact.address !== newAddress) {
+                // Remove the contact with the old address
+                const updatedContacts = await removeContact(contact.address);
+
+                // Add a new contact with the updated information
+                await addContact(
+                    {
+                        address: newAddress,
+                        color: draftColor,
+                        emoji: draftEmoji,
+                        name,
+                    },
+                    updatedContacts
+                );
+                // Replacing the route allows the back button go back to the address book
+                navigate(`/home/address-book`, {
+                    replace: true,
+                });
+                navigate(`/home/address-book/contact/${newAddress}`);
+            } else {
+                // Update the existing contact if the address hasn't changed
+                await editContact(contact.address, {
+                    color: draftColor,
+                    emoji: draftEmoji,
+                    name,
+                });
+                navigate(-1);
+            }
         },
-        [contact?.address, editContact, draftColor, draftEmoji, navigate]
+        [
+            contact?.address,
+            addContact,
+            removeContact,
+            editContact,
+            draftColor,
+            draftEmoji,
+            navigate,
+        ]
     );
 
     if (!contact) {
@@ -49,10 +78,12 @@ const Edit: React.FC = () => {
         <Formik
             initialValues={{
                 name: contact.name,
+                address: contact.address,
                 termsOfService: false,
             }}
             validationSchema={Yup.object({
                 name: nameValidation,
+                address: addressValidation,
             })}
             onSubmit={onSubmit}
         >

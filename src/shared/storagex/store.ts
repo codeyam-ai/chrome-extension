@@ -23,6 +23,14 @@ export async function setSession(keyValue: Record<string, string | null>) {
     chrome.storage.session.set(keyValue);
 }
 
+export async function removeLocal(keys: string | string[]) {
+    Browser.storage.local.remove(keys);
+}
+
+export async function removeSession(keys: string | string[]) {
+    chrome.storage.session.remove(keys);
+}
+
 export async function setEncrypted({
     key,
     value,
@@ -45,6 +53,7 @@ export async function setEncrypted({
         strong: false,
         masterSalt: MASTER_SALT,
     });
+
     const encryptedValue = encrypt({
         text: value,
         strong,
@@ -104,7 +113,5 @@ export async function deleteEncrypted({
         masterSalt: MASTER_SALT,
         strong,
     });
-    await (session
-        ? setSession({ [encryptedKey]: null })
-        : setLocal({ [encryptedKey]: null }));
+    await (session ? removeSession(encryptedKey) : removeLocal(encryptedKey));
 }

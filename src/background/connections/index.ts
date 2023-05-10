@@ -11,10 +11,10 @@ import type { Connection } from './Connection';
 export class Connections {
     private _connections: Connection[] = [];
 
-    private _uiConnection: UiConnection | null = null;
-
-    getUiConnection(): UiConnection | null {
-        return this._uiConnection;
+    getUiConnections(): UiConnection[] {
+        return this._connections.filter(
+            (connection) => connection instanceof UiConnection
+        ) as UiConnection[];
     }
 
     constructor() {
@@ -31,7 +31,6 @@ export class Connections {
                         break;
                     case UiConnection.CHANNEL:
                         connection = new UiConnection(port);
-                        this._uiConnection = connection as UiConnection;
                         break;
                     default:
                         throw new Error(

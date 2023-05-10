@@ -28,7 +28,8 @@ const Approve = ({ disabled, onApprove, onCancel }: NextStepProps) => {
             buttonPrimaryChildren={
                 approving ? <LoadingIndicator /> : <>Approve</>
             }
-            isButtonPrimaryDisabled={disabled}
+            isButtonPrimaryDisabled={disabled || approving}
+            isButtonSecondaryDisabled={approving}
             onClickButtonSecondary={cancel}
             buttonSecondaryTestId="reject"
             buttonSecondaryChildren={<>Cancel</>}

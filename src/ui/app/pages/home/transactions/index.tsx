@@ -1,7 +1,7 @@
 import { QueueListIcon } from '@heroicons/react/24/solid';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import _ from 'lodash';
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 
 import { useAppSelector } from '_hooks';
 import Loading from '_src/ui/app/components/loading';
@@ -10,7 +10,7 @@ import { queryTransactionsByAddress } from '_src/ui/app/hooks/useQueryTransactio
 import Button from '_src/ui/app/shared/buttons/Button';
 import TransactionRows from '_src/ui/app/shared/content/rows-and-lists/TransactionRows';
 import Alert from '_src/ui/app/shared/feedback/Alert';
-import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
+import SubpageHeader from '_src/ui/app/shared/headers/SubpageHeader';
 import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
@@ -19,7 +19,6 @@ import type { FormattedTransaction } from '_src/ui/app/helpers/transactions/type
 const TransactionsPage = () => {
     const [activePage, setActivePage] = useState(0);
     const address = useAppSelector(({ account }) => account.address);
-    const [firstDigest, setFirstDigest] = useState<string>();
     const [formattedTxns, setFormattedTxns] = useState<FormattedTransaction[]>(
         []
     );
@@ -42,39 +41,54 @@ const TransactionsPage = () => {
         isFetchingNextPage,
     } = useInfiniteQuery(['query-transactions'], fetchTransactions, {
         enabled: !!address,
-        refetchInterval: 3000,
-        staleTime: 30000,
+        refetchInterval: 5000,
     });
 
     const loadPage = useCallback(async () => {
         if (!suiTxns?.pages[activePage]) return;
 
-        if (activePage === 0) {
-            // Save the length of the first page to compare with
-            // the length of the first page after refetching.
-            setFirstDigest(
-                suiTxns.pages[activePage].blocks[0].transaction.digest
+        setFormattedTxns((prev) => {
+            const newTransactionDigests = suiTxns?.pages[0].blocks.map(
+                (x) => x.analyzedTransaction.digest
             );
-        }
+            let newTransactionsLength = 0;
+            for (const newTranasctionDigest of newTransactionDigests) {
+                if (
+                    prev.find(
+                        (x) =>
+                            x.analyzedTransaction.digest ===
+                            newTranasctionDigest
+                    )
+                ) {
+                    break;
+                }
+                newTransactionsLength++;
+            }
+            const newTransactions = suiTxns?.pages[0].blocks.slice(
+                0,
+                newTransactionsLength
+            );
 
-        if (
-            !firstDigest ||
-            suiTxns.pages[0].blocks[0].transaction.digest === firstDigest
-        ) {
-            // Initial fetch or when selecting the load more button.
-            // Deduplicate the transactions and set the state.
-            setFormattedTxns((prev) =>
-                _.uniqWith(
-                    [...prev, ...suiTxns.pages[activePage].blocks],
-                    _.isEqual
-                )
+            const newX = suiTxns?.pages[activePage].blocks ?? [];
+            const lastX = prev.slice(newX.length * -1) ?? [];
+
+            const newXDigests = newX.map((x) => x.analyzedTransaction.digest);
+            const lastXDigests = lastX.map((x) => x.analyzedTransaction.digest);
+
+            if (_.isEqual(newXDigests, lastXDigests)) {
+                if (newTransactions.length === 0) {
+                    return prev;
+                }
+
+                return [...newTransactions, ...prev];
+            }
+
+            return _.uniqBy(
+                [...newTransactions, ...prev, ...newX],
+                (x) => x.analyzedTransaction.digest
             );
-        } else {
-            // Compare the length of the first page with the length
-            // of the initial page. If they are different, prepend the new item.
-            setFormattedTxns((prev) => [suiTxns.pages[0].blocks[0], ...prev]);
-        }
-    }, [suiTxns, activePage, firstDigest]);
+        });
+    }, [suiTxns, activePage]);
 
     // load a page of "formatted transactions"
     useEffect(() => {
@@ -101,9 +115,9 @@ const TransactionsPage = () => {
         }
     }, [suiTxns, activePage, fetchNextPage]);
 
-    if (error) {
+    if (error && formattedTxns.length === 0) {
         return (
-            <div className="pb-4">
+            <div className="p-6">
                 <Alert
                     title={'We could not retrieve your transactions'}
                     subtitle={'Please try again later.'}
@@ -114,14 +128,14 @@ const TransactionsPage = () => {
     }
 
     return (
-        <React.Fragment>
-            <Loading loading={!suiTxns} big={true}>
-                {suiTxns && suiTxns.pages[0].blocks.length > 0 && (
-                    <div className={'flex flex-col'}>
-                        <TextPageTitle title="Activity" />
+        <Loading loading={!suiTxns} big={true}>
+            <div className="flex flex-col gap-4">
+                <SubpageHeader title="My Activity" />
+                {suiTxns &&
+                    suiTxns.pages[0].blocks.length > 0 &&
+                    formattedTxns.length > 0 && (
                         <TransactionRows transactions={formattedTxns} />
-                    </div>
-                )}
+                    )}
                 <div>
                     {isFetchingNextPage && (
                         <div className={'pb-8'}>
@@ -136,7 +150,6 @@ const TransactionsPage = () => {
                         >
                             <Button
                                 buttonStyle={'secondary'}
-                                className={'mb-6'}
                                 onClick={incrementPage}
                             >
                                 Load more
@@ -157,8 +170,8 @@ const TransactionsPage = () => {
                         internal={true}
                     />
                 )}
-            </Loading>
-        </React.Fragment>
+            </div>
+        </Loading>
     );
 };
 

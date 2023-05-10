@@ -1,18 +1,18 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { RawSigner, JsonRpcProvider, Connection } from '@mysten/sui.js';
+import { Connection, JsonRpcProvider, RawSigner } from '@mysten/sui.js';
 
-import { growthbook } from './experimentation/feature-gating';
 import { queryClient } from './helpers/queryClient';
 import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
 import type { Keypair, SuiAddress } from '@mysten/sui.js';
 
 export enum API_ENV {
-    local = 'local',
-    devNet = 'devNet',
+    mainNet = 'mainNet',
     testNet = 'testNet',
+    devNet = 'devNet',
+    local = 'local',
     customRPC = 'customRPC',
 }
 
@@ -21,44 +21,41 @@ type EnvInfo = {
 };
 
 export const API_ENV_TO_INFO: Record<string, EnvInfo> = {
-    [API_ENV.local.toString()]: { name: 'Local' },
-    [API_ENV.devNet.toString()]: { name: 'Devnet' },
-    [API_ENV.customRPC.toString()]: { name: 'Custom RPC URL' },
+    [API_ENV.mainNet.toString()]: { name: 'Mainnet' },
     [API_ENV.testNet.toString()]: { name: 'Testnet' },
+    [API_ENV.devNet.toString()]: { name: 'Devnet' },
+    [API_ENV.local.toString()]: { name: 'Local' },
+    [API_ENV.customRPC.toString()]: { name: 'Custom RPC URL' },
 };
 
 export const ENV_TO_API: Record<string, Connection | null> = {
-    [API_ENV.local.toString()]: new Connection({
-        fullnode: process.env.API_ENDPOINT_LOCAL_FULLNODE || '',
-        faucet: process.env.API_ENDPOINT_LOCAL_FAUCET || '',
+    [API_ENV.mainNet.toString()]: new Connection({
+        fullnode: process.env.API_ENDPOINT_MAINNET_FULLNODE || '',
+        faucet: '',
+    }),
+    [API_ENV.testNet.toString()]: new Connection({
+        fullnode: process.env.API_ENDPOINT_TESTNET_FULLNODE || '',
+        faucet: process.env.API_ENDPOINT_TESTNET_FAUCET || '',
     }),
     [API_ENV.devNet.toString()]: new Connection({
         fullnode: process.env.API_ENDPOINT_DEVNET_FULLNODE || '',
         faucet: process.env.API_ENDPOINT_DEVNET_FAUCET || '',
     }),
-    [API_ENV.customRPC.toString()]: null,
-    [API_ENV.testNet.toString()]: new Connection({
-        fullnode: process.env.API_ENDPOINT_TESTNET_FULLNODE || '',
-        faucet: process.env.API_ENDPOINT_TESTNET_FAUCET || '',
+    [API_ENV.local.toString()]: new Connection({
+        fullnode: process.env.API_ENDPOINT_LOCAL_FULLNODE || '',
+        faucet: process.env.API_ENDPOINT_LOCAL_FAUCET || '',
     }),
+    [API_ENV.customRPC.toString()]: null,
 };
 
-function getDefaultApiEnv() {
-    const apiEnv = growthbook.getFeatureValue(
-        'default-api-env',
-        API_ENV.testNet
-    );
-    if (apiEnv && !Object.keys(API_ENV).includes(apiEnv)) {
-        throw new Error(`Unknown environment variable API_ENV, ${apiEnv}`);
-    }
-    return apiEnv ? API_ENV[apiEnv as keyof typeof API_ENV] : API_ENV.testNet;
-}
-
 function getDefaultAPI(env: API_ENV) {
-    const dynamicApiEnvs = growthbook.getFeatureValue(
-        'api-endpoints',
-        {} as Record<string, Record<string, string>>
-    );
+    // TODO: use the new, async, Growthbook code to load API endpoints from the server
+
+    // const dynamicApiEnvs = growthbook.getFeatureValue(
+    //     'api-endpoints',
+    //     {} as Record<string, Record<string, string>>
+    // );
+    const dynamicApiEnvs = {} as Record<string, Record<string, string>>;
 
     const mergedApiEnvs = ENV_TO_API;
     for (const env of Object.keys(ENV_TO_API)) {
@@ -82,17 +79,13 @@ function getDefaultAPI(env: API_ENV) {
 
     const apiEndpoint = mergedApiEnvs[env];
 
-    if (
-        !apiEndpoint ||
-        apiEndpoint.fullnode === '' ||
-        apiEndpoint.faucet === ''
-    ) {
+    if (!apiEndpoint || apiEndpoint.fullnode === '') {
         throw new Error(`API endpoint not found for API_ENV ${env}`);
     }
     return apiEndpoint;
 }
 
-export const DEFAULT_API_ENV = getDefaultApiEnv();
+export const DEFAULT_API_ENV = API_ENV.mainNet;
 
 type NetworkTypes = keyof typeof API_ENV;
 

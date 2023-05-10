@@ -12,10 +12,6 @@ import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { CoinSelect } from '_src/ui/app/pages/home/home/CoinDropdown';
 import { setSuiRecipient } from '_src/ui/app/redux/slices/forms';
-// import {
-//     getTransactionsByAddress,
-//     type TxResultState,
-// } from '_src/ui/app/redux/slices/txresults';
 import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
@@ -51,25 +47,8 @@ function TransferCoinRecipientForm({
         searchParams.has('hideWalletRecommendations') &&
         searchParams.get('hideWalletRecommendations') === 'true';
 
-    // const txByAddress: TxResultState[] = useAppSelector(({ txresults }) => {
-    //     console.log('txresults', txresults);
-    //     return txresults.latestTx.filter((tx) => tx.isSender);
-    // });
-
-    // console.log('txByAddress', txByAddress);
-    const recentTxs: string[] = [];
-    // txByAddress.forEach((tx) => {
-    //     if (tx.to) {
-    //         return recentTxs.push(tx.to);
-    //     }
-    // });
-
     const loading = false; //useAppSelector(({ txresults }) => txresults.loading);
     const dispatch = useAppDispatch();
-
-    // useEffect(() => {
-    //     dispatch(getTransactionsByAddress()).unwrap();
-    // }, [dispatch]);
 
     const {
         isSubmitting,
@@ -93,14 +72,14 @@ function TransferCoinRecipientForm({
             dispatch(
                 setSuiRecipient({
                     to: e.target.name,
-                    from: accountInfos[activeAccountIndex].name || 'Wallet',
+                    from:
+                        accountInfos.find((a) => a.index === activeAccountIndex)
+                            ?.name || 'Wallet',
                 })
             );
         },
         [accountInfos, activeAccountIndex, dispatch]
     );
-
-    const recentWallets = [...new Set(recentTxs)].splice(0, 3);
 
     if (!coinType) return <></>;
 
@@ -118,7 +97,7 @@ function TransferCoinRecipientForm({
                     </div>
                     <div className={'relative'}>
                         {disableToInput && contact ? (
-                            <div className="flex flex-row items-center w-full gap-2 py-[16px] px-[20px] shadow-sm rounded-[16px] bg-ethos-light-background-secondary font-weight-ethos-body-large text-size-ethos-body-large leading-line-height-ethos-body-large tracking-letter-spacing-ethos-body-large border border-ethos-light-text-stroke">
+                            <div className="flex flex-row items-center w-full gap-2 py-[16px] px-[20px] shadow-sm rounded-[16px] bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary font-weight-ethos-body-large text-size-ethos-body-large leading-line-height-ethos-body-large tracking-letter-spacing-ethos-body-large border border-ethos-light-text-stroke">
                                 <WalletColorAndEmojiCircle
                                     circleSizeClasses="w-8 h-8"
                                     color={contact.color}
@@ -152,11 +131,10 @@ function TransferCoinRecipientForm({
                 </div>
 
                 <div className={'pb-[80px] pt-[202px]'}>
-                    {!hideWalletRecommendations && recentWallets.length > 0 && (
+                    {!hideWalletRecommendations && contacts.length > 0 && (
                         <SuiTxWalletList
-                            header={'Recent Wallets'}
-                            wallets={accountInfos}
-                            transactions={recentWallets}
+                            header={'Address Book'}
+                            wallets={contacts}
                             activeAccountIndex={activeAccountIndex}
                             setFieldValue={setFieldValue}
                         />

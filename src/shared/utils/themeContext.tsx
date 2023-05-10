@@ -1,5 +1,7 @@
 import { createContext, useState, useEffect, useCallback } from 'react';
 
+import { removeLocal, setLocal, getLocal } from '../storagex/store';
+
 import type { ReactNode } from 'react';
 
 type ThemeName = 'system' | 'light' | 'dark';
@@ -8,8 +10,14 @@ type ThemeContextType = {
     setTheme: (name: ThemeName) => void;
 };
 
-function getTheme(): ThemeName {
-    const localTheme = localStorage.theme;
+async function getTheme(): Promise<ThemeName> {
+    let localTheme = await getLocal('theme');
+    if (!localTheme) {
+        localTheme = localStorage.theme;
+        if (localTheme) {
+            setLocal({ theme: localTheme.toString() });
+        }
+    }
 
     if (localTheme === 'dark') {
         // user has manually selected dark mode
@@ -35,16 +43,79 @@ function getTheme(): ThemeName {
 function rawSetTheme(theme: ThemeName) {
     if (theme === 'dark') {
         localStorage.theme = 'dark';
+        setLocal({ theme: 'dark' });
     } else if (theme === 'light') {
         localStorage.theme = 'light';
+        setLocal({ theme: 'light' });
     } else {
         localStorage.removeItem('theme');
+        removeLocal('theme');
     }
 }
 
 export const ThemeContext = createContext<ThemeContextType>(
     {} as ThemeContextType
 );
+
+export function useTheme(initialTheme?: ThemeName) {
+    const [theme, setTheme] = useState<ThemeName>('system');
+    const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(
+        'light'
+    );
+
+    const updateResolvedTheme = useCallback((currentTheme: ThemeName) => {
+        if (currentTheme === 'dark') {
+            setResolvedTheme('dark');
+        } else if (currentTheme === 'light') {
+            setResolvedTheme('light');
+        } else {
+            const isDark = document.documentElement.classList.contains('dark');
+            setResolvedTheme(isDark ? 'dark' : 'light');
+        }
+    }, []);
+
+    const externalSetTheme = useCallback(
+        (theme: ThemeName) => {
+            setTheme(theme);
+            rawSetTheme(theme);
+            getTheme().then((newTheme) => {
+                updateResolvedTheme(newTheme);
+            });
+        },
+        [updateResolvedTheme]
+    );
+
+    if (initialTheme) {
+        rawSetTheme(initialTheme);
+    }
+
+    useEffect(() => {
+        getTheme().then((theme) => {
+            setTheme(theme);
+            updateResolvedTheme(theme);
+        });
+    }, [updateResolvedTheme]);
+
+    useEffect(() => {
+        rawSetTheme(theme);
+        window
+            .matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', (e) => {
+                getTheme().then((newTheme) => {
+                    updateResolvedTheme(newTheme);
+                });
+            });
+        return function cleanup() {
+            window
+                .matchMedia('(prefers-color-scheme: dark)')
+                .removeEventListener('change', (e) => {
+                    getTheme();
+                });
+        };
+    }, [theme, updateResolvedTheme]);
+
+    return { theme, setTheme: externalSetTheme, resolvedTheme };
+}
 
 export const ThemeProvider = ({
     initialTheme,
@@ -53,7 +124,7 @@ export const ThemeProvider = ({
     initialTheme: ThemeName | undefined;
     children: ReactNode;
 }) => {
-    const [theme, setTheme] = useState<ThemeName>(getTheme);
+    const [theme, setTheme] = useState<ThemeName>('system');
 
     const externalSetTheme = useCallback((theme: ThemeName) => {
         setTheme(theme);
@@ -64,6 +135,12 @@ export const ThemeProvider = ({
     if (initialTheme) {
         rawSetTheme(initialTheme);
     }
+
+    useEffect(() => {
+        getTheme().then((theme) => {
+            setTheme(theme);
+        });
+    }, []);
 
     useEffect(() => {
         rawSetTheme(theme);

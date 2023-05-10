@@ -9,11 +9,14 @@ import { isErrorCausedByUserNotHavingEnoughSuiToPayForGas } from '../../../dapp-
 import { getGasDataFromError } from '../../../dapp-tx-approval/lib/extractGasData';
 import getErrorDisplaySuiForMist from '../../../dapp-tx-approval/lib/getErrorDisplaySuiForMist';
 import { useAppDispatch, useAppSelector } from '_hooks';
-import { transferNFT } from '_redux/slices/sui-objects';
+// import { transferNFT } from '_redux/slices/sui-objects';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
+import transferNFT from '_src/ui/app/helpers/transferNFT';
 import { accountNftsSelector } from '_src/ui/app/redux/slices/account';
 import { resettransferNftForm } from '_src/ui/app/redux/slices/forms';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
+import { api } from '_store/thunk-extras';
 
 import st from './TransferNFTForm.module.scss';
 
@@ -24,7 +27,9 @@ const initialValues = {
 export type FormValues = typeof initialValues;
 
 function TransferNFTReview() {
+    const { connectToLedger } = useSuiLedgerClient();
     const [formSubmitted, submitForm] = useState(false);
+    const { account } = useAppSelector((state) => state);
     const formState = useAppSelector(
         ({ forms: { transferNft } }) => transferNft
     );
@@ -41,7 +46,7 @@ function TransferNFTReview() {
     const navigate = useNavigate();
     const submitNftTransfer = useCallback(async () => {
         // Let the user know the transaction is en route
-        toast(<SuccessAlert text={'Transaction submitted.'} />);
+        toast(<SuccessAlert text={'Submitting transaction...'} />);
 
         if (formState.nftId === null) {
             return;
@@ -50,24 +55,34 @@ function TransferNFTReview() {
         submitForm(true);
 
         try {
-            const resp = await dispatch(
-                transferNFT({
-                    recipientAddress: formState.to,
-                    nftId: formState.nftId,
-                    transferCost: formState.gasFee
-                        ? parseInt(formState.gasFee)
-                        : 0,
-                })
-            ).unwrap();
+            const response = await transferNFT({
+                ...account,
+                connectToLedger,
+                recipientAddress: formState.to,
+                nft: selectedNFTObj,
+                provider: api.instance.fullNode,
+            });
+
+            // const resp = await dispatch(
+            //     transferNFT({
+            //         recipientAddress: formState.to,
+            //         nftId: formState.nftId,
+            //         transferCost: formState.gasFee
+            //             ? parseInt(formState.gasFee)
+            //             : 0,
+            //     })
+            // ).unwrap();
+
+            if (!response) return;
 
             dispatch(resettransferNftForm());
 
-            if (resp.txId) {
+            if (response.txId) {
                 // Redirect to nft page
                 navigate('/nfts');
 
                 const navLink = `/transactions/receipt?${new URLSearchParams({
-                    txdigest: resp.txId,
+                    txdigest: response.txId,
                 }).toString()}`;
 
                 toast(
@@ -92,7 +107,15 @@ function TransferNFTReview() {
                 delay: 500,
             });
         }
-    }, [dispatch, navigate, formState]);
+    }, [
+        formState.nftId,
+        formState.to,
+        account,
+        connectToLedger,
+        selectedNFTObj,
+        dispatch,
+        navigate,
+    ]);
 
     if (!formState.to) {
         return <Navigate to={'/nfts'} />;

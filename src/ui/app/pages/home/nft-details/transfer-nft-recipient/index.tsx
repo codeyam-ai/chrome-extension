@@ -15,8 +15,12 @@ import {
     accountNftsSelector,
 } from '_redux/slices/account';
 import { DEFAULT_NFT_TRANSFER_GAS_FEE } from '_redux/slices/sui-objects/Coin';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
+import safeAddress from '_src/ui/app/helpers/safeAddress';
+import transferObjectTransactionBlock from '_src/ui/app/helpers/transferObjectTransactionBlock';
 import { setNftDetails } from '_src/ui/app/redux/slices/forms';
+import { api } from '_src/ui/app/redux/store/thunk-extras';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 
 import type { SerializedError } from '@reduxjs/toolkit';
@@ -31,13 +35,19 @@ const initialValues = {
 export type FormValues = typeof initialValues;
 
 function TransferNFTRecipient() {
-    const address = useAppSelector(({ account: { address } }) => address);
+    const { connectToLedger } = useSuiLedgerClient();
+    const {
+        account: {
+            address,
+            authentication,
+            activeAccountIndex,
+            accountInfos,
+            passphrase,
+        },
+    } = useAppSelector((state) => state);
     const formData = useAppSelector(
         ({ forms: { transferNft } }) => transferNft
     );
-    const {
-        account: { authentication, activeAccountIndex },
-    } = useAppSelector((state) => state);
     const dispatch = useAppDispatch();
     const [searchParams] = useSearchParams();
     const objectId = searchParams.get('objectId');
@@ -76,38 +86,50 @@ function TransferNFTRecipient() {
                 return;
             }
 
+            const safeTo = safeAddress(to);
+
+            if (!safeTo) return;
+
             const signer = await getSigner(
+                passphrase,
+                accountInfos,
                 address,
                 authentication,
-                activeAccountIndex
+                activeAccountIndex,
+                connectToLedger
             );
 
-            const transactionBlock = new TransactionBlock();
-            transactionBlock.add(
-                TransactionBlock.Transactions.TransferObjects(
-                    [transactionBlock.object(objectId)],
-                    transactionBlock.pure(to)
-                )
+            if (!signer) return;
+
+            let transactionBlock: TransactionBlock | null =
+                new TransactionBlock();
+            transactionBlock = await transferObjectTransactionBlock(
+                transactionBlock,
+                selectedNFTObj,
+                safeTo,
+                api.instance.fullNode
             );
 
-            const signedTx = await signer.dryRunTransactionBlock({
-                transactionBlock: transactionBlock,
-            });
-
-            const gasFee =
-                Number(signedTx.effects.gasUsed.computationCost) +
-                (Number(signedTx.effects.gasUsed.storageCost) -
-                    Number(signedTx.effects.gasUsed.storageRebate));
-
-            setSendError(null);
+            if (!transactionBlock) return;
 
             try {
+                const dryRun = await signer.dryRunTransactionBlock({
+                    transactionBlock: transactionBlock,
+                });
+
+                const gasFee =
+                    Number(dryRun.effects.gasUsed.computationCost) +
+                    (Number(dryRun.effects.gasUsed.storageCost) -
+                        Number(dryRun.effects.gasUsed.storageRebate));
+
+                setSendError(null);
+
                 dispatch(
                     setNftDetails({
                         from: address || 'Wallet',
                         to: to,
                         nftId: objectId,
-                        gasFee: `${gasFee} MIST`,
+                        gasFee: gasFee.toString(),
                     })
                 );
 
@@ -122,13 +144,16 @@ function TransferNFTRecipient() {
             }
         },
         [
+            objectId,
+            passphrase,
+            accountInfos,
+            address,
+            authentication,
+            activeAccountIndex,
+            connectToLedger,
+            selectedNFTObj,
             dispatch,
             navigate,
-            objectId,
-            address,
-
-            activeAccountIndex,
-            authentication,
         ]
     );
 

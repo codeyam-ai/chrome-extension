@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import getNextWalletColor from '../../helpers/getNextWalletColor';
 import { useAppDispatch, useAppSelector } from '../../hooks';
+import useWalletName from '../../hooks/useWalletName';
 import { saveAccountInfos, setAccountInfos } from '../../redux/slices/account';
 import { thunkExtras } from '../../redux/store/thunk-extras';
 import EmojiDisplay from '../../shared/EmojiDisplay';
@@ -34,17 +35,14 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     if (indexFromParam !== null) {
         walletIndex = +indexFromParam;
     }
-    const currentAccountInfo = _accountInfos[walletIndex];
+    const currentAccountInfo =
+        _accountInfos.find(
+            (accountInfo) => accountInfo.index === walletIndex
+        ) ?? _accountInfos[0];
     const draftAccountInfos = useRef<AccountInfo[]>(_accountInfos);
 
-    const [draftName, setDraftName] = useState<string>(
-        currentAccountInfo.name ||
-            `Wallet${
-                currentAccountInfo.index > 0
-                    ? ' ' + currentAccountInfo.index + 1
-                    : ''
-            }`
-    );
+    const name = useWalletName(currentAccountInfo);
+    const [draftName, setDraftName] = useState<string>(name);
 
     const [draftColor, setDraftColor] = useState<string>(
         currentAccountInfo.color || getNextWalletColor(0)

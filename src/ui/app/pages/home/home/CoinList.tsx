@@ -1,14 +1,18 @@
-import CoinBalance from './CoinBalance';
+import CoinBalanceElement from './CoinBalance';
+import Body from '_src/ui/app/shared/typography/Body';
 
 const CoinList = ({ balances }: { balances: Record<string, bigint> }) => {
     return (
-        <div className="text-left">
+        <div className="text-left space-y-2" data-testid="coin-list">
+            <Body className="ml-1">My Tokens</Body>
             {Object.keys(balances).map((type: string) => {
                 const balance = balances[type];
                 return (
-                    <div className={'mb-5'} key={type}>
-                        <CoinBalance type={type} balance={balance} />
-                    </div>
+                    <CoinBalanceElement
+                        key={type}
+                        type={type}
+                        balance={balance.toString()}
+                    />
                 );
             })}
         </div>

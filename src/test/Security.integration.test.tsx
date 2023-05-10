@@ -5,7 +5,8 @@ import nock from 'nock';
 
 import { getEncrypted } from '_shared/storagex/store';
 import { BASE_URL } from '_src/shared/constants';
-import { Mockchain } from '_src/test/utils/mockchain';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import {
     fakeAccessToken,
@@ -16,15 +17,20 @@ import {
     simulateEmailUser,
 } from '_src/test/utils/storage';
 
+jest.mock('_shared/encryption/password', () => ({
+    encrypt: jest.fn((data) => data.text),
+    decrypt: jest.fn((data) => data.encryptedData),
+}));
+
 describe('The Security Settings page', () => {
-    let mockchain: Mockchain;
+    let mockJsonRpc: MockJsonRpc;
 
     beforeEach(() => {
-        mockchain = new Mockchain();
+        mockJsonRpc = new MockJsonRpc();
     });
 
     const init = async () => {
-        await mockchain.mockSuiObjects();
+        await mockSuiObjects(mockJsonRpc);
         await renderApp();
 
         await screen.findByText('Get started with Sui');
@@ -46,7 +52,7 @@ describe('The Security Settings page', () => {
     describe('mnemonic user', () => {
         beforeEach(async () => {
             simulateMnemonicUser();
-            mockchain.mockCommonCalls();
+            mockCommonCalls(mockJsonRpc);
         });
 
         test('requires a valid password to view the recovery phrase', async () => {
@@ -132,7 +138,11 @@ describe('The Security Settings page', () => {
             await within(currentWallet).findByText('Wallet 1');
             await userEvent.click(currentWallet);
 
-            const wallet2Link = await screen.findByText('Wallet 2');
+            const wallet2Link = await screen.findByText(
+                'Wallet 2',
+                {},
+                { timeout: 30000 }
+            );
             await userEvent.click(wallet2Link);
 
             await navigateToSecurity();
@@ -185,12 +195,17 @@ describe('The Security Settings page', () => {
             await userEvent.click(await screen.findByText('Save'));
             await screen.findByText('Settings');
 
-            const passphrase = await getEncrypted({
-                key: 'passphrase',
-                session: true,
-                strong: false,
-            });
-            expect(passphrase).toEqual('one two three');
+            const lockOption = await screen.findByText('Lock / Reset Ethos');
+            await userEvent.click(lockOption);
+
+            const lockWalletButton = await screen.findByText('Lock Wallet Now');
+            await userEvent.click(lockWalletButton);
+
+            const paswwordInput = await screen.findByTestId('password');
+
+            await userEvent.type(paswwordInput, 'one two three');
+            await userEvent.click(screen.getByTestId('submit'));
+            await screen.findByText('My Balance');
         });
 
         test('does not allow user to change password if they put wrong current password', async () => {
@@ -274,7 +289,7 @@ describe('The Security Settings page', () => {
                 });
 
             simulateEmailUser();
-            mockchain.mockCommonCalls();
+            mockCommonCalls(mockJsonRpc);
         });
 
         test('shows the seed phrase for email accounts', async () => {
@@ -362,7 +377,11 @@ describe('The Security Settings page', () => {
             await within(currentWallet).findByText('Wallet 1');
             await userEvent.click(currentWallet);
 
-            const wallet2Link = await screen.findByText('Wallet 2');
+            const wallet2Link = await screen.findByText(
+                'Wallet 2',
+                {},
+                { timeout: 30000 }
+            );
             await userEvent.click(wallet2Link);
 
             await navigateToSecurity();

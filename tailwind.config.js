@@ -59,6 +59,7 @@ module.exports = {
                 // ==========
 
                 'ethos-box-shadow': '0px 4px 12px rgba(0, 0, 0, 0.09)',
+                'ethos-shadow-tab-bar-up': '0px -4px 4px rgba(0, 0, 0, 0.05)',
                 'ethos-shadow-small': '0px 1px 2px rgba(0, 0, 0, 0.05)',
                 'ethos-hovering-element-box-shadow':
                     '0px 2px 8px rgba(0, 0, 0, 0.1)',
@@ -85,7 +86,10 @@ module.exports = {
                 'ethos-sui-blue': '#3D5FF2',
                 'ethos-light-purple': '#F0EBFE',
                 'ethos-pale-purple': '#F8F5FF',
+                'ethos-super-light-purple': '#FBFAFF',
                 'ethos-light-gray': '#F9F9FB',
+                'ethos-success-green': '#238044',
+                'ethos-failure-red': '#CE3838',
 
                 // ==========
                 // Light mode
@@ -94,6 +98,7 @@ module.exports = {
                 // Background
                 'ethos-light-background-default': '#FFFFFF',
                 'ethos-light-background-secondary': '#F2F2F2',
+                'ethos-light-background-light-grey': '#F9F9FB',
                 'ethos-light-fullscreen-backdrop': '#FAFAFB',
 
                 // Text and stroke
@@ -116,7 +121,11 @@ module.exports = {
                 // Background
                 'ethos-dark-background-default': '#111111',
                 'ethos-dark-background-secondary': '#1A1C26',
+                'ethos-dark-background-light-grey': '#1A1C26',
                 'ethos-dark-fullscreen-backdrop': '#000',
+
+                'ethos-light-background-green': 'rgba(56, 206, 110, 0.08)',
+                'ethos-light-background-purple': 'rgba(144, 64, 245, 0.1)',
 
                 // Text and stroke
                 'ethos-dark-text-default': '#FFFFFF',
@@ -144,7 +153,11 @@ module.exports = {
         },
     },
     plugins: [require('@tailwindcss/forms')],
-    variants: {},
+    variants: {
+        extend: {
+            backgroundColor: ['even'],
+        },
+    },
     corePlugins: {
         preflight: true,
     },

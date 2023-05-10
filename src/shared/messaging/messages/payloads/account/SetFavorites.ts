@@ -1,11 +1,10 @@
 import { isBasePayload } from '_payloads';
 
 import type { BasePayload, Payload } from '_payloads';
-import type { Favorite } from '_src/types/AccountCustomization';
 
 export interface SetFavorites extends BasePayload {
     type: 'set-favorites';
-    favorites: Favorite[];
+    favorites: string[];
 }
 
 export function isSetFavorites(payload: Payload): payload is SetFavorites {

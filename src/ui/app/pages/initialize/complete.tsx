@@ -2,19 +2,20 @@ import {
     ChatBubbleOvalLeftIcon,
     GlobeAltIcon,
 } from '@heroicons/react/24/solid';
-import { type ReactNode, useCallback, useState } from 'react';
-import AnimatedNumbers from 'react-animated-numbers';
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { useEffect, type ReactNode } from 'react';
 
 import ConfettiPop from '../../components/Confetti';
-import { useAppSelector } from '../../hooks';
+import { useAppDispatch, useAppSelector, useFormatCoin } from '../../hooks';
+import { accountAggregateBalancesSelector } from '../../redux/slices/account';
+import { fetchAllBalances } from '../../redux/slices/balances';
 import OnboardingButton from '../../shared/buttons/OnboardingButton';
-import Alert from '../../shared/feedback/Alert';
 import OnboardingCard from '../../shared/layouts/OnboardingCard';
-import SuiIcon from '../../shared/svg/SuiIcon';
 import TwitterIcon from '../../shared/svg/TwitterIcon';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Header from '../../shared/typography/Header';
 import JumboTitle from '../../shared/typography/JumboTitle';
+import Sui from '../home/home/Sui';
 import {
     DASHBOARD_LINK,
     MAILTO_SUPPORT_URL,
@@ -56,65 +57,13 @@ const SocialLink = ({ title, iconWithNoClasses, to }: SocialLinkProps) => {
 };
 
 const CompletePage = () => {
-    const [error, setError] = useState(false);
-    const [hasUsedFaucet, setHasUsedFaucet] = useState(false);
-    const [faucetCompletedSuccessfully, setFaucetCompletedSuccessfully] =
-        useState(false);
-    const [suiAmount, setSuiAmount] = useState(0);
-    const address = useAppSelector(({ account }) => account.address);
+    const balances = useAppSelector(accountAggregateBalancesSelector);
+    const mistBalance = balances[SUI_TYPE_ARG];
 
-    const generateCascadingAnimationConfig = useCallback(
-        (_: number, index: number) => {
-            return {
-                mass: 1,
-                tension: 230 * (index + 1),
-                friction: 140,
-            };
-        },
-        []
-    );
-
-    const onFaucetClicked = useCallback(async () => {
-        setHasUsedFaucet(true);
-        setSuiAmount(0.05);
-
-        setTimeout(async () => {
-            if (!faucetCompletedSuccessfully) {
-                setError(true);
-            }
-        }, 5000);
-
-        const result = await fetch('https://faucet.devnet.sui.io/gas', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                FixedAmountRequest: {
-                    recipient: address,
-                },
-            }),
-        });
-
-        setFaucetCompletedSuccessfully(true);
-        if (result.status !== 201 && result.status !== 200) {
-            setError(true);
-            setSuiAmount(0);
-            return;
-        }
-    }, [address, faucetCompletedSuccessfully]);
+    const [balanceFormatted] = useFormatCoin(mistBalance, SUI_TYPE_ARG);
+    const dispatch = useAppDispatch();
 
     const setupButtons: OnboardingButtonProps[] = [
-        {
-            title: 'Use Faucet',
-            linkType: 'none',
-            onClick: onFaucetClicked,
-            iconWithNoClasses: <SuiIcon width={20} height={20} />,
-            iconBackgroundColor: '#3D5FF2',
-            buttonGradientColor: '#DDEEFA',
-            disabled: hasUsedFaucet,
-        },
         {
             title: 'Explore Ethos',
             to: DASHBOARD_LINK,
@@ -127,26 +76,10 @@ const CompletePage = () => {
 
     const rightCardContent = (
         <div className="flex flex-col gap-3 p-4 place-items-center">
-            <div className="flex place-content-center place-items-center h-[104px] w-[104px] rounded-full bg-ethos-light-background-default">
-                <SuiIcon width={50} height={50} color="black" />
-            </div>
+            <Sui width={80} />
             <div className="flex flex-col gap-2 text-center">
-                <JumboTitle forceLightMode>
-                    {suiAmount === 0 && !error ? (
-                        '0'
-                    ) : (
-                        // https://www.npmjs.com/package/react-animated-numbers
-                        <div className="flex place-content-center place-items-center">
-                            <AnimatedNumbers
-                                includeComma
-                                fontStyle={{
-                                    textAlign: 'center',
-                                }}
-                                animateToNumber={suiAmount || 0}
-                                configs={generateCascadingAnimationConfig}
-                            />
-                        </div>
-                    )}
+                <JumboTitle data-testid="suiBalance" forceLightMode>
+                    {balanceFormatted}
                 </JumboTitle>
                 <Header isTextColorMedium forceLightMode>
                     Sui Balance
@@ -154,6 +87,10 @@ const CompletePage = () => {
             </div>
         </div>
     );
+
+    useEffect(() => {
+        dispatch(fetchAllBalances());
+    }, [dispatch]);
 
     return (
         <OnboardingCard
@@ -169,16 +106,6 @@ const CompletePage = () => {
                 <ConfettiPop />
             </div>
             <div className="flex flex-col gap-3 px-6 sm:px-10 pb-6">
-                {error && (
-                    <div className="pb-4">
-                        <Alert
-                            title="The faucet isn't working"
-                            subtitle="There could be an issue with the Sui network or the Sui faucet. Please try again later."
-                            borderRadius={16}
-                            forceLightMode
-                        />
-                    </div>
-                )}
                 {setupButtons.map((b, key) => {
                     return (
                         <OnboardingButton

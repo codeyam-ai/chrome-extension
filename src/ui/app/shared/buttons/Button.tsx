@@ -8,6 +8,7 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
     // Defaults to primary
     buttonStyle?: 'primary' | 'secondary';
     className?: string;
+    wrapperClassName?: string;
     onClick?: MouseEventHandler<HTMLButtonElement>;
     to?: string;
     type?: 'button' | 'submit' | 'reset' | undefined;
@@ -42,13 +43,14 @@ const dangerPrimaryButtonClassNames =
 const dangerSecondaryButtonClassNames =
     baseButtonClassNames +
     ' ' +
-    'bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary text-ethos-light-text-default dark:ethos-dark-text-default';
+    'bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary text-ethos-light-text-default dark:text-ethos-dark-text-default';
 
 const Button = (props: ButtonProps) => {
     const {
         buttonStyle,
         to,
         className,
+        wrapperClassName,
         isInline,
         removeContainerPadding,
         isDanger,
@@ -67,6 +69,7 @@ const Button = (props: ButtonProps) => {
     if (removeContainerPadding) {
         buttonWrapperClassNames = '';
     }
+    buttonWrapperClassNames += ' ' + wrapperClassName;
 
     let classes = className ? className + ' ' : '';
     if (buttonStyle === 'secondary' && isDanger) {

@@ -1,20 +1,21 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { Mockchain } from '_src/test/utils/mockchain';
+import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Minting an NFT', () => {
-    let mockchain: Mockchain;
+    let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
-        mockchain = new Mockchain();
+        mockJsonRpc = new MockJsonRpc();
         simulateMnemonicUser();
-        mockchain.mockCommonCalls();
+        mockCommonCalls(mockJsonRpc);
     });
 
     test('can mint an NFT', async () => {
-        mockchain.mockSuiObjects({
+        mockSuiObjects(mockJsonRpc, {
             suiBalance: 500000,
         });
         renderApp();

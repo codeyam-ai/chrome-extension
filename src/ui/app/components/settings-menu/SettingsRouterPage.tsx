@@ -9,6 +9,7 @@ import ThemePage from './subpages/ThemePage';
 import ChangePasswordPage from './subpages/security/subpages/change-password/ChangePasswordPage';
 import { SettingsContainer } from '../../shared/navigation/nav-bar/SettingsContainer';
 import { getEncrypted } from '_src/shared/storagex/store';
+import ChangeAutoLockTimeoutPage from '_src/ui/app/components/settings-menu/ChangeAutoLockTimeoutPage';
 import SettingsHomePage from '_src/ui/app/components/settings-menu/SettingsHomePage';
 import NetworkPage from '_src/ui/app/components/settings-menu/subpages/network/NetworkPage';
 import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/permissions/PermissionsPage';
@@ -56,6 +57,10 @@ function SettingsRouterPage() {
                 </Route>
                 <Route path="permissions" element={<PermissionsPage />} />
                 <Route path="lock" element={<LockPage />} />
+                <Route
+                    path="change-auto-lock-timeout"
+                    element={<ChangeAutoLockTimeoutPage />}
+                />
             </Route>
         </Routes>
     );

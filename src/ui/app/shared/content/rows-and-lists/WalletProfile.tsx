@@ -4,12 +4,16 @@ import { Link } from 'react-router-dom';
 import WalletColorAndEmojiCircle from '../../WalletColorAndEmojiCircle';
 import BodyLarge from '../../typography/BodyLarge';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
+import AccountAddress, {
+    AddressMode,
+} from '_src/ui/app/components/account-address';
 import {
     useNextWalletPickerUrl,
     useWalletPickerIsOpen,
 } from '_src/ui/app/components/settings-menu/hooks';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector } from '_src/ui/app/hooks';
+import useWalletName from '_src/ui/app/hooks/useWalletName';
 
 interface WalletProfileProps {
     onClick?: () => void;
@@ -28,7 +32,8 @@ const WalletProfile = ({ onClick, inlineWalletPicker }: WalletProfileProps) => {
     const isWalletPickerOpen = useWalletPickerIsOpen();
     const walletPickerUrl = useNextWalletPickerUrl(true, 'open');
     const closeWalletPickerUrl = useNextWalletPickerUrl(false);
-    const shortenedName = truncateString(accountInfo?.name || 'Wallet', 8);
+    const name = useWalletName(accountInfo);
+    const shortenedName = truncateString(name, 8);
 
     const CurrentWallet = () => (
         <div
@@ -67,6 +72,11 @@ const WalletProfile = ({ onClick, inlineWalletPicker }: WalletProfileProps) => {
                     </Link>
                 )}
             </div>
+            <AccountAddress
+                showName={false}
+                showLink={false}
+                mode={AddressMode.FADED}
+            />
         </div>
     );
 };

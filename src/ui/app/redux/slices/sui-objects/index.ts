@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-    getExecutionStatusType,
+    // getExecutionStatusType,
     getObjectId,
-    getTimestampFromTransactionResponse,
-    getTotalGasUsed,
-    getTransactionDigest,
+    // getTimestampFromTransactionResponse,
+    // getTotalGasUsed,
+    // getTransactionDigest,
     getObjectVersion,
-    TransactionBlock,
+    // TransactionBlock,
     getSuiObjectData,
 } from '@mysten/sui.js';
 import {
@@ -18,135 +18,245 @@ import {
 } from '@reduxjs/toolkit';
 
 import { SUI_SYSTEM_STATE_OBJECT_ID } from './Coin';
+import { NFT } from './NFT';
+// import { fetchAllBalances } from '../balances';
+// import { getSigner } from '_src/ui/app/helpers/getSigner';
+// import transferObjectTransactionBlock from '_src/ui/app/helpers/transferObjectTransactionBlock';
 
-import type { SuiAddress, ObjectId, SuiObjectData } from '@mysten/sui.js';
+import type {
+    // SuiAddress,
+    // ObjectId,
+    SuiObjectData,
+    PaginatedObjectsResponse,
+    SuiObjectResponse,
+} from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
-const objectsAdapter = createEntityAdapter<SuiObjectData>({
+export interface ExtendedSuiObjectData extends SuiObjectData {
+    kiosk?: SuiObjectData;
+}
+
+const objectsAdapter = createEntityAdapter<ExtendedSuiObjectData>({
     selectId: (info) => info.objectId,
     sortComparer: (a, b) => a.objectId.localeCompare(b.objectId),
 });
 
 export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
-    SuiObjectData[],
+    ExtendedSuiObjectData[] | null,
     void,
     AppThunkConfig
 >('sui-objects/fetch-all', async (_, { getState, extra: { api } }) => {
     const state = getState();
+
+    if (!state.suiObjects.lastSync) {
+        try {
+            const response = await fetch(
+                api.instance.fullNode.connection.fullnode,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        jsonrpc: '2.0',
+                        id: 1,
+                        method: 'rpc.discover',
+                    }),
+                }
+            );
+
+            if (response.status !== 200) {
+                throw new Error('RPC not responding');
+            }
+        } catch (e) {
+            throw new Error('RPC not responding');
+        }
+    }
+
     const {
         account: { address },
     } = state;
-    const allSuiObjects: SuiObjectData[] = [];
+
+    if (!address) {
+        return null;
+    }
+
+    const allSuiObjects: ExtendedSuiObjectData[] = [];
     if (address) {
-        const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
-            owner: address,
-        });
+        let allObjRes: SuiObjectResponse[] = [];
+        let nextCursor: PaginatedObjectsResponse['nextCursor'] | undefined;
+        let page = 0;
+        while (nextCursor !== null) {
+            page += 1;
+            const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
+                owner: address,
+                cursor: nextCursor,
+            });
 
-        const objectIDs = allObjectRefs.data
-            .filter((anObj) => {
-                const fetchedVersion = getObjectVersion(anObj);
-                const storedObj = suiObjectsAdapterSelectors.selectById(
-                    state,
-                    getObjectId(anObj)
-                );
-                const storedVersion = storedObj
-                    ? getObjectVersion(storedObj)
-                    : null;
-                const objOutdated = fetchedVersion !== storedVersion;
-                if (!objOutdated && storedObj) {
-                    allSuiObjects.push(storedObj);
-                }
-                return objOutdated;
-            })
-            .map((anObj) => {
+            if (page > 20) {
+                nextCursor = null;
+            } else {
                 if (
-                    typeof anObj.data === 'object' &&
-                    'objectId' in anObj.data
+                    allObjectRefs.hasNextPage &&
+                    nextCursor !== allObjectRefs.nextCursor
                 ) {
-                    return anObj.data.objectId;
+                    nextCursor = allObjectRefs.nextCursor;
                 } else {
-                    return '';
+                    nextCursor = null;
                 }
-            })
-            .filter((objId) => objId.length > 0);
+            }
 
-        objectIDs.push(SUI_SYSTEM_STATE_OBJECT_ID);
-        const allObjRes = await api.instance.fullNode.multiGetObjects({
-            ids: objectIDs,
-            options: {
-                showOwner: true,
-                showContent: true,
-                showType: true,
-            },
-        });
+            const objectIDs = allObjectRefs.data
+                .filter((anObj) => {
+                    const fetchedVersion = getObjectVersion(anObj);
+                    const storedObj = suiObjectsAdapterSelectors.selectById(
+                        state,
+                        getObjectId(anObj)
+                    );
+                    const storedVersion = storedObj
+                        ? getObjectVersion(storedObj)
+                        : null;
+                    const objOutdated = fetchedVersion !== storedVersion;
+                    if (!objOutdated && storedObj) {
+                        allSuiObjects.push(storedObj);
+                    }
+                    return objOutdated;
+                })
+                .map((anObj) => {
+                    if (
+                        typeof anObj.data === 'object' &&
+                        'objectId' in anObj.data
+                    ) {
+                        return anObj.data.objectId;
+                    } else {
+                        return '';
+                    }
+                })
+                .filter((objId) => objId.length > 0);
+
+            const newObjRes = await api.instance.fullNode.multiGetObjects({
+                ids: objectIDs,
+                options: {
+                    showOwner: true,
+                    showContent: true,
+                    showType: true,
+                    showDisplay: true,
+                },
+            });
+
+            allObjRes = [...allObjRes, ...newObjRes];
+        }
+
         for (const objRes of allObjRes) {
             const suiObjectData = getSuiObjectData(objRes);
             if (suiObjectData) {
-                allSuiObjects.push(suiObjectData);
+                if (NFT.isKiosk(suiObjectData)) {
+                    const kioskObjects = await NFT.getKioskObjects(
+                        api.instance.fullNode,
+                        suiObjectData
+                    );
+
+                    for (const kioskObject of kioskObjects) {
+                        const kioskObjectData = getSuiObjectData(kioskObject);
+                        if (kioskObjectData) {
+                            allSuiObjects.push({
+                                kiosk: suiObjectData,
+                                ...kioskObjectData,
+                            });
+                        }
+                    }
+                } else {
+                    allSuiObjects.push(suiObjectData);
+                }
             }
         }
+
+        // for (const o of allSuiObjects) {
+        //     if (
+        //         o.owner &&
+        //         typeof o.owner === 'object' &&
+        //         'AddressOwner' in o.owner
+        //     ) {
+        //         o.owner.AddressOwner = address;
+        //     }
+        // }
     }
+
     return allSuiObjects;
 });
 
-type NFTTxResponse = {
-    timestamp_ms?: number;
-    status?: string;
-    gasFee?: string;
-    txId?: string;
-};
+// type NFTTxResponse = {
+//     timestamp_ms?: number;
+//     status?: string;
+//     gasFee?: string;
+//     txId?: string;
+// };
 
-export const transferNFT = createAsyncThunk<
-    NFTTxResponse,
-    { nftId: ObjectId; recipientAddress: SuiAddress; transferCost: number },
-    AppThunkConfig
->(
-    'transferNFT',
-    async (data, { extra: { api, keypairVault }, getState, dispatch }) => {
-        const {
-            account: { activeAccountIndex, authentication, address },
-        } = getState();
-        let signer;
-        if (authentication) {
-            signer = api.getEthosSignerInstance(address || '', authentication);
-        } else {
-            signer = api.getSignerInstance(
-                keypairVault.getKeyPair(activeAccountIndex)
-            );
-        }
-        const transactionBlock = new TransactionBlock();
-        transactionBlock.add(
-            TransactionBlock.Transactions.TransferObjects(
-                [transactionBlock.object(data.nftId)],
-                transactionBlock.pure(data.recipientAddress)
-            )
-        );
-        const executedTransaction = await signer.signAndExecuteTransactionBlock(
-            {
-                transactionBlock,
-                options: {
-                    showEffects: true,
-                    showEvents: true,
-                    showInput: true,
-                },
-            }
-        );
+// export const transferNFT = createAsyncThunk<
+//     NFTTxResponse | undefined,
+//     { nftId: ObjectId; recipientAddress: SuiAddress; transferCost: number },
+//     AppThunkConfig
+// >('transferNFT', async (data, { getState, dispatch, extra: { api } }) => {
+//     const {
+//         account: {
+//             activeAccountIndex,
+//             authentication,
+//             address,
+//             accountInfos,
+//             passphrase,
+//         },
+//         suiObjects: { entities },
+//     } = getState();
 
-        await dispatch(fetchAllOwnedAndRequiredObjects());
-        const txnResp = {
-            timestamp_ms:
-                getTimestampFromTransactionResponse(executedTransaction),
-            status: getExecutionStatusType(executedTransaction),
-            gasFee: executedTransaction
-                ? getTotalGasUsed(executedTransaction)?.toString()
-                : '0',
-            txId: getTransactionDigest(executedTransaction),
-        };
+//     const nft = entities[data.nftId];
 
-        return txnResp as NFTTxResponse;
-    }
-);
+//     if (!nft) return;
+
+//     const signer = await getSigner(
+//         passphrase,
+//         accountInfos,
+//         address,
+//         authentication,
+//         activeAccountIndex
+//     );
+
+//     if (!signer) return;
+
+//     let transactionBlock: TransactionBlock | null = new TransactionBlock();
+
+//     transactionBlock = await transferObjectTransactionBlock(
+//         transactionBlock,
+//         nft,
+//         data.recipientAddress,
+//         api.instance.fullNode
+//     );
+
+//     if (!transactionBlock) return;
+
+//     const executedTransaction = await signer.signAndExecuteTransactionBlock({
+//         transactionBlock,
+//         options: {
+//             showEffects: true,
+//             showEvents: true,
+//             showInput: true,
+//         },
+//     });
+
+//     dispatch(fetchAllBalances());
+//     await dispatch(fetchAllOwnedAndRequiredObjects());
+//     const txnResp = {
+//         timestamp_ms: getTimestampFromTransactionResponse(executedTransaction),
+//         status: getExecutionStatusType(executedTransaction),
+//         gasFee: executedTransaction
+//             ? getTotalGasUsed(executedTransaction)?.toString()
+//             : '0',
+//         txId: getTransactionDigest(executedTransaction),
+//     };
+
+//     return txnResp as NFTTxResponse;
+// });
+
 interface SuiObjectsManualState {
     loading: boolean;
     error: false | { code?: string; message?: string; name?: string };

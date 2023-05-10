@@ -1,6 +1,12 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import {
+    ReadonlyWalletAccount,
+    SUI_DEVNET_CHAIN,
+    SUI_MAINNET_CHAIN,
+    SUI_TESTNET_CHAIN,
+} from '@mysten/wallet-standard';
 import { filter, map } from 'rxjs';
 
 import { mapToPromise } from './utils';
@@ -12,8 +18,6 @@ import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/mes
 
 import type { SuiAddress } from '@mysten/sui.js';
 import type { Payload } from '_payloads';
-import type { GetAccount } from '_payloads/account/GetAccount';
-import type { GetAccountResponse } from '_payloads/account/GetAccountResponse';
 import type {
     PermissionType,
     HasPermissionsRequest,
@@ -26,27 +30,30 @@ import type {
     PreapprovalResponse,
 } from '_payloads/transactions';
 import type { NetworkEnvType } from '_src/background/NetworkEnv';
+import type { GetAccounts } from '_src/shared/messaging/messages/payloads/account/GetAccounts';
+import type { GetAccountsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountsResponse';
 import type { GetContacts } from '_src/shared/messaging/messages/payloads/account/GetContacts';
 import type { GetContactsResponse } from '_src/shared/messaging/messages/payloads/account/GetContactsResponse';
 import type { GetFavorites } from '_src/shared/messaging/messages/payloads/account/GetFavorites';
 import type { GetFavoritesResponse } from '_src/shared/messaging/messages/payloads/account/GetFavoritesResponse';
 import type { GetNetwork } from '_src/shared/messaging/messages/payloads/account/GetNetwork';
 import type { GetNetworkResponse } from '_src/shared/messaging/messages/payloads/account/GetNetworkResponse';
+import type { GetTheme } from '_src/shared/messaging/messages/payloads/account/GetTheme';
+import type { GetThemeResponse } from '_src/shared/messaging/messages/payloads/account/GetThemeResponse';
 import type { SetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/SetAccountCustomizations';
 import type { SetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/SetAccountCustomizationsResponse';
 import type { SetContacts } from '_src/shared/messaging/messages/payloads/account/SetContacts';
 import type { SetContactsResponse } from '_src/shared/messaging/messages/payloads/account/SetContactsResponse';
 import type { SetFavorites } from '_src/shared/messaging/messages/payloads/account/SetFavorites';
 import type { SetFavoritesResponse } from '_src/shared/messaging/messages/payloads/account/SetFavoritesResponse';
+import type { SwitchAccount } from '_src/shared/messaging/messages/payloads/account/SwitchAccount';
+import type { SwitchAccountResponse } from '_src/shared/messaging/messages/payloads/account/SwitchAccountResponse';
 import type { DisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { OpenWallet } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
-import type {
-    AccountCustomization,
-    Favorite,
-} from '_src/types/AccountCustomization';
+import type { AccountCustomization } from '_src/types/AccountCustomization';
 import type { Contact } from '_src/ui/app/redux/slices/contacts';
 import type { Observable } from 'rxjs';
 
@@ -60,10 +67,15 @@ export class DAppInterface {
         );
     }
 
-    public openWallet(): Promise<boolean> {
+    public openWallet(
+        accessToken?: string,
+        refreshToken?: string
+    ): Promise<boolean> {
         return mapToPromise(
             this.send<OpenWallet, OpenWalletResponse>({
                 type: 'open-wallet',
+                accessToken,
+                refreshToken,
             }),
             (response) => response.success
         );
@@ -93,12 +105,54 @@ export class DAppInterface {
         );
     }
 
-    public getAccounts(): Promise<SuiAddress[]> {
+    public getAccounts(address?: string): Promise<ReadonlyWalletAccount[]> {
         return mapToPromise(
-            this.send<GetAccount, GetAccountResponse>({
-                type: 'get-account',
+            this.send<GetAccounts, GetAccountsResponse>({
+                type: 'get-accounts',
             }),
-            (response) => response.accounts
+            (response) => {
+                return response.accounts.map(
+                    (address) =>
+                        new ReadonlyWalletAccount({
+                            address,
+                            publicKey: new Uint8Array(),
+                            chains: [
+                                SUI_DEVNET_CHAIN,
+                                SUI_TESTNET_CHAIN,
+                                SUI_MAINNET_CHAIN,
+                            ],
+                            features: [
+                                'standard:connect',
+                                'standard:disconnect',
+                                'standard:events',
+                                'sui:signMessage',
+                                'sui:signTransactionBlock',
+                                'sui:signAndExecuteTransactionBlock',
+                            ],
+                        })
+                );
+            }
+        );
+    }
+
+    public switchAccount(address: string): Promise<SuiAddress> {
+        return mapToPromise(
+            this.send<SwitchAccount, SwitchAccountResponse>({
+                type: 'switch-account',
+                address,
+            }),
+            (response) => response.address
+        );
+    }
+
+    public getTheme(): Promise<string> {
+        return mapToPromise(
+            this.send<GetTheme, GetThemeResponse>({
+                type: 'get-theme',
+            }),
+            (response) => {
+                return response.theme;
+            }
         );
     }
 
@@ -138,7 +192,7 @@ export class DAppInterface {
         );
     }
 
-    public getFavorites(): Promise<Favorite[]> {
+    public getFavorites(): Promise<string[]> {
         return mapToPromise(
             this.send<GetFavorites, GetFavoritesResponse>({
                 type: 'get-favorites',
@@ -157,7 +211,7 @@ export class DAppInterface {
         );
     }
 
-    public setFavorites(favorites: Favorite[]) {
+    public setFavorites(favorites: string[]) {
         return mapToPromise(
             this.send<SetFavorites, SetFavoritesResponse>({
                 type: 'set-favorites',

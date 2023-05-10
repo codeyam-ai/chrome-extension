@@ -1,6 +1,6 @@
 import { cssTransition, ToastContainer } from 'react-toastify';
 
-import { getTheme } from '../../helpers/getTheme';
+import { useTheme } from '_src/shared/utils/themeContext';
 
 import type React from 'react';
 
@@ -16,10 +16,11 @@ const Fade = cssTransition({
 });
 
 const BaseLayout = ({ className, children }: BaseLayoutProps) => {
-    const theme = getTheme();
+    const { resolvedTheme } = useTheme();
 
     const defaultClasses =
         'mx-auto w-[360px] min-h-[600px] shadow-ethos-box-shadow sm:rounded-[20px] text-center bg-ethos-light-background-default dark:bg-ethos-dark-background-default';
+
     return (
         <div className={`${className || ''} ${defaultClasses}`}>
             <ToastContainer
@@ -32,7 +33,7 @@ const BaseLayout = ({ className, children }: BaseLayoutProps) => {
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
-                theme={theme === 'light' ? 'light' : 'dark'}
+                theme={resolvedTheme}
             />
             {children}
         </div>
