@@ -124,8 +124,7 @@ export function DappTxApprovalPage() {
         !txRequest ||
         !signer ||
         !address ||
-        (activeAccount?.importedLedgerIndex === undefined &&
-            analysis === undefined);
+        analysis === undefined;
 
     useEffect(() => {
         window.onresize = () => {

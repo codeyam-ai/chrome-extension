@@ -34,10 +34,10 @@ const LedgerItem = ({
     index,
     onSelect,
 }: {
-    account: any;
+    account: SerializedLedgerAccount;
     selected: boolean;
     index: number;
-    onSelect: (account: any) => void;
+    onSelect: (account: SerializedLedgerAccount) => void;
 }) => {
     const wallet = useMemo(() => {
         return {
@@ -103,7 +103,7 @@ export function ImportLedgerAccounts() {
     }, [accountInfos, ledgerAccounts]);
 
     const onAccountClick = useCallback(
-        (targetAccount: any) => {
+        (targetAccount: SerializedLedgerAccount) => {
             setSelectedLedgerAccounts((prevState) => {
                 const existing = prevState.find(
                     (ledgerAccount) =>
@@ -184,64 +184,4 @@ export function ImportLedgerAccounts() {
             </div>
         </Loading>
     );
-
-    // return (
-    //     <Overlay
-    //         showModal
-    //         title="Import Accounts"
-    //         closeOverlay={() => {
-    //             navigate(accountsUrl);
-    //         }}
-    //     >
-    //         <div className="w-full flex flex-col gap-5">
-    //             <div className="h-full bg-white flex flex-col border border-solid border-gray-45 rounded-2xl">
-    //                 <div className="text-center bg-gray-40 py-2.5 rounded-t-2xl">
-    //                     <Text
-    //                         variant="captionSmall"
-    //                         weight="bold"
-    //                         color="steel-darker"
-    //                         truncate
-    //                     >
-    //                         {areAllAccountsImported
-    //                             ? 'Ledger Accounts '
-    //                             : 'Connect Ledger Accounts'}
-    //                     </Text>
-    //                 </div>
-    //                 <div className="grow px-4 py-2">{summaryCardBody}</div>
-    //                 <div className="w-full rounded-b-2xl border-x-0 border-b-0 border-t border-solid border-gray-40 text-center pt-3 pb-4">
-    //                     <div className="w-fit ml-auto mr-auto">
-    //                         <Link
-    //                             text="Select All Accounts"
-    //                             color="heroDark"
-    //                             weight="medium"
-    //                             onClick={() => {
-    //                                 if (ledgerAccounts) {
-    //                                     setSelectedLedgerAccounts(
-    //                                         ledgerAccounts
-    //                                     );
-    //                                 }
-    //                             }}
-    //                             disabled={isSelectAllButtonDisabled}
-    //                         />
-    //                     </div>
-    //                 </div>
-    //             </div>
-    //             <div>
-    //                 <Button
-    //                     variant="primary"
-    //                     size="tall"
-    //                     before={<UnlockedLockIcon />}
-    //                     text="Unlock"
-    //                     loading={importLedgerAccountsMutation.isLoading}
-    //                     disabled={isUnlockButtonDisabled}
-    //                     onClick={() =>
-    //                         importLedgerAccountsMutation.mutate(
-    //                             selectedLedgerAccounts
-    //                         )
-    //                     }
-    //                 />
-    //             </div>
-    //         </div>
-    //     </Overlay>
-    // );
 }

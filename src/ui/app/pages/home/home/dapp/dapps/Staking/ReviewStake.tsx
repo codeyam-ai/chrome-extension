@@ -10,6 +10,7 @@ import { LinkType } from '_src/enums/LinkType';
 import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
+import humanReadableTransactionErrors from '_src/ui/app/helpers/humanReadableTransactionError';
 import { calculateStakeRewardStart } from '_src/ui/app/helpers/staking/calculateStakeRewardStart';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { useSystemState } from '_src/ui/app/hooks/staking/useSystemState';
@@ -120,7 +121,13 @@ const ReviewStake: React.FC = () => {
             // eslint-disable-next-line no-console
             console.error('error', error);
 
-            toast(<FailAlert text={`Something went wrong. ${error}`} />);
+            toast(
+                <FailAlert
+                    text={`Something went wrong. ${humanReadableTransactionErrors(
+                        `${error}`
+                    )}`}
+                />
+            );
         }
         setLoading(false);
     }, [

@@ -20,7 +20,7 @@ const humanReadableTransactionErrors = (errorMessage: string) => {
     if (
         errorMessage.indexOf('Ledger device: INS_NOT_SUPPORTED (0x6d00)') > -1
     ) {
-        return 'The Ledger did not sign the transaction. Please try again. Be sure to scroll all the way to the right until you see the "Confirm" button.';
+        return 'The Ledger did not sign the transaction. Please ensure blind transactions are enabled and scroll all the way to the right until you see the "Confirm" button.';
     }
 
     if (isErrorCausedByUserNotHavingEnoughSuiToPayForGas(errorMessage)) {
