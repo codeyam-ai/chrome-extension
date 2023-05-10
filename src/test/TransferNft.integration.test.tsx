@@ -143,7 +143,7 @@ describe('Creating and sending an NFT', () => {
         userEvent.click(confirmBtn);
 
         await screen.findByText(
-            'Transaction submitted...',
+            'Submitting transaction...',
             {},
             { timeout: 5000 }
         );
