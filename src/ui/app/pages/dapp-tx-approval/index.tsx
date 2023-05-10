@@ -17,7 +17,6 @@ import finishTransaction from './lib/finishTransaction';
 import resizeWindow from './lib/resizeWindow';
 import Base from './types/Base';
 import ComplexMoveCall from './types/ComplexMoveCall';
-import ConnectLedger from './types/ConnectLedger';
 import SimpleAssetMint from './types/SimpleAssetMint';
 import SimpleAssetSwap from './types/SimpleAssetSwap';
 import SimpleAssetTransfer from './types/SimpleAssetTransfer';
@@ -52,7 +51,6 @@ export type DistilledEffect = {
 
 export function DappTxApprovalPage() {
     const { connectToLedger } = useSuiLedgerClient();
-    const [ledgerConnected, setLedgerConnected] = useState(false);
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
 
     const activeChain = useMemo(() => {
@@ -149,8 +147,11 @@ export function DappTxApprovalPage() {
     }, [selectedApiEnv]);
 
     useEffect(() => {
+        if (signer) return;
+
         if (!accountInfos || accountInfos.length === 0) return;
 
+        console.log('RETRIEVE SIGNER');
         const retrieveSigner = async () => {
             const signer = await getSigner(
                 passphrase,
@@ -169,16 +170,17 @@ export function DappTxApprovalPage() {
         retrieveSigner();
     }, [
         accountInfos,
+        activeAccount,
         activeAccountIndex,
         address,
         authentication,
         connectToLedger,
         passphrase,
         selectedApiEnv,
+        signer,
     ]);
 
     const getTransactionInfo = useCallback(async () => {
-        console.log('GET TRANSACTION INFO 0');
         if (!accountInfos || accountInfos.length === 0) return;
 
         if (
@@ -206,13 +208,10 @@ export function DappTxApprovalPage() {
             return;
         }
 
-        console.log('GET TRANSACTION INFO 1');
-
         if (!signer || !transactionBlock || !activeAccount) return;
 
         // console.log('SERIALIZED', transactionBlock.serialize());
 
-        console.log('GET TRANSACTION INFO 2');
         try {
             const analysis = await analyzeChanges({
                 signer,
@@ -256,14 +255,8 @@ export function DappTxApprovalPage() {
     ]);
 
     useEffect(() => {
-        if (
-            activeAccount?.importedLedgerIndex !== undefined &&
-            !ledgerConnected
-        )
-            return;
-
         getTransactionInfo();
-    }, [activeAccount, getTransactionInfo, ledgerConnected]);
+    }, [getTransactionInfo]);
 
     const closeWindow = useDependencies().closeWindow;
 
@@ -275,6 +268,8 @@ export function DappTxApprovalPage() {
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
+            if (!signer) return;
+
             const justSign =
                 txRequest?.tx && 'justSign' in txRequest.tx
                     ? txRequest.tx.justSign
@@ -288,32 +283,17 @@ export function DappTxApprovalPage() {
                     ? txRequest.tx.requestType
                     : undefined;
             await finishTransaction(
-                connectToLedger,
+                signer,
                 transactionBlock ?? null,
                 txID,
                 approved,
-                passphrase,
-                authentication ?? null,
-                address,
-                accountInfos,
-                activeAccountIndex,
                 justSign,
                 options,
                 requestType
             );
             setDone(true);
         },
-        [
-            txRequest,
-            connectToLedger,
-            transactionBlock,
-            txID,
-            passphrase,
-            authentication,
-            address,
-            accountInfos,
-            activeAccountIndex,
-        ]
+        [txRequest, signer, transactionBlock, txID]
     );
 
     const onApprove = useCallback(() => {
@@ -325,12 +305,16 @@ export function DappTxApprovalPage() {
     }, [handleOnSubmit]);
 
     const content = useMemo(() => {
-        if (
-            activeAccount?.importedLedgerIndex !== undefined &&
-            !ledgerConnected
-        ) {
-            return <ConnectLedger onConnect={setLedgerConnected} />;
-        }
+        // if (
+        //     activeAccount?.importedLedgerIndex !== undefined &&
+        //     !ledgerConnection
+        // ) {
+        //     return (
+        //         <SimpleBase approval={txRequest} onComplete={onComplete}>
+        //             <ConnectLedger onConnect={setLedgerConnection} />
+        //         </SimpleBase>
+        //     );
+        // }
 
         if (
             txRequest &&
@@ -481,38 +465,29 @@ export function DappTxApprovalPage() {
 
         return (
             <Base
+                signer={signer}
                 txID={txID}
                 address={address}
                 txRequest={txRequest}
                 objectChanges={analysis?.dryRunResponse?.objectChanges}
                 effects={analysis?.dryRunResponse?.effects}
-                authentication={authentication ?? null}
-                passphrase={passphrase}
-                activeAccountIndex={activeAccountIndex}
-                accountInfos={accountInfos}
                 transactionBlock={transactionBlock}
                 setDone={setDone}
             />
         );
     }, [
-        activeAccount,
-        ledgerConnected,
-        txRequest,
-        address,
         activeChain,
-        signer,
+        address,
         analysis,
-        txID,
-        authentication,
-        passphrase,
-        activeAccountIndex,
-        accountInfos,
-        transactionBlock,
-        onComplete,
-        explicitError,
-        selectedApiEnv,
         dryRunError,
+        explicitError,
         onApprove,
+        onComplete,
+        selectedApiEnv,
+        signer,
+        transactionBlock,
+        txID,
+        txRequest,
     ]);
 
     return (

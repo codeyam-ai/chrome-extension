@@ -10,7 +10,6 @@ import TabElement from '../TabElement';
 import { useCategorizedEvents, useCustomSummary } from '../lib';
 import finishTransaction from '../lib/finishTransaction';
 import * as summaries from '../summaries';
-import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import UserApproveContainer from '_src/ui/app/components/user-approve-container';
 import { useFormatCoin } from '_src/ui/app/hooks';
 
@@ -18,12 +17,14 @@ import type { Detail } from '../DetailElement';
 import type { Section } from '../SectionElement';
 import type { SmallDetail } from '../SmallValue';
 import type {
+    RawSigner,
     SuiAddress,
     SuiObjectChange,
     TransactionEffects,
 } from '@mysten/sui.js';
+import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
-import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 export enum TxApprovalTab {
     SUMMARY = 'Summary',
@@ -36,11 +37,8 @@ export type TabSections = {
 };
 
 export type BaseProps = {
+    signer: RawSigner | EthosSigner | LedgerSigner;
     txID?: string;
-    passphrase: string | null;
-    authentication: string | null;
-    accountInfos: AccountInfo[];
-    activeAccountIndex: number;
     txRequest: ApprovalRequest | null;
     transactionBlock: TransactionBlock | null;
     objectChanges?: SuiObjectChange[] | null;
@@ -50,11 +48,8 @@ export type BaseProps = {
 };
 
 const Base = ({
+    signer,
     address,
-    passphrase,
-    authentication,
-    accountInfos,
-    activeAccountIndex,
     txID,
     transactionBlock,
     txRequest,
@@ -62,7 +57,6 @@ const Base = ({
     effects,
     setDone,
 }: BaseProps) => {
-    const { connectToLedger } = useSuiLedgerClient();
     const [tab, setTab] = useState(TxApprovalTab.SUMMARY);
 
     const summaryKey = useCustomSummary(txRequest);
@@ -421,6 +415,8 @@ const Base = ({
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
+            if (!signer) return;
+
             const justSign =
                 txRequest?.tx && 'justSign' in txRequest.tx
                     ? txRequest.tx.justSign
@@ -434,33 +430,17 @@ const Base = ({
                     ? txRequest.tx.requestType
                     : undefined;
             await finishTransaction(
-                connectToLedger,
+                signer,
                 transactionBlock ?? null,
                 txID,
                 approved,
-                passphrase,
-                authentication ?? null,
-                address,
-                accountInfos,
-                activeAccountIndex,
                 justSign,
                 options,
                 requestType
             );
             setDone(true);
         },
-        [
-            txRequest,
-            connectToLedger,
-            transactionBlock,
-            txID,
-            passphrase,
-            authentication,
-            address,
-            accountInfos,
-            activeAccountIndex,
-            setDone,
-        ]
+        [signer, txRequest, transactionBlock, txID, setDone]
     );
 
     return txRequest ? (
