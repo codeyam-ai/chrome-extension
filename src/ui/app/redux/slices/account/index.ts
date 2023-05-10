@@ -340,6 +340,14 @@ export const createMnemonic = createAsyncThunk(
                 strong: true,
                 passphrase,
             });
+
+            await setEncrypted({
+                key: 'passphraseEncryptedWithMnemonic',
+                value: passphrase,
+                strong: false,
+                session: true,
+                passphrase: mnemonic,
+            });
         }
 
         return mnemonic;
