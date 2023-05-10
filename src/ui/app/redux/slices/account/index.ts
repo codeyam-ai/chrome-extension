@@ -28,7 +28,11 @@ import { generateMnemonic } from '_shared/cryptography/mnemonics';
 import Authentication from '_src/background/Authentication';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
 import { CUSTOMIZE_ID } from '_src/data/dappsMap';
-import { AccountType, PASSPHRASE_TEST } from '_src/shared/constants';
+import {
+    AccountType,
+    MNEMONIC_TEST,
+    PASSPHRASE_TEST,
+} from '_src/shared/constants';
 import {
     deleteEncrypted,
     getEncrypted,
@@ -342,10 +346,10 @@ export const createMnemonic = createAsyncThunk(
             });
 
             await setEncrypted({
-                key: 'passphraseEncryptedWithMnemonic',
-                value: passphrase,
+                key: 'mnemonic-test',
+                value: MNEMONIC_TEST,
+                session: false,
                 strong: false,
-                session: true,
                 passphrase: mnemonic,
             });
         }
@@ -967,6 +971,19 @@ const isPasswordCorrect = async (password: string) => {
     return true;
 };
 
+const isMnemonicCorrect = async (mnemonic: string) => {
+    const mnemonicTest = await getEncrypted({
+        key: 'mnemonic-test',
+        session: false,
+        passphrase: mnemonic,
+        strong: false,
+    });
+
+    if (mnemonicTest !== MNEMONIC_TEST) return false;
+
+    return true;
+};
+
 export const assertPasswordIsCorrect: AsyncThunk<
     boolean,
     string | null,
@@ -999,6 +1016,31 @@ export const unlock: AsyncThunk<string | null, string | null, AppThunkConfig> =
             return null;
         }
     );
+
+export const recoverPasswordFromMnemonic: AsyncThunk<
+    string | null,
+    string | null,
+    AppThunkConfig
+> = createAsyncThunk<string | null, string | null, AppThunkConfig>(
+    'account/unlock',
+    async (mnemonic): Promise<string | null> => {
+        if (mnemonic) {
+            const isCorrect = await isMnemonicCorrect(mnemonic);
+            console.log('isCorrect :>> ', isCorrect);
+            if (isCorrect) {
+                // await setEncrypted({
+                //     key: 'passphrase',
+                //     value: passphrase,
+                //     strong: false,
+                //     session: true,
+                // });
+                // setUnlocked(passphrase);
+                // return passphrase;
+            }
+        }
+        return null;
+    }
+);
 
 export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
     'account/getFavoriteDappsKeys',
