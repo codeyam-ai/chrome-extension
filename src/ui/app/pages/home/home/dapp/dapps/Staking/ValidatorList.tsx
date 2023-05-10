@@ -9,6 +9,7 @@ import ArrowUpDownSort from '_src/ui/app/shared/svg/ArrowUpDownSort';
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { SuiAddress, SuiValidatorSummary } from '@mysten/sui.js';
+import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 
 export interface SuiValidatorSummaryWithApy extends SuiValidatorSummary {
     apy: number;
@@ -129,7 +130,7 @@ const ValidatorRow: React.FC<ValidatorRowProps> = ({
         <button
             onClick={onClick}
             className={classNames(
-                'w-full py-3 px-2 text-left rounded-lg border-b border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke',
+                'w-full py-4 px-2 text-left rounded-lg border-b border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke',
                 isSelected
                     ? 'border-2 border-b-2 border-ethos-light-primary-light dark:border-ethos-dark-primary-dark'
                     : ''
@@ -148,16 +149,28 @@ const ValidatorRow: React.FC<ValidatorRowProps> = ({
                     )}
                     <div className="flex flex-col">
                         <Body isSemibold>{validator.name}</Body>
-                        <Body isTextColorMedium>
-                            {truncateMiddle(validator.suiAddress)}
+                        <Body>
+                            <EthosLink
+                                className="!font-weight-ethos-body"
+                                type="internal"
+                                to={`/home/staking/validator/${validator.suiAddress}/details`}
+                            >
+                                Learn more
+                            </EthosLink>
                         </Body>
                     </div>
                 </div>
-                <div className="flex flex-col text-right">
-                    <Body isSemibold>{validator.apy || 0}% APY</Body>
-                    <Body>
-                        {Number(validator.commissionRate) / 100}% Commission
-                    </Body>
+                <div className="flex flex-col">
+                    <div className="flex justify-end gap-1">
+                        <Body isSemibold>{validator.apy || 0}%</Body>
+                        <Body>APY</Body>
+                    </div>
+                    <div className="flex justify-end gap-1">
+                        <Body isSemibold>
+                            {Number(validator.commissionRate) / 100}%
+                        </Body>
+                        <Body>Commission</Body>
+                    </div>
                 </div>
             </div>
         </button>
