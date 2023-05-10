@@ -12,6 +12,7 @@ import App from '_app/index';
 import { AppType } from '_redux/slices/app/AppType';
 import { DependenciesContext } from '_shared/utils/dependenciesContext';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
+import { SuiLedgerClientProvider } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import { createStore } from '_store';
 import { thunkExtras } from '_store/thunk-extras';
 
@@ -21,7 +22,6 @@ import type { RootState } from '_redux/RootReducer';
 import type { Dependencies } from '_shared/utils/dependenciesContext';
 import type { AppStore } from '_store';
 import type { PropsWithChildren } from 'react';
-import { SuiLedgerClientProvider } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: PreloadedState<RootState>;
