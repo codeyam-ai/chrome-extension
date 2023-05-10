@@ -3,28 +3,37 @@ import { fromB64 } from '@mysten/bcs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { useSuiLedgerClient } from '../../components/ledger/SuiLedgerClientProvider';
 import formatUrl from '../../helpers/format-url';
 import { AppState } from '../../hooks/useInitializedGuard';
-import { respondToTransactionRequest } from '../../redux/slices/transaction-requests';
+// import { respondToTransactionRequest } from '../../redux/slices/transaction-requests';
 import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import IncorrectSigner from '../dapp-tx-approval/errors/IncorrectSigner';
+import signMessage from '../dapp-tx-approval/lib/signMessage';
 import SimpleBase from '../dapp-tx-approval/types/SimpleBase';
 import Loading from '_components/loading';
 import UserApproveContainer from '_components/user-approve-container';
-import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
+import { useAppSelector, useInitializedGuard } from '_hooks';
 import { signMessageRequestsSelectors } from '_redux/slices/sign-message-requests';
 
 import type { RootState } from '_redux/RootReducer';
 
 export function DappSignMessageApprovalPage() {
+    const { connectToLedger } = useSuiLedgerClient();
     const [siteFaviconSrc, setSiteFaviconSrc] = useState<string | undefined>();
     const { signMessageRequestID } = useParams();
     const guardLoading = useInitializedGuard([
         AppState.MNEMONIC,
         AppState.HOSTED,
     ]);
-    const activeAddress = useAppSelector(({ account }) => account.address);
+    const {
+        activeAccountIndex,
+        accountInfos,
+        address: activeAddress,
+        authentication,
+        passphrase,
+    } = useAppSelector(({ account }) => account);
     const signMessageRequestLoading = useAppSelector(
         ({ transactionRequests }) => !transactionRequests.initialized
     );
@@ -40,7 +49,7 @@ export function DappSignMessageApprovalPage() {
     );
     const signMessageRequest = useAppSelector(signMessageRequestSelector);
     const loading = guardLoading || signMessageRequestLoading;
-    const dispatch = useAppDispatch();
+    // const dispatch = useAppDispatch();
 
     const message = useMemo(() => {
         if (signMessageRequest?.tx?.type !== 'sign-message') return null;
@@ -49,19 +58,41 @@ export function DappSignMessageApprovalPage() {
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
+            if (!message) return;
+
             if (signMessageRequest?.tx?.type === 'sign-message') {
-                await dispatch(
-                    respondToTransactionRequest({
-                        txRequestID: signMessageRequest.id,
-                        approved,
-                        addressForTransaction:
-                            signMessageRequest.tx.accountAddress,
-                    })
+                await signMessage(
+                    connectToLedger,
+                    message,
+                    signMessageRequest.id,
+                    approved,
+                    passphrase,
+                    authentication,
+                    activeAddress,
+                    accountInfos,
+                    activeAccountIndex
                 );
+                // await dispatch(
+                //     respondToTransactionRequest({
+                //         txRequestID: signMessageRequest.id,
+                //         approved,
+                //         addressForTransaction:
+                //             signMessageRequest.tx.accountAddress,
+                //     })
+                // );
                 window.close();
             }
         },
-        [dispatch, signMessageRequest]
+        [
+            accountInfos,
+            activeAccountIndex,
+            activeAddress,
+            authentication,
+            connectToLedger,
+            message,
+            passphrase,
+            signMessageRequest,
+        ]
     );
 
     const handleImgError = useCallback(() => {

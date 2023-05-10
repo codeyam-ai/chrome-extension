@@ -18,6 +18,7 @@ import type {
 } from '../lib/analyzeChanges';
 import type { RawSigner, SuiAddress, SuiObjectChange } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 import type { ReactNode } from 'react';
 
 const Row = ({
@@ -258,7 +259,7 @@ const Details = ({
     signer,
 }: {
     analysis: AnalyzeChangesResult;
-    signer: EthosSigner | RawSigner;
+    signer: EthosSigner | LedgerSigner | RawSigner;
 }) => {
     const { resolvedTheme } = useTheme();
     const [details, setDetails] = useState(false);

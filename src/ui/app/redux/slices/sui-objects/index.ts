@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-    getExecutionStatusType,
+    // getExecutionStatusType,
     getObjectId,
-    getTimestampFromTransactionResponse,
-    getTotalGasUsed,
-    getTransactionDigest,
+    // getTimestampFromTransactionResponse,
+    // getTotalGasUsed,
+    // getTransactionDigest,
     getObjectVersion,
-    TransactionBlock,
+    // TransactionBlock,
     getSuiObjectData,
 } from '@mysten/sui.js';
 import {
@@ -19,13 +19,13 @@ import {
 
 import { SUI_SYSTEM_STATE_OBJECT_ID } from './Coin';
 import { NFT } from './NFT';
-import { fetchAllBalances } from '../balances';
-import { getSigner } from '_src/ui/app/helpers/getSigner';
-import transferObjectTransactionBlock from '_src/ui/app/helpers/transferObjectTransactionBlock';
+// import { fetchAllBalances } from '../balances';
+// import { getSigner } from '_src/ui/app/helpers/getSigner';
+// import transferObjectTransactionBlock from '_src/ui/app/helpers/transferObjectTransactionBlock';
 
 import type {
-    SuiAddress,
-    ObjectId,
+    // SuiAddress,
+    // ObjectId,
     SuiObjectData,
     PaginatedObjectsResponse,
     SuiObjectResponse,
@@ -186,76 +186,77 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
     return allSuiObjects;
 });
 
-type NFTTxResponse = {
-    timestamp_ms?: number;
-    status?: string;
-    gasFee?: string;
-    txId?: string;
-};
+// type NFTTxResponse = {
+//     timestamp_ms?: number;
+//     status?: string;
+//     gasFee?: string;
+//     txId?: string;
+// };
 
-export const transferNFT = createAsyncThunk<
-    NFTTxResponse | undefined,
-    { nftId: ObjectId; recipientAddress: SuiAddress; transferCost: number },
-    AppThunkConfig
->('transferNFT', async (data, { getState, dispatch, extra: { api } }) => {
-    const {
-        account: {
-            activeAccountIndex,
-            authentication,
-            address,
-            accountInfos,
-            passphrase,
-        },
-        suiObjects: { entities },
-    } = getState();
+// export const transferNFT = createAsyncThunk<
+//     NFTTxResponse | undefined,
+//     { nftId: ObjectId; recipientAddress: SuiAddress; transferCost: number },
+//     AppThunkConfig
+// >('transferNFT', async (data, { getState, dispatch, extra: { api } }) => {
+//     const {
+//         account: {
+//             activeAccountIndex,
+//             authentication,
+//             address,
+//             accountInfos,
+//             passphrase,
+//         },
+//         suiObjects: { entities },
+//     } = getState();
 
-    const nft = entities[data.nftId];
+//     const nft = entities[data.nftId];
 
-    if (!nft) return;
+//     if (!nft) return;
 
-    const signer = await getSigner(
-        passphrase,
-        accountInfos,
-        address,
-        authentication,
-        activeAccountIndex
-    );
+//     const signer = await getSigner(
+//         passphrase,
+//         accountInfos,
+//         address,
+//         authentication,
+//         activeAccountIndex
+//     );
 
-    if (!signer) return;
+//     if (!signer) return;
 
-    let transactionBlock: TransactionBlock | null = new TransactionBlock();
+//     let transactionBlock: TransactionBlock | null = new TransactionBlock();
 
-    transactionBlock = await transferObjectTransactionBlock(
-        transactionBlock,
-        nft,
-        data.recipientAddress,
-        api.instance.fullNode
-    );
+//     transactionBlock = await transferObjectTransactionBlock(
+//         transactionBlock,
+//         nft,
+//         data.recipientAddress,
+//         api.instance.fullNode
+//     );
 
-    if (!transactionBlock) return;
+//     if (!transactionBlock) return;
 
-    const executedTransaction = await signer.signAndExecuteTransactionBlock({
-        transactionBlock,
-        options: {
-            showEffects: true,
-            showEvents: true,
-            showInput: true,
-        },
-    });
+//     const executedTransaction = await signer.signAndExecuteTransactionBlock({
+//         transactionBlock,
+//         options: {
+//             showEffects: true,
+//             showEvents: true,
+//             showInput: true,
+//         },
+//     });
 
-    dispatch(fetchAllBalances());
-    await dispatch(fetchAllOwnedAndRequiredObjects());
-    const txnResp = {
-        timestamp_ms: getTimestampFromTransactionResponse(executedTransaction),
-        status: getExecutionStatusType(executedTransaction),
-        gasFee: executedTransaction
-            ? getTotalGasUsed(executedTransaction)?.toString()
-            : '0',
-        txId: getTransactionDigest(executedTransaction),
-    };
+//     dispatch(fetchAllBalances());
+//     await dispatch(fetchAllOwnedAndRequiredObjects());
+//     const txnResp = {
+//         timestamp_ms: getTimestampFromTransactionResponse(executedTransaction),
+//         status: getExecutionStatusType(executedTransaction),
+//         gasFee: executedTransaction
+//             ? getTotalGasUsed(executedTransaction)?.toString()
+//             : '0',
+//         txId: getTransactionDigest(executedTransaction),
+//     };
 
-    return txnResp as NFTTxResponse;
-});
+//     return txnResp as NFTTxResponse;
+// });
+
 interface SuiObjectsManualState {
     loading: boolean;
     error: false | { code?: string; message?: string; name?: string };

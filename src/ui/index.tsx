@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import { HashRouter } from 'react-router-dom';
 
 import App from './app';
+import { SuiLedgerClientProvider } from './app/components/ledger/SuiLedgerClientProvider';
 import Loading from './app/components/loading';
 import { queryClient } from './app/helpers/queryClient';
 import { initAppType, initNetworkFromStorage } from '_redux/slices/app';
@@ -96,15 +97,17 @@ function renderApp(root: Root) {
 
     root.render(
         <DependenciesContext.Provider value={appDependencies}>
-            <HashRouter>
-                <Provider store={store}>
-                    <IntlProvider locale={navigator.language}>
-                        <QueryClientProvider client={queryClient}>
-                            <App />
-                        </QueryClientProvider>
-                    </IntlProvider>
-                </Provider>
-            </HashRouter>
+            <SuiLedgerClientProvider>
+                <HashRouter>
+                    <Provider store={store}>
+                        <IntlProvider locale={navigator.language}>
+                            <QueryClientProvider client={queryClient}>
+                                <App />
+                            </QueryClientProvider>
+                        </IntlProvider>
+                    </Provider>
+                </HashRouter>
+            </SuiLedgerClientProvider>
         </DependenciesContext.Provider>
     );
 }

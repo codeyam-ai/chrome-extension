@@ -18,6 +18,7 @@ import {
 } from '_redux/slices/account';
 import { Coin } from '_redux/slices/sui-objects/Coin';
 import ns from '_shared/namespace';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 import safeAddress from '_src/ui/app/helpers/safeAddress';
 import {
@@ -115,6 +116,7 @@ function useOnHandleSubmit({
     setSendError,
     formState,
 }: UseOnHandleSubmit) {
+    const { connectToLedger } = useSuiLedgerClient();
     const {
         account: {
             authentication,
@@ -159,7 +161,8 @@ function useOnHandleSubmit({
                 accountInfos,
                 address,
                 authentication,
-                activeAccountIndex
+                activeAccountIndex,
+                connectToLedger
             );
 
             if (!signer) return;
@@ -202,25 +205,31 @@ function useOnHandleSubmit({
                 );
             }
 
-            const signedTx = await signer.dryRunTransactionBlock({
-                transactionBlock,
-            });
+            try {
+                const signedTx = await signer.dryRunTransactionBlock({
+                    transactionBlock,
+                });
 
-            const { computationCost, storageCost, storageRebate } =
-                signedTx.effects.gasUsed;
+                const { computationCost, storageCost, storageRebate } =
+                    signedTx.effects.gasUsed;
 
-            const gasFee =
-                Number(computationCost) +
-                (Number(storageCost) - Number(storageRebate));
+                const gasFee =
+                    Number(computationCost) +
+                    (Number(storageCost) - Number(storageRebate));
 
-            dispatch(
-                setSuiAmount({
-                    amount: amount,
-                    gasFee: gasFee.toString(),
-                })
-            );
+                dispatch(
+                    setSuiAmount({
+                        amount: amount,
+                        gasFee: gasFee.toString(),
+                    })
+                );
 
-            setSendError(null);
+                setSendError(null);
+            } catch (e: unknown) {
+                const message = (e as SerializedError).message || null;
+                setSendError(message);
+                return;
+            }
 
             try {
                 resetForm();
@@ -241,10 +250,11 @@ function useOnHandleSubmit({
             address,
             authentication,
             activeAccountIndex,
+            connectToLedger,
+            formState.to,
             state,
             dispatch,
             setSendError,
-            formState.to,
             navigate,
         ]
     );

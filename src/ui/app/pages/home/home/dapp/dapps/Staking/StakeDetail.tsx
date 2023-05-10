@@ -16,6 +16,7 @@ import { toast } from 'react-toastify';
 
 import { Card } from './ExistingStake';
 import ClickableLargeTooltip from '_src/ui/app/components/ClickableTooltip';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { useDistanceToStartEarningRewards } from '_src/ui/app/hooks/staking/useDistanceToStartEarningRewards';
@@ -48,6 +49,7 @@ function revokeStakeTransaction(stakedSuiId: SuiAddress) {
 }
 
 const StakeDetail: React.FC = () => {
+    const { connectToLedger } = useSuiLedgerClient();
     const { validatorAddress, stakedSuiId } = useParams();
 
     const {
@@ -113,7 +115,8 @@ const StakeDetail: React.FC = () => {
             accountInfos,
             address,
             authentication,
-            activeAccountIndex
+            activeAccountIndex,
+            connectToLedger
         );
 
         if (!signer) return;
@@ -148,6 +151,7 @@ const StakeDetail: React.FC = () => {
         activeAccountIndex,
         address,
         authentication,
+        connectToLedger,
         passphrase,
         queryClient,
         stakedSuiId,

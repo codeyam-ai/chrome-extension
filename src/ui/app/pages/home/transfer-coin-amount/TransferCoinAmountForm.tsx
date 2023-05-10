@@ -11,6 +11,7 @@ import LoadingIndicator from '_components/loading/LoadingIndicator';
 import ns from '_shared/namespace';
 import { useDependencies } from '_shared/utils/dependenciesContext';
 import WalletTo from '_src/ui/app/components/wallet-to';
+import humanReadableTransactionErrors from '_src/ui/app/helpers/humanReadableTransactionError';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
 import { CoinSelect } from '_src/ui/app/pages/home/home/CoinDropdown';
@@ -146,6 +147,7 @@ function TransferCoinForm({
     const dollarDisplay = isValid && amountBigNumber.gte(0) ? dollars : '$0.00';
 
     const { featureFlags } = useDependencies();
+
     return (
         <Form autoComplete="off" noValidate={false}>
             <div className="pt-6 px-6 text-left flex flex-col mb-2">
@@ -183,8 +185,13 @@ function TransferCoinForm({
                     component="div"
                 />
                 {submitError ? (
-                    <div className="flex flex-col mb-2">
-                        <Alert title="Transfer failed" subtitle={submitError} />
+                    <div className="flex flex-col m-3">
+                        <Alert
+                            title="Problem"
+                            subtitle={humanReadableTransactionErrors(
+                                submitError
+                            )}
+                        />
                     </div>
                 ) : null}
             </div>

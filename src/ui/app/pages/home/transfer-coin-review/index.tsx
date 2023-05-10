@@ -9,18 +9,18 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import TransferCoinReviewForm from './TransferCoinReviewForm';
-import { isErrorCausedByUserNotHavingEnoughSuiToPayForGas } from '../../dapp-tx-approval/lib';
-import { getGasDataFromError } from '../../dapp-tx-approval/lib/extractGasData';
-import getErrorDisplaySuiForMist from '../../dapp-tx-approval/lib/getErrorDisplaySuiForMist';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector } from '_hooks';
 import { resetSendSuiForm } from '_redux/slices/forms';
-import { sendTokens } from '_redux/slices/transactions';
+// import { sendTokens } from '_redux/slices/transactions';
 import ns from '_shared/namespace';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
+import sendTokens from '_src/ui/app/helpers/sendTokens';
 import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
-import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
+import { accountCoinsSelector } from '_src/ui/app/redux/slices/account';
 import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 
+import type { SuiMoveObject } from '@mysten/sui.js';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
 
@@ -33,6 +33,8 @@ export type FormValues = typeof initialValues;
 
 // TODO: show out of sync when sui objects locally might be outdated
 function TransferCoinReviewPage() {
+    const { connectToLedger } = useSuiLedgerClient();
+    const state = useAppSelector((state) => state);
     const [searchParams] = useSearchParams();
     const [formSubmitted, setFormSubmitted] = useState(false);
     const coinType = searchParams.get('type');
@@ -48,7 +50,6 @@ function TransferCoinReviewPage() {
             { to, amount }: FormValues,
             { resetForm }: FormikHelpers<FormValues>
         ) => {
-            toast(<SuccessAlert text={'Transaction submitted.'} />);
             const amountBigNumber = ns.parse.numberString({
                 numberString: amount,
                 locale,
@@ -72,13 +73,18 @@ function TransferCoinReviewPage() {
                         .toString()
                 );
 
-                const tx = await dispatch(
-                    sendTokens({
-                        amount: bigIntAmount,
-                        recipientAddress: to,
-                        tokenTypeArg: coinType,
-                    })
-                ).unwrap();
+                const allCoins: SuiMoveObject[] = accountCoinsSelector(state);
+
+                const tx = await sendTokens({
+                    ...state.account,
+                    connectToLedger,
+                    allCoins,
+                    recipientAddress: to,
+                    tokenTypeArg: coinType,
+                    amount: bigIntAmount,
+                });
+
+                toast(<SuccessAlert text={'Transaction submitted...'} />);
 
                 resetForm();
                 dispatch(resetSendSuiForm());
@@ -101,24 +107,32 @@ function TransferCoinReviewPage() {
                 const receiptUrl = '/home';
                 navigate(receiptUrl);
             } catch (e) {
-                const error = e as { message: string };
-                const failAlertText =
-                    isErrorCausedByUserNotHavingEnoughSuiToPayForGas(
-                        error.message
-                    )
-                        ? `You don't have enough SUI to pay the transaction cost of ${getErrorDisplaySuiForMist(
-                              getGasDataFromError(error.message)?.gasBudget
-                          )} SUI.`
-                        : 'Transaction unsuccessful.';
-                const receiptUrl = '/home';
-                navigate(receiptUrl);
-                toast(<FailAlert text={failAlertText} />, {
-                    delay: 250,
-                });
+                // const error = e as { message: string };
+                // const failAlertText =
+                //     isErrorCausedByUserNotHavingEnoughSuiToPayForGas(
+                //         error.message
+                //     )
+                //         ? `You don't have enough SUI to pay the transaction cost of ${getErrorDisplaySuiForMist(
+                //               getGasDataFromError(error.message)?.gasBudget
+                //           )} SUI.`
+                //         : 'Transaction unsuccessful.';
+                // const receiptUrl = '/home';
+                // navigate(receiptUrl);
+                // toast(<FailAlert text={failAlertText} />, {
+                //     delay: 250,
+                // });
                 setSendError((e as SerializedError).message || null);
             }
         },
-        [locale, coinType, coinDecimals, dispatch, navigate]
+        [
+            locale,
+            coinType,
+            coinDecimals,
+            state,
+            connectToLedger,
+            dispatch,
+            navigate,
+        ]
     );
     const handleOnClearSubmitError = useCallback(() => {
         setSendError(null);

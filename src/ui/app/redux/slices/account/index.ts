@@ -189,7 +189,8 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 for (let i = 0; i < accountInfos.length; i++) {
                     if (
                         accountInfos[i].importedMnemonicName ||
-                        accountInfos[i].importedPrivateKeyName
+                        accountInfos[i].importedPrivateKeyName ||
+                        accountInfos[i].importedLedgerIndex !== undefined
                     ) {
                         continue;
                     }
@@ -242,6 +243,8 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                             seed: secretKey.toString(),
                         };
                     }
+                } else if (activeAccount?.importedLedgerIndex !== undefined) {
+                    activeSeed = undefined;
                 } else {
                     activeSeed = {
                         address:
@@ -1067,6 +1070,7 @@ type AccountState = {
     favoriteDappsKeys: string[];
     excludedDappsKeys: string[];
     importNames: { mnemonics: string[]; privateKeys: string[] };
+    ledgerConnected: boolean;
 };
 
 const initialState: AccountState = {
@@ -1088,6 +1092,7 @@ const initialState: AccountState = {
         mnemonics: [],
         privateKeys: [],
     },
+    ledgerConnected: false,
 };
 
 const accountSlice = createSlice({
@@ -1117,6 +1122,9 @@ const accountSlice = createSlice({
         },
         setEmail: (state, action: PayloadAction<string | null>) => {
             state.email = action.payload;
+        },
+        setLedgerConnected: (state, action: PayloadAction<boolean>) => {
+            state.ledgerConnected = action.payload;
         },
         lockWalletUI: (state, action: PayloadAction<boolean>) => {
             if (action.payload) {
@@ -1247,8 +1255,13 @@ const accountSlice = createSlice({
             }),
 });
 
-export const { setMnemonic, setAddress, setAccountInfos, lockWalletUI } =
-    accountSlice.actions;
+export const {
+    setMnemonic,
+    setAddress,
+    setAccountInfos,
+    setLedgerConnected,
+    lockWalletUI,
+} = accountSlice.actions;
 
 export default accountSlice.reducer;
 
