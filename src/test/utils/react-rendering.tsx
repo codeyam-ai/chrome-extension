@@ -63,7 +63,9 @@ export async function renderApp({
                     <Provider store={storeToUse}>
                         <IntlProvider locale={locale}>
                             <QueryClientProvider client={queryClient}>
-                                <DependenciesContext.Provider value={dependencies}>
+                                <DependenciesContext.Provider
+                                    value={dependencies}
+                                >
                                     {children}
                                 </DependenciesContext.Provider>
                             </QueryClientProvider>

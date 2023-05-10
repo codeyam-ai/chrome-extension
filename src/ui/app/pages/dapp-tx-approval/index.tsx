@@ -17,6 +17,7 @@ import finishTransaction from './lib/finishTransaction';
 import resizeWindow from './lib/resizeWindow';
 import Base from './types/Base';
 import ComplexMoveCall from './types/ComplexMoveCall';
+import ConnectLedger from './types/ConnectLedger';
 import SimpleAssetMint from './types/SimpleAssetMint';
 import SimpleAssetSwap from './types/SimpleAssetSwap';
 import SimpleAssetTransfer from './types/SimpleAssetTransfer';
@@ -51,6 +52,7 @@ export type DistilledEffect = {
 
 export function DappTxApprovalPage() {
     const { connectToLedger } = useSuiLedgerClient();
+    const [ledgerConnected, setLedgerConnected] = useState(false);
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
 
     const activeChain = useMemo(() => {
@@ -78,6 +80,14 @@ export function DappTxApprovalPage() {
         accountInfos,
         passphrase,
     } = useAppSelector(({ account }) => account);
+
+    const activeAccount = useMemo(
+        () =>
+            accountInfos.find(
+                (accountInfo) => accountInfo.index === activeAccountIndex
+            ),
+        [accountInfos, activeAccountIndex]
+    );
 
     const { txID } = useParams();
     const guardLoading = useInitializedGuard([
@@ -116,7 +126,8 @@ export function DappTxApprovalPage() {
         !txRequest ||
         !signer ||
         !address ||
-        analysis === undefined;
+        (activeAccount?.importedLedgerIndex === undefined &&
+            analysis === undefined);
 
     useEffect(() => {
         window.onresize = () => {
@@ -166,7 +177,10 @@ export function DappTxApprovalPage() {
         selectedApiEnv,
     ]);
 
-    useEffect(() => {
+    const getTransactionInfo = useCallback(async () => {
+        console.log('GET TRANSACTION INFO 0');
+        if (!accountInfos || accountInfos.length === 0) return;
+
         if (
             (txRequest &&
                 'account' in txRequest.tx &&
@@ -192,65 +206,64 @@ export function DappTxApprovalPage() {
             return;
         }
 
+        console.log('GET TRANSACTION INFO 1');
+
+        if (!signer || !transactionBlock || !activeAccount) return;
+
+        // console.log('SERIALIZED', transactionBlock.serialize());
+
+        console.log('GET TRANSACTION INFO 2');
+        try {
+            const analysis = await analyzeChanges({
+                signer,
+                transactionBlock,
+            });
+
+            if ('type' in analysis) {
+                if (
+                    analysis.type === 'Insufficient Gas' &&
+                    analysis.errorInfo &&
+                    analysis.errorInfo.gasRequired &&
+                    analysis.errorInfo.gasAvailable
+                ) {
+                    setExplicitError(
+                        <NotEnoughGas
+                            gasAvailable={analysis.errorInfo.gasAvailable}
+                            gasRequired={analysis.errorInfo.gasRequired}
+                        />
+                    );
+                } else if (analysis.type === 'NFT is locked') {
+                    setExplicitError(<LockedNFT />);
+                } else {
+                    setDryRunError(analysis.message);
+                }
+                setAnalysis(null);
+            } else {
+                setAnalysis(analysis);
+            }
+        } catch (e: unknown) {
+            setDryRunError(`${e}`);
+            setAnalysis(null);
+        }
+    }, [
+        accountInfos,
+        activeAccount,
+        activeChain,
+        address,
+        signer,
+        transactionBlock,
+        txRequest,
+    ]);
+
+    useEffect(() => {
         if (
-            !signer ||
-            !transactionBlock ||
-            !accountInfos ||
-            accountInfos.length === 0
+            activeAccount?.importedLedgerIndex !== undefined &&
+            !ledgerConnected
         )
             return;
 
-        const getTransactionInfo = async () => {
-            if (!accountInfos || accountInfos.length === 0) return;
-
-            // console.log('SERIALIZED', transactionBlock.serialize());
-
-            try {
-                const analysis = await analyzeChanges({
-                    signer,
-                    transactionBlock,
-                });
-
-                if ('type' in analysis) {
-                    if (
-                        analysis.type === 'Insufficient Gas' &&
-                        analysis.errorInfo &&
-                        analysis.errorInfo.gasRequired &&
-                        analysis.errorInfo.gasAvailable
-                    ) {
-                        setExplicitError(
-                            <NotEnoughGas
-                                gasAvailable={analysis.errorInfo.gasAvailable}
-                                gasRequired={analysis.errorInfo.gasRequired}
-                            />
-                        );
-                    } else if (analysis.type === 'NFT is locked') {
-                        setExplicitError(<LockedNFT />);
-                    } else {
-                        setDryRunError(analysis.message);
-                    }
-                    setAnalysis(null);
-                } else {
-                    setAnalysis(analysis);
-                }
-            } catch (e: unknown) {
-                setDryRunError(`${e}`);
-                setAnalysis(null);
-            }
-        };
-
         getTransactionInfo();
-    }, [
-        accountInfos,
-        activeAccountIndex,
-        address,
-        authentication,
-        signer,
-        transactionBlock,
-        selectedApiEnv,
-        txRequest,
-        activeChain,
-    ]);
+    }, [activeAccount, getTransactionInfo, ledgerConnected]);
 
     const closeWindow = useDependencies().closeWindow;
 
@@ -312,6 +325,13 @@ export function DappTxApprovalPage() {
     }, [handleOnSubmit]);
 
     const content = useMemo(() => {
+        if (
+            activeAccount?.importedLedgerIndex !== undefined &&
+            !ledgerConnected
+        ) {
+            return <ConnectLedger onConnect={setLedgerConnected} />;
+        }
+
         if (
             txRequest &&
             'account' in txRequest.tx &&
@@ -475,6 +495,8 @@ export function DappTxApprovalPage() {
             />
         );
     }, [
+        activeAccount,
+        ledgerConnected,
         txRequest,
         address,
         activeChain,
