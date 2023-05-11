@@ -135,6 +135,9 @@ export function ImportLedgerAccounts() {
         for (const account of selectedLedgerAccounts) {
             const { index, address } = account;
             const rawIndex = LEDGER_OFFSET + index;
+            const existingAccountInfo = accountInfos.find(
+                (accountInfo) => accountInfo.address === address
+            );
             mutableAccountInfos.push({
                 index: rawIndex,
                 address,
@@ -142,6 +145,7 @@ export function ImportLedgerAccounts() {
                 color: getNextWalletColor(index),
                 emoji: getNextEmoji(index),
                 name: `Ledger ${index + 1}`,
+                ...existingAccountInfo,
             });
         }
 

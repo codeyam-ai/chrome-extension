@@ -58,11 +58,17 @@ const LedgerWallet = ({
                 await dispatch(saveAccountInfos(updatedAccountInfos));
             }
         } catch (e: unknown) {
-            toast.error(
-                `Error verifying ledger account: ${humanReadableTransactionErrors(
-                    `${e}`
-                )}`
-            );
+            let message = `Error verifying ledger account: ${humanReadableTransactionErrors(
+                `${e}`
+            )}`;
+
+            if (
+                `${e}`.indexOf('Ledger device: INS_NOT_SUPPORTED (0x6d00)') > -1
+            ) {
+                message =
+                    "An error occurred while verifying. You may need to restart the ledger. Please scroll all the way to the right until you see 'Confirm' in the ledger when verifying";
+            }
+            toast.error(message);
         }
     }, [account, accountInfos, connectToLedger, dispatch]);
 
@@ -171,7 +177,10 @@ const LedgerHome = () => {
                 />
             </div>
 
-            {ledgerAccounts.length > 0 ? (
+            {ledgerAccounts.sort(
+                (a, b) =>
+                    (a.importedLedgerIndex ?? 0) - (b.importedLedgerIndex ?? 0)
+            ).length > 0 ? (
                 <div className="flex flex-col gap-3">
                     <Subheader>Selected Ledger Accounts</Subheader>
 
