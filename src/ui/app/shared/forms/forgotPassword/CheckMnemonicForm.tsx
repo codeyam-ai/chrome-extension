@@ -2,13 +2,13 @@ import { Formik, Form, useField } from 'formik';
 import { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 
-import Button from '../buttons/Button';
-import HideShowToggle from '../buttons/HideShowToggle';
-import Input from '../inputs/Input';
+import Button from '../../buttons/Button';
+import HideShowToggle from '../../buttons/HideShowToggle';
+import Input from '../../inputs/Input';
 
 import type { FormikValues } from 'formik';
-import Body from '../typography/Body';
-import EthosLink from '../typography/EthosLink';
+import Body from '../../typography/Body';
+import EthosLink from '../../typography/EthosLink';
 
 type PassphraseFormProps = {
     onSubmit: (mnemonicFromForm: string) => void;
@@ -67,7 +67,7 @@ const CustomFormikForm = ({
     );
 };
 
-const ForgotPasswordForm = ({
+const CheckMnemonicForm = ({
     onSubmit,
     isPasswordIncorrect = false,
 }: PassphraseFormProps) => {
@@ -98,4 +98,4 @@ const ForgotPasswordForm = ({
     );
 };
 
-export default ForgotPasswordForm;
+export default CheckMnemonicForm;

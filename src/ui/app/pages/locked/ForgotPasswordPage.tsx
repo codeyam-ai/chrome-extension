@@ -9,6 +9,7 @@ import {
     loadAccountInformationFromStorage,
     assertMnemonicIsCorrect,
     unlock,
+    savePassphrase,
 } from '../../redux/slices/account';
 import UnlockWalletForm from '../../shared/forms/UnlockWalletForm';
 import HeaderWithLargeEthosIcon from '../../shared/headers/page-headers/HeaderWithLargeEthosIcon';
@@ -16,8 +17,10 @@ import BaseLayout from '../../shared/layouts/BaseLayout';
 import Loading from '_components/loading';
 import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
 import PageLayout from '_src/ui/app/pages/PageLayout';
-import ForgotPasswordForm from '../../shared/forms/ForgotPasswordForm';
+import CheckMnemonicForm from '../../shared/forms/forgotPassword/CheckMnemonicForm';
 import { getEncrypted } from '_src/shared/storagex/store';
+import ChangePasswordForm from '../../components/settings-menu/subpages/security/subpages/change-password/ChangePasswordForm';
+import ChangePasswordFromMnemonicForm from '../../shared/forms/forgotPassword/ChangePasswordFromMnemonicForm';
 
 const ForgotPasswordPage = () => {
     const dispatch = useAppDispatch();
@@ -49,6 +52,14 @@ const ForgotPasswordPage = () => {
         [dispatch]
     );
 
+    const updatePassword = useCallback(
+        async (newPassword: string) => {
+            await dispatch(savePassphrase(newPassword));
+            navigate('/home');
+        },
+        [dispatch]
+    );
+
     return (
         <PageLayout>
             checkingInitialized: {checkingInitialized.toString()}
@@ -61,9 +72,11 @@ const ForgotPasswordPage = () => {
                 <BaseLayout className="!min-h-0">
                     <HeaderWithLargeEthosIcon description="Forgot Password" />
                     {isMnemonicCorrect ? (
-                        <div>correct</div>
+                        <ChangePasswordFromMnemonicForm
+                            onSubmit={updatePassword}
+                        />
                     ) : (
-                        <ForgotPasswordForm
+                        <CheckMnemonicForm
                             onSubmit={checkMnemonic}
                             isPasswordIncorrect={isPasswordIncorrect}
                         />
