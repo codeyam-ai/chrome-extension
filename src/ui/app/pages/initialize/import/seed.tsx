@@ -8,12 +8,10 @@ import {
 import { useAppDispatch } from '_src/ui/app/hooks';
 import { createMnemonic, setMnemonic } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
-import HideShowToggle from '_src/ui/app/shared/buttons/HideShowToggle';
-import OnboardingCard from '_src/ui/app/shared/layouts/OnboardingCard';
-import Body from '_src/ui/app/shared/typography/Body';
-
-import type { ClipboardEvent, FormEvent } from 'react';
 import RecoveryPhraseInput from '_src/ui/app/shared/inputs/RecoveryPhraseInput';
+import OnboardingCard from '_src/ui/app/shared/layouts/OnboardingCard';
+
+import type { FormEvent } from 'react';
 
 const idPrefix = 'word-';
 const errorText =

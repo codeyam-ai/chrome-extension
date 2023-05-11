@@ -1,7 +1,7 @@
-// RecoveryPhraseInput.tsx
-import Body from '_src/ui/app/shared/typography/Body';
 import { useCallback, useState } from 'react';
+
 import HideShowToggle from '../buttons/HideShowToggle';
+import Body from '_src/ui/app/shared/typography/Body';
 
 const idPrefix = 'word-';
 
