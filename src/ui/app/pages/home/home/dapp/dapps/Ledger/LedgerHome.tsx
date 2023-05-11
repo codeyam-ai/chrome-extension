@@ -80,17 +80,17 @@ const LedgerWallet = ({
     return (
         <div className="flex flex-col gap-1 p-3 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-lg">
             {!account.ledgerAccountVerified && (
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center gap-1">
                     <Subheader>Account Verificiation Required</Subheader>
                     {verifying ? (
-                        <>
+                        <div className="flex flex-col gap-3 px-6">
                             <Body>Please check your ledger.</Body>
                             <Body>
                                 Be sure to scroll all the way to the right until
                                 you see &#34;Confirm&#34; and select that to
                                 verify.
                             </Body>
-                        </>
+                        </div>
                     ) : (
                         <>
                             <Body>
