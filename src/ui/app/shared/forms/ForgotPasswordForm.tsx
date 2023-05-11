@@ -11,7 +11,7 @@ import Body from '../typography/Body';
 import EthosLink from '../typography/EthosLink';
 
 type PassphraseFormProps = {
-    onSubmit: (passphrase: string) => void;
+    onSubmit: (mnemonicFromForm: string) => void;
     isPasswordIncorrect?: boolean;
 };
 
@@ -58,7 +58,6 @@ const CustomFormikForm = ({
             </div>
             <Button
                 buttonStyle="primary"
-                data-testid="submit"
                 type="submit"
                 disabled={!meta.value || !!meta.error}
             >

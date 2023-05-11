@@ -1017,28 +1017,14 @@ export const unlock: AsyncThunk<string | null, string | null, AppThunkConfig> =
         }
     );
 
-export const recoverPasswordFromMnemonic: AsyncThunk<
-    string | null,
-    string | null,
+export const assertMnemonicIsCorrect: AsyncThunk<
+    boolean,
+    string,
     AppThunkConfig
-> = createAsyncThunk<string | null, string | null, AppThunkConfig>(
-    'account/unlock',
-    async (mnemonic): Promise<string | null> => {
-        if (mnemonic) {
-            const isCorrect = await isMnemonicCorrect(mnemonic);
-            console.log('isCorrect :>> ', isCorrect);
-            if (isCorrect) {
-                // await setEncrypted({
-                //     key: 'passphrase',
-                //     value: passphrase,
-                //     strong: false,
-                //     session: true,
-                // });
-                // setUnlocked(passphrase);
-                // return passphrase;
-            }
-        }
-        return null;
+> = createAsyncThunk<boolean, string, AppThunkConfig>(
+    'account/assertMnemonicIsCorrect',
+    async (mnemonic): Promise<boolean> => {
+        return await isMnemonicCorrect(mnemonic);
     }
 );
 
@@ -1236,6 +1222,9 @@ const accountSlice = createSlice({
             })
             .addCase(saveEmail.fulfilled, (state, action) => {
                 state.email = action.payload;
+            })
+            .addCase(assertMnemonicIsCorrect.fulfilled, (state, action) => {
+                state.loading = false;
             })
             .addCase(unlock.fulfilled, (state, action) => {
                 state.locked = !action.payload;
