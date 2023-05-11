@@ -1,4 +1,4 @@
-import { SUI_TYPE_ARG, type TransactionBlock } from '@mysten/sui.js';
+import { type TransactionBlock } from '@mysten/sui.js';
 
 import type { Permission, DistilledEffect } from '..';
 import type { Detail } from '../DetailElement';
@@ -276,7 +276,7 @@ const standard = ({
             effects.details.push({
                 label: 'Coins',
                 content: Object.keys(coinChanges)
-                    .filter((name) => name !== SUI_TYPE_ARG)
+                    .filter((name) => name.indexOf('::sui::SUI') === -1)
                     .map(
                         (coinName) =>
                             ({

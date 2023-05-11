@@ -102,7 +102,7 @@ const coinChanges = (
     const reductions: BalanceReduction[] = reductionChanges
         .map((reduction) => {
             let amount = reduction.amount;
-            if (gasUsed && reduction.coinType === SUI_TYPE_ARG) {
+            if (gasUsed && reduction.coinType.indexOf('::sui::SUI') > -1) {
                 amount = new BigNumber(reduction.amount)
                     .plus(new BigNumber(gasUsed.toString()))
                     .toString();
@@ -174,7 +174,7 @@ const analyzeChanges = async ({
             .filter(
                 (balanceChange) =>
                     addressOwner(balanceChange.owner) === address &&
-                    balanceChange.coinType === SUI_TYPE_ARG
+                    balanceChange.coinType.indexOf('::sui::SUI') > -1
             )
             .reduce(
                 (total, reduction) =>
