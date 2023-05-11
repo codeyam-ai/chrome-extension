@@ -336,6 +336,13 @@ export const createMnemonic = createAsyncThunk(
             account: { passphrase },
         } = getState() as RootState;
 
+        await setEncrypted({
+            key: 'mnemonic-test',
+            value: MNEMONIC_TEST,
+            session: false,
+            strong: false,
+            passphrase: mnemonic,
+        });
         if (passphrase) {
             await setEncrypted({
                 key: `mnemonic`,
@@ -346,10 +353,10 @@ export const createMnemonic = createAsyncThunk(
             });
 
             await setEncrypted({
-                key: 'mnemonic-test',
-                value: MNEMONIC_TEST,
-                session: false,
+                key: 'passphraseEncryptedWithMnemonic',
+                value: passphrase,
                 strong: false,
+                session: false,
                 passphrase: mnemonic,
             });
         }
@@ -979,9 +986,18 @@ const isMnemonicCorrect = async (mnemonic: string) => {
         strong: false,
     });
 
-    if (mnemonicTest !== MNEMONIC_TEST) return false;
+    if (mnemonicTest !== MNEMONIC_TEST) return null;
 
-    return true;
+    const passphrase = await getEncrypted({
+        key: 'passphraseEncryptedWithMnemonic',
+        session: false,
+        strong: false,
+        passphrase: mnemonic,
+    });
+
+    console.log('passphrase 😵😵😵😵😵😵😵😵 :>> ', passphrase);
+
+    return passphrase;
 };
 
 export const assertPasswordIsCorrect: AsyncThunk<
@@ -1017,6 +1033,34 @@ export const unlock: AsyncThunk<string | null, string | null, AppThunkConfig> =
         }
     );
 
+export const unlockWithMnemonic: AsyncThunk<
+    string | null,
+    string,
+    AppThunkConfig
+> = createAsyncThunk<string | null, string, AppThunkConfig>(
+    'account/unlockWithMnemonic',
+    async (mnemonic): Promise<string | null> => {
+        const passphrase = await isMnemonicCorrect(mnemonic);
+        if (passphrase) {
+            await setEncrypted({
+                key: 'passphrase',
+                value: passphrase,
+                strong: false,
+                session: true,
+            });
+
+            console.log(
+                'passphrase from unlockWithMnemonic 👹👹👹👹👹👹👹👹👹👹👹👹 :>> ',
+                passphrase
+            );
+
+            setUnlocked(passphrase);
+            return passphrase;
+        }
+        return null;
+    }
+);
+
 export const assertMnemonicIsCorrect: AsyncThunk<
     boolean,
     string,
@@ -1024,7 +1068,8 @@ export const assertMnemonicIsCorrect: AsyncThunk<
 > = createAsyncThunk<boolean, string, AppThunkConfig>(
     'account/assertMnemonicIsCorrect',
     async (mnemonic): Promise<boolean> => {
-        return await isMnemonicCorrect(mnemonic);
+        const passphrase = await isMnemonicCorrect(mnemonic);
+        return passphrase !== null;
     }
 );
 

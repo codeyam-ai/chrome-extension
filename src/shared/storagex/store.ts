@@ -48,14 +48,13 @@ export async function setEncrypted({
     if (!value || value.length === 0) return;
 
     console.log('=================');
-    console.log('✏️ SET ENCRYPTED');
+    console.log('🔏🔏 SET ENCRYPTED 🔏🔏');
     console.log('key :>> ', key);
     console.log('value :>> ', value);
 
     if (passphrase !== MASTER_PASSPHRASE) {
         console.log('passphrase NOT master :>> ', passphrase);
     }
-    console.log('=================');
 
     const encryptedKey = encrypt({
         text: key,
@@ -69,6 +68,9 @@ export async function setEncrypted({
         strong,
         passphrase,
     });
+    console.log('encryptedKey :>> ', encryptedKey);
+    console.log('encryptedValue :>> ', encryptedValue);
+    console.log('=================');
     if (session) {
         await setSession({ [encryptedKey]: encryptedValue });
     } else {
@@ -88,7 +90,7 @@ export async function getEncrypted({
     strong: boolean;
 }) {
     console.log('=================');
-    console.log('🔍 GET ENCRYPTED');
+    console.log('🔍🔍 GET ENCRYPTED 🔍🔍');
     console.log('key :>> ', key);
 
     if (passphrase !== MASTER_PASSPHRASE) {

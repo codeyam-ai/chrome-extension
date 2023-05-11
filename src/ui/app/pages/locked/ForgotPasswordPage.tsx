@@ -10,6 +10,7 @@ import {
     assertMnemonicIsCorrect,
     unlock,
     savePassphrase,
+    unlockWithMnemonic,
 } from '../../redux/slices/account';
 import UnlockWalletForm from '../../shared/forms/UnlockWalletForm';
 import HeaderWithLargeEthosIcon from '../../shared/headers/page-headers/HeaderWithLargeEthosIcon';
@@ -47,7 +48,7 @@ const ForgotPasswordPage = () => {
             }
             setIsPasswordIncorrect(false);
             setIsMnemonicCorrect(true);
-            return;
+            await dispatch(unlockWithMnemonic(mnemonicFromForm));
         },
         [dispatch]
     );
@@ -57,7 +58,7 @@ const ForgotPasswordPage = () => {
             await dispatch(savePassphrase(newPassword));
             navigate('/home');
         },
-        [dispatch]
+        [dispatch, navigate]
     );
 
     return (
