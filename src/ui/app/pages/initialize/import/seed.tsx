@@ -13,62 +13,15 @@ import OnboardingCard from '_src/ui/app/shared/layouts/OnboardingCard';
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { ClipboardEvent, FormEvent } from 'react';
+import RecoveryPhraseInput from '_src/ui/app/shared/inputs/RecoveryPhraseInput';
 
 const idPrefix = 'word-';
-
-interface WordInputProps {
-    index: number;
-    defaultValue: string;
-    updateWord: (index: number, newWord: string) => void;
-    handlePaste: (e: ClipboardEvent<HTMLInputElement>) => void;
-    password?: boolean;
-}
-
-const WordInput = ({
-    index,
-    defaultValue,
-    updateWord,
-    handlePaste,
-    password,
-}: WordInputProps) => {
-    const focusOnThisInput = useCallback(() => {
-        document.getElementById(idPrefix + index)?.focus();
-    }, [index]);
-
-    const updateThisWord = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            updateWord(index, e.target.value);
-        },
-        [index, updateWord]
-    );
-
-    return (
-        <div
-            className="flex gap-1 py-3 px-4 bg-ethos-light-background-secondary rounded-xl"
-            key={index}
-            onClick={focusOnThisInput}
-        >
-            <Body isTextColorMedium>
-                <code>{index + 1}</code>
-            </Body>
-            <input
-                type={password ? 'password' : 'text'}
-                id={idPrefix + index}
-                data-testid={idPrefix + index}
-                className="w-full bg-ethos-light-background-secondary border-none focus:outline-none focus:ring-transparent p-0 m-0"
-                autoComplete="off"
-                defaultValue={defaultValue}
-                onPaste={handlePaste}
-                onChange={updateThisWord}
-            />
-        </div>
-    );
-};
+const errorText =
+    'That recovery phrase is not valid. Please check your phrase and try again.';
 
 const ImportSeedPage = () => {
     const [words, setWords] = useState<string[]>([]);
-    const [error, setError] = useState(false);
-    const [passwordMode, setPasswordMode] = useState(true);
+    const [error, setError] = useState<string>('');
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
@@ -85,7 +38,7 @@ const ImportSeedPage = () => {
             }
             const formattedMnemonic = normalizeMnemonics(mnemonic.trim());
             if (!validateMnemonics(formattedMnemonic)) {
-                setError(true);
+                setError(errorText);
                 return;
             }
             await dispatch(
@@ -114,27 +67,9 @@ const ImportSeedPage = () => {
         [words]
     );
 
-    const togglePasswordMode = useCallback(() => {
-        setPasswordMode((prev) => !prev);
+    const updateWordsState = useCallback((newWords: string[]) => {
+        setWords(newWords);
     }, []);
-
-    const handlePaste = useCallback(
-        (e: ClipboardEvent<HTMLInputElement>) => {
-            const clipboardData = e.clipboardData?.getData('Text');
-            const wordList = clipboardData.split(' ');
-            if (wordList.length !== 12) {
-                return;
-            }
-            e.preventDefault();
-
-            setWords(wordList);
-            setTimeout(() => {
-                // Give React a bit of time to update the disabled property on the button before focusing
-                focusOnContinueButton();
-            }, 1);
-        },
-        [focusOnContinueButton]
-    );
 
     useEffect(() => {
         focusOnFirstWord();
@@ -151,33 +86,12 @@ const ImportSeedPage = () => {
             progressTotal={3}
         >
             <form onSubmit={onSubmit} className="flex flex-col gap-6 px-6">
-                <div className="flex flex-col gap-3">
-                    <div className="grid grid-cols-3 grid-rows-4 gap-3">
-                        {[...Array(12)].map((_, index) => {
-                            return (
-                                <WordInput
-                                    index={index}
-                                    defaultValue={words[index]}
-                                    updateWord={updateWord}
-                                    handlePaste={handlePaste}
-                                    key={index}
-                                    password={passwordMode}
-                                />
-                            );
-                        })}
-                    </div>
-                    {error && (
-                        <Body className="pt-2 text-ethos-light-red">
-                            That recovery phrase is not valid. Please check your
-                            phrase and try again.
-                        </Body>
-                    )}
-                </div>
-                <HideShowToggle
-                    forceLightTheme
-                    name="Phrase"
-                    hide={passwordMode}
-                    onToggle={togglePasswordMode}
+                <RecoveryPhraseInput
+                    words={words}
+                    onPaste={focusOnContinueButton}
+                    updateWord={updateWord}
+                    onWordsChange={updateWordsState}
+                    errorText={error}
                 />
                 <div className="pb-10">
                     <Button
