@@ -9,6 +9,7 @@ import Input from '../../inputs/Input';
 import type { FormikValues } from 'formik';
 import Body from '../../typography/Body';
 import EthosLink from '../../typography/EthosLink';
+import BodyLarge from '../../typography/BodyLarge';
 
 type PassphraseFormProps = {
     onSubmit: (mnemonicFromForm: string) => void;
@@ -31,10 +32,12 @@ const CustomFormikForm = ({
 
     return (
         <div className="flex flex-col h-full justify-between">
-            FORGOT PASSWORD
+            <BodyLarge className="text-left px-6 pb-4">
+                Enter your 12 word recovery phrase to create a new password.
+            </BodyLarge>
             <Input
                 {...field}
-                label="Seed Phrase"
+                label="Recovery Phrase"
                 id="mnemonic"
                 data-testid="mnemonic"
                 name="mnemonic"
@@ -43,7 +46,7 @@ const CustomFormikForm = ({
                 autoFocus
                 errorText={
                     isPasswordIncorrect
-                        ? 'Seed Phrase is incorrect'
+                        ? 'Recovery Phrase is incorrect'
                         : meta.touched && meta.error
                         ? meta.error
                         : undefined
@@ -51,7 +54,7 @@ const CustomFormikForm = ({
             />
             <div className={'mb-6'}>
                 <HideShowToggle
-                    name="Seed Phrase"
+                    name="Recovery Phrase"
                     hide={passwordMode}
                     onToggle={togglePasswordMode}
                 />

@@ -23,6 +23,8 @@ import CheckMnemonicForm from '../../shared/forms/forgotPassword/CheckMnemonicFo
 import { getEncrypted } from '_src/shared/storagex/store';
 import ChangePasswordForm from '../../components/settings-menu/subpages/security/subpages/change-password/ChangePasswordForm';
 import ChangePasswordFromMnemonicForm from '../../shared/forms/forgotPassword/ChangePasswordFromMnemonicForm';
+import Subheader from '../../shared/typography/Subheader';
+import BodyLarge from '../../shared/typography/BodyLarge';
 
 const ForgotPasswordPage = () => {
     const dispatch = useAppDispatch();
@@ -78,14 +80,8 @@ const ForgotPasswordPage = () => {
         [currentPassword, dispatch, navigate]
     );
 
-    const navTest = useCallback(() => {
-        navigate('/home');
-    }, [navigate]);
-
     return (
         <PageLayout>
-            checkingInitialized: {checkingInitialized.toString()}
-            <button onClick={navTest}>NAV TEST</button>
             <Loading
                 loading={checkingInitialized}
                 resize={true}

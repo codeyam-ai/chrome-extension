@@ -10,6 +10,8 @@ import Button from '../../buttons/Button';
 import HideShowToggle from '../../buttons/HideShowToggle';
 import Checkbox from '../../inputs/Checkbox';
 import Input from '../../inputs/Input';
+import BodyLarge from '../../typography/BodyLarge';
+import { CheckCircleIcon } from '@heroicons/react/24/solid';
 
 type CreatePasswordFormProps = {
     onSubmit: (passphrase: string) => void;
@@ -29,6 +31,13 @@ const CustomFormikForm = () => {
     return (
         <>
             <div className="sm:!px-10 pb-12">
+                <div className="flex flex-col gap-2 items-center place-content-center pb-4">
+                    <CheckCircleIcon className="w-6 h-6 text-ethos-light-green dark:text-ethos-dark-green" />
+                    <BodyLarge className="px-6 pb-4">
+                        Your recovery phrase has been verified
+                    </BodyLarge>
+                </div>
+
                 <Input
                     {...field}
                     placeholder="Enter a new password"
