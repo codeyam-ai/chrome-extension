@@ -995,8 +995,6 @@ const isMnemonicCorrect = async (mnemonic: string) => {
         passphrase: mnemonic,
     });
 
-    console.log('passphrase 😵😵😵😵😵😵😵😵 :>> ', passphrase);
-
     return passphrase;
 };
 
@@ -1048,11 +1046,6 @@ export const unlockWithMnemonic: AsyncThunk<
                 strong: false,
                 session: true,
             });
-
-            console.log(
-                'passphrase from unlockWithMnemonic 👹👹👹👹👹👹👹👹👹👹👹👹 :>> ',
-                passphrase
-            );
 
             setUnlocked(passphrase);
             return passphrase;

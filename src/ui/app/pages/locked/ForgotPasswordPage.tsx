@@ -11,6 +11,7 @@ import {
     unlock,
     savePassphrase,
     unlockWithMnemonic,
+    changePassword,
 } from '../../redux/slices/account';
 import UnlockWalletForm from '../../shared/forms/UnlockWalletForm';
 import HeaderWithLargeEthosIcon from '../../shared/headers/page-headers/HeaderWithLargeEthosIcon';
@@ -31,7 +32,7 @@ const ForgotPasswordPage = () => {
     const checkingInitialized = useInitializedGuard(AppState.LOCKED);
     const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false);
     const [isMnemonicCorrect, setIsMnemonicCorrect] = useState(false);
-
+    const [currentPassword, setCurrentPassword] = useState<string>();
     const loading = useAppSelector((state) => state.account.loading);
     console.log('loading :>> ', loading);
 
@@ -48,22 +49,43 @@ const ForgotPasswordPage = () => {
             }
             setIsPasswordIncorrect(false);
             setIsMnemonicCorrect(true);
-            await dispatch(unlockWithMnemonic(mnemonicFromForm));
+            const recoveredPassword = await dispatch(
+                unlockWithMnemonic(mnemonicFromForm)
+            );
+            setCurrentPassword(recoveredPassword.payload as string);
         },
         [dispatch]
     );
 
     const updatePassword = useCallback(
         async (newPassword: string) => {
-            await dispatch(savePassphrase(newPassword));
-            navigate('/home');
+            const success = await dispatch(
+                changePassword({
+                    currentPassword: currentPassword || '',
+                    newPassword,
+                })
+            );
+            if (success.payload) {
+                const unlockResult = await dispatch(unlock(newPassword));
+                if (!unlockResult.payload) {
+                    setIsPasswordIncorrect(true);
+                    return;
+                }
+                await dispatch(loadAccountInformationFromStorage());
+                navigate('/home');
+            }
         },
-        [dispatch, navigate]
+        [currentPassword, dispatch, navigate]
     );
+
+    const navTest = useCallback(() => {
+        navigate('/home');
+    }, [navigate]);
 
     return (
         <PageLayout>
             checkingInitialized: {checkingInitialized.toString()}
+            <button onClick={navTest}>NAV TEST</button>
             <Loading
                 loading={checkingInitialized}
                 resize={true}

@@ -28,7 +28,7 @@ const CustomFormikForm = () => {
 
     return (
         <>
-            <div className="!px-6 sm:!px-10 pb-12">
+            <div className="sm:!px-10 pb-12">
                 <Input
                     {...field}
                     placeholder="Enter a new password"
@@ -41,6 +41,7 @@ const CustomFormikForm = () => {
                         meta.touched && meta.error ? meta.error : undefined
                     }
                     autoFocus
+                    className="!px-0"
                 />
 
                 <Input
@@ -56,6 +57,7 @@ const CustomFormikForm = () => {
                             ? confirmMeta.error
                             : undefined
                     }
+                    className="!px-0"
                 />
                 <HideShowToggle
                     name="Password"
