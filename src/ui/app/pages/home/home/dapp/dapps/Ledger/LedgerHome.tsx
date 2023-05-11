@@ -30,9 +30,12 @@ const LedgerWallet = ({
 }) => {
     const dispatch = useAppDispatch();
     const { accountInfos } = useAppSelector(({ account }) => account);
+    const [verifying, setVerifying] = useState(false);
 
     const testAccount = useCallback(async () => {
-        if (!account.importedLedgerIndex) return;
+        if (account.importedLedgerIndex === undefined) return;
+
+        setVerifying(true);
 
         try {
             const suiLedgerClient = await connectToLedger();
@@ -77,17 +80,30 @@ const LedgerWallet = ({
             {!account.ledgerAccountVerified && (
                 <div className="flex flex-col items-center">
                     <Subheader>Account Verificiation Required</Subheader>
-                    <Body>
-                        In order to sign transactions with this account you will
-                        need to verify it.
-                    </Body>
-                    <Button
-                        buttonStyle="secondary"
-                        onClick={testAccount}
-                        removeContainerPadding
-                    >
-                        Verify Account
-                    </Button>
+                    {verifying ? (
+                        <>
+                            <Body>Please check your ledger.</Body>
+                            <Body>
+                                Be sure to scroll all the way to the right until
+                                you see &#34;Confirm&#34; and select that to
+                                verify.
+                            </Body>
+                        </>
+                    ) : (
+                        <>
+                            <Body>
+                                In order to sign transactions with this account
+                                you will need to verify it.
+                            </Body>
+                            <Button
+                                buttonStyle="secondary"
+                                onClick={testAccount}
+                                removeContainerPadding
+                            >
+                                Verify Account
+                            </Button>
+                        </>
+                    )}
                 </div>
             )}
             <WalletButton
