@@ -30,6 +30,7 @@ import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { SuiAddress } from '@mysten/sui.js';
+import ValidatorImage from './Validator/ValidatorImage';
 
 const APY_HELP_TEXT =
     "Annualized Percentage Yield of validator's past operations. Note, there is no guarantee APY will true indefinitely";
@@ -173,15 +174,10 @@ const StakeDetail: React.FC = () => {
                 >
                     <Body>Validator</Body>
                     <div className="flex justify-center place-content-center py-2">
-                        {validator?.imageUrl ? (
-                            <img
-                                src={validator.imageUrl}
-                                alt={validator.name}
-                                className="h-5 w-5 rounded-full"
-                            />
-                        ) : (
-                            <div className="h-5 w-5 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
-                        )}
+                        <ValidatorImage
+                            validator={validator}
+                            className="h-5 w-5 rounded-full"
+                        />
                         <BodyLarge isSemibold className="ml-2">
                             {validator?.name}
                         </BodyLarge>

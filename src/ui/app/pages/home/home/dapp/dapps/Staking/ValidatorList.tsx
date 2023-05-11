@@ -10,6 +10,7 @@ import Body from '_src/ui/app/shared/typography/Body';
 
 import type { SuiAddress, SuiValidatorSummary } from '@mysten/sui.js';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
+import ValidatorImage from './Validator/ValidatorImage';
 
 export interface SuiValidatorSummaryWithApy extends SuiValidatorSummary {
     apy: number;
@@ -138,15 +139,10 @@ const ValidatorRow: React.FC<ValidatorRowProps> = ({
         >
             <div className="flex flex-row items-center place-content-center justify-between">
                 <div className="flex items-center place-content-center gap-3">
-                    {validator.imageUrl ? (
-                        <img
-                            src={validator.imageUrl}
-                            alt={validator.name}
-                            className="h-9 w-9 rounded-full"
-                        />
-                    ) : (
-                        <div className="h-9 w-9 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
-                    )}
+                    <ValidatorImage
+                        validator={validator}
+                        className="h-9 w-9 rounded-full"
+                    />
                     <div className="flex flex-col">
                         <Body isSemibold>{validator.name}</Body>
                         <Body>

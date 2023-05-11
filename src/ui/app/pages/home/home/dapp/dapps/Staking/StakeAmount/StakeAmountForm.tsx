@@ -20,6 +20,7 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { KeyNameAndValue } from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
+import ValidatorImage from '../Validator/ValidatorImage';
 
 interface StakeAmountFormProps {
     validator: SuiValidatorSummaryWithApy;
@@ -72,15 +73,10 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
             keyName: validator.name,
             value: (
                 <div className="flex place-content-center gap-1">
-                    {validator.imageUrl ? (
-                        <img
-                            src={validator.imageUrl}
-                            alt={validator.name}
-                            className="h-5 w-5 rounded-full"
-                        />
-                    ) : (
-                        <div className="h-5 w-5 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
-                    )}
+                    <ValidatorImage
+                        validator={validator}
+                        className="h-5 w-5 rounded-full"
+                    />
                     <Body isSemibold>{validator.name}</Body>
                     <ClickableTooltip
                         message={validator.description}

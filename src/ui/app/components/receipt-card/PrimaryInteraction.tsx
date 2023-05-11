@@ -14,6 +14,7 @@ import CopyBody from '../../shared/typography/CopyBody';
 
 import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTransactions';
 import type { SuiAddress } from '@mysten/sui.js';
+import ValidatorImage from '../../pages/home/home/dapp/dapps/Staking/Validator/ValidatorImage';
 
 const AvatarItem = ({
     color,
@@ -145,15 +146,10 @@ const PrimaryInteraction = ({ from, important }: AnalyzedTransaction) => {
         toNode = undefined;
         toValidator = (
             <div className="flex items-center gap-3">
-                {validator && validator.imageUrl ? (
-                    <img
-                        src={validator.imageUrl}
-                        alt={validator.name}
-                        className="h-9 w-9 rounded-full"
-                    />
-                ) : (
-                    <div className="h-9 w-9 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
-                )}
+                <ValidatorImage
+                    validator={validator}
+                    className="h-9 w-9 rounded-full"
+                />
                 <div className="flex flex-col items-start text-left">
                     <BodyLarge isSemibold>{validator?.name}</BodyLarge>
                     <CopyBody
