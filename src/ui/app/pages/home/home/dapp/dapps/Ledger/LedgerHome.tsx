@@ -72,6 +72,8 @@ const LedgerWallet = ({
                     "An error occurred while verifying. You may need to restart the ledger. Please scroll all the way to the right until you see 'Confirm' in the ledger when verifying";
             }
             toast.error(message);
+        } finally {
+            setVerifying(false);
         }
     }, [account, accountInfos, connectToLedger, dispatch]);
 
