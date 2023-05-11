@@ -566,26 +566,21 @@ export class ContentScriptConnection extends Connection {
 
     private async setActiveAccount(address: SuiAddress): Promise<SuiAddress> {
         const accountInfos = await this.getAccountInfos();
-        const activeAccountIndex = accountInfos.findIndex(
-            (a) => a.address === address
-        );
+        const activeAccount = accountInfos.find((a) => a.address === address);
 
-        if (activeAccountIndex === -1) {
+        if (!activeAccount) {
             const activeAccount = await this.getActiveAccount();
             return activeAccount.address;
         }
 
         await setEncrypted({
             key: 'activeAccountIndex',
-            value: activeAccountIndex.toString(),
+            value: activeAccount.index.toString(),
             session: false,
             strong: false,
         });
 
-        return (
-            accountInfos.find((a) => a.index === activeAccountIndex) ??
-            accountInfos[0]
-        ).address;
+        return activeAccount.address;
     }
 
     private async getActiveAccount(): Promise<AccountInfo> {
