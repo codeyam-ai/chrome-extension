@@ -19,6 +19,7 @@ interface WalletButtonProps {
     isWalletEditing: boolean;
     destination?: string;
     onClick?: () => void;
+    disabled?: boolean;
 }
 
 const WalletButton = ({
@@ -27,6 +28,7 @@ const WalletButton = ({
     isWalletEditing,
     destination,
     onClick,
+    disabled,
 }: WalletButtonProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
@@ -35,6 +37,8 @@ const WalletButton = ({
     const editWalletUrl = useEditWalletUrl(wallet.index);
 
     const handleClick = useCallback(async () => {
+        if (disabled) return;
+
         if (onClick) {
             onClick();
             return;
@@ -58,6 +62,7 @@ const WalletButton = ({
             navigate(-1);
         }
     }, [
+        disabled,
         onClick,
         isActive,
         isWalletEditing,
@@ -83,7 +88,9 @@ const WalletButton = ({
         <div
             ref={ref}
             data-testid={`wallet${wallet.index + 1}`}
-            className="py-[10px] px-3 flex justify-between items-center cursor-pointer"
+            className={`py-[10px] px-3 flex justify-between items-center ${
+                disabled ? 'opacity-50' : 'cursor-pointer'
+            }`}
             onClick={isWalletEditing ? editThisWallet : handleClick}
         >
             <div className="flex gap-3">

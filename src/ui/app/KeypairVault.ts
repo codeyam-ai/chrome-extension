@@ -18,6 +18,7 @@ export type AccountInfo = {
     importedMnemonicIndex?: number;
     importedPrivateKeyName?: string;
     importedLedgerIndex?: number;
+    ledgerAccountVerified?: boolean;
 };
 
 export type SeedInfo = {

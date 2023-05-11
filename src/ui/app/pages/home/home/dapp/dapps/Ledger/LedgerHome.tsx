@@ -1,19 +1,99 @@
+import { Ed25519PublicKey } from '@mysten/sui.js';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import LedgerLogo from './LedgerLogo';
+import { derivationPathForLedger } from './hooks/useDeriveLedgerAccounts';
 import ledgerReadableError from './lib/ledgerReadableError';
 import { useTheme } from '_src/shared/utils/themeContext';
 import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import Loading from '_src/ui/app/components/loading';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 import humanReadableTransactionErrors from '_src/ui/app/helpers/humanReadableTransactionError';
-import { useAppSelector } from '_src/ui/app/hooks';
+import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
+import { saveAccountInfos } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 import WalletButton from '_src/ui/app/shared/wallet-list/WalletButton';
+
+import type Sui from '@mysten/ledgerjs-hw-app-sui';
+import type { AccountInfo } from '_src/ui/app/KeypairVault';
+
+const LedgerWallet = ({
+    account,
+    connectToLedger,
+}: {
+    account: AccountInfo;
+    connectToLedger: () => Promise<Sui>;
+}) => {
+    const dispatch = useAppDispatch();
+    const { accountInfos } = useAppSelector(({ account }) => account);
+
+    const testAccount = useCallback(async () => {
+        if (!account.importedLedgerIndex) return;
+
+        try {
+            const suiLedgerClient = await connectToLedger();
+            const publicKeyResult = await suiLedgerClient.getPublicKey(
+                derivationPathForLedger(account.importedLedgerIndex),
+                true
+            );
+            const publicKey = new Ed25519PublicKey(publicKeyResult.publicKey);
+            const suiAddress = publicKey.toSuiAddress();
+            if (suiAddress === account.address) {
+                const updatedAccountInfos: AccountInfo[] = accountInfos.map(
+                    (accountInfo: AccountInfo) => {
+                        if (accountInfo.address === suiAddress) {
+                            return {
+                                ...accountInfo,
+                                ledgerAccountVerified: true,
+                            };
+                        }
+                        return accountInfo;
+                    }
+                );
+
+                await dispatch(saveAccountInfos(updatedAccountInfos));
+            }
+        } catch (e: unknown) {
+            toast.error(
+                `Error verifying ledger account: ${humanReadableTransactionErrors(
+                    `${e}`
+                )}`
+            );
+        }
+    }, [account, accountInfos, connectToLedger, dispatch]);
+
+    return (
+        <div className="flex flex-col gap-1 p-3 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-lg">
+            {!account.ledgerAccountVerified && (
+                <div className="flex flex-col items-center">
+                    <Subheader>Account Verificiation Required</Subheader>
+                    <Body>
+                        In order to sign transactions with this account you will
+                        need to verify it.
+                    </Body>
+                    <Button
+                        buttonStyle="secondary"
+                        onClick={testAccount}
+                        removeContainerPadding
+                    >
+                        Verify Account
+                    </Button>
+                </div>
+            )}
+            <WalletButton
+                wallet={account}
+                isActive={false}
+                isWalletEditing={false}
+                destination={'/home'}
+                disabled={!account.ledgerAccountVerified}
+            />
+        </div>
+    );
+};
 
 const LedgerHome = () => {
     const { connectToLedger } = useSuiLedgerClient();
@@ -99,17 +179,11 @@ const LedgerHome = () => {
 
                     {ledgerAccounts.map((account) => {
                         return (
-                            <div
-                                key={`ledger-${account.address}`}
-                                className="flex flex-col gap-1 p-3 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-lg"
-                            >
-                                <WalletButton
-                                    wallet={account}
-                                    isActive={false}
-                                    isWalletEditing={false}
-                                    destination="/home"
-                                />
-                            </div>
+                            <LedgerWallet
+                                key={`ledger-account-${account.address}`}
+                                account={account}
+                                connectToLedger={connectToLedger}
+                            />
                         );
                     })}
 

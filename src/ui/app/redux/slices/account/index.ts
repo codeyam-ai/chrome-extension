@@ -1123,9 +1123,6 @@ const accountSlice = createSlice({
         setEmail: (state, action: PayloadAction<string | null>) => {
             state.email = action.payload;
         },
-        setLedgerConnected: (state, action: PayloadAction<boolean>) => {
-            state.ledgerConnected = action.payload;
-        },
         lockWalletUI: (state, action: PayloadAction<boolean>) => {
             if (action.payload) {
                 state.authentication = null;
@@ -1255,13 +1252,8 @@ const accountSlice = createSlice({
             }),
 });
 
-export const {
-    setMnemonic,
-    setAddress,
-    setAccountInfos,
-    setLedgerConnected,
-    lockWalletUI,
-} = accountSlice.actions;
+export const { setMnemonic, setAddress, setAccountInfos, lockWalletUI } =
+    accountSlice.actions;
 
 export default accountSlice.reducer;
 
