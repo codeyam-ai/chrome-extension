@@ -60,7 +60,7 @@ export const getSigner = async (
             if (!importedPrivateKey) return null;
 
             keypair = Ed25519Keypair.fromSecretKey(fromHEX(importedPrivateKey));
-        } else if (activeAccount.importedLedgerIndex) {
+        } else if (activeAccount.importedLedgerIndex !== undefined) {
             return new LedgerSigner(
                 connectToLedger,
                 derivationPathForLedger(activeAccount.importedLedgerIndex),
