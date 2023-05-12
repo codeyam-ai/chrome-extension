@@ -1053,7 +1053,7 @@ export const unlockWithMnemonic: AsyncThunk<
             return null;
         }
         const passphrase = await getPasswordEncryptedWithMnemonic(mnemonic);
-        console.log('passphrase in unlockWithMnemonic :>> ', passphrase);
+
         if (passphrase) {
             await setEncrypted({
                 key: 'passphrase',

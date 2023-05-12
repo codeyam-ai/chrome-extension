@@ -1,6 +1,3 @@
-// Copyright (c) 2022, Mysten Labs, Inc.
-// SPDX-License-Identifier: Apache-2.0
-
 import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -34,10 +31,7 @@ export default function useInitializedGuard(
 
     const passwordReady = useAppSelector((state) => !!state.account.passphrase);
     const mnemonicReady = useAppSelector((state) => !!state.account.mnemonic);
-    const accountState = useAppSelector((state) => state.account);
-    console.log('accountState :>> ', accountState);
-    console.log('passwordReady :>> ', passwordReady);
-    console.log('mnemonicReady :>> ', mnemonicReady);
+
     if (passwordReady && mnemonicReady) {
         currentState = AppState.MNEMONIC;
     }
@@ -79,7 +73,6 @@ export default function useInitializedGuard(
         }
 
         if (guardAct) {
-            console.log('currentState :>> ', currentState);
             if (currentState === AppState.LOADING) return;
             if (
                 currentState === AppState.UNINITIALIZED &&
