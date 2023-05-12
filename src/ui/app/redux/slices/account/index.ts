@@ -1148,6 +1148,7 @@ export type AccountState = {
     excludedDappsKeys: string[];
     importNames: { mnemonics: string[]; privateKeys: string[] };
     ledgerConnected: boolean;
+    isBiometricsSetUp: boolean;
 };
 
 const initialState: AccountState = {
@@ -1170,6 +1171,7 @@ const initialState: AccountState = {
         privateKeys: [],
     },
     ledgerConnected: false,
+    isBiometricsSetUp: false,
 };
 
 const accountSlice = createSlice({
@@ -1206,6 +1208,9 @@ const accountSlice = createSlice({
             } else {
                 state.locked = true;
             }
+        },
+        setIsBiometricsSetUp: (state, action: PayloadAction<boolean>) => {
+            state.isBiometricsSetUp = action.payload;
         },
     },
     extraReducers: (builder) =>
@@ -1329,8 +1334,13 @@ const accountSlice = createSlice({
             }),
 });
 
-export const { setMnemonic, setAddress, setAccountInfos, lockWalletUI } =
-    accountSlice.actions;
+export const {
+    setMnemonic,
+    setAddress,
+    setAccountInfos,
+    lockWalletUI,
+    setIsBiometricsSetUp,
+} = accountSlice.actions;
 
 export default accountSlice.reducer;
 

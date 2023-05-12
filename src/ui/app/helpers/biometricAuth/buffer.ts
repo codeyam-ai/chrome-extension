@@ -3,7 +3,7 @@ export function bufferDecode(value: string) {
 }
 
 export function bufferEncode(value: ArrayBuffer) {
-    // @ts-expect-error
+    // @ts-expect-error Ignoring TypeScript error because Uint8Array is iterable and this will work at runtime
     return btoa(String.fromCharCode.apply(null, new Uint8Array(value)));
     // .replace(/\+/g, '-')
     // .replace(/\//g, '_')

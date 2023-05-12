@@ -1,4 +1,4 @@
-import { Buffer } from 'buffer';
+import type { Buffer } from 'buffer';
 /**
  * Convert the aaguid buffer in authData into a UUID string
  */
