@@ -75,7 +75,7 @@ const ForgotPasswordPage = () => {
                 big={true}
                 className="p-36"
             >
-                <BaseLayout className="!min-h-0">
+                <BaseLayout className="!min-h-0 sm:!w-[500px]">
                     <HeaderWithLargeEthosIcon description="Forgot Password" />
                     {isMnemonicCorrect ? (
                         <ChangePasswordFromMnemonicForm
