@@ -1131,7 +1131,7 @@ export const saveExcludedDappsKeys = createAsyncThunk(
     }
 );
 
-type AccountState = {
+export type AccountState = {
     loading: boolean;
     authentication: string | null;
     email: string | null;

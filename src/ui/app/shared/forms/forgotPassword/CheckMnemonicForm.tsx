@@ -82,6 +82,7 @@ const CheckMnemonicForm = ({
                         buttonStyle="primary"
                         type="submit"
                         id="continue"
+                        data-testid="submit"
                         disabled={words.some((word) => word === '')}
                         className="mt-4"
                     >
