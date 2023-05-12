@@ -138,7 +138,7 @@ const RecoveryPhraseInput = ({
                 </Body>
             )}
             <HideShowToggle
-                forceLightTheme
+                forceLightTheme={forceLightTheme}
                 name="Phrase"
                 hide={passwordMode}
                 onToggle={togglePasswordMode}

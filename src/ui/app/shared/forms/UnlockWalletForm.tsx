@@ -5,10 +5,10 @@ import * as Yup from 'yup';
 import Button from '../buttons/Button';
 import HideShowToggle from '../buttons/HideShowToggle';
 import Input from '../inputs/Input';
-
-import type { FormikValues } from 'formik';
 import Body from '../typography/Body';
 import EthosLink from '../typography/EthosLink';
+
+import type { FormikValues } from 'formik';
 
 type PassphraseFormProps = {
     onSubmit: (passphrase: string) => void;
