@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { AppState } from '../../hooks/useInitializedGuard';
 import {
-    assertMnemonicIsCorrect,
     changePassword,
     loadAccountInformationFromStorage,
     unlock,
@@ -28,19 +27,15 @@ const ForgotPasswordPage = () => {
 
     const checkMnemonic = useCallback(
         async (mnemonicFromForm: string) => {
-            const unlockResult = await dispatch(
-                assertMnemonicIsCorrect(mnemonicFromForm)
+            const recoveredPassword = await dispatch(
+                unlockWithMnemonic(mnemonicFromForm)
             );
-            // If passwords don't match, unlock returns false
-            if (!unlockResult.payload) {
+            if (!recoveredPassword.payload) {
                 setIsPasswordIncorrect(true);
                 return;
             }
             setIsPasswordIncorrect(false);
             setIsMnemonicCorrect(true);
-            const recoveredPassword = await dispatch(
-                unlockWithMnemonic(mnemonicFromForm)
-            );
             setCurrentPassword(recoveredPassword.payload as string);
         },
         [dispatch]

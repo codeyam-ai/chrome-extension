@@ -883,6 +883,14 @@ export const savePassphrase: AsyncThunk<
                 session: true,
                 strong: false,
             });
+
+            await setEncrypted({
+                key: 'passphraseEncryptedWithMnemonic',
+                value: passphrase,
+                strong: false,
+                session: false,
+                passphrase: mnemonic,
+            });
         }
         return passphrase;
     }
@@ -986,8 +994,10 @@ const isMnemonicCorrect = async (mnemonic: string) => {
         strong: false,
     });
 
-    if (mnemonicTest !== MNEMONIC_TEST) return null;
+    return mnemonicTest === MNEMONIC_TEST;
+};
 
+const getPasswordEncryptedWithMnemonic = async (mnemonic: string) => {
     const passphrase = await getEncrypted({
         key: 'passphraseEncryptedWithMnemonic',
         session: false,
@@ -1038,7 +1048,12 @@ export const unlockWithMnemonic: AsyncThunk<
 > = createAsyncThunk<string | null, string, AppThunkConfig>(
     'account/unlockWithMnemonic',
     async (mnemonic): Promise<string | null> => {
-        const passphrase = await isMnemonicCorrect(mnemonic);
+        const unlockResult = await isMnemonicCorrect(mnemonic);
+        if (!unlockResult) {
+            return null;
+        }
+        const passphrase = await getPasswordEncryptedWithMnemonic(mnemonic);
+        console.log('passphrase in unlockWithMnemonic :>> ', passphrase);
         if (passphrase) {
             await setEncrypted({
                 key: 'passphrase',
@@ -1051,18 +1066,6 @@ export const unlockWithMnemonic: AsyncThunk<
             return passphrase;
         }
         return null;
-    }
-);
-
-export const assertMnemonicIsCorrect: AsyncThunk<
-    boolean,
-    string,
-    AppThunkConfig
-> = createAsyncThunk<boolean, string, AppThunkConfig>(
-    'account/assertMnemonicIsCorrect',
-    async (mnemonic): Promise<boolean> => {
-        const passphrase = await isMnemonicCorrect(mnemonic);
-        return passphrase !== null;
     }
 );
 
@@ -1260,9 +1263,6 @@ const accountSlice = createSlice({
             })
             .addCase(saveEmail.fulfilled, (state, action) => {
                 state.email = action.payload;
-            })
-            .addCase(assertMnemonicIsCorrect.fulfilled, (state, action) => {
-                state.loading = false;
             })
             .addCase(unlock.fulfilled, (state, action) => {
                 state.locked = !action.payload;
