@@ -1,6 +1,3 @@
-// Copyright (c) 2022, Mysten Labs, Inc.
-// SPDX-License-Identifier: Apache-2.0
-
 // replaces global fetch with something that works in Node (i.e. tests)
 import 'isomorphic-fetch';
 import { useEffect } from 'react';
@@ -32,7 +29,8 @@ import SavePhrasePage from './pages/initialize/save-phrase';
 import StylePage from './pages/initialize/style';
 import OnboardingThemePage from './pages/initialize/theme';
 import VerifyPhrasePage from './pages/initialize/verify-phrase';
-import LockedPage from './pages/locked';
+import ForgotPasswordPage from './pages/locked/ForgotPasswordPage';
+import LockedPage from './pages/locked/locked';
 import PasswordPage from './pages/password';
 import { AppType } from './redux/slices/app/AppType';
 import { loadContactsStorage } from './redux/slices/contacts';
@@ -208,6 +206,10 @@ const App = () => {
                     </Route>
                     <Route path="password" element={<PasswordPage />} />
                     <Route path="locked" element={<LockedPage />} />
+                    <Route
+                        path="locked/forgot-password"
+                        element={<ForgotPasswordPage />}
+                    />
                     <Route path="locked/*" element={<LockedPage />} />
                     <Route
                         path="/connect/:requestID"
