@@ -1,7 +1,7 @@
+import truncateString from '../../helpers/truncate-string';
 import Body from '../typography/Body';
 
 import type { BasicTransactionInfo } from '../../helpers/transactions/basicTransactionAnalysis';
-import truncateString from '../../helpers/truncate-string';
 
 const translateCommand = (command: string) => {
     switch (command) {
