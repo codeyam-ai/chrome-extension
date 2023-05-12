@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import HideShowToggle from '../buttons/HideShowToggle';
 import Body from '_src/ui/app/shared/typography/Body';
 
-const idPrefix = 'word-';
+export const RECOVERY_PHRASE_INPUT_ID_PREFIX = 'word-';
 
 interface WordInputProps {
     index: number;
@@ -21,7 +21,9 @@ const WordInput = ({
     password,
 }: WordInputProps) => {
     const focusOnThisInput = useCallback(() => {
-        document.getElementById(idPrefix + index)?.focus();
+        document
+            .getElementById(RECOVERY_PHRASE_INPUT_ID_PREFIX + index)
+            ?.focus();
     }, [index]);
 
     const updateThisWord = useCallback(
@@ -42,8 +44,8 @@ const WordInput = ({
             </Body>
             <input
                 type={password ? 'password' : 'text'}
-                id={idPrefix + index}
-                data-testid={idPrefix + index}
+                id={RECOVERY_PHRASE_INPUT_ID_PREFIX + index}
+                data-testid={RECOVERY_PHRASE_INPUT_ID_PREFIX + index}
                 className="w-full bg-ethos-light-background-secondary border-none focus:outline-none focus:ring-transparent p-0 m-0"
                 autoComplete="off"
                 defaultValue={defaultValue}

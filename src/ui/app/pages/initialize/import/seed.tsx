@@ -8,7 +8,9 @@ import {
 import { useAppDispatch } from '_src/ui/app/hooks';
 import { createMnemonic, setMnemonic } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
-import RecoveryPhraseInput from '_src/ui/app/shared/inputs/RecoveryPhraseInput';
+import RecoveryPhraseInput, {
+    RECOVERY_PHRASE_INPUT_ID_PREFIX,
+} from '_src/ui/app/shared/inputs/RecoveryPhraseInput';
 import OnboardingCard from '_src/ui/app/shared/layouts/OnboardingCard';
 
 import type { FormEvent } from 'react';
@@ -53,7 +55,7 @@ const ImportSeedPage = () => {
     }, []);
 
     const focusOnFirstWord = useCallback(() => {
-        document.getElementById(idPrefix + 0)?.focus();
+        document.getElementById(RECOVERY_PHRASE_INPUT_ID_PREFIX + 0)?.focus();
     }, []);
 
     const updateWord = useCallback(

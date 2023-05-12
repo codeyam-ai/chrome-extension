@@ -1,9 +1,11 @@
 import { Form, Formik } from 'formik';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import * as Yup from 'yup';
 
 import Button from '../../buttons/Button';
-import RecoveryPhraseInput from '../../inputs/RecoveryPhraseInput';
+import RecoveryPhraseInput, {
+    RECOVERY_PHRASE_INPUT_ID_PREFIX,
+} from '../../inputs/RecoveryPhraseInput';
 import BodyLarge from '../../typography/BodyLarge';
 
 type PassphraseFormProps = {
@@ -18,6 +20,14 @@ const CheckMnemonicForm = ({
     const [words, setWords] = useState(Array(12).fill(''));
     const [errorText, setErrorText] = useState('');
 
+    const focusOnContinueButton = useCallback(() => {
+        document.getElementById('continue')?.focus();
+    }, []);
+
+    const focusOnFirstWord = useCallback(() => {
+        document.getElementById(RECOVERY_PHRASE_INPUT_ID_PREFIX + 0)?.focus();
+    }, []);
+
     const updateWord = useCallback(
         (index: number, newWord: string) => {
             const newWords = [...words];
@@ -31,12 +41,14 @@ const CheckMnemonicForm = ({
         setWords(newWords);
     }, []);
 
-    const onPaste = useCallback(() => {}, []);
-
     const _onSubmit = useCallback(() => {
         const seed = (words as string[]).join(' ').trim();
         onSubmit(seed);
     }, [onSubmit, words]);
+
+    useEffect(() => {
+        focusOnFirstWord();
+    }, [focusOnFirstWord]);
 
     return (
         <div className="h-full">
@@ -57,7 +69,7 @@ const CheckMnemonicForm = ({
                     <RecoveryPhraseInput
                         words={words}
                         updateWord={updateWord}
-                        onPaste={onPaste}
+                        onPaste={focusOnContinueButton}
                         onWordsChange={onWordsChange}
                         errorText={
                             isPasswordIncorrect
@@ -68,7 +80,9 @@ const CheckMnemonicForm = ({
                     <Button
                         buttonStyle="primary"
                         type="submit"
+                        id="continue"
                         disabled={words.some((word) => word === '')}
+                        className="mt-4"
                     >
                         Reset Password
                     </Button>
