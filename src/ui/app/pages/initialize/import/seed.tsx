@@ -15,6 +15,7 @@ import OnboardingCard from '_src/ui/app/shared/layouts/OnboardingCard';
 
 import type { FormEvent } from 'react';
 
+const idPrefix = 'word-';
 const errorText =
     'That recovery phrase is not valid. Please check your phrase and try again.';
 

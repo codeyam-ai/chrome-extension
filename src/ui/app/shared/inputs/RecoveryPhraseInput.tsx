@@ -137,13 +137,12 @@ const RecoveryPhraseInput = ({
                     {errorText}
                 </Body>
             )}
-            <div className="flex place-content-center w-full">
-                <HideShowToggle
-                    forceLightTheme={forceLightTheme}
-                    hide={passwordMode}
-                    onToggle={togglePasswordMode}
-                />
-            </div>
+            <HideShowToggle
+                forceLightTheme
+                name="Phrase"
+                hide={passwordMode}
+                onToggle={togglePasswordMode}
+            />
         </div>
     );
 };

@@ -5,10 +5,10 @@ import * as Yup from 'yup';
 import Button from '../buttons/Button';
 import HideShowToggle from '../buttons/HideShowToggle';
 import Input from '../inputs/Input';
-import Body from '../typography/Body';
-import EthosLink from '../typography/EthosLink';
 
 import type { FormikValues } from 'formik';
+import Body from '../typography/Body';
+import EthosLink from '../typography/EthosLink';
 
 type PassphraseFormProps = {
     onSubmit: (passphrase: string) => void;
@@ -49,8 +49,9 @@ const CustomFormikForm = ({
                 }
             />
 
-            <div className="flex place-content-center w-full mb-6">
+            <div className={'mb-6'}>
                 <HideShowToggle
+                    name="Password"
                     hide={passwordMode}
                     onToggle={togglePasswordMode}
                 />
