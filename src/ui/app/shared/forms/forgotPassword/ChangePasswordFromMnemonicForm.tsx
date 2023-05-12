@@ -1,17 +1,15 @@
-import { Formik, Form, useField } from 'formik';
+import { CheckCircleIcon } from '@heroicons/react/24/solid';
+import { Form, Formik, useField } from 'formik';
 import { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 
-import { passwordComplexityValidation } from '_app/shared/forms/validation-utils';
-import { BASE_URL } from '_src/shared/constants';
-
-import type { FormikValues } from 'formik';
 import Button from '../../buttons/Button';
 import HideShowToggle from '../../buttons/HideShowToggle';
-import Checkbox from '../../inputs/Checkbox';
 import Input from '../../inputs/Input';
 import BodyLarge from '../../typography/BodyLarge';
-import { CheckCircleIcon } from '@heroicons/react/24/solid';
+import { passwordComplexityValidation } from '_app/shared/forms/validation-utils';
+
+import type { FormikValues } from 'formik';
 
 type CreatePasswordFormProps = {
     onSubmit: (passphrase: string) => void;
@@ -68,11 +66,12 @@ const CustomFormikForm = () => {
                     }
                     className="!px-0"
                 />
-                <HideShowToggle
-                    name="Password"
-                    hide={passwordMode}
-                    onToggle={togglePasswordMode}
-                />
+                <div className="flex place-content-center w-full">
+                    <HideShowToggle
+                        hide={passwordMode}
+                        onToggle={togglePasswordMode}
+                    />
+                </div>
             </div>
 
             <div className="px-6 sm:px-10 pb-6 sm:pb-10">

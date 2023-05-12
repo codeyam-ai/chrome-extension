@@ -64,12 +64,13 @@ const CustomFormikForm = () => {
                     }
                     forceLightTheme
                 />
-                <HideShowToggle
-                    forceLightTheme
-                    name="Password"
-                    hide={passwordMode}
-                    onToggle={togglePasswordMode}
-                />
+                <div className="flex place-content-center w-full">
+                    <HideShowToggle
+                        forceLightTheme
+                        hide={passwordMode}
+                        onToggle={togglePasswordMode}
+                    />
+                </div>
             </div>
 
             <Checkbox

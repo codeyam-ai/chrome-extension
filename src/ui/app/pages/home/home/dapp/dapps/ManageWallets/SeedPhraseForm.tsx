@@ -140,11 +140,12 @@ const SeedPhraseForm = ({
                     </Body>
                 )}
             </div>
-            <HideShowToggle
-                name="Phrase"
-                hide={passwordMode}
-                onToggle={togglePasswordMode}
-            />
+            <div className="flex place-content-center w-full">
+                <HideShowToggle
+                    hide={passwordMode}
+                    onToggle={togglePasswordMode}
+                />
+            </div>
         </form>
     );
 };
