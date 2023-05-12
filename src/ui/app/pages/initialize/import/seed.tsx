@@ -92,6 +92,7 @@ const ImportSeedPage = () => {
                     updateWord={updateWord}
                     onWordsChange={updateWordsState}
                     errorText={error}
+                    forceLightTheme
                 />
                 <div className="pb-10">
                     <Button

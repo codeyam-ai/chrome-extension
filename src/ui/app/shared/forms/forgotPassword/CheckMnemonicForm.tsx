@@ -18,7 +18,6 @@ const CheckMnemonicForm = ({
     isPasswordIncorrect = false,
 }: PassphraseFormProps) => {
     const [words, setWords] = useState(Array(12).fill(''));
-    const [errorText, setErrorText] = useState('');
 
     const focusOnContinueButton = useCallback(() => {
         document.getElementById('continue')?.focus();
@@ -74,7 +73,7 @@ const CheckMnemonicForm = ({
                         errorText={
                             isPasswordIncorrect
                                 ? 'Recovery Phrase is incorrect'
-                                : errorText
+                                : ''
                         }
                     />
                     <Button

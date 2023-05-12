@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { useCallback, useState } from 'react';
 
 import HideShowToggle from '../buttons/HideShowToggle';
@@ -11,6 +12,7 @@ interface WordInputProps {
     updateWord: (index: number, newWord: string) => void;
     handlePaste: (e: React.ClipboardEvent<HTMLInputElement>) => void;
     password?: boolean;
+    forceLightTheme?: boolean;
 }
 
 const WordInput = ({
@@ -19,6 +21,7 @@ const WordInput = ({
     updateWord,
     handlePaste,
     password,
+    forceLightTheme,
 }: WordInputProps) => {
     const focusOnThisInput = useCallback(() => {
         document
@@ -35,7 +38,10 @@ const WordInput = ({
 
     return (
         <div
-            className="flex gap-1 py-3 px-4 bg-ethos-light-background-secondary rounded-xl"
+            className={classNames(
+                'flex items-center gap-1 py-3 px-4 bg-ethos-light-background-secondary rounded-xl',
+                forceLightTheme ? '' : 'dark:bg-ethos-dark-background-secondary'
+            )}
             key={index}
             onClick={focusOnThisInput}
         >
@@ -46,7 +52,12 @@ const WordInput = ({
                 type={password ? 'password' : 'text'}
                 id={RECOVERY_PHRASE_INPUT_ID_PREFIX + index}
                 data-testid={RECOVERY_PHRASE_INPUT_ID_PREFIX + index}
-                className="w-full bg-ethos-light-background-secondary border-none focus:outline-none focus:ring-transparent p-0 m-0"
+                className={classNames(
+                    'w-full bg-ethos-light-background-secondary border-none focus:outline-none focus:ring-transparent p-0 m-0',
+                    forceLightTheme
+                        ? ''
+                        : 'dark:bg-ethos-dark-background-secondary'
+                )}
                 autoComplete="off"
                 defaultValue={defaultValue}
                 onPaste={handlePaste}
@@ -62,6 +73,7 @@ interface RecoveryPhraseInputProps {
     onPaste: () => void;
     onWordsChange: (newWords: string[]) => void;
     errorText: string;
+    forceLightTheme?: boolean;
 }
 
 const RecoveryPhraseInput = ({
@@ -70,6 +82,7 @@ const RecoveryPhraseInput = ({
     onPaste,
     onWordsChange,
     errorText,
+    forceLightTheme,
 }: RecoveryPhraseInputProps) => {
     const [localWords, setLocalWords] = useState(words);
     const [passwordMode, setPasswordMode] = useState(true);
@@ -109,12 +122,20 @@ const RecoveryPhraseInput = ({
                             handlePaste={handlePaste}
                             key={index}
                             password={passwordMode}
+                            forceLightTheme={forceLightTheme}
                         />
                     );
                 })}
             </div>
             {errorText && (
-                <Body className="pt-2 text-ethos-light-red">{errorText}</Body>
+                <Body
+                    className={classNames(
+                        'pt-2 text-ethos-light-red',
+                        forceLightTheme ? '' : 'text-ethos-dark-red'
+                    )}
+                >
+                    {errorText}
+                </Body>
             )}
             <HideShowToggle
                 forceLightTheme
