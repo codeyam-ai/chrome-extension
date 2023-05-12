@@ -65,17 +65,19 @@ const CheckMnemonicForm = ({
                         Enter your 12 word recovery phrase to create a new
                         password.
                     </BodyLarge>
-                    <RecoveryPhraseInput
-                        words={words}
-                        updateWord={updateWord}
-                        onPaste={focusOnContinueButton}
-                        onWordsChange={onWordsChange}
-                        errorText={
-                            isPasswordIncorrect
-                                ? 'Recovery Phrase is incorrect'
-                                : ''
-                        }
-                    />
+                    <div className="px-6">
+                        <RecoveryPhraseInput
+                            words={words}
+                            updateWord={updateWord}
+                            onPaste={focusOnContinueButton}
+                            onWordsChange={onWordsChange}
+                            errorText={
+                                isPasswordIncorrect
+                                    ? 'Recovery Phrase is incorrect'
+                                    : ''
+                            }
+                        />
+                    </div>
                     <Button
                         buttonStyle="primary"
                         type="submit"
