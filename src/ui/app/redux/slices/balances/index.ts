@@ -4,6 +4,8 @@ import {
     createSlice,
 } from '@reduxjs/toolkit';
 
+import testConnection from '../../testConnection';
+
 import type { CoinBalance } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
@@ -21,28 +23,7 @@ export const fetchAllBalances = createAsyncThunk<
     const state = getState();
 
     if (!state.balances.lastSync) {
-        try {
-            const response = await fetch(
-                api.instance.fullNode.connection.fullnode,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        jsonrpc: '2.0',
-                        id: 1,
-                        method: 'rpc.discover',
-                    }),
-                }
-            );
-
-            if (response.status !== 200) {
-                throw new Error('RPC not responding');
-            }
-        } catch (e) {
-            throw new Error('RPC not responding');
-        }
+        await testConnection(api);
     }
 
     const {
