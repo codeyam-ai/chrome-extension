@@ -158,8 +158,8 @@ export default class ApiProvider {
         customRPC?: string | null
     ) {
         this._apiEnv = apiEnv;
-        this._customRPC = customRPC ?? null;
         this.fallbackNumber = fallbackNumber;
+        this._customRPC = customRPC ?? null;
         // We also clear the query client whenever set set a new API provider:
         queryClient.clear();
 
@@ -181,13 +181,21 @@ export default class ApiProvider {
     public fallback(currentFallbackNumber?: number) {
         if (this.fallbackNumber !== currentFallbackNumber) return true;
         if (this.fallbackNumber === 3) return false;
-        this.setNewJsonRpcProvider(this._apiEnv, (this.fallbackNumber ?? 0) + 1, this._customRPC);
+        this.setNewJsonRpcProvider(
+            this._apiEnv,
+            (this.fallbackNumber ?? 1) + 1,
+            this._customRPC
+        );
         return true;
     }
 
     public get instance() {
         if (!this._apiFullNodeProvider) {
-            this.setNewJsonRpcProvider(this._apiEnv, this.fallbackNumber, this._customRPC);
+            this.setNewJsonRpcProvider(
+                this._apiEnv,
+                this.fallbackNumber,
+                this._customRPC
+            );
         }
         return {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -197,7 +205,11 @@ export default class ApiProvider {
 
     public getSignerInstance(keypair: Keypair, force?: boolean): RawSigner {
         if (!this._apiFullNodeProvider) {
-            this.setNewJsonRpcProvider(this._apiEnv, this.fallbackNumber, this._customRPC);
+            this.setNewJsonRpcProvider(
+                this._apiEnv,
+                this.fallbackNumber,
+                this._customRPC
+            );
         }
 
         if (!this._signer || force) {
@@ -215,7 +227,11 @@ export default class ApiProvider {
         accessToken: string
     ): EthosSigner {
         if (!this._apiFullNodeProvider) {
-            this.setNewJsonRpcProvider(this._apiEnv, this.fallbackNumber, this._customRPC);
+            this.setNewJsonRpcProvider(
+                this._apiEnv,
+                this.fallbackNumber,
+                this._customRPC
+            );
         }
         return new EthosSigner(
             address,
