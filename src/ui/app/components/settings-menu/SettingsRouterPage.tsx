@@ -1,14 +1,12 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import LockPage from './subpages/LockPage';
 import ThemePage from './subpages/ThemePage';
 import ChangePasswordPage from './subpages/security/subpages/change-password/ChangePasswordPage';
 import { SettingsContainer } from '../../shared/navigation/nav-bar/SettingsContainer';
-import { getEncrypted } from '_src/shared/storagex/store';
 import ChangeAutoLockTimeoutPage from '_src/ui/app/components/settings-menu/ChangeAutoLockTimeoutPage';
 import SettingsHomePage from '_src/ui/app/components/settings-menu/SettingsHomePage';
 import NetworkPage from '_src/ui/app/components/settings-menu/subpages/network/NetworkPage';
@@ -18,20 +16,6 @@ import ViewPrivateKeyPage from '_src/ui/app/components/settings-menu/subpages/se
 import ViewSeedPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewSeedPage';
 
 function SettingsRouterPage() {
-    const [isHostedWallet, setIsHostedWallet] = useState(false);
-
-    useEffect(() => {
-        const _setIsHosted = async () => {
-            const authentication = await getEncrypted({
-                key: 'authentication',
-                session: true,
-                strong: false,
-            });
-            setIsHostedWallet(authentication !== null);
-        };
-        _setIsHosted();
-    }, []);
-
     return (
         <Routes>
             <Route path={`settings`} element={<SettingsContainer />}>
@@ -39,12 +23,7 @@ function SettingsRouterPage() {
                 <Route path="network" element={<NetworkPage />} />
                 <Route path="theme" element={<ThemePage />} />
                 <Route path="security">
-                    <Route
-                        path={'home'}
-                        element={
-                            <SecurityHomePage isHostedWallet={isHostedWallet} />
-                        }
-                    />
+                    <Route path={'home'} element={<SecurityHomePage />} />
                     <Route
                         path="change-password"
                         element={<ChangePasswordPage />}

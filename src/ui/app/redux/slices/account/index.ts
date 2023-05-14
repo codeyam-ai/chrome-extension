@@ -28,7 +28,11 @@ import { generateMnemonic } from '_shared/cryptography/mnemonics';
 import Authentication from '_src/background/Authentication';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
 import { CUSTOMIZE_ID } from '_src/data/dappsMap';
-import { AccountType, PASSPHRASE_TEST } from '_src/shared/constants';
+import {
+    AccountType,
+    MNEMONIC_TEST,
+    PASSPHRASE_TEST,
+} from '_src/shared/constants';
 import {
     deleteEncrypted,
     getEncrypted,
@@ -332,6 +336,13 @@ export const createMnemonic = createAsyncThunk(
             account: { passphrase },
         } = getState() as RootState;
 
+        await setEncrypted({
+            key: 'mnemonic-test',
+            value: MNEMONIC_TEST,
+            session: false,
+            strong: false,
+            passphrase: mnemonic,
+        });
         if (passphrase) {
             await setEncrypted({
                 key: `mnemonic`,
@@ -339,6 +350,14 @@ export const createMnemonic = createAsyncThunk(
                 session: false,
                 strong: true,
                 passphrase,
+            });
+
+            await setEncrypted({
+                key: 'passphraseEncryptedWithMnemonic',
+                value: passphrase,
+                strong: false,
+                session: false,
+                passphrase: mnemonic,
             });
         }
 
@@ -864,6 +883,14 @@ export const savePassphrase: AsyncThunk<
                 session: true,
                 strong: false,
             });
+
+            await setEncrypted({
+                key: 'passphraseEncryptedWithMnemonic',
+                value: passphrase,
+                strong: false,
+                session: false,
+                passphrase: mnemonic,
+            });
         }
         return passphrase;
     }
@@ -959,6 +986,28 @@ const isPasswordCorrect = async (password: string) => {
     return true;
 };
 
+const isMnemonicCorrect = async (mnemonic: string) => {
+    const mnemonicTest = await getEncrypted({
+        key: 'mnemonic-test',
+        session: false,
+        passphrase: mnemonic,
+        strong: false,
+    });
+
+    return mnemonicTest === MNEMONIC_TEST;
+};
+
+const getPasswordEncryptedWithMnemonic = async (mnemonic: string) => {
+    const passphrase = await getEncrypted({
+        key: 'passphraseEncryptedWithMnemonic',
+        session: false,
+        strong: false,
+        passphrase: mnemonic,
+    });
+
+    return passphrase;
+};
+
 export const assertPasswordIsCorrect: AsyncThunk<
     boolean,
     string | null,
@@ -991,6 +1040,34 @@ export const unlock: AsyncThunk<string | null, string | null, AppThunkConfig> =
             return null;
         }
     );
+
+export const unlockWithMnemonic: AsyncThunk<
+    string | null,
+    string,
+    AppThunkConfig
+> = createAsyncThunk<string | null, string, AppThunkConfig>(
+    'account/unlockWithMnemonic',
+    async (mnemonic): Promise<string | null> => {
+        const unlockResult = await isMnemonicCorrect(mnemonic);
+        if (!unlockResult) {
+            return null;
+        }
+        const passphrase = await getPasswordEncryptedWithMnemonic(mnemonic);
+
+        if (passphrase) {
+            await setEncrypted({
+                key: 'passphrase',
+                value: passphrase,
+                strong: false,
+                session: true,
+            });
+
+            setUnlocked(passphrase);
+            return passphrase;
+        }
+        return null;
+    }
+);
 
 export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
     'account/getFavoriteDappsKeys',
@@ -1054,7 +1131,7 @@ export const saveExcludedDappsKeys = createAsyncThunk(
     }
 );
 
-type AccountState = {
+export type AccountState = {
     loading: boolean;
     authentication: string | null;
     email: string | null;

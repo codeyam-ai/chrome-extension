@@ -1,8 +1,9 @@
-import { setUnlocked } from '_app/helpers/lock-wallet';
+import { setLocked, setUnlocked } from '_app/helpers/lock-wallet';
 import { setEncrypted } from '_shared/storagex/store';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
 import {
     AccountType,
+    MNEMONIC_TEST,
     PASSPHRASE_TEST,
     PREAPPROVAL_KEY,
 } from '_src/shared/constants';
@@ -75,19 +76,34 @@ export const simulateMnemonicUser = async function (unlocked = true) {
         passphrase: password,
     });
     await setEncrypted({
+        key: 'mnemonic-test',
+        value: MNEMONIC_TEST,
+        session: false,
+        strong: false,
+        passphrase: recoveryPhrase,
+    });
+    await setEncrypted({
+        key: 'passphraseEncryptedWithMnemonic',
+        value: password,
+        strong: false,
+        session: false,
+        passphrase: recoveryPhrase,
+    });
+    await setEncrypted({
         key: 'account-type',
         value: AccountType.PASSWORD,
         strong: false,
         session: false,
     });
-    if (unlocked) {
-        await setEncrypted({
-            key: 'passphrase',
-            value: password,
-            strong: false,
-            session: true,
-        });
-        await setUnlocked(password);
+    await setEncrypted({
+        key: 'passphrase',
+        value: password,
+        strong: false,
+        session: true,
+    });
+    await setUnlocked(password);
+    if (!unlocked) {
+        await setLocked(password);
     }
 };
 

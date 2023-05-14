@@ -7,26 +7,23 @@ import {
     ShieldExclamationIcon,
     SignalIcon,
 } from '@heroicons/react/24/solid';
-import { useContext, useEffect, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Browser from 'webextension-polyfill';
 
 import { API_ENV_TO_INFO } from '../../ApiProvider';
-import { iframe } from '../../helpers';
 import SettingsList from '../../shared/navigation/nav-bar/SettingsList';
 import PaintBrushIcon from '../../shared/svg/PaintBrushIcon';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import EthosLogoWithText from '../logos/EthosLogoWithText';
 import {
+    BASE_URL,
     DASHBOARD_LINK,
-    IFRAME_URL,
     MAILTO_SUPPORT_URL,
     ToS_LINK,
-    BASE_URL,
 } from '_src/shared/constants';
 import { ThemeContext } from '_src/shared/utils/themeContext';
-import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
-import { reset } from '_src/ui/app/redux/slices/account';
+import { useAppSelector } from '_src/ui/app/hooks';
 
 export const SubpageUrls = {
     network: '/settings/network',
@@ -45,7 +42,6 @@ const SettingsHomePage = () => {
     const purple = '#9040F5';
     const blue = '#6772FF';
 
-    const dispatch = useAppDispatch();
     const { theme } = useContext(ThemeContext);
     const themeDisplay = useMemo(() => {
         return theme.charAt(0).toUpperCase() + theme.slice(1);
@@ -53,22 +49,6 @@ const SettingsHomePage = () => {
 
     const apiEnv = useAppSelector((state) => state.app.apiEnv);
     const networkName = API_ENV_TO_INFO[apiEnv].name;
-
-    useEffect(() => {
-        const listenForLogOut = async () => {
-            await iframe.listenForLogout();
-
-            try {
-                await dispatch(reset());
-            } finally {
-                // setLoading(false);
-            }
-        };
-        listenForLogOut();
-    }, [dispatch]);
-    useEffect(() => {
-        iframe.listenForReady();
-    }, [dispatch]);
 
     return (
         <div>
@@ -156,14 +136,6 @@ const SettingsHomePage = () => {
                     </BodyLarge>
                 </div>
             </div>
-            <iframe
-                id="wallet-iframe"
-                src={IFRAME_URL}
-                height="1px"
-                width="1px"
-                title="wallet"
-                className="-top-[1000px] absolute"
-            />
         </div>
     );
 };

@@ -4,14 +4,14 @@
 import { useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { AppState } from '../hooks/useInitializedGuard';
+import { AppState } from '../../hooks/useInitializedGuard';
 import {
     loadAccountInformationFromStorage,
     unlock,
-} from '../redux/slices/account';
-import UnlockWalletForm from '../shared/forms/UnlockWalletForm';
-import HeaderWithLargeEthosIcon from '../shared/headers/page-headers/HeaderWithLargeEthosIcon';
-import BaseLayout from '../shared/layouts/BaseLayout';
+} from '../../redux/slices/account';
+import UnlockWalletForm from '../../shared/forms/UnlockWalletForm';
+import HeaderWithLargeEthosIcon from '../../shared/headers/page-headers/HeaderWithLargeEthosIcon';
+import BaseLayout from '../../shared/layouts/BaseLayout';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
 import PageLayout from '_src/ui/app/pages/PageLayout';

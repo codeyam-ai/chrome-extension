@@ -5,6 +5,8 @@ import * as Yup from 'yup';
 import Button from '../buttons/Button';
 import HideShowToggle from '../buttons/HideShowToggle';
 import Input from '../inputs/Input';
+import Body from '../typography/Body';
+import EthosLink from '../typography/EthosLink';
 
 import type { FormikValues } from 'formik';
 
@@ -63,6 +65,12 @@ const CustomFormikForm = ({
             >
                 Unlock Wallet
             </Button>
+
+            <Body className="pb-6">
+                <EthosLink type="internal" to="forgot-password">
+                    Forgot Password
+                </EthosLink>
+            </Body>
         </div>
     );
 };
@@ -82,7 +90,6 @@ const UnlockWalletForm = ({
             <Formik
                 initialValues={{
                     password: '',
-                    confirmPassword: '',
                 }}
                 validationSchema={Yup.object({
                     password: Yup.string().required('Enter your password'),

@@ -59,7 +59,6 @@ export async function setEncrypted({
         strong,
         passphrase,
     });
-
     if (session) {
         await setSession({ [encryptedKey]: encryptedValue });
     } else {
@@ -89,6 +88,7 @@ export async function getEncrypted({
         : getLocal(encryptedKey));
 
     if (!encryptedValue) return null;
+
     return decrypt({
         encryptedData: encryptedValue as string,
         passphrase,

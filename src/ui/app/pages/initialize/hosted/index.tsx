@@ -81,9 +81,10 @@ const HostedPage = () => {
                             If this continues, please reach out to{' '}
                             <EthosLink
                                 type={LinkType.External}
-                                to="mailto:support@ethoswallet.xyz"
+                                to={MAILTO_SUPPORT_URL}
+                                forceLightMode
                             >
-                                support@ethoswallet.xyz
+                                {MAILTO_SUPPORT_URL}
                             </EthosLink>
                         </Body>
                     </div>
