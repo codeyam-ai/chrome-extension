@@ -457,10 +457,10 @@ const dappsMap: Map<string, DappData> = new Map([
             description:
                 'Typus is a real yield infrastructure that integrates swap, lending, and derivatives building on top of the Sui ecosystem.',
             urls: {
-                [NetworkName.DEVNET]:
-                    'https://devnet.typus.finance/vault/coveredcall/',
                 [NetworkName.TESTNET]:
                     'https://testnet.typus.finance/vault/coveredcall/',
+                [NetworkName.MAINNET]:
+                    'https://typus.finance/vault/coveredcall/',
             },
             tags: [TagName.FINANCE],
         } as DappData,
@@ -492,6 +492,8 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.DEVNET]:
                     'https://sui.interestprotocol.com/en-US/dapp/dex',
                 [NetworkName.TESTNET]:
+                    'https://sui.interestprotocol.com/en-US/dapp/dex',
+                [NetworkName.MAINNET]:
                     'https://sui.interestprotocol.com/en-US/dapp/dex',
             },
             tags: [TagName.FINANCE],
