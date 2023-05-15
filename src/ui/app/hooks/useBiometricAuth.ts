@@ -4,6 +4,8 @@ import useAppSelector from './useAppSelector';
 import { bufferDecode, bufferEncode } from '../helpers/biometricAuth/buffer';
 import useAppDispatch from './useAppDispatch';
 import { setIsBiometricsSetUp } from '../redux/slices/account';
+import importPublicKey from '../helpers/biometricAuth/importPublicKey';
+import verifySignature from '../helpers/biometricAuth/verifySignature';
 
 const ETHOS_WALLET_BYTES = Uint8Array.from('Ethos Wallet', (c) =>
     c.charCodeAt(0)
@@ -22,6 +24,7 @@ const CREDENTIAL_CREATION_OPTIONS = {
             id: ETHOS_WALLET_BYTES,
         },
         pubKeyCredParams: [
+            // -7 corresponds to the "ES256" algorithm, which stands for "ECDSA using P-256 and SHA-256".
             { type: 'public-key', alg: -7 },
             // { type: 'public-key', alg: -35 },
             // { type: 'public-key', alg: -36 },
@@ -168,6 +171,16 @@ export function useBiometricAuth() {
         if (assertion) {
             // @ts-expect-error response does exist on assertion
             const sig = assertion.response.signature;
+
+            const publicKey = await importPublicKey(publicKeyBase64 || '');
+            console.log('publicKey :>> ', publicKey);
+            const isValid = await verifySignature(publicKey, sig, challenge);
+
+            if (isValid) {
+                console.log('The signature is valid.');
+            } else {
+                console.log('The signature is not valid.');
+            }
 
             try {
                 console.log('bufferEncode(sig) :>> ', bufferEncode(sig));
