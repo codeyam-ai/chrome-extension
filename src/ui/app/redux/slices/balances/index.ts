@@ -36,7 +36,7 @@ export const fetchAllBalances = createAsyncThunk<
     }
 
     const allBalances = await api.instance.fullNode.getAllBalances({
-        owner: address
+        owner: address,
     });
 
     let validBalances = allBalances;
