@@ -183,6 +183,7 @@ export function DappSignMessageApprovalPage() {
                                 <div>has requested you sign a message</div>
                             </div>
                         </div>
+                        <Body>HI THERE</Body>
                         {message && (
                             <div className="flex flex-col gap-1 px-6 w-full">
                                 <BodyLarge>Message To Sign</BodyLarge>
