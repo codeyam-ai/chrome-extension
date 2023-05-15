@@ -22,7 +22,7 @@ const AutoLockTimeoutForm = () => {
             <Input
                 {...timeoutField}
                 min="1"
-                max="30"
+                max="90"
                 type="number"
                 label="Auto Lock Timeout"
                 data-testid="timeout-input"
