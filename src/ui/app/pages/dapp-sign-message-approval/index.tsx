@@ -51,9 +51,24 @@ export function DappSignMessageApprovalPage() {
     const loading = guardLoading || signMessageRequestLoading;
     // const dispatch = useAppDispatch();
 
-    const message = useMemo(() => {
-        if (signMessageRequest?.tx?.type !== 'sign-message') return null;
-        return new TextDecoder().decode(fromB64(signMessageRequest.tx.message));
+    const { message } = useMemo(() => {
+        if (signMessageRequest?.tx?.type !== 'sign-message') return {};
+
+        const messageBytes = fromB64(signMessageRequest.tx.message);
+        let message: string = signMessageRequest.tx.message;
+        let type: 'utf8' | 'base64' = 'base64';
+        try {
+            message = new TextDecoder('utf8', { fatal: true }).decode(
+                messageBytes
+            );
+            type = 'utf8';
+        } catch (e) {
+            // do nothing
+        }
+        return {
+            message,
+            type,
+        };
     }, [signMessageRequest]);
 
     const handleOnSubmit = useCallback(
@@ -63,7 +78,7 @@ export function DappSignMessageApprovalPage() {
             if (signMessageRequest?.tx?.type === 'sign-message') {
                 await signMessage(
                     connectToLedger,
-                    message,
+                    signMessageRequest.tx.message,
                     signMessageRequest.id,
                     approved,
                     passphrase,
