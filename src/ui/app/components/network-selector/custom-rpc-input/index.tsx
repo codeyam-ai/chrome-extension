@@ -12,6 +12,7 @@ import { setCustomRPC } from '_redux/slices/app';
 import Button from '_src/ui/app/shared/buttons/Button';
 
 import st from '../NetworkSelector.module.scss';
+import { useQueryClient } from '@tanstack/react-query';
 
 const MIN_CHAR = 5;
 
@@ -40,9 +41,10 @@ export function CustomRPCInput() {
 
     const dispatch = useAppDispatch();
 
+    const queryClient = useQueryClient();
     const changeNetwork = useCallback(
         async ({ rpcInput }: { rpcInput: string }) => {
-            dispatch(setCustomRPC(rpcInput));
+            dispatch(setCustomRPC({ customRPC: rpcInput, queryClient }));
         },
         [dispatch]
     );

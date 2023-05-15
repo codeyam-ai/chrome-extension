@@ -1,4 +1,4 @@
-import { QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
@@ -7,7 +7,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { API_ENV } from '../../ui/app/ApiProvider';
 import KeypairVault from '_app/KeypairVault';
 import { BackgroundClient } from '_app/background-client';
-import { queryClient } from '_app/helpers/queryClient';
+import { queryConfig } from '_src/ui/app/helpers/queryConfig';
 import App from '_app/index';
 import { AppType } from '_redux/slices/app/AppType';
 import { DependenciesContext } from '_shared/utils/dependenciesContext';
@@ -62,7 +62,9 @@ export async function renderApp({
                 >
                     <Provider store={storeToUse}>
                         <IntlProvider locale={locale}>
-                            <QueryClientProvider client={queryClient}>
+                            <QueryClientProvider
+                                client={new QueryClient(queryConfig)}
+                            >
                                 <DependenciesContext.Provider
                                     value={dependencies}
                                 >

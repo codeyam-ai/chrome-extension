@@ -16,6 +16,7 @@ import { useAppSelector, useAppDispatch } from '_hooks';
 import { changeRPCNetwork } from '_redux/slices/app';
 
 import st from './NetworkSelector.module.scss';
+import { useQueryClient } from '@tanstack/react-query';
 
 const NetworkSelector = () => {
     const [selectedApiEnv, customRPC] = useAppSelector(({ app }) => [
@@ -43,6 +44,8 @@ const NetworkSelector = () => {
         }));
     }, []);
 
+    const queryClient = useQueryClient();
+
     const changeNetwork = useCallback(
         (e: React.MouseEvent<HTMLElement>) => {
             const networkName = e.currentTarget.dataset.network;
@@ -59,7 +62,7 @@ const NetworkSelector = () => {
                 return;
             }
             const apiEnv = API_ENV[networkName as keyof typeof API_ENV];
-            dispatch(changeRPCNetwork(apiEnv));
+            dispatch(changeRPCNetwork({ apiEnv, queryClient }));
         },
         [customRPC, dispatch]
     );
