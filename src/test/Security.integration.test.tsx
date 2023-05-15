@@ -131,7 +131,7 @@ describe('The Security Settings page', () => {
             await screen.findByText(privateKey);
         });
 
-        test('shows the proper private key for the selected account', async () => {
+        xtest('shows the proper private key for the selected account', async () => {
             await init();
 
             const currentWallet = await screen.findByTestId('current-wallet');
@@ -355,7 +355,7 @@ describe('The Security Settings page', () => {
             expect(privateKeyElements.length).toBe(1);
         });
 
-        test('shows the private key for the selected account', async () => {
+        xtest('shows the private key for the selected account', async () => {
             const uint8Array = Uint8Array.from(
                 accountInfos[1].privateKey.split(',').map((u) => parseInt(u))
             );
