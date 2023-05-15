@@ -1,9 +1,8 @@
-import { screen, within } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Browser from 'webextension-polyfill';
 
 import { fakeAlarms } from './utils/fake-browser/fake-browser';
-import { makeTestDeps } from './utils/test-dependencies';
 import {
     AUTO_LOCK_TIMEOUT_KEY,
     DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES,

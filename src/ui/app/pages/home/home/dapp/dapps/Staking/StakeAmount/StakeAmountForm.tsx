@@ -154,6 +154,7 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                         <div className="pt-4">
                             <StakeSummary
                                 amount={''}
+                                commissionRate={validator.commissionRate}
                                 rewardsStart={formattedDistanceToRewards}
                                 stakingAPY={validator.apy?.toString()}
                                 gasPrice={mistToSui(

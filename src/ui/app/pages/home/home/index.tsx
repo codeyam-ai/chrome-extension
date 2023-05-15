@@ -1,9 +1,7 @@
-// Copyright (c) 2022, Mysten Labs, Inc.
-// SPDX-License-Identifier: Apache-2.0
-
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import CoinList from './CoinList';
+import StakedInfo from './StakedInfo';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import { DappList } from './dapp/DappList';
 import ChainIndicator from '../../dapp-tx-approval/types/ChainIndicator';
@@ -11,6 +9,7 @@ import { useAppSelector } from '_hooks';
 import { accountAggregateBalancesSelector } from '_redux/slices/account';
 import { LinkType } from '_src/enums/LinkType';
 import { DASHBOARD_LINK } from '_src/shared/constants';
+import { useTotalStakedSUI } from '_src/ui/app/hooks/staking/useTotalStakedSUI';
 import { useFavoriteDapps } from '_src/ui/app/hooks/useFavoriteDapps';
 import SendReceiveButtonGroup from '_src/ui/app/shared/buttons/SendReceiveButtonGroup';
 import Body from '_src/ui/app/shared/typography/Body';
@@ -21,7 +20,11 @@ import Subheader from '_src/ui/app/shared/typography/Subheader';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 function HomePage() {
-    const { allFavorites } = useFavoriteDapps();
+    const { favoriteDappsForCurrentNetwork, favoriteDapps } =
+        useFavoriteDapps();
+    const { totalActivePendingStakedSUI, isLoading: isLoadingStakedSui } =
+        useTotalStakedSUI();
+
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
 
     const balances = useAppSelector(accountAggregateBalancesSelector);
@@ -39,7 +42,11 @@ function HomePage() {
 
     return (
         <div className="flex flex-col">
-            {showDappList && <DappList dapps={allFavorites} />}
+            {showDappList && (
+                <DappList
+                    dapps={favoriteDappsForCurrentNetwork ?? favoriteDapps}
+                />
+            )}
             <ChainIndicator apiEnv={selectedApiEnv} className="mt-3" />
             <div className="pt-5 pb-4">
                 <WalletBalanceAndIconHomeView
@@ -51,6 +58,15 @@ function HomePage() {
             <SendReceiveButtonGroup mistBalance={mistBalance} />
             <div className="flex flex-col gap-6 overflow-auto">
                 <ContentBlock>
+                    {!isLoadingStakedSui &&
+                        totalActivePendingStakedSUI > BigInt('0') && (
+                            <StakedInfo
+                                totalActivePendingStakedSUI={
+                                    totalActivePendingStakedSUI
+                                }
+                            />
+                        )}
+
                     <CoinList balances={balances} />
 
                     {(!balances || Object.keys(balances).length < 2) && (

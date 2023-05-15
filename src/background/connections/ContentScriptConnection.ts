@@ -319,23 +319,30 @@ export class ContentScriptConnection extends Connection {
                 const network = await networkEnv.getActiveNetwork();
                 this.sendNetwork(network, msg.id);
             } else if (isHasPermissionRequest(payload)) {
+                const activeAccount = await this.getActiveAccount();
+
                 this.send(
                     createMessage<HasPermissionsResponse>(
                         {
                             type: 'has-permissions-response',
                             result: await Permissions.hasPermissions(
                                 this.origin,
-                                payload.permissions
+                                payload.permissions,
+                                null,
+                                activeAccount?.address
                             ),
                         },
                         msg.id
                     )
                 );
             } else if (isAcquirePermissionsRequest(payload)) {
+                const activeAccount = await this.getActiveAccount();
+
                 try {
                     const permission = await Permissions.acquirePermissions(
                         payload.permissions,
-                        this
+                        this,
+                        activeAccount?.address
                     );
                     this.send(
                         createMessage<AcquirePermissionsResponse>(
@@ -559,26 +566,21 @@ export class ContentScriptConnection extends Connection {
 
     private async setActiveAccount(address: SuiAddress): Promise<SuiAddress> {
         const accountInfos = await this.getAccountInfos();
-        const activeAccountIndex = accountInfos.findIndex(
-            (a) => a.address === address
-        );
+        const activeAccount = accountInfos.find((a) => a.address === address);
 
-        if (activeAccountIndex === -1) {
+        if (!activeAccount) {
             const activeAccount = await this.getActiveAccount();
             return activeAccount.address;
         }
 
         await setEncrypted({
             key: 'activeAccountIndex',
-            value: activeAccountIndex.toString(),
+            value: activeAccount.index.toString(),
             session: false,
             strong: false,
         });
 
-        return (
-            accountInfos.find((a) => a.index === activeAccountIndex) ??
-            accountInfos[0]
-        ).address;
+        return activeAccount.address;
     }
 
     private async getActiveAccount(): Promise<AccountInfo> {

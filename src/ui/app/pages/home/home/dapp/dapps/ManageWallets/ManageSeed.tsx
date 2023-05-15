@@ -18,7 +18,7 @@ import Header from '_src/ui/app/shared/typography/Header';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 import WalletList from '_src/ui/app/shared/wallet-list/WalletList';
 
-const IMPORTED_SEED_BUFFER = 100000;
+const IMPORTED_SEED_BUFFER = 100_000;
 
 const ManageSeed = () => {
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);

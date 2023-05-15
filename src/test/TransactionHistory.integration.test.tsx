@@ -73,14 +73,14 @@ xdescribe('The Transaction History Page', () => {
         renderApp({ initialRoute: '/transactions' });
         await screen.findByText('$1.00', {}, { timeout: 2000 });
 
-        let currentWallet = await screen.findByTestId('current-wallet');
+        let currentWallet = await screen.findByTestId('current-wallet-link');
         await within(currentWallet).findByText('Wallet 1');
         await userEvent.click(currentWallet);
 
         const wallet2Link = await screen.findByText('Wallet 2');
         await userEvent.click(wallet2Link);
 
-        currentWallet = await screen.findByTestId('current-wallet');
+        currentWallet = await screen.findByTestId('current-wallet-link');
         await within(currentWallet).findByText('Wallet 2');
 
         await await new Promise((r) => setTimeout(r, 500));

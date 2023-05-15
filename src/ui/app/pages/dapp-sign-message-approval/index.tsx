@@ -3,25 +3,37 @@ import { fromB64 } from '@mysten/bcs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { useSuiLedgerClient } from '../../components/ledger/SuiLedgerClientProvider';
 import formatUrl from '../../helpers/format-url';
 import { AppState } from '../../hooks/useInitializedGuard';
-import { respondToTransactionRequest } from '../../redux/slices/transaction-requests';
+// import { respondToTransactionRequest } from '../../redux/slices/transaction-requests';
 import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';
+import IncorrectSigner from '../dapp-tx-approval/errors/IncorrectSigner';
+import signMessage from '../dapp-tx-approval/lib/signMessage';
+import SimpleBase from '../dapp-tx-approval/types/SimpleBase';
 import Loading from '_components/loading';
 import UserApproveContainer from '_components/user-approve-container';
-import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
+import { useAppSelector, useInitializedGuard } from '_hooks';
 import { signMessageRequestsSelectors } from '_redux/slices/sign-message-requests';
 
 import type { RootState } from '_redux/RootReducer';
 
 export function DappSignMessageApprovalPage() {
+    const { connectToLedger } = useSuiLedgerClient();
     const [siteFaviconSrc, setSiteFaviconSrc] = useState<string | undefined>();
     const { signMessageRequestID } = useParams();
     const guardLoading = useInitializedGuard([
         AppState.MNEMONIC,
         AppState.HOSTED,
     ]);
+    const {
+        activeAccountIndex,
+        accountInfos,
+        address: activeAddress,
+        authentication,
+        passphrase,
+    } = useAppSelector(({ account }) => account);
     const signMessageRequestLoading = useAppSelector(
         ({ transactionRequests }) => !transactionRequests.initialized
     );
@@ -37,28 +49,65 @@ export function DappSignMessageApprovalPage() {
     );
     const signMessageRequest = useAppSelector(signMessageRequestSelector);
     const loading = guardLoading || signMessageRequestLoading;
-    const dispatch = useAppDispatch();
+    // const dispatch = useAppDispatch();
 
-    const message = useMemo(() => {
-        if (signMessageRequest?.tx?.type !== 'sign-message') return null;
-        return new TextDecoder().decode(fromB64(signMessageRequest.tx.message));
+    const { message } = useMemo(() => {
+        if (signMessageRequest?.tx?.type !== 'sign-message') return {};
+
+        const messageBytes = fromB64(signMessageRequest.tx.message);
+        let message: string = signMessageRequest.tx.message;
+        let type: 'utf8' | 'base64' = 'base64';
+        try {
+            message = new TextDecoder('utf8', { fatal: true }).decode(
+                messageBytes
+            );
+            type = 'utf8';
+        } catch (e) {
+            // do nothing
+        }
+        return {
+            message,
+            type,
+        };
     }, [signMessageRequest]);
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
+            if (!message) return;
+
             if (signMessageRequest?.tx?.type === 'sign-message') {
-                await dispatch(
-                    respondToTransactionRequest({
-                        txRequestID: signMessageRequest.id,
-                        approved,
-                        addressForTransaction:
-                            signMessageRequest.tx.accountAddress,
-                    })
+                await signMessage(
+                    connectToLedger,
+                    signMessageRequest.tx.message,
+                    signMessageRequest.id,
+                    approved,
+                    passphrase,
+                    authentication,
+                    activeAddress,
+                    accountInfos,
+                    activeAccountIndex
                 );
+                // await dispatch(
+                //     respondToTransactionRequest({
+                //         txRequestID: signMessageRequest.id,
+                //         approved,
+                //         addressForTransaction:
+                //             signMessageRequest.tx.accountAddress,
+                //     })
+                // );
                 window.close();
             }
         },
-        [dispatch, signMessageRequest]
+        [
+            accountInfos,
+            activeAccountIndex,
+            activeAddress,
+            authentication,
+            connectToLedger,
+            message,
+            passphrase,
+            signMessageRequest,
+        ]
     );
 
     const handleImgError = useCallback(() => {
@@ -80,6 +129,27 @@ export function DappSignMessageApprovalPage() {
             window.close();
         }
     }, [loading, signMessageRequest]);
+
+    if (
+        activeAddress &&
+        signMessageRequest?.tx?.type === 'sign-message' &&
+        signMessageRequest?.tx?.accountAddress !== activeAddress
+    ) {
+        return (
+            <SimpleBase
+                approval={signMessageRequest}
+                onComplete={handleOnSubmit}
+            >
+                <div className="py-12">
+                    <IncorrectSigner
+                        txID={signMessageRequest.id}
+                        txRequest={signMessageRequest}
+                        correctAddress={signMessageRequest.tx.accountAddress}
+                    />
+                </div>
+            </SimpleBase>
+        );
+    }
 
     return (
         <Loading loading={loading} big={true} resize={true}>

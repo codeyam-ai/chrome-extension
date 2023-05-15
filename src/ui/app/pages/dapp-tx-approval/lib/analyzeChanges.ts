@@ -11,9 +11,10 @@ import type {
     DryRunTransactionBlockResponse,
 } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 
 export type AnalyzeChangesArgs = {
-    signer: RawSigner | EthosSigner;
+    signer: RawSigner | EthosSigner | LedgerSigner;
     transactionBlock: string | TransactionBlock | Uint8Array;
 };
 
@@ -101,7 +102,7 @@ const coinChanges = (
     const reductions: BalanceReduction[] = reductionChanges
         .map((reduction) => {
             let amount = reduction.amount;
-            if (gasUsed && reduction.coinType === SUI_TYPE_ARG) {
+            if (gasUsed && reduction.coinType.indexOf('::sui::SUI') > -1) {
                 amount = new BigNumber(reduction.amount)
                     .plus(new BigNumber(gasUsed.toString()))
                     .toString();
@@ -150,6 +151,13 @@ const analyzeChanges = async ({
 
         const { effects, balanceChanges, objectChanges } = dryRunResponse;
 
+        if (effects.status.status === 'failure') {
+            return {
+                type: 'Contract Error',
+                message: `${effects.status.error}`,
+            };
+        }
+
         const gas = {
             ...effects.gasUsed,
             total: (getTotalGasUsed(effects) ?? 0).toString(),
@@ -166,7 +174,7 @@ const analyzeChanges = async ({
             .filter(
                 (balanceChange) =>
                     addressOwner(balanceChange.owner) === address &&
-                    balanceChange.coinType === SUI_TYPE_ARG
+                    balanceChange.coinType.indexOf('::sui::SUI') > -1
             )
             .reduce(
                 (total, reduction) =>
@@ -206,6 +214,14 @@ const analyzeChanges = async ({
             totalFee,
         };
     } catch (error: unknown) {
+        if (`${error}`.includes('not_exclusively_listed')) {
+            return {
+                type: 'NFT is locked',
+                message:
+                    'This NFT has been listed in a marketplace and therefore can not be transferred. Please unlist the NFT from the marketplace and try again.',
+            };
+        }
+
         const address = await signer.getAddress();
         const {
             totalBalance,

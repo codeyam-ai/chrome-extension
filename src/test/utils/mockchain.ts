@@ -2,8 +2,7 @@ import { renderTemplate } from './json-templates';
 import { makeCoinObject } from '_src/test/utils/mockchain-templates/coinObject';
 import { makeDryRunTransactionResponse } from '_src/test/utils/mockchain-templates/dryRunTransaction';
 import { suiSystemStateObject } from '_src/test/utils/mockchain-templates/sui-system-state';
-
-import type { CoinBalance } from '@mysten/sui.js';
+import type { CoinBalance, DelegatedStake } from '@mysten/sui.js';
 import type { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 export const mockCommonCalls = (mockJsonRpc: MockJsonRpc) => {
@@ -33,12 +32,14 @@ export const mockSuiObjects = (
     options: {
         suiBalance?: number;
         nftDetails?: { name: string };
+        stakedSui?: { principal: string }[];
         logObjects?: boolean;
     } = {}
 ) => {
     const fullObjects = [];
     const objectInfos = [];
     const coinBalances = [];
+    const stakedSui: DelegatedStake[] = [];
     if (options.suiBalance) {
         const objId = '0xfd9cff9fd6befa0e7d6481d0eeae02056b2ca46e';
         const coinObject = makeCoinObject(options.suiBalance, objId);
@@ -81,6 +82,34 @@ export const mockSuiObjects = (
         objectInfos.push(nftObjectInfo);
         fullObjects.push(renderedNftResult);
     }
+    if (options.stakedSui) {
+        options.stakedSui.forEach((stake, i) => {
+            stakedSui.push({
+                validatorAddress:
+                    '0x0a392298244ca2694098d015b00cf49ae1168118b28d13cb0baafd5884e5559a',
+                stakingPool:
+                    '0x093136a86b72b6aa1c84e84e72a00ca2260246441976f1ce070b136dbfc6b90f',
+                stakes: [
+                    {
+                        stakedSuiId: `0xd32356af50f7aa6f26b89657c798968eaf5db3d43479ae793a01125e746ee9${i}c`,
+                        stakeRequestEpoch: '778',
+                        stakeActiveEpoch: '779',
+                        principal: stake.principal,
+                        status: 'Active',
+                        estimatedReward: '2388556',
+                    },
+                ],
+            });
+        });
+    }
+
+    mockJsonRpc.mockBlockchainCall(
+        {
+            method: 'suix_getStakes',
+        },
+        stakedSui,
+        true
+    );
 
     mockJsonRpc.mockBlockchainCall(
         { method: 'suix_getOwnedObjects' },

@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 
 import type { KeyNameAndValue } from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
@@ -7,6 +9,7 @@ interface StakeSummaryProps {
     stakingAPY?: string;
     rewardsStart?: string;
     gasPrice?: string;
+    commissionRate?: string;
     showRowDividers?: boolean;
 }
 
@@ -15,14 +18,26 @@ const StakeSummary: React.FC<StakeSummaryProps> = ({
     stakingAPY,
     rewardsStart,
     gasPrice,
+    commissionRate,
     showRowDividers,
 }) => {
+    const computedCommissionRate = useMemo(() => {
+        return (Number(commissionRate) / 100).toString();
+    }, [commissionRate]);
+
     const keyValueList: KeyNameAndValue[] = [
         {
             keyName: 'Staking APY',
             value: stakingAPY ? `${stakingAPY}%` : 'N/A',
         },
     ];
+
+    if (commissionRate) {
+        keyValueList.push({
+            keyName: 'Commission',
+            value: `${computedCommissionRate}%`,
+        });
+    }
 
     if (amount) {
         keyValueList.unshift({

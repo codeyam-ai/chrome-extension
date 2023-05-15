@@ -18,21 +18,21 @@ describe('Top Nav Wallet Management', () => {
     test('Switching current wallet', async () => {
         renderApp();
 
-        let currentWallet = await screen.findByTestId('current-wallet');
+        let currentWallet = await screen.findByTestId('current-wallet-link');
         await within(currentWallet).findByText('Wallet 1');
         await userEvent.click(currentWallet);
 
         const wallet2Link = await screen.findByText('Wallet 2');
         await userEvent.click(wallet2Link);
 
-        currentWallet = await screen.findByTestId('current-wallet');
+        currentWallet = await screen.findByTestId('current-wallet-link');
         await within(currentWallet).findByText('Wallet 2');
     });
 
     test('Editing wallet', async () => {
         renderApp();
 
-        let currentWallet = await screen.findByTestId('current-wallet');
+        let currentWallet = await screen.findByTestId('current-wallet-link');
         await within(currentWallet).findByText('Wallet 1');
         await userEvent.click(currentWallet);
 
@@ -58,7 +58,7 @@ describe('Top Nav Wallet Management', () => {
         await screen.findAllByTestId('color-#EB154C');
 
         // check wallet 1 still current wallet (see https://linear.app/ethoswallet/issue/ETHOS-89)
-        currentWallet = await screen.findByTestId('current-wallet');
+        currentWallet = await screen.findByTestId('current-wallet-link');
         await within(currentWallet).findByText('Wal-1');
     });
 });

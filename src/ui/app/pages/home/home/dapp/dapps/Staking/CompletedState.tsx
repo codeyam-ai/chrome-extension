@@ -56,6 +56,7 @@ const CompletedStake: React.FC = () => {
                     <StakeSummary
                         amount={amount || undefined}
                         stakingAPY={validator?.apy?.toString()}
+                        commissionRate={validator?.commissionRate}
                         rewardsStart={'Tomorrow'}
                         gasPrice={mistToSui(+(validator?.gasPrice || '0'), 4)}
                     />

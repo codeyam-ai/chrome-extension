@@ -142,7 +142,11 @@ describe('Creating and sending an NFT', () => {
         const confirmBtn = await screen.findByText('Confirm & Send');
         userEvent.click(confirmBtn);
 
-        await screen.findByText('Transaction submitted.');
+        await screen.findByText(
+            'Submitting transaction...',
+            {},
+            { timeout: 5000 }
+        );
 
         // Account for the delay in displaying the 'transaction successful alert'
         await new Promise((r) => setTimeout(r, 500));

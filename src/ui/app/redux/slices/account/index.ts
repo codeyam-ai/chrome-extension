@@ -27,13 +27,12 @@ import { Coin } from '_redux/slices/sui-objects/Coin';
 import { generateMnemonic } from '_shared/cryptography/mnemonics';
 import Authentication from '_src/background/Authentication';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
+import { CUSTOMIZE_ID } from '_src/data/dappsMap';
 import {
-    ADDRESS_BOOK_ID,
-    CUSTOMIZE_ID,
-    MY_ASSETS_ID,
-    STAKING_ID,
-} from '_src/data/dappsMap';
-import { AccountType, PASSPHRASE_TEST } from '_src/shared/constants';
+    AccountType,
+    MNEMONIC_TEST,
+    PASSPHRASE_TEST,
+} from '_src/shared/constants';
 import {
     deleteEncrypted,
     getEncrypted,
@@ -194,7 +193,8 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 for (let i = 0; i < accountInfos.length; i++) {
                     if (
                         accountInfos[i].importedMnemonicName ||
-                        accountInfos[i].importedPrivateKeyName
+                        accountInfos[i].importedPrivateKeyName ||
+                        accountInfos[i].importedLedgerIndex !== undefined
                     ) {
                         continue;
                     }
@@ -247,6 +247,8 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                             seed: secretKey.toString(),
                         };
                     }
+                } else if (activeAccount?.importedLedgerIndex !== undefined) {
+                    activeSeed = undefined;
                 } else {
                     activeSeed = {
                         address:
@@ -334,6 +336,13 @@ export const createMnemonic = createAsyncThunk(
             account: { passphrase },
         } = getState() as RootState;
 
+        await setEncrypted({
+            key: 'mnemonic-test',
+            value: MNEMONIC_TEST,
+            session: false,
+            strong: false,
+            passphrase: mnemonic,
+        });
         if (passphrase) {
             await setEncrypted({
                 key: `mnemonic`,
@@ -341,6 +350,14 @@ export const createMnemonic = createAsyncThunk(
                 session: false,
                 strong: true,
                 passphrase,
+            });
+
+            await setEncrypted({
+                key: 'passphraseEncryptedWithMnemonic',
+                value: passphrase,
+                strong: false,
+                session: false,
+                passphrase: mnemonic,
             });
         }
 
@@ -866,6 +883,14 @@ export const savePassphrase: AsyncThunk<
                 session: true,
                 strong: false,
             });
+
+            await setEncrypted({
+                key: 'passphraseEncryptedWithMnemonic',
+                value: passphrase,
+                strong: false,
+                session: false,
+                passphrase: mnemonic,
+            });
         }
         return passphrase;
     }
@@ -961,6 +986,28 @@ const isPasswordCorrect = async (password: string) => {
     return true;
 };
 
+const isMnemonicCorrect = async (mnemonic: string) => {
+    const mnemonicTest = await getEncrypted({
+        key: 'mnemonic-test',
+        session: false,
+        passphrase: mnemonic,
+        strong: false,
+    });
+
+    return mnemonicTest === MNEMONIC_TEST;
+};
+
+const getPasswordEncryptedWithMnemonic = async (mnemonic: string) => {
+    const passphrase = await getEncrypted({
+        key: 'passphraseEncryptedWithMnemonic',
+        session: false,
+        strong: false,
+        passphrase: mnemonic,
+    });
+
+    return passphrase;
+};
+
 export const assertPasswordIsCorrect: AsyncThunk<
     boolean,
     string | null,
@@ -994,6 +1041,34 @@ export const unlock: AsyncThunk<string | null, string | null, AppThunkConfig> =
         }
     );
 
+export const unlockWithMnemonic: AsyncThunk<
+    string | null,
+    string,
+    AppThunkConfig
+> = createAsyncThunk<string | null, string, AppThunkConfig>(
+    'account/unlockWithMnemonic',
+    async (mnemonic): Promise<string | null> => {
+        const unlockResult = await isMnemonicCorrect(mnemonic);
+        if (!unlockResult) {
+            return null;
+        }
+        const passphrase = await getPasswordEncryptedWithMnemonic(mnemonic);
+
+        if (passphrase) {
+            await setEncrypted({
+                key: 'passphrase',
+                value: passphrase,
+                strong: false,
+                session: true,
+            });
+
+            setUnlocked(passphrase);
+            return passphrase;
+        }
+        return null;
+    }
+);
+
 export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
     'account/getFavoriteDappsKeys',
     async (): Promise<string[]> => {
@@ -1005,40 +1080,7 @@ export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
-        const excludeDappKeys = JSON.parse(
-            (await getEncrypted({
-                key: 'excludedDappsKeys',
-                session: false,
-                strong: false,
-            })) || '[]'
-        );
-
-        const automaticKeys = [
-            CUSTOMIZE_ID,
-            ADDRESS_BOOK_ID,
-            MY_ASSETS_ID,
-            STAKING_ID,
-        ];
-
-        const allFavoriteDappsKeys = [...favoriteDappsKeys];
-        for (const key of automaticKeys) {
-            if (!favoriteDappsKeys.includes(key)) {
-                allFavoriteDappsKeys.push(key);
-            }
-        }
-
-        for (const key of excludeDappKeys) {
-            const index = allFavoriteDappsKeys.indexOf(key);
-            if (index !== -1) {
-                allFavoriteDappsKeys.splice(index, 1);
-            }
-        }
-
-        if (allFavoriteDappsKeys.length !== favoriteDappsKeys.length) {
-            await saveFavoriteDappsKeys(allFavoriteDappsKeys);
-        }
-
-        return allFavoriteDappsKeys;
+        return favoriteDappsKeys;
     }
 );
 
@@ -1089,7 +1131,7 @@ export const saveExcludedDappsKeys = createAsyncThunk(
     }
 );
 
-type AccountState = {
+export type AccountState = {
     loading: boolean;
     authentication: string | null;
     email: string | null;
@@ -1105,6 +1147,7 @@ type AccountState = {
     favoriteDappsKeys: string[];
     excludedDappsKeys: string[];
     importNames: { mnemonics: string[]; privateKeys: string[] };
+    ledgerConnected: boolean;
 };
 
 const initialState: AccountState = {
@@ -1126,6 +1169,7 @@ const initialState: AccountState = {
         mnemonics: [],
         privateKeys: [],
     },
+    ledgerConnected: false,
 };
 
 const accountSlice = createSlice({
@@ -1231,6 +1275,12 @@ const accountSlice = createSlice({
                 loadFavoriteDappsKeysFromStorage.fulfilled,
                 (state, action) => {
                     state.favoriteDappsKeys = action.payload;
+                }
+            )
+            .addCase(
+                loadExcludedDappsKeysFromStorage.fulfilled,
+                (state, action) => {
+                    state.excludedDappsKeys = action.payload;
                 }
             )
             .addCase(saveFavoriteDappsKeys.fulfilled, (state, action) => {

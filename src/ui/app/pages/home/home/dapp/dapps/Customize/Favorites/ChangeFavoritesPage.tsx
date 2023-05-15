@@ -29,9 +29,15 @@ const ChangeFavoritesPage: React.FC = () => {
         if (tempRemovedNftKeys.includes(CUSTOMIZE_ID)) {
             const tempRemovedNftKeysWithoutCustomize =
                 tempRemovedNftKeys.filter((key) => key !== CUSTOMIZE_ID);
-            await setExcludedDappsKeys(tempRemovedNftKeysWithoutCustomize);
+            await setExcludedDappsKeys(
+                tempRemovedNftKeysWithoutCustomize,
+                tempFavoriteDappsKeys
+            );
         } else {
-            await setExcludedDappsKeys(tempRemovedNftKeys);
+            await setExcludedDappsKeys(
+                tempRemovedNftKeys,
+                tempFavoriteDappsKeys
+            );
         }
 
         navigate('/home/customize/completed');
@@ -47,7 +53,7 @@ const ChangeFavoritesPage: React.FC = () => {
         <div className="relative flex flex-col items-center pt-6">
             <Title>Choose your favorite apps</Title>
             <Button onClick={handleOnContinue} wrapperClassName="w-full mt-6">
-                Next
+                Save
             </Button>
 
             <FavoritesSortableList onFavoritesChosen={onFavoritesChosen} />

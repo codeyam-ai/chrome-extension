@@ -64,6 +64,13 @@ export const CUSTOMIZE_ID = '5bbe5c3d-88a2-4537-92a5-20b6021e2ea3';
 export const STAKING_ID = 'c97b5592-ae1f-4dd4-a903-050a97c4d84a';
 export const DISPLAY_ID = '8154ebc4-035c-4133-ba09-e6b07b7c2040';
 
+export const DEFAULT_DAPP_KEYS = [
+    CUSTOMIZE_ID,
+    ADDRESS_BOOK_ID,
+    MY_ASSETS_ID,
+    STAKING_ID,
+];
+
 const dappsMap: Map<string, DappData> = new Map([
     [
         CUSTOMIZE_ID,
@@ -361,7 +368,7 @@ const dappsMap: Map<string, DappData> = new Map([
             title: 'Turbos',
             description: 'Perpetuals Exchange',
             urls: {
-                // [NetworkName.DEVNET]: 'https://turbos.finance/',
+                [NetworkName.MAINNET]: 'https://turbos.finance/',
             },
             tags: [TagName.FINANCE],
         } as DappData,
@@ -421,7 +428,7 @@ const dappsMap: Map<string, DappData> = new Map([
                 'Cetus is a pioneer DEX and concentrated liquidity protocol focusing on Move-based ecosystems like Aptos and Sui.',
             urls: {
                 [NetworkName.TESTNET]: 'https://app.cetus.zone',
-                // [NetworkName.MAINNET]: 'https://app.cetus.zone',
+                [NetworkName.MAINNET]: 'https://app.cetus.zone',
             },
             tags: [TagName.FINANCE],
         } as DappData,
@@ -452,6 +459,8 @@ const dappsMap: Map<string, DappData> = new Map([
             urls: {
                 [NetworkName.TESTNET]:
                     'https://testnet.typus.finance/vault/coveredcall/',
+                [NetworkName.MAINNET]:
+                    'https://typus.finance/vault/coveredcall/',
             },
             tags: [TagName.FINANCE],
         } as DappData,
@@ -483,6 +492,8 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.DEVNET]:
                     'https://sui.interestprotocol.com/en-US/dapp/dex',
                 [NetworkName.TESTNET]:
+                    'https://sui.interestprotocol.com/en-US/dapp/dex',
+                [NetworkName.MAINNET]:
                     'https://sui.interestprotocol.com/en-US/dapp/dex',
             },
             tags: [TagName.FINANCE],

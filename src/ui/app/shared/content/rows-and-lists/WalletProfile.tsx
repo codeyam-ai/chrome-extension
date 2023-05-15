@@ -37,7 +37,6 @@ const WalletProfile = ({ onClick, inlineWalletPicker }: WalletProfileProps) => {
 
     const CurrentWallet = () => (
         <div
-            data-testid="current-wallet"
             className="flex flex-row gap-2 items-center cursor-pointer"
         >
             <WalletColorAndEmojiCircle
@@ -60,13 +59,12 @@ const WalletProfile = ({ onClick, inlineWalletPicker }: WalletProfileProps) => {
                         <CurrentWallet />
                     </div>
                 ) : (
-                    <Link
+                    <Link data-testid="current-wallet-link"
                         to={
                             isWalletPickerOpen
                                 ? closeWalletPickerUrl
                                 : walletPickerUrl
                         }
-                        onClick={onClick}
                     >
                         <CurrentWallet />
                     </Link>

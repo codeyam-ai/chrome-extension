@@ -7,6 +7,7 @@ import MintTransactionCard from './MintTransactionCard';
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 import type { RawSigner, SuiObjectChange } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 
 export type StepInformation = {
     id: string;
@@ -25,7 +26,7 @@ const SimpleAssetMint = ({
     analysis: AnalyzeChangesResult;
     onApprove: () => void;
     onCancel: () => void;
-    signer: EthosSigner | RawSigner;
+    signer: EthosSigner | LedgerSigner | RawSigner;
 }) => {
     const stepInformation = useMemo(
         () => ({

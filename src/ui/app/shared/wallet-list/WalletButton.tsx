@@ -18,6 +18,8 @@ interface WalletButtonProps {
     isActive: boolean;
     isWalletEditing: boolean;
     destination?: string;
+    onClick?: () => void;
+    disabled?: boolean;
 }
 
 const WalletButton = ({
@@ -25,6 +27,8 @@ const WalletButton = ({
     isActive,
     isWalletEditing,
     destination,
+    onClick,
+    disabled,
 }: WalletButtonProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
@@ -32,7 +36,14 @@ const WalletButton = ({
     const shortenedAddress = useMiddleEllipsis(wallet.address, 24, 12);
     const editWalletUrl = useEditWalletUrl(wallet.index);
 
-    const switchToThisWallet = useCallback(async () => {
+    const handleClick = useCallback(async () => {
+        if (disabled) return;
+
+        if (onClick) {
+            onClick();
+            return;
+        }
+
         if (isActive) {
             if (destination) {
                 navigate(destination);
@@ -51,6 +62,8 @@ const WalletButton = ({
             navigate(-1);
         }
     }, [
+        disabled,
+        onClick,
         isActive,
         isWalletEditing,
         dispatch,
@@ -75,8 +88,10 @@ const WalletButton = ({
         <div
             ref={ref}
             data-testid={`wallet${wallet.index + 1}`}
-            className="py-[10px] px-3 flex justify-between items-center cursor-pointer"
-            onClick={isWalletEditing ? editThisWallet : switchToThisWallet}
+            className={`py-[10px] px-3 flex justify-between items-center ${
+                disabled ? 'opacity-50' : 'cursor-pointer'
+            }`}
+            onClick={isWalletEditing ? editThisWallet : handleClick}
         >
             <div className="flex gap-3">
                 <WalletColorAndEmojiCircle

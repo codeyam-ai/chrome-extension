@@ -2,7 +2,6 @@ import {
     type SuiAddress,
     type SuiTransactionBlockResponse,
     getTotalGasUsed,
-    SUI_TYPE_ARG,
 } from '@mysten/sui.js';
 
 import basicTransactionAnalysis, {
@@ -99,7 +98,11 @@ const analyzeTransactions = (
         }).reduce((acc, { coinType, amount }) => {
             acc[coinType] = BigInt(amount);
 
-            if (isSender && coinType === SUI_TYPE_ARG && totalGasUsed) {
+            if (
+                isSender &&
+                coinType.indexOf('::sui::SUI') > -1 &&
+                totalGasUsed
+            ) {
                 acc[coinType] += totalGasUsed;
             }
 

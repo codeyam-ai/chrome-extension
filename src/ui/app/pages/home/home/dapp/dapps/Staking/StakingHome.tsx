@@ -3,25 +3,20 @@ import { useMemo } from 'react';
 import ExistingStake from './ExistingStake';
 import StakingIntro from './StakingIntro';
 import Loading from '_src/ui/app/components/loading';
-import { useAppSelector } from '_src/ui/app/hooks';
-import useGetDelegatedStakes from '_src/ui/app/hooks/staking/useGetDelegatedStakes';
+import { useTotalStakedSUI } from '_src/ui/app/hooks/staking/useTotalStakedSUI';
 
 const StakingHome: React.FC = () => {
-    const { address } = useAppSelector(({ account }) => account);
-    const { data: delegatedStakes, isLoading } = useGetDelegatedStakes(
-        address || ''
-    );
+    const { delegatedStakes, totalActivePendingStakedSUI, isLoading } =
+        useTotalStakedSUI();
 
-    // Total active stake for all delegations
-    const totalActivePendingStake = useMemo(() => {
+    const totalStakeEarnedRewards = useMemo(() => {
         if (!delegatedStakes) return BigInt(0);
 
         return delegatedStakes.reduce(
             (acc, curr) =>
-                curr.stakes.reduce(
-                    (total, { principal }) => total + BigInt(principal),
-                    acc
-                ),
+                curr.stakes.reduce((total, { estimatedReward }) => {
+                    return total + BigInt(estimatedReward ?? 0);
+                }, acc),
 
             BigInt(0)
         );
@@ -30,10 +25,11 @@ const StakingHome: React.FC = () => {
     return (
         <div className="flex w-full h-full items-center place-content-center">
             <Loading loading={isLoading} big={true}>
-                {delegatedStakes && !!totalActivePendingStake ? (
+                {delegatedStakes && !!totalActivePendingStakedSUI ? (
                     <ExistingStake
                         delegatedStakes={delegatedStakes}
-                        amountStaked={totalActivePendingStake}
+                        amountStaked={totalActivePendingStakedSUI}
+                        totalStakeEarnedRewards={totalStakeEarnedRewards}
                     />
                 ) : (
                     <StakingIntro />

@@ -2,7 +2,6 @@ import {
     type SuiAddress,
     type SuiTransactionBlockResponse,
     getTotalGasUsed,
-    SUI_TYPE_ARG,
 } from '@mysten/sui.js';
 
 import addressOwner from './addressOwner';
@@ -40,7 +39,7 @@ const sendTransactionAnalysis = (
     });
 
     for (const balanceChange of ownerBalanceChanges) {
-        if (balanceChange.coinType === SUI_TYPE_ARG) {
+        if (balanceChange.coinType.indexOf('::sui::SUI') > -1) {
             const recipientBalanceChange = findBalanceChanges({
                 balanceChanges,
                 value: (BigInt(balanceChange.amount) + gasUsed) * BigInt(-1),

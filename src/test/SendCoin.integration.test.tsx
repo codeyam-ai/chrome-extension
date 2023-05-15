@@ -83,7 +83,7 @@ describe('send coin flow', () => {
         });
         await userEvent.click(button);
         await screen.findByText(
-            'Transaction submitted.',
+            'Transaction submitted...',
             {},
             { timeout: 5000 }
         );

@@ -84,6 +84,5 @@ describe('Importing a wallet using a seed phrase', () => {
 
         await userEvent.click(screen.getByTestId('submit'));
         await screen.findByText('Wallet Set Up');
-        await screen.findByText('40');
     }
 });

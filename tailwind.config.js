@@ -88,6 +88,8 @@ module.exports = {
                 'ethos-pale-purple': '#F8F5FF',
                 'ethos-super-light-purple': '#FBFAFF',
                 'ethos-light-gray': '#F9F9FB',
+                'ethos-success-green': '#238044',
+                'ethos-failure-red': '#CE3838',
 
                 // ==========
                 // Light mode
@@ -121,6 +123,9 @@ module.exports = {
                 'ethos-dark-background-secondary': '#1A1C26',
                 'ethos-dark-background-light-grey': '#1A1C26',
                 'ethos-dark-fullscreen-backdrop': '#000',
+
+                'ethos-light-background-green': 'rgba(56, 206, 110, 0.08)',
+                'ethos-light-background-purple': 'rgba(144, 64, 245, 0.1)',
 
                 // Text and stroke
                 'ethos-dark-text-default': '#FFFFFF',

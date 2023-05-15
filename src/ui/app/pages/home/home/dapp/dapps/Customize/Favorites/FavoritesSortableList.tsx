@@ -1,11 +1,10 @@
 import { MinusCircleIcon } from '@heroicons/react/24/outline';
-import { StarIcon } from '@heroicons/react/24/solid';
-import _ from 'lodash';
+import { NoSymbolIcon, StarIcon } from '@heroicons/react/24/solid';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { ReactSortable, type SortableEvent } from 'react-sortablejs';
 
 import DappListItem from '../../../DappListItem';
-import dappsMap from '_src/data/dappsMap';
+import dappsMap, { CUSTOMIZE_ID } from '_src/data/dappsMap';
 import { EXPLORER_ONLY_KEYS } from '_src/data/explorerOnlyDapps';
 import { useAppSelector } from '_src/ui/app/hooks';
 import useConvertVerticalScrollToHorizontal from '_src/ui/app/hooks/useConvertVerticalScrollToHorizontal';
@@ -36,18 +35,14 @@ interface FavoritesSortableListProps {
 export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
     onFavoritesChosen,
 }) => {
-    const { favoriteDapps, favoriteNfts, excludedDappsKeys } =
-        useFavoriteDapps();
+    const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
+    const { allFavorites, excludedDappsKeys } = useFavoriteDapps();
 
     const nfts = useAppSelector(accountNftsSelector);
     const projectNfts = useMemo(() => {
         const projectNftsRecord = getProjectNftsFromAllNfts(nfts);
         return Object.values(projectNftsRecord);
     }, [nfts]);
-    const [selectedApiEnv] = useAppSelector(({ app }) => [
-        app.apiEnv,
-        app.customRPC,
-    ]);
 
     const favoriteScrollContainerRef = useRef<HTMLDivElement>(null);
     useConvertVerticalScrollToHorizontal(favoriteScrollContainerRef);
@@ -55,13 +50,9 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
     const allDappsContainerRef = useRef<HTMLDivElement>(null);
 
     // Each item needs a number ID to work with react-sortablejs
-    const dappsWithSortIds: SortableItem[] = useMemo(() => {
+    const allDappsAndNftsWithSortIds: SortableItem[] = useMemo(() => {
         const sortableDapps = Array.from(dappsMap.values())
-            .filter(
-                (dapp) =>
-                    !EXPLORER_ONLY_KEYS.includes(dapp.id) &&
-                    dapp.urls[selectedApiEnv]
-            )
+            .filter((dapp) => !EXPLORER_ONLY_KEYS.includes(dapp.id))
             .map(
                 (item) =>
                     ({
@@ -85,25 +76,16 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
             );
 
         return [...sortableDapps, ...sortableNfts];
-    }, [projectNfts, selectedApiEnv]);
+    }, [projectNfts]);
 
     const [favoritesState, setFavoritesState] = useState<SortableItem[]>([
-        ...favoriteNfts.map(
+        ...(allFavorites ?? []).map(
             (item) =>
                 ({
                     ...item,
                     sortId: uuidToNumber(item.id),
                     key: item.id,
                     type: 'nft',
-                } as SortableItem)
-        ),
-        ...favoriteDapps.map(
-            (item) =>
-                ({
-                    ...item,
-                    sortId: uuidToNumber(item.id),
-                    key: item.id,
-                    type: 'dapp',
                 } as SortableItem)
         ),
     ]);
@@ -130,7 +112,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
 
     const allDappsItems = useMemo(
         () =>
-            dappsWithSortIds.map((item) => {
+            allDappsAndNftsWithSortIds.map((item) => {
                 const isFavorite = favoritesState.some(
                     (fav) => fav.id === item.id
                 );
@@ -154,7 +136,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                     </div>
                 );
             }),
-        [dappsWithSortIds, favoritesState]
+        [allDappsAndNftsWithSortIds, favoritesState]
     );
 
     const handleDragStart = useCallback((evt: SortableEvent) => {
@@ -162,11 +144,13 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
         setDraggedFromFavorites(
             evt.from.className.includes('FavoriteListIndicator')
         );
+        setDraggedItemId(evt.item.dataset.id ?? null);
     }, []);
 
     const handleDragEnd = useCallback(() => {
         setIsDragging(false);
         setDraggedFromFavorites(false);
+        setDraggedItemId(null);
     }, []);
 
     const handleClone = useCallback((evt: SortableEvent) => {
@@ -179,17 +163,21 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
 
     const onSetFavoritesList = useCallback(
         (newListState: SortableItem[]) => {
-            const existingRemovedNfts = excludedDappsKeys.filter(
-                (key) => !newListState.some((item) => item.key === key)
+            if (!allFavorites) return;
+
+            const removedNfts = excludedDappsKeys.filter(
+                (id) => !newListState.some((item) => item.id === id)
             );
-            const removedNfts = [
-                ...existingRemovedNfts,
-                ..._.differenceWith(
-                    favoritesState,
-                    newListState,
-                    _.isEqual
-                ).map((nft) => nft.key),
-            ].filter((item, index, self) => self.indexOf(item) === index);
+
+            for (const previousFavorite of allFavorites) {
+                if (
+                    !newListState.some(
+                        (item) => item.id === previousFavorite.id
+                    )
+                ) {
+                    removedNfts.push(previousFavorite.id);
+                }
+            }
 
             setFavoritesState(newListState);
             onFavoritesChosen(
@@ -197,7 +185,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                 removedNfts
             );
         },
-        [excludedDappsKeys, favoritesState, onFavoritesChosen]
+        [allFavorites, excludedDappsKeys, onFavoritesChosen]
     );
 
     return (
@@ -239,6 +227,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                     ghostClass="hidden"
                     onEnd={handleDragEnd}
                     className="RemoveFromFavoritesIndicator"
+                    disabled={draggedItemId === CUSTOMIZE_ID}
                 >
                     <div
                         className="flex w-full"
@@ -248,9 +237,16 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                         }}
                     >
                         <div className="flex flex-col items-center justify-center gap-2 w-full h-28 m-4 rounded-lg border-2 border-dashed border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
-                            <MinusCircleIcon className="w-5 h-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                            {draggedItemId === CUSTOMIZE_ID ? (
+                                <NoSymbolIcon className="w-5 h-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                            ) : (
+                                <MinusCircleIcon className="w-5 h-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+                            )}
+
                             <Body isTextColorMedium>
-                                Drag here to remove from favorites
+                                {draggedItemId === CUSTOMIZE_ID
+                                    ? "This app can't be unfavorited"
+                                    : 'Drag here to remove from favorites'}
                             </Body>
                         </div>
                     </div>
@@ -271,7 +267,7 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                             sort={false}
                             bubbleScroll
                             group="shared"
-                            list={dappsWithSortIds}
+                            list={allDappsAndNftsWithSortIds}
                             // eslint-disable-next-line react/jsx-no-bind, @typescript-eslint/no-empty-function
                             setList={() => {}}
                             animation={200}

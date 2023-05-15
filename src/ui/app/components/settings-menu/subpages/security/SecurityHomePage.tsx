@@ -3,10 +3,6 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import Header from '_src/ui/app/shared/typography/Header';
 
-interface SecurityHomePageProps {
-    isHostedWallet: boolean;
-}
-
 interface SecurityItem {
     title: string;
     description: string;
@@ -29,7 +25,7 @@ const SecurityItemDisplay = ({ item }: { item: SecurityItem }) => {
     );
 };
 
-const SecurityHomePage = ({ isHostedWallet }: SecurityHomePageProps) => {
+const SecurityHomePage = () => {
     const securityItems: SecurityItem[] = [
         {
             title: 'Password',

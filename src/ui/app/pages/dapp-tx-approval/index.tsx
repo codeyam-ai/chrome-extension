@@ -1,9 +1,15 @@
 import { TransactionBlock } from '@mysten/sui.js';
+import {
+    SUI_DEVNET_CHAIN,
+    SUI_MAINNET_CHAIN,
+    SUI_TESTNET_CHAIN,
+} from '@mysten/wallet-standard';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import IncorrectChain from './errors/IncorrectChain';
 import IncorrectSigner from './errors/IncorrectSigner';
+import LockedNFT from './errors/LockedNFT';
 import NotEnoughGas from './errors/NotEnoughGas';
 import UnknownError from './errors/UnknownError';
 import analyzeChanges from './lib/analyzeChanges';
@@ -12,9 +18,11 @@ import resizeWindow from './lib/resizeWindow';
 import Base from './types/Base';
 import ComplexMoveCall from './types/ComplexMoveCall';
 import SimpleAssetMint from './types/SimpleAssetMint';
+import SimpleAssetSwap from './types/SimpleAssetSwap';
 import SimpleAssetTransfer from './types/SimpleAssetTransfer';
 import SimpleBase from './types/SimpleBase';
 import SimpleCoinTransfer from './types/SimpleCoinTransfer';
+import { useSuiLedgerClient } from '../../components/ledger/SuiLedgerClientProvider';
 import { getSigner } from '../../helpers/getSigner';
 import { AppState } from '../../hooks/useInitializedGuard';
 import Loading from '_components/loading';
@@ -26,6 +34,7 @@ import type { AnalyzeChangesResult } from './lib/analyzeChanges';
 import type { RawSigner, SuiMoveNormalizedType } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 import type { ReactNode } from 'react';
 
 export type Permission = {
@@ -41,6 +50,7 @@ export type DistilledEffect = {
 };
 
 export function DappTxApprovalPage() {
+    const { connectToLedger } = useSuiLedgerClient();
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
 
     const activeChain = useMemo(() => {
@@ -50,15 +60,17 @@ export function DappTxApprovalPage() {
             case 'local':
                 return 'sui:local';
             case 'testNet':
-                return 'sui:testnet';
-            // case 'mainNet':
-            //     return 'sui:mainnet';
+                return SUI_TESTNET_CHAIN;
+            case 'devNet':
+                return SUI_DEVNET_CHAIN;
             default:
-                return 'sui:devnet';
+                return SUI_MAINNET_CHAIN;
         }
     }, [selectedApiEnv]);
 
-    const [signer, setSigner] = useState<RawSigner | EthosSigner | undefined>();
+    const [signer, setSigner] = useState<
+        RawSigner | EthosSigner | LedgerSigner | undefined
+    >();
     const {
         activeAccountIndex,
         address,
@@ -66,6 +78,14 @@ export function DappTxApprovalPage() {
         accountInfos,
         passphrase,
     } = useAppSelector(({ account }) => account);
+
+    const activeAccount = useMemo(
+        () =>
+            accountInfos.find(
+                (accountInfo) => accountInfo.index === activeAccountIndex
+            ),
+        [accountInfos, activeAccountIndex]
+    );
 
     const { txID } = useParams();
     const guardLoading = useInitializedGuard([
@@ -126,6 +146,8 @@ export function DappTxApprovalPage() {
     }, [selectedApiEnv]);
 
     useEffect(() => {
+        if (signer) return;
+
         if (!accountInfos || accountInfos.length === 0) return;
 
         const retrieveSigner = async () => {
@@ -134,7 +156,8 @@ export function DappTxApprovalPage() {
                 accountInfos,
                 address,
                 authentication,
-                activeAccountIndex
+                activeAccountIndex,
+                connectToLedger
             );
 
             if (signer) {
@@ -145,14 +168,19 @@ export function DappTxApprovalPage() {
         retrieveSigner();
     }, [
         accountInfos,
+        activeAccount,
         activeAccountIndex,
         address,
         authentication,
+        connectToLedger,
         passphrase,
         selectedApiEnv,
+        signer,
     ]);
 
-    useEffect(() => {
+    const getTransactionInfo = useCallback(async () => {
+        if (!accountInfos || accountInfos.length === 0) return;
+
         if (
             (txRequest &&
                 'account' in txRequest.tx &&
@@ -162,71 +190,71 @@ export function DappTxApprovalPage() {
             (txRequest &&
                 'chain' in txRequest.tx &&
                 txRequest.tx.chain &&
-                ['sui:devnet', 'sui:testnet'].includes(txRequest.tx.chain) &&
-                ['sui:devnet', 'sui:testnet'].includes(activeChain) &&
+                [
+                    SUI_DEVNET_CHAIN,
+                    SUI_TESTNET_CHAIN,
+                    SUI_MAINNET_CHAIN,
+                ].includes(txRequest.tx.chain) &&
+                [
+                    SUI_DEVNET_CHAIN,
+                    SUI_TESTNET_CHAIN,
+                    SUI_MAINNET_CHAIN,
+                ].includes(activeChain) &&
                 txRequest.tx.chain !== activeChain)
         ) {
             setAnalysis(null);
             return;
         }
 
-        if (
-            !signer ||
-            !transactionBlock ||
-            !accountInfos ||
-            accountInfos.length === 0
-        )
-            return;
+        if (!signer || !transactionBlock || !activeAccount) return;
 
-        const getTransactionInfo = async () => {
-            if (!accountInfos || accountInfos.length === 0) return;
+        // console.log('SERIALIZED', transactionBlock.serialize());
 
-            // console.log('SERIALIZED', transactionBlock.serialize());
+        try {
+            const analysis = await analyzeChanges({
+                signer,
+                transactionBlock,
+            });
 
-            try {
-                const analysis = await analyzeChanges({
-                    signer,
-                    transactionBlock,
-                });
-
-                if ('type' in analysis) {
-                    if (
-                        analysis.type === 'Insufficient Gas' &&
-                        analysis.errorInfo &&
-                        analysis.errorInfo.gasRequired &&
-                        analysis.errorInfo.gasAvailable
-                    ) {
-                        setExplicitError(
-                            <NotEnoughGas
-                                gasAvailable={analysis.errorInfo.gasAvailable}
-                                gasRequired={analysis.errorInfo.gasRequired}
-                            />
-                        );
-                    } else {
-                        setDryRunError(analysis.message);
-                    }
-                    setAnalysis(null);
+            if ('type' in analysis) {
+                if (
+                    analysis.type === 'Insufficient Gas' &&
+                    analysis.errorInfo &&
+                    analysis.errorInfo.gasRequired &&
+                    analysis.errorInfo.gasAvailable
+                ) {
+                    setExplicitError(
+                        <NotEnoughGas
+                            gasAvailable={analysis.errorInfo.gasAvailable}
+                            gasRequired={analysis.errorInfo.gasRequired}
+                        />
+                    );
+                } else if (analysis.type === 'NFT is locked') {
+                    setExplicitError(<LockedNFT />);
                 } else {
-                    setAnalysis(analysis);
+                    setDryRunError(analysis.message);
                 }
-            } catch (e: unknown) {
-                setDryRunError(`${e}`);
                 setAnalysis(null);
+            } else {
+                setAnalysis(analysis);
             }
-        };
-
-        getTransactionInfo();
+        } catch (e: unknown) {
+            setDryRunError(`${e}`);
+            setAnalysis(null);
+        }
     }, [
         accountInfos,
-        activeAccountIndex,
+        activeAccount,
+        activeChain,
         address,
-        authentication,
         signer,
         transactionBlock,
-        selectedApiEnv,
         txRequest,
-        activeChain,
     ]);
+
+    useEffect(() => {
+        getTransactionInfo();
+    }, [getTransactionInfo]);
 
     const closeWindow = useDependencies().closeWindow;
 
@@ -238,6 +266,8 @@ export function DappTxApprovalPage() {
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
+            if (!signer) return;
+
             const justSign =
                 txRequest?.tx && 'justSign' in txRequest.tx
                     ? txRequest.tx.justSign
@@ -251,30 +281,17 @@ export function DappTxApprovalPage() {
                     ? txRequest.tx.requestType
                     : undefined;
             await finishTransaction(
+                signer,
                 transactionBlock ?? null,
                 txID,
                 approved,
-                passphrase,
-                authentication ?? null,
-                address,
-                accountInfos,
-                activeAccountIndex,
                 justSign,
                 options,
                 requestType
             );
             setDone(true);
         },
-        [
-            txRequest,
-            transactionBlock,
-            txID,
-            passphrase,
-            authentication,
-            address,
-            accountInfos,
-            activeAccountIndex,
-        ]
+        [txRequest, signer, transactionBlock, txID]
     );
 
     const onApprove = useCallback(() => {
@@ -309,8 +326,12 @@ export function DappTxApprovalPage() {
             txRequest &&
             'chain' in txRequest.tx &&
             txRequest.tx.chain &&
-            ['sui:devnet', 'sui:testnet'].includes(txRequest.tx.chain) &&
-            ['sui:devnet', 'sui:testnet'].includes(activeChain) &&
+            [SUI_DEVNET_CHAIN, SUI_TESTNET_CHAIN, SUI_MAINNET_CHAIN].includes(
+                txRequest.tx.chain
+            ) &&
+            [SUI_DEVNET_CHAIN, SUI_TESTNET_CHAIN, SUI_MAINNET_CHAIN].includes(
+                activeChain
+            ) &&
             txRequest.tx.chain !== activeChain
         ) {
             return (
@@ -345,6 +366,24 @@ export function DappTxApprovalPage() {
 
         try {
             if (
+                analysis.moveCalls.length === 1 &&
+                analysis.balanceAdditions.length === 1 &&
+                analysis.balanceReductions.length === 1 &&
+                analysis.assetTransfers.length === 0
+            ) {
+                return (
+                    <SimpleBase approval={txRequest} onComplete={onComplete}>
+                        <SimpleAssetSwap
+                            signer={signer}
+                            addition={analysis.balanceAdditions[0]}
+                            reduction={analysis.balanceReductions[0]}
+                            analysis={analysis}
+                            onCancel={onComplete}
+                            onApprove={onApprove}
+                        />
+                    </SimpleBase>
+                );
+            } else if (
                 analysis.moveCalls.length === 1 &&
                 analysis.assetMints.length === 1 &&
                 analysis.assetTransfers.length === 0
@@ -413,36 +452,29 @@ export function DappTxApprovalPage() {
 
         return (
             <Base
+                signer={signer}
                 txID={txID}
                 address={address}
                 txRequest={txRequest}
                 objectChanges={analysis?.dryRunResponse?.objectChanges}
                 effects={analysis?.dryRunResponse?.effects}
-                authentication={authentication ?? null}
-                passphrase={passphrase}
-                activeAccountIndex={activeAccountIndex}
-                accountInfos={accountInfos}
                 transactionBlock={transactionBlock}
                 setDone={setDone}
             />
         );
     }, [
-        txRequest,
-        address,
         activeChain,
-        signer,
+        address,
         analysis,
-        txID,
-        authentication,
-        passphrase,
-        activeAccountIndex,
-        accountInfos,
-        transactionBlock,
-        onComplete,
-        explicitError,
-        selectedApiEnv,
         dryRunError,
+        explicitError,
         onApprove,
+        onComplete,
+        selectedApiEnv,
+        signer,
+        transactionBlock,
+        txID,
+        txRequest,
     ]);
 
     return (

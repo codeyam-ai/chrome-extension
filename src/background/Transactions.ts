@@ -422,10 +422,14 @@ class Transactions {
     public async getTransactionRequests(): Promise<
         Record<string, ApprovalRequest>
     > {
-        return (await Browser.storage.local.get({ [TX_STORE_KEY]: {} }))[
-            TX_STORE_KEY
-        ];
+        const resultsString = await getEncrypted({
+            key: TX_STORE_KEY,
+            session: false,
+            strong: false,
+        });
+        return JSON.parse(resultsString || '{}');
     }
+
     public async getPreapprovalRequests(): Promise<
         Record<string, PreapprovalRequest>
     > {
@@ -496,7 +500,14 @@ class Transactions {
     private async saveTransactionRequests(
         txRequests: Record<string, ApprovalRequest>
     ) {
-        await Browser.storage.local.set({ [TX_STORE_KEY]: txRequests });
+        await setEncrypted({
+            key: TX_STORE_KEY,
+            value: JSON.stringify(txRequests),
+            strong: false,
+            session: false,
+        });
+
+        Browser.storage.local.remove(TX_STORE_KEY);
     }
 
     private async savePreapprovalRequests(
@@ -516,7 +527,7 @@ class Transactions {
         await this.saveTransactionRequests(txs);
     }
 
-    private async removeTransactionRequest(txID: string) {
+    public async removeTransactionRequest(txID: string) {
         const txs = await this.getTransactionRequests();
         delete txs[txID];
         await this.saveTransactionRequests(txs);
@@ -577,7 +588,7 @@ class Transactions {
                             txRequest.txResult = txResult;
                             txRequest.txResultError = txResultError;
                             txRequest.txSigned = txSigned;
-                            await this.storeTransactionRequest(txRequest);
+                            await this.removeTransactionRequest(txRequest.id);
                             return txRequest;
                         }
                     }
