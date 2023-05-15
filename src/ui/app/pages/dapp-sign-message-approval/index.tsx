@@ -18,6 +18,7 @@ import { useAppSelector, useInitializedGuard } from '_hooks';
 import { signMessageRequestsSelectors } from '_redux/slices/sign-message-requests';
 
 import type { RootState } from '_redux/RootReducer';
+import { useDependencies } from '_src/shared/utils/dependenciesContext';
 
 export function DappSignMessageApprovalPage() {
     const { connectToLedger } = useSuiLedgerClient();
@@ -50,6 +51,8 @@ export function DappSignMessageApprovalPage() {
     const signMessageRequest = useAppSelector(signMessageRequestSelector);
     const loading = guardLoading || signMessageRequestLoading;
     // const dispatch = useAppDispatch();
+
+    const { closeWindow } = useDependencies();
 
     const { message } = useMemo(() => {
         if (signMessageRequest?.tx?.type !== 'sign-message') return {};
@@ -95,7 +98,7 @@ export function DappSignMessageApprovalPage() {
                 //             signMessageRequest.tx.accountAddress,
                 //     })
                 // );
-                window.close();
+                closeWindow();
             }
         },
         [
@@ -126,7 +129,7 @@ export function DappSignMessageApprovalPage() {
             (!signMessageRequest ||
                 (signMessageRequest && signMessageRequest.approved !== null))
         ) {
-            window.close();
+            closeWindow();
         }
     }, [loading, signMessageRequest]);
 
