@@ -15,13 +15,8 @@ const balancesAdapter = createEntityAdapter<CoinBalance>({
     sortComparer: (a, b) => a.coinType.localeCompare(b.coinType),
 });
 
-const REMOVE_LIST: string[] = [
-    '0x5a9020b8cba51a1acbe16bee819d18d167ba29aa874116bf82d2ed79899edc7e',
-    '0x22c3383e567e9de5d55280200f04dab6f3e7729d05e02c8e58f671a3ccd1901b',
-];
-
 export const fetchAllBalances = createAsyncThunk<
-    CoinBalance[] | null,
+    { validBalances: CoinBalance[] | null; invalidTokens: string[] | null },
     void,
     AppThunkConfig
 >('balances/fetch-all', async (_, { getState, extra: { api } }) => {
@@ -36,25 +31,42 @@ export const fetchAllBalances = createAsyncThunk<
     } = state;
 
     if (!address) {
-        return null;
+        return { validBalances: null, invalidTokens: null };
+    }
+
+    let invalidTokens: string[] | null = state.balances.invalidTokens ?? null;
+    try {
+        const invalidTokensResponse = await fetch(
+            'https://raw.githubusercontent.com/EthosWallet/valid_packages/main/public/invalid_tokens.json'
+        );
+        invalidTokens = await invalidTokensResponse.json();
+    } catch (e) {
+        // Do nothing
     }
 
     const allBalances = await api.instance.fullNode.getAllBalances({
-        owner: address,
+        owner: '0xe678f12e02fd2a68dffb331120c2147891d4f13b50616119ca253dac13933779',
     });
 
-    return allBalances;
+    const validBalances = allBalances.filter(
+        (coinBalance) =>
+            !(invalidTokens ?? []).includes(coinBalance.coinType.split('::')[0])
+    );
+
+    return { validBalances, invalidTokens };
 });
 
 interface BalancesManualState {
     loading: boolean;
     error: false | { code?: string; message?: string; name?: string };
     lastSync: number | null;
+    invalidTokens: string[];
 }
 const initialState = balancesAdapter.getInitialState<BalancesManualState>({
     loading: true,
     error: false,
     lastSync: null,
+    invalidTokens: [],
 });
 
 const slice = createSlice({
@@ -72,17 +84,16 @@ const slice = createSlice({
         builder
             .addCase(fetchAllBalances.fulfilled, (state, action) => {
                 if (action.payload) {
-                    const safeBalances = action.payload.filter(
-                        (balance) =>
-                            !REMOVE_LIST.includes(
-                                balance.coinType.split('::')[0]
-                            )
-                    );
-
-                    balancesAdapter.setAll(state, safeBalances);
-                    state.loading = false;
-                    state.error = false;
-                    state.lastSync = Date.now();
+                    const { validBalances, invalidTokens } = action.payload;
+                    if (validBalances) {
+                        balancesAdapter.setAll(state, validBalances);
+                        state.loading = false;
+                        state.error = false;
+                        state.lastSync = Date.now();
+                    }
+                    if (invalidTokens) {
+                        state.invalidTokens = invalidTokens;
+                    }
                 }
             })
             .addCase(fetchAllBalances.pending, (state, action) => {
