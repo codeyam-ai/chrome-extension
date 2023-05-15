@@ -134,15 +134,12 @@ describe('The Security Settings page', () => {
         test('shows the proper private key for the selected account', async () => {
             await init();
 
-            const currentWallet = await screen.findByTestId('current-wallet');
+            const currentWallet = await screen.findByTestId('current-wallet-link');
             await within(currentWallet).findByText('Wallet 1');
+
             await userEvent.click(currentWallet);
 
-            const wallet2Link = await screen.findByText(
-                'Wallet 2',
-                {},
-                { timeout: 30000 }
-            );
+            const wallet2Link = await screen.findByTestId('wallet2');
             await userEvent.click(wallet2Link);
 
             await navigateToSecurity();
@@ -373,15 +370,11 @@ describe('The Security Settings page', () => {
 
             await init();
 
-            const currentWallet = await screen.findByTestId('current-wallet');
+            const currentWallet = await screen.findByTestId('current-wallet-link');
             await within(currentWallet).findByText('Wallet 1');
             await userEvent.click(currentWallet);
 
-            const wallet2Link = await screen.findByText(
-                'Wallet 2',
-                {},
-                { timeout: 30000 }
-            );
+            const wallet2Link = await screen.findByTestId('wallet2')
             await userEvent.click(wallet2Link);
 
             await navigateToSecurity();
