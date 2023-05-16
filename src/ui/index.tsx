@@ -10,7 +10,7 @@ import { HashRouter } from 'react-router-dom';
 import App from './app';
 import { SuiLedgerClientProvider } from './app/components/ledger/SuiLedgerClientProvider';
 import Loading from './app/components/loading';
-import { queryConfig } from "_app/helpers/queryConfig";
+import { queryConfig } from '_app/helpers/queryConfig';
 import { initAppType, initNetworkFromStorage } from '_redux/slices/app';
 import { getFromLocationSearch } from '_redux/slices/app/AppType';
 import { DependenciesContext } from '_shared/utils/dependenciesContext';
@@ -29,7 +29,6 @@ import './styles/toastify.css';
 import '_font-icons/output/sui-icons.scss';
 import 'bootstrap-icons/font/bootstrap-icons.scss';
 import 'react-loading-skeleton/dist/skeleton.css';
-
 
 function isDevMode() {
     return process.env.NODE_ENV === 'development';

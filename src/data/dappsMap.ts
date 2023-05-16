@@ -218,7 +218,7 @@ const dappsMap: Map<string, DappData> = new Map([
             image: sui8192,
             title: 'Sui 8192',
             description:
-                'The fastest fully on-chain game this side of the Mississippi. Compete for the high score!',
+                'Sui 8192 is a fun, 100% on-chain game. Combine the tiles to get a high score!',
             urls: {
                 [NetworkName.TESTNET]: 'https://ethoswallet.github.io/Sui8192',
                 [NetworkName.MAINNET]: 'https://ethoswallet.github.io/Sui8192',
