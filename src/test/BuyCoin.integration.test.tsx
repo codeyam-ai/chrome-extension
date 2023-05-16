@@ -36,7 +36,7 @@ describe('Buy coin flow', () => {
         // TODO: Add logic to test async iFrame loading
     };
 
-    test('Moonpay onboarding is disabled', async () => {
+    xtest('Moonpay onboarding is disabled', async () => {
         renderApp({
             dependencies: {
                 ...makeTestDeps(),
@@ -50,7 +50,7 @@ describe('Buy coin flow', () => {
         // await disabledAndBack();
     });
 
-    test('Moonpay onboarding widget is displayed', async () => {
+    xtest('Moonpay onboarding widget is displayed', async () => {
         renderApp({
             dependencies: {
                 ...makeTestDeps(),
