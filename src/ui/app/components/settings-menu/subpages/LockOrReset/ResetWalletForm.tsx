@@ -2,13 +2,12 @@ import { Form, Formik, useField } from 'formik';
 import { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 
-import type { FormikValues } from 'formik';
-import Input from '_src/ui/app/shared/inputs/Input';
-import Button from '_src/ui/app/shared/buttons/Button';
-import Body from '_src/ui/app/shared/typography/Body';
-import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import { useAppDispatch } from '_src/ui/app/hooks';
 import { assertPasswordIsCorrect } from '_src/ui/app/redux/slices/account';
+import Button from '_src/ui/app/shared/buttons/Button';
+import Input from '_src/ui/app/shared/inputs/Input';
+
+import type { FormikValues } from 'formik';
 
 type PassphraseFormProps = {
     onSubmit: (passphrase: string) => void;
