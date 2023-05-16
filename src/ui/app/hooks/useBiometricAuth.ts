@@ -6,19 +6,20 @@ import useAppSelector from './useAppSelector';
 import { extractInfoFromCredential } from '../helpers/biometricAuth';
 import { setIsBiometricsSetUp } from '../redux/slices/account';
 
-const ETHOS_WALLET_BYTES = new TextEncoder().encode('Ethos Wallet');
-const ETHOS_WALLET_PASSWORD = new TextEncoder().encode('Ethos Wallet Password');
+const ETHOS_WALLET_PASSWORD_BYTES = new TextEncoder().encode(
+    'Ethos Wallet Password'
+);
 
 const CREDENTIAL_CREATION_OPTIONS: CredentialCreationOptions = {
     publicKey: {
-        challenge: ETHOS_WALLET_BYTES,
+        challenge: ETHOS_WALLET_PASSWORD_BYTES,
         rp: {
             name: 'Ethos Wallet',
         },
         user: {
             name: 'Ethos Wallet',
             displayName: 'Ethos Wallet',
-            id: ETHOS_WALLET_BYTES,
+            id: ETHOS_WALLET_PASSWORD_BYTES,
         },
         pubKeyCredParams: [
             { type: 'public-key', alg: -7 }, //ES256
@@ -57,9 +58,10 @@ export function useBiometricAuth() {
             });
 
         if (credential) {
-            const { id, userData } = extractInfoFromCredential(credential);
+            const { id, challenge } = extractInfoFromCredential(credential);
+
             setCredentialIdBase64(id);
-            setEncryptedChallenge(userData?.challenge);
+            setEncryptedChallenge(challenge);
             dispatch(setIsBiometricsSetUp(true));
         }
     }, [dispatch, isSupported]);
@@ -79,9 +81,8 @@ export function useBiometricAuth() {
             }
 
             if (credentialIdBase64) {
-                console.log('ID', credentialIdBase64);
                 const publicKey: PublicKeyCredentialRequestOptions = {
-                    challenge: ETHOS_WALLET_BYTES,
+                    challenge: ETHOS_WALLET_PASSWORD_BYTES,
                     allowCredentials: [
                         {
                             type: 'public-key',
@@ -96,12 +97,15 @@ export function useBiometricAuth() {
                     publicKey,
                 });
                 if (credential) {
-                    const { userData } = extractInfoFromCredential(credential);
+                    const { challenge, signature } =
+                        extractInfoFromCredential(credential);
+                    console.log('SIGNATURE', signature);
 
-                    console.log(
-                        'VALID',
-                        userData?.challenge === encryptedChallenge
-                    );
+                    console.log('VALID', challenge === encryptedChallenge);
+
+                    // Save the signature in local storage
+                    // On next authentication check the signature and, if equal, use the challenge to decrypt the password
+                    // Use the password as if the user had entered it directly
                 }
             }
         },

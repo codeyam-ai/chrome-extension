@@ -3,20 +3,30 @@ export function extractInfoFromCredential(credential: Credential) {
         credential.type === 'public-key' &&
         'response' in credential &&
         credential.response &&
-        typeof credential.response === 'object' &&
-        'clientDataJSON' in credential.response &&
-        credential.response.clientDataJSON
+        typeof credential.response === 'object'
     ) {
         const { id, response } = credential;
 
-        const userData = JSON.parse(
-            new TextDecoder().decode(response.clientDataJSON as ArrayBuffer)
-        );
+        let signature: ArrayBuffer | undefined;
+        let publicKey: string | undefined;
+        let challenge: string | undefined;
+
+        if ('clientDataJSON' in response && response.clientDataJSON) {
+            const userData = JSON.parse(
+                new TextDecoder().decode(response.clientDataJSON as ArrayBuffer)
+            );
+            challenge = userData.challenge;
+        }
+
+        if ('signature' in response && response.signature) {
+            signature = response.signature as ArrayBuffer;
+        }
 
         return {
             id,
-            // publicKeyBase64,
-            userData,
+            signature,
+            publicKey,
+            challenge,
         };
     }
 

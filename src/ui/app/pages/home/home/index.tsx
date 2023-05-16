@@ -2,6 +2,7 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import CoinList from './CoinList';
 import StakedInfo from './StakedInfo';
+import TestBiometrics from './TEST_biometrics';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import { DappList } from './dapp/DappList';
 import ChainIndicator from '../../dapp-tx-approval/types/ChainIndicator';
@@ -18,7 +19,6 @@ import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-import TestBiometrics from './TEST_biometrics';
 
 function HomePage() {
     const { favoriteDappsForCurrentNetwork, favoriteDapps } =
