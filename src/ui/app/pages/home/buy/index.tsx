@@ -27,15 +27,15 @@ const providers = [
         },
     },
     {
-        path: '/home/buy/transak',
+        path: '/home/buy/stripe',
         logo: {
             light: transakLight,
             dark: transakDark,
-            altText: 'Transak payments for fiat to SUI purchases',
+            altText: 'Stripe payments for fiat to SUI purchases',
         },
         link: {
             type: LinkType.External,
-            url: 'https://transak.com/',
+            url: 'https://stripe.com/',
         },
     },
 ];

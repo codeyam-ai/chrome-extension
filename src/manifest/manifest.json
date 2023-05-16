@@ -11,6 +11,9 @@
     "action": {
         "default_popup": "ui.html?type=popup"
     },
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' https://apis.google.com; object-src 'self'"
+    },
     "host_permissions": [
         "http://127.0.0.1:5001/",
         "https://gateway.devnet.sui.io/",
