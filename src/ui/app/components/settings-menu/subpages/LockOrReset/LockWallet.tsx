@@ -8,10 +8,10 @@ import { DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES } from '_src/shared/constants';
 import { thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Header from '_src/ui/app/shared/typography/Header';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 const LockWallet = () => {
     const lockWallet = useCallback(async () => {
@@ -57,7 +57,7 @@ const LockWallet = () => {
     };
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col">
             <ContentBlock>
                 <Header>Lock Ethos</Header>
                 <Body isTextColorMedium>
@@ -65,7 +65,9 @@ const LockWallet = () => {
                     wallet.
                 </Body>
             </ContentBlock>
-            <Button onClick={lockWallet}>Lock Wallet Now</Button>
+            <Button onClick={lockWallet} className="mt-2">
+                Lock Wallet Now
+            </Button>
             <ContentBlock>
                 <BodyLarge>
                     Ethos will Auto-lock after {currentTimeout} minutes
