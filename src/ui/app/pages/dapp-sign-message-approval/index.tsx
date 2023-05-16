@@ -16,9 +16,9 @@ import Loading from '_components/loading';
 import UserApproveContainer from '_components/user-approve-container';
 import { useAppSelector, useInitializedGuard } from '_hooks';
 import { signMessageRequestsSelectors } from '_redux/slices/sign-message-requests';
+import { useDependencies } from '_src/shared/utils/dependenciesContext';
 
 import type { RootState } from '_redux/RootReducer';
-import { useDependencies } from '_src/shared/utils/dependenciesContext';
 
 export function DappSignMessageApprovalPage() {
     const { connectToLedger } = useSuiLedgerClient();
@@ -90,27 +90,11 @@ export function DappSignMessageApprovalPage() {
                     accountInfos,
                     activeAccountIndex
                 );
-                // await dispatch(
-                //     respondToTransactionRequest({
-                //         txRequestID: signMessageRequest.id,
-                //         approved,
-                //         addressForTransaction:
-                //             signMessageRequest.tx.accountAddress,
-                //     })
-                // );
+                
                 closeWindow();
             }
         },
-        [
-            accountInfos,
-            activeAccountIndex,
-            activeAddress,
-            authentication,
-            connectToLedger,
-            message,
-            passphrase,
-            signMessageRequest,
-        ]
+        [accountInfos, activeAccountIndex, activeAddress, authentication, closeWindow, connectToLedger, message, passphrase, signMessageRequest]
     );
 
     const handleImgError = useCallback(() => {
@@ -122,16 +106,6 @@ export function DappSignMessageApprovalPage() {
             setSiteFaviconSrc(signMessageRequest.originFavIcon);
         }
     }, [signMessageRequest]);
-
-    useEffect(() => {
-        if (
-            !loading &&
-            (!signMessageRequest ||
-                (signMessageRequest && signMessageRequest.approved !== null))
-        ) {
-            closeWindow();
-        }
-    }, [loading, signMessageRequest]);
 
     if (
         activeAddress &&
@@ -186,7 +160,6 @@ export function DappSignMessageApprovalPage() {
                                 <div>has requested you sign a message</div>
                             </div>
                         </div>
-                        <Body>HI THERE</Body>
                         {message && (
                             <div className="flex flex-col gap-1 px-6 w-full">
                                 <BodyLarge>Message To Sign</BodyLarge>

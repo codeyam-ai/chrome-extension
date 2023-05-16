@@ -2,6 +2,7 @@ import { toB64 } from '@mysten/sui.js';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { BackgroundClient } from '_app/background-client';
 import { TX_STORE_KEY } from '_shared/constants';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
@@ -13,62 +14,72 @@ import { makeTestDeps } from '_src/test/utils/test-dependencies';
 import type { ApprovalRequest, SignMessageApprovalRequest } from '_payloads/transactions';
 
 describe('The Sign Message Approval popup', () => {
+    const responseSpy = jest.spyOn(BackgroundClient.prototype, 'sendTransactionRequestResponse');
+
     const txRequestId = '95ae4a0d-0b7b-478b-ab70-bc3fe291540e';
     let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
         mockCommonCalls(mockJsonRpc);
         await simulateMnemonicUser();
+        responseSpy.mockClear();
     });
 
     test('shows the message to sign and allows user to approve it', async () => {
         await simulateReduxStateWithSignMessage(txRequestId);
         const testDeps = makeTestDeps();
         const mockWindowCloser = testDeps.closeWindow;
-        console.log("HIy0")
         renderApp({
             initialRoute: `/sign-message-approval/${txRequestId}`,
             dependencies: testDeps,
         });
 
-        console.log("HIy1s")
-        await screen.findByText('HI THERE');
-
-        console.log("HIy1")
         await screen.findByText('Message To Sign');
-        console.log("HIy2")
         await screen.findByText('hello');
-        console.log("HIy3")
-        const approveButton = await screen.findByText('Approve');
+        const approveButton = await screen.findByText('Sign');
 
         await userEvent.click(approveButton);
         await waitFor(() => {
             expect(mockWindowCloser.mock.calls.length).toEqual(1);
         });
 
-        const response = await getApprovalRequestFromLocalStorage(txRequestId);
-        console.log("REPSONSE", response)
+        expect(responseSpy.mock.calls.length).toEqual(1);
+
+        expect(responseSpy.mock.calls[0][1]).toBe(true);
+
+        const result = responseSpy.mock.calls[0][2];
+        expect(result).toBeDefined();
+        if (result && "signature" in result) {
+            // eslint-disable-next-line jest/no-conditional-expect
+            expect(result.messageBytes).toEqual('aGVsbG8=');
+            // eslint-disable-next-line jest/no-conditional-expect
+            expect(result.signature).toEqual('ABepCVvd/lL8SI3ncsVWVqgw186yzFiT5kBuvxkLxqbh/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4=');
+        }
     });
 
-    // test('the user can reject the transaction', async () => {
-    //     await simulateReduxStateWithSignMessage(txRequestId);
+    test('shows the message to sign and allows user to reject it', async () => {
+        await simulateReduxStateWithSignMessage(txRequestId);
+        const testDeps = makeTestDeps();
+        const mockWindowCloser = testDeps.closeWindow;
+        renderApp({
+            initialRoute: `/sign-message-approval/${txRequestId}`,
+            dependencies: testDeps,
+        });
 
-    //     const testDeps = makeTestDeps();
-    //     const mockWindowCloser = testDeps.closeWindow;
+        await screen.findByText('Message To Sign');
+        await screen.findByText('hello');
+        const approveButton = await screen.findByText('Reject');
 
-    //     renderApp({
-    //         initialRoute: `/tx-approval/${txRequestId}`,
-    //         dependencies: testDeps,
-    //     });
+        await userEvent.click(approveButton);
+        await waitFor(() => {
+            expect(mockWindowCloser.mock.calls.length).toEqual(1);
+        });
 
-    //     await screen.findByText('Cost', {}, { timeout: 5000 });
+        expect(responseSpy.mock.calls.length).toEqual(1);
 
-    //     const cancelButton = await screen.findByText('Cancel');
-    //     await userEvent.click(cancelButton);
-    //     await waitFor(() =>
-    //         expect(mockWindowCloser.mock.calls.length).toEqual(1)
-    //     );
-    // });
+        expect(responseSpy.mock.calls[0][1]).toBe(false);
+        expect(responseSpy.mock.calls[0][2]).toBeUndefined();
+    });
 
     async function putApprovalRequestInLocalStorage(
         txRequestId: string,
@@ -80,21 +91,6 @@ describe('The Sign Message Approval popup', () => {
             session: false,
             strong: false,
         });
-    }
-
-    async function getApprovalRequestFromLocalStorage(
-        txRequestId: string
-    ) {
-        const response = await getEncrypted({
-            key: TX_STORE_KEY,
-            session: false,
-            strong: false,
-        });
-        if (!response) return;
-
-        const approvalRequests = JSON.parse(response);
-
-        return approvalRequests[txRequestId];
     }
 
     async function simulateReduxStateWithSignMessage(txRequestId: string) {
