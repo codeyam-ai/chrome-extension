@@ -10,7 +10,7 @@ describe('Importing a wallet using a seed phrase', () => {
     beforeEach(() => {
         mockJsonRpc = new MockJsonRpc();
         mockCommonCalls(mockJsonRpc);
-        mockSuiObjects(mockJsonRpc, { suiBalance: 40000000000 });
+        mockSuiObjects(mockJsonRpc, { suiBalance: 40_000_000_000 });
     });
 
     test('Entire flow works', async () => {
@@ -84,5 +84,6 @@ describe('Importing a wallet using a seed phrase', () => {
 
         await userEvent.click(screen.getByTestId('submit'));
         await screen.findByText('Wallet Set Up');
+        await screen.findByText('40');
     }
 });
