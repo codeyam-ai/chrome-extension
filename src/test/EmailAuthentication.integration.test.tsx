@@ -10,6 +10,8 @@ import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('Email Authentication', () => {
+    const address = '0x218d1ea2ce30efd16394f81569f69cf8531d05ea';
+
     let mockJsonRpc: MockJsonRpc;
     beforeEach(() => {
         mockJsonRpc = new MockJsonRpc();
@@ -25,7 +27,7 @@ describe('Email Authentication', () => {
             .reply(200, {
                 accounts: [
                     {
-                        address: '0x218d1ea2ce30efd16394f81569f69cf8531d05ea',
+                        address,
                         index: 0,
                     },
                 ],
@@ -57,7 +59,7 @@ describe('Email Authentication', () => {
     test('User can see tokens page after logged in via the iframe', async () => {
         const fakeAccessToken = '12345';
         await setSession({ accessToken: fakeAccessToken });
-        mockSuiObjects(mockJsonRpc);
+        mockSuiObjects(mockJsonRpc, { address });
         nock(BASE_URL, {
             reqheaders: { 'x-supabase-access-token': fakeAccessToken },
         })
@@ -65,7 +67,7 @@ describe('Email Authentication', () => {
             .reply(200, {
                 accounts: [
                     {
-                        address: '0x218d1ea2ce30efd16394f81569f69cf8531d05ea',
+                        address,
                         index: 0,
                     },
                 ],

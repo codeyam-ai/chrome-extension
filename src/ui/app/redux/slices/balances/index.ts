@@ -36,7 +36,7 @@ export const fetchAllBalances = createAsyncThunk<
     }
 
     const allBalances = await api.instance.fullNode.getAllBalances({
-        owner: '0xe678f12e02fd2a68dffb331120c2147891d4f13b50616119ca253dac13933779',
+        owner: address,
     });
 
     let validBalances = allBalances;
@@ -45,10 +45,13 @@ export const fetchAllBalances = createAsyncThunk<
         invalidTokens = (await Browser.storage.local.get('invalidTokens'))
             .invalidTokens;
     }
-    validBalances = validBalances.filter(
-        (coinBalance) =>
-            !invalidTokens.includes(coinBalance.coinType.split('::')[0])
-    );
+    if (!invalidTokens) {
+        invalidTokens = [];
+    }
+    validBalances = validBalances.filter((coinBalance) => {
+        const split = coinBalance.coinType.split('::');
+        return !invalidTokens.includes(split[0]);
+    });
 
     return validBalances;
 });

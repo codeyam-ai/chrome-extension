@@ -28,6 +28,7 @@ const signMessage = async (
     let txResult: SuiTransactionBlockResponse | SignedMessage | undefined =
         undefined;
     let txResultError: string | undefined;
+
     if (approved) {
         const signer = await getSigner(
             passphrase,
@@ -50,6 +51,7 @@ const signMessage = async (
             txResultError = (e as Error).message;
         }
     }
+
     thunkExtras.background.sendTransactionRequestResponse(
         txID,
         approved,

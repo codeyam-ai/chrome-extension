@@ -1,6 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
 import CustomRpcForm from './CustomRpcForm';
@@ -44,6 +45,8 @@ function NetworkPage() {
         }));
     }, []);
 
+    const queryClient = useQueryClient();
+
     const networkOptions = useMemo(() => {
         const options: SegmentedControlItem[] = [];
         networks.forEach((network) => {
@@ -63,7 +66,7 @@ function NetworkPage() {
                     return;
                 }
                 const apiEnv = API_ENV[name as keyof typeof API_ENV];
-                dispatch(changeRPCNetwork(apiEnv));
+                dispatch(changeRPCNetwork({ apiEnv, queryClient }));
             };
             const isCustomRpc = network.name === 'Custom RPC URL';
             const isCustomRpcSelected =
@@ -77,7 +80,7 @@ function NetworkPage() {
             });
         });
         return options;
-    }, [networks, selectedNetworkName, customRPC, dispatch]);
+    }, [networks, selectedNetworkName, customRPC, dispatch, queryClient]);
 
     return (
         <div className="flex flex-col">

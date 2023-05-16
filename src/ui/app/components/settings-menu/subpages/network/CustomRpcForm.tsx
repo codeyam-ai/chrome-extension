@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { Form, Formik, useField } from 'formik';
 import { useCallback, useMemo } from 'react';
 import * as Yup from 'yup';
@@ -61,11 +62,12 @@ const CustomRpcForm = () => {
 
     const dispatch = useAppDispatch();
 
+    const queryClient = useQueryClient();
     const _onSubmit = useCallback(
         ({ networkUrl }: FormikValues) => {
-            dispatch(setCustomRPC(networkUrl));
+            dispatch(setCustomRPC({ customRPC: networkUrl, queryClient }));
         },
-        [dispatch]
+        [dispatch, queryClient]
     );
     return (
         <div>

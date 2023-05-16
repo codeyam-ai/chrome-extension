@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 
 import BodyLarge from '../typography/BodyLarge';
@@ -19,32 +20,6 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
     children?: React.ReactNode;
 }
 
-const buttonChildrenClassNames =
-    'text-size-ethos-button-text inline-flex items-center justify-center gap-2';
-
-const baseButtonClassNames =
-    'flex items-center place-content-center w-full py-[10px] px-4 min-h-[46px] border border-transparent rounded-[10px] disabled:opacity-50';
-
-const primaryButtonClassNames =
-    baseButtonClassNames +
-    ' ' +
-    'text-ethos-light-background-default bg-ethos-light-primary-light';
-
-const secondaryButtonClassNames =
-    baseButtonClassNames +
-    ' ' +
-    'bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary text-ethos-light-primary-light dark:text-ethos-dark-primary-dark';
-
-const dangerPrimaryButtonClassNames =
-    baseButtonClassNames +
-    ' ' +
-    'bg-ethos-light-red dark:bg-ethos-dark-red text-ethos-light-background-default';
-
-const dangerSecondaryButtonClassNames =
-    baseButtonClassNames +
-    ' ' +
-    'bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary text-ethos-light-text-default dark:text-ethos-dark-text-default';
-
 const Button = (props: ButtonProps) => {
     const {
         buttonStyle,
@@ -61,7 +36,35 @@ const Button = (props: ButtonProps) => {
     // ex) !py-2. This will only work if done from the component implementation
     // (not adding the "!") later in this file
 
-    // const buttonWrapperClassNames = isInline ? '' : 'px-6';
+    const buttonChildrenClassNames =
+        'text-size-ethos-button-text inline-flex items-center justify-center gap-2';
+
+    const baseButtonClassNames =
+        'flex items-center place-content-center w-full py-[10px] px-4 min-h-[46px] border border-transparent rounded-[10px] disabled:opacity-50';
+
+    const primaryButtonClassNames = classNames(
+        baseButtonClassNames,
+        // Create opacity in a roundabout way to fix tooltip stack context bug (where the tooltip looks like it's below the button when the button is disabled)
+        reactProps.disabled
+            ? 'text-ethos-light-background-default/50 bg-ethos-light-primary-light/50 disabled:!opacity-100'
+            : 'text-ethos-light-background-default bg-ethos-light-primary-light'
+    );
+
+    const secondaryButtonClassNames =
+        baseButtonClassNames +
+        ' ' +
+        'bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary text-ethos-light-primary-light dark:text-ethos-dark-primary-dark';
+
+    const dangerPrimaryButtonClassNames =
+        baseButtonClassNames +
+        ' ' +
+        'bg-ethos-light-red dark:bg-ethos-dark-red text-ethos-light-background-default';
+
+    const dangerSecondaryButtonClassNames =
+        baseButtonClassNames +
+        ' ' +
+        'bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary text-ethos-light-text-default dark:text-ethos-dark-text-default';
+
     let buttonWrapperClassNames = 'px-6 pb-6';
     if (isInline) {
         buttonWrapperClassNames = 'pb-6';

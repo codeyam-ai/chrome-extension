@@ -3,6 +3,7 @@ import {
     SUI_MAINNET_CHAIN,
     SUI_TESTNET_CHAIN,
 } from '@mysten/wallet-standard';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
 import { API_ENV } from '_src/ui/app/ApiProvider';
@@ -30,6 +31,7 @@ const IncorrectChain = ({
 }: IncorrectSignerProps) => {
     const dispatch = useAppDispatch();
 
+    const queryClient = useQueryClient();
     const switchChain = useCallback(async () => {
         let correctNetwork;
         switch (correctChain) {
@@ -48,8 +50,10 @@ const IncorrectChain = ({
             default:
                 correctNetwork = API_ENV.mainNet;
         }
-        await dispatch(changeRPCNetwork(correctNetwork));
-    }, [dispatch, correctChain]);
+        await dispatch(
+            changeRPCNetwork({ apiEnv: correctNetwork, queryClient })
+        );
+    }, [dispatch, correctChain, queryClient]);
 
     return (
         <div className="px-6 pb-6 flex flex-col gap-6 items-start justify-start">
