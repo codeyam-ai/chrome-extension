@@ -40,6 +40,7 @@ const CustomFormikForm = ({
                 required={true}
                 autoFocus
                 showHideToggle
+                autoComplete="off"
                 errorText={
                     isPasswordIncorrect
                         ? 'Password is incorrect'

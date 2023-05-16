@@ -3,6 +3,7 @@ import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
 import { useCallback, useRef, useState } from 'react';
+import ShowHideToggleButton from './ShowHideToggleButton';
 
 export interface InputProps
     extends React.DetailedHTMLProps<
@@ -70,16 +71,10 @@ const Input = ({
                     type={reactProps.type || passwordMode ? 'password' : 'text'}
                 />
                 {showHideToggle && (
-                    <div
-                        className="absolute p-4 right-0 top-1/2 transform -translate-y-1/2 cursor-pointer rounded-r-[16px] hover:bg-black/5 hover:dark:bg-white/10"
-                        onClick={togglePasswordMode}
-                    >
-                        {passwordMode ? (
-                            <EyeIcon className="w-6 h-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
-                        ) : (
-                            <EyeSlashIcon className="w-6 h-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
-                        )}
-                    </div>
+                    <ShowHideToggleButton
+                        passwordMode={!!passwordMode}
+                        togglePasswordMode={togglePasswordMode}
+                    />
                 )}
             </div>
             {description && <Body isTextColorMedium>{description}</Body>}
