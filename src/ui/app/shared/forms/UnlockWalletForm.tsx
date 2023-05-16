@@ -37,9 +37,9 @@ const CustomFormikForm = ({
                 id="password"
                 data-testid="password"
                 name="password"
-                type={passwordMode ? 'password' : 'text'}
                 required={true}
                 autoFocus
+                showHideToggle
                 errorText={
                     isPasswordIncorrect
                         ? 'Password is incorrect'
@@ -48,14 +48,6 @@ const CustomFormikForm = ({
                         : undefined
                 }
             />
-
-            <div className={'mb-6'}>
-                <HideShowToggle
-                    name="Password"
-                    hide={passwordMode}
-                    onToggle={togglePasswordMode}
-                />
-            </div>
 
             <Button
                 buttonStyle="primary"
