@@ -10,13 +10,15 @@ import type { FormikValues } from 'formik';
 
 type PasswordVerificationFormProps = {
     onSubmit: (password: string) => void;
-    isPasswordIncorrect?: boolean;
+    submitButtonText: string;
 };
 
 const CustomFormikForm = ({
     isPasswordIncorrect = false,
+    submitButtonText,
 }: {
     isPasswordIncorrect: boolean;
+    submitButtonText: string;
 }) => {
     const [field, meta] = useField('password');
 
@@ -46,7 +48,7 @@ const CustomFormikForm = ({
                 type="submit"
                 disabled={!meta.value || !!meta.error}
             >
-                View private key
+                {submitButtonText}
             </Button>
         </div>
     );
@@ -54,6 +56,7 @@ const CustomFormikForm = ({
 
 const PasswordVerificationForm = ({
     onSubmit,
+    submitButtonText,
 }: PasswordVerificationFormProps) => {
     const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false);
     const passphrase = useAppSelector(({ account }) => account.passphrase);
@@ -80,7 +83,10 @@ const PasswordVerificationForm = ({
             onSubmit={_onSubmit}
         >
             <Form>
-                <CustomFormikForm isPasswordIncorrect={isPasswordIncorrect} />
+                <CustomFormikForm
+                    isPasswordIncorrect={isPasswordIncorrect}
+                    submitButtonText={submitButtonText}
+                />
             </Form>
         </Formik>
     );

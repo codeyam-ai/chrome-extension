@@ -104,7 +104,7 @@ export default function ViewPrivateKeyPage() {
                         disabled={true}
                     />
                 </div>
-                <Button to="/" buttonStyle="secondary">
+                <Button to="/" buttonStyle="secondary" isInline>
                     Done
                 </Button>
             </div>
@@ -165,7 +165,10 @@ export default function ViewPrivateKeyPage() {
                                 control over your wallet."
                 />
             </div>
-            <PasswordVerificationForm onSubmit={viewPrivateKey} />
+            <PasswordVerificationForm
+                onSubmit={viewPrivateKey}
+                submitButtonText="View Private Key"
+            />
         </>
     );
 }
