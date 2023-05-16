@@ -155,6 +155,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 accountInfos[i].importedLedgerIndex !== undefined &&
                 accountInfos[i].ledgerAccountIndex === undefined
             ) {
+                accountInfos[i].index = accountInfos[i].index + 1;
                 accountInfos[i].ledgerAccountIndex =
                     (accountInfos[i].importedLedgerIndex ?? 0) + 1;
                 accountInfos[i].importedLedgerIndex = undefined;
