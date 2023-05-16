@@ -108,9 +108,9 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                         <Subheader className={'text-center mb-6 mt-2'}>
                             How much would you like to stake?
                         </Subheader>
+                    </div>
 
-                        <div className="flex flex-col gap-2 py-5 px-4 rounded-xl border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
-                            <div className="flex justify-between">
+                    {/* <div className="flex justify-between">
                                 <Body isSemibold>Amount</Body>
                                 <span className="flex gap-1">
                                     <Body isTextColorMedium>Available:</Body>
@@ -118,28 +118,32 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                                         {formattedSuiBalance} SUI
                                     </Body>
                                 </span>
-                            </div>
-                            <div className="flex px-3 py-2 justify-between items-center place-content-center rounded-xl border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
-                                <div className="flex">
-                                    <Sui />
-                                    <input
-                                        {...amountField}
-                                        name="amount"
-                                        type="text"
-                                        className="w-full bg-transparent border-none focus:ring-0 caret-ethos-light-primary-light dark:caret-ethos-dark-primary-dark"
-                                        autoFocus
-                                        placeholder="0"
-                                    />
-                                </div>
-                                <BodyLarge>SUI</BodyLarge>
-                            </div>
-                            {dirty && amountMeta.error && (
-                                <div className="mt-1 text-ethos-light-red dark:text-ethos-dark-red">
-                                    {amountMeta.error}
-                                </div>
-                            )}
+                            </div> */}
+                    <div className="flex px-3 py-2 justify-between items-center place-content-center rounded-xl border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
+                        <div className="basis-3/5 flex">
+                            <Sui />
+                            <input
+                                {...amountField}
+                                name="amount"
+                                type="text"
+                                className="w-full bg-transparent border-none focus:ring-0 caret-ethos-light-primary-light dark:caret-ethos-dark-primary-dark"
+                                autoFocus
+                                placeholder="0"
+                            />
                         </div>
+                        <span className="basis-2/5 flex gap-1 items-end justify-end">
+                            <Body isTextColorMedium>Available:</Body>
+                            <Body isTextColorMedium isSemibold>
+                                {formattedSuiBalance} SUI
+                            </Body>
+                        </span>
+                        {/* <BodyLarge>SUI</BodyLarge> */}
                     </div>
+                    {dirty && amountMeta.error && (
+                        <div className="mt-1 text-ethos-light-red dark:text-ethos-dark-red">
+                            {amountMeta.error}
+                        </div>
+                    )}
                     <div className="flex flex-col justify-between py-5 px-6 mt-9 mb-4 bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey divide-y divide-ethos-light-text-stroke dark:divide-ethos-dark-text-stroke border-t border-b border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
                         <div className="pb-2">
                             <KeyValueList
