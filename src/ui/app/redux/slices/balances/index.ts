@@ -3,6 +3,7 @@ import {
     createEntityAdapter,
     createSlice,
 } from '@reduxjs/toolkit';
+import Browser from 'webextension-polyfill';
 
 import testConnection from '../../testConnection';
 
@@ -16,7 +17,7 @@ const balancesAdapter = createEntityAdapter<CoinBalance>({
 });
 
 export const fetchAllBalances = createAsyncThunk<
-    { validBalances: CoinBalance[] | null; invalidTokens: string[] | null },
+    CoinBalance[] | null,
     void,
     AppThunkConfig
 >('balances/fetch-all', async (_, { getState, extra: { api } }) => {
@@ -31,29 +32,41 @@ export const fetchAllBalances = createAsyncThunk<
     } = state;
 
     if (!address) {
-        return { validBalances: null, invalidTokens: null };
-    }
-
-    let invalidTokens: string[] | null = state.balances.invalidTokens ?? null;
-    try {
-        const invalidTokensResponse = await fetch(
-            'https://raw.githubusercontent.com/EthosWallet/valid_packages/main/public/invalid_tokens.json'
-        );
-        invalidTokens = await invalidTokensResponse.json();
-    } catch (e) {
-        // Do nothing
+        return null;
     }
 
     const allBalances = await api.instance.fullNode.getAllBalances({
         owner: address,
     });
 
-    const validBalances = allBalances.filter(
+    let validBalances = allBalances;
+    let invalidTokens = state.balances.invalidTokens;
+    if (invalidTokens.length === 0) {
+        invalidTokens = (await Browser.storage.local.get('invalidTokens'))
+            .invalidTokens;
+    }
+    validBalances = validBalances.filter(
         (coinBalance) =>
-            !(invalidTokens ?? []).includes(coinBalance.coinType.split('::')[0])
+            !invalidTokens.includes(coinBalance.coinType.split('::')[0])
     );
 
-    return { validBalances, invalidTokens };
+    return validBalances;
+});
+
+export const fetchInvalidTokens = createAsyncThunk<
+    string[] | null,
+    void,
+    AppThunkConfig
+>('balances/fetch-invalid-tokens', async () => {
+    try {
+        const invalidTokensResponse = await fetch(
+            'https://raw.githubusercontent.com/EthosWallet/valid_packages/main/public/invalid_tokens.json'
+        );
+        const invalidTokens = await invalidTokensResponse.json();
+        return invalidTokens;
+    } catch (e) {
+        return null;
+    }
 });
 
 interface BalancesManualState {
@@ -62,6 +75,7 @@ interface BalancesManualState {
     lastSync: number | null;
     invalidTokens: string[];
 }
+
 const initialState = balancesAdapter.getInitialState<BalancesManualState>({
     loading: true,
     error: false,
@@ -84,19 +98,15 @@ const slice = createSlice({
         builder
             .addCase(fetchAllBalances.fulfilled, (state, action) => {
                 if (action.payload) {
-                    const { validBalances, invalidTokens } = action.payload;
-                    if (validBalances) {
-                        balancesAdapter.setAll(state, validBalances);
+                    if (action.payload) {
+                        balancesAdapter.setAll(state, action.payload);
                         state.loading = false;
                         state.error = false;
                         state.lastSync = Date.now();
                     }
-                    if (invalidTokens) {
-                        state.invalidTokens = invalidTokens;
-                    }
                 }
             })
-            .addCase(fetchAllBalances.pending, (state, action) => {
+            .addCase(fetchAllBalances.pending, (state) => {
                 state.loading = true;
             })
             .addCase(
@@ -105,7 +115,15 @@ const slice = createSlice({
                     state.loading = false;
                     state.error = { code, message, name };
                 }
-            );
+            )
+            .addCase(fetchInvalidTokens.fulfilled, (state, action) => {
+                if (action.payload) {
+                    Browser.storage.local.set({
+                        invalidTokens: action.payload,
+                    });
+                    state.invalidTokens = action.payload;
+                }
+            });
     },
 });
 

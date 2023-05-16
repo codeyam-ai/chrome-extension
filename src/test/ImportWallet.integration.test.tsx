@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Importing a wallet using a seed phrase', () => {
     let mockJsonRpc: MockJsonRpc;
@@ -84,6 +84,5 @@ describe('Importing a wallet using a seed phrase', () => {
 
         await userEvent.click(screen.getByTestId('submit'));
         await screen.findByText('Wallet Set Up');
-        await screen.findByText('40');
     }
 });

@@ -7,8 +7,8 @@ import { renderApp } from './utils/react-rendering';
 import { simulateMnemonicUser } from './utils/storage';
 import { PREAPPROVAL_KEY } from '_shared/constants';
 import { setEncrypted } from '_shared/storagex/store';
-import { makeTestDeps } from '_src/test/utils/test-dependencies';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
 describe('transaction pre-approval flow', () => {
     let mockJsonRpc: MockJsonRpc;

@@ -93,9 +93,9 @@ export function ImportLedgerAccounts() {
             )
             .map((accountInfo) => ({
                 address: accountInfo.address,
-                index: accountInfo.importedLedgerIndex ?? 0,
+                index: accountInfo.ledgerAccountIndex ?? 0,
                 derivationPath: derivationPathForLedger(
-                    accountInfo.importedLedgerIndex ?? 0
+                    accountInfo.ledgerAccountIndex ?? 0
                 ),
             }));
 
@@ -129,7 +129,7 @@ export function ImportLedgerAccounts() {
         );
 
         mutableAccountInfos = mutableAccountInfos.filter(
-            (account) => account.importedLedgerIndex === undefined
+            (account) => account.ledgerAccountIndex === undefined
         );
 
         for (const account of selectedLedgerAccounts) {
@@ -141,7 +141,7 @@ export function ImportLedgerAccounts() {
             mutableAccountInfos.push({
                 index: rawIndex,
                 address,
-                importedLedgerIndex: index,
+                ledgerAccountIndex: index,
                 color: getNextWalletColor(index),
                 emoji: getNextEmoji(index),
                 name: `Ledger ${index + 1}`,

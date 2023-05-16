@@ -160,7 +160,7 @@ function TransferCoinForm({
                         />
                     </div>
                 ) : null}
-                {walletFrom?.importedLedgerIndex !== undefined && (
+                {walletFrom?.ledgerAccountIndex !== undefined && (
                     <div className="flex flex-col m-3">
                         <Alert
                             title="Check Your Ledger"
