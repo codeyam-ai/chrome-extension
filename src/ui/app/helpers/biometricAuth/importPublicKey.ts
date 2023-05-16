@@ -1,12 +1,11 @@
+import { fromB64 } from '@mysten/bcs';
+
 export default async function importPublicKey(
     keyData: string
 ): Promise<CryptoKey> {
     try {
-        const decodedData = atob(keyData);
-        const importKeyData = new Uint8Array(decodedData.length);
-        for (let i = 0; i < decodedData.length; i++) {
-            importKeyData[i] = decodedData.charCodeAt(i);
-        }
+        console.log('KEY DATA', keyData);
+        const importKeyData = fromB64(keyData);
 
         console.log('importKeyData :>> ', importKeyData);
 

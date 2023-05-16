@@ -1,5 +1,6 @@
-import { useBiometricAuth } from '_src/ui/app/hooks/useBiometricAuth';
 import { useCallback } from 'react';
+
+import { useBiometricAuth } from '_src/ui/app/hooks/useBiometricAuth';
 
 const TestBiometrics = () => {
     const { isSupported, setup, authenticate } = useBiometricAuth();

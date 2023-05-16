@@ -1,15 +1,14 @@
 import { useState } from 'react';
-import { extractInfoFromCredential } from '../helpers/biometricAuth';
-import useAppSelector from './useAppSelector';
-import { bufferDecode, bufferEncode } from '../helpers/biometricAuth/buffer';
+
 import useAppDispatch from './useAppDispatch';
-import { setIsBiometricsSetUp } from '../redux/slices/account';
+import useAppSelector from './useAppSelector';
+import { extractInfoFromCredential } from '../helpers/biometricAuth';
+import { bufferDecode, bufferEncode } from '../helpers/biometricAuth/buffer';
 import importPublicKey from '../helpers/biometricAuth/importPublicKey';
 import verifySignature from '../helpers/biometricAuth/verifySignature';
+import { setIsBiometricsSetUp } from '../redux/slices/account';
 
-const ETHOS_WALLET_BYTES = Uint8Array.from('Ethos Wallet', (c) =>
-    c.charCodeAt(0)
-);
+const ETHOS_WALLET_BYTES = new TextEncoder().encode('Ethos Wallet');
 
 const CREDENTIAL_CREATION_OPTIONS = {
     publicKey: {
@@ -24,17 +23,9 @@ const CREDENTIAL_CREATION_OPTIONS = {
             id: ETHOS_WALLET_BYTES,
         },
         pubKeyCredParams: [
-            // -7 corresponds to the "ES256" algorithm, which stands for "ECDSA using P-256 and SHA-256".
-            { type: 'public-key', alg: -7 },
-            // { type: 'public-key', alg: -35 },
-            // { type: 'public-key', alg: -36 },
-            // { type: 'public-key', alg: -257 },
-            // { type: 'public-key', alg: -258 },
-            // { type: 'public-key', alg: -259 },
-            // { type: 'public-key', alg: -37 },
-            // { type: 'public-key', alg: -38 },
-            // { type: 'public-key', alg: -39 },
-            // { type: 'public-key', alg: -8 },
+            { type: 'public-key', alg: -7 }, //ES256
+            // { type: 'public-key', alg: -8 }, //Ed25519
+            // { type: 'public-key', alg: -257 }, //RS256
         ],
         authenticatorSelection: {
             authenticatorAttachment: 'platform',
@@ -52,8 +43,6 @@ export function useBiometricAuth() {
     const dispatch = useAppDispatch();
 
     const isSupported =
-        // currently only support mac, because design is not ready for other platforms,
-        // and we use "Touch ID" as feature name
         navigator.credentials &&
         navigator.platform.toUpperCase().includes('MAC');
 
@@ -144,13 +133,11 @@ export function useBiometricAuth() {
             datetime: new Date().toISOString(),
             nonce: ~~(Math.random() * 2 ** 30),
         });
-        const challengeBase64 = btoa(challenge);
+        const challengeBytes = new TextEncoder().encode(challenge);
         const assertion = await navigator.credentials
             .get({
                 publicKey: {
-                    challenge: Uint8Array.from(challenge, (c) =>
-                        c.charCodeAt(0)
-                    ),
+                    challenge: challengeBytes,
                     allowCredentials: [
                         {
                             type: 'public-key',
