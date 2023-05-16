@@ -33,14 +33,14 @@ const LedgerWallet = ({
     const [verifying, setVerifying] = useState(false);
 
     const testAccount = useCallback(async () => {
-        if (account.importedLedgerIndex === undefined) return;
+        if (account.ledgerAccountIndex === undefined) return;
 
         setVerifying(true);
 
         try {
             const suiLedgerClient = await connectToLedger();
             const publicKeyResult = await suiLedgerClient.getPublicKey(
-                derivationPathForLedger(account.importedLedgerIndex),
+                derivationPathForLedger(account.ledgerAccountIndex),
                 true
             );
             const publicKey = new Ed25519PublicKey(publicKeyResult.publicKey);
@@ -155,7 +155,7 @@ const LedgerHome = () => {
 
     const ledgerAccounts = useMemo(() => {
         return accountInfos.filter(
-            (account) => account.importedLedgerIndex !== undefined
+            (account) => account.ledgerAccountIndex !== undefined
         );
     }, [accountInfos]);
 
@@ -197,7 +197,7 @@ const LedgerHome = () => {
 
             {ledgerAccounts.sort(
                 (a, b) =>
-                    (a.importedLedgerIndex ?? 0) - (b.importedLedgerIndex ?? 0)
+                    (a.ledgerAccountIndex ?? 0) - (b.ledgerAccountIndex ?? 0)
             ).length > 0 ? (
                 <div className="flex flex-col gap-3">
                     <Subheader>Selected Ledger Accounts</Subheader>

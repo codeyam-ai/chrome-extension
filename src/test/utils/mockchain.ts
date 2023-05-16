@@ -38,7 +38,9 @@ export const mockSuiObjects = (
         logObjects?: boolean;
     } = {}
 ) => {
-    const address = options.address ?? "0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de" 
+    const address =
+        options.address ??
+        '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de';
     const fullObjects = [];
     const objectInfos = [];
     const coinBalances = [];
@@ -115,11 +117,9 @@ export const mockSuiObjects = (
     );
 
     mockJsonRpc.mockBlockchainCall(
-        { 
+        {
             method: 'suix_getOwnedObjects',
-            params: [
-                address,
-            ]
+            params: [address],
         },
         {
             data: objectInfos,
@@ -134,8 +134,8 @@ export const mockSuiObjects = (
 
     mockJsonRpc.mockBlockchainCall(
         {
-             method: 'suix_getAllBalances', 
-             params: [ address ]
+            method: 'suix_getAllBalances',
+            params: [address],
         },
         coinBalances,
         true

@@ -17,7 +17,8 @@ export type AccountInfo = {
     importedMnemonicName?: string;
     importedMnemonicIndex?: number;
     importedPrivateKeyName?: string;
-    importedLedgerIndex?: number;
+    importedLedgerIndex?: number; // migrating away - do not use
+    ledgerAccountIndex?: number;
     ledgerAccountVerified?: boolean;
 };
 

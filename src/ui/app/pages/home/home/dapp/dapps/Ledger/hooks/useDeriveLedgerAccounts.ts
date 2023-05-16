@@ -53,8 +53,9 @@ async function deriveAccountsFromLedger(
     const ledgerAccounts: SerializedLedgerAccount[] = [];
     const derivationPaths = getDerivationPathsForLedger(numAccountsToDerive);
 
-    for (let index = 0; index < derivationPaths.length; ++index) {
-        const derivationPath = derivationPaths[index];
+    let index = -1;
+    for (const derivationPath of derivationPaths) {
+        index += 1;
         const publicKeyResult = await suiLedgerClient.getPublicKey(
             derivationPath
         );
@@ -78,5 +79,5 @@ function getDerivationPathsForLedger(numDerivations: number) {
 }
 
 export function derivationPathForLedger(index: number) {
-    return `m/44'/784'/${index + 1}'/0'/0'`;
+    return `m/44'/784'/${index}'/0'/0'`;
 }
