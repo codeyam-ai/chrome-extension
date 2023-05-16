@@ -80,7 +80,7 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
 
     return (
         <div className="flex flex-col h-[414px] relative">
-            <div className="flex h-full overflow-y-scroll no-scrollbar items-center place-content-center">
+            <div className="flex w-full h-full overflow-y-scroll no-scrollbar items-center place-content-center">
                 <Loading loading={isFetchingSystemState} big>
                     <Form
                         autoComplete="off"
@@ -92,24 +92,26 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                             </Subheader>
                         </div>
 
-                        <div className="flex px-3 py-2 justify-between items-center place-content-center rounded-xl border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
-                            <div className="basis-3/5 flex">
-                                <Sui />
-                                <input
-                                    {...amountField}
-                                    name="amount"
-                                    type="text"
-                                    className="w-full bg-transparent border-none focus:ring-0 caret-ethos-light-primary-light dark:caret-ethos-dark-primary-dark"
-                                    autoFocus
-                                    placeholder="0"
-                                />
+                        <div className="px-4">
+                            <div className="flex px-3 py-2 justify-between items-center place-content-center rounded-xl border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
+                                <div className="basis-1/2 flex">
+                                    <Sui />
+                                    <input
+                                        {...amountField}
+                                        name="amount"
+                                        type="text"
+                                        className="w-full bg-transparent border-none focus:ring-0 caret-ethos-light-primary-light dark:caret-ethos-dark-primary-dark"
+                                        autoFocus
+                                        placeholder="0"
+                                    />
+                                </div>
+                                <span className="basis-1/2 flex gap-1 items-end justify-end">
+                                    <Body isTextColorMedium>Available:</Body>
+                                    <Body isTextColorMedium isSemibold>
+                                        {formattedSuiBalance} SUI
+                                    </Body>
+                                </span>
                             </div>
-                            <span className="basis-2/5 flex gap-1 items-end justify-end">
-                                <Body isTextColorMedium>Available:</Body>
-                                <Body isTextColorMedium isSemibold>
-                                    {formattedSuiBalance} SUI
-                                </Body>
-                            </span>
                         </div>
                         {dirty && amountMeta.error && (
                             <div className="mt-1 text-ethos-light-red dark:text-ethos-dark-red">
