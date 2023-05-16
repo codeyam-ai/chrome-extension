@@ -148,6 +148,19 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 strong: false,
             })) || '[]'
         );
+
+        // Temporary migration fix
+        for (let i = 0; i < accountInfos.length; ++i) {
+            if (
+                accountInfos[i].importedLedgerIndex !== undefined &&
+                accountInfos[i].ledgerAccountIndex === undefined
+            ) {
+                accountInfos[i].ledgerAccountIndex =
+                    (accountInfos[i].importedLedgerIndex ?? 0) + 1;
+                accountInfos[i].importedLedgerIndex = undefined;
+            }
+        }
+
         const importNames = JSON.parse(
             (await getEncrypted({
                 key: 'importNames',
@@ -194,7 +207,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     if (
                         accountInfos[i].importedMnemonicName ||
                         accountInfos[i].importedPrivateKeyName ||
-                        accountInfos[i].importedLedgerIndex !== undefined
+                        accountInfos[i].ledgerAccountIndex !== undefined
                     ) {
                         continue;
                     }
@@ -247,7 +260,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                             seed: secretKey.toString(),
                         };
                     }
-                } else if (activeAccount?.importedLedgerIndex !== undefined) {
+                } else if (activeAccount?.ledgerAccountIndex !== undefined) {
                     activeSeed = undefined;
                 } else {
                     activeSeed = {

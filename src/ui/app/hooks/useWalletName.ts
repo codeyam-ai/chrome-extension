@@ -11,7 +11,7 @@ const useWalletName = (wallet?: AccountInfo) => {
         if (
             wallet.importedMnemonicName !== undefined &&
             wallet.importedMnemonicIndex !== undefined &&
-            wallet.importedLedgerIndex !== undefined
+            wallet.ledgerAccountIndex !== undefined
         ) {
             return `${wallet.importedMnemonicName} ${
                 wallet.importedMnemonicIndex + 1
