@@ -1,11 +1,11 @@
 import { Form, Formik, useField } from 'formik';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 
-import Button from '../buttons/Button';
-import Input from '../inputs/Input';
-import Body from '../typography/Body';
-import EthosLink from '../typography/EthosLink';
+import { useAppDispatch } from '_src/ui/app/hooks';
+import { assertPasswordIsCorrect } from '_src/ui/app/redux/slices/account';
+import Button from '_src/ui/app/shared/buttons/Button';
+import Input from '_src/ui/app/shared/inputs/Input';
 
 import type { FormikValues } from 'formik';
 
@@ -32,7 +32,6 @@ const CustomFormikForm = ({
                 data-testid="password"
                 name="password"
                 required={true}
-                autoFocus
                 showHideToggle
                 autoComplete="off"
                 errorText={
@@ -50,27 +49,29 @@ const CustomFormikForm = ({
                 type="submit"
                 disabled={!meta.value || !!meta.error}
             >
-                Unlock Wallet
+                Reset Wallet
             </Button>
-
-            <Body className="pb-6">
-                <EthosLink type="internal" to="forgot-password">
-                    Forgot Password
-                </EthosLink>
-            </Body>
         </div>
     );
 };
 
-const UnlockWalletForm = ({
-    onSubmit,
-    isPasswordIncorrect = false,
-}: PassphraseFormProps) => {
+const ResetWalletForm = ({ onSubmit }: PassphraseFormProps) => {
+    const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false);
+    const dispatch = useAppDispatch();
     const _onSubmit = useCallback(
-        ({ password }: FormikValues) => {
-            onSubmit(password);
+        async ({ password }: FormikValues) => {
+            const { payload: isPasswordCorrect } = await dispatch(
+                assertPasswordIsCorrect(password)
+            );
+            if (!isPasswordCorrect) {
+                setIsPasswordIncorrect(true);
+                return;
+            } else {
+                setIsPasswordIncorrect(false);
+                onSubmit(password);
+            }
         },
-        [onSubmit]
+        [dispatch, onSubmit]
     );
     return (
         <div className="h-full">
@@ -93,4 +94,4 @@ const UnlockWalletForm = ({
     );
 };
 
-export default UnlockWalletForm;
+export default ResetWalletForm;

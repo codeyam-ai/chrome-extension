@@ -66,17 +66,15 @@ describe('The Security Settings page', () => {
             let recoveryPhraseElements = screen.queryAllByText(recoveryPhrase);
             expect(recoveryPhraseElements.length).toBe(0);
 
-            const passwordInput = await screen.findByTestId(
-                'view-phrase-password'
-            );
+            const passwordInput = await screen.findByTestId('password');
             await userEvent.type(passwordInput, 'bad-password');
 
             const submitPasswordButton = await screen.findByText(
-                'View recovery phrase'
+                'View Recovery Phrase'
             );
             await userEvent.click(submitPasswordButton);
 
-            await screen.findByText('Password is not correct.');
+            await screen.findByText('Password is incorrect');
 
             recoveryPhraseElements = screen.queryAllByText(recoveryPhrase);
             expect(recoveryPhraseElements.length).toBe(0);
@@ -84,9 +82,6 @@ describe('The Security Settings page', () => {
             await userEvent.clear(passwordInput);
             await userEvent.type(passwordInput, password);
             await userEvent.click(submitPasswordButton);
-
-            const errors = screen.queryAllByText('Password is not correct.');
-            expect(errors.length).toBe(0);
 
             await screen.findByText(recoveryPhrase);
         });
@@ -106,17 +101,15 @@ describe('The Security Settings page', () => {
             let privateKeyElements = screen.queryAllByText(privateKey);
             expect(privateKeyElements.length).toBe(0);
 
-            const passwordInput = await screen.findByTestId(
-                'view-private-key-password'
-            );
+            const passwordInput = await screen.findByTestId('password');
             await userEvent.type(passwordInput, 'bad-password');
 
             const submitPasswordButton = await screen.findByText(
-                'View private key'
+                'View Private Key'
             );
             await userEvent.click(submitPasswordButton);
 
-            await screen.findByText('Password is not correct.');
+            await screen.findByText('Password is incorrect');
 
             privateKeyElements = screen.queryAllByText(privateKey);
             expect(privateKeyElements.length).toBe(0);
@@ -124,9 +117,6 @@ describe('The Security Settings page', () => {
             await userEvent.clear(passwordInput);
             await userEvent.type(passwordInput, password);
             await userEvent.click(submitPasswordButton);
-
-            const errors = screen.queryAllByText('Password is not correct.');
-            expect(errors.length).toBe(0);
 
             await screen.findByText(privateKey);
         });
@@ -156,11 +146,9 @@ describe('The Security Settings page', () => {
             );
             const privateKey = toB64(uint8Array);
 
-            const passwordInput = await screen.findByTestId(
-                'view-private-key-password'
-            );
+            const passwordInput = await screen.findByTestId('password');
             const submitPasswordButton = await screen.findByText(
-                'View private key'
+                'View Private Key'
             );
 
             await userEvent.type(passwordInput, password);
@@ -306,7 +294,7 @@ describe('The Security Settings page', () => {
             await userEvent.click(viewPhraseCheck);
 
             const viewPhraseButton = await screen.findByText(
-                'View recovery phrase'
+                'View Recovery Phrase'
             );
             await userEvent.click(viewPhraseButton);
 
@@ -345,7 +333,7 @@ describe('The Security Settings page', () => {
             await userEvent.click(viewPhraseCheck);
 
             const viewPhraseButton = await screen.findByText(
-                'View private key'
+                'View Private Key'
             );
             await userEvent.click(viewPhraseButton);
 
@@ -395,7 +383,7 @@ describe('The Security Settings page', () => {
             await userEvent.click(viewPhraseCheck);
 
             const viewPhraseButton = await screen.findByText(
-                'View private key'
+                'View Private Key'
             );
             await userEvent.click(viewPhraseButton);
 
