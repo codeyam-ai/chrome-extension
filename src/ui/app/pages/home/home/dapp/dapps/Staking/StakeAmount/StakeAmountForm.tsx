@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 
 import Sui from '../../../../Sui';
 import StakeSummary from '../StakeSummary';
+import ValidatorImage from '../Validator/ValidatorImage';
 import { type SuiValidatorSummaryWithApy } from '../ValidatorList';
 import ClickableTooltip from '_src/ui/app/components/ClickableTooltip';
 import Loading from '_src/ui/app/components/loading';
@@ -20,7 +21,6 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { KeyNameAndValue } from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
-import ValidatorImage from '../Validator/ValidatorImage';
 
 interface StakeAmountFormProps {
     validator: SuiValidatorSummaryWithApy;

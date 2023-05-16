@@ -1,10 +1,10 @@
 import { useFormatCoin } from '../../hooks';
 import { useValidatorsWithApy } from '../../hooks/staking/useValidatorsWithApy';
+import ValidatorImage from '../../pages/home/home/dapp/dapps/Staking/Validator/ValidatorImage';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 
 import type { StakingTransactionInfo } from '../../helpers/transactions/stakingTransactionAnalysis';
-import ValidatorImage from '../../pages/home/home/dapp/dapps/Staking/Validator/ValidatorImage';
 
 interface StakingSummaryProps {
     stakingTransactionInfo: StakingTransactionInfo;

@@ -15,6 +15,7 @@ import { Navigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { Card } from './ExistingStake';
+import ValidatorImage from './Validator/ValidatorImage';
 import ClickableLargeTooltip from '_src/ui/app/components/ClickableTooltip';
 import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
@@ -30,7 +31,6 @@ import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { SuiAddress } from '@mysten/sui.js';
-import ValidatorImage from './Validator/ValidatorImage';
 
 const APY_HELP_TEXT =
     "Annualized Percentage Yield of validator's past operations. Note, there is no guarantee APY will true indefinitely";

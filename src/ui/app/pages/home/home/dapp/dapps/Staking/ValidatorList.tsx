@@ -1,16 +1,15 @@
 import classNames from 'classnames';
 import { useCallback, useMemo, useState } from 'react';
 
+import ValidatorImage from './Validator/ValidatorImage';
 import Loading from '_src/ui/app/components/loading';
-import truncateMiddle from '_src/ui/app/helpers/truncate-middle';
 import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 import Radio from '_src/ui/app/shared/inputs/Radio';
 import ArrowUpDownSort from '_src/ui/app/shared/svg/ArrowUpDownSort';
 import Body from '_src/ui/app/shared/typography/Body';
+import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 
 import type { SuiAddress, SuiValidatorSummary } from '@mysten/sui.js';
-import EthosLink from '_src/ui/app/shared/typography/EthosLink';
-import ValidatorImage from './Validator/ValidatorImage';
 
 export interface SuiValidatorSummaryWithApy extends SuiValidatorSummary {
     apy: number;

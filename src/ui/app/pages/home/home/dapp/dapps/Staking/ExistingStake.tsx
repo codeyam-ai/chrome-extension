@@ -10,6 +10,7 @@ import { type PropsWithChildren, useCallback, useMemo } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
 
+import ValidatorImage from './Validator/ValidatorImage';
 import { useTheme } from '_src/shared/utils/themeContext';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import { useDistanceToStartEarningRewards } from '_src/ui/app/hooks/staking/useDistanceToStartEarningRewards';
@@ -17,7 +18,6 @@ import { useSystemState } from '_src/ui/app/hooks/staking/useSystemState';
 import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
-import ValidatorImage from './Validator/ValidatorImage';
 
 export interface Stake {
     status: 'Active' | 'Pending' | 'Unstaked';
