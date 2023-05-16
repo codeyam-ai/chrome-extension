@@ -3,7 +3,7 @@
 
 import { Route, Routes } from 'react-router-dom';
 
-import LockPage from './subpages/LockPage';
+import LockOrResetPage from './subpages/LockOrReset/LockOrResetPage';
 import ThemePage from './subpages/ThemePage';
 import ChangePasswordPage from './subpages/security/subpages/change-password/ChangePasswordPage';
 import { SettingsContainer } from '../../shared/navigation/nav-bar/SettingsContainer';
@@ -35,7 +35,7 @@ function SettingsRouterPage() {
                     />
                 </Route>
                 <Route path="permissions" element={<PermissionsPage />} />
-                <Route path="lock" element={<LockPage />} />
+                <Route path="lock" element={<LockOrResetPage />} />
                 <Route
                     path="change-auto-lock-timeout"
                     element={<ChangeAutoLockTimeoutPage />}
