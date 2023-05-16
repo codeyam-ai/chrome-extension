@@ -76,7 +76,7 @@ export const simulateMnemonicUser = async function (unlocked = true) {
     });
     await setEncrypted({
         key: 'activeAccountIndex',
-        value: "0",
+        value: '0',
         session: false,
         strong: false,
     });

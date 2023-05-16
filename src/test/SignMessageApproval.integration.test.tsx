@@ -11,10 +11,16 @@ import { renderApp } from '_src/test/utils/react-rendering';
 import { accountInfos, simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
-import type { ApprovalRequest, SignMessageApprovalRequest } from '_payloads/transactions';
+import type {
+    ApprovalRequest,
+    SignMessageApprovalRequest,
+} from '_payloads/transactions';
 
 describe('The Sign Message Approval popup', () => {
-    const responseSpy = jest.spyOn(BackgroundClient.prototype, 'sendTransactionRequestResponse');
+    const responseSpy = jest.spyOn(
+        BackgroundClient.prototype,
+        'sendTransactionRequestResponse'
+    );
 
     const txRequestId = '95ae4a0d-0b7b-478b-ab70-bc3fe291540e';
     let mockJsonRpc: MockJsonRpc;
@@ -49,11 +55,13 @@ describe('The Sign Message Approval popup', () => {
 
         const result = responseSpy.mock.calls[0][2];
         expect(result).toBeDefined();
-        if (result && "signature" in result) {
+        if (result && 'signature' in result) {
             // eslint-disable-next-line jest/no-conditional-expect
             expect(result.messageBytes).toEqual('aGVsbG8=');
             // eslint-disable-next-line jest/no-conditional-expect
-            expect(result.signature).toEqual('ABepCVvd/lL8SI3ncsVWVqgw186yzFiT5kBuvxkLxqbh/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4=');
+            expect(result.signature).toEqual(
+                'ABepCVvd/lL8SI3ncsVWVqgw186yzFiT5kBuvxkLxqbh/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4='
+            );
         }
     });
 

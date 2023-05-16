@@ -90,11 +90,21 @@ export function DappSignMessageApprovalPage() {
                     accountInfos,
                     activeAccountIndex
                 );
-                
+
                 closeWindow();
             }
         },
-        [accountInfos, activeAccountIndex, activeAddress, authentication, closeWindow, connectToLedger, message, passphrase, signMessageRequest]
+        [
+            accountInfos,
+            activeAccountIndex,
+            activeAddress,
+            authentication,
+            closeWindow,
+            connectToLedger,
+            message,
+            passphrase,
+            signMessageRequest,
+        ]
     );
 
     const handleImgError = useCallback(() => {
