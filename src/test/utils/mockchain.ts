@@ -2,6 +2,7 @@ import { renderTemplate } from './json-templates';
 import { makeCoinObject } from '_src/test/utils/mockchain-templates/coinObject';
 import { makeDryRunTransactionResponse } from '_src/test/utils/mockchain-templates/dryRunTransaction';
 import { suiSystemStateObject } from '_src/test/utils/mockchain-templates/sui-system-state';
+
 import type { CoinBalance, DelegatedStake } from '@mysten/sui.js';
 import type { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
@@ -30,12 +31,16 @@ export const mockCommonCalls = (mockJsonRpc: MockJsonRpc) => {
 export const mockSuiObjects = (
     mockJsonRpc: MockJsonRpc,
     options: {
+        address?: string;
         suiBalance?: number;
         nftDetails?: { name: string };
         stakedSui?: { principal: string }[];
         logObjects?: boolean;
     } = {}
 ) => {
+    const address =
+        options.address ??
+        '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de';
     const fullObjects = [];
     const objectInfos = [];
     const coinBalances = [];
@@ -112,7 +117,10 @@ export const mockSuiObjects = (
     );
 
     mockJsonRpc.mockBlockchainCall(
-        { method: 'suix_getOwnedObjects' },
+        {
+            method: 'suix_getOwnedObjects',
+            params: [address],
+        },
         {
             data: objectInfos,
             nextCursor: {
@@ -125,7 +133,10 @@ export const mockSuiObjects = (
     );
 
     mockJsonRpc.mockBlockchainCall(
-        { method: 'suix_getAllBalances' },
+        {
+            method: 'suix_getAllBalances',
+            params: [address],
+        },
         coinBalances,
         true
     );

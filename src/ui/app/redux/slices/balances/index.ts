@@ -3,6 +3,7 @@ import {
     createEntityAdapter,
     createSlice,
 } from '@reduxjs/toolkit';
+import Browser from 'webextension-polyfill';
 
 import testConnection from '../../testConnection';
 
@@ -14,11 +15,6 @@ const balancesAdapter = createEntityAdapter<CoinBalance>({
     selectId: (info) => info.coinType,
     sortComparer: (a, b) => a.coinType.localeCompare(b.coinType),
 });
-
-const REMOVE_LIST: string[] = [
-    '0x5a9020b8cba51a1acbe16bee819d18d167ba29aa874116bf82d2ed79899edc7e',
-    '0x22c3383e567e9de5d55280200f04dab6f3e7729d05e02c8e58f671a3ccd1901b',
-];
 
 export const fetchAllBalances = createAsyncThunk<
     CoinBalance[] | null,
@@ -43,18 +39,48 @@ export const fetchAllBalances = createAsyncThunk<
         owner: address,
     });
 
-    return allBalances;
+    let validBalances = allBalances;
+    let invalidTokens = state.balances.invalidTokens;
+    if (invalidTokens.length === 0) {
+        invalidTokens = (await Browser.storage.local.get('invalidTokens'))
+            .invalidTokens;
+    }
+    validBalances = validBalances.filter(
+        (coinBalance) =>
+            !invalidTokens.includes(coinBalance.coinType.split('::')[0])
+    );
+
+    return validBalances;
+});
+
+export const fetchInvalidTokens = createAsyncThunk<
+    string[] | null,
+    void,
+    AppThunkConfig
+>('balances/fetch-invalid-tokens', async () => {
+    try {
+        const invalidTokensResponse = await fetch(
+            'https://raw.githubusercontent.com/EthosWallet/valid_packages/main/public/invalid_tokens.json'
+        );
+        const invalidTokens = await invalidTokensResponse.json();
+        return invalidTokens;
+    } catch (e) {
+        return null;
+    }
 });
 
 interface BalancesManualState {
     loading: boolean;
     error: false | { code?: string; message?: string; name?: string };
     lastSync: number | null;
+    invalidTokens: string[];
 }
+
 const initialState = balancesAdapter.getInitialState<BalancesManualState>({
     loading: true,
     error: false,
     lastSync: null,
+    invalidTokens: [],
 });
 
 const slice = createSlice({
@@ -72,20 +98,15 @@ const slice = createSlice({
         builder
             .addCase(fetchAllBalances.fulfilled, (state, action) => {
                 if (action.payload) {
-                    const safeBalances = action.payload.filter(
-                        (balance) =>
-                            !REMOVE_LIST.includes(
-                                balance.coinType.split('::')[0]
-                            )
-                    );
-
-                    balancesAdapter.setAll(state, safeBalances);
-                    state.loading = false;
-                    state.error = false;
-                    state.lastSync = Date.now();
+                    if (action.payload) {
+                        balancesAdapter.setAll(state, action.payload);
+                        state.loading = false;
+                        state.error = false;
+                        state.lastSync = Date.now();
+                    }
                 }
             })
-            .addCase(fetchAllBalances.pending, (state, action) => {
+            .addCase(fetchAllBalances.pending, (state) => {
                 state.loading = true;
             })
             .addCase(
@@ -94,7 +115,15 @@ const slice = createSlice({
                     state.loading = false;
                     state.error = { code, message, name };
                 }
-            );
+            )
+            .addCase(fetchInvalidTokens.fulfilled, (state, action) => {
+                if (action.payload) {
+                    Browser.storage.local.set({
+                        invalidTokens: action.payload,
+                    });
+                    state.invalidTokens = action.payload;
+                }
+            });
     },
 });
 

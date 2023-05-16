@@ -5,7 +5,10 @@ import { defer, filter, from, of, repeat, switchMap } from 'rxjs';
 
 import { useBalancesState } from '../../hooks/useBalancesState';
 import { AppState } from '../../hooks/useInitializedGuard';
-import { fetchAllBalances } from '../../redux/slices/balances';
+import {
+    fetchAllBalances,
+    fetchInvalidTokens,
+} from '../../redux/slices/balances';
 import { WarningAlert } from '../../shared/alerts/WarningAlert';
 import Alert from '../../shared/feedback/Alert';
 import BaseLayout from '../../shared/layouts/BaseLayout';
@@ -31,7 +34,7 @@ const AppContainer = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        const sub = fetchAllOwnedObjectsSubscription(
+        const sub = fetchAllInvalidTokensSubscription(
             guardChecking,
             dispatch
         ).subscribe();
@@ -40,6 +43,14 @@ const AppContainer = () => {
 
     useEffect(() => {
         const sub = fetchAllBalancesSubscription(
+            guardChecking,
+            dispatch
+        ).subscribe();
+        return () => sub.unsubscribe();
+    }, [guardChecking, dispatch]);
+
+    useEffect(() => {
+        const sub = fetchAllOwnedObjectsSubscription(
             guardChecking,
             dispatch
         ).subscribe();
@@ -134,6 +145,20 @@ export function fetchAllBalancesSubscription(
         filter(() => !guardChecking),
         switchMap(() =>
             defer(() => from(dispatch(fetchAllBalances()))).pipe(
+                repeat({ delay: POLL_SUI_OBJECTS_INTERVAL })
+            )
+        )
+    );
+}
+
+export function fetchAllInvalidTokensSubscription(
+    guardChecking: boolean,
+    dispatch: AppDispatch
+) {
+    return of(guardChecking).pipe(
+        filter(() => !guardChecking),
+        switchMap(() =>
+            defer(() => from(dispatch(fetchInvalidTokens()))).pipe(
                 repeat({ delay: POLL_SUI_OBJECTS_INTERVAL })
             )
         )

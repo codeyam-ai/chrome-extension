@@ -91,7 +91,7 @@ const CreateWalletProvider = ({
                 (a) =>
                     a.importedMnemonicIndex === undefined &&
                     a.importedPrivateKeyName === undefined &&
-                    a.importedLedgerIndex === undefined
+                    a.ledgerAccountIndex === undefined
             );
             const sortedAccountIndices = relevantAccountInfos
                 .map((a) => a.index || 0)

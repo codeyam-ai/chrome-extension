@@ -326,10 +326,10 @@ const dappsMap: Map<string, DappData> = new Map([
             description:
                 'Keepsake is a re-imagined gaming NFT marketplace focused on a strong emphasis on NFT utility and discoverability of digital assets through web3 gaming on Sui blockchain.',
             urls: {
-                [NetworkName.DEVNET]: 'https://keepsake.gg/',
                 [NetworkName.TESTNET]: 'https://beta.keepsake.gg/',
+                [NetworkName.MAINNET]: 'https://keepsake.gg/',
             },
-            tags: [TagName.MARKETPLACE, TagName.GAMES, TagName.NFTS],
+            tags: [TagName.MARKETPLACE, TagName.NFTS],
         } as DappData,
     ],
     [
@@ -344,7 +344,7 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.DEVNET]: 'https://devnet.aftermath.finance',
                 [NetworkName.TESTNET]: 'https://testnet.aftermath.finance',
             },
-            tags: [TagName.FINANCE, TagName.NFTS],
+            tags: [TagName.FINANCE],
         } as DappData,
     ],
     [
@@ -402,7 +402,7 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.TESTNET]: 'https://clutchy.io/',
                 [NetworkName.MAINNET]: 'https://clutchy.io/',
             },
-            tags: [TagName.MARKETPLACE],
+            tags: [TagName.MARKETPLACE, TagName.NFTS],
         } as DappData,
     ],
     [
@@ -445,23 +445,6 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.DEVNET]: 'https://app.bayswap.io/',
                 [NetworkName.TESTNET]: 'https://app.bayswap.io/',
             },
-            tags: [TagName.FINANCE, TagName.TOOLS],
-        } as DappData,
-    ],
-    [
-        'ddd6d9cd-0849-40ec-ac6a-7bff10f60372',
-        {
-            id: 'ddd6d9cd-0849-40ec-ac6a-7bff10f60372',
-            image: typus,
-            title: 'Typus Finance',
-            description:
-                'Typus is a real yield infrastructure that integrates swap, lending, and derivatives building on top of the Sui ecosystem.',
-            urls: {
-                [NetworkName.DEVNET]:
-                    'https://devnet.typus.finance/vault/coveredcall/',
-                [NetworkName.TESTNET]:
-                    'https://testnet.typus.finance/vault/coveredcall/',
-            },
             tags: [TagName.FINANCE],
         } as DappData,
     ],
@@ -476,6 +459,8 @@ const dappsMap: Map<string, DappData> = new Map([
             urls: {
                 [NetworkName.TESTNET]:
                     'https://testnet.typus.finance/vault/coveredcall/',
+                [NetworkName.MAINNET]:
+                    'https://typus.finance/vault/coveredcall/',
             },
             tags: [TagName.FINANCE],
         } as DappData,
@@ -492,6 +477,8 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.DEVNET]:
                     'https://sui.interestprotocol.com/en-US/dapp/dex',
                 [NetworkName.TESTNET]:
+                    'https://sui.interestprotocol.com/en-US/dapp/dex',
+                [NetworkName.MAINNET]:
                     'https://sui.interestprotocol.com/en-US/dapp/dex',
             },
             tags: [TagName.FINANCE],

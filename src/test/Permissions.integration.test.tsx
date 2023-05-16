@@ -1,13 +1,13 @@
 import { screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import {
     simulateConnectedApps,
     simulateMnemonicUser,
 } from '_src/test/utils/storage';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('The Permissions page', () => {
     let mockJsonRpc: MockJsonRpc;

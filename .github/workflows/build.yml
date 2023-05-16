@@ -92,8 +92,8 @@ jobs:
               run: npm install
 
             # Finally, build the chrome extension
-            - name: Build Chrome Extension
-              run: npm test
+            - name: Run Tests
+              run: DEBUG_PRINT_LIMIT=10000000 npm test
 
             - name: Notify if broken
               uses: sarisia/actions-status-discord@v1
