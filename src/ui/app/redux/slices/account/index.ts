@@ -149,7 +149,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             })) || '[]'
         );
 
-        // Temporary migration fix
+        // Temporary migration fix - remove after 6/15/2023 (search for this date for related code)
         for (let i = 0; i < accountInfos.length; ++i) {
             if (
                 accountInfos[i].importedLedgerIndex !== undefined &&
