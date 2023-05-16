@@ -1,10 +1,10 @@
-import { toB64 } from '@mysten/sui.js';
+import { SignedMessage, toB64 } from '@mysten/sui.js';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { BackgroundClient } from '_app/background-client';
 import { TX_STORE_KEY } from '_shared/constants';
-import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
+import { setEncrypted } from '_src/shared/storagex/store';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { mockCommonCalls } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
@@ -53,16 +53,12 @@ describe('The Sign Message Approval popup', () => {
 
         expect(responseSpy.mock.calls[0][1]).toBe(true);
 
-        const result = responseSpy.mock.calls[0][2];
+        const result = responseSpy.mock.calls[0][2] as SignedMessage;
         expect(result).toBeDefined();
-        if (result && 'signature' in result) {
-            // eslint-disable-next-line jest/no-conditional-expect
-            expect(result.messageBytes).toEqual('aGVsbG8=');
-            // eslint-disable-next-line jest/no-conditional-expect
-            expect(result.signature).toEqual(
-                'ABepCVvd/lL8SI3ncsVWVqgw186yzFiT5kBuvxkLxqbh/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4='
-            );
-        }
+        expect(result.messageBytes).toEqual('aGVsbG8=');
+        expect(result.signature).toEqual(
+            'ABepCVvd/lL8SI3ncsVWVqgw186yzFiT5kBuvxkLxqbh/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4='
+        );
     });
 
     test('shows the message to sign and allows user to reject it', async () => {
