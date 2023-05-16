@@ -1,18 +1,24 @@
-import { bufferEncode } from './buffer';
-import decodeAttestationObject from './decodeAttestationObject';
-import parseAuthData from './parseAuthData';
+export function extractInfoFromCredential(credential: Credential) {
+    if (
+        credential.type === 'public-key' &&
+        'response' in credential &&
+        credential.response &&
+        typeof credential.response === 'object' &&
+        'clientDataJSON' in credential.response &&
+        credential.response.clientDataJSON
+    ) {
+        const { id, response } = credential;
 
-export function extractInfoFromCredential(credential: any) {
-    const attestationObject = credential.response.attestationObject;
-    const rawId = credential.rawId;
-    const decodedAttestationObject = decodeAttestationObject(
-        Buffer.from(attestationObject)
-    );
-    const authData = parseAuthData(decodedAttestationObject.authData);
-    const publicKeyBase64 = authData.credentialPublicKey;
+        const userData = JSON.parse(
+            new TextDecoder().decode(response.clientDataJSON as ArrayBuffer)
+        );
 
-    return {
-        credentialIdBase64: bufferEncode(rawId),
-        publicKeyBase64,
-    };
+        return {
+            id,
+            // publicKeyBase64,
+            userData,
+        };
+    }
+
+    return {};
 }
