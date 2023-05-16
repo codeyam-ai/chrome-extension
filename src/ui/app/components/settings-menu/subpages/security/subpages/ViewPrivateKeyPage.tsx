@@ -149,7 +149,7 @@ export default function ViewPrivateKeyPage() {
                     onClick={viewPrivateKey}
                     disabled={!hasConfirmed}
                 >
-                    View private key
+                    View Private Key
                 </Button>
             </>
         );
