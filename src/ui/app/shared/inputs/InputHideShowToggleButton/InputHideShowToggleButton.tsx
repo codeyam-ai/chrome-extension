@@ -1,20 +1,20 @@
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
 
-import ShowHideToggleTooltip from './ShowHideToggleTooltip';
+import InputHideShowToggleTooltip from './InputHideShowToggleTooltip';
 import { TooltipDirection } from '_src/ui/app/components/Tooltip';
 
-interface ShowHideToggleButtonProps {
+interface InputHideShowToggleButtonProps {
     passwordMode: boolean;
     togglePasswordMode: () => void;
 }
 
-const ShowHideToggleButton: React.FC<ShowHideToggleButtonProps> = ({
+const InputHideShowToggleButton: React.FC<InputHideShowToggleButtonProps> = ({
     passwordMode,
     togglePasswordMode,
 }) => {
     return (
         <div className="absolute right-[1px] top-1/2 transform -translate-y-1/2">
-            <ShowHideToggleTooltip
+            <InputHideShowToggleTooltip
                 tooltipText={passwordMode ? 'Show Password' : 'Hide Password'}
                 direction={TooltipDirection.DOWN}
             >
@@ -32,9 +32,9 @@ const ShowHideToggleButton: React.FC<ShowHideToggleButtonProps> = ({
                         <EyeSlashIcon className="w-6 h-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
                     )}
                 </button>
-            </ShowHideToggleTooltip>
+            </InputHideShowToggleTooltip>
         </div>
     );
 };
 
-export default ShowHideToggleButton;
+export default InputHideShowToggleButton;

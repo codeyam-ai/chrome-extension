@@ -2,17 +2,17 @@ import { useCallback, useState } from 'react';
 
 import { TooltipDirection } from '_src/ui/app/components/Tooltip';
 
-export interface ShowHideToggleTooltipProps
+export interface InputHideShowToggleTooltipProps
     extends React.HTMLAttributes<HTMLElement> {
     tooltipText: string;
     direction?: TooltipDirection;
 }
 
-const ShowHideToggleTooltip = ({
+const InputHideShowToggleTooltip = ({
     children,
     tooltipText,
     direction = TooltipDirection.RIGHT,
-}: ShowHideToggleTooltipProps) => {
+}: InputHideShowToggleTooltipProps) => {
     const [hasMouseEntered, setHasMouseEntered] = useState(false);
     const handleMouseEnter = useCallback(() => {
         setHasMouseEntered(true);
@@ -62,4 +62,4 @@ const ShowHideToggleTooltip = ({
     );
 };
 
-export default ShowHideToggleTooltip;
+export default InputHideShowToggleTooltip;

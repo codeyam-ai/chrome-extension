@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { useCallback, useRef, useState } from 'react';
 
-import ShowHideToggleButton from './ShowHideToggleButton/ShowHideToggleButton';
+import InputHideShowToggleButton from './InputHideShowToggleButton/InputHideShowToggleButton';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 
@@ -71,7 +71,7 @@ const Input = ({
                     type={reactProps.type || passwordMode ? 'password' : 'text'}
                 />
                 {showHideToggle && (
-                    <ShowHideToggleButton
+                    <InputHideShowToggleButton
                         passwordMode={!!passwordMode}
                         togglePasswordMode={togglePasswordMode}
                     />
