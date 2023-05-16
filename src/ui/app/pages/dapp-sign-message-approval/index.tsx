@@ -16,6 +16,7 @@ import Loading from '_components/loading';
 import UserApproveContainer from '_components/user-approve-container';
 import { useAppSelector, useInitializedGuard } from '_hooks';
 import { signMessageRequestsSelectors } from '_redux/slices/sign-message-requests';
+import { useDependencies } from '_src/shared/utils/dependenciesContext';
 
 import type { RootState } from '_redux/RootReducer';
 
@@ -50,6 +51,8 @@ export function DappSignMessageApprovalPage() {
     const signMessageRequest = useAppSelector(signMessageRequestSelector);
     const loading = guardLoading || signMessageRequestLoading;
     // const dispatch = useAppDispatch();
+
+    const { closeWindow } = useDependencies();
 
     const { message } = useMemo(() => {
         if (signMessageRequest?.tx?.type !== 'sign-message') return {};
@@ -87,15 +90,8 @@ export function DappSignMessageApprovalPage() {
                     accountInfos,
                     activeAccountIndex
                 );
-                // await dispatch(
-                //     respondToTransactionRequest({
-                //         txRequestID: signMessageRequest.id,
-                //         approved,
-                //         addressForTransaction:
-                //             signMessageRequest.tx.accountAddress,
-                //     })
-                // );
-                window.close();
+
+                closeWindow();
             }
         },
         [
@@ -103,6 +99,7 @@ export function DappSignMessageApprovalPage() {
             activeAccountIndex,
             activeAddress,
             authentication,
+            closeWindow,
             connectToLedger,
             message,
             passphrase,
@@ -119,16 +116,6 @@ export function DappSignMessageApprovalPage() {
             setSiteFaviconSrc(signMessageRequest.originFavIcon);
         }
     }, [signMessageRequest]);
-
-    useEffect(() => {
-        if (
-            !loading &&
-            (!signMessageRequest ||
-                (signMessageRequest && signMessageRequest.approved !== null))
-        ) {
-            window.close();
-        }
-    }, [loading, signMessageRequest]);
 
     if (
         activeAddress &&

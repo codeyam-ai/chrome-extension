@@ -69,6 +69,18 @@ export const simulateMnemonicUser = async function (unlocked = true) {
         strong: false,
     });
     await setEncrypted({
+        key: 'address',
+        value: accountInfos[0].address,
+        session: false,
+        strong: false,
+    });
+    await setEncrypted({
+        key: 'activeAccountIndex',
+        value: '0',
+        session: false,
+        strong: false,
+    });
+    await setEncrypted({
         key: 'mnemonic',
         value: recoveryPhrase,
         session: false,
