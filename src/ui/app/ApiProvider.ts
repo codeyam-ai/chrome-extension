@@ -3,10 +3,10 @@
 
 import { Connection, JsonRpcProvider, RawSigner } from '@mysten/sui.js';
 
-import { queryClient } from './helpers/queryClient';
 import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
 import type { Keypair, SuiAddress } from '@mysten/sui.js';
+import type { QueryClient } from '@tanstack/react-query';
 
 export enum API_ENV {
     mainNet = 'mainNet',
@@ -155,13 +155,15 @@ export default class ApiProvider {
     public setNewJsonRpcProvider(
         apiEnv: API_ENV = DEFAULT_API_ENV,
         fallbackNumber?: number,
-        customRPC?: string | null
+        customRPC?: string | null,
+        queryClient?: QueryClient
     ) {
         this._apiEnv = apiEnv;
         this.fallbackNumber = fallbackNumber;
         this._customRPC = customRPC ?? null;
-        // We also clear the query client whenever set set a new API provider:
-        queryClient.clear();
+
+        // Make sure that state is cleared when switching networks
+        queryClient?.clear();
 
         const connection = customRPC
             ? new Connection({ fullnode: customRPC })
