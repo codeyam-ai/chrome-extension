@@ -21,6 +21,7 @@ const ShowHideToggleButton: React.FC<ShowHideToggleButtonProps> = ({
                 <button
                     className="flex items-center place-content-center h-[56px] w-[56px] rounded-r-[15px] hover:bg-black/5 hover:dark:bg-white/10"
                     onClick={togglePasswordMode}
+                    type="button"
                 >
                     {passwordMode ? (
                         <EyeIcon className="w-6 h-6 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />

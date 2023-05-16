@@ -1,9 +1,9 @@
 import classNames from 'classnames';
+import { useCallback, useRef, useState } from 'react';
+
+import ShowHideToggleButton from './ShowHideToggleButton/ShowHideToggleButton';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
-import { useCallback, useRef, useState } from 'react';
-import ShowHideToggleButton from './ShowHideToggleButton/ShowHideToggleButton';
 
 export interface InputProps
     extends React.DetailedHTMLProps<

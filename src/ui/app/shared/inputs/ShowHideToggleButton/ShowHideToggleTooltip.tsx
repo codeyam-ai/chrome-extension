@@ -13,7 +13,7 @@ const ShowHideToggleTooltip = ({
     tooltipText,
     direction = TooltipDirection.RIGHT,
 }: ShowHideToggleTooltipProps) => {
-    const [hasMouseEntered, setHasMouseEntered] = useState(true);
+    const [hasMouseEntered, setHasMouseEntered] = useState(false);
     const handleMouseEnter = useCallback(() => {
         setHasMouseEntered(true);
     }, []);
@@ -26,7 +26,7 @@ const ShowHideToggleTooltip = ({
     return (
         <div className="relative flex items-center">
             <div
-                className={`text-center text-xs ${shift} absolute whitespace-no-wrap bg-gray-800 dark:bg-gray-700 text-white px-2 py-1 rounded flex items-center transition-all duration-75 cursor-default`}
+                className={`text-center text-xs ${shift} absolute -right-[5px] whitespace-no-wrap bg-gray-800 dark:bg-gray-700 text-white px-2 py-1 rounded flex items-center transition-all duration-75 cursor-default`}
                 style={
                     hasMouseEntered
                         ? {

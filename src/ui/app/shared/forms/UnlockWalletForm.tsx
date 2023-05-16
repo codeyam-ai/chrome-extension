@@ -1,9 +1,8 @@
-import { Formik, Form, useField } from 'formik';
-import { useCallback, useState } from 'react';
+import { Form, Formik, useField } from 'formik';
+import { useCallback } from 'react';
 import * as Yup from 'yup';
 
 import Button from '../buttons/Button';
-import HideShowToggle from '../buttons/HideShowToggle';
 import Input from '../inputs/Input';
 import Body from '../typography/Body';
 import EthosLink from '../typography/EthosLink';
@@ -23,11 +22,6 @@ const CustomFormikForm = ({
     // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
     // which we can spread on <input> and alse replace ErrorMessage entirely.
     const [field, meta] = useField('password');
-    const [passwordMode, setPasswordMode] = useState(true);
-
-    const togglePasswordMode = useCallback(() => {
-        setPasswordMode((prev) => !prev);
-    }, []);
 
     return (
         <div className="flex flex-col h-full justify-between">
