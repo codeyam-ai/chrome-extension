@@ -1,25 +1,26 @@
-import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import moonpayDark from '_images/payments/logos/moonpay-dark.png';
-import moonpayLight from '_images/payments/logos/moonpay-light.png';
-import transakDark from '_images/payments/logos/transak-dark.png';
-import transakLight from '_images/payments/logos/transak-light.png';
+import MoonpayDark from '_images/payments/logos/moonpay-dark';
+import MoonpayLight from '_images/payments/logos/moonpay-light';
+import TransakDark from '_images/payments/logos/transak-dark';
+import TransakLight from '_images/payments/logos/transak-light';
 import { LinkType } from '_src/enums/LinkType';
+import { API_ENV } from '_src/shared/api-env';
 import { useTheme } from '_src/shared/utils/themeContext';
 import checkMoonpaySupport from '_src/ui/app/helpers/checkMoonpaySupport';
+import { useAppSelector } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Header from '_src/ui/app/shared/typography/Header';
 
 const providers = [
     {
+        isRedirect: false, // corrected here
         path: '/home/buy/moonpay',
         logo: {
-            light: moonpayLight,
-            dark: moonpayDark,
-            altText: 'Moonpay payments for fiat to SUI purchases',
+            light: <MoonpayLight />,
+            dark: <MoonpayDark />,
         },
         link: {
             type: LinkType.External,
@@ -27,27 +28,26 @@ const providers = [
         },
     },
     {
-        path: '/home/buy/stripe',
+        isRedirect: true,
+        path: undefined,
         logo: {
-            light: transakLight,
-            dark: transakDark,
-            altText: 'Stripe payments for fiat to SUI purchases',
+            light: <TransakLight />,
+            dark: <TransakDark />,
         },
         link: {
             type: LinkType.External,
-            url: 'https://stripe.com/',
+            url: 'https://transak.com/',
         },
     },
 ];
-
 interface ProviderSelectProps {
     theme: string;
     provider: {
-        path: string;
+        isRedirect: boolean;
+        path: string | undefined;
         logo: {
-            light: string;
-            dark: string;
-            altText: string;
+            light: JSX.Element;
+            dark: JSX.Element;
         };
         link: {
             type: LinkType;
@@ -58,41 +58,68 @@ interface ProviderSelectProps {
 
 const ProviderSelect = ({ theme, provider }: ProviderSelectProps) => {
     const navigate = useNavigate();
+    const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+
+    const isProduction = selectedApiEnv.toString() === API_ENV.mainNet;
+    const env = isProduction ? 'production' : 'staging';
+    const code = 'SUI';
+    const apiKey = isProduction
+        ? '2ce1afb2-adf6-4c11-827e-000fabd7ffd8'
+        : '0d469a3f-08ba-4cf6-9c7d-c5371a0d06c2';
+    const baseUrl = isProduction
+        ? 'https://global.transak.com'
+        : 'https://global-stg.transak.com';
+    const colorCode = encodeURIComponent('#6D28D9');
 
     const selectProvider = useCallback(() => {
-        navigate(provider.path);
-    }, [navigate, provider.path]);
+        if (!provider.isRedirect) {
+            if (provider.path) {
+                navigate(provider.path);
+            }
+        } else {
+            const url = `${baseUrl}?apiKey=${apiKey}&themeColor=${colorCode}&environment=${env}&cryptoCurrencyCode=${code}&hideMenu=true&exchangeScreenTitle=Buy%20SUI`;
+            window.location.href = url;
+        }
+    }, [
+        navigate,
+        provider.path,
+        apiKey,
+        baseUrl,
+        colorCode,
+        env,
+        provider.isRedirect,
+    ]);
+
+    const preventPropagation = useCallback(
+        (e: React.MouseEvent<HTMLElement>) => {
+            e.stopPropagation();
+        },
+        []
+    );
 
     return (
         <button
             onClick={selectProvider}
             className={
-                'block w-full mb-5 rounded-lg p-5 text-left border border-ethos-light-background-secondary hover:border-ethos-light-primary-light hover:dark:border-ethos-dark-primary-dark dark:border-ethos-dark-border-dark transition-all'
+                'flex items-center w-full mb-5 h-20 rounded-lg p-5 text-left border border-ethos-light-background-secondary hover:border-ethos-light-primary-light hover:dark:border-ethos-dark-primary-dark dark:border-ethos-dark-border-dark transition-all'
             }
         >
-            <div className={'flex flex-col justify-between relative'}>
-                <div className={'flex flex-row justify-between items-center'}>
-                    <img
-                        src={
-                            theme === 'light'
-                                ? provider.logo.light
-                                : provider.logo.dark
-                        }
-                        alt={provider.logo.altText}
-                    />
+            <div className={'w-full flex flex-col justify-between relative'}>
+                <div
+                    className={
+                        'flex w-full flex-row justify-between items-center'
+                    }
+                >
+                    {theme === 'light'
+                        ? provider.logo.light
+                        : provider.logo.dark}
                     <EthosLink
-                        className={'text-sm underline'}
+                        className={'text-sm underline text-right'}
                         to={provider.link.url}
                         type={provider.link.type}
+                        onClick={preventPropagation}
                     >
-                        Details{' '}
-                        <ArrowUpRightIcon
-                            width={16}
-                            height={16}
-                            className={
-                                'text-ethos-light-primary-light dark:ethos-dark-primary-dark ml-2'
-                            }
-                        />
+                        Details
                     </EthosLink>
                 </div>
             </div>

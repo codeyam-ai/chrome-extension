@@ -62,7 +62,6 @@ import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
 import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
-import StripeOnboarding from './pages/home/buy/providers/stripe';
 
 const App = () => {
     const dispatch = useAppDispatch();
@@ -107,10 +106,6 @@ const App = () => {
                         />
                         <Route path="home/buy">
                             <Route path="*" element={<OnboardingProviders />} />
-                            <Route
-                                path="stripe"
-                                element={<StripeOnboarding />}
-                            />
                             <Route
                                 path="moonpay"
                                 element={<MoonpayOnboarding />}

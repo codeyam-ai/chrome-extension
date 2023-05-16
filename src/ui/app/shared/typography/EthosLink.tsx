@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 export interface EthosLinkProps {
     type: 'external' | 'internal' | 'none';
     to?: string;
-    onClick?: () => void;
+    onClick?: (() => void) | ((e: React.MouseEvent<HTMLElement>) => void);
     onMouseOver?: () => void;
     forceLightMode?: boolean;
     children: ReactNode;
