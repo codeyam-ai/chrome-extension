@@ -30,7 +30,7 @@ const Input = ({
     showHideToggle,
     ...reactProps
 }: InputProps) => {
-    const [passwordMode, setPasswordMode] = useState(showHideToggle);
+    const [passwordMode, setPasswordMode] = useState(!!showHideToggle);
     const inputRef = useRef<HTMLInputElement>(null);
     const inputClasses =
         // the addition of focus:py-[15px] focus:px-[19px] is to compensate for the 1px border that gets added on focus, so the element doesn't change sizes
@@ -68,7 +68,11 @@ const Input = ({
                         showHideToggle ? ' pr-12' : ''
                     )}
                     {...reactProps}
-                    type={reactProps.type || passwordMode ? 'password' : 'text'}
+                    type={
+                        passwordMode && reactProps.type !== 'number'
+                            ? 'password'
+                            : reactProps.type || 'text'
+                    }
                 />
                 {showHideToggle && (
                     <InputHideShowToggleButton
