@@ -45,13 +45,10 @@ export const fetchAllBalances = createAsyncThunk<
         invalidTokens = (await Browser.storage.local.get('invalidTokens'))
             .invalidTokens;
     }
-    if (!invalidTokens) {
-        invalidTokens = [];
-    }
-    validBalances = validBalances.filter((coinBalance) => {
-        const split = coinBalance.coinType.split('::');
-        return !invalidTokens.includes(split[0]);
-    });
+    validBalances = validBalances.filter(
+        (coinBalance) =>
+            !invalidTokens.includes(coinBalance.coinType.split('::')[0])
+    );
 
     return validBalances;
 });
