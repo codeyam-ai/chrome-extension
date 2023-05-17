@@ -12,6 +12,7 @@ const WalletTo = ({
         address: string;
         emoji?: string;
         color?: string;
+        nftPfpUrl?: string;
     };
     noTo?: boolean;
 }) => {
@@ -28,6 +29,7 @@ const WalletTo = ({
             <WalletColorAndEmojiCircle
                 color={walletTo.color}
                 emoji={walletTo.emoji}
+                nftPfpUrl={walletTo.nftPfpUrl}
                 circleSizeClasses="h-5 w-5"
                 emojiSizeInPx={12}
             />
