@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import PasswordVerificationForm from './PasswordVerificationForm';
 import Button from '../../../../../shared/buttons/Button';
 import { secureApiCall } from '_src/shared/utils/simpleApiCall';
 import { useAppSelector } from '_src/ui/app/hooks';
 import Alert from '_src/ui/app/shared/feedback/Alert';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { ChangeEventHandler } from 'react';
 
@@ -12,8 +12,6 @@ export default function ViewSeedPage() {
     const [hasConfirmed, setHasConfirmed] = useState(false);
     const [showSeed, setShowSeed] = useState(false);
     const [hostedSeed, setHostedSeed] = useState('Loading...');
-    const [providedPassword, setProvidedPassword] = useState('');
-    const [passphraseError, setPassphraseError] = useState(false);
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
     );
@@ -45,18 +43,6 @@ export default function ViewSeedPage() {
         getHostedSeed();
     }, [authentication, hasConfirmed]);
 
-    const matchPassword = useCallback(() => {
-        const matches = providedPassword === passphrase;
-        setPassphraseError(!matches);
-        setShowSeed(matches);
-    }, [passphrase, providedPassword]);
-
-    const onChangeProvidedPassword = useCallback<
-        ChangeEventHandler<HTMLInputElement>
-    >((event) => {
-        setProvidedPassword(event.target.value);
-    }, []);
-
     const onHandleConfirmed = useCallback<ChangeEventHandler<HTMLInputElement>>(
         (event) => {
             const checked = event.target.checked;
@@ -80,7 +66,7 @@ export default function ViewSeedPage() {
                     name="mnemonic"
                     disabled={true}
                 />
-                <Button to="/" buttonStyle="secondary">
+                <Button to="/" buttonStyle="secondary" isInline>
                     Done
                 </Button>
             </div>
@@ -125,7 +111,7 @@ export default function ViewSeedPage() {
                     onClick={viewSeed}
                     disabled={!hasConfirmed}
                 >
-                    View recovery phrase
+                    View Recovery Phrase
                 </Button>
             </>
         );
@@ -141,33 +127,10 @@ export default function ViewSeedPage() {
                                 control over your wallet."
                 />
             </div>
-            <div className="pb-4 px-6 w-full relative flex items-start text-left">
-                <div className="flex flex-col gap-3 items-stretch w-full">
-                    <BodyLarge>Please enter your password:</BodyLarge>
-                    {passphraseError && (
-                        <div className="text-ethos-dark-red">
-                            Password is not correct.
-                        </div>
-                    )}
-                    <input
-                        id="view-phrase-password"
-                        data-testid="view-phrase-password"
-                        aria-describedby="view-phrase-password-description"
-                        name="view-phrase-password"
-                        type="password"
-                        onChange={onChangeProvidedPassword}
-                        className="rounded border-gray-300 focus:ring-purple-500 dark:focus:ring-violet-700 dark:border-gray-400 dark:bg-gray-700"
-                        autoFocus
-                    />
-                </div>
-            </div>
-            <Button
-                buttonStyle="secondary"
-                onClick={matchPassword}
-                disabled={providedPassword.length === 0}
-            >
-                View recovery phrase
-            </Button>
+            <PasswordVerificationForm
+                onSubmit={viewSeed}
+                submitButtonText="View Recovery Phrase"
+            />
         </>
     );
 }

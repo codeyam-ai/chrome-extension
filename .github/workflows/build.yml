@@ -93,7 +93,7 @@ jobs:
 
             # Finally, build the chrome extension
             - name: Run Tests
-              run: DEBUG_PRINT_LIMIT=10000000 npm test
+              run: DEBUG_PRINT_LIMIT=10000000 NODE_OPTIONS="--max-old-space-size=4096" npm test
 
             - name: Notify if broken
               uses: sarisia/actions-status-discord@v1

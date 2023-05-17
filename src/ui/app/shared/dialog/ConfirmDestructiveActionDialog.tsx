@@ -36,7 +36,11 @@ const ConfirmDestructiveActionDialog = ({
     return (
         <>
             <Transition appear show={isOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={closeModal}>
+                <Dialog
+                    as="div"
+                    className="relative z-[999]"
+                    onClose={closeModal}
+                >
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -60,7 +64,7 @@ const ConfirmDestructiveActionDialog = ({
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <Dialog.Panel className="w-[328px] transform overflow-hidden rounded-[20px] text-center align-middle shadow-ethos-modal-box-shadow transition-all bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
+                                <Dialog.Panel className="w-[328px] transform overflow-hidden rounded-[20px] text-center align-middle shadow-ethos-modal-box-shadow transition-all bg-ethos-light-background-default dark:bg-ethos-dark-background-default dark:border dark:border-ethos-dark-text-stroke">
                                     <div className="flex place-content-end pt-6 px-6">
                                         <button
                                             onClick={closeModal}
