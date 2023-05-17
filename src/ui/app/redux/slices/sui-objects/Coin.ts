@@ -14,10 +14,8 @@ import type {
 } from '@mysten/sui.js';
 // import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
-const COIN_TYPE =
-    '0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin';
-const COIN_TYPE_ARG_REGEX =
-    /^0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<(.+)>$/;
+const COIN_TYPE = '0x2::coin::Coin';
+const COIN_TYPE_ARG_REGEX = /^0x2::coin::Coin<(.+)>$/;
 
 export const DEFAULT_GAS_BUDGET_FOR_PAY = 500;
 export const DEFAULT_GAS_BUDGET_FOR_STAKE = 50000;
