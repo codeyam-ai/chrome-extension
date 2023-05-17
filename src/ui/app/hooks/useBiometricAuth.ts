@@ -6,20 +6,18 @@ import useAppSelector from './useAppSelector';
 import { extractInfoFromCredential } from '../helpers/biometricAuth';
 import { setIsBiometricsSetUp } from '../redux/slices/account';
 
-const ETHOS_WALLET_PASSWORD_BYTES = new TextEncoder().encode(
-    'Ethos Wallet Password'
-);
+const CHALLENGE = new TextEncoder().encode('Ethos Wallet');
 
 const CREDENTIAL_CREATION_OPTIONS: CredentialCreationOptions = {
     publicKey: {
-        challenge: ETHOS_WALLET_PASSWORD_BYTES,
+        challenge: CHALLENGE,
         rp: {
             name: 'Ethos Wallet',
         },
         user: {
             name: 'Ethos Wallet',
             displayName: 'Ethos Wallet',
-            id: ETHOS_WALLET_PASSWORD_BYTES,
+            id: CHALLENGE,
         },
         pubKeyCredParams: [
             { type: 'public-key', alg: -7 }, //ES256
@@ -30,6 +28,7 @@ const CREDENTIAL_CREATION_OPTIONS: CredentialCreationOptions = {
         },
         timeout: 60000,
     },
+    signal: undefined,
 };
 
 export function useBiometricAuth() {
@@ -82,7 +81,7 @@ export function useBiometricAuth() {
 
             if (credentialIdBase64) {
                 const publicKey: PublicKeyCredentialRequestOptions = {
-                    challenge: ETHOS_WALLET_PASSWORD_BYTES,
+                    challenge: CHALLENGE,
                     allowCredentials: [
                         {
                             type: 'public-key',
@@ -95,6 +94,7 @@ export function useBiometricAuth() {
 
                 const credential = await navigator.credentials.get({
                     publicKey,
+                    signal
                 });
                 if (credential) {
                     const { challenge, signature } =
