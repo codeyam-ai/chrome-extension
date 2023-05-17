@@ -5,6 +5,7 @@ import useAppDispatch from './useAppDispatch';
 import useAppSelector from './useAppSelector';
 import { extractInfoFromCredential } from '../helpers/biometricAuth';
 import { setIsBiometricsSetUp } from '../redux/slices/account';
+import { bufferDecode } from '../helpers/biometricAuth/buffer';
 
 const CHALLENGE = new TextEncoder().encode('Ethos Wallet');
 
@@ -85,7 +86,7 @@ export function useBiometricAuth() {
                     allowCredentials: [
                         {
                             type: 'public-key',
-                            id: fromB64(credentialIdBase64),
+                            id: bufferDecode(credentialIdBase64),
                             transports: ['internal'],
                         },
                     ],
@@ -94,7 +95,7 @@ export function useBiometricAuth() {
 
                 const credential = await navigator.credentials.get({
                     publicKey,
-                    signal
+                    signal,
                 });
                 if (credential) {
                     const { challenge, signature } =

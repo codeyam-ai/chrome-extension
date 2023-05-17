@@ -1,11 +1,14 @@
+import { bufferEncode } from './buffer';
+
 export function extractInfoFromCredential(credential: Credential) {
     if (
         credential.type === 'public-key' &&
+        'rawId' in credential &&
         'response' in credential &&
         credential.response &&
         typeof credential.response === 'object'
     ) {
-        const { id, response } = credential;
+        const { rawId, response } = credential;
 
         let signature: ArrayBuffer | undefined;
         let publicKey: string | undefined;
@@ -23,7 +26,7 @@ export function extractInfoFromCredential(credential: Credential) {
         }
 
         return {
-            id,
+            id: bufferEncode(rawId as ArrayBuffer),
             signature,
             publicKey,
             challenge,
