@@ -351,7 +351,7 @@ describe('The Transaction Approval popup', () => {
                 method: 'suix_getCoins',
                 params: [
                     '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de',
-                    '0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI',
+                    '0x2::sui::SUI',
                     null,
                     null,
                 ],
