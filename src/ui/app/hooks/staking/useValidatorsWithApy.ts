@@ -63,6 +63,7 @@ export function useValidatorsWithApy() {
             }) => {
                 return validatorApys?.apys.reduce((acc, { apy, address }) => {
                     const validator = activeValidators[address];
+
                     acc[address] = {
                         ...validator,
                         stakeShare: calculateValidatorStakeShare(

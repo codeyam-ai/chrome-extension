@@ -7,6 +7,7 @@ import truncateMiddle from '../../helpers/truncate-middle';
 import { useAppSelector } from '../../hooks';
 import { useValidatorsWithApy } from '../../hooks/staking/useValidatorsWithApy';
 import useWalletOrContact from '../../hooks/useWalletOrContact';
+import ValidatorImage from '../../pages/home/home/dapp/dapps/Staking/Validator/ValidatorImage';
 import WalletColorAndEmojiCircle from '../../shared/WalletColorAndEmojiCircle';
 import ActionIcon from '../../shared/transactions/ActionIcon';
 import BodyLarge from '../../shared/typography/BodyLarge';
@@ -145,15 +146,10 @@ const PrimaryInteraction = ({ from, important }: AnalyzedTransaction) => {
         toNode = undefined;
         toValidator = (
             <div className="flex items-center gap-3">
-                {validator && validator.imageUrl ? (
-                    <img
-                        src={validator.imageUrl}
-                        alt={validator.name}
-                        className="h-9 w-9 rounded-full"
-                    />
-                ) : (
-                    <div className="h-9 w-9 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
-                )}
+                <ValidatorImage
+                    validator={validator}
+                    className="h-9 w-9 rounded-full"
+                />
                 <div className="flex flex-col items-start text-left">
                     <BodyLarge isSemibold>{validator?.name}</BodyLarge>
                     <CopyBody

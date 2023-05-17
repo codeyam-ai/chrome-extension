@@ -15,6 +15,7 @@ import { Navigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { Card } from './ExistingStake';
+import ValidatorImage from './Validator/ValidatorImage';
 import ClickableLargeTooltip from '_src/ui/app/components/ClickableTooltip';
 import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
@@ -173,15 +174,10 @@ const StakeDetail: React.FC = () => {
                 >
                     <Body>Validator</Body>
                     <div className="flex justify-center place-content-center py-2">
-                        {validator?.imageUrl ? (
-                            <img
-                                src={validator.imageUrl}
-                                alt={validator.name}
-                                className="h-5 w-5 rounded-full"
-                            />
-                        ) : (
-                            <div className="h-5 w-5 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
-                        )}
+                        <ValidatorImage
+                            validator={validator}
+                            className="h-5 w-5 rounded-full"
+                        />
                         <BodyLarge isSemibold className="ml-2">
                             {validator?.name}
                         </BodyLarge>

@@ -138,7 +138,9 @@ const AssetChanges = ({
         (objectChange) =>
             !(
                 'objectType' in objectChange &&
-                objectChange.objectType.indexOf('0x2::coin::Coin') > -1
+                objectChange.objectType.indexOf(
+                    '0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin'
+                ) > -1
             )
     );
 

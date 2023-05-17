@@ -89,7 +89,7 @@ export class Coin {
      * such that `validator` will stake the `amount` of Coin<T> for the user.
      *
      * @param signer A signer with connection to fullnode
-     * @param coins A list of Coins owned by the signer with the same generic type(e.g., 0x2::Sui::Sui)
+     * @param coins A list of Coins owned by the signer with the same generic type(e.g., 0x0000000000000000000000000000000000000000000000000000000000000002::Sui::Sui)
      * @param amount The amount to be staked
      * @param validator The sui address of the chosen validator
      */

@@ -53,7 +53,7 @@ const SelectValidator: React.FC = () => {
             <Button
                 onClick={onContinue}
                 removeContainerPadding
-                className="!mt-2 !mb-6"
+                className="!mt-2"
                 disabled={!selectedValidator}
             >
                 Next
