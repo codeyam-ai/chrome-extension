@@ -1,14 +1,14 @@
 import { Switch } from '@headlessui/react';
 import classNames from 'classnames';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
-// Define the types for your props
 interface SimpleToggleProps {
     onSwitchOn: () => void;
     onSwitchOff: () => void;
     value: boolean;
     ariaLabelOn: string;
     ariaLabelOff: string;
+    forceLightTheme?: boolean;
 }
 
 const SimpleToggle: React.FC<SimpleToggleProps> = ({
@@ -17,6 +17,7 @@ const SimpleToggle: React.FC<SimpleToggleProps> = ({
     value,
     ariaLabelOn,
     ariaLabelOff,
+    forceLightTheme,
 }) => {
     const handleSwitch = useCallback(
         (checked: boolean) => {
@@ -31,9 +32,20 @@ const SimpleToggle: React.FC<SimpleToggleProps> = ({
             onChange={handleSwitch}
             className={classNames(
                 value
-                    ? 'bg-ethos-light-primary-light dark:bg-ethos-dark-primary-dark'
-                    : 'bg-ethos-light-medium-gray dark:bg-ethos-dark-medium-gray',
-                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ethos-light-primary-light dark:focus:ring-ethos-dark-primary-dark focus:ring-offset-2'
+                    ? classNames(
+                          'bg-ethos-light-primary-light',
+                          forceLightTheme
+                              ? ''
+                              : 'dark:bg-ethos-dark-primary-dark'
+                      )
+                    : classNames(
+                          'bg-ethos-light-medium-gray',
+                          forceLightTheme
+                              ? ''
+                              : 'dark:bg-ethos-dark-medium-gray'
+                      ),
+                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ethos-light-primary-light focus:ring-offset-2',
+                forceLightTheme ? '' : 'dark:focus:ring-ethos-dark-primary-dark'
             )}
         >
             <span className="sr-only">

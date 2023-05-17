@@ -1,5 +1,6 @@
 import {
     EnvelopeIcon,
+    FingerPrintIcon,
     KeyIcon,
     LockClosedIcon,
 } from '@heroicons/react/24/solid';
@@ -35,7 +36,8 @@ interface OnboardingCardProps {
         | 'lock'
         | 'wallet'
         | 'emoji-and-color'
-        | 'sui';
+        | 'sui'
+        | 'fingerprint';
     progressCompleted?: number;
     progressTotal?: number;
     isIconBlurred?: boolean;
@@ -58,25 +60,33 @@ const OnboardingCard = ({
 }: OnboardingCardProps) => {
     const iconClasses = 'h-16 w-16 text-ethos-light-background-default';
     let iconDisplay = <></>;
-    if (icon === 'key') {
-        iconDisplay = <KeyIcon className={iconClasses} />;
-    }
-    if (icon === 'envelope') {
-        iconDisplay = <EnvelopeIcon className={iconClasses} />;
-    }
-    if (icon === 'pin') {
-        iconDisplay = <BigPinIcon />;
-    }
-    if (icon === 'lock') {
-        iconDisplay = <LockClosedIcon className={iconClasses} />;
-    }
-    if (icon === 'wallet') {
-        // Temporarily importing from a custom file because of a bug where WalletIcon isn't included in heroicons
-        iconDisplay = (
-            <span className={iconClasses}>
-                <WalletIcon />
-            </span>
-        );
+
+    switch (icon) {
+        case 'key':
+            iconDisplay = <KeyIcon className={iconClasses} />;
+            break;
+        case 'envelope':
+            iconDisplay = <EnvelopeIcon className={iconClasses} />;
+            break;
+        case 'pin':
+            iconDisplay = <BigPinIcon />;
+            break;
+        case 'lock':
+            iconDisplay = <LockClosedIcon className={iconClasses} />;
+            break;
+        case 'wallet':
+            // Temporarily importing from a custom file because of a bug where WalletIcon isn't included in heroicons
+            iconDisplay = (
+                <span className={iconClasses}>
+                    <WalletIcon />
+                </span>
+            );
+            break;
+        case 'fingerprint':
+            iconDisplay = <FingerPrintIcon className={iconClasses} />;
+            break;
+        default:
+            break;
     }
 
     let gradientStyle = '';

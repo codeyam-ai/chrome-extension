@@ -11,10 +11,12 @@ import {
     createMnemonic,
     savePassphrase,
 } from '_src/ui/app/redux/slices/account';
+import { useBiometricAuth } from '../../hooks/useBiometricAuth';
 
 const CreatePasswordPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const { isSupported: isBiometricsSupported } = useBiometricAuth();
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
     );
@@ -22,6 +24,11 @@ const CreatePasswordPage = () => {
     const _save = useCallback(
         async (passphrase: string) => {
             await dispatch(savePassphrase(passphrase));
+
+            if (isBiometricsSupported) {
+                navigate('/initialize/touch-id');
+                return;
+            }
 
             if (mnemonic) {
                 // User is importing existing seed
@@ -32,7 +39,7 @@ const CreatePasswordPage = () => {
                 navigate('/initialize/save-phrase');
             }
         },
-        [dispatch, mnemonic, navigate]
+        [dispatch, isBiometricsSupported, mnemonic, navigate]
     );
 
     return (

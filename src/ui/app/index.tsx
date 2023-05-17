@@ -60,6 +60,7 @@ import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
 import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
+import TouchIdOnboardingPage from './pages/initialize/touch-id';
 
 const App = () => {
     const dispatch = useAppDispatch();
@@ -190,6 +191,10 @@ const App = () => {
                         <Route
                             path="create-password"
                             element={<CreatePasswordPage />}
+                        />
+                        <Route
+                            path="touch-id"
+                            element={<TouchIdOnboardingPage />}
                         />
                         <Route
                             path="save-phrase"

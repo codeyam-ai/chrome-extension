@@ -41,10 +41,10 @@ export function useBiometricAuth() {
         navigator.credentials &&
         navigator.platform.toUpperCase().includes('MAC');
 
-    // const isBiometricsSetUp = useAppSelector(
-    //     ({ account }) => account.isBiometricsSetUp
-    // );
-    const isBiometricsSetUp = true;
+    const isBiometricsSetUp = useAppSelector(
+        ({ account }) => account.isBiometricsSetUp
+    );
+    // const isBiometricsSetUp = true;
 
     const setup = useCallback(async () => {
         if (!isSupported) {

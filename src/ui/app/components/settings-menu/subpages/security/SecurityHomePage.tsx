@@ -7,6 +7,7 @@ import SimpleToggle from '../../../SimpleToggle';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import Body from '_src/ui/app/shared/typography/Body';
+import { BIOMETRIC_DISCLAIMER } from '_src/shared/constants';
 
 interface SecurityItem {
     title: string;
@@ -32,10 +33,6 @@ const SecurityItemDisplay = ({ item }: { item: SecurityItem }) => {
 
 const SecurityHomePage = () => {
     const { isSupported, isBiometricsSetUp, setup, reset } = useBiometricAuth();
-
-    const handleSwitchOn = useCallback(async () => {
-        const setupResult = await setup();
-    }, []);
 
     const securityItems: SecurityItem[] = [
         {
@@ -90,8 +87,7 @@ const SecurityHomePage = () => {
                         />
                     </div>
                     <Body isTextColorMedium className="text-left pt-2">
-                        Ethos never handles or stores your biometric data in any
-                        way.
+                        {BIOMETRIC_DISCLAIMER}
                     </Body>
                 </div>
             )}

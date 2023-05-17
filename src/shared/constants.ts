@@ -26,6 +26,9 @@ export const PREAPPROVAL_KEY = 'preapprovals';
 export const AUTO_LOCK_TIMEOUT_KEY = 'autoLockTimeout';
 export const DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES = 15;
 
+export const BIOMETRIC_DISCLAIMER =
+    'Your privacy is important. Ethos never tracks, handles, or stores your biometric data.';
+
 export const NUM_OF_EPOCH_BEFORE_EARNING = 2;
 
 export enum AccountType {
