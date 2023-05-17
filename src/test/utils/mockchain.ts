@@ -62,8 +62,7 @@ export const mockSuiObjects = (
             },
         };
         const coinBalance: CoinBalance = {
-            coinType:
-                '0x2::sui::SUI',
+            coinType: '0x2::sui::SUI',
             totalBalance: options.suiBalance.toString(),
             coinObjectCount: 1,
             lockedBalance: { number: 0 },
