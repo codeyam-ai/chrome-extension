@@ -112,13 +112,20 @@ export function useBiometricAuth() {
                 }
                 return false;
             }
+            return false;
         },
         [credentialIdBase64, encryptedChallenge, isBiometricsSetUp, isSupported]
     );
 
+    const reset = useCallback(() => {
+        dispatch(setIsBiometricsSetUp(false));
+    }, [dispatch]);
+
     return {
         isSupported,
+        isBiometricsSetUp,
         setup,
         authenticate,
+        reset,
     };
 }

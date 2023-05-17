@@ -100,6 +100,7 @@ module.exports = {
                 'ethos-light-background-secondary': '#F2F2F2',
                 'ethos-light-background-light-grey': '#F9F9FB',
                 'ethos-light-fullscreen-backdrop': '#FAFAFB',
+                'ethos-light-medium-gray': '#cbd5e1',
 
                 // Text and stroke
                 'ethos-light-text-default': '#000000',
@@ -123,6 +124,7 @@ module.exports = {
                 'ethos-dark-background-secondary': '#1A1C26',
                 'ethos-dark-background-light-grey': '#1A1C26',
                 'ethos-dark-fullscreen-backdrop': '#000',
+                'ethos-dark-medium-gray': '#334155',
 
                 'ethos-light-background-green': 'rgba(56, 206, 110, 0.08)',
                 'ethos-light-background-purple': 'rgba(144, 64, 245, 0.1)',

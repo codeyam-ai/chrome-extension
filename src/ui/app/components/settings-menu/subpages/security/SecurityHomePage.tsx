@@ -1,7 +1,11 @@
+import { useBiometricAuth } from '_src/ui/app/hooks/useBiometricAuth';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import Header from '_src/ui/app/shared/typography/Header';
+import SimpleToggle from '../../../SimpleToggle';
+import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 
 interface SecurityItem {
     title: string;
@@ -26,6 +30,12 @@ const SecurityItemDisplay = ({ item }: { item: SecurityItem }) => {
 };
 
 const SecurityHomePage = () => {
+    const { isSupported, isBiometricsSetUp, setup, reset } = useBiometricAuth();
+
+    const handleSwitchOn = useCallback(async () => {
+        const setupResult = await setup();
+    }, []);
+
     const securityItems: SecurityItem[] = [
         {
             title: 'Password',
@@ -55,10 +65,31 @@ const SecurityHomePage = () => {
             <ContentBlock className="!py-6 !px-0 !pb-4">
                 <Header>Security</Header>
                 <BodyLarge isTextColorMedium>
-                    Reset your password or export your seedphrase or private
-                    keys.
+                    Reset your password or export your recovery phrase or
+                    private keys.
                 </BodyLarge>
             </ContentBlock>
+            {isSupported && (
+                <div className="flex flex-col py-6">
+                    <ContentBlock className="!px-0 !pb-4">
+                        <Header>Touch ID</Header>
+                        <BodyLarge isTextColorMedium>
+                            Use biometrics (Touch ID) to securely sign in
+                            without typing in your password.
+                        </BodyLarge>
+                    </ContentBlock>
+                    <div className="flex justify-between">
+                        <BodyLarge>Unlock with Touch ID</BodyLarge>
+                        <SimpleToggle
+                            value={isBiometricsSetUp}
+                            onSwitchOn={setup}
+                            onSwitchOff={reset}
+                            ariaLabelOn="Touch ID is enabled"
+                            ariaLabelOff="Touch ID is disabled"
+                        />
+                    </div>
+                </div>
+            )}
             {securityItems.map((item, key) => {
                 return <SecurityItemDisplay item={item} key={key} />;
             })}
