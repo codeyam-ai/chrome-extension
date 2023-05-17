@@ -12,9 +12,8 @@ import ColorPickerMenu from '_src/ui/app/shared/inputs/colors/ColorPickerMenu';
 import EmojiPickerMenu, {
     type EmojiPickerResult,
 } from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
-import Title from '_src/ui/app/shared/typography/Title';
 
-const ChangeProfilePicture: React.FC = () => {
+const ChangeEmojiAndColor: React.FC = () => {
     const [isEmojiPickerMenuOpen, setIsEmojiPickerMenuOpen] = useState(false);
     const [isColorPickerMenuOpen, setIsColorPickerMenuOpen] = useState(false);
     const { updateCurrentAccountInfo } = useUpdateCurrentAccountInfo();
@@ -70,10 +69,7 @@ const ChangeProfilePicture: React.FC = () => {
     }, [draftEmoji, navigate, updateCurrentAccountInfo]);
 
     return (
-        <div className="flex flex-col items-center pt-6 px-6">
-            <Title className="pb-6">
-                Choose your wallet&apos;s profile picture
-            </Title>
+        <div className="flex flex-col items-center w-full">
             <div className="flex gap-6">
                 <div
                     data-testid="emoji-picker"
@@ -111,4 +107,4 @@ const ChangeProfilePicture: React.FC = () => {
     );
 };
 
-export default ChangeProfilePicture;
+export default ChangeEmojiAndColor;

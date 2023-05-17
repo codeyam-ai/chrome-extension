@@ -1,6 +1,6 @@
 import { Outlet, Route, Routes, useLocation } from 'react-router-dom';
 
-import ChangeProfilePicture from './ChangeProfilePicture';
+import ChangeProfilePicture from './ChangeProfilePicture/ChangeProfilePicturePage';
 import ChangeWalletTheme from './ChangeWalletTheme';
 import CustomizeCompleted from './CustomizeCompleted';
 import ChangeFavoritesPage from './Favorites/ChangeFavoritesPage';
