@@ -15,14 +15,32 @@ import BaseLayout from '../../shared/layouts/BaseLayout';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
 import PageLayout from '_src/ui/app/pages/PageLayout';
+import { useBiometricAuth } from '../../hooks/useBiometricAuth';
 
 const LockedPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { pathname } = useLocation();
+    const { authenticate } = useBiometricAuth();
 
     const checkingInitialized = useInitializedGuard(AppState.LOCKED);
     const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false);
+
+    const onFingerprintAuth = useCallback(async () => {
+        const authenticateResult = await authenticate();
+
+        if (!authenticateResult) {
+            return;
+        } else {
+            // Should get the passphrase from storage somehow
+            // const unlockResult = await dispatch(unlock(passphrase));
+            const unlockResult = await dispatch(unlock('one two three'));
+            if (unlockResult.payload) {
+                await dispatch(loadAccountInformationFromStorage());
+                navigate((pathname || '/').replace('/locked', ''));
+            }
+        }
+    }, [authenticate, dispatch, navigate, pathname]);
 
     const _save = useCallback(
         async (passphrase: string) => {
@@ -52,6 +70,7 @@ const LockedPage = () => {
                     <UnlockWalletForm
                         onSubmit={_save}
                         isPasswordIncorrect={isPasswordIncorrect}
+                        onFingerprintAuth={onFingerprintAuth}
                     />
                 </BaseLayout>
             </Loading>

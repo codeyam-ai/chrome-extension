@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from 'react';
 import InputHideShowToggleButton from './InputHideShowToggleButton/InputHideShowToggleButton';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
+import InputFingerprintButton from './InputFingerprintButton';
 
 export interface InputProps
     extends React.DetailedHTMLProps<
@@ -17,6 +18,7 @@ export interface InputProps
     isTextAlignRight?: boolean;
     forceLightTheme?: boolean;
     showHideToggle?: boolean;
+    onClickFingerprint?: () => void;
 }
 
 const Input = ({
@@ -28,6 +30,7 @@ const Input = ({
     forceLightTheme,
     className,
     showHideToggle,
+    onClickFingerprint,
     ...reactProps
 }: InputProps) => {
     const [passwordMode, setPasswordMode] = useState(!!showHideToggle);
@@ -75,10 +78,18 @@ const Input = ({
                     }
                 />
                 {showHideToggle && (
-                    <InputHideShowToggleButton
-                        passwordMode={!!passwordMode}
-                        togglePasswordMode={togglePasswordMode}
-                    />
+                    <>
+                        <InputHideShowToggleButton
+                            passwordMode={!!passwordMode}
+                            togglePasswordMode={togglePasswordMode}
+                            shiftLeft={!!onClickFingerprint}
+                        />
+                        {onClickFingerprint && (
+                            <InputFingerprintButton
+                                onButtonClick={onClickFingerprint}
+                            />
+                        )}
+                    </>
                 )}
             </div>
             {description && <Body isTextColorMedium>{description}</Body>}

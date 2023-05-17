@@ -1,5 +1,5 @@
 import { Form, Formik, useField } from 'formik';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import * as Yup from 'yup';
 
 import Button from '../buttons/Button';
@@ -8,17 +8,17 @@ import Body from '../typography/Body';
 import EthosLink from '../typography/EthosLink';
 
 import type { FormikValues } from 'formik';
-
-type PassphraseFormProps = {
-    onSubmit: (passphrase: string) => void;
-    isPasswordIncorrect?: boolean;
-};
+import { useBiometricAuth } from '../../hooks/useBiometricAuth';
 
 const CustomFormikForm = ({
     isPasswordIncorrect = false,
+    onFingerprintAuth,
 }: {
     isPasswordIncorrect: boolean;
+    onFingerprintAuth?: () => void;
 }) => {
+    const { isBiometricsSetUp } = useBiometricAuth();
+
     // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
     // which we can spread on <input> and alse replace ErrorMessage entirely.
     const [field, meta] = useField('password');
@@ -32,9 +32,12 @@ const CustomFormikForm = ({
                 data-testid="password"
                 name="password"
                 required={true}
+                autoComplete="off"
                 autoFocus
                 showHideToggle
-                autoComplete="off"
+                onClickFingerprint={
+                    isBiometricsSetUp ? onFingerprintAuth : undefined
+                }
                 errorText={
                     isPasswordIncorrect
                         ? 'Password is incorrect'
@@ -54,7 +57,11 @@ const CustomFormikForm = ({
             </Button>
 
             <Body className="pb-6">
-                <EthosLink type="internal" to="forgot-password">
+                <EthosLink
+                    type="internal"
+                    to="forgot-password"
+                    className="!text-ethos-light-text-medium dark:!text-ethos-dark-text-medium"
+                >
                     Forgot Password
                 </EthosLink>
             </Body>
@@ -62,10 +69,17 @@ const CustomFormikForm = ({
     );
 };
 
+type UnlockWalletFormProps = {
+    onSubmit: (passphrase: string) => void;
+    isPasswordIncorrect?: boolean;
+    onFingerprintAuth?: () => void;
+};
+
 const UnlockWalletForm = ({
     onSubmit,
     isPasswordIncorrect = false,
-}: PassphraseFormProps) => {
+    onFingerprintAuth,
+}: UnlockWalletFormProps) => {
     const _onSubmit = useCallback(
         ({ password }: FormikValues) => {
             onSubmit(password);
@@ -86,6 +100,7 @@ const UnlockWalletForm = ({
                 <Form className="h-full">
                     <CustomFormikForm
                         isPasswordIncorrect={isPasswordIncorrect}
+                        onFingerprintAuth={onFingerprintAuth}
                     />
                 </Form>
             </Formik>
