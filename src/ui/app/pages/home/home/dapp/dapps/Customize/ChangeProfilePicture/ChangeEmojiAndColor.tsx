@@ -64,9 +64,14 @@ const ChangeEmojiAndColor: React.FC = () => {
     );
 
     const handleOnContinue = useCallback(() => {
-        updateCurrentAccountInfo({ emoji: draftEmoji });
+        updateCurrentAccountInfo({
+            emoji: draftEmoji,
+            color: draftColor,
+            nftPfpId: undefined,
+            nftPfpUrl: undefined,
+        });
         navigate('/home/customize/theme');
-    }, [draftEmoji, navigate, updateCurrentAccountInfo]);
+    }, [draftColor, draftEmoji, navigate, updateCurrentAccountInfo]);
 
     return (
         <div className="flex flex-col items-center w-full">
