@@ -6,6 +6,7 @@ import Header from '_src/ui/app/shared/typography/Header';
 import SimpleToggle from '../../../SimpleToggle';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import Body from '_src/ui/app/shared/typography/Body';
 
 interface SecurityItem {
     title: string;
@@ -88,6 +89,10 @@ const SecurityHomePage = () => {
                             ariaLabelOff="Touch ID is disabled"
                         />
                     </div>
+                    <Body isTextColorMedium className="text-left pt-2">
+                        Ethos never handles or stores your biometric data in any
+                        way.
+                    </Body>
                 </div>
             )}
             {securityItems.map((item, key) => {
