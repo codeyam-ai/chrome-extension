@@ -5,11 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import SelectableNftGrid from './SelectableNftGrid';
 import { DASHBOARD_COLLECTIBLES } from '_src/shared/constants';
 import Loading from '_src/ui/app/components/loading';
-import {
-    useAppSelector,
-    useNFTBasicData,
-    useObjectsState,
-} from '_src/ui/app/hooks';
+import { useAppSelector, useObjectsState } from '_src/ui/app/hooks';
 import { useUpdateCurrentAccountInfo } from '_src/ui/app/hooks/useUpdateCurrentAccountInfo';
 import { accountNftsSelector } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';

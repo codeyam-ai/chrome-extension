@@ -1,4 +1,3 @@
-// src/ui/app/hooks/useUpdateCurrentAccountInfo.ts
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -21,7 +20,6 @@ export const useUpdateCurrentAccountInfo = () => {
     const activeAccountIndex = useSelector(
         (state: RootState) => state.account.activeAccountIndex
     );
-    console.log('accountInfos :>> ', accountInfos);
 
     useEffect(() => {
         const _setIsHosted = async () => {
