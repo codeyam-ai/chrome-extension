@@ -94,7 +94,7 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
 
                         <div className="px-4">
                             <div className="flex px-3 py-2 justify-between items-center place-content-center rounded-xl border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
-                                <div className="basis-1/2 flex">
+                                <div className="basis-1/3 flex">
                                     <Sui />
                                     <input
                                         {...amountField}
@@ -105,7 +105,7 @@ const StakeAmountForm: React.FC<StakeAmountFormProps> = ({
                                         placeholder="0"
                                     />
                                 </div>
-                                <span className="basis-1/2 flex gap-1 items-end justify-end">
+                                <span className="basis-2/3 flex gap-1 items-end justify-end">
                                     <Body isTextColorMedium>Available:</Body>
                                     <Body isTextColorMedium isSemibold>
                                         {formattedSuiBalance} SUI
