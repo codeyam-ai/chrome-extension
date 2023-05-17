@@ -62,7 +62,9 @@ export function useBiometricAuth() {
             setCredentialIdBase64(id);
             setEncryptedChallenge(challenge);
             dispatch(setIsBiometricsSetUp(true));
+            return true;
         }
+        return false;
     }, [dispatch, isSupported]);
 
     const authenticate = useCallback(
@@ -102,11 +104,13 @@ export function useBiometricAuth() {
                     console.log('SIGNATURE', signature);
 
                     console.log('VALID', challenge === encryptedChallenge);
+                    return challenge === encryptedChallenge;
 
                     // Save the signature in local storage
                     // On next authentication check the signature and, if equal, use the challenge to decrypt the password
                     // Use the password as if the user had entered it directly
                 }
+                return false;
             }
         },
         [credentialIdBase64, encryptedChallenge, isBiometricsSetUp, isSupported]
