@@ -1,4 +1,4 @@
-import { bufferEncode } from './buffer';
+import { toB64 } from '@mysten/bcs';
 
 export function extractInfoFromCredential(credential: Credential) {
     if (
@@ -10,7 +10,7 @@ export function extractInfoFromCredential(credential: Credential) {
     ) {
         const { rawId, response } = credential;
 
-        let signature: ArrayBuffer | undefined;
+        let signature: string | undefined;
         let publicKey: string | undefined;
         let challenge: string | undefined;
 
@@ -22,11 +22,16 @@ export function extractInfoFromCredential(credential: Credential) {
         }
 
         if ('signature' in response && response.signature) {
-            signature = response.signature as ArrayBuffer;
+            signature = toB64(
+                new Uint8Array(response.signature as ArrayBuffer)
+            );
         }
+        console.log('SIGNATURE', signature);
+
+        const id = toB64(new Uint8Array(rawId as ArrayBuffer));
 
         return {
-            id: bufferEncode(rawId as ArrayBuffer),
+            id,
             signature,
             publicKey,
             challenge,
