@@ -46,7 +46,9 @@ const sendTokens = async ({
     if (!signer) return;
 
     const [primaryCoin, ...mergeCoins] = allCoins.filter(
-        (coin) => coin.type === `0x2::coin::Coin<${tokenTypeArg}>`
+        (coin) =>
+            coin.type ===
+            `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${tokenTypeArg}>`
     );
 
     const transactionBlock = new TransactionBlock();

@@ -53,7 +53,7 @@ export const mockSuiObjects = (
                 objectId: objId,
                 version: '0',
                 digest: '12Pe8JN96upsApMseeghANkkNMKUWA6Bz4JD5NTWko2q',
-                type: '0x2::coin::Coin<0x2::sui::SUI>',
+                type: '0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI>',
                 owner: {
                     AddressOwner: '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
                 },
@@ -62,7 +62,8 @@ export const mockSuiObjects = (
             },
         };
         const coinBalance: CoinBalance = {
-            coinType: '0x2::sui::SUI',
+            coinType:
+                '0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI',
             totalBalance: options.suiBalance.toString(),
             coinObjectCount: 1,
             lockedBalance: { number: 0 },
@@ -201,7 +202,7 @@ export const rpcMocks = (mockJsonRpc: MockJsonRpc) => {
                     method: 'suix_getCoins',
                     params: [
                         '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de',
-                        '0x2::sui::SUI',
+                        '0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI',
                         null,
                         null,
                     ],

@@ -47,7 +47,10 @@ const SendReceiveButtonGroup = ({
     const selectedApiEnv = useAppSelector(({ app }) => app.apiEnv);
     const isMainnet = selectedApiEnv === API_ENV.mainNet;
 
-    const sui = suiBalance['0x2::sui::SUI'];
+    const sui =
+        suiBalance[
+            '0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI'
+        ];
     useEffect(() => {
         if (!sui) return;
         setBalance(sui.toString());

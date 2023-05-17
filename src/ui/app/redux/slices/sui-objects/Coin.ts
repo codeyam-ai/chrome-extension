@@ -14,8 +14,10 @@ import type {
 } from '@mysten/sui.js';
 // import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
-const COIN_TYPE = '0x2::coin::Coin';
-const COIN_TYPE_ARG_REGEX = /^0x2::coin::Coin<(.+)>$/;
+const COIN_TYPE =
+    '0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin';
+const COIN_TYPE_ARG_REGEX =
+    /^0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<(.+)>$/;
 
 export const DEFAULT_GAS_BUDGET_FOR_PAY = 500;
 export const DEFAULT_GAS_BUDGET_FOR_STAKE = 50000;
@@ -89,7 +91,7 @@ export class Coin {
      * such that `validator` will stake the `amount` of Coin<T> for the user.
      *
      * @param signer A signer with connection to fullnode
-     * @param coins A list of Coins owned by the signer with the same generic type(e.g., 0x2::Sui::Sui)
+     * @param coins A list of Coins owned by the signer with the same generic type(e.g., 0x0000000000000000000000000000000000000000000000000000000000000002::Sui::Sui)
      * @param amount The amount to be staked
      * @param validator The sui address of the chosen validator
      */
