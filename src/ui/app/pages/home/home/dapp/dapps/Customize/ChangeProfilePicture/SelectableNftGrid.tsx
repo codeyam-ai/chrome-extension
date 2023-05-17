@@ -14,7 +14,7 @@ const SelectableNftGrid = ({
     onSelect,
 }: SelectableNftGridProps) => {
     return (
-        <div className="grid grid-cols-2 gap-x-6 gap-y-7 px-6 pb-6">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-7 pb-6">
             {(nfts || []).map((nft) => (
                 <NftGridItem
                     nft={nft}

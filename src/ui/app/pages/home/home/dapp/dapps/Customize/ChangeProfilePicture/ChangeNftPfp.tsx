@@ -1,23 +1,30 @@
 import { PhotoIcon } from '@heroicons/react/24/solid';
 import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import SelectableNftGrid from './SelectableNftGrid';
 import { DASHBOARD_COLLECTIBLES } from '_src/shared/constants';
 import Loading from '_src/ui/app/components/loading';
 import { useAppSelector, useObjectsState } from '_src/ui/app/hooks';
 import { accountNftsSelector } from '_src/ui/app/redux/slices/account';
+import Button from '_src/ui/app/shared/buttons/Button';
 import { Icon } from '_src/ui/app/shared/icons/Icon';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
 const ChangeNftPfp: React.FC = () => {
     const [selectedNftId, setSelectedNftId] = useState<string>();
     const { loading } = useObjectsState();
+    const navigate = useNavigate();
 
     const nfts = useAppSelector(accountNftsSelector) || [];
 
     const onSelectNft = useCallback((id: string) => {
         setSelectedNftId(id);
     }, []);
+
+    const handleOnContinue = useCallback(() => {
+        navigate('/home/customize/theme');
+    }, [navigate]);
 
     return (
         <Loading loading={loading} big>
@@ -31,11 +38,20 @@ const ChangeNftPfp: React.FC = () => {
                         linkUrl={DASHBOARD_COLLECTIBLES}
                     />
                 ) : (
-                    <SelectableNftGrid
-                        nfts={nfts}
-                        onSelect={onSelectNft}
-                        selectedNftId={selectedNftId}
-                    />
+                    <div className="flex flex-col">
+                        <Button
+                            onClick={handleOnContinue}
+                            disabled={!selectedNftId}
+                            isInline
+                        >
+                            Continue
+                        </Button>
+                        <SelectableNftGrid
+                            nfts={nfts}
+                            onSelect={onSelectNft}
+                            selectedNftId={selectedNftId}
+                        />
+                    </div>
                 )}
             </div>
         </Loading>

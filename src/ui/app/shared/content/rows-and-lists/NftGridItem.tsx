@@ -46,8 +46,10 @@ const NftGridItem = ({ nft, type, selected, onSelect }: NftGridItemProps) => {
         const gridItem = (
             <div
                 className={classNames(
-                    'relative rounded-2xl',
-                    selected ? 'border-4 border-blue-500' : ''
+                    'relative rounded-2xl overflow-hidden',
+                    selected
+                        ? 'border-4 border-ethos-light-primary-light dark:border-ethos-dark-primary-dark'
+                        : ''
                 )}
                 onFocus={emulateFocus}
                 onBlur={emulateBlur}
