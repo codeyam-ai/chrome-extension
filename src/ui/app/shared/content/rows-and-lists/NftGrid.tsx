@@ -10,7 +10,11 @@ const NftGrid = ({ nfts }: NftGridProps) => {
     return (
         <div className="grid grid-cols-2 gap-x-6 gap-y-7 px-6 pb-6">
             {(nfts || []).map((nft) => (
-                <NftGridItem nft={nft} key={`nft-${nft.objectId}`} />
+                <NftGridItem
+                    nft={nft}
+                    key={`nft-${nft.objectId}`}
+                    type="link"
+                />
             ))}
         </div>
     );

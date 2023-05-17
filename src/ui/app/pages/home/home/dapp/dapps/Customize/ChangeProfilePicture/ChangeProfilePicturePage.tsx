@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import ChangeEmojiAndColor from './ChangeEmojiAndColor';
+import ChangeNftPfp from './ChangeNftPfp';
 import Radio from '_src/ui/app/shared/inputs/Radio';
 import Title from '_src/ui/app/shared/typography/Title';
 
@@ -32,7 +33,7 @@ const ChangeProfilePicture: React.FC = () => {
                 />
             </div>
             <hr className="w-full text-ethos-light-text-stroke dark:text-ethos-dark-text-stroke pb-4" />
-            {pfpType === 'emoji' ? <ChangeEmojiAndColor /> : <div>NFT</div>}
+            {pfpType === 'emoji' ? <ChangeEmojiAndColor /> : <ChangeNftPfp />}
         </div>
     );
 };
