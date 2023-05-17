@@ -5,7 +5,7 @@ import type { SuiObjectData } from '@mysten/sui.js';
 interface SelectableNftGridProps {
     nfts: SuiObjectData[];
     selectedNftId?: string;
-    onSelect: (id: string) => void;
+    onSelect: (id: string, url: string) => void;
 }
 
 const SelectableNftGrid = ({

@@ -5,6 +5,8 @@ export interface Account {
     nickname: string;
     color: string;
     emoji: string;
+    nftPfpId?: string;
+    nftPfpUrl?: string;
 }
 
 export interface AccountCustomization extends Account {

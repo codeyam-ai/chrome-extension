@@ -2,11 +2,23 @@ import { useCallback, useState } from 'react';
 
 import ChangeEmojiAndColor from './ChangeEmojiAndColor';
 import ChangeNftPfp from './ChangeNftPfp';
+import { useAppSelector } from '_src/ui/app/hooks';
 import Radio from '_src/ui/app/shared/inputs/Radio';
 import Title from '_src/ui/app/shared/typography/Title';
 
+import type { AccountInfo } from '_src/ui/app/KeypairVault';
+
 const ChangeProfilePicture: React.FC = () => {
-    const [pfpType, setPfpType] = useState<'emoji' | 'nft'>('emoji');
+    const accountInfo = useAppSelector(
+        ({ account: { accountInfos, activeAccountIndex } }) =>
+            accountInfos.find(
+                (accountInfo: AccountInfo) =>
+                    (accountInfo.index || 0) === activeAccountIndex
+            )
+    );
+    const [pfpType, setPfpType] = useState<'emoji' | 'nft'>(
+        accountInfo?.nftPfpUrl ? 'nft' : 'emoji'
+    );
 
     const onRadioChange = useCallback(
         (event: React.ChangeEvent<HTMLInputElement>) => {

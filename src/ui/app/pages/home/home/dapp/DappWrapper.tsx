@@ -57,7 +57,7 @@ export const DappViewHeader: React.FC<DappViewHeaderProps> = ({
     hideFavorite,
 }) => {
     return (
-        <div className="flex items-center justify-between h-[50px] px-4 shadow-ethos-shadow-small border-b border-ethos-light-gray border-ethos-dark-text-stroke bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
+        <div className="flex items-center justify-between p-4 shadow-ethos-shadow-small border-b border-ethos-light-gray border-ethos-dark-text-stroke bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
             <div className="w-1/4 text-left">
                 <button onClick={closeDapp}>
                     <ChevronLeftIcon

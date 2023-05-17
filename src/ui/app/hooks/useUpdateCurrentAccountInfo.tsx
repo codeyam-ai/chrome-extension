@@ -21,6 +21,7 @@ export const useUpdateCurrentAccountInfo = () => {
     const activeAccountIndex = useSelector(
         (state: RootState) => state.account.activeAccountIndex
     );
+    console.log('accountInfos :>> ', accountInfos);
 
     useEffect(() => {
         const _setIsHosted = async () => {

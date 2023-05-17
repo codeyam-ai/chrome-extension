@@ -11,7 +11,7 @@ interface NftGridItemProps {
     nft: SuiObjectData;
     type: 'link' | 'selectable';
     selected?: boolean;
-    onSelect?: (id: string) => void;
+    onSelect?: (id: string, url: string) => void;
 }
 
 const NftGridItem = ({ nft, type, selected, onSelect }: NftGridItemProps) => {
@@ -38,9 +38,9 @@ const NftGridItem = ({ nft, type, selected, onSelect }: NftGridItemProps) => {
 
     const handleSelect = useCallback(() => {
         if (onSelect) {
-            onSelect(nft.objectId);
+            onSelect(nft.objectId, filePath || '');
         }
-    }, [onSelect, nft.objectId]);
+    }, [onSelect, nft.objectId, filePath]);
 
     if (nft.content && 'fields' in nft.content) {
         const gridItem = (
