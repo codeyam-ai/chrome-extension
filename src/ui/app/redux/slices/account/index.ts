@@ -56,6 +56,7 @@ type InitialAccountInfo = {
     locked: boolean;
     accountType: AccountType;
     importNames: { mnemonics: string[]; privateKeys: string[] };
+    biometricID: string | null;
 };
 
 export const loadAccountInformationFromStorage = createAsyncThunk(
@@ -110,8 +111,15 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     mnemonics: [],
                     privateKeys: [],
                 },
+                biometricID: null,
             };
         }
+
+        const biometricID = await getEncrypted({
+            key: 'biometricID',
+            session: false,
+            strong: false,
+        });
 
         const passphrase = await getEncrypted({
             key: 'passphrase',
@@ -132,6 +140,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     mnemonics: [],
                     privateKeys: [],
                 },
+                biometricID,
             };
         }
 
@@ -308,6 +317,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 locked: true,
                 accountType,
                 importNames,
+                biometricID,
             };
         }
 
@@ -320,6 +330,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             locked: false,
             accountType,
             importNames,
+            biometricID,
         };
     }
 );
@@ -1145,6 +1156,20 @@ export const saveExcludedDappsKeys = createAsyncThunk(
     }
 );
 
+export const saveBiometricID = createAsyncThunk(
+    'account/saveBiometricID',
+    async (id: string, { getState }): Promise<string> => {
+        await setEncrypted({
+            key: 'biometricID',
+            value: id,
+            session: false,
+            strong: false,
+        });
+
+        return id;
+    }
+);
+
 export const saveBiometricKey = createAsyncThunk(
     'account/saveBiometricKey',
     async (biometric: string, { getState }): Promise<boolean> => {
@@ -1168,7 +1193,7 @@ export const saveBiometricKey = createAsyncThunk(
 
 export const unlockViaBiometric = createAsyncThunk(
     'account/unlockViaBiometric',
-    async (biometric: string): Promise<boolean> => {
+    async (biometric: string): Promise<string | null> => {
         const passphrase = await getEncrypted({
             key: 'biometric',
             session: false,
@@ -1176,14 +1201,19 @@ export const unlockViaBiometric = createAsyncThunk(
             passphrase: biometric,
         });
 
-        const unlocked = await unlock(passphrase);
-        return !!unlocked;
+        return passphrase;
     }
 );
 
-export const deleteBiometric = createAsyncThunk(
-    'account/deleteBiometric',
+export const removeBiometric = createAsyncThunk(
+    'account/removeBiometric',
     async (biometric: string): Promise<void> => {
+        await deleteEncrypted({
+            key: 'biometricID',
+            session: false,
+            strong: false,
+        });
+
         await deleteEncrypted({
             key: 'biometric',
             session: false,
@@ -1271,9 +1301,6 @@ const accountSlice = createSlice({
                 state.locked = true;
             }
         },
-        setBiometricID: (state, action: PayloadAction<string>) => {
-            state.biometricID = action.payload;
-        },
     },
     extraReducers: (builder) =>
         builder
@@ -1297,6 +1324,7 @@ const accountSlice = createSlice({
                     state.accountType = action.payload.accountType;
                     state.importNames = action.payload.importNames;
                     state.locked = action.payload.locked;
+                    state.biometricID = action.payload.biometricID;
                 }
             )
             .addCase(createMnemonic.pending, (state) => {
@@ -1393,16 +1421,17 @@ const accountSlice = createSlice({
                             state.accountInfos[0]?.index || 0;
                     }
                 }
+            })
+            .addCase(saveBiometricID.fulfilled, (state, action) => {
+                state.biometricID = action.payload;
+            })
+            .addCase(removeBiometric.fulfilled, (state) => {
+                state.biometricID = null;
             }),
 });
 
-export const {
-    setMnemonic,
-    setAddress,
-    setAccountInfos,
-    lockWalletUI,
-    setBiometricID,
-} = accountSlice.actions;
+export const { setMnemonic, setAddress, setAccountInfos, lockWalletUI } =
+    accountSlice.actions;
 
 export default accountSlice.reducer;
 

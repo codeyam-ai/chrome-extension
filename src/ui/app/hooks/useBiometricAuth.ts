@@ -5,9 +5,9 @@ import useAppDispatch from './useAppDispatch';
 import useAppSelector from './useAppSelector';
 import { extractInfoFromCredential } from '../helpers/biometricAuth';
 import {
-    deleteBiometric,
+    removeBiometric,
+    saveBiometricID,
     saveBiometricKey,
-    setBiometricID,
     unlockViaBiometric,
 } from '../redux/slices/account';
 
@@ -44,7 +44,6 @@ export function useBiometricAuth() {
         navigator.platform.toUpperCase().includes('MAC');
 
     const biometricID = useAppSelector(({ account }) => account.biometricID);
-    // const isBiometricsSetUp = true;
 
     const setup = useCallback(async () => {
         if (!isSupported) {
@@ -63,7 +62,7 @@ export function useBiometricAuth() {
             );
 
             if (id) {
-                await dispatch(setBiometricID(id));
+                await dispatch(saveBiometricID(id));
             }
 
             if (challenge) {
@@ -113,18 +112,20 @@ export function useBiometricAuth() {
         const challenge = await getBiometric();
 
         if (challenge) {
-            const success = await dispatch(unlockViaBiometric(challenge));
-            return success;
+            const passphrase = await dispatch(
+                unlockViaBiometric(challenge)
+            ).unwrap();
+            return passphrase;
         }
 
-        return false;
+        return null;
     }, [getBiometric, dispatch]);
 
     const reset = useCallback(async () => {
         const challenge = await getBiometric();
 
         if (challenge) {
-            dispatch(deleteBiometric(challenge));
+            dispatch(removeBiometric(challenge));
         }
     }, [dispatch, getBiometric]);
 

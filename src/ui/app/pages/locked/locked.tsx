@@ -27,14 +27,12 @@ const LockedPage = () => {
     const [isPasswordIncorrect, setIsPasswordIncorrect] = useState(false);
 
     const onFingerprintAuth = useCallback(async () => {
-        const authenticateResult = await authenticate();
+        const passphrase = await authenticate();
 
-        if (!authenticateResult) {
+        if (!passphrase) {
             return;
         } else {
-            // Should get the passphrase from storage somehow
-            // const unlockResult = await dispatch(unlock(passphrase));
-            const unlockResult = await dispatch(unlock('one two three'));
+            const unlockResult = await dispatch(unlock(passphrase));
             if (unlockResult.payload) {
                 await dispatch(loadAccountInformationFromStorage());
                 navigate((pathname || '/').replace('/locked', ''));
