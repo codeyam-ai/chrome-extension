@@ -1,4 +1,3 @@
-// src/ui/app/hooks/useUpdateCurrentAccountInfo.ts
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 

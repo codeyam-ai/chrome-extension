@@ -13,6 +13,8 @@ export type AccountInfo = {
     name?: string;
     color?: string;
     emoji?: string;
+    nftPfpId?: string;
+    nftPfpUrl?: string;
     chain?: string;
     importedMnemonicName?: string;
     importedMnemonicIndex?: number;

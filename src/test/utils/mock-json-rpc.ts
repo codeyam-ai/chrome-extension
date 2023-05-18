@@ -17,7 +17,7 @@ interface CallContext {
 export class MockJsonRpc {
     registeredCalls: CallContext[];
 
-    constructor(trace: boolean = false) {
+    constructor(trace = false) {
         this.registeredCalls = [];
         nock('http://mainNet-fullnode.example.com')
             .persist()
@@ -79,11 +79,15 @@ export class MockJsonRpc {
                     numExpectedCalls &&
                     callContext.actualCalls === numExpectedCalls;
                 if (matches) {
-
                     if (!reachedLimit) {
                         if (trace) {
-                            console.log(`for ${method} returning ${JSON.stringify(callContext.expectedCall.result)}`)
-                        } 
+                            // eslint-disable-next-line no-console
+                            console.log(
+                                `for ${method} returning ${JSON.stringify(
+                                    callContext.expectedCall.result
+                                )}`
+                            );
+                        }
                         callContext.actualCalls += 1;
                         allJsonRpcResponses.push(
                             callContext.expectedCall.result
