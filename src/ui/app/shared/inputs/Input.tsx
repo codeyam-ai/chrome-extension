@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import { useCallback, useRef, useState } from 'react';
 
+import InputFingerprintButton from './InputFingerprintButton';
 import InputHideShowToggleButton from './InputHideShowToggleButton/InputHideShowToggleButton';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
-import InputFingerprintButton from './InputFingerprintButton';
 
 export interface InputProps
     extends React.DetailedHTMLProps<

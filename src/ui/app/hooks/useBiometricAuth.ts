@@ -1,12 +1,17 @@
 import { fromB64 } from '@mysten/bcs';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import useAppDispatch from './useAppDispatch';
 import useAppSelector from './useAppSelector';
 import { extractInfoFromCredential } from '../helpers/biometricAuth';
-import { setIsBiometricsSetUp } from '../redux/slices/account';
+import {
+    deleteBiometric,
+    saveBiometricKey,
+    setBiometricID,
+    unlockViaBiometric,
+} from '../redux/slices/account';
 
-const CHALLENGE = new TextEncoder().encode('Ethos Wallet');
+export const CHALLENGE = new TextEncoder().encode('Ethos Wallet');
 
 const CREDENTIAL_CREATION_OPTIONS: CredentialCreationOptions = {
     publicKey: {
@@ -32,18 +37,13 @@ const CREDENTIAL_CREATION_OPTIONS: CredentialCreationOptions = {
 };
 
 export function useBiometricAuth() {
-    const [credentialIdBase64, setCredentialIdBase64] = useState<string>();
-    const [encryptedChallenge, setEncryptedChallenge] = useState<string>();
-
     const dispatch = useAppDispatch();
 
     const isSupported =
         navigator.credentials &&
         navigator.platform.toUpperCase().includes('MAC');
 
-    const isBiometricsSetUp = useAppSelector(
-        ({ account }) => account.isBiometricsSetUp
-    );
+    const biometricID = useAppSelector(({ account }) => account.biometricID);
     // const isBiometricsSetUp = true;
 
     const setup = useCallback(async () => {
@@ -58,74 +58,79 @@ export function useBiometricAuth() {
             });
 
         if (credential) {
-            const { id, challenge } = extractInfoFromCredential(credential);
+            const { id, challenge } = await extractInfoFromCredential(
+                credential
+            );
 
-            setCredentialIdBase64(id);
-            setEncryptedChallenge(challenge);
-            dispatch(setIsBiometricsSetUp(true));
+            if (id) {
+                await dispatch(setBiometricID(id));
+            }
+
+            if (challenge) {
+                await dispatch(saveBiometricKey(challenge));
+            }
             return true;
         }
         return false;
     }, [dispatch, isSupported]);
 
-    const authenticate = useCallback(
-        async (signal?: AbortSignal) => {
-            return true;
-            if (!isSupported) {
-                // throw new Error('Biometric auth is not supported');
-                return false;
-            }
+    const getBiometric = useCallback(async () => {
+        if (!isSupported) {
+            // throw new Error('Biometric auth is not supported');
+            return;
+        }
 
-            if (!isBiometricsSetUp) {
-                console.log('Biometric auth is not set up');
+        if (!biometricID) {
+            // throw new Error('Biometric auth is not setuped');
+            return;
+        }
 
-                // throw new Error('Biometric auth is not setuped');
-                return false;
-            }
+        const publicKey: PublicKeyCredentialRequestOptions = {
+            challenge: CHALLENGE,
+            allowCredentials: [
+                {
+                    type: 'public-key',
+                    id: fromB64(biometricID),
+                    transports: ['internal'],
+                },
+            ],
+            userVerification: 'discouraged',
+        };
 
-            if (credentialIdBase64) {
-                const publicKey: PublicKeyCredentialRequestOptions = {
-                    challenge: CHALLENGE,
-                    allowCredentials: [
-                        {
-                            type: 'public-key',
-                            id: fromB64(credentialIdBase64),
-                            transports: ['internal'],
-                        },
-                    ],
-                    userVerification: 'discouraged',
-                };
+        const credential = await navigator.credentials.get({
+            publicKey,
+        });
 
-                const credential = await navigator.credentials.get({
-                    publicKey,
-                    signal,
-                });
-                if (credential) {
-                    const { challenge, signature } =
-                        extractInfoFromCredential(credential);
-                    console.log('SIGNATURE', signature);
+        if (credential) {
+            const { challenge } = await extractInfoFromCredential(credential);
+            return challenge;
+        }
 
-                    console.log('VALID', challenge === encryptedChallenge);
-                    return challenge === encryptedChallenge;
+        return;
+    }, [biometricID, isSupported]);
 
-                    // Save the signature in local storage
-                    // On next authentication check the signature and, if equal, use the challenge to decrypt the password
-                    // Use the password as if the user had entered it directly
-                }
-                return false;
-            }
-            return false;
-        },
-        [credentialIdBase64, encryptedChallenge, isBiometricsSetUp, isSupported]
-    );
+    const authenticate = useCallback(async () => {
+        const challenge = await getBiometric();
 
-    const reset = useCallback(() => {
-        dispatch(setIsBiometricsSetUp(false));
-    }, [dispatch]);
+        if (challenge) {
+            const success = await dispatch(unlockViaBiometric(challenge));
+            return success;
+        }
+
+        return false;
+    }, [getBiometric, dispatch]);
+
+    const reset = useCallback(async () => {
+        const challenge = await getBiometric();
+
+        if (challenge) {
+            dispatch(deleteBiometric(challenge));
+        }
+    }, [dispatch, getBiometric]);
 
     return {
         isSupported,
-        isBiometricsSetUp,
+        isBiometricsSetUp: !!biometricID,
         setup,
         authenticate,
         reset,

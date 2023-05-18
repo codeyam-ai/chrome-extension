@@ -1,18 +1,17 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import SimpleToggle from '../../components/SimpleToggle';
 import { useBiometricAuth } from '../../hooks/useBiometricAuth';
-import InlineButtonGroup from '../../shared/buttons/InlineButtonGroup';
+import { createMnemonic } from '../../redux/slices/account';
+import Button from '../../shared/buttons/Button';
 import OnboardingCard from '../../shared/layouts/OnboardingCard';
 import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';
-import { createMnemonic } from '../../redux/slices/account';
-import Button from '../../shared/buttons/Button';
 import EthosLink from '../../shared/typography/EthosLink';
 import { LinkType } from '_src/enums/LinkType';
 import { BIOMETRIC_DISCLAIMER } from '_src/shared/constants';
+import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 
 const TouchIdOnboardingPage = () => {
     const dispatch = useAppDispatch();

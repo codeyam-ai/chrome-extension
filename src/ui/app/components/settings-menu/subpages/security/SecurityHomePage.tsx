@@ -1,13 +1,11 @@
+import SimpleToggle from '../../../SimpleToggle';
+import { BIOMETRIC_DISCLAIMER } from '_src/shared/constants';
 import { useBiometricAuth } from '_src/ui/app/hooks/useBiometricAuth';
 import Button from '_src/ui/app/shared/buttons/Button';
+import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import Header from '_src/ui/app/shared/typography/Header';
-import SimpleToggle from '../../../SimpleToggle';
-import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import Body from '_src/ui/app/shared/typography/Body';
-import { BIOMETRIC_DISCLAIMER } from '_src/shared/constants';
 
 interface SecurityItem {
     title: string;

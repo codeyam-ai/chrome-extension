@@ -4,6 +4,7 @@
 import { useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { useBiometricAuth } from '../../hooks/useBiometricAuth';
 import { AppState } from '../../hooks/useInitializedGuard';
 import {
     loadAccountInformationFromStorage,
@@ -15,7 +16,6 @@ import BaseLayout from '../../shared/layouts/BaseLayout';
 import Loading from '_components/loading';
 import { useAppDispatch, useInitializedGuard } from '_hooks';
 import PageLayout from '_src/ui/app/pages/PageLayout';
-import { useBiometricAuth } from '../../hooks/useBiometricAuth';
 
 const LockedPage = () => {
     const dispatch = useAppDispatch();

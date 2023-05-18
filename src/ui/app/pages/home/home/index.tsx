@@ -2,7 +2,6 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import CoinList from './CoinList';
 import StakedInfo from './StakedInfo';
-import TestBiometrics from './TEST_biometrics';
 import WalletBalanceAndIconHomeView from './WalletBalanceAndIconHomeView';
 import { DappList } from './dapp/DappList';
 import ChainIndicator from '../../dapp-tx-approval/types/ChainIndicator';
@@ -49,6 +48,7 @@ function HomePage() {
                 />
             )}
             <ChainIndicator apiEnv={selectedApiEnv} className="mt-3" />
+
             <div className="pt-5 pb-4">
                 <WalletBalanceAndIconHomeView
                     accountInfo={accountInfo}

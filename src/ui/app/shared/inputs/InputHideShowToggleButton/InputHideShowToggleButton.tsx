@@ -1,8 +1,8 @@
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
+import classNames from 'classnames';
 
 import InputHideShowToggleTooltip from './InputHideShowToggleTooltip';
 import { TooltipDirection } from '_src/ui/app/components/Tooltip';
-import classNames from 'classnames';
 
 interface InputHideShowToggleButtonProps {
     passwordMode: boolean;

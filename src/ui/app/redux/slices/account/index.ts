@@ -1145,6 +1145,54 @@ export const saveExcludedDappsKeys = createAsyncThunk(
     }
 );
 
+export const saveBiometricKey = createAsyncThunk(
+    'account/saveBiometricKey',
+    async (biometric: string, { getState }): Promise<boolean> => {
+        const {
+            account: { passphrase },
+        } = getState() as RootState;
+
+        if (!passphrase) return false;
+
+        await setEncrypted({
+            key: 'biometric',
+            value: passphrase,
+            session: false,
+            strong: true,
+            passphrase: biometric,
+        });
+
+        return true;
+    }
+);
+
+export const unlockViaBiometric = createAsyncThunk(
+    'account/unlockViaBiometric',
+    async (biometric: string): Promise<boolean> => {
+        const passphrase = await getEncrypted({
+            key: 'biometric',
+            session: false,
+            strong: true,
+            passphrase: biometric,
+        });
+
+        const unlocked = await unlock(passphrase);
+        return !!unlocked;
+    }
+);
+
+export const deleteBiometric = createAsyncThunk(
+    'account/deleteBiometric',
+    async (biometric: string): Promise<void> => {
+        await deleteEncrypted({
+            key: 'biometric',
+            session: false,
+            strong: true,
+            passphrase: biometric,
+        });
+    }
+);
+
 export type AccountState = {
     loading: boolean;
     authentication: string | null;
@@ -1162,7 +1210,7 @@ export type AccountState = {
     excludedDappsKeys: string[];
     importNames: { mnemonics: string[]; privateKeys: string[] };
     ledgerConnected: boolean;
-    isBiometricsSetUp: boolean;
+    biometricID: string | null;
 };
 
 const initialState: AccountState = {
@@ -1185,7 +1233,7 @@ const initialState: AccountState = {
         privateKeys: [],
     },
     ledgerConnected: false,
-    isBiometricsSetUp: false,
+    biometricID: null,
 };
 
 const accountSlice = createSlice({
@@ -1223,8 +1271,8 @@ const accountSlice = createSlice({
                 state.locked = true;
             }
         },
-        setIsBiometricsSetUp: (state, action: PayloadAction<boolean>) => {
-            state.isBiometricsSetUp = action.payload;
+        setBiometricID: (state, action: PayloadAction<string>) => {
+            state.biometricID = action.payload;
         },
     },
     extraReducers: (builder) =>
@@ -1353,7 +1401,7 @@ export const {
     setAddress,
     setAccountInfos,
     lockWalletUI,
-    setIsBiometricsSetUp,
+    setBiometricID,
 } = accountSlice.actions;
 
 export default accountSlice.reducer;

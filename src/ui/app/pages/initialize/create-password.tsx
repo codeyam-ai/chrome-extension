@@ -4,6 +4,7 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useBiometricAuth } from '../../hooks/useBiometricAuth';
 import CreatePasswordForm from '../../shared/forms/CreatePasswordForm';
 import OnboardingCard from '../../shared/layouts/OnboardingCard';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
@@ -11,7 +12,6 @@ import {
     createMnemonic,
     savePassphrase,
 } from '_src/ui/app/redux/slices/account';
-import { useBiometricAuth } from '../../hooks/useBiometricAuth';
 
 const CreatePasswordPage = () => {
     const dispatch = useAppDispatch();

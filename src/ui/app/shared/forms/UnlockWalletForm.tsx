@@ -1,14 +1,14 @@
 import { Form, Formik, useField } from 'formik';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import * as Yup from 'yup';
 
+import { useBiometricAuth } from '../../hooks/useBiometricAuth';
 import Button from '../buttons/Button';
 import Input from '../inputs/Input';
 import Body from '../typography/Body';
 import EthosLink from '../typography/EthosLink';
 
 import type { FormikValues } from 'formik';
-import { useBiometricAuth } from '../../hooks/useBiometricAuth';
 
 const CustomFormikForm = ({
     isPasswordIncorrect = false,
