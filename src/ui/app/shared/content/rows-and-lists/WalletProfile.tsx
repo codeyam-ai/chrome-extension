@@ -38,8 +38,7 @@ const WalletProfile = ({ onClick, inlineWalletPicker }: WalletProfileProps) => {
     const CurrentWallet = () => (
         <div className="flex flex-row gap-2 items-center cursor-pointer">
             <WalletColorAndEmojiCircle
-                color={accountInfo?.color}
-                emoji={accountInfo?.emoji}
+                {...accountInfo}
                 circleSizeClasses="h-6 w-6"
                 emojiSizeInPx={12}
             />

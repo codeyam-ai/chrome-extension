@@ -1,4 +1,3 @@
-// src/ui/app/hooks/useUpdateCurrentAccountInfo.ts
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -38,9 +37,11 @@ export const useUpdateCurrentAccountInfo = () => {
         updatedInfo: Partial<AccountInfo>
     ) => {
         const newAccountInfos = [...accountInfos];
-        const currentAccountInfo = newAccountInfos[activeAccountIndex];
-        newAccountInfos[activeAccountIndex] = {
-            ...currentAccountInfo,
+        const currentAccountInfoIndex = newAccountInfos.findIndex(
+            (accountInfo) => accountInfo.index === activeAccountIndex
+        );
+        newAccountInfos[currentAccountInfoIndex] = {
+            ...newAccountInfos[currentAccountInfoIndex],
             ...updatedInfo,
         };
 

@@ -23,6 +23,7 @@ const AvatarItem = ({
     subheader,
     emoji,
     fullHeader,
+    nftPfpUrl,
 }: {
     color?: string;
     pre?: string;
@@ -30,6 +31,7 @@ const AvatarItem = ({
     subheader?: string;
     emoji?: string;
     fullHeader?: string;
+    nftPfpUrl?: string;
 }) => (
     <div className={'flex items-center gap-3'}>
         <WalletColorAndEmojiCircle
@@ -37,6 +39,7 @@ const AvatarItem = ({
             circleSizeClasses={'w-[40px] h-[40px] auto'}
             color={color || '#7E23CA'}
             emoji={emoji}
+            nftPfpUrl={nftPfpUrl}
         />
         <div className={'flex flex-col items-start'}>
             <div className="flex gap-1 items-center">

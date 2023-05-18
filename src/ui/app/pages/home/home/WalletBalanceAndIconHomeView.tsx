@@ -38,6 +38,7 @@ const WalletBalanceAndIconHomeView = ({
                 <WalletColorAndEmojiCircle
                     color={accountInfo?.color}
                     emoji={accountInfo?.emoji}
+                    nftPfpUrl={accountInfo?.nftPfpUrl}
                     circleSizeClasses="h-[60px] w-[60px]"
                     emojiSizeInPx={32}
                 />

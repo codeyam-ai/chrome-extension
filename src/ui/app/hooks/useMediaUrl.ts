@@ -29,13 +29,19 @@ export default function useMediaUrl(objData: SuiObjectData, fieldName = 'url') {
     const { fields } = (content?.dataType === 'moveObject' && content) || {};
     return useMemo(() => {
         const objDisplay = getDisplay(display);
-        let mediaUrl = objDisplay?.[fieldName] ?? fields?.[fieldName];
-        if (!mediaUrl && fieldName === 'url') {
+        let mediaUrl: string | undefined;
+        if (fieldName === 'url') {
             mediaUrl = objDisplay?.['image_url'] ?? fields?.['image_url'];
+
+            if (!mediaUrl) {
+                mediaUrl = objDisplay?.['img_url'] ?? fields?.['img_url'];
+            }
         }
-        if (!mediaUrl && fieldName === 'url') {
-            mediaUrl = objDisplay?.['img_url'] ?? fields?.['img_url'];
+
+        if (!mediaUrl) {
+            mediaUrl = objDisplay?.[fieldName] ?? fields?.[fieldName];
         }
+
         if (typeof mediaUrl === 'string') {
             mediaUrl = ipfs(mediaUrl);
             if (safeUrl(mediaUrl)) {
