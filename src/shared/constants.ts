@@ -12,10 +12,11 @@ export const ToS_LINK = BASE_URL + '/terms-of-service';
 export const DASHBOARD_LINK = LINK_URL + '/dashboard'; // + queryParamFrom;
 export const IFRAME_URL =
     BASE_URL + '/wallet?apiKey=' + process.env.ETHOS_API_KEY;
-export const NFT_EXPERIMENT_LINK = BASE_URL + '/dashboard/experiment'; //+ queryParamFrom;
+export const DASHBOARD_COLLECTIBLES = BASE_URL + '/dashboard/collectibles';
 export const LOGIN_URL = BASE_URL + '/logged_in';
 export const MAILTO_SUPPORT_URL = 'mailto:support@ethoswallet.xyz';
 export const TWITTER_URL = 'https://twitter.com/EthosWalletXYZ';
+export const DISCORD_URL = 'https://discord.gg/ethoswallet';
 
 export const MIST_PER_SUI = 1000000000;
 
