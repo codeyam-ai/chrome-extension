@@ -12,7 +12,7 @@ export const safeUrl = (testUrl: string) => {
     if (testUrl.startsWith('data:')) {
         return true;
     }
-    
+
     let url;
 
     try {
