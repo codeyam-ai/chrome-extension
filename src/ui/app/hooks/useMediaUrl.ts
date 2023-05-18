@@ -8,17 +8,21 @@ import ipfs from '../helpers/ipfs';
 
 import type { SuiObjectData } from '@mysten/sui.js';
 
-const safeUrl = (testUrl: string) => {
-    let url;
-  
-    try {
-      url = new URL(testUrl);
-    } catch (_) {
-      return false;  
+export const safeUrl = (testUrl: string) => {
+    if (testUrl.startsWith('data:')) {
+        return true;
     }
-  
-    return url.protocol === "http:" || url.protocol === "https:";
-}
+    
+    let url;
+
+    try {
+        url = new URL(testUrl);
+    } catch (_) {
+        return false;
+    }
+
+    return url.protocol === 'http:' || url.protocol === 'https:';
+};
 
 export default function useMediaUrl(objData: SuiObjectData, fieldName = 'url') {
     const { display, content } = objData ?? {};
