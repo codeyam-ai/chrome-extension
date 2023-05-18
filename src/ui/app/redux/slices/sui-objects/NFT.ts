@@ -39,6 +39,7 @@ export class NFT {
         }
 
         if (
+            !url &&
             !!data.content &&
             'fields' in data.content &&
             'url' in data.content.fields &&
