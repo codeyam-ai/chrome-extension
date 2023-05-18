@@ -32,7 +32,18 @@ const MintTransactionCard = ({
         () => coinType ?? type ?? SUI_TYPE_ARG,
         [coinType, type]
     );
-    const simpleType = useMemo(() => primaryType.split('::')[2], [primaryType]);
+    const simpleType = useMemo(
+        () =>
+            /*
+                From data that looks like:
+                0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<0x1cbfdf7de5004f887705fa53bb345d4372e5004bd8b04a6f8868f5e1ca1af9c7::ethos_example_coin::ETHOS_EXAMPLE_COIN>
+                extract ETHOS_EXAMPLE_COIN
+            */
+            primaryType
+                .substring(primaryType.indexOf('<'), primaryType.indexOf('>'))
+                .split('::')[2],
+        [primaryType]
+    );
 
     return (
         <TransactionBody>
