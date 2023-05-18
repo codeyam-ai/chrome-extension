@@ -79,11 +79,14 @@ export class MockJsonRpc {
                     numExpectedCalls &&
                     callContext.actualCalls === numExpectedCalls;
                 if (matches) {
-
                     if (!reachedLimit) {
                         if (trace) {
-                            console.log(`for ${method} returning ${JSON.stringify(callContext.expectedCall.result)}`)
-                        } 
+                            console.log(
+                                `for ${method} returning ${JSON.stringify(
+                                    callContext.expectedCall.result
+                                )}`
+                            );
+                        }
                         callContext.actualCalls += 1;
                         allJsonRpcResponses.push(
                             callContext.expectedCall.result

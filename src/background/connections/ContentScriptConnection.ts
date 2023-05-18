@@ -101,7 +101,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('getAccount', msg.id);
                 } else {
                     this.sendAccounts([activeAccount.address], msg.id);
                 }
@@ -118,7 +118,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('switchAccount', msg.id);
                 } else {
                     const activeAddress = await this.setActiveAccount(
                         payload.address
@@ -139,7 +139,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('getAccounts', msg.id);
                 } else {
                     const accountInfos = await this.getAccountInfos();
                     const addresses = accountInfos.map(
@@ -178,7 +178,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('getAccountCustomizatios', msg.id);
                 } else {
                     const accountInfos = await this.getAccountInfos();
                     const accountCustomizations: AccountCustomization[] = [];
@@ -213,7 +213,10 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError(
+                        'setAccountCustomizations',
+                        msg.id
+                    );
                 } else {
                     this.setAccountCustomizations(
                         payload.accountCustomizations
@@ -234,7 +237,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('getTheme', msg.id);
                 } else {
                     const theme = (await getLocal('theme')) as string;
                     this.sendTheme(theme, msg.id);
@@ -254,7 +257,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('getContacts', msg.id);
                 } else {
                     const contacts = await this.getContacts();
                     this.sendContacts(contacts, msg.id);
@@ -274,7 +277,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('setContacts', msg.id);
                 } else {
                     this.setContacts(payload.contacts);
                 }
@@ -293,7 +296,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('getFavorites', msg.id);
                 } else {
                     const favorites = await this.getFavorites();
                     this.sendFavorites(favorites, msg.id);
@@ -313,7 +316,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('setFavorites', msg.id);
                 } else {
                     this.setFavorites(payload.favorites);
                 }
@@ -449,7 +452,7 @@ export class ContentScriptConnection extends Connection {
                         );
                     }
                 } else {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('preapproval', msg.id);
                 }
             } else if (isDisconnectRequest(payload)) {
                 let success = true;
@@ -609,12 +612,11 @@ export class ContentScriptConnection extends Connection {
         this.send(createMessage(error, responseForID));
     }
 
-    private sendNotAllowedError(requestID?: string) {
+    private sendNotAllowedError(operation: string, requestID?: string) {
         this.sendError(
             {
                 error: true,
-                message:
-                    "Operation not allowed, dapp doesn't have the required permissions",
+                message: `${operation} operation not allowed, dapp doesn't have the required permissions`,
                 code: -2,
             },
             requestID
