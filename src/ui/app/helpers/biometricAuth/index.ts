@@ -40,7 +40,7 @@ export async function extractInfoFromCredential(
             );
         }
 
-        // Verifying the signature (why?) is a pain so we're just using the challenge
+        // Verifying the signature is a pain (why?) so we're just using the challenge
         // The password won't decrypt without the correct signature anyway
         // https://gist.github.com/philholden/50120652bfe0498958fd5926694ba354
         // if (challenge && publicKeyData && signature) {
