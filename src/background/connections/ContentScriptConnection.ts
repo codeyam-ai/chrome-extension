@@ -188,6 +188,8 @@ export class ContentScriptConnection extends Connection {
                             nickname: accountInfo.name || '',
                             color: accountInfo.color || '',
                             emoji: accountInfo.emoji || '',
+                            nftPfpId: accountInfo.nftPfpId || '',
+                            nftPfpUrl: accountInfo.nftPfpUrl || '',
                         });
                     }
 
