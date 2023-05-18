@@ -5,6 +5,7 @@ import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 import { getObjectId, hasPublicTransfer } from '@mysten/sui.js';
 import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
@@ -12,6 +13,7 @@ import Loading from '_components/loading';
 import { useAppSelector, useNFTBasicData } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account';
 import { truncateMiddle } from '_src/ui/app/helpers/truncate-string-middle';
+import { useUpdateCurrentAccountInfo } from '_src/ui/app/hooks/useUpdateCurrentAccountInfo';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
@@ -28,8 +30,20 @@ function NFTdetailsContent({
     nft: SuiObjectData;
     onClick?: ButtonHTMLAttributes<HTMLButtonElement>['onClick'];
 }) {
+    const { updateCurrentAccountInfo } = useUpdateCurrentAccountInfo();
+
     const { filePath, nftObjectID, nftFields, fileExtentionType } =
         useNFTBasicData(nft);
+
+    const setAsPfp = useCallback(async () => {
+        if (filePath && nftObjectID) {
+            await updateCurrentAccountInfo({
+                nftPfpId: nftObjectID,
+                nftPfpUrl: filePath,
+            });
+            toast('NFT set as profile picture');
+        }
+    }, [filePath, nftObjectID, updateCurrentAccountInfo]);
 
     let address;
     if (
@@ -67,16 +81,30 @@ function NFTdetailsContent({
                             {nftFields?.description}
                         </BodyLarge>
 
-                        {hasPublicTransfer(nft) && (
-                            <Button
-                                isInline
-                                buttonStyle="primary"
-                                className={'inline-block mb-0'}
-                                onClick={onClick}
-                            >
-                                Send
-                            </Button>
-                        )}
+                        <div className="flex gap-6 items-center justify-center">
+                            {hasPublicTransfer(nft) && (
+                                <Button
+                                    buttonStyle="primary"
+                                    wrapperClassName="flex-1 w-full"
+                                    className="flex-1"
+                                    onClick={onClick}
+                                    removeContainerPadding
+                                >
+                                    Send
+                                </Button>
+                            )}
+                            {filePath && (
+                                <Button
+                                    buttonStyle="secondary"
+                                    wrapperClassName="flex-1 w-full"
+                                    className="flex-1"
+                                    onClick={setAsPfp}
+                                    removeContainerPadding
+                                >
+                                    Set as PFP
+                                </Button>
+                            )}
+                        </div>
                     </div>
 
                     <div className={'w-full text-left'}>
