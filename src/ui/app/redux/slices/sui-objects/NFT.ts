@@ -8,6 +8,7 @@ import {
 import get from 'lodash/get';
 
 import ipfs from '_src/ui/app/helpers/ipfs';
+import { safeUrl } from '_src/ui/app/hooks/useMediaUrl';
 
 import type {
     SuiObjectResponse,
@@ -28,20 +29,30 @@ export class NFT {
     public static isNFT(data: SuiObjectData): boolean {
         if (this.isBagNFT(data)) return true;
 
+        let url: string | undefined;
         if (
             data.display?.data &&
             typeof data.display.data === 'object' &&
             ('image_url' in data.display.data || 'img_url' in data.display.data)
         ) {
-            return true;
+            url = data.display.data.image_url ?? data.display.data.img_url;
         }
 
-        return (
+        if (
+            !url &&
             !!data.content &&
             'fields' in data.content &&
             'url' in data.content.fields &&
             !('ticket_id' in data.content.fields)
-        );
+        ) {
+            url = data.content.fields.url;
+        }
+
+        if (url) {
+            return safeUrl(ipfs(url));
+        }
+
+        return false;
     }
 
     public static isKiosk(data: SuiObjectData): boolean {
