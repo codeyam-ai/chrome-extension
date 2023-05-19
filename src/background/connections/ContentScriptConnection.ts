@@ -47,6 +47,8 @@ import {
 } from '_src/shared/storagex/store';
 import { openInNewTab } from '_src/shared/utils';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
+import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
+import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 
 import type { NetworkEnvType } from '../NetworkEnv';
 import type {
@@ -186,8 +188,12 @@ export class ContentScriptConnection extends Connection {
                         accountCustomizations.push({
                             address: accountInfo.address,
                             nickname: accountInfo.name || '',
-                            color: accountInfo.color || '',
-                            emoji: accountInfo.emoji || '',
+                            color:
+                                accountInfo.color ??
+                                getNextWalletColor(accountInfo.index),
+                            emoji:
+                                accountInfo.emoji ??
+                                getNextEmoji(accountInfo.index),
                             nftPfpId: accountInfo.nftPfpId || '',
                             nftPfpUrl: accountInfo.nftPfpUrl || '',
                         });
