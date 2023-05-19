@@ -6,7 +6,7 @@ import nock from 'nock';
 import { getEncrypted } from '_shared/storagex/store';
 import { BASE_URL } from '_src/shared/constants';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
-import { mockCommonCalls, mockBlockchain } from '_src/test/utils/mockchain';
+import { mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import {
     fakeAccessToken,
@@ -52,7 +52,6 @@ describe('The Security Settings page', () => {
     describe('mnemonic user', () => {
         beforeEach(async () => {
             simulateMnemonicUser();
-            mockCommonCalls(mockJsonRpc);
         });
 
         test('requires a valid password to view the recovery phrase', async () => {
@@ -276,7 +275,6 @@ describe('The Security Settings page', () => {
                 });
 
             simulateEmailUser();
-            mockCommonCalls(mockJsonRpc);
         });
 
         test('shows the seed phrase for email accounts', async () => {

@@ -1,11 +1,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import {
-    mockCommonCalls,
-    mockBlockchain,
-    rpcMocks,
-} from '_src/test/utils/mockchain';
+import { mockBlockchain, rpcMocks } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
@@ -16,7 +12,6 @@ describe('send coin flow', () => {
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
         await simulateMnemonicUser();
-        mockCommonCalls(mockJsonRpc);
         mockBlockchain(mockJsonRpc, {
             suiBalance: 4_000_000_000, // MIST units
         });

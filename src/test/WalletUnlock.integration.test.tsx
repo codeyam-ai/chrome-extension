@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { mockCommonCalls, mockBlockchain } from '_src/test/utils/mockchain';
+import { mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import {
     password as correctPassword,
@@ -13,7 +13,6 @@ describe('Unlocking the wallet', () => {
     let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
-        mockCommonCalls(mockJsonRpc);
         await createLockedWallet();
     });
 

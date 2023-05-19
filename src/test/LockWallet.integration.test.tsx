@@ -8,7 +8,7 @@ import {
     DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES,
 } from '_src/shared/constants';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
-import { mockCommonCalls, mockBlockchain } from '_src/test/utils/mockchain';
+import { mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import {
     simulateEmailUser,
@@ -20,7 +20,6 @@ describe('Lock Wallet Page', () => {
 
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
-        mockCommonCalls(mockJsonRpc);
         mockBlockchain(mockJsonRpc);
     });
 

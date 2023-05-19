@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 
-import { mockCommonCalls, mockBlockchain } from './utils/mockchain';
+import { mockBlockchain } from './utils/mockchain';
 import { fakeAccessToken } from './utils/storage';
 import { BASE_URL } from '_src/shared/constants';
 import { setSession } from '_src/shared/storagex/store';
@@ -15,7 +15,6 @@ describe('Email Authentication', () => {
     let mockJsonRpc: MockJsonRpc;
     beforeEach(() => {
         mockJsonRpc = new MockJsonRpc();
-        mockCommonCalls(mockJsonRpc);
     });
 
     test('User can enter email and is prompted to wait for the magic login link', async () => {

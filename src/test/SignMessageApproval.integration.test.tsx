@@ -6,7 +6,6 @@ import { BackgroundClient } from '_app/background-client';
 import { TX_STORE_KEY } from '_shared/constants';
 import { setEncrypted } from '_src/shared/storagex/store';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
-import { mockCommonCalls } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { accountInfos, simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
@@ -26,7 +25,6 @@ describe('The Sign Message Approval popup', () => {
     let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
-        mockCommonCalls(mockJsonRpc);
         await simulateMnemonicUser();
         responseSpy.mockClear();
     });

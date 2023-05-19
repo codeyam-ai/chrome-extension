@@ -7,7 +7,6 @@ import { TX_STORE_KEY } from '_shared/constants';
 import { setEncrypted } from '_src/shared/storagex/store';
 import { renderTemplate } from '_src/test/utils/json-templates';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
-import { mockCommonCalls } from '_src/test/utils/mockchain';
 import { makeCoinObject } from '_src/test/utils/mockchain-templates/coinObject';
 import { makeDryRunTransactionResponse } from '_src/test/utils/mockchain-templates/dryRunTransaction';
 import { renderApp } from '_src/test/utils/react-rendering';
@@ -15,6 +14,7 @@ import { accountInfos, simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
 import type { ApprovalRequest } from '_payloads/transactions';
+import { mockCommonCalls } from '_src/test/utils/mockchain';
 
 describe('The Transaction Approval popup', () => {
     const txRequestId = '95ae4a0d-0b7b-478b-ab70-bc3fe291540e';

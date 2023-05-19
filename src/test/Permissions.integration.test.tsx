@@ -2,7 +2,7 @@ import { screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
-import { mockCommonCalls, mockBlockchain } from '_src/test/utils/mockchain';
+import { mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import {
     simulateConnectedApps,
@@ -16,7 +16,6 @@ describe('The Permissions page', () => {
         mockJsonRpc = new MockJsonRpc();
         await simulateMnemonicUser();
         await simulateConnectedApps();
-        mockCommonCalls(mockJsonRpc);
         mockBlockchain(mockJsonRpc);
     });
 

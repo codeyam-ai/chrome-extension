@@ -2,7 +2,7 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { renderTemplate } from '_src/test/utils/json-templates';
-import { mockCommonCalls, mockBlockchain } from '_src/test/utils/mockchain';
+import { mockBlockchain } from '_src/test/utils/mockchain';
 import { makeCoinObject } from '_src/test/utils/mockchain-templates/coinObject';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
@@ -14,7 +14,6 @@ xdescribe('The Transaction History Page', () => {
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
         simulateMnemonicUser();
-        mockCommonCalls(mockJsonRpc);
     });
 
     test('Handles a wallet that has no transactions', async () => {

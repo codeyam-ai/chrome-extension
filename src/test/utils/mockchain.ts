@@ -6,6 +6,9 @@ import { suiSystemStateObject } from '_src/test/utils/mockchain-templates/sui-sy
 import type { CoinBalance, DelegatedStake } from '@mysten/sui.js';
 import type { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
+/**
+ * Mocks out the basic JsonRPC calls that any blockchain interaction will make.
+ */
 export const mockCommonCalls = (mockJsonRpc: MockJsonRpc) => {
     mockJsonRpc.mockJsonRpcCall(
         { method: 'rpc.discover' },
@@ -41,6 +44,7 @@ export const mockBlockchain = (
         logObjects?: boolean;
     } = {}
 ) => {
+    mockCommonCalls(mockJsonRpc);
     const address =
         options.address ??
         '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de';
