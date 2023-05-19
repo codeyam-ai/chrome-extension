@@ -18,6 +18,7 @@ import finalStardust from '_images/dapps/logos/final-stardust.png';
 import gotbeef from '_images/dapps/logos/gotbeef.png';
 import interestProtocol from '_images/dapps/logos/interest-protocol.png';
 import keepsake from '_images/dapps/logos/keepsake.png';
+import hyperspace from '_images/dapps/logos/hyperspace.png';
 import kriya from '_images/dapps/logos/kriya.png';
 import movePad from '_images/dapps/logos/movepad.jpg';
 import { default as movex } from '_images/dapps/logos/movex.png';
@@ -551,6 +552,20 @@ const dappsMap: Map<string, DappData> = new Map([
             },
             tags: [TagName.GAMES, TagName.TOOLS],
         } as DappData,
+    ],
+    [
+      '3874aba4-e78a-4f12-8f9d-dc9dddc85e52',
+      {
+        id: '3874aba4-e78a-4f12-8f9d-dc9dddc85e52',
+        image: hyperspace,
+        title: 'Hyperspace',
+        description:
+          'Hyperspace is the premiere NFT marketplace and launchpad on Sui on a mission to unlock the future of NFT trading and utilization.',
+        urls: {
+          [NetworkName.MAINNET]: 'https://sui.hyperspace.xyz',
+        },
+        tags: [TagName.MARKETPLACE, TagName.NFTS],
+      } as DappData,
     ],
 ]);
 export default dappsMap;
