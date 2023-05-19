@@ -98,8 +98,8 @@ const StakeDetail: React.FC = () => {
     );
 
     const onClickRevokeStake = useCallback(
-        () => setIsModalOpen(true),
-        [setIsModalOpen]
+        () => stake?.status !== 'Pending' && setIsModalOpen(true),
+        [setIsModalOpen, stake?.status]
     );
 
     const onCancelConfirmRevokeStake = useCallback(() => {
@@ -107,7 +107,7 @@ const StakeDetail: React.FC = () => {
     }, [setIsModalOpen]);
 
     const onConfirmRevokeStake = useCallback(async () => {
-        if (!stakedSuiId) return;
+        if (!stakedSuiId || stake?.status === 'Pending') return;
 
         setLoading(true);
 
@@ -155,6 +155,7 @@ const StakeDetail: React.FC = () => {
         connectToLedger,
         passphrase,
         queryClient,
+        stake?.status,
         stakedSuiId,
     ]);
 
@@ -288,10 +289,16 @@ const StakeDetail: React.FC = () => {
                     className="mt-4 bg-ethos-light-background-purple"
                     buttonStyle="secondary"
                     removeContainerPadding
+                    disabled={stake?.status === 'Pending'}
                 >
                     <MinusCircleIcon width={18} height={18} />
-                    Unstake SUI
+                    {stake?.status === 'Pending'
+                        ? 'Status: Pending'
+                        : 'Unstake SUI'}
                 </Button>
+                <Body className="py-4">
+                    Staked SUI in Pending state cannot be unstaked.
+                </Body>
             </div>
             <ConfirmDestructiveActionDialog
                 primaryActionIsLoading={loading}
