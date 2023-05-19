@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { mockCommonCalls, mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import {
     password as correctPassword,
@@ -34,7 +34,7 @@ describe('Unlocking the wallet', () => {
 
     const createLockedWallet = async () => {
         await simulateMnemonicUser(false);
-        mockSuiObjects(mockJsonRpc);
+        mockBlockchain(mockJsonRpc);
         renderApp();
         await screen.findAllByText('Unlock Wallet');
     };

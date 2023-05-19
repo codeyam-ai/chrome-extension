@@ -2,7 +2,7 @@ import { act, screen, waitFor } from '@testing-library/react';
 
 import { DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES } from '_src/shared/constants';
 import { fakeAlarms } from '_src/test/utils/fake-browser/fake-browser';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { mockCommonCalls, mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
@@ -25,7 +25,7 @@ describe('The home page', () => {
 
     test('sends heartbeat and locks when background service says to', async () => {
         const fakeHeartbeat = new FakeHeartbeat();
-        mockSuiObjects(mockJsonRpc);
+        mockBlockchain(mockJsonRpc);
         const deps = { ...makeTestDeps(), heartbeat: fakeHeartbeat };
         renderApp({ dependencies: deps });
         await screen.findByText('Get started with Sui');

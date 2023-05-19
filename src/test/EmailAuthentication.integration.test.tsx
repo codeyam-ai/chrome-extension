@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 
-import { mockCommonCalls, mockSuiObjects } from './utils/mockchain';
+import { mockCommonCalls, mockBlockchain } from './utils/mockchain';
 import { fakeAccessToken } from './utils/storage';
 import { BASE_URL } from '_src/shared/constants';
 import { setSession } from '_src/shared/storagex/store';
@@ -59,7 +59,7 @@ describe('Email Authentication', () => {
     test('User can see tokens page after logged in via the iframe', async () => {
         const fakeAccessToken = '12345';
         await setSession({ accessToken: fakeAccessToken });
-        mockSuiObjects(mockJsonRpc, { address });
+        mockBlockchain(mockJsonRpc, { address });
         nock(BASE_URL, {
             reqheaders: { 'x-supabase-access-token': fakeAccessToken },
         })

@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import {
     mockCommonCalls,
-    mockSuiObjects,
+    mockBlockchain,
     rpcMocks,
 } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
@@ -17,7 +17,7 @@ describe('send coin flow', () => {
         mockJsonRpc = new MockJsonRpc();
         await simulateMnemonicUser();
         mockCommonCalls(mockJsonRpc);
-        mockSuiObjects(mockJsonRpc, {
+        mockBlockchain(mockJsonRpc, {
             suiBalance: 4_000_000_000, // MIST units
         });
         const mocks = rpcMocks(mockJsonRpc);

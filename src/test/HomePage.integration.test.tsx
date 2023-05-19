@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react';
 
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { mockCommonCalls, mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
@@ -15,7 +15,7 @@ describe('Rendering the Home page', () => {
     });
 
     test('when wallet has no coins', async () => {
-        mockSuiObjects(mockJsonRpc, {
+        mockBlockchain(mockJsonRpc, {
             stakedSui: [
                 {
                     principal: '1000000000',
@@ -31,7 +31,7 @@ describe('Rendering the Home page', () => {
 
     describe('when the wallet has some coins', () => {
         beforeEach(async () => {
-            mockSuiObjects(mockJsonRpc, {
+            mockBlockchain(mockJsonRpc, {
                 suiBalance: 40000000000,
                 stakedSui: [
                     {
@@ -85,7 +85,7 @@ describe('Rendering the Home page', () => {
 
     describe('when the wallet has staked SUI', () => {
         beforeEach(async () => {
-            mockSuiObjects(mockJsonRpc, {
+            mockBlockchain(mockJsonRpc, {
                 stakedSui: [
                     {
                         principal: '1000000000',

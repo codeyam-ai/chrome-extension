@@ -27,7 +27,7 @@ export class MockJsonRpc {
             });
     }
 
-    mockBlockchainCall(
+    mockJsonRpcCall(
         request: { method: string; params?: unknown[] },
         result: unknown,
         persist?: boolean

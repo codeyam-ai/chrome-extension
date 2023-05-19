@@ -208,7 +208,7 @@ describe('The Transaction Approval popup', () => {
             40000000,
             '0x395c50c614cc22156c9de8db24163f48e4ff66ae'
         );
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'sui_multiGetObjects',
                 params: [
@@ -221,7 +221,7 @@ describe('The Transaction Approval popup', () => {
             [coinObj]
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'sui_multiGetObjects',
                 params: [
@@ -240,7 +240,7 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('liquidityMultiGetObjects', {})
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'sui_multiGetObjects',
                 params: [
@@ -255,7 +255,7 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('mintCoinMultiGetObjects', {})
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'sui_multiGetObjects',
                 params: [
@@ -271,7 +271,7 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('mintCoinMultiGetObjects', {})
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'sui_multiGetObjects',
                 params: [
@@ -288,7 +288,7 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('mintCoinMultiGetObjects', {})
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'suix_getReferenceGasPrice',
                 params: [],
@@ -296,7 +296,7 @@ describe('The Transaction Approval popup', () => {
             '10'
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
@@ -306,7 +306,7 @@ describe('The Transaction Approval popup', () => {
             makeDryRunTransactionResponse()
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
@@ -316,7 +316,7 @@ describe('The Transaction Approval popup', () => {
             makeDryRunTransactionResponse()
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
@@ -326,7 +326,7 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('liquidityDryRunTransaction', {})
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
@@ -336,7 +336,7 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('multiCoinDryRunTransaction1', {})
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
@@ -346,7 +346,7 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('multiCoinDryRunTransaction2', {})
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'suix_getCoins',
                 params: [
@@ -359,7 +359,7 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('getCoins', {})
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'sui_getNormalizedMoveFunction',
                 params: [
@@ -371,7 +371,7 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('liquidityNormalizedMoveFunction', {})
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'sui_getNormalizedMoveFunction',
                 params: [
@@ -383,7 +383,7 @@ describe('The Transaction Approval popup', () => {
             renderTemplate('mintCoinNormalizedMoveFunction', {})
         );
 
-        return mockJsonRpc.mockBlockchainCall(
+        return mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'sui_executeTransactionBlock',
             },

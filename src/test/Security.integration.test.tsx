@@ -6,7 +6,7 @@ import nock from 'nock';
 import { getEncrypted } from '_shared/storagex/store';
 import { BASE_URL } from '_src/shared/constants';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { mockCommonCalls, mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import {
     fakeAccessToken,
@@ -30,7 +30,7 @@ describe('The Security Settings page', () => {
     });
 
     const init = async () => {
-        await mockSuiObjects(mockJsonRpc);
+        await mockBlockchain(mockJsonRpc);
         await renderApp();
 
         await screen.findByText('Get started with Sui');

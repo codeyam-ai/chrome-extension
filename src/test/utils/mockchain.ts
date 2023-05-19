@@ -7,7 +7,7 @@ import type { CoinBalance, DelegatedStake } from '@mysten/sui.js';
 import type { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 export const mockCommonCalls = (mockJsonRpc: MockJsonRpc) => {
-    mockJsonRpc.mockBlockchainCall(
+    mockJsonRpc.mockJsonRpcCall(
         { method: 'rpc.discover' },
         { info: { version: '0.20.1' } },
         true
@@ -21,14 +21,17 @@ export const mockCommonCalls = (mockJsonRpc: MockJsonRpc) => {
         iconUrl: null,
         id: null,
     };
-    mockJsonRpc.mockBlockchainCall(
+    mockJsonRpc.mockJsonRpcCall(
         { method: 'suix_getCoinMetadata' },
         coinMetadataResponse,
         true
     );
 };
 
-export const mockSuiObjects = (
+/**
+ * Sets the core state of the mock blockchain.
+ */
+export const mockBlockchain = (
     mockJsonRpc: MockJsonRpc,
     options: {
         address?: string;
@@ -108,7 +111,7 @@ export const mockSuiObjects = (
         });
     }
 
-    mockJsonRpc.mockBlockchainCall(
+    mockJsonRpc.mockJsonRpcCall(
         {
             method: 'suix_getStakes',
         },
@@ -116,7 +119,7 @@ export const mockSuiObjects = (
         true
     );
 
-    mockJsonRpc.mockBlockchainCall(
+    mockJsonRpc.mockJsonRpcCall(
         {
             method: 'suix_getOwnedObjects',
             params: [address],
@@ -132,7 +135,7 @@ export const mockSuiObjects = (
         true
     );
 
-    mockJsonRpc.mockBlockchainCall(
+    mockJsonRpc.mockJsonRpcCall(
         {
             method: 'suix_getAllBalances',
             params: [address],
@@ -143,7 +146,7 @@ export const mockSuiObjects = (
 
     fullObjects.push(suiSystemStateObject);
     fullObjects.forEach((fullObject) => {
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'suix_getObject',
                 params: [fullObject.data.objectId],
@@ -153,7 +156,7 @@ export const mockSuiObjects = (
         );
     });
 
-    mockJsonRpc.mockBlockchainCall(
+    mockJsonRpc.mockJsonRpcCall(
         { method: 'sui_multiGetObjects' },
         fullObjects,
         true
@@ -169,34 +172,34 @@ export const mockSuiObjects = (
 export const rpcMocks = (mockJsonRpc: MockJsonRpc) => {
     return {
         sui_getNormalizedMoveFunction: () => {
-            mockJsonRpc.mockBlockchainCall(
+            mockJsonRpc.mockJsonRpcCall(
                 { method: 'sui_getNormalizedMoveFunction' },
                 renderTemplate('getNormalizedMoveFunction', {}),
                 true
             );
         },
         suix_getNormalizedMoveFunction: () => {
-            mockJsonRpc.mockBlockchainCall(
+            mockJsonRpc.mockJsonRpcCall(
                 { method: 'sui_getNormalizedMoveFunction' },
                 renderTemplate('getNormalizedMoveFunction', {}),
                 true
             );
         },
         sui_devInspectTransactionBlock: () => {
-            mockJsonRpc.mockBlockchainCall(
+            mockJsonRpc.mockJsonRpcCall(
                 { method: 'sui_devInspectTransactionBlock' },
                 renderTemplate('devInspectTransaction', {})
             );
         },
         suix_getReferenceGasPrice: () => {
-            mockJsonRpc.mockBlockchainCall(
+            mockJsonRpc.mockJsonRpcCall(
                 { method: 'suix_getReferenceGasPrice', params: [] },
                 '1',
                 true
             );
         },
         suix_getCoins: () => {
-            mockJsonRpc.mockBlockchainCall(
+            mockJsonRpc.mockJsonRpcCall(
                 {
                     method: 'suix_getCoins',
                     params: [
@@ -211,7 +214,7 @@ export const rpcMocks = (mockJsonRpc: MockJsonRpc) => {
             );
         },
         sui_dryRunTransactionBlock: (digest: string) => {
-            mockJsonRpc.mockBlockchainCall(
+            mockJsonRpc.mockJsonRpcCall(
                 {
                     method: 'sui_dryRunTransactionBlock',
                     params: [digest],
@@ -221,7 +224,7 @@ export const rpcMocks = (mockJsonRpc: MockJsonRpc) => {
             );
         },
         sui_executeTransactionBlock: (params: (string | string[] | null)[]) => {
-            mockJsonRpc.mockBlockchainCall(
+            mockJsonRpc.mockJsonRpcCall(
                 {
                     method: 'sui_executeTransactionBlock',
                     params: params ?? [

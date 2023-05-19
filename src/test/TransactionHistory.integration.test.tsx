@@ -2,7 +2,7 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { renderTemplate } from '_src/test/utils/json-templates';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { mockCommonCalls, mockBlockchain } from '_src/test/utils/mockchain';
 import { makeCoinObject } from '_src/test/utils/mockchain-templates/coinObject';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
@@ -18,8 +18,8 @@ xdescribe('The Transaction History Page', () => {
     });
 
     test('Handles a wallet that has no transactions', async () => {
-        mockSuiObjects(mockJsonRpc);
-        mockJsonRpc.mockBlockchainCall(
+        mockBlockchain(mockJsonRpc);
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'suix_getTransactions',
                 params: [
@@ -33,7 +33,7 @@ xdescribe('The Transaction History Page', () => {
                 nextCursor: null,
             }
         );
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'suix_getTransactions',
                 params: [
@@ -55,7 +55,7 @@ xdescribe('The Transaction History Page', () => {
     });
 
     test('Shows transactions TO the current wallet', async () => {
-        mockSuiObjects(mockJsonRpc);
+        mockBlockchain(mockJsonRpc);
         mockTransactionHistory();
         renderApp({ initialRoute: '/transactions' });
         await screen.findByText('$1.00', {}, { timeout: 2000 });
@@ -68,7 +68,7 @@ xdescribe('The Transaction History Page', () => {
     });
 
     test('Shows correct transactions when switching wallet', async () => {
-        mockSuiObjects(mockJsonRpc);
+        mockBlockchain(mockJsonRpc);
         mockTransactionHistory();
         renderApp({ initialRoute: '/transactions' });
         await screen.findByText('$1.00', {}, { timeout: 2000 });
@@ -94,7 +94,7 @@ xdescribe('The Transaction History Page', () => {
 
     function mockTransactionHistory() {
         const view = renderTemplate('transaction', {});
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'suix_getTransactions',
                 params: [
@@ -108,7 +108,7 @@ xdescribe('The Transaction History Page', () => {
                 nextCursor: null,
             }
         );
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'suix_getTransactions',
                 params: [
@@ -123,7 +123,7 @@ xdescribe('The Transaction History Page', () => {
                 nextCursor: null,
             }
         );
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'suix_getTransaction',
                 params: ['5VaudApwJSXRCcpzAeKuGsXatyYa1PBMAHhPEDJHEMNH'],
@@ -131,7 +131,7 @@ xdescribe('The Transaction History Page', () => {
             view
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'suix_getObject',
                 params: ['0x12e502e444d75209e744cd0b8e29b01e7c3ebf96'],
@@ -143,7 +143,7 @@ xdescribe('The Transaction History Page', () => {
             true
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'suix_getTransactions',
                 params: [
@@ -157,7 +157,7 @@ xdescribe('The Transaction History Page', () => {
                 nextCursor: null,
             }
         );
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'suix_getTransactions',
                 params: [
