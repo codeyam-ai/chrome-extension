@@ -2,7 +2,7 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { simulateMnemonicUser } from './utils/storage';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { mockCommonCalls, mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
@@ -12,7 +12,7 @@ describe('Top Nav Wallet Management', () => {
         simulateMnemonicUser();
         mockJsonRpc = new MockJsonRpc();
         mockCommonCalls(mockJsonRpc);
-        mockSuiObjects(mockJsonRpc);
+        mockBlockchain(mockJsonRpc);
     });
 
     test('Switching current wallet', async () => {
