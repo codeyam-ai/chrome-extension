@@ -23,6 +23,7 @@ import Browser from 'webextension-polyfill';
 import { Window } from './Window';
 import { API_ENV } from '../ui/app/ApiProvider';
 import { PREAPPROVAL_KEY, TX_STORE_KEY } from '_src/shared/constants';
+import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
@@ -283,12 +284,6 @@ class Transactions {
         requestType?: SuiSignAndExecuteTransactionBlockInput['requestType'];
         options?: SuiSignAndExecuteTransactionBlockInput['options'];
     }) {
-        const activeSeed = await this.getActiveSeed();
-
-        if (activeSeed.address !== address) {
-            throw new Error('Requested address for transaction is not active.');
-        }
-
         let env;
         let envEndpoint;
         switch (chain) {
@@ -334,13 +329,29 @@ class Transactions {
             throw new Error('No connection found');
         }
 
+        const provider = new JsonRpcProvider(connection);
+
         try {
-            const provider = new JsonRpcProvider(connection);
-            const secretKey = Uint8Array.from(
-                activeSeed.seed.split(',').map((n) => parseInt(n))
-            );
-            const keypair = Ed25519Keypair.fromSecretKey(secretKey);
-            const signer = new RawSigner(keypair, provider);
+            let signer;
+
+            const authentication = await this.getAuthentication();
+            if (authentication) {
+                signer = new EthosSigner(address, authentication, provider);
+            } else {
+                const activeSeed = await this.getActiveSeed();
+
+                if (activeSeed.address !== address) {
+                    throw new Error(
+                        'Requested address for transaction is not active.'
+                    );
+                }
+
+                const secretKey = Uint8Array.from(
+                    activeSeed.seed.split(',').map((n) => parseInt(n))
+                );
+                const keypair = Ed25519Keypair.fromSecretKey(secretKey);
+                signer = new RawSigner(keypair, provider);
+            }
 
             const txResponse = await signer.signAndExecuteTransactionBlock({
                 transactionBlock,
@@ -463,6 +474,16 @@ class Transactions {
         });
 
         return JSON.parse(activeSeedString || '[]');
+    }
+
+    private async getAuthentication(): Promise<string | null> {
+        const authentication = await getEncrypted({
+            key: 'authentication',
+            session: true,
+            strong: false,
+        });
+
+        return authentication;
     }
 
     private createTransactionRequest(
