@@ -1,9 +1,6 @@
 import { toB64 } from '@mysten/bcs';
 
-export async function extractInfoFromCredential(
-    credential: Credential,
-    publicKeyData?: Uint8Array
-) {
+export async function extractInfoFromCredential(credential: Credential) {
     if (
         credential.type === 'public-key' &&
         'rawId' in credential &&
@@ -12,6 +9,8 @@ export async function extractInfoFromCredential(
         typeof credential.response === 'object'
     ) {
         const { rawId, response } = credential;
+
+        console.log('CREDENTIAL', credential);
 
         const id = toB64(new Uint8Array(rawId as ArrayBuffer));
 
@@ -26,12 +25,29 @@ export async function extractInfoFromCredential(
             challenge = userData.challenge;
         }
 
+        // if ('authenticatorData' in response && response.authenticatorData) {
+        //     const userData = JSON.parse(
+        //         new TextDecoder().decode(
+        //             response.authenticatorData as ArrayBuffer
+        //         )
+        //     );
+        //     challenge = userData.challenge;
+        // }
+
+        if ('userHandle' in response && response.userHandle) {
+            const userData = new TextDecoder().decode(
+                response.userHandle as ArrayBuffer
+            );
+            console.log('userData', userData);
+        }
+
         if (
             'getPublicKey' in response &&
             response.getPublicKey &&
             typeof response.getPublicKey === 'function'
         ) {
             publicKey = toB64(new Uint8Array(response.getPublicKey()));
+            console.log('publicKey', publicKey);
         }
 
         if ('signature' in response && response.signature) {

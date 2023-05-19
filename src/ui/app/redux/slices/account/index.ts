@@ -1177,6 +1177,8 @@ export const saveBiometricKey = createAsyncThunk(
             account: { passphrase },
         } = getState() as RootState;
 
+        console.log('PASSPHRASE', passphrase, biometric);
+
         if (!passphrase) return false;
 
         await setEncrypted({
@@ -1194,6 +1196,8 @@ export const saveBiometricKey = createAsyncThunk(
 export const unlockViaBiometric = createAsyncThunk(
     'account/unlockViaBiometric',
     async (biometric: string): Promise<string | null> => {
+        console.log('biometric', biometric);
+
         const passphrase = await getEncrypted({
             key: 'biometric',
             session: false,

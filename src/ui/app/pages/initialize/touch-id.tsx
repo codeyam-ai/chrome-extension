@@ -43,7 +43,7 @@ const TouchIdOnboardingPage = () => {
             progressCompleted={mnemonic ? 3 : 1}
             progressTotal={mnemonic ? 3 : 5}
         >
-            <div className="px-6 sm:px-10 pb-12">
+            <div className="px-6 sm:px-10 pb-12 flex flex-col gap-6">
                 <div className="flex justify-between">
                     <BodyLarge forceLightMode>Unlock with Touch ID</BodyLarge>
                     <SimpleToggle
@@ -55,11 +55,8 @@ const TouchIdOnboardingPage = () => {
                         forceLightTheme
                     />
                 </div>
-                <Body
-                    isTextColorMedium
-                    className="text-left pt-2"
-                    forceLightMode
-                >
+                <Body>Please verify your Touch ID twice to set up.</Body>
+                <Body isTextColorMedium className="text-left" forceLightMode>
                     {BIOMETRIC_DISCLAIMER}
                 </Body>
 

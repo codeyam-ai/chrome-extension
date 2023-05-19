@@ -10,6 +10,7 @@ import {
     saveBiometricKey,
     unlockViaBiometric,
 } from '../redux/slices/account';
+import { toast } from 'react-toastify';
 
 export const CHALLENGE = new TextEncoder().encode('Ethos Wallet');
 
@@ -45,6 +46,46 @@ export function useBiometricAuth() {
 
     const biometricID = useAppSelector(({ account }) => account.biometricID);
 
+    const getBiometric = useCallback(
+        async (id?: string) => {
+            if (!isSupported) {
+                // throw new Error('Biometric auth is not supported');
+                return;
+            }
+
+            if (!id && !biometricID) {
+                // throw new Error('Biometric auth is not setuped');
+                return;
+            }
+
+            const publicKey: PublicKeyCredentialRequestOptions = {
+                challenge: CHALLENGE,
+                allowCredentials: [
+                    {
+                        type: 'public-key',
+                        id: fromB64(id ?? biometricID ?? ''),
+                        transports: ['internal'],
+                    },
+                ],
+                userVerification: 'discouraged',
+            };
+
+            const credential = await navigator.credentials.get({
+                publicKey,
+            });
+
+            if (credential) {
+                const { signature } = await extractInfoFromCredential(
+                    credential
+                );
+                return signature;
+            }
+
+            return;
+        },
+        [biometricID, isSupported]
+    );
+
     const setup = useCallback(async () => {
         if (!isSupported) {
             return false;
@@ -57,63 +98,29 @@ export function useBiometricAuth() {
             });
 
         if (credential) {
-            const { id, challenge } = await extractInfoFromCredential(
-                credential
-            );
+            const { id } = await extractInfoFromCredential(credential);
 
-            if (id) {
+            if (!id) return false;
+
+            const signature = await getBiometric(id);
+
+            if (signature) {
                 await dispatch(saveBiometricID(id));
+                await dispatch(saveBiometricKey(signature));
+                return true;
             }
 
-            if (challenge) {
-                await dispatch(saveBiometricKey(challenge));
-            }
-            return true;
+            return false;
         }
         return false;
-    }, [dispatch, isSupported]);
-
-    const getBiometric = useCallback(async () => {
-        if (!isSupported) {
-            // throw new Error('Biometric auth is not supported');
-            return;
-        }
-
-        if (!biometricID) {
-            // throw new Error('Biometric auth is not setuped');
-            return;
-        }
-
-        const publicKey: PublicKeyCredentialRequestOptions = {
-            challenge: CHALLENGE,
-            allowCredentials: [
-                {
-                    type: 'public-key',
-                    id: fromB64(biometricID),
-                    transports: ['internal'],
-                },
-            ],
-            userVerification: 'discouraged',
-        };
-
-        const credential = await navigator.credentials.get({
-            publicKey,
-        });
-
-        if (credential) {
-            const { challenge } = await extractInfoFromCredential(credential);
-            return challenge;
-        }
-
-        return;
-    }, [biometricID, isSupported]);
+    }, [dispatch, isSupported, getBiometric]);
 
     const authenticate = useCallback(async () => {
-        const challenge = await getBiometric();
+        const signature = await getBiometric();
 
-        if (challenge) {
+        if (signature) {
             const passphrase = await dispatch(
-                unlockViaBiometric(challenge)
+                unlockViaBiometric(signature)
             ).unwrap();
             return passphrase;
         }
@@ -122,10 +129,10 @@ export function useBiometricAuth() {
     }, [getBiometric, dispatch]);
 
     const reset = useCallback(async () => {
-        const challenge = await getBiometric();
+        const signature = await getBiometric();
 
-        if (challenge) {
-            dispatch(removeBiometric(challenge));
+        if (signature) {
+            dispatch(removeBiometric(signature));
         }
     }, [dispatch, getBiometric]);
 
