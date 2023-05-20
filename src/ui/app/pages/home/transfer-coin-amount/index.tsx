@@ -171,9 +171,7 @@ function useOnHandleSubmit({
 
             const allCoins: SuiMoveObject[] = accountCoinsSelector(state);
             const [primaryCoin, ...mergeCoins] = allCoins.filter(
-                (c) =>
-                    c.type ===
-                    `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${coin.type}>`
+                (c) => c.type === `0x2::coin::Coin<${coin.type}>`
             );
 
             const transactionBlock = new TransactionBlock();
