@@ -169,6 +169,7 @@ export default class ApiProvider {
         const connection = customRPC
             ? new Connection({ fullnode: customRPC })
             : getDefaultAPI(apiEnv, this.fallbackNumber);
+
         this._apiFullNodeProvider = new JsonRpcProvider(connection);
 
         this._signer = null;
