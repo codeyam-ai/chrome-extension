@@ -1,11 +1,10 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Keypair, SuiAddress } from '@mysten/sui.js';
 import { Connection, JsonRpcProvider, RawSigner } from '@mysten/sui.js';
 
 import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-
-import type { Keypair, SuiAddress } from '@mysten/sui.js';
 import type { QueryClient } from '@tanstack/react-query';
 
 export enum API_ENV {
@@ -169,6 +168,7 @@ export default class ApiProvider {
         const connection = customRPC
             ? new Connection({ fullnode: customRPC })
             : getDefaultAPI(apiEnv, this.fallbackNumber);
+
         this._apiFullNodeProvider = new JsonRpcProvider(connection);
 
         this._signer = null;
