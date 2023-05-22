@@ -14,7 +14,7 @@ describe('Buy coin flow', () => {
         mockJsonRpc = new MockJsonRpc();
         await simulateMnemonicUser();
         mockBlockchain(mockJsonRpc, {
-            suiBalance: 0,
+            coinTransaction: 0,
         });
     });
 

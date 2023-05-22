@@ -9,7 +9,7 @@ describe('Importing a wallet using a seed phrase', () => {
     let mockJsonRpc: MockJsonRpc;
     beforeEach(() => {
         mockJsonRpc = new MockJsonRpc();
-        mockBlockchain(mockJsonRpc, { suiBalance: 40_000_000_000 });
+        mockBlockchain(mockJsonRpc, { coinTransaction: 40_000_000_000 });
     });
 
     test('Entire flow works', async () => {

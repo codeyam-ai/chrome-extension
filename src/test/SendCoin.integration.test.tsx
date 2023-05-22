@@ -13,7 +13,7 @@ describe('send coin flow', () => {
         mockJsonRpc = new MockJsonRpc();
         await simulateMnemonicUser();
         mockBlockchain(mockJsonRpc, {
-            suiBalance: 4_000_000_000, // MIST units
+            coinTransaction: 4_000_000_000, // MIST units
         });
         const mocks = rpcMocks(mockJsonRpc);
         mocks.suix_getNormalizedMoveFunction();

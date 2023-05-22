@@ -2,14 +2,17 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { renderTemplate } from '_src/test/utils/json-templates';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { mockBlockchain } from '_src/test/utils/mockchain';
 import { makeCoinObject } from '_src/test/utils/mockchain-templates/coinObject';
 import { renderApp } from '_src/test/utils/react-rendering';
-import { simulateMnemonicUser } from '_src/test/utils/storage';
-import { preventActWarning } from '_src/test/utils/test-helpers';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import {
+    simulateMnemonicUser,
+    wallet1Address,
+    wallet2Address,
+} from '_src/test/utils/storage';
 
-xdescribe('The Transaction History Page', () => {
+describe('The Transaction History Page', () => {
     let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
@@ -18,55 +21,21 @@ xdescribe('The Transaction History Page', () => {
 
     test('Handles a wallet that has no transactions', async () => {
         mockBlockchain(mockJsonRpc);
-        mockJsonRpc.mockJsonRpcCall(
-            {
-                method: 'suix_getTransactions',
-                params: [
-                    {
-                        ToAddress: '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
-                    },
-                ],
-            },
-            {
-                data: [],
-                nextCursor: null,
-            }
-        );
-        mockJsonRpc.mockJsonRpcCall(
-            {
-                method: 'suix_getTransactions',
-                params: [
-                    {
-                        FromAddress:
-                            '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
-                    },
-                ],
-            },
-            {
-                data: [],
-                nextCursor: null,
-            }
-        );
         renderApp({ initialRoute: '/transactions' });
-
-        // this fails on CI occasionally. 1000ms (the default timeout) seems like it should be plenty, but alas.
-        await screen.findByText('No transactions yet', {}, { timeout: 2000 });
+        await screen.findByText('No transactions yet');
     });
 
     test('Shows transactions TO the current wallet', async () => {
-        mockBlockchain(mockJsonRpc);
-        mockTransactionHistory();
-        renderApp({ initialRoute: '/transactions' });
-        await screen.findByText('$1.00', {}, { timeout: 2000 });
+        // TODO: flesh out the from/to semantics for mockchain
+        mockBlockchain(mockJsonRpc, { coinTransaction: 100_000_000 });
 
-        // this annoying code prevents async code from getting scheduled after the test is over. It would be good to
-        // find a better pattern; see discussion here:
-        // https://discord.com/channels/723559267868737556/723565903228305549/1075109945541926913
-        preventActWarning();
-        await new Promise((r) => setTimeout(r, 10));
+        renderApp({ initialRoute: '/transactions' });
+        await screen.findByText('Received Sui');
+        await screen.findByText('+ 0.1 SUI');
+        await screen.findByTestId('coin-icon');
     });
 
-    test('Shows correct transactions when switching wallet', async () => {
+    xtest('Shows correct transactions when switching wallet', async () => {
         mockBlockchain(mockJsonRpc);
         mockTransactionHistory();
         renderApp({ initialRoute: '/transactions' });

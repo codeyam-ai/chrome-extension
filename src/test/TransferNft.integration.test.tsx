@@ -17,7 +17,7 @@ describe('Creating and sending an NFT', () => {
 
     test('rendering an empty state for the nfts page', async () => {
         mockBlockchain(mockJsonRpc, {
-            suiBalance: 500000,
+            coinTransaction: 500000,
         });
         renderApp({ initialRoute: '/nfts' });
         await screen.findByText('NFTs');
@@ -39,7 +39,7 @@ describe('Creating and sending an NFT', () => {
         const nftName = 'nft-test';
 
         mockBlockchain(mockJsonRpc, {
-            suiBalance: 500000,
+            coinTransaction: 500000,
             nftDetails: {
                 name: 'nft-test',
             },

@@ -31,7 +31,7 @@ describe('Rendering the Home page', () => {
     describe('when the wallet has some coins', () => {
         beforeEach(async () => {
             mockBlockchain(mockJsonRpc, {
-                suiBalance: 40000000000,
+                coinTransaction: 40000000000,
                 stakedSui: [
                     {
                         principal: '1000000000',

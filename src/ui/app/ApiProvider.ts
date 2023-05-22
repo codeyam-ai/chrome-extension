@@ -144,6 +144,7 @@ export const generateActiveNetworkList = (): NetworkTypes[] => {
         (env) => !excludedNetworks.includes(env as keyof typeof API_ENV)
     );
 };
+
 export default class ApiProvider {
     public fallbackNumber: number | undefined = undefined;
 
