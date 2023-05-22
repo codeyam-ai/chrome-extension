@@ -73,7 +73,8 @@ const assetChanges = (
         (objectChange) =>
             objectChange.type === 'created' &&
             objectChange.sender === address &&
-            objectChange.sender === addressOwner(objectChange.owner)
+            objectChange.sender === addressOwner(objectChange.owner) &&
+            objectChange.objectType.indexOf(SUI_TYPE_ARG) === -1
     );
 
     return {
