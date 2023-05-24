@@ -15,7 +15,7 @@ describe('Minting an NFT', () => {
 
     test('can mint an NFT', async () => {
         mockBlockchain(mockJsonRpc, {
-            suiBalance: 500000,
+            coinTransaction: 500000,
         });
         renderApp();
         const nftsButton = await screen.findByTitle('NFTs');

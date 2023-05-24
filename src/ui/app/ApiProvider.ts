@@ -144,6 +144,7 @@ export const generateActiveNetworkList = (): NetworkTypes[] => {
         (env) => !excludedNetworks.includes(env as keyof typeof API_ENV)
     );
 };
+
 export default class ApiProvider {
     public fallbackNumber: number | undefined = undefined;
 
@@ -168,6 +169,7 @@ export default class ApiProvider {
         const connection = customRPC
             ? new Connection({ fullnode: customRPC })
             : getDefaultAPI(apiEnv, this.fallbackNumber);
+
         this._apiFullNodeProvider = new JsonRpcProvider(connection);
 
         this._signer = null;

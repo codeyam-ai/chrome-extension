@@ -5,6 +5,10 @@ import { suiSystemStateObject } from '_src/test/utils/mockchain-templates/sui-sy
 
 import type { CoinBalance, DelegatedStake } from '@mysten/sui.js';
 import type { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import { wallet1Address, wallet2Address } from './storage';
+import { SuiTransactionBlockResponse } from '@mysten/sui.js/src/types/transactions';
+
+import { makeCoinTransactionBlock } from '_src/test/utils/mockchain-templates/transactionBlock';
 
 /**
  * Mocks out the basic JsonRPC calls that any blockchain interaction will make.
@@ -21,7 +25,7 @@ export const mockCommonCalls = (mockJsonRpc: MockJsonRpc) => {
         name: 'Sui',
         symbol: 'SUI',
         description: '',
-        iconUrl: null,
+        iconUrl: 'http://example.com/sui-icon.png',
         id: null,
     };
     mockJsonRpc.mockJsonRpcCall(
@@ -31,38 +35,59 @@ export const mockCommonCalls = (mockJsonRpc: MockJsonRpc) => {
     );
 };
 
+interface CoinTransactionSpec {
+    amountInMist: number;
+    toAddress: string;
+    fromAddress: string;
+}
+
 /**
- * Sets the core state of the mock blockchain.
+ * Sets the state of the mock blockchain.
+ *
+ * @param options.coinTransaction - If provided, the blockchain will have a single transaction and associated coin objects.
+ *  If a number is provided, it will be used as the amount of SUI transferred in the transaction. If an object is provided,
+ *  it will be used to set up a transaction with the given amount of SUI, to the given address, from the given address.
  */
 export const mockBlockchain = (
     mockJsonRpc: MockJsonRpc,
     options: {
         address?: string;
-        suiBalance?: number;
+        coinTransaction?: number | CoinTransactionSpec;
         nftDetails?: { name: string };
         stakedSui?: { principal: string }[];
         logObjects?: boolean;
     } = {}
 ) => {
     mockCommonCalls(mockJsonRpc);
-    const address =
-        options.address ??
-        '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de';
+    const address = options.address ?? wallet1Address;
     const fullObjects = [];
     const objectInfos = [];
     const coinBalances = [];
+    const coinTransactionBlocks = [];
     const stakedSui: DelegatedStake[] = [];
-    if (options.suiBalance) {
-        const objId = '0xfd9cff9fd6befa0e7d6481d0eeae02056b2ca46e';
-        const coinObject = makeCoinObject(options.suiBalance, objId);
+    if (options.coinTransaction) {
+        const coinObjectId = '0xfd9cff9fd6befa0e7d6481d0eeae02056b2ca46e';
+
+        const actualCoinTransaction =
+            typeof options.coinTransaction === 'number'
+                ? {
+                      amountInMist: options.coinTransaction,
+                      toAddress: wallet1Address,
+                      fromAddress: wallet2Address,
+                  }
+                : options.coinTransaction;
+        const coinObject = makeCoinObject(
+            actualCoinTransaction.amountInMist,
+            coinObjectId
+        );
         const coinObjectInfo = {
             data: {
-                objectId: objId,
+                objectId: coinObjectId,
                 version: '0',
                 digest: '12Pe8JN96upsApMseeghANkkNMKUWA6Bz4JD5NTWko2q',
                 type: '0x2::coin::Coin<0x2::sui::SUI>',
                 owner: {
-                    AddressOwner: '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+                    AddressOwner: wallet1Address,
                 },
                 previousTransaction:
                     '2joDzF1sDVAVv9ej7j8197ZwiZ1hX73kSFW48c1nNxv3',
@@ -70,10 +95,18 @@ export const mockBlockchain = (
         };
         const coinBalance: CoinBalance = {
             coinType: '0x2::sui::SUI',
-            totalBalance: options.suiBalance.toString(),
+            totalBalance: actualCoinTransaction.amountInMist.toString(),
             coinObjectCount: 1,
             lockedBalance: { number: 0 },
         };
+
+        const coinTransactionBlock = makeCoinTransactionBlock(
+            actualCoinTransaction.toAddress,
+            actualCoinTransaction.fromAddress,
+            actualCoinTransaction.amountInMist,
+            coinObjectId
+        );
+        coinTransactionBlocks.push(coinTransactionBlock);
         objectInfos.push(coinObjectInfo);
         fullObjects.push(coinObject);
         coinBalances.push(coinBalance);
@@ -114,6 +147,44 @@ export const mockBlockchain = (
             });
         });
     }
+
+    mockJsonRpc.mockJsonRpcCall(
+        {
+            method: 'suix_queryTransactionBlocks',
+            params: [
+                {
+                    filter: {
+                        ToAddress: wallet1Address,
+                    },
+                },
+            ],
+        },
+        {
+            data: coinTransactionBlocks,
+            nextCursor: null,
+            hasNextPage: false,
+        },
+        true
+    );
+
+    mockJsonRpc.mockJsonRpcCall(
+        {
+            method: 'suix_queryTransactionBlocks',
+            params: [
+                {
+                    filter: {
+                        FromAddress: wallet1Address,
+                    },
+                },
+            ],
+        },
+        {
+            data: [],
+            nextCursor: null,
+            hasNextPage: false,
+        },
+        true
+    );
 
     mockJsonRpc.mockJsonRpcCall(
         {

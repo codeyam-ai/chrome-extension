@@ -26,6 +26,7 @@ const CoinIcon = ({
     if (iconUrl) {
         return (
             <img
+                data-testid="coin-icon"
                 src={iconUrl}
                 alt={coinName ?? symbol}
                 width={42}
