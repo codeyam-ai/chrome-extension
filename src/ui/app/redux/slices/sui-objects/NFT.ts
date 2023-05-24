@@ -61,7 +61,7 @@ export class NFT {
             data.type.includes('kiosk') &&
             !!data.content &&
             'fields' in data.content &&
-            'kiosk' in data.content.fields
+            ('kiosk' in data.content.fields || 'for' in data.content.fields)
         );
     }
 
@@ -70,7 +70,8 @@ export class NFT {
         data: SuiObjectData
     ): Promise<SuiObjectResponse[]> {
         if (!this.isKiosk(data)) return [];
-        const kiosk = get(data, 'content.fields.kiosk');
+        let kiosk = get(data, 'content.fields.kiosk');
+        if (!kiosk) kiosk = get(data, 'content.fields.for');
         if (!kiosk) return [];
         let allKioskObjects: DynamicFieldInfo[] = [];
         let cursor: string | undefined | null;
@@ -91,7 +92,8 @@ export class NFT {
         const relevantKioskObjects = allKioskObjects.filter(
             (kioskObject) =>
                 kioskObject.name.type ===
-                '0x0000000000000000000000000000000000000000000000000000000000000002::kiosk::Item'
+                    '0x0000000000000000000000000000000000000000000000000000000000000002::kiosk::Item' ||
+                kioskObject.name.type === '0x2::kiosk::Item'
         );
         const objectIds = relevantKioskObjects.map((item) => item.objectId);
 
