@@ -496,6 +496,7 @@ const dappsMap: Map<string, DappData> = new Map([
             urls: {
                 [NetworkName.DEVNET]: 'https://sui.apass.network',
                 [NetworkName.TESTNET]: 'https://sui.apass.network',
+                [NetworkName.MAINNET]: 'https://sui.apass.network',
             },
             tags: [TagName.GAMES, TagName.NFTS],
         } as DappData,
@@ -508,7 +509,9 @@ const dappsMap: Map<string, DappData> = new Map([
             title: 'Final Stardust: Cosmic Nexus',
             description:
                 'Final Stardust is a media franchise in the making, with its first installment being "Final Stardust: Cosmic Nexus", a digital collectible card game inspired by big Japanese/Anime TCG games.',
-            urls: {},
+            urls: {
+                [NetworkName.MAINNET]: 'https://demo.finalstardust.com/',
+            },
             tags: [TagName.GAMES, TagName.NFTS],
         } as DappData,
     ],
