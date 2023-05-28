@@ -7,7 +7,7 @@ import { useBalancesState } from '../../hooks/useBalancesState';
 import { AppState } from '../../hooks/useInitializedGuard';
 import {
     fetchAllBalances,
-    fetchInvalidTokens,
+    fetchInvalidPackages,
 } from '../../redux/slices/balances';
 import { WarningAlert } from '../../shared/alerts/WarningAlert';
 import Alert from '../../shared/feedback/Alert';
@@ -34,7 +34,7 @@ const AppContainer = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        const sub = fetchAllInvalidTokensSubscription(
+        const sub = fetchAllInvalidPackagesSubscription(
             guardChecking,
             dispatch
         ).subscribe();
@@ -151,14 +151,14 @@ export function fetchAllBalancesSubscription(
     );
 }
 
-export function fetchAllInvalidTokensSubscription(
+export function fetchAllInvalidPackagesSubscription(
     guardChecking: boolean,
     dispatch: AppDispatch
 ) {
     return of(guardChecking).pipe(
         filter(() => !guardChecking),
         switchMap(() =>
-            defer(() => from(dispatch(fetchInvalidTokens()))).pipe(
+            defer(() => from(dispatch(fetchInvalidPackages()))).pipe(
                 repeat({ delay: POLL_SUI_OBJECTS_INTERVAL })
             )
         )
