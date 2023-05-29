@@ -6,9 +6,10 @@ import BodyLarge from '../typography/BodyLarge';
 
 interface SubpageHeaderProps {
     title: string;
+    action?: React.ReactNode;
 }
 
-const SubpageHeader: React.FC<SubpageHeaderProps> = ({ title }) => {
+const SubpageHeader: React.FC<SubpageHeaderProps> = ({ title, action }) => {
     const navigate = useNavigate();
 
     const goBack = useCallback(() => {
@@ -30,7 +31,13 @@ const SubpageHeader: React.FC<SubpageHeaderProps> = ({ title }) => {
             >
                 {title}
             </BodyLarge>
-            <div className="w-1/4"></div>
+            <div className="w-1/4">
+                {action && (
+                    <div className="flex justify-end items-center">
+                        {action}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

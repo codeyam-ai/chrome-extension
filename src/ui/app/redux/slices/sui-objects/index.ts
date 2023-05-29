@@ -11,7 +11,6 @@ import {
     createEntityAdapter,
     createSlice,
 } from '@reduxjs/toolkit';
-import Browser from 'webextension-polyfill';
 
 import { SUI_SYSTEM_STATE_OBJECT_ID } from './Coin';
 import { NFT } from './NFT';
@@ -53,15 +52,6 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
 
     if (!address) {
         return null;
-    }
-
-    let invalidPackages = state.balances.invalidPackages;
-    if (invalidPackages.length === 0) {
-        invalidPackages = (await Browser.storage.local.get('invalidPackages'))
-            .invalidPackages;
-    }
-    if (!invalidPackages) {
-        invalidPackages = [];
     }
 
     const allSuiObjects: ExtendedSuiObjectData[] = [];
@@ -132,13 +122,6 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
 
         for (const objRes of allObjRes) {
             const suiObjectData = getSuiObjectData(objRes);
-
-            if (
-                suiObjectData?.type &&
-                invalidPackages.includes(suiObjectData.type.split('::')[0])
-            ) {
-                continue;
-            }
 
             if (suiObjectData) {
                 if (NFT.isKiosk(suiObjectData)) {

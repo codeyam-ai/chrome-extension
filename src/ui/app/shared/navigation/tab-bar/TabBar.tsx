@@ -33,16 +33,16 @@ const navItems: NavItem[] = [
         solidIcon: <HomeIconSolid className={iconClasses} />,
     },
     {
-        title: 'NFTs',
-        to: './nfts',
-        outlineIcon: <Squares2X2IconOutline className={iconClasses} />,
-        solidIcon: <Squares2X2IconSolid className={iconClasses} />,
-    },
-    {
         title: 'Tokens',
         to: './tokens',
         outlineIcon: <WalletIconOutline className={iconClasses} />,
         solidIcon: <WalletIconSolid className={iconClasses} />,
+    },
+    {
+        title: 'NFTs',
+        to: './nfts',
+        outlineIcon: <Squares2X2IconOutline className={iconClasses} />,
+        solidIcon: <Squares2X2IconSolid className={iconClasses} />,
     },
     {
         title: 'History',
