@@ -5,10 +5,8 @@ import { defer, filter, from, of, repeat, switchMap } from 'rxjs';
 
 import { useBalancesState } from '../../hooks/useBalancesState';
 import { AppState } from '../../hooks/useInitializedGuard';
-import {
-    fetchAllBalances,
-    fetchInvalidPackages,
-} from '../../redux/slices/balances';
+import { fetchAllBalances } from '../../redux/slices/balances';
+import { fetchInvalidPackages } from '../../redux/slices/valid';
 import { WarningAlert } from '../../shared/alerts/WarningAlert';
 import Alert from '../../shared/feedback/Alert';
 import BaseLayout from '../../shared/layouts/BaseLayout';

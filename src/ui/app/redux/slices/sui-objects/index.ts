@@ -55,7 +55,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         return null;
     }
 
-    let invalidPackages = state.balances.invalidPackages;
+    let invalidPackages = state.valid.invalidPackages;
     if (invalidPackages.length === 0) {
         invalidPackages = (await Browser.storage.local.get('invalidPackages'))
             .invalidPackages;
