@@ -59,7 +59,7 @@ function NftsPage() {
                         linkUrl={DASHBOARD_COLLECTIBLES}
                     />
                 ) : (
-                    <NftGrid nfts={validNfts} />
+                    <NftGrid nfts={validNfts} edit={showAll} />
                 )}
             </div>
         </Loading>

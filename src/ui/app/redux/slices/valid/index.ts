@@ -17,11 +17,11 @@ const combineValidSources = async () => {
         invalidPackages: [],
     });
 
-    const { additions } = await Browser.storage.local.get({
+    const { invalidPackageAdditions } = await Browser.storage.local.get({
         invalidPackageAdditions: [],
     });
 
-    const { subtractions } = await Browser.storage.local.get({
+    const { invalidPackageSubtractions } = await Browser.storage.local.get({
         invalidPackageSubtractions: [],
     });
 
@@ -30,8 +30,10 @@ const combineValidSources = async () => {
     }
 
     return invalidPackages
-        .concat(additions ?? [])
-        .filter((item: string) => !(subtractions ?? []).includes(item));
+        .concat(invalidPackageAdditions ?? [])
+        .filter(
+            (item: string) => !(invalidPackageSubtractions ?? []).includes(item)
+        );
 };
 
 export const initializeInvalidPackages = createAsyncThunk<
@@ -73,15 +75,24 @@ export const addInvalidPackage = createAsyncThunk<
     AppThunkConfig
 >('valid/add-invalid-package', async (invalidPackage) => {
     try {
-        const { invalidPackageAdditions } = await Browser.storage.local.get({
-            invalidPackageAdditions: [],
-        });
+        const { invalidPackageAdditions, invalidPackageSubtractions } =
+            await Browser.storage.local.get({
+                invalidPackageAdditions: [],
+                invalidPackageSubtractions: [],
+            });
 
         if (!invalidPackageAdditions.includes(invalidPackage)) {
             invalidPackageAdditions.push(invalidPackage);
+            await Browser.storage.local.set({ invalidPackageAdditions });
         }
 
-        await Browser.storage.local.set({ invalidPackageAdditions });
+        if (invalidPackageSubtractions.includes(invalidPackage)) {
+            invalidPackageSubtractions.splice(
+                invalidPackageSubtractions.indexOf(invalidPackage),
+                1
+            );
+            await Browser.storage.local.set({ invalidPackageSubtractions });
+        }
 
         const combined = await combineValidSources();
         return combined;
@@ -96,15 +107,24 @@ export const removeInvalidPackage = createAsyncThunk<
     AppThunkConfig
 >('valid/remove-invalid-package', async (invalidPackage) => {
     try {
-        const { invalidPackageSubtractions } = await Browser.storage.local.get({
-            invalidPackageSubtractions: [],
-        });
+        const { invalidPackageSubtractions, invalidPackageAdditions } =
+            await Browser.storage.local.get({
+                invalidPackageSubtractions: [],
+                invalidPackageAdditions: [],
+            });
 
         if (!invalidPackageSubtractions.includes(invalidPackage)) {
             invalidPackageSubtractions.push(invalidPackage);
+            await Browser.storage.local.set({ invalidPackageSubtractions });
         }
 
-        await Browser.storage.local.set({ invalidPackageSubtractions });
+        if (invalidPackageAdditions.includes(invalidPackage)) {
+            invalidPackageAdditions.splice(
+                invalidPackageAdditions.indexOf(invalidPackage),
+                1
+            );
+            await Browser.storage.local.set({ invalidPackageAdditions });
+        }
 
         const combined = await combineValidSources();
         return combined;
