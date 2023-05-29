@@ -8,7 +8,9 @@ import Browser from 'webextension-polyfill';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
-const invalidPackagesAdapter = createEntityAdapter<string>({});
+const invalidPackagesAdapter = createEntityAdapter<string>({
+    selectId: (info) => info,
+});
 
 const combineValidSources = async () => {
     const { invalidPackages } = await Browser.storage.local.get({

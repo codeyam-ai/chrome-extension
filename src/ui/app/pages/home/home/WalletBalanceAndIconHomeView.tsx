@@ -39,8 +39,8 @@ const WalletBalanceAndIconHomeView = ({
                     color={accountInfo?.color}
                     emoji={accountInfo?.emoji}
                     nftPfpUrl={accountInfo?.nftPfpUrl}
-                    circleSizeClasses="h-[60px] w-[60px]"
-                    emojiSizeInPx={32}
+                    circleSizeClasses="h-[90px] w-[90px]"
+                    emojiSizeInPx={45}
                 />
             </div>
             <div className="flex flex-col">
