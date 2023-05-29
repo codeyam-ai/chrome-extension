@@ -1,4 +1,4 @@
-import { Cog6ToothIcon } from '@heroicons/react/24/outline';
+import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { CircleStackIcon } from '@heroicons/react/24/solid';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -61,7 +61,7 @@ function TokensPage() {
                         : 'text-ethos-light-text-medium'
                 }`}
             >
-                <Cog6ToothIcon width={24} />
+                <AdjustmentsHorizontalIcon width={24} />
             </div>
         );
     }, [showAll, toggleShowAll]);
@@ -88,7 +88,10 @@ function TokensPage() {
                     loading={!validBalances}
                 >
                     <div className={'px-6 pb-6'}>
-                        <CoinList balances={sortedValidBalances} />
+                        <CoinList
+                            balances={sortedValidBalances}
+                            edit={showAll}
+                        />
                     </div>
                 </Loading>
             )}

@@ -1,4 +1,4 @@
-import { Cog6ToothIcon } from '@heroicons/react/24/outline';
+import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { PhotoIcon } from '@heroicons/react/24/solid';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -41,7 +41,7 @@ function NftsPage() {
                         : 'text-ethos-light-text-medium'
                 }`}
             >
-                <Cog6ToothIcon width={24} />
+                <AdjustmentsHorizontalIcon width={24} />
             </div>
         );
     }, [showAll, toggleShowAll]);

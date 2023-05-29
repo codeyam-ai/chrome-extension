@@ -16,6 +16,7 @@ const CoinList = ({
                         key={type}
                         type={type}
                         balance={balance.toString()}
+                        edit={edit}
                     />
                 );
             })}

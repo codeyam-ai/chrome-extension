@@ -76,6 +76,8 @@ const NftGridItem = ({
         }
     }, [dispatch, hidden, nft]);
 
+    if (hidden && !edit) return <></>;
+
     if (nft.content && 'fields' in nft.content) {
         const gridItem = (
             <div
