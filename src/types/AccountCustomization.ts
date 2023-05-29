@@ -7,6 +7,10 @@ export interface Account {
     emoji: string;
     nftPfpId?: string;
     nftPfpUrl?: string;
+    invalidPackages?: {
+        invalidPackageAdditions: string[];
+        invalidPackageSubtractions: string[];
+    };
 }
 
 export interface AccountCustomization extends Account {

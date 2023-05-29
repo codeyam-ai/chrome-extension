@@ -1,6 +1,8 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import Browser from 'webextension-polyfill';
+
 import { Connection } from './Connection';
 import { isSignTransactionRequest } from '../../shared/messaging/messages/payloads/transactions/ExecuteTransactionRequest';
 import networkEnv from '../NetworkEnv';
@@ -183,6 +185,7 @@ export class ContentScriptConnection extends Connection {
                     this.sendNotAllowedError('getAccountCustomizatios', msg.id);
                 } else {
                     const accountInfos = await this.getAccountInfos();
+                    const invalidPackages = await this.getInvalidPackages();
                     const accountCustomizations: AccountCustomization[] = [];
                     for (const accountInfo of accountInfos) {
                         accountCustomizations.push({
@@ -196,6 +199,7 @@ export class ContentScriptConnection extends Connection {
                                 getNextEmoji(accountInfo.index),
                             nftPfpId: accountInfo.nftPfpId || '',
                             nftPfpUrl: accountInfo.nftPfpUrl || '',
+                            invalidPackages,
                         });
                     }
 
@@ -500,6 +504,19 @@ export class ContentScriptConnection extends Connection {
         throw new Error(
             "[ContentScriptConnection] port doesn't include an origin"
         );
+    }
+
+    private async getInvalidPackages(): Promise<{
+        invalidPackageAdditions: string[];
+        invalidPackageSubtractions: string[];
+    }> {
+        const { invalidPackageAdditions, invalidPackageSubtractions } =
+            await Browser.storage.local.get({
+                invalidPackageAdditions: [],
+                invalidPackageSubtractions: [],
+            });
+
+        return { invalidPackageAdditions, invalidPackageSubtractions };
     }
 
     private async getAccountInfos(): Promise<AccountInfo[]> {
