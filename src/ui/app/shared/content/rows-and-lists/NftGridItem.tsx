@@ -82,7 +82,9 @@ const NftGridItem = ({
         const gridItem = (
             <div
                 className={`${
-                    edit ? 'bg-ethos-light-background-secondary rounded-lg' : ''
+                    edit
+                        ? 'bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary rounded-lg'
+                        : ''
                 }`}
             >
                 <div
@@ -122,7 +124,7 @@ const NftGridItem = ({
                         onClick={toggleDisplay}
                     >
                         <Body>{hidden ? 'Hidden' : 'Displayed'}:</Body>
-                        <Body className="underline text-ethos-light-primary-light">
+                        <Body className="underline text-ethos-light-primary-light dark:text-ethos-dark-primary-dark">
                             {hidden ? 'Show' : 'Hide'}
                         </Body>
                     </div>
