@@ -6,7 +6,10 @@ import { defer, filter, from, of, repeat, switchMap } from 'rxjs';
 import { useBalancesState } from '../../hooks/useBalancesState';
 import { AppState } from '../../hooks/useInitializedGuard';
 import { fetchAllBalances } from '../../redux/slices/balances';
-import { fetchInvalidPackages } from '../../redux/slices/valid';
+import {
+    fetchInvalidPackages,
+    initializeInvalidPackages,
+} from '../../redux/slices/valid';
 import { WarningAlert } from '../../shared/alerts/WarningAlert';
 import Alert from '../../shared/feedback/Alert';
 import BaseLayout from '../../shared/layouts/BaseLayout';
@@ -21,6 +24,7 @@ import PageLayout from '_src/ui/app/pages/PageLayout';
 import type { AppDispatch } from '../../redux/store';
 
 export const POLL_SUI_OBJECTS_INTERVAL = 4000;
+export const POLL_INVALID_PACKAGES = 300000;
 
 const AppContainer = () => {
     const { pathname } = useLocation();
@@ -30,6 +34,10 @@ const AppContainer = () => {
         AppState.HOSTED,
     ]);
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(initializeInvalidPackages());
+    }, [guardChecking, dispatch]);
 
     useEffect(() => {
         const sub = fetchAllInvalidPackagesSubscription(
@@ -157,7 +165,7 @@ export function fetchAllInvalidPackagesSubscription(
         filter(() => !guardChecking),
         switchMap(() =>
             defer(() => from(dispatch(fetchInvalidPackages()))).pipe(
-                repeat({ delay: POLL_SUI_OBJECTS_INTERVAL })
+                repeat({ delay: POLL_INVALID_PACKAGES })
             )
         )
     );

@@ -67,7 +67,10 @@ function HomePage() {
                             />
                         )}
 
-                    <CoinList balances={balances} />
+                    <div className="flex flex-col gap-2">
+                        <Body className="ml-1">My Tokens</Body>
+                        <CoinList balances={balances} />
+                    </div>
 
                     {(!balances || Object.keys(balances).length < 2) && (
                         <div className="py-3">

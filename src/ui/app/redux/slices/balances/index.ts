@@ -3,7 +3,6 @@ import {
     createEntityAdapter,
     createSlice,
 } from '@reduxjs/toolkit';
-import Browser from 'webextension-polyfill';
 
 import testConnection from '../../testConnection';
 
@@ -39,21 +38,7 @@ export const fetchAllBalances = createAsyncThunk<
         owner: address,
     });
 
-    let validBalances = allBalances;
-    let invalidPackages = state.valid.invalidPackages;
-    if (invalidPackages.length === 0) {
-        invalidPackages = (await Browser.storage.local.get('invalidPackages'))
-            .invalidPackages;
-    }
-    if (!invalidPackages) {
-        invalidPackages = [];
-    }
-    validBalances = validBalances.filter((coinBalance) => {
-        const split = coinBalance.coinType.split('::');
-        return !invalidPackages.includes(split[0]);
-    });
-
-    return validBalances;
+    return allBalances;
 });
 
 interface BalancesManualState {

@@ -8,8 +8,41 @@ import Browser from 'webextension-polyfill';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
-const invalidPackagesAdapter = createEntityAdapter<string>({
-    selectId: (type: string) => type.split('::')[0],
+const invalidPackagesAdapter = createEntityAdapter<string>({});
+
+const combineValidSources = async () => {
+    const { invalidPackages } = await Browser.storage.local.get({
+        invalidPackages: [],
+    });
+
+    const { additions } = await Browser.storage.local.get({
+        invalidPackageAdditions: [],
+    });
+
+    const { subtractions } = await Browser.storage.local.get({
+        invalidPackageSubtractions: [],
+    });
+
+    if (invalidPackages.length === 0) {
+        throw new Error('No valid sources found');
+    }
+
+    return invalidPackages
+        .concat(additions ?? [])
+        .filter((item: string) => !(subtractions ?? []).includes(item));
+};
+
+export const initializeInvalidPackages = createAsyncThunk<
+    string[] | null,
+    void,
+    AppThunkConfig
+>('valid/initialize-invalid-packages', async () => {
+    try {
+        const combined = await combineValidSources();
+        return combined;
+    } catch (e) {
+        return null;
+    }
 });
 
 export const fetchInvalidPackages = createAsyncThunk<
@@ -22,7 +55,57 @@ export const fetchInvalidPackages = createAsyncThunk<
             'https://raw.githubusercontent.com/EthosWallet/valid_packages/main/public/invalid_tokens.json'
         );
         const invalidPackages = await invalidPackagesResponse.json();
-        return invalidPackages;
+
+        await Browser.storage.local.set({ invalidPackages });
+
+        const combined = await combineValidSources();
+        return combined;
+    } catch (e) {
+        return null;
+    }
+});
+
+export const addInvalidPackage = createAsyncThunk<
+    string[] | null,
+    string,
+    AppThunkConfig
+>('valid/add-invalid-package', async (invalidPackage) => {
+    try {
+        const { invalidPackageAdditions } = await Browser.storage.local.get({
+            invalidPackageAdditions: [],
+        });
+
+        if (!invalidPackageAdditions.includes(invalidPackage)) {
+            invalidPackageAdditions.push(invalidPackage);
+        }
+
+        await Browser.storage.local.set({ invalidPackageAdditions });
+
+        const combined = await combineValidSources();
+        return combined;
+    } catch (e) {
+        return null;
+    }
+});
+
+export const removeInvalidPackage = createAsyncThunk<
+    string[] | null,
+    string,
+    AppThunkConfig
+>('valid/remove-invalid-package', async (invalidPackage) => {
+    try {
+        const { invalidPackageSubtractions } = await Browser.storage.local.get({
+            invalidPackageSubtractions: [],
+        });
+
+        if (!invalidPackageSubtractions.includes(invalidPackage)) {
+            invalidPackageSubtractions.push(invalidPackage);
+        }
+
+        await Browser.storage.local.set({ invalidPackageSubtractions });
+
+        const combined = await combineValidSources();
+        return combined;
     } catch (e) {
         return null;
     }
@@ -46,12 +129,28 @@ const slice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
+            .addCase(initializeInvalidPackages.fulfilled, (state, action) => {
+                if (action.payload) {
+                    invalidPackagesAdapter.setAll(state, action.payload);
+                    state.invalidPackages = action.payload;
+                    state.loading = false;
+                    state.error = false;
+                }
+            })
+            .addCase(initializeInvalidPackages.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(
+                initializeInvalidPackages.rejected,
+                (state, { error: { code, name, message } }) => {
+                    state.loading = false;
+                    state.error = { code, message, name };
+                }
+            )
             .addCase(fetchInvalidPackages.fulfilled, (state, action) => {
                 if (action.payload) {
-                    Browser.storage.local.set({
-                        invalidPackages: action.payload,
-                    });
                     invalidPackagesAdapter.setAll(state, action.payload);
+                    state.invalidPackages = action.payload;
                     state.loading = false;
                     state.error = false;
                 }
@@ -65,7 +164,19 @@ const slice = createSlice({
                     state.loading = false;
                     state.error = { code, message, name };
                 }
-            );
+            )
+            .addCase(addInvalidPackage.fulfilled, (state, action) => {
+                if (action.payload) {
+                    invalidPackagesAdapter.setAll(state, action.payload);
+                    state.invalidPackages = action.payload;
+                }
+            })
+            .addCase(removeInvalidPackage.fulfilled, (state, action) => {
+                if (action.payload) {
+                    invalidPackagesAdapter.setAll(state, action.payload);
+                    state.invalidPackages = action.payload;
+                }
+            });
     },
 });
 
