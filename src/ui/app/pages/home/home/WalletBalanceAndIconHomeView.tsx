@@ -34,7 +34,7 @@ const WalletBalanceAndIconHomeView = ({
             className="flex flex-col place-items-center"
             data-testid="wallet-and-balance"
         >
-            <div className="pb-2">
+            <div className="pb-3">
                 <WalletColorAndEmojiCircle
                     color={accountInfo?.color}
                     emoji={accountInfo?.emoji}

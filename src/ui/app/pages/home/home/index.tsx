@@ -48,7 +48,7 @@ function HomePage() {
                 />
             )}
             <ChainIndicator apiEnv={selectedApiEnv} className="mt-3" />
-            <div className="pt-5 pb-4">
+            <div className="py-3">
                 <WalletBalanceAndIconHomeView
                     accountInfo={accountInfo}
                     mistBalance={mistBalance}
