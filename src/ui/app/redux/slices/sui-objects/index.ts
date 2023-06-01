@@ -28,6 +28,7 @@ import type { AppThunkConfig } from '_store/thunk-extras';
 
 export interface ExtendedSuiObjectData extends SuiObjectData {
     kiosk?: SuiObjectData;
+    kioskLoaded?: boolean;
 }
 
 const objectsAdapter = createEntityAdapter<ExtendedSuiObjectData>({
@@ -36,10 +37,13 @@ const objectsAdapter = createEntityAdapter<ExtendedSuiObjectData>({
 });
 
 export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
-    ExtendedSuiObjectData[] | null,
-    void,
+    {
+        suiObjects: ExtendedSuiObjectData[];
+        cursor?: PaginatedObjectsResponse['nextCursor'];
+    } | null,
+    { cursor: PaginatedObjectsResponse['nextCursor'] } | undefined,
     AppThunkConfig
->('sui-objects/fetch-all', async (_, { getState, extra: { api } }) => {
+>('sui-objects/fetch-all', async (data, { getState, extra: { api } }) => {
     const state = getState();
 
     if (!state.suiObjects.lastSync) {
@@ -54,28 +58,28 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         return null;
     }
 
-    const allSuiObjects: ExtendedSuiObjectData[] = [];
+    let cursor = data?.cursor;
+    const suiObjects: ExtendedSuiObjectData[] = [];
     if (address) {
         let allObjRes: SuiObjectResponse[] = [];
-        let nextCursor: PaginatedObjectsResponse['nextCursor'] | undefined;
-        let page = 0;
-        while (nextCursor !== null) {
-            page += 1;
+        let objectsRefPage = 0;
+        while (cursor !== null) {
+            objectsRefPage += 1;
             const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
-                owner: address,
-                cursor: nextCursor,
+                owner: '0x174d523be66c291225bb1c9c283aed9aeb9e7ae737e616ffe3b723919c749333',
+                cursor,
             });
 
-            if (page > 20) {
-                nextCursor = null;
+            if (objectsRefPage > 10) {
+                cursor = null;
             } else {
                 if (
                     allObjectRefs.hasNextPage &&
-                    nextCursor !== allObjectRefs.nextCursor
+                    cursor !== allObjectRefs.nextCursor
                 ) {
-                    nextCursor = allObjectRefs.nextCursor;
+                    cursor = allObjectRefs.nextCursor;
                 } else {
-                    nextCursor = null;
+                    cursor = null;
                 }
             }
 
@@ -91,7 +95,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                         : null;
                     const objOutdated = fetchedVersion !== storedVersion;
                     if (!objOutdated && storedObj) {
-                        allSuiObjects.push(storedObj);
+                        suiObjects.push(storedObj);
                     }
                     return objOutdated;
                 })
@@ -120,11 +124,13 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
             allObjRes = [...allObjRes, ...newObjRes];
         }
 
+        let kioskObjectsLoaded = 0;
         for (const objRes of allObjRes) {
             const suiObjectData = getSuiObjectData(objRes);
 
             if (suiObjectData) {
-                if (NFT.isKiosk(suiObjectData)) {
+                if (NFT.isKiosk(suiObjectData) && kioskObjectsLoaded < 10) {
+                    (suiObjectData as ExtendedSuiObjectData).kioskLoaded = true;
                     const kioskObjects = await NFT.getKioskObjects(
                         api.instance.fullNode,
                         suiObjectData
@@ -133,30 +139,31 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                     for (const kioskObject of kioskObjects) {
                         const kioskObjectData = getSuiObjectData(kioskObject);
                         if (kioskObjectData) {
-                            allSuiObjects.push({
+                            suiObjects.push({
                                 kiosk: suiObjectData,
                                 ...kioskObjectData,
                             });
                         }
+                        kioskObjectsLoaded += 1;
                     }
                 } else {
-                    allSuiObjects.push(suiObjectData);
+                    suiObjects.push(suiObjectData);
                 }
             }
         }
 
-        // for (const o of allSuiObjects) {
-        //     if (
-        //         o.owner &&
-        //         typeof o.owner === 'object' &&
-        //         'AddressOwner' in o.owner
-        //     ) {
-        //         o.owner.AddressOwner = address;
-        //     }
-        // }
+        for (const o of suiObjects) {
+            if (
+                o.owner &&
+                typeof o.owner === 'object' &&
+                'AddressOwner' in o.owner
+            ) {
+                o.owner.AddressOwner = address;
+            }
+        }
     }
 
-    return allSuiObjects;
+    return { suiObjects, cursor };
 });
 
 // type NFTTxResponse = {
@@ -234,6 +241,7 @@ interface SuiObjectsManualState {
     loading: boolean;
     error: false | { code?: string; message?: string; name?: string };
     lastSync: number | null;
+    cursor?: PaginatedObjectsResponse['nextCursor'];
 }
 const initialState = objectsAdapter.getInitialState<SuiObjectsManualState>({
     loading: true,
@@ -258,7 +266,8 @@ const slice = createSlice({
                 fetchAllOwnedAndRequiredObjects.fulfilled,
                 (state, action) => {
                     if (action.payload) {
-                        objectsAdapter.setAll(state, action.payload);
+                        objectsAdapter.setAll(state, action.payload.suiObjects);
+                        state.cursor = action.payload.cursor;
                         state.loading = false;
                         state.error = false;
                         state.lastSync = Date.now();
