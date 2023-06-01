@@ -133,8 +133,6 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
             if (suiObjectData) {
                 if (NFT.isKiosk(suiObjectData)) {
                     if (kioskObjectsLoaded < 10) {
-                        (suiObjectData as ExtendedSuiObjectData).kioskLoaded =
-                            true;
                         const kioskObjects = await NFT.getKioskObjects(
                             api.instance.fullNode,
                             suiObjectData
@@ -151,6 +149,11 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                             }
                             kioskObjectsLoaded += 1;
                         }
+
+                        suiObjects.push({
+                            kioskLoaded: true,
+                            ...suiObjectData,
+                        })
                     } else {
                         suiObjects.push(suiObjectData);
                         kiosksPending = true;
@@ -192,7 +195,7 @@ export const fetchMoreObjects = createAsyncThunk<
     let kioskObjectsLoaded = 0;
     if (suiObjects.kiosksPending) {
         for (const suiObjectData of suiObjectDatas) {
-            if (!NFT.isKiosk(suiObjectData)) {
+            if (!NFT.isKiosk(suiObjectData) || suiObjectData.kioskLoaded) {
                 continue;
             }
 
