@@ -66,7 +66,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         while (cursor !== null) {
             objectsRefPage += 1;
             const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
-                owner: '0x174d523be66c291225bb1c9c283aed9aeb9e7ae737e616ffe3b723919c749333',
+                owner: address,
                 cursor,
             });
 
@@ -152,15 +152,15 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
             }
         }
 
-        for (const o of suiObjects) {
-            if (
-                o.owner &&
-                typeof o.owner === 'object' &&
-                'AddressOwner' in o.owner
-            ) {
-                o.owner.AddressOwner = address;
-            }
-        }
+        // for (const o of suiObjects) {
+        //     if (
+        //         o.owner &&
+        //         typeof o.owner === 'object' &&
+        //         'AddressOwner' in o.owner
+        //     ) {
+        //         o.owner.AddressOwner = address;
+        //     }
+        // }
     }
 
     return { suiObjects, cursor };
