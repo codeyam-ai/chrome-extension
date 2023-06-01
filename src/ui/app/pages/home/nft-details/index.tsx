@@ -10,12 +10,14 @@ import { toast } from 'react-toastify';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import Loading from '_components/loading';
-import { useAppSelector, useNFTBasicData } from '_hooks';
+import { useAppDispatch, useAppSelector, useNFTBasicData } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account';
 import { truncateMiddle } from '_src/ui/app/helpers/truncate-string-middle';
 import { useUpdateCurrentAccountInfo } from '_src/ui/app/hooks/useUpdateCurrentAccountInfo';
+import { addInvalidPackage } from '_src/ui/app/redux/slices/valid';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
+import ConfirmDestructiveActionDialog from '_src/ui/app/shared/dialog/ConfirmDestructiveActionDialog';
 import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
@@ -30,6 +32,9 @@ function NFTdetailsContent({
     nft: SuiObjectData;
     onClick?: ButtonHTMLAttributes<HTMLButtonElement>['onClick'];
 }) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const { updateCurrentAccountInfo } = useUpdateCurrentAccountInfo();
 
     const { filePath, nftObjectID, nftFields, fileExtentionType } =
@@ -44,6 +49,20 @@ function NFTdetailsContent({
             toast('NFT set as profile picture');
         }
     }, [filePath, nftObjectID, updateCurrentAccountInfo]);
+
+    const hide = useCallback(async () => {
+        await dispatch(addInvalidPackage(nft.type?.split('::')[0] ?? ''));
+        toast('NFT type has been hidden');
+        navigate('/nfts', { replace: true });
+    }, [dispatch, nft, navigate]);
+
+    const showModal = useCallback(() => {
+        setIsModalOpen(true);
+    }, []);
+
+    const closeModal = useCallback(() => {
+        setIsModalOpen(false);
+    }, []);
 
     let address;
     if (
@@ -177,6 +196,25 @@ function NFTdetailsContent({
                                     <ArrowUpRightIcon width={16} height={16} />
                                 </ExplorerLink>
                             </div>
+                        </div>
+                        <div className="p-12 flex justify-center">
+                            <Button
+                                buttonStyle="secondary"
+                                onClick={showModal}
+                                removeContainerPadding
+                            >
+                                Hide This Type of NFTs
+                            </Button>
+                            <ConfirmDestructiveActionDialog
+                                onCancel={closeModal}
+                                onConfirm={hide}
+                                isOpen={isModalOpen}
+                                setIsOpen={setIsModalOpen}
+                                title="Are you sure you want to hide this type of NFTs?"
+                                description="You can show them again using the controls on the NFTs page."
+                                primaryButtonText="Hide NFTs"
+                                secondaryButtonText="Cancel"
+                            />
                         </div>
                         {/*
                                 
