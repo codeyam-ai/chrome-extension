@@ -3,19 +3,25 @@ import { PhotoIcon } from '@heroicons/react/24/solid';
 import { useCallback, useMemo, useState } from 'react';
 
 import Loading from '../../components/loading';
+import Button from '../../shared/buttons/Button';
 import SubpageHeader from '../../shared/headers/SubpageHeader';
 import { Icon } from '../../shared/icons/Icon';
-import { useAppSelector, useObjectsState } from '_hooks';
+import { useAppDispatch, useAppSelector, useObjectsState } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account';
 import { DASHBOARD_COLLECTIBLES } from '_src/shared/constants';
 import NftGrid from '_src/ui/app/shared/content/rows-and-lists/NftGrid';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
+import { fetchMoreObjects } from '../../redux/slices/sui-objects';
 
 function NftsPage() {
+    const dispatch = useAppDispatch();
     const { loading } = useObjectsState();
     const [showAll, setShowAll] = useState(false);
 
     const nfts = useAppSelector(accountNftsSelector);
+    const { kiosksPending, cursor } = useAppSelector(
+        ({ suiObjects }) => suiObjects
+    );
     const { invalidPackages } = useAppSelector(({ valid }) => valid);
 
     const validNfts = useMemo(() => {
@@ -46,6 +52,10 @@ function NftsPage() {
         );
     }, [showAll, toggleShowAll]);
 
+    const loadMore = useCallback(() => {
+        dispatch(fetchMoreObjects());
+    }, [dispatch]);
+
     return (
         <Loading loading={loading} big>
             <div className="flex flex-col gap-4">
@@ -60,6 +70,11 @@ function NftsPage() {
                     />
                 ) : (
                     <NftGrid nfts={validNfts} edit={showAll} />
+                )}
+                {(kiosksPending || !!cursor) && (
+                    <div className="p-6">
+                        <Button onClick={loadMore}>Load More</Button>
+                    </div>
                 )}
             </div>
         </Loading>
