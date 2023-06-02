@@ -20,9 +20,7 @@ function NftsPage() {
     const [showAll, setShowAll] = useState(false);
 
     const nfts = useAppSelector(accountNftsSelector);
-    const { kiosksPending, cursor } = useAppSelector(
-        ({ suiObjects }) => suiObjects
-    );
+    const { kiosksPending } = useAppSelector(({ suiObjects }) => suiObjects);
     const { invalidPackages } = useAppSelector(({ valid }) => valid);
 
     const validNfts = useMemo(() => {
@@ -73,7 +71,7 @@ function NftsPage() {
                 ) : (
                     <NftGrid nfts={validNfts} edit={showAll} />
                 )}
-                {(kiosksPending || !!cursor) && (
+                {kiosksPending && (
                     <div className="p-6">
                         <Button onClick={loadMore}>
                             {loadingMore ? (
