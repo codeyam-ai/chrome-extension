@@ -17,6 +17,7 @@
         "lint": "npm run eslint:check && npm run prettier:check && npm run stylelint:check",
         "lint:fix": "npm run eslint:fix && npm run prettier:fix && npm run stylelint:fix",
         "start": "concurrently --restart-tries 10 --raw \"npm:build:dev -- --watch\" \"npm:prettier:fix:watch\"",
+        "start:dev-only": "concurrently --restart-tries 10 --raw \"npm:build:dev -- --watch\"",
         "test": "jest",
         "test:print-all": "DEBUG_PRINT_LIMIT=100000000 npm test",
         "make-font-icons": "svgtofont -s ./font-icons/svgs/ -o ./font-icons/output/",

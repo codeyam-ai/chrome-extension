@@ -257,7 +257,7 @@ const slice = createSlice({
                 fetchAllOwnedAndRequiredObjects.fulfilled,
                 (state, action) => {
                     if (action.payload) {
-                        objectsAdapter.setAll(state, action.payload.suiObjects);
+                        objectsAdapter.setMany(state, action.payload.suiObjects);
                         state.cursor = action.payload.cursor;
                         state.kiosksPending = action.payload.kiosksPending;
                         state.loading = false;
