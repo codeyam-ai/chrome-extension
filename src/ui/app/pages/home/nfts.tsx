@@ -3,6 +3,8 @@ import { PhotoIcon } from '@heroicons/react/24/solid';
 import { useCallback, useMemo, useState } from 'react';
 
 import Loading from '../../components/loading';
+import LoadingIndicator from '../../components/loading/LoadingIndicator';
+import { fetchMoreObjects } from '../../redux/slices/sui-objects';
 import Button from '../../shared/buttons/Button';
 import SubpageHeader from '../../shared/headers/SubpageHeader';
 import { Icon } from '../../shared/icons/Icon';
@@ -11,11 +13,10 @@ import { accountNftsSelector } from '_redux/slices/account';
 import { DASHBOARD_COLLECTIBLES } from '_src/shared/constants';
 import NftGrid from '_src/ui/app/shared/content/rows-and-lists/NftGrid';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
-import { fetchMoreObjects } from '../../redux/slices/sui-objects';
 
 function NftsPage() {
     const dispatch = useAppDispatch();
-    const { loading } = useObjectsState();
+    const { loading, loadingMore } = useObjectsState();
     const [showAll, setShowAll] = useState(false);
 
     const nfts = useAppSelector(accountNftsSelector);
@@ -53,8 +54,9 @@ function NftsPage() {
     }, [showAll, toggleShowAll]);
 
     const loadMore = useCallback(() => {
+        if (loadingMore) return;
         dispatch(fetchMoreObjects());
-    }, [dispatch]);
+    }, [dispatch, loadingMore]);
 
     return (
         <Loading loading={loading} big>
@@ -73,7 +75,13 @@ function NftsPage() {
                 )}
                 {(kiosksPending || !!cursor) && (
                     <div className="p-6">
-                        <Button onClick={loadMore}>Load More</Button>
+                        <Button onClick={loadMore}>
+                            {loadingMore ? (
+                                <LoadingIndicator />
+                            ) : (
+                                <>Load More</>
+                            )}
+                        </Button>
                     </div>
                 )}
             </div>

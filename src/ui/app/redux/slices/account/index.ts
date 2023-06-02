@@ -1412,9 +1412,9 @@ export const accountItemizedBalancesSelector = createSelector(
 export const accountNftsSelector = createSelector(
     ownedObjects,
     (allSuiObjects) => {
-        return allSuiObjects.filter(
-            (anObj) => !Coin.isCoin(anObj) && NFT.isNFT(anObj)
-        );
+        return allSuiObjects
+            .filter((anObj) => !Coin.isCoin(anObj) && NFT.isNFT(anObj))
+            .sort((a, b) => a.index - b.index);
     }
 );
 

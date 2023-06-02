@@ -27,6 +27,7 @@ import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
 export interface ExtendedSuiObjectData extends SuiObjectData {
+    index: number;
     kiosk?: SuiObjectData;
     kioskLoaded?: boolean;
 }
@@ -47,41 +48,42 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
 >('sui-objects/fetch-all', async (_, { getState, extra: { api } }) => {
     const state = getState();
 
-    if (!state.suiObjects.lastSync) {
-        await testConnection(api);
-    }
-
     const {
         account: { address },
+        suiObjects: { lastSync },
     } = state;
 
     if (!address) {
         return null;
     }
 
+    if (!lastSync) {
+        await testConnection(api);
+    }
+
     let objectResponses: SuiObjectResponse[] = [];
+    let nextCursor: PaginatedObjectsResponse['nextCursor'] | undefined;
     let cursor: PaginatedObjectsResponse['nextCursor'] | undefined;
-    let kiosksPending = false;
+    let kiosksPending = state.suiObjects.kiosksPending;
     const suiObjects: ExtendedSuiObjectData[] = [];
     if (address) {
         let objectsRefPage = 0;
-        while (cursor !== null) {
+        while (nextCursor !== null) {
             objectsRefPage += 1;
             const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
                 owner: '0x174d523be66c291225bb1c9c283aed9aeb9e7ae737e616ffe3b723919c749333',
                 cursor,
             });
 
+            cursor = allObjectRefs.nextCursor;
+
             if (objectsRefPage > 10) {
-                cursor = null;
+                nextCursor = null;
             } else {
-                if (
-                    allObjectRefs.hasNextPage &&
-                    cursor !== allObjectRefs.nextCursor
-                ) {
-                    cursor = allObjectRefs.nextCursor;
+                if (allObjectRefs.hasNextPage && nextCursor !== cursor) {
+                    nextCursor = cursor;
                 } else {
-                    cursor = null;
+                    nextCursor = null;
                 }
             }
 
@@ -126,6 +128,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
             objectResponses = [...objectResponses, ...newObjRes];
         }
 
+        let objectIndex = 0;
         let kioskObjectsLoaded = 0;
         for (const objRes of objectResponses) {
             const suiObjectData = getSuiObjectData(objRes);
@@ -143,6 +146,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                                 getSuiObjectData(kioskObject);
                             if (kioskObjectData) {
                                 suiObjects.push({
+                                    index: objectIndex,
                                     kiosk: suiObjectData,
                                     ...kioskObjectData,
                                 });
@@ -151,28 +155,37 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                         }
 
                         suiObjects.push({
+                            index: objectIndex,
                             kioskLoaded: true,
                             ...suiObjectData,
-                        })
+                        });
                     } else {
-                        suiObjects.push(suiObjectData);
+                        suiObjects.push({
+                            index: objectIndex,
+                            ...suiObjectData,
+                        });
                         kiosksPending = true;
                     }
                 } else {
-                    suiObjects.push(suiObjectData);
+                    suiObjects.push({
+                        index: objectIndex,
+                        ...suiObjectData,
+                    });
                 }
             }
+
+            objectIndex += 1;
         }
 
-        // for (const o of suiObjects) {
-        //     if (
-        //         o.owner &&
-        //         typeof o.owner === 'object' &&
-        //         'AddressOwner' in o.owner
-        //     ) {
-        //         o.owner.AddressOwner = address;
-        //     }
-        // }
+        for (const o of suiObjects) {
+            if (
+                o.owner &&
+                typeof o.owner === 'object' &&
+                'AddressOwner' in o.owner
+            ) {
+                o.owner.AddressOwner = address;
+            }
+        }
     }
 
     return { suiObjects, kiosksPending, cursor };
@@ -180,7 +193,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
 
 export const fetchMoreObjects = createAsyncThunk<
     {
-        suiObjects: ExtendedSuiObjectData[];
+        newSuiObjects: ExtendedSuiObjectData[];
         kiosksPending: boolean;
         cursor?: PaginatedObjectsResponse['nextCursor'];
     } | null,
@@ -189,8 +202,11 @@ export const fetchMoreObjects = createAsyncThunk<
 >('sui-objects/fetch-more', async (_, { getState, extra: { api } }) => {
     const { suiObjects } = getState();
 
+    if (suiObjects.loadingMore) return null;
+
     const suiObjectDatas = objectsAdapter.getSelectors().selectAll(suiObjects);
-    console.log('START', suiObjectDatas.length);
+    const newSuiObjects: ExtendedSuiObjectData[] = [];
+    let objectIndex = suiObjectDatas.length;
     let kiosksPending = true;
     let kioskObjectsLoaded = 0;
     if (suiObjects.kiosksPending) {
@@ -212,20 +228,30 @@ export const fetchMoreObjects = createAsyncThunk<
             for (const kioskObject of kioskObjects) {
                 const kioskObjectData = getSuiObjectData(kioskObject);
                 if (kioskObjectData) {
-                    suiObjectDatas.push({
+                    newSuiObjects.push({
                         kiosk: suiObjectData,
+                        index: objectIndex,
                         ...kioskObjectData,
                     });
                 }
                 kioskObjectsLoaded += 1;
             }
+
+            newSuiObjects.push({
+                kioskLoaded: true,
+                ...suiObjectData,
+            });
+
+            objectIndex += 1;
         }
     }
-    return { suiObjects: suiObjectDatas, kiosksPending };
+
+    return { newSuiObjects, kiosksPending };
 });
 
 interface SuiObjectsManualState {
     loading: boolean;
+    loadingMore: boolean;
     error: false | { code?: string; message?: string; name?: string };
     lastSync: number | null;
     cursor?: PaginatedObjectsResponse['nextCursor'];
@@ -234,6 +260,7 @@ interface SuiObjectsManualState {
 }
 const initialState = objectsAdapter.getInitialState<SuiObjectsManualState>({
     loading: true,
+    loadingMore: false,
     error: false,
     lastSync: null,
     kiosksPending: false,
@@ -257,7 +284,10 @@ const slice = createSlice({
                 fetchAllOwnedAndRequiredObjects.fulfilled,
                 (state, action) => {
                     if (action.payload) {
-                        objectsAdapter.setMany(state, action.payload.suiObjects);
+                        objectsAdapter.upsertMany(
+                            state,
+                            action.payload.suiObjects
+                        );
                         state.cursor = action.payload.cursor;
                         state.kiosksPending = action.payload.kiosksPending;
                         state.loading = false;
@@ -266,12 +296,9 @@ const slice = createSlice({
                     }
                 }
             )
-            .addCase(
-                fetchAllOwnedAndRequiredObjects.pending,
-                (state, action) => {
-                    state.loading = true;
-                }
-            )
+            .addCase(fetchAllOwnedAndRequiredObjects.pending, (state) => {
+                state.loading = true;
+            })
             .addCase(
                 fetchAllOwnedAndRequiredObjects.rejected,
                 (state, { error: { code, name, message } }) => {
@@ -279,28 +306,27 @@ const slice = createSlice({
                     state.error = { code, message, name };
                 }
             )
+            .addCase(fetchMoreObjects.pending, (state) => {
+                state.loadingMore = true;
+            })
             .addCase(fetchMoreObjects.fulfilled, (state, action) => {
-                console.log('IN');
                 if (action.payload) {
-                    const existingObjects = objectsAdapter
-                        .getSelectors()
-                        .selectAll(state);
-                    objectsAdapter.setAll(state, [
-                        ...existingObjects,
-                        ...action.payload.suiObjects,
-                    ]);
-                    console.log(
-                        'SUCCESS',
-                        existingObjects.length,
-                        action.payload.suiObjects.length
+                    objectsAdapter.upsertMany(
+                        state,
+                        action.payload.newSuiObjects
                     );
                     // state.cursor = action.payload.cursor;
                     state.kiosksPending = action.payload.kiosksPending;
-                    state.loading = false;
-                    state.error = false;
-                    state.lastSync = Date.now();
+                    state.loadingMore = false;
                 }
-            });
+            })
+            .addCase(
+                fetchMoreObjects.rejected,
+                (state, { error: { code, name, message } }) => {
+                    state.loadingMore = false;
+                    state.error = { code, message, name };
+                }
+            );
     },
 });
 
