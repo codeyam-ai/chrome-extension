@@ -71,7 +71,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         while (nextCursor !== null) {
             objectsRefPage += 1;
             const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
-                owner: '0x174d523be66c291225bb1c9c283aed9aeb9e7ae737e616ffe3b723919c749333',
+                owner: address,
                 cursor,
             });
 
@@ -177,15 +177,15 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
             objectIndex += 1;
         }
 
-        for (const o of suiObjects) {
-            if (
-                o.owner &&
-                typeof o.owner === 'object' &&
-                'AddressOwner' in o.owner
-            ) {
-                o.owner.AddressOwner = address;
-            }
-        }
+        // for (const o of suiObjects) {
+        //     if (
+        //         o.owner &&
+        //         typeof o.owner === 'object' &&
+        //         'AddressOwner' in o.owner
+        //     ) {
+        //         o.owner.AddressOwner = address;
+        //     }
+        // }
     }
 
     return { suiObjects, kiosksPending, cursor };
@@ -201,8 +201,6 @@ export const fetchMoreObjects = createAsyncThunk<
     AppThunkConfig
 >('sui-objects/fetch-more', async (_, { getState, extra: { api } }) => {
     const { suiObjects } = getState();
-
-    if (suiObjects.loadingMore) return null;
 
     const suiObjectDatas = objectsAdapter.getSelectors().selectAll(suiObjects);
     const newSuiObjects: ExtendedSuiObjectData[] = [];
