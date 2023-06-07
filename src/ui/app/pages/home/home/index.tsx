@@ -68,7 +68,9 @@ function HomePage() {
                         )}
 
                     <div className="flex flex-col gap-2">
-                        <Body className="ml-1">My Tokens</Body>
+                        {Object.keys(balances || {}).length > 1 && (
+                            <Body className="ml-1">My Tokens</Body>
+                        )}
                         <CoinList balances={balances} />
                     </div>
 
