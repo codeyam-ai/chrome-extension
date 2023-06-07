@@ -9,6 +9,7 @@ import { wallet1Address, wallet2Address } from './storage';
 import { SuiTransactionBlockResponse } from '@mysten/sui.js/src/types/transactions';
 
 import { makeCoinTransactionBlock } from '_src/test/utils/mockchain-templates/transactionBlock';
+import { getObjectIds } from './test-helpers';
 
 /**
  * Mocks out the basic JsonRPC calls that any blockchain interaction will make.
@@ -47,13 +48,19 @@ interface CoinTransactionSpec {
  * @param options.coinTransaction - If provided, the blockchain will have a single transaction and associated coin objects.
  *  If a number is provided, it will be used as the amount of SUI transferred in the transaction. If an object is provided,
  *  it will be used to set up a transaction with the given amount of SUI, to the given address, from the given address.
+ *
+ * @param options.nftDetails - If provided, the blockchain will contain `nftDetails.count` many NFTs (default: `1`), and
+ *  will have `nftDetails.name` as the base name. All but the first will append a count for unique names, e.g., `name`,
+ *  `name2`, name3
+ * @param options.logObjects - If true, this function call will log the internal "fullObjects" list for inspection. This list
+ * will ultimately be the state of the mockchain, i.e., what is "on chain".
  */
 export const mockBlockchain = (
     mockJsonRpc: MockJsonRpc,
     options: {
         address?: string;
         coinTransaction?: number | CoinTransactionSpec;
-        nftDetails?: { name: string };
+        nftDetails?: { name: string; count?: number };
         stakedSui?: { principal: string }[];
         logObjects?: boolean;
     } = {}
@@ -112,20 +119,31 @@ export const mockBlockchain = (
         coinBalances.push(coinBalance);
     }
     if (options.nftDetails) {
-        const renderedNftResult = renderTemplate('nftObject', {
-            name: options.nftDetails.name,
-        });
+        const buildNft = (name: string, objectId: string) => {
+            const renderedNftResult = renderTemplate('nftObject', {
+                name,
+                objectId,
+            });
 
-        const nftObjectInfo = {
-            data: {
-                objectId:
-                    '0x3c36fe1eca57222e087352959ab0edf83251fe0a5aa8a0ec87c4e3fa1714f367',
-                version: '10',
-                digest: '3LrFiM2niq5to7XJ466L7b9oVkQtXqTvNhfiLWCNCTTN',
-            },
+            const nftObjectInfo = {
+                data: {
+                    objectId,
+                    version: '10',
+                    digest: '3LrFiM2niq5to7XJ466L7b9oVkQtXqTvNhfiLWCNCTTN',
+                },
+            };
+            objectInfos.push(nftObjectInfo);
+            fullObjects.push(renderedNftResult);
         };
-        objectInfos.push(nftObjectInfo);
-        fullObjects.push(renderedNftResult);
+
+        const name = options.nftDetails.name;
+        const count: number = options.nftDetails?.count ?? 1;
+        const objectIds = getObjectIds(count);
+        for (const objectId of objectIds) {
+            const i = objectId.at(-1);
+            const nftName = i === '0' ? name : `${name}${i}`;
+            buildNft(nftName, objectId);
+        }
     }
     if (options.stakedSui) {
         options.stakedSui.forEach((stake, i) => {
@@ -236,6 +254,10 @@ export const mockBlockchain = (
         fullObjects,
         true
     );
+
+    if (options.logObjects) {
+        console.log('!! mockchain log !! fullObjects !!\n', fullObjects);
+    }
 };
 
 /**
