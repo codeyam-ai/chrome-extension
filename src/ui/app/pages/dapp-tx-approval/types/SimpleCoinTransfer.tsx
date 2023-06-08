@@ -81,7 +81,7 @@ const StepOne = ({
                     )}
                     {featureFlags?.showUsd && (
                         <Body className="text-ethos-light-text-medium text-sm">
-                            ≈ {dollars}
+                            ≈ {dollars} USD
                         </Body>
                     )}
                 </div>

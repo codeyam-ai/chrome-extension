@@ -36,7 +36,7 @@ const CoinIcon = ({
         );
     } else if (coinType === SUI_TYPE_ARG) {
         return (
-            <ActionIcon>
+            <ActionIcon isSui paddingOverride={'p-0'}>
                 <Sui />
             </ActionIcon>
         );

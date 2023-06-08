@@ -16,7 +16,7 @@ const CostValue = ({ value, symbol, dollars, total }: Cost) => {
                 {value} {symbol}
             </div>
             <Dot />
-            <div>{dollars}</div>
+            <div>≈ {dollars} USD</div>
         </div>
     );
 };

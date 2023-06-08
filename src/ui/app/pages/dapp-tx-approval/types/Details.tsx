@@ -25,20 +25,24 @@ const Row = ({
     title,
     value,
     subvalue,
+    dollars,
     truncate = true,
 }: {
     title: string;
     value?: string;
     subvalue?: ReactNode;
     truncate?: boolean;
+    dollars?: string;
 }) => {
+    const formattedValue =
+        title === 'SUI' ? `${truncateMiddle(value)} ≈ ${dollars} USD` : value;
     return (
         <div className="flex flex-row items-center justify-between">
             <Body isSemibold={!value}>{title}</Body>
             <div className="text-right">
                 {value && (
                     <div title={value}>
-                        <Body>{truncate ? truncateMiddle(value) : value}</Body>
+                        <Body>{truncate ? formattedValue : value}</Body>
                     </div>
                 )}
                 {typeof subvalue === 'string' ? (
@@ -92,12 +96,13 @@ const BalanceChanges = ({
         amount: string;
         coinType: string;
     }) => {
-        const [formatted, symbol] = useFormatCoin(amount, coinType);
+        const [formatted, symbol, dollars] = useFormatCoin(amount, coinType);
 
         return (
             <Row
                 title={symbol ?? coinType}
                 value={formatted}
+                dollars={dollars}
                 subvalue={coinType === SUI_TYPE_ARG ? undefined : coinType}
             />
         );

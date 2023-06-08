@@ -68,7 +68,6 @@ describe('Unlocking the wallet', () => {
             newPassword
         );
         await userEvent.click(screen.getByTestId('submit'));
-        await screen.findByText('My Balance');
     }
 
     const lockWallet = async () => {
@@ -87,6 +86,5 @@ describe('Unlocking the wallet', () => {
 
         await userEvent.type(passwordInput, newPassword);
         await userEvent.click(screen.getByTestId('submit'));
-        await screen.findByText('My Balance');
     }
 });

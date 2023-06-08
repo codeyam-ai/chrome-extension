@@ -7,12 +7,12 @@ import { MemoryRouter } from 'react-router-dom';
 import { API_ENV } from '../../ui/app/ApiProvider';
 import KeypairVault from '_app/KeypairVault';
 import { BackgroundClient } from '_app/background-client';
-import { queryConfig } from '_src/ui/app/helpers/queryConfig';
 import App from '_app/index';
 import { AppType } from '_redux/slices/app/AppType';
 import { DependenciesContext } from '_shared/utils/dependenciesContext';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
 import { SuiLedgerClientProvider } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
+import { queryConfig } from '_src/ui/app/helpers/queryConfig';
 import { createStore } from '_store';
 import { thunkExtras } from '_store/thunk-extras';
 

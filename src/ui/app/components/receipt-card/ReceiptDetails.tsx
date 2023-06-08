@@ -8,7 +8,7 @@ import CopyBody from '../../shared/typography/CopyBody';
 import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTransactions';
 
 const ReceiptDetails = ({ totalGasUsed, digest }: AnalyzedTransaction) => {
-    const [formattedGasFee, gasSymbol] = useFormatCoin(
+    const [formattedGasFee, gasSymbol, dollars] = useFormatCoin(
         totalGasUsed,
         SUI_TYPE_ARG
     );
@@ -20,7 +20,7 @@ const ReceiptDetails = ({ totalGasUsed, digest }: AnalyzedTransaction) => {
                 keyNamesAndValues={[
                     {
                         keyName: 'Gas Fee',
-                        value: `${formattedGasFee} ${gasSymbol}`,
+                        value: `${formattedGasFee} ${gasSymbol} ≈ ${dollars} USD`,
                     },
                     {
                         keyName: 'Digest',

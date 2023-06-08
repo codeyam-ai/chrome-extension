@@ -116,7 +116,7 @@ const BalanceChange = ({
     const balanceChange = balanceChanges?.[0];
     const ownerAddress = addressOwner(balanceChange?.owner);
     const ownerWallet = useWalletOrContact(ownerAddress || '');
-    const [formattedAmount, symbol] = useFormatCoin(
+    const [formattedAmount, symbol, dollars] = useFormatCoin(
         balanceChange?.amount || 0,
         balanceChange?.coinType || ''
     );
@@ -137,7 +137,7 @@ const BalanceChange = ({
                 </CopyBody>
             )}
             <Body>
-                {formattedAmount} {symbol}
+                {formattedAmount} {symbol} ≈ {dollars} USD
             </Body>
         </div>
     );

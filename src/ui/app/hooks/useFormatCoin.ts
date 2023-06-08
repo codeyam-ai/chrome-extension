@@ -5,8 +5,8 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { useMemo } from 'react';
-// import { useIntl } from 'react-intl';
 
+import { queryCryptoToFiat } from './useCryptoToFiatConversion';
 import { Coin } from '../redux/slices/sui-objects/Coin';
 import { api } from '../redux/store/thunk-extras';
 import ns from '_shared/namespace';
@@ -101,6 +101,23 @@ export function useCoinDecimals(coinType?: string | null) {
     ] as const;
 }
 
+export function useCoinConversion() {
+    const amount = useQuery(
+        ['conversion'],
+        async () => {
+            return queryCryptoToFiat();
+        },
+        {
+            retry: false,
+            enabled: true,
+            staleTime: Infinity,
+            cacheTime: 4000,
+        }
+    );
+
+    return amount.data;
+}
+
 // TODO: This handles undefined values to make it easier to integrate with the reset of the app as it is
 // today, but it really shouldn't in a perfect world.
 export function useFormatCoin(
@@ -108,7 +125,6 @@ export function useFormatCoin(
     coinType?: string | null,
     formattedLength?: number
 ): FormattedCoin {
-    // const intl = useIntl();
     const verifiedBridgeToken = useMemo<string | undefined>(() => {
         if (!coinType) return;
         const packageObjectId = coinType.split('::')[0];
@@ -123,6 +139,8 @@ export function useFormatCoin(
     );
 
     const [decimals, coinMetadata, queryResult] = useCoinDecimals(coinType);
+    const conversion = useCoinConversion();
+
     // const { isFetched, isError } = queryResult;
 
     const formatted = useMemo(() => {
@@ -168,10 +186,10 @@ export function useFormatCoin(
             balance === null ||
             typeof decimals === 'undefined'
         ) {
-            return '...';
+            return '$0.00';
         }
-        return ns.format.dollars(balance, decimals);
-    }, [balance, decimals]);
+        return ns.format.dollars(balance, decimals, conversion);
+    }, [balance, decimals, conversion]);
 
     return [
         formatted,

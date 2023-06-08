@@ -31,15 +31,31 @@ export function coinBalance(
     return bn.toFormat(formatDecimals) + postfix;
 }
 
-export function dollars(balance: bigint | number | string, decimals: number) {
+export function dollars(
+    balance: bigint | number | string,
+    decimals: number,
+    conversion?: number
+) {
+    let amtToFormat;
+
+    const coinAmt = new BigNumber(balance.toString())
+        .shiftedBy(-decimals)
+        .toNumber();
+
     const dollarFormatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
     });
 
-    return dollarFormatter.format(
-        new BigNumber(balance.toString())
-            .shiftedBy(-1 * (decimals - 2))
-            .toNumber()
-    );
+    if (conversion) {
+        amtToFormat = coinAmt * conversion;
+    } else {
+        amtToFormat = coinAmt * 100;
+    }
+
+    if (dollarFormatter.format(amtToFormat) === '$0.00') {
+        return '< $0.01';
+    } else {
+        return dollarFormatter.format(amtToFormat);
+    }
 }

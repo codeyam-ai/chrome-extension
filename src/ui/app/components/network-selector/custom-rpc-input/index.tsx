@@ -1,6 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { useQueryClient } from '@tanstack/react-query';
 import { Field, Formik, Form } from 'formik';
 import { useCallback } from 'react';
 import * as Yup from 'yup';
@@ -12,7 +13,6 @@ import { setCustomRPC } from '_redux/slices/app';
 import Button from '_src/ui/app/shared/buttons/Button';
 
 import st from '../NetworkSelector.module.scss';
-import { useQueryClient } from '@tanstack/react-query';
 
 const MIN_CHAR = 5;
 

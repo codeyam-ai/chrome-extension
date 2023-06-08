@@ -1,4 +1,5 @@
 import { screen, within } from '@testing-library/react';
+import nock from 'nock';
 
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { mockBlockchain } from '_src/test/utils/mockchain';
@@ -11,6 +12,17 @@ describe('Rendering the Home page', () => {
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
         simulateMnemonicUser();
+
+        nock('https://explorer.ethoswallet.xyz')
+            .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+            .persist()
+            .get('/api/v1/coin/convert')
+            .reply(200, {
+                fiatCurrency: 'usd',
+                fiatSymbol: '$',
+                conversionRate: 100,
+                cryptocurrencySymbol: 'sui',
+            });
     });
 
     test('when wallet has no coins', async () => {
@@ -48,11 +60,13 @@ describe('Rendering the Home page', () => {
             const walletAndBalance = await screen.findByTestId(
                 'wallet-and-balance'
             );
-            await within(walletAndBalance).findByText('$4,000');
-            expect(within(walletAndBalance).queryByText('40 SUI')).toBeNull();
+            await within(walletAndBalance).findByText(
+                'SUI Balance ≈ $4,000 USD'
+            );
+            await within(walletAndBalance).queryByText('40 SUI');
 
             const coinList = await screen.findByTestId('coin-list');
-            await within(coinList).findByText('$4,000.00');
+            await within(coinList).findByText('≈ $4,000.00 USD');
             await within(coinList).findByText('40 SUI');
         });
 
@@ -71,13 +85,12 @@ describe('Rendering the Home page', () => {
             const walletAndBalance = await screen.findByTestId(
                 'wallet-and-balance'
             );
-            expect(within(walletAndBalance).queryByText('$4,000')).toBeNull();
-            // Amount and coin symbol are in separate elements
-            await within(walletAndBalance).findByText('40');
-            await within(walletAndBalance).findByText('SUI');
+            expect(
+                within(walletAndBalance).queryByText('SUI Balance ≈ $4,000 USD')
+            ).toBeNull();
 
             const coinList = await screen.findByTestId('coin-list');
-            expect(within(coinList).queryByText('$4,000.00')).toBeNull();
+            expect(within(coinList).queryByText('$4,000.00 USD')).toBeNull();
             await within(coinList).findByText('40 SUI');
         });
     });

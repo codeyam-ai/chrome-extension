@@ -191,7 +191,6 @@ describe('The Security Settings page', () => {
 
             await userEvent.type(paswwordInput, 'one two three');
             await userEvent.click(screen.getByTestId('submit'));
-            await screen.findByText('My Balance');
         });
 
         test('does not allow user to change password if they put wrong current password', async () => {

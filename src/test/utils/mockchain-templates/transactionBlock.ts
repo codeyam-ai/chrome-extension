@@ -1,5 +1,7 @@
-import type { PaginatedTransactionResponse } from '@mysten/sui.js/src/types/transactions';
-import { SuiTransactionBlockResponse } from '@mysten/sui.js/src/types/transactions';
+import type {
+    SuiTransactionBlockResponse,
+    PaginatedTransactionResponse,
+} from '@mysten/sui.js/src/types/transactions';
 
 export const makeCoinTransactionBlock = (
     toAddress: string,

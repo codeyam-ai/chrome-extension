@@ -30,7 +30,7 @@ describe('Minting an NFT', () => {
         // the mockchain will make nfts with names like `nft`, `nft1`, etc
         // the alt-text uses the name and fallsback to "NFT", hence the `i`
         // to ignore case.
-        const nfts = await screen.findAllByAltText(/nft/i)
+        const nfts = await screen.findAllByAltText(/nft/i);
         expect(nfts.length).toBe(5);
     });
 });

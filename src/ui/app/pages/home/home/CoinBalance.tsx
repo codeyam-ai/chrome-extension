@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import Sui from './Sui';
 import UnknownToken from './UnknownToken';
-import { useDependencies } from '_shared/utils/dependenciesContext';
+import { useDependencies } from '_src/shared/utils/dependenciesContext';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { useFormatCoin } from '_src/ui/app/hooks/useFormatCoin';
@@ -13,6 +13,7 @@ import {
 } from '_src/ui/app/redux/slices/valid';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import Typography from '_src/ui/app/shared/typography/Typography';
 
 export type CoinProps = {
     type: string;
@@ -27,6 +28,7 @@ function CoinBalance({ type, balance, replaceUrl, edit }: CoinProps) {
 
     const navigate = useNavigate();
     const location = useLocation();
+    const { featureFlags } = useDependencies();
     const [
         balanceFormatted,
         symbol,
@@ -57,8 +59,6 @@ function CoinBalance({ type, balance, replaceUrl, edit }: CoinProps) {
     const updateUrl = useCallback(() => {
         navigate(sendUrl, { replace: replaceUrl });
     }, [navigate, sendUrl, replaceUrl]);
-
-    const { featureFlags } = useDependencies();
 
     const onImageError = useCallback((e: SyntheticEvent<HTMLImageElement>) => {
         e.currentTarget.style.opacity = '0';
@@ -120,14 +120,17 @@ function CoinBalance({ type, balance, replaceUrl, edit }: CoinProps) {
                         )}
                     </div>
                 </div>
-
                 <div className="flex flex-col items-end text-right">
-                    <BodyLarge>
+                    <BodyLarge isSemibold>
                         {balanceFormatted} {symbol}
                     </BodyLarge>
                     {featureFlags.showUsd && (
                         <div className="flex items-center text-base text-slate-800 dark:text-slate-300">
-                            <div>{usdAmount}</div>
+                            <Typography
+                                className={'text-[12px] leading-[12px]'}
+                            >
+                                ≈ {usdAmount} USD
+                            </Typography>
                         </div>
                     )}
                 </div>
