@@ -9,6 +9,7 @@ import OnboardingCard from '../../shared/layouts/OnboardingCard';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import {
     createMnemonic,
+    loadAccountInformationFromStorage,
     savePassphrase,
 } from '_src/ui/app/redux/slices/account';
 
@@ -25,6 +26,7 @@ const CreatePasswordPage = () => {
 
             if (mnemonic) {
                 // User is importing existing seed
+                await dispatch(loadAccountInformationFromStorage());
                 navigate('/initialize/complete');
             } else {
                 // User is generating new wallet
