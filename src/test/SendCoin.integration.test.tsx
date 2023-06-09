@@ -1,10 +1,10 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { mockBlockchain, rpcMocks } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('send coin flow', () => {
     let mockJsonRpc: MockJsonRpc;

@@ -48,7 +48,7 @@ function HomePage() {
                 />
             )}
             <ChainIndicator apiEnv={selectedApiEnv} className="mt-3" />
-            <div className="py-3">
+            <div className="pt-3 pb-5">
                 <WalletBalanceAndIconHomeView
                     accountInfo={accountInfo}
                     mistBalance={mistBalance}
@@ -69,7 +69,9 @@ function HomePage() {
 
                     <div className="flex flex-col gap-2">
                         {Object.keys(balances || {}).length > 1 && (
-                            <Body className="ml-1">My Tokens</Body>
+                            <Body isSemibold className="ml-1">
+                                My Tokens
+                            </Body>
                         )}
                         <CoinList balances={balances} />
                     </div>

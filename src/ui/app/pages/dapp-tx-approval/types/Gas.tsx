@@ -21,8 +21,7 @@ const Gas = ({ gasSummary }: { gasSummary: GasCostSummary }) => {
             {featureFlags.showUsd ? (
                 <div className="flex flex-col items-end text-right">
                     <div className="flex items-center gap-1 text-base">
-                        <Body className="font-light">USD</Body>
-                        <Body isSemibold>{dollars}</Body>
+                        <Body isSemibold>{dollars} USD</Body>
                     </div>
                     <Body className="text-size-ethos-small text-[#74777C]">
                         {formatted} {symbol}

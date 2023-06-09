@@ -1,9 +1,17 @@
 import type { SuiObjectResponse } from '@mysten/sui.js/src/types/objects';
 
+type SuiObjectResponseWithDataObjectId = SuiObjectResponse & {
+    data: {
+        [K in keyof SuiObjectResponse['data']]: K extends 'objectId'
+            ? number
+            : SuiObjectResponse['data'][K];
+    };
+};
+
 export const makeCoinObject = (
     balance: number,
     id: string
-): SuiObjectResponse => {
+): SuiObjectResponseWithDataObjectId => {
     return {
         data: {
             objectId: id,

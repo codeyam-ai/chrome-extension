@@ -1,4 +1,7 @@
 import CoinBalanceElement from './CoinBalance';
+import { LinkType } from '_src/enums/LinkType';
+import EthosLink from '_src/ui/app/shared/typography/EthosLink';
+import Typography from '_src/ui/app/shared/typography/Typography';
 
 const CoinList = ({
     balances,
@@ -20,6 +23,17 @@ const CoinList = ({
                     />
                 );
             })}
+            <div className={'w-full text-left'}>
+                <Typography isTextColorMedium>
+                    Conversion data provided by{' '}
+                    <EthosLink
+                        type={LinkType.External}
+                        to={'https://www.coingecko.com'}
+                    >
+                        CoinGecko
+                    </EthosLink>
+                </Typography>
+            </div>
         </div>
     );
 };

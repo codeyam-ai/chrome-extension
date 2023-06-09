@@ -106,7 +106,7 @@ function TransferCoinForm({
                         {amount} {truncateString(coinSymbol, 8)}
                     </Header>
                     {featureFlags.showUsd && (
-                        <Subheader isTextColorMedium>{dollars}</Subheader>
+                        <Subheader isTextColorMedium>≈ {dollars} USD</Subheader>
                     )}
                 </div>
                 <KeyValueList

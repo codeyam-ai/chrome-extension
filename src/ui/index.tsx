@@ -90,7 +90,7 @@ function renderApp(root: Root, queryClient: QueryClient) {
         },
         heartbeat: makeHeartbeat(),
         featureFlags: {
-            showUsd: false,
+            showUsd: true,
             showWipFeatures: isDevMode(),
         },
     };
