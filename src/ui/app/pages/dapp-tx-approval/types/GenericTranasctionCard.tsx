@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { Costs, Gains, Receiving, Sending } from './Amount';
 import Gas from './Gas';
@@ -14,6 +14,8 @@ const GenericTransactionCard = ({
 }: {
     stepInformation: StepInformation;
 }) => {
+    const [showAdditionalMoveCalls, setShowAdditionalMoveCalls] =
+        useState(false);
     const { analysis } = stepInformation;
 
     const moveCalls = useMemo(() => {
@@ -29,6 +31,12 @@ const GenericTransactionCard = ({
             );
     }, [analysis]);
 
+    const toggleAdditionalMoveCalls = useCallback(() => {
+        setShowAdditionalMoveCalls(
+            (showAdditionalMoveCalls) => !showAdditionalMoveCalls
+        );
+    }, []);
+
     return (
         <TransactionBody>
             <div className="w-full rounded-xl bg-ethos-light-gray dark:bg-ethos-dark-background-secondary flex flex-col divide-y divide-ethos-light-purple dark:divide-ethos-dark-text-stroke overflow-hidden">
@@ -37,12 +45,17 @@ const GenericTransactionCard = ({
                 </div>
                 {moveCalls && moveCalls.slice(0, 2)}
                 {moveCalls && moveCalls.length > 2 && (
-                    <div className="p-6 flex-col justify-center items-center text-center">
+                    <div
+                        className="p-6 flex-col justify-center items-center text-center cursor-pointer"
+                        onClick={toggleAdditionalMoveCalls}
+                    >
                         <BodyLarge isSemibold>
-                            + {moveCalls.length - 2} Additional Move Calls
+                            {showAdditionalMoveCalls ? '-' : '+'}{' '}
+                            {moveCalls.length - 2} Additional Move Calls
                         </BodyLarge>
                     </div>
                 )}
+                {showAdditionalMoveCalls && moveCalls && moveCalls.slice(2)}
                 <Costs balanceReductions={analysis.balanceReductions} />
                 <Sending
                     owner={analysis.owner}

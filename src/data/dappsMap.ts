@@ -16,6 +16,7 @@ import display from '_images/dapps/logos/display.png';
 import explorer from '_images/dapps/logos/explorer.png';
 import finalStardust from '_images/dapps/logos/final-stardust.png';
 import gotbeef from '_images/dapps/logos/gotbeef.png';
+import hyperspace from '_images/dapps/logos/hyperspace.png';
 import interestProtocol from '_images/dapps/logos/interest-protocol.png';
 import keepsake from '_images/dapps/logos/keepsake.png';
 import kriya from '_images/dapps/logos/kriya.png';
@@ -63,6 +64,13 @@ export const EXPLORER_ID = 'e6539937-7cad-4a15-bc31-49d963e392ff';
 export const CUSTOMIZE_ID = '5bbe5c3d-88a2-4537-92a5-20b6021e2ea3';
 export const STAKING_ID = 'c97b5592-ae1f-4dd4-a903-050a97c4d84a';
 export const DISPLAY_ID = '8154ebc4-035c-4133-ba09-e6b07b7c2040';
+
+export const DEFAULT_DAPP_KEYS = [
+    CUSTOMIZE_ID,
+    ADDRESS_BOOK_ID,
+    MY_ASSETS_ID,
+    STAKING_ID,
+];
 
 const dappsMap: Map<string, DappData> = new Map([
     [
@@ -211,7 +219,7 @@ const dappsMap: Map<string, DappData> = new Map([
             image: sui8192,
             title: 'Sui 8192',
             description:
-                'The fastest fully on-chain game this side of the Mississippi. Compete for the high score!',
+                'Sui 8192 is a fun, 100% on-chain game. Combine the tiles to get a high score!',
             urls: {
                 [NetworkName.TESTNET]: 'https://ethoswallet.github.io/Sui8192',
                 [NetworkName.MAINNET]: 'https://ethoswallet.github.io/Sui8192',
@@ -319,10 +327,10 @@ const dappsMap: Map<string, DappData> = new Map([
             description:
                 'Keepsake is a re-imagined gaming NFT marketplace focused on a strong emphasis on NFT utility and discoverability of digital assets through web3 gaming on Sui blockchain.',
             urls: {
-                [NetworkName.DEVNET]: 'https://keepsake.gg/',
                 [NetworkName.TESTNET]: 'https://beta.keepsake.gg/',
+                [NetworkName.MAINNET]: 'https://keepsake.gg/',
             },
-            tags: [TagName.MARKETPLACE, TagName.GAMES, TagName.NFTS],
+            tags: [TagName.MARKETPLACE, TagName.NFTS],
         } as DappData,
     ],
     [
@@ -337,7 +345,7 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.DEVNET]: 'https://devnet.aftermath.finance',
                 [NetworkName.TESTNET]: 'https://testnet.aftermath.finance',
             },
-            tags: [TagName.FINANCE, TagName.NFTS],
+            tags: [TagName.FINANCE],
         } as DappData,
     ],
     [
@@ -361,7 +369,7 @@ const dappsMap: Map<string, DappData> = new Map([
             title: 'Turbos',
             description: 'Perpetuals Exchange',
             urls: {
-                // [NetworkName.DEVNET]: 'https://turbos.finance/',
+                [NetworkName.MAINNET]: 'https://turbos.finance/',
             },
             tags: [TagName.FINANCE],
         } as DappData,
@@ -395,7 +403,7 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.TESTNET]: 'https://clutchy.io/',
                 [NetworkName.MAINNET]: 'https://clutchy.io/',
             },
-            tags: [TagName.MARKETPLACE],
+            tags: [TagName.MARKETPLACE, TagName.NFTS],
         } as DappData,
     ],
     [
@@ -421,7 +429,7 @@ const dappsMap: Map<string, DappData> = new Map([
                 'Cetus is a pioneer DEX and concentrated liquidity protocol focusing on Move-based ecosystems like Aptos and Sui.',
             urls: {
                 [NetworkName.TESTNET]: 'https://app.cetus.zone',
-                // [NetworkName.MAINNET]: 'https://app.cetus.zone',
+                [NetworkName.MAINNET]: 'https://app.cetus.zone',
             },
             tags: [TagName.FINANCE],
         } as DappData,
@@ -438,21 +446,6 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.DEVNET]: 'https://app.bayswap.io/',
                 [NetworkName.TESTNET]: 'https://app.bayswap.io/',
             },
-            tags: [TagName.FINANCE, TagName.TOOLS],
-        } as DappData,
-    ],
-    [
-        'ddd6d9cd-0849-40ec-ac6a-7bff10f60372',
-        {
-            id: 'ddd6d9cd-0849-40ec-ac6a-7bff10f60372',
-            image: typus,
-            title: 'Typus Finance',
-            description:
-                'Typus is a real yield infrastructure that integrates swap, lending, and derivatives building on top of the Sui ecosystem.',
-            urls: {
-                [NetworkName.TESTNET]:
-                    'https://testnet.typus.finance/vault/coveredcall/',
-            },
             tags: [TagName.FINANCE],
         } as DappData,
     ],
@@ -467,6 +460,8 @@ const dappsMap: Map<string, DappData> = new Map([
             urls: {
                 [NetworkName.TESTNET]:
                     'https://testnet.typus.finance/vault/coveredcall/',
+                [NetworkName.MAINNET]:
+                    'https://typus.finance/vault/coveredcall/',
             },
             tags: [TagName.FINANCE],
         } as DappData,
@@ -484,6 +479,8 @@ const dappsMap: Map<string, DappData> = new Map([
                     'https://sui.interestprotocol.com/en-US/dapp/dex',
                 [NetworkName.TESTNET]:
                     'https://sui.interestprotocol.com/en-US/dapp/dex',
+                [NetworkName.MAINNET]:
+                    'https://sui.interestprotocol.com/en-US/dapp/dex',
             },
             tags: [TagName.FINANCE],
         } as DappData,
@@ -499,6 +496,7 @@ const dappsMap: Map<string, DappData> = new Map([
             urls: {
                 [NetworkName.DEVNET]: 'https://sui.apass.network',
                 [NetworkName.TESTNET]: 'https://sui.apass.network',
+                [NetworkName.MAINNET]: 'https://sui.apass.network',
             },
             tags: [TagName.GAMES, TagName.NFTS],
         } as DappData,
@@ -511,7 +509,9 @@ const dappsMap: Map<string, DappData> = new Map([
             title: 'Final Stardust: Cosmic Nexus',
             description:
                 'Final Stardust is a media franchise in the making, with its first installment being "Final Stardust: Cosmic Nexus", a digital collectible card game inspired by big Japanese/Anime TCG games.',
-            urls: {},
+            urls: {
+                [NetworkName.MAINNET]: 'https://demo.finalstardust.com/',
+            },
             tags: [TagName.GAMES, TagName.NFTS],
         } as DappData,
     ],
@@ -554,6 +554,20 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.TESTNET]: 'https://www.cubicgames.xyz/games',
             },
             tags: [TagName.GAMES, TagName.TOOLS],
+        } as DappData,
+    ],
+    [
+        '3874aba4-e78a-4f12-8f9d-dc9dddc85e52',
+        {
+            id: '3874aba4-e78a-4f12-8f9d-dc9dddc85e52',
+            image: hyperspace,
+            title: 'Hyperspace',
+            description:
+                'Hyperspace is the premiere NFT marketplace and launchpad on Sui on a mission to unlock the future of NFT trading and utilization.',
+            urls: {
+                [NetworkName.MAINNET]: 'https://sui.hyperspace.xyz',
+            },
+            tags: [TagName.MARKETPLACE, TagName.NFTS],
         } as DappData,
     ],
 ]);

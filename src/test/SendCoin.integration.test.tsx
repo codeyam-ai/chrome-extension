@@ -1,14 +1,10 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import {
-    mockCommonCalls,
-    mockSuiObjects,
-    rpcMocks,
-} from '_src/test/utils/mockchain';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import { mockBlockchain, rpcMocks } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('send coin flow', () => {
     let mockJsonRpc: MockJsonRpc;
@@ -16,9 +12,8 @@ describe('send coin flow', () => {
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
         await simulateMnemonicUser();
-        mockCommonCalls(mockJsonRpc);
-        mockSuiObjects(mockJsonRpc, {
-            suiBalance: 4_000_000_000, // MIST units
+        mockBlockchain(mockJsonRpc, {
+            coinTransaction: 4_000_000_000, // MIST units
         });
         const mocks = rpcMocks(mockJsonRpc);
         mocks.suix_getNormalizedMoveFunction();
@@ -83,7 +78,7 @@ describe('send coin flow', () => {
         });
         await userEvent.click(button);
         await screen.findByText(
-            'Transaction submitted.',
+            'Transaction submitted...',
             {},
             { timeout: 5000 }
         );

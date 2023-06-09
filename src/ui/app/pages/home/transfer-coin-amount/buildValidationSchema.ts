@@ -69,14 +69,14 @@ export function buildValidationSchema({
             .test(
                 'max',
                 `Amount must be less than ${
-                    !!coin?.balance && !!coin?.decimals
+                    !!coin?.balance && coin?.decimals !== undefined
                         ? ns.format.coinBalance(coin?.balance, coin?.decimals)
                         : '---'
                 } ${coin?.symbol}`,
                 (amount?: BigNumber) => {
                     return amount &&
-                        !!coin?.balance &&
-                        !!coin?.decimals &&
+                        coin?.balance !== undefined &&
+                        coin?.decimals !== undefined &&
                         coin.balance >= 0
                         ? amount
                               .shiftedBy(coin.decimals)
@@ -88,7 +88,7 @@ export function buildValidationSchema({
                 'max-decimals',
                 `The value exeeds the maximum decimals (${coin?.decimals}).`,
                 (amount?: BigNumber) => {
-                    return amount && !!coin?.decimals
+                    return amount && coin?.decimals !== undefined
                         ? amount.shiftedBy(coin.decimals).isInteger()
                         : false;
                 }
@@ -96,7 +96,7 @@ export function buildValidationSchema({
             .test(
                 'gas-balance-check',
                 `Insufficient ${SUI_SYMBOL} balance to cover gas fee (${
-                    !!gas?.budget && !!gas?.decimals
+                    !!gas?.budget && gas?.decimals !== undefined
                         ? ns.format.coinBalance(gas.budget, gas.decimals)
                         : '---'
                 } ${SUI_SYMBOL})`,
@@ -108,7 +108,7 @@ export function buildValidationSchema({
                         let availableGas = gas.aggregateBalance;
                         if (
                             availableGas &&
-                            !!coin?.decimals &&
+                            coin?.decimals !== undefined &&
                             coin.type === SUI_TYPE_ARG
                         ) {
                             availableGas -= BigInt(

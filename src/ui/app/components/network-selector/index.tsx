@@ -1,6 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { useQueryClient } from '@tanstack/react-query';
 import cl from 'classnames';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useMemo, useCallback } from 'react';
@@ -43,6 +44,8 @@ const NetworkSelector = () => {
         }));
     }, []);
 
+    const queryClient = useQueryClient();
+
     const changeNetwork = useCallback(
         (e: React.MouseEvent<HTMLElement>) => {
             const networkName = e.currentTarget.dataset.network;
@@ -59,7 +62,7 @@ const NetworkSelector = () => {
                 return;
             }
             const apiEnv = API_ENV[networkName as keyof typeof API_ENV];
-            dispatch(changeRPCNetwork(apiEnv));
+            dispatch(changeRPCNetwork({ apiEnv, queryClient }));
         },
         [customRPC, dispatch]
     );

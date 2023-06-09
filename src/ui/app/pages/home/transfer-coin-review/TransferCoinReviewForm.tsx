@@ -11,10 +11,12 @@ import LoadingIndicator from '_components/loading/LoadingIndicator';
 import { useDependencies } from '_shared/utils/dependenciesContext';
 import { useTheme } from '_src/shared/utils/themeContext';
 import WalletTo from '_src/ui/app/components/wallet-to';
+import humanReadableTransactionErrors from '_src/ui/app/helpers/humanReadableTransactionError';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
+import Alert from '_src/ui/app/shared/feedback/Alert';
 import { AssetCard } from '_src/ui/app/shared/nfts/AssetCard';
 import Body from '_src/ui/app/shared/typography/Body';
 import Header from '_src/ui/app/shared/typography/Header';
@@ -30,6 +32,7 @@ export type TransferCoinFormProps = {
 
 function TransferCoinForm({
     onClearSubmitError,
+    submitError,
     submitted,
 }: TransferCoinFormProps) {
     const {
@@ -103,7 +106,7 @@ function TransferCoinForm({
                         {amount} {truncateString(coinSymbol, 8)}
                     </Header>
                     {featureFlags.showUsd && (
-                        <Subheader isTextColorMedium>{dollars}</Subheader>
+                        <Subheader isTextColorMedium>≈ {dollars} USD</Subheader>
                     )}
                 </div>
                 <KeyValueList
@@ -147,9 +150,29 @@ function TransferCoinForm({
                         },
                     ]}
                 />
+                {submitError ? (
+                    <div className="flex flex-col m-3">
+                        <Alert
+                            title="Problem"
+                            subtitle={humanReadableTransactionErrors(
+                                submitError
+                            )}
+                        />
+                    </div>
+                ) : null}
+                {walletFrom?.ledgerAccountIndex !== undefined && (
+                    <div className="flex flex-col m-3">
+                        <Alert
+                            title="Check Your Ledger"
+                            subtitle={
+                                'Please approve the transaction on your Ledger device.'
+                            }
+                        />
+                    </div>
+                )}
                 <div className="flex flex-col mb-2 absolute w-full bottom-[-10px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4 rounded-b-2xl">
                     <Button
-                        disabled={submitted}
+                        disabled={submitted && !submitError}
                         buttonStyle="primary"
                         type="submit"
                         className="mt-2"

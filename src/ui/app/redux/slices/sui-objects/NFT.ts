@@ -8,12 +8,14 @@ import {
 import get from 'lodash/get';
 
 import ipfs from '_src/ui/app/helpers/ipfs';
+import { safeUrl } from '_src/ui/app/hooks/useMediaUrl';
 
 import type {
     SuiObjectResponse,
     JsonRpcProvider,
     SuiMoveObject,
 } from '@mysten/sui.js';
+import type { DynamicFieldInfo } from '@mysten/sui.js/dist/types/dynamic_fields';
 
 export type BagNFT = {
     id: string;
@@ -27,20 +29,30 @@ export class NFT {
     public static isNFT(data: SuiObjectData): boolean {
         if (this.isBagNFT(data)) return true;
 
+        let url: string | undefined;
         if (
             data.display?.data &&
             typeof data.display.data === 'object' &&
             ('image_url' in data.display.data || 'img_url' in data.display.data)
         ) {
-            return true;
+            url = data.display.data.image_url ?? data.display.data.img_url;
         }
 
-        return (
+        if (
+            !url &&
             !!data.content &&
             'fields' in data.content &&
             'url' in data.content.fields &&
             !('ticket_id' in data.content.fields)
-        );
+        ) {
+            url = data.content.fields.url;
+        }
+
+        if (url) {
+            return safeUrl(ipfs(url));
+        }
+
+        return false;
     }
 
     public static isKiosk(data: SuiObjectData): boolean {
@@ -49,7 +61,7 @@ export class NFT {
             data.type.includes('kiosk') &&
             !!data.content &&
             'fields' in data.content &&
-            'kiosk' in data.content.fields
+            ('kiosk' in data.content.fields || 'for' in data.content.fields)
         );
     }
 
@@ -58,25 +70,51 @@ export class NFT {
         data: SuiObjectData
     ): Promise<SuiObjectResponse[]> {
         if (!this.isKiosk(data)) return [];
-        const kiosk = get(data, 'content.fields.kiosk');
+        let kiosk = get(data, 'content.fields.kiosk');
+        if (!kiosk) kiosk = get(data, 'content.fields.for');
         if (!kiosk) return [];
-        const allKioskObjets = await provider.getDynamicFields({
-            parentId: kiosk,
-        });
-        const relevantKioskObjects = allKioskObjets.data.filter(
-            (kioskObject) => kioskObject.name.type === '0x2::kiosk::Item'
+        let allKioskObjects: DynamicFieldInfo[] = [];
+        let cursor: string | undefined | null;
+        while (cursor !== null) {
+            const response = await provider.getDynamicFields({
+                parentId: kiosk,
+                cursor,
+            });
+            if (!response.data) return [];
+            allKioskObjects = [...(allKioskObjects || []), ...response.data];
+            if (!response.hasNextPage || response.nextCursor === cursor) {
+                cursor = null;
+            } else {
+                cursor = response.nextCursor;
+            }
+        }
+
+        const relevantKioskObjects = allKioskObjects.filter(
+            (kioskObject) =>
+                kioskObject.name.type ===
+                    '0x0000000000000000000000000000000000000000000000000000000000000002::kiosk::Item' ||
+                kioskObject.name.type === '0x2::kiosk::Item'
         );
         const objectIds = relevantKioskObjects.map((item) => item.objectId);
 
-        const objects = await provider.multiGetObjects({
-            ids: objectIds,
-            options: {
-                showContent: true,
-                showType: true,
-                showDisplay: true,
-                showOwner: true,
-            },
-        });
+        let objects: SuiObjectResponse[] = [];
+        const groupSize = 30;
+        for (let i = 0; i < objectIds.length; i += groupSize) {
+            const group = objectIds.slice(i, i + groupSize);
+
+            const groupObjects = await provider.multiGetObjects({
+                ids: group,
+                options: {
+                    showContent: true,
+                    showType: true,
+                    showDisplay: true,
+                    showOwner: true,
+                },
+            });
+
+            objects = [...objects, ...groupObjects];
+        }
+
         return objects;
     }
 
@@ -197,9 +235,9 @@ export type Nft = {
 const NftRegex =
     /(0x[a-f0-9]{39,40})::nft::Nft<0x[a-f0-9]{39,40}::([a-zA-Z]{1,})::([a-zA-Z]{1,})>/;
 const UrlDomainRegex =
-    /0x2::dynamic_field::Field<(0x[a-f0-9]{39,40})::utils::Marker<(0x[a-f0-9]{39,40})::display::UrlDomain>, (0x[a-f0-9]{39,40})::display::UrlDomain>/;
+    /0x0000000000000000000000000000000000000000000000000000000000000002::dynamic_field::Field<(0x[a-f0-9]{39,40})::utils::Marker<(0x[a-f0-9]{39,40})::display::UrlDomain>, (0x[a-f0-9]{39,40})::display::UrlDomain>/;
 const DisplayDomainRegex =
-    /0x2::dynamic_field::Field<(0x[a-f0-9]{39,40})::utils::Marker<(0x[a-f0-9]{39,40})::display::DisplayDomain>, (0x[a-f0-9]{39,40})::display::DisplayDomain>/;
+    /0x0000000000000000000000000000000000000000000000000000000000000002::dynamic_field::Field<(0x[a-f0-9]{39,40})::utils::Marker<(0x[a-f0-9]{39,40})::display::DisplayDomain>, (0x[a-f0-9]{39,40})::display::DisplayDomain>/;
 
 export const NftParser: SuiObjectParser<NftRpcResponse, NftRaw> = {
     parser: (data, suiData, rpcResponse) => {

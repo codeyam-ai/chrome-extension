@@ -11,6 +11,7 @@ import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
 // import { getTransactionsByAddress } from '_redux/slices/txresults';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
+import type { QueryClient } from '@tanstack/react-query';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
 type AppState = {
@@ -43,11 +44,15 @@ export const getRPCNetwork = createAsyncThunk<API_ENV, void, AppThunkConfig>(
 
 // On network change, set setNewJsonRpcProvider, fetch all owned objects, and fetch all transactions
 // TODO: add clear Object state because edge cases where use state stays in cache
-export const changeRPCNetwork = createAsyncThunk<void, API_ENV, AppThunkConfig>(
+export const changeRPCNetwork = createAsyncThunk<
+    void,
+    { apiEnv: API_ENV; queryClient: QueryClient },
+    AppThunkConfig
+>(
     'changeRPCNetwork',
-    (networkName, { extra: { api }, dispatch, getState }) => {
+    ({ apiEnv, queryClient }, { extra: { api }, dispatch, getState }) => {
         const { app } = getState();
-        const isCustomRPC = networkName === API_ENV.customRPC;
+        const isCustomRPC = apiEnv === API_ENV.customRPC;
         const customRPCURL =
             app?.customRPC && isCustomRPC ? app?.customRPC : null;
 
@@ -55,11 +60,11 @@ export const changeRPCNetwork = createAsyncThunk<void, API_ENV, AppThunkConfig>(
         if (isCustomRPC && !customRPCURL) return;
 
         // Set persistent network state
-        Browser.storage.local.set({ sui_Env: networkName });
+        Browser.storage.local.set({ sui_Env: apiEnv });
 
-        dispatch(setApiEnv(networkName));
+        dispatch(setApiEnv(apiEnv));
 
-        api.setNewJsonRpcProvider(networkName, customRPCURL);
+        api.setNewJsonRpcProvider(apiEnv, undefined, customRPCURL, queryClient);
 
         // dispatch(getTransactionsByAddress());
         dispatch(fetchAllBalances());
@@ -67,41 +72,50 @@ export const changeRPCNetwork = createAsyncThunk<void, API_ENV, AppThunkConfig>(
     }
 );
 
-export const setCustomRPC = createAsyncThunk<void, string, AppThunkConfig>(
-    'setCustomRPC',
-    (customRPC, { dispatch }) => {
-        // Set persistent network state
-        Browser.storage.local.set({ sui_Env_RPC: customRPC });
-        dispatch(setCustomRPCURL(customRPC));
-        dispatch(changeRPCNetwork(API_ENV.customRPC));
-    }
-);
+export const setCustomRPC = createAsyncThunk<
+    void,
+    { customRPC: string; queryClient: QueryClient },
+    AppThunkConfig
+>('setCustomRPC', ({ customRPC, queryClient }, { dispatch }) => {
+    // Set persistent network state
+    Browser.storage.local.set({ sui_Env_RPC: customRPC });
+    dispatch(setCustomRPCURL(customRPC));
+    dispatch(changeRPCNetwork({ apiEnv: API_ENV.customRPC, queryClient }));
+});
 
 export const initNetworkFromStorage = createAsyncThunk<
     void,
-    void,
+    QueryClient,
     AppThunkConfig
->('initNetworkFromStorage', async (_, { dispatch, extra: { api } }) => {
-    const result = await Browser.storage.local.get(['sui_Env', 'sui_Env_RPC']);
+>(
+    'initNetworkFromStorage',
+    async (queryClient, { dispatch, extra: { api } }) => {
+        const result = await Browser.storage.local.get([
+            'sui_Env',
+            'sui_Env_RPC',
+        ]);
 
-    const isValidCustomRPC = result?.sui_Env_RPC?.length > 0;
+        const isValidCustomRPC = result?.sui_Env_RPC?.length > 0;
 
-    const network =
-        result.sui_Env === API_ENV.customRPC && !isValidCustomRPC
-            ? DEFAULT_API_ENV
-            : result.sui_Env;
+        const network =
+            result.sui_Env === API_ENV.customRPC && !isValidCustomRPC
+                ? DEFAULT_API_ENV
+                : result.sui_Env;
 
-    const customRPCURL =
-        network === API_ENV.customRPC && isValidCustomRPC
-            ? result.sui_Env_RPC
-            : null;
+        const customRPCURL =
+            network === API_ENV.customRPC && isValidCustomRPC
+                ? result.sui_Env_RPC
+                : null;
 
-    if (result.sui_Env_RPC && customRPCURL) {
-        dispatch(setCustomRPC(result.sui_Env_RPC));
-    } else if (result.sui_Env) {
-        dispatch(changeRPCNetwork(result.sui_Env));
+        if (result.sui_Env_RPC && customRPCURL) {
+            dispatch(
+                setCustomRPC({ customRPC: result.sui_Env_RPC, queryClient })
+            );
+        } else if (result.sui_Env) {
+            dispatch(changeRPCNetwork({ apiEnv: result.sui_Env, queryClient }));
+        }
     }
-});
+);
 
 const slice = createSlice({
     name: 'app',

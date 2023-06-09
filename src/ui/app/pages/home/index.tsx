@@ -6,6 +6,10 @@ import { defer, filter, from, of, repeat, switchMap } from 'rxjs';
 import { useBalancesState } from '../../hooks/useBalancesState';
 import { AppState } from '../../hooks/useInitializedGuard';
 import { fetchAllBalances } from '../../redux/slices/balances';
+import {
+    fetchInvalidPackages,
+    initializeInvalidPackages,
+} from '../../redux/slices/valid';
 import { WarningAlert } from '../../shared/alerts/WarningAlert';
 import Alert from '../../shared/feedback/Alert';
 import BaseLayout from '../../shared/layouts/BaseLayout';
@@ -20,6 +24,7 @@ import PageLayout from '_src/ui/app/pages/PageLayout';
 import type { AppDispatch } from '../../redux/store';
 
 export const POLL_SUI_OBJECTS_INTERVAL = 4000;
+export const POLL_INVALID_PACKAGES = 300000;
 
 const AppContainer = () => {
     const { pathname } = useLocation();
@@ -31,7 +36,11 @@ const AppContainer = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        const sub = fetchAllOwnedObjectsSubscription(
+        dispatch(initializeInvalidPackages());
+    }, [guardChecking, dispatch]);
+
+    useEffect(() => {
+        const sub = fetchAllInvalidPackagesSubscription(
             guardChecking,
             dispatch
         ).subscribe();
@@ -40,6 +49,14 @@ const AppContainer = () => {
 
     useEffect(() => {
         const sub = fetchAllBalancesSubscription(
+            guardChecking,
+            dispatch
+        ).subscribe();
+        return () => sub.unsubscribe();
+    }, [guardChecking, dispatch]);
+
+    useEffect(() => {
+        const sub = fetchAllOwnedObjectsSubscription(
             guardChecking,
             dispatch
         ).subscribe();
@@ -135,6 +152,20 @@ export function fetchAllBalancesSubscription(
         switchMap(() =>
             defer(() => from(dispatch(fetchAllBalances()))).pipe(
                 repeat({ delay: POLL_SUI_OBJECTS_INTERVAL })
+            )
+        )
+    );
+}
+
+export function fetchAllInvalidPackagesSubscription(
+    guardChecking: boolean,
+    dispatch: AppDispatch
+) {
+    return of(guardChecking).pipe(
+        filter(() => !guardChecking),
+        switchMap(() =>
+            defer(() => from(dispatch(fetchInvalidPackages()))).pipe(
+                repeat({ delay: POLL_INVALID_PACKAGES })
             )
         )
     );

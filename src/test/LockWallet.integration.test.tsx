@@ -1,28 +1,26 @@
-import { screen, within } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Browser from 'webextension-polyfill';
 
 import { fakeAlarms } from './utils/fake-browser/fake-browser';
-import { makeTestDeps } from './utils/test-dependencies';
 import {
     AUTO_LOCK_TIMEOUT_KEY,
     DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES,
 } from '_src/shared/constants';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import { mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import {
     simulateEmailUser,
     simulateMnemonicUser,
 } from '_src/test/utils/storage';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Lock Wallet Page', () => {
     let mockJsonRpc: MockJsonRpc;
 
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
-        mockCommonCalls(mockJsonRpc);
-        mockSuiObjects(mockJsonRpc);
+        mockBlockchain(mockJsonRpc);
     });
 
     describe('for an email user', () => {

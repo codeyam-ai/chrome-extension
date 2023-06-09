@@ -21,6 +21,7 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 import type { RawSigner, SuiObjectChange } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 
 export type StepInformation = {
     objectId: string;
@@ -77,7 +78,7 @@ const StepTwo = ({
     onCancel,
     onSelectStep,
 }: {
-    signer: RawSigner | EthosSigner;
+    signer: RawSigner | EthosSigner | LedgerSigner;
     stepInformation: StepInformation;
     onApprove: () => void;
     onCancel: () => void;
@@ -110,7 +111,7 @@ const SimpleAssetTransfer = ({
     onApprove,
     onCancel,
 }: {
-    signer: RawSigner | EthosSigner;
+    signer: RawSigner | EthosSigner | LedgerSigner;
     assetTransfer: SuiObjectChange;
     analysis: AnalyzeChangesResult;
     onApprove: () => void;

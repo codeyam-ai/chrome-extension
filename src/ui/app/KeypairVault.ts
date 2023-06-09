@@ -13,10 +13,15 @@ export type AccountInfo = {
     name?: string;
     color?: string;
     emoji?: string;
+    nftPfpId?: string;
+    nftPfpUrl?: string;
     chain?: string;
     importedMnemonicName?: string;
     importedMnemonicIndex?: number;
     importedPrivateKeyName?: string;
+    importedLedgerIndex?: number; // migrating away - do not use - remove after 6/15/2023 (search for this date for related code)
+    ledgerAccountIndex?: number;
+    ledgerAccountVerified?: boolean;
 };
 
 export type SeedInfo = {

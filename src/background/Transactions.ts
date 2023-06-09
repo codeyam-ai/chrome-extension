@@ -23,6 +23,7 @@ import Browser from 'webextension-polyfill';
 import { Window } from './Window';
 import { API_ENV } from '../ui/app/ApiProvider';
 import { PREAPPROVAL_KEY, TX_STORE_KEY } from '_src/shared/constants';
+import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
@@ -283,12 +284,6 @@ class Transactions {
         requestType?: SuiSignAndExecuteTransactionBlockInput['requestType'];
         options?: SuiSignAndExecuteTransactionBlockInput['options'];
     }) {
-        const activeSeed = await this.getActiveSeed();
-
-        if (activeSeed.address !== address) {
-            throw new Error('Requested address for transaction is not active.');
-        }
-
         let env;
         let envEndpoint;
         switch (chain) {
@@ -334,13 +329,29 @@ class Transactions {
             throw new Error('No connection found');
         }
 
+        const provider = new JsonRpcProvider(connection);
+
         try {
-            const provider = new JsonRpcProvider(connection);
-            const secretKey = Uint8Array.from(
-                activeSeed.seed.split(',').map((n) => parseInt(n))
-            );
-            const keypair = Ed25519Keypair.fromSecretKey(secretKey);
-            const signer = new RawSigner(keypair, provider);
+            let signer;
+
+            const authentication = await this.getAuthentication();
+            if (authentication) {
+                signer = new EthosSigner(address, authentication, provider);
+            } else {
+                const activeSeed = await this.getActiveSeed();
+
+                if (activeSeed.address !== address) {
+                    throw new Error(
+                        'Requested address for transaction is not active.'
+                    );
+                }
+
+                const secretKey = Uint8Array.from(
+                    activeSeed.seed.split(',').map((n) => parseInt(n))
+                );
+                const keypair = Ed25519Keypair.fromSecretKey(secretKey);
+                signer = new RawSigner(keypair, provider);
+            }
 
             const txResponse = await signer.signAndExecuteTransactionBlock({
                 transactionBlock,
@@ -422,10 +433,14 @@ class Transactions {
     public async getTransactionRequests(): Promise<
         Record<string, ApprovalRequest>
     > {
-        return (await Browser.storage.local.get({ [TX_STORE_KEY]: {} }))[
-            TX_STORE_KEY
-        ];
+        const resultsString = await getEncrypted({
+            key: TX_STORE_KEY,
+            session: false,
+            strong: false,
+        });
+        return JSON.parse(resultsString || '{}');
     }
+
     public async getPreapprovalRequests(): Promise<
         Record<string, PreapprovalRequest>
     > {
@@ -459,6 +474,16 @@ class Transactions {
         });
 
         return JSON.parse(activeSeedString || '[]');
+    }
+
+    private async getAuthentication(): Promise<string | null> {
+        const authentication = await getEncrypted({
+            key: 'authentication',
+            session: true,
+            strong: false,
+        });
+
+        return authentication;
     }
 
     private createTransactionRequest(
@@ -496,7 +521,14 @@ class Transactions {
     private async saveTransactionRequests(
         txRequests: Record<string, ApprovalRequest>
     ) {
-        await Browser.storage.local.set({ [TX_STORE_KEY]: txRequests });
+        await setEncrypted({
+            key: TX_STORE_KEY,
+            value: JSON.stringify(txRequests),
+            strong: false,
+            session: false,
+        });
+
+        Browser.storage.local.remove(TX_STORE_KEY);
     }
 
     private async savePreapprovalRequests(
@@ -516,7 +548,7 @@ class Transactions {
         await this.saveTransactionRequests(txs);
     }
 
-    private async removeTransactionRequest(txID: string) {
+    public async removeTransactionRequest(txID: string) {
         const txs = await this.getTransactionRequests();
         delete txs[txID];
         await this.saveTransactionRequests(txs);
@@ -577,7 +609,7 @@ class Transactions {
                             txRequest.txResult = txResult;
                             txRequest.txResultError = txResultError;
                             txRequest.txSigned = txSigned;
-                            await this.storeTransactionRequest(txRequest);
+                            await this.removeTransactionRequest(txRequest.id);
                             return txRequest;
                         }
                     }

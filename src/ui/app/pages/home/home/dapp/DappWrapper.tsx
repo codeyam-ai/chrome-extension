@@ -13,8 +13,9 @@ import type { ReactNode } from 'react';
 interface DappWrapperProps {
     children: ReactNode;
     dappTitle: string;
-    isFavorite: boolean;
+    isFavorite?: boolean;
     closeDapp?: () => void;
+    hideFavorite?: boolean;
 }
 
 export const DappWrapper: React.FC<DappWrapperProps> = ({
@@ -22,6 +23,7 @@ export const DappWrapper: React.FC<DappWrapperProps> = ({
     dappTitle,
     closeDapp,
     isFavorite,
+    hideFavorite,
 }) => {
     const navigate = useNavigate();
 
@@ -35,6 +37,7 @@ export const DappWrapper: React.FC<DappWrapperProps> = ({
                 title={dappTitle}
                 closeDapp={closeDapp ?? onClose}
                 isFavorite={isFavorite}
+                hideFavorite={hideFavorite}
             />
             {children}
         </div>
@@ -42,14 +45,16 @@ export const DappWrapper: React.FC<DappWrapperProps> = ({
 };
 interface DappViewHeaderProps {
     title: string;
-    isFavorite: boolean;
+    isFavorite?: boolean;
     closeDapp: () => void;
+    hideFavorite?: boolean;
 }
 
 export const DappViewHeader: React.FC<DappViewHeaderProps> = ({
     title,
     isFavorite,
     closeDapp,
+    hideFavorite,
 }) => {
     return (
         <div className="flex items-center justify-between p-4 shadow-ethos-shadow-small border-b border-ethos-light-gray border-ethos-dark-text-stroke bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-light-grey">
@@ -66,13 +71,14 @@ export const DappViewHeader: React.FC<DappViewHeaderProps> = ({
             >
                 {title}
             </BodyLarge>
-            {/* Favorites currently not implemented */}
             <div className="w-1/4"></div>
-            {isFavorite ? (
-                <StarIconSolid className="h-5 w-5 text-ethos-dark-primary-light dark:text-ethos-dark-primary-dark" />
-            ) : (
-                <StarIconOutline className="h-5 w-5 text-ethos-dark-primary-light dark:text-ethos-dark-primary-dark" />
-            )}
+            {hideFavorite && <div></div>}
+            {!hideFavorite &&
+                (isFavorite ? (
+                    <StarIconSolid className="h-5 w-5 text-ethos-dark-primary-light dark:text-ethos-dark-primary-dark" />
+                ) : (
+                    <StarIconOutline className="h-5 w-5 text-ethos-dark-primary-light dark:text-ethos-dark-primary-dark" />
+                ))}
         </div>
     );
 };

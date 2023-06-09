@@ -1,11 +1,11 @@
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import { useFormatCoin } from '_hooks';
-import { useDependencies } from '_shared/utils/dependenciesContext';
+import { useDependencies } from '_src/shared/utils/dependenciesContext';
 import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
-import Body from '_src/ui/app/shared/typography/Body';
 import JumboTitle from '_src/ui/app/shared/typography/JumboTitle';
-import Subheader from '_src/ui/app/shared/typography/Subheader';
+import Title from '_src/ui/app/shared/typography/Title';
+import Typography from '_src/ui/app/shared/typography/Typography';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
@@ -19,12 +19,12 @@ const WalletBalanceAndIconHomeView = ({
     mistBalance,
 }: WalletBalanceAndIconHomeViewProps) => {
     const { featureFlags } = useDependencies();
-
     const [balanceFormatted, symbol, usdAmount] = useFormatCoin(
         mistBalance,
         SUI_TYPE_ARG,
         6
     );
+
     const formatted = usdAmount.endsWith('.00')
         ? usdAmount.slice(0, -3)
         : usdAmount;
@@ -34,23 +34,29 @@ const WalletBalanceAndIconHomeView = ({
             className="flex flex-col place-items-center"
             data-testid="wallet-and-balance"
         >
-            <div className="pb-2">
+            <div className="pb-3">
                 <WalletColorAndEmojiCircle
                     color={accountInfo?.color}
                     emoji={accountInfo?.emoji}
-                    circleSizeClasses="h-[60px] w-[60px]"
-                    emojiSizeInPx={32}
+                    nftPfpUrl={accountInfo?.nftPfpUrl}
+                    circleSizeClasses="h-[90px] w-[90px]"
+                    emojiSizeInPx={45}
                 />
             </div>
             <div className="flex flex-col">
-                <Body>My Balance</Body>
                 {featureFlags.showUsd ? (
-                    <JumboTitle>{formatted}</JumboTitle>
+                    <div className="flex flex-col place-content-center items-center">
+                        <Title>
+                            {balanceFormatted} {symbol}
+                        </Title>
+                        {formatted && (
+                            <Typography className={'font-[14px]'}>
+                                SUI Balance ≈ {formatted} USD
+                            </Typography>
+                        )}
+                    </div>
                 ) : (
-                    <span className="flex gap-2 place-content-center items-baseline">
-                        <JumboTitle>{balanceFormatted}</JumboTitle>
-                        <Subheader>{symbol}</Subheader>
-                    </span>
+                    <JumboTitle>{formatted}</JumboTitle>
                 )}
             </div>
         </div>

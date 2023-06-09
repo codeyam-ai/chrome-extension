@@ -16,7 +16,7 @@ import Button from '_src/ui/app/shared/buttons/Button';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
-const IMPORTED_PRIVATE_KEY_BUFFER = 10000;
+const IMPORTED_PRIVATE_KEY_BUFFER = 10_000;
 
 const ImportPrivateKey = () => {
     const accountInfos = useAppSelector(({ account }) => account.accountInfos);

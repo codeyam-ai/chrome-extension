@@ -1,6 +1,3 @@
-// Copyright (c) 2022, Mysten Labs, Inc.
-// SPDX-License-Identifier: Apache-2.0
-
 import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -34,6 +31,7 @@ export default function useInitializedGuard(
 
     const passwordReady = useAppSelector((state) => !!state.account.passphrase);
     const mnemonicReady = useAppSelector((state) => !!state.account.mnemonic);
+
     if (passwordReady && mnemonicReady) {
         currentState = AppState.MNEMONIC;
     }

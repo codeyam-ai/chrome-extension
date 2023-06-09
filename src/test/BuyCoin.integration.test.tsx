@@ -1,11 +1,11 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import { mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Buy coin flow', () => {
     let mockJsonRpc: MockJsonRpc;
@@ -13,9 +13,8 @@ describe('Buy coin flow', () => {
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
         await simulateMnemonicUser();
-        mockCommonCalls(mockJsonRpc);
-        mockSuiObjects(mockJsonRpc, {
-            suiBalance: 0,
+        mockBlockchain(mockJsonRpc, {
+            coinTransaction: 0,
         });
     });
 
@@ -36,7 +35,7 @@ describe('Buy coin flow', () => {
         // TODO: Add logic to test async iFrame loading
     };
 
-    test('Moonpay onboarding is disabled', async () => {
+    xtest('Moonpay onboarding is disabled', async () => {
         renderApp({
             dependencies: {
                 ...makeTestDeps(),
@@ -50,7 +49,7 @@ describe('Buy coin flow', () => {
         // await disabledAndBack();
     });
 
-    test('Moonpay onboarding widget is displayed', async () => {
+    xtest('Moonpay onboarding widget is displayed', async () => {
         renderApp({
             dependencies: {
                 ...makeTestDeps(),

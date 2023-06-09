@@ -36,13 +36,9 @@ const WalletProfile = ({ onClick, inlineWalletPicker }: WalletProfileProps) => {
     const shortenedName = truncateString(name, 8);
 
     const CurrentWallet = () => (
-        <div
-            data-testid="current-wallet"
-            className="flex flex-row gap-2 items-center cursor-pointer"
-        >
+        <div className="flex flex-row gap-2 items-center cursor-pointer">
             <WalletColorAndEmojiCircle
-                color={accountInfo?.color}
-                emoji={accountInfo?.emoji}
+                {...accountInfo}
                 circleSizeClasses="h-6 w-6"
                 emojiSizeInPx={12}
             />
@@ -61,12 +57,12 @@ const WalletProfile = ({ onClick, inlineWalletPicker }: WalletProfileProps) => {
                     </div>
                 ) : (
                     <Link
+                        data-testid="current-wallet-link"
                         to={
                             isWalletPickerOpen
                                 ? closeWalletPickerUrl
                                 : walletPickerUrl
                         }
-                        onClick={onClick}
                     >
                         <CurrentWallet />
                     </Link>

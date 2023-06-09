@@ -2,30 +2,29 @@ import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { renderTemplate } from './utils/json-templates';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import { mockBlockchain } from '_src/test/utils/mockchain';
 import { makeDryRunTransactionResponse } from '_src/test/utils/mockchain-templates/dryRunTransaction';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('Creating and sending an NFT', () => {
     let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
         simulateMnemonicUser();
-        mockCommonCalls(mockJsonRpc);
     });
 
     test('rendering an empty state for the nfts page', async () => {
-        mockSuiObjects(mockJsonRpc, {
-            suiBalance: 500000,
+        mockBlockchain(mockJsonRpc, {
+            coinTransaction: 500000,
         });
         renderApp({ initialRoute: '/nfts' });
         await screen.findByText('NFTs');
     });
 
     test('rendering the nfts page with an nft populated', async () => {
-        mockSuiObjects(mockJsonRpc, {
+        mockBlockchain(mockJsonRpc, {
             nftDetails: {
                 name: 'nft-test',
             },
@@ -39,14 +38,14 @@ describe('Creating and sending an NFT', () => {
     test('Transfer the NFT', async () => {
         const nftName = 'nft-test';
 
-        mockSuiObjects(mockJsonRpc, {
-            suiBalance: 500000,
+        mockBlockchain(mockJsonRpc, {
+            coinTransaction: 500000,
             nftDetails: {
                 name: 'nft-test',
             },
         });
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'suix_getCoins',
                 params: [
@@ -60,13 +59,13 @@ describe('Creating and sending an NFT', () => {
             true
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             { method: 'suix_getReferenceGasPrice', params: [] },
             '1',
             true
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
@@ -77,7 +76,7 @@ describe('Creating and sending an NFT', () => {
             true
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'sui_dryRunTransactionBlock',
                 params: [
@@ -88,7 +87,7 @@ describe('Creating and sending an NFT', () => {
             true
         );
 
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'sui_executeTransactionBlock',
                 params: [
@@ -142,7 +141,11 @@ describe('Creating and sending an NFT', () => {
         const confirmBtn = await screen.findByText('Confirm & Send');
         userEvent.click(confirmBtn);
 
-        await screen.findByText('Transaction submitted.');
+        await screen.findByText(
+            'Submitting transaction...',
+            {},
+            { timeout: 5000 }
+        );
 
         // Account for the delay in displaying the 'transaction successful alert'
         await new Promise((r) => setTimeout(r, 500));

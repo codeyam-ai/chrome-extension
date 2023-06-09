@@ -37,7 +37,7 @@ const CoinTransactionCard = ({
                                 isSemibold
                                 className="text-[#74777C] text-xl"
                             >
-                                ≈ {dollars}
+                                ≈ {dollars} USD
                             </BodyLarge>
                         )}
                     </div>

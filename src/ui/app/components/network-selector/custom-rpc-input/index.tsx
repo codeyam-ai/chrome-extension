@@ -1,6 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { useQueryClient } from '@tanstack/react-query';
 import { Field, Formik, Form } from 'formik';
 import { useCallback } from 'react';
 import * as Yup from 'yup';
@@ -40,11 +41,12 @@ export function CustomRPCInput() {
 
     const dispatch = useAppDispatch();
 
+    const queryClient = useQueryClient();
     const changeNetwork = useCallback(
         async ({ rpcInput }: { rpcInput: string }) => {
-            dispatch(setCustomRPC(rpcInput));
+            dispatch(setCustomRPC({ customRPC: rpcInput, queryClient }));
         },
-        [dispatch]
+        [dispatch, queryClient]
     );
 
     return (

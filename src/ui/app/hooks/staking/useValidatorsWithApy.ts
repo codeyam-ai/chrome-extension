@@ -1,8 +1,10 @@
 import { type SuiAddress, type SuiValidatorSummary } from '@mysten/sui.js';
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 import { useSystemState } from './useSystemState';
 import { roundFloat } from '../../helpers/roundFloat';
+import { calculateValidatorStakeShare } from '../../helpers/staking/calculateValidatorStakeShare';
 import { api } from '../../redux/store/thunk-extras';
 
 import type { SuiValidatorSummaryWithApy } from '../../pages/home/home/dapp/dapps/Staking/ValidatorList';
@@ -20,6 +22,14 @@ const MINIMUM_THRESHOLD = 0.001;
 export function useValidatorsWithApy() {
     const provider = api.instance.fullNode;
     const { data: systemState, isFetched } = useSystemState();
+
+    const totalStake = useMemo(() => {
+        if (!systemState?.activeValidators) return BigInt(0);
+        return systemState.activeValidators.reduce(
+            (acc, curr) => (acc += BigInt(curr.stakingPoolSuiBalance)),
+            BigInt(0)
+        );
+    }, [systemState?.activeValidators]);
 
     return useQuery(
         ['get-rolling-average-apys'],
@@ -53,8 +63,14 @@ export function useValidatorsWithApy() {
             }) => {
                 return validatorApys?.apys.reduce((acc, { apy, address }) => {
                     const validator = activeValidators[address];
+
                     acc[address] = {
                         ...validator,
+                        stakeShare: calculateValidatorStakeShare(
+                            BigInt(validator.stakingPoolSuiBalance),
+                            totalStake,
+                            2
+                        ),
                         apy: roundFloat(apy * 100, DEFAULT_APY_DECIMALS),
                         isApyApproxZero:
                             !isStakeSubsidyStarted || apy < MINIMUM_THRESHOLD,

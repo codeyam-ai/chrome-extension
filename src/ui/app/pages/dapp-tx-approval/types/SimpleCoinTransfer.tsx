@@ -24,6 +24,7 @@ import type {
 } from '../lib/analyzeChanges';
 import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 
 export type StepInformation = {
     name: string;
@@ -80,7 +81,7 @@ const StepOne = ({
                     )}
                     {featureFlags?.showUsd && (
                         <Body className="text-ethos-light-text-medium text-sm">
-                            ≈ {dollars}
+                            ≈ {dollars} USD
                         </Body>
                     )}
                 </div>
@@ -99,7 +100,7 @@ const StepTwo = ({
     onCancel,
     onSelectStep,
 }: {
-    signer: RawSigner | EthosSigner;
+    signer: RawSigner | EthosSigner | LedgerSigner;
     stepInformation: StepInformation;
     onApprove: () => void;
     onCancel: () => void;
@@ -132,7 +133,7 @@ const SimpleCoinTransfer = ({
     onApprove,
     onCancel,
 }: {
-    signer: RawSigner | EthosSigner;
+    signer: RawSigner | EthosSigner | LedgerSigner;
     reduction: BalanceReduction;
     analysis: AnalyzeChangesResult;
     onApprove: () => void;

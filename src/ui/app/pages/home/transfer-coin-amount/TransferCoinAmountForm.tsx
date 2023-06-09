@@ -1,25 +1,27 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
-import { memo, useEffect, useMemo, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 
-import Sui from '../home/Sui';
-import UnknownToken from '../home/UnknownToken';
+import CoinList from '../home/CoinList';
 import LoadingIndicator from '_components/loading/LoadingIndicator';
 import ns from '_shared/namespace';
 import { useDependencies } from '_shared/utils/dependenciesContext';
 import WalletTo from '_src/ui/app/components/wallet-to';
+import humanReadableTransactionErrors from '_src/ui/app/helpers/humanReadableTransactionError';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
 import { CoinSelect } from '_src/ui/app/pages/home/home/CoinDropdown';
 import { accountAggregateBalancesSelector } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Alert from '_src/ui/app/shared/feedback/Alert';
+import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import CopyBody from '_src/ui/app/shared/typography/CopyBody';
+import Typography from '_src/ui/app/shared/typography/Typography';
 
 import type { FormValues } from '.';
 
@@ -29,78 +31,6 @@ export type TransferCoinFormProps = {
     coinSymbol: string;
     gasBudget: number;
     onClearSubmitError: () => void;
-};
-
-const AvailableBalance = ({
-    balances,
-    filterType,
-}: {
-    balances: Record<string, bigint>;
-    filterType?: string | null;
-}) => {
-    const FormatCoin = (balance: bigint, type: string) => {
-        const [balanceFormatted, symbol, usdAmount, , icon] = useFormatCoin(
-            balance,
-            type
-        );
-
-        return [balanceFormatted, symbol, usdAmount, icon];
-    };
-
-    const filteredTypes = useMemo(() => {
-        const types = Object.keys(balances);
-        if (!filterType) return types;
-
-        return types.filter((type: string) => filterType === type);
-    }, [balances, filterType]);
-
-    const { featureFlags } = useDependencies();
-    return (
-        <div className="text-left">
-            {filteredTypes.map((type: string, idx: number) => {
-                const balance = balances[type];
-                const [balanceFormatted, symbol, usdAmount, icon] = FormatCoin(
-                    balance,
-                    type
-                );
-                return (
-                    <div className="flex items-align justify-between" key={idx}>
-                        <div className="flex gap-4 items-align">
-                            <div className="flex items-center">
-                                {icon ? (
-                                    <img
-                                        src={icon}
-                                        alt={`coin-${symbol}`}
-                                        height={39}
-                                        width={39}
-                                    />
-                                ) : symbol === 'SUI' ? (
-                                    <Sui />
-                                ) : (
-                                    <UnknownToken />
-                                )}
-                            </div>
-                            <div className="flex flex-col items-start">
-                                <div className="font-light text-base">
-                                    Available Balance
-                                </div>
-                                <div className="font-light text-sm text-slate-500 dark:text-slate-400">
-                                    <div>
-                                        {balanceFormatted} {symbol}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {featureFlags.showUsd && (
-                            <div className="flex items-center text-base text-slate-800 dark:text-slate-300">
-                                <div>{usdAmount}</div>
-                            </div>
-                        )}
-                    </div>
-                );
-            })}
-        </div>
-    );
 };
 
 function TransferCoinForm({
@@ -115,6 +45,14 @@ function TransferCoinForm({
         contacts.find((contact) => contact.address === formState.to)
     );
     const balances = useAppSelector(accountAggregateBalancesSelector);
+
+    const suiBal: Record<string, bigint> = {};
+
+    Object.keys(balances).forEach((key) => {
+        if (key === '0x2::sui::SUI') {
+            suiBal[key] = balances[key];
+        }
+    });
 
     const [searchParams] = useSearchParams();
     const coinType = searchParams.get('type');
@@ -143,9 +81,10 @@ function TransferCoinForm({
         onClearRef.current();
     }, [amount]);
 
-    const dollarDisplay = isValid && amountBigNumber.gte(0) ? dollars : '$0.00';
+    const dollarDisplay = amountBigNumber.gte(0) ? dollars : '$0.00';
 
     const { featureFlags } = useDependencies();
+
     return (
         <Form autoComplete="off" noValidate={false}>
             <div className="pt-6 px-6 text-left flex flex-col mb-2">
@@ -174,7 +113,7 @@ function TransferCoinForm({
                 </div>
                 {featureFlags.showUsd && (
                     <BodyLarge isSemibold isTextColorMedium>
-                        {dollarDisplay}
+                        ≈ {dollarDisplay} USD
                     </BodyLarge>
                 )}
                 <ErrorMessage
@@ -183,13 +122,21 @@ function TransferCoinForm({
                     component="div"
                 />
                 {submitError ? (
-                    <div className="flex flex-col mb-2">
-                        <Alert title="Transfer failed" subtitle={submitError} />
+                    <div className="flex flex-col m-3">
+                        <Alert
+                            title="Problem"
+                            subtitle={humanReadableTransactionErrors(
+                                submitError
+                            )}
+                        />
                     </div>
                 ) : null}
             </div>
             <ContentBlock className="mb-2">
-                <AvailableBalance balances={balances} filterType={coinType} />
+                <Body isSemibold className="ml-1">
+                    Available Balance
+                </Body>
+                <CoinList balances={suiBal} />
             </ContentBlock>
             <div className="flex flex-col mb-2 absolute w-full bottom-[-10px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4 rounded-b-2xl">
                 <Button
@@ -212,14 +159,23 @@ function AmountField() {
         'flex flex-row w-full py-[16px] px-[20px] focus:py-[15px] focus:px-[19px] resize-none shadow-sm rounded-[16px] bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary font-weight-ethos-body-large text-size-ethos-body-large leading-line-height-ethos-body-large tracking-letter-spacing-ethos-body-large bg-ethos-light-background-default dark:bg-ethos-dark-background-default border border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke focus:ring-0 focus:border-2 focus:border-ethos-light-primary-light focus:dark:border-ethos-dark-primary-dark focus:shadow-ethos-light-stroke-focused dark:focus:shadow-ethos-dark-stroke-focused';
 
     return (
-        <Field
-            name="amount"
-            type="text"
-            className={classes}
-            placeholder="Amount"
-            autoFocus
-            disabled={isSubmitting}
-        />
+        <div className={'relative'}>
+            <Field
+                name="amount"
+                type="text"
+                className={classes}
+                placeholder="Amount"
+                autoFocus
+                disabled={isSubmitting}
+            />
+            <Typography
+                className={
+                    'absolute top-[18px] right-5 font-weight-ethos-body-large text-size-ethos-body-large leading-line-height-ethos-body-large text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
+                }
+            >
+                SUI
+            </Typography>
+        </div>
     );
 }
 

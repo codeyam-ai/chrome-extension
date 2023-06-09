@@ -7,7 +7,7 @@ import {
 import classNames from 'classnames';
 
 import { API_ENV } from '_src/ui/app/ApiProvider';
-import Body from '_src/ui/app/shared/typography/Body';
+import Typography from '_src/ui/app/shared/typography/Typography';
 
 interface ChainIndicatorProps {
     apiEnv: API_ENV;
@@ -39,8 +39,12 @@ const ChainIndicator = ({ apiEnv, className }: ChainIndicatorProps) => {
         <div className={classNames('flex justify-center', className)}>
             <div className="flex gap-1 items-center">
                 <SignalIcon color="#9040F5" height={24} />
-                <Body>{chainName.toUpperCase()}</Body>
-                <Body isSemibold>{network.toUpperCase()}</Body>
+                <Typography className={'font-xs'}>
+                    {chainName.toUpperCase()}
+                </Typography>
+                <Typography className={'font-xs font-semibold'}>
+                    {network.toUpperCase()}
+                </Typography>
             </div>
         </div>
     );

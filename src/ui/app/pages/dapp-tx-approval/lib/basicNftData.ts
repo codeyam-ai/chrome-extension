@@ -2,6 +2,7 @@ import getDisplay from '_src/ui/app/helpers/getDisplay';
 
 import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 
 export type BasicNFtData = {
     name?: string;
@@ -12,7 +13,7 @@ const basicNftData = async ({
     signer,
     objectId,
 }: {
-    signer: RawSigner | EthosSigner;
+    signer: RawSigner | EthosSigner | LedgerSigner;
     objectId: string;
 }): Promise<BasicNFtData> => {
     const objectData = await signer.provider.getObject({

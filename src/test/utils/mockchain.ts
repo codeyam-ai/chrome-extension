@@ -1,12 +1,21 @@
+import { SuiTransactionBlockResponse } from '@mysten/sui.js/src/types/transactions';
+
 import { renderTemplate } from './json-templates';
+import { wallet1Address, wallet2Address } from './storage';
+import { getObjectIds } from './test-helpers';
 import { makeCoinObject } from '_src/test/utils/mockchain-templates/coinObject';
 import { makeDryRunTransactionResponse } from '_src/test/utils/mockchain-templates/dryRunTransaction';
 import { suiSystemStateObject } from '_src/test/utils/mockchain-templates/sui-system-state';
-import type { CoinBalance } from '@mysten/sui.js';
+import { makeCoinTransactionBlock } from '_src/test/utils/mockchain-templates/transactionBlock';
+
+import type { CoinBalance, DelegatedStake } from '@mysten/sui.js';
 import type { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
+/**
+ * Mocks out the basic JsonRPC calls that any blockchain interaction will make.
+ */
 export const mockCommonCalls = (mockJsonRpc: MockJsonRpc) => {
-    mockJsonRpc.mockBlockchainCall(
+    mockJsonRpc.mockJsonRpcCall(
         { method: 'rpc.discover' },
         { info: { version: '0.20.1' } },
         true
@@ -17,38 +26,75 @@ export const mockCommonCalls = (mockJsonRpc: MockJsonRpc) => {
         name: 'Sui',
         symbol: 'SUI',
         description: '',
-        iconUrl: null,
+        iconUrl: 'http://example.com/sui-icon.png',
         id: null,
     };
-    mockJsonRpc.mockBlockchainCall(
+    mockJsonRpc.mockJsonRpcCall(
         { method: 'suix_getCoinMetadata' },
         coinMetadataResponse,
         true
     );
 };
 
-export const mockSuiObjects = (
+interface CoinTransactionSpec {
+    amountInMist: number;
+    toAddress: string;
+    fromAddress: string;
+}
+
+/**
+ * Sets the state of the mock blockchain.
+ *
+ * @param options.coinTransaction - If provided, the blockchain will have a single transaction and associated coin objects.
+ *  If a number is provided, it will be used as the amount of SUI transferred in the transaction. If an object is provided,
+ *  it will be used to set up a transaction with the given amount of SUI, to the given address, from the given address.
+ *
+ * @param options.nftDetails - If provided, the blockchain will contain `nftDetails.count` many NFTs (default: `1`), and
+ *  will have `nftDetails.name` as the base name. All but the first will append a count for unique names, e.g., `name`,
+ *  `name2`, name3
+ * @param options.logObjects - If true, this function call will log the internal "fullObjects" list for inspection. This list
+ * will ultimately be the state of the mockchain, i.e., what is "on chain".
+ */
+export const mockBlockchain = (
     mockJsonRpc: MockJsonRpc,
     options: {
-        suiBalance?: number;
-        nftDetails?: { name: string };
+        address?: string;
+        coinTransaction?: number | CoinTransactionSpec;
+        nftDetails?: { name: string; count?: number };
+        stakedSui?: { principal: string }[];
         logObjects?: boolean;
     } = {}
 ) => {
+    mockCommonCalls(mockJsonRpc);
+    const address = options.address ?? wallet1Address;
     const fullObjects = [];
     const objectInfos = [];
     const coinBalances = [];
-    if (options.suiBalance) {
-        const objId = '0xfd9cff9fd6befa0e7d6481d0eeae02056b2ca46e';
-        const coinObject = makeCoinObject(options.suiBalance, objId);
+    const coinTransactionBlocks = [];
+    const stakedSui: DelegatedStake[] = [];
+    if (options.coinTransaction) {
+        const coinObjectId = '0xfd9cff9fd6befa0e7d6481d0eeae02056b2ca46e';
+
+        const actualCoinTransaction =
+            typeof options.coinTransaction === 'number'
+                ? {
+                      amountInMist: options.coinTransaction,
+                      toAddress: wallet1Address,
+                      fromAddress: wallet2Address,
+                  }
+                : options.coinTransaction;
+        const coinObject = makeCoinObject(
+            actualCoinTransaction.amountInMist,
+            coinObjectId
+        );
         const coinObjectInfo = {
             data: {
-                objectId: objId,
+                objectId: coinObjectId,
                 version: '0',
                 digest: '12Pe8JN96upsApMseeghANkkNMKUWA6Bz4JD5NTWko2q',
                 type: '0x2::coin::Coin<0x2::sui::SUI>',
                 owner: {
-                    AddressOwner: '0x1ce5033e82ae9a48ea743b503d96b49b9c57fe0b',
+                    AddressOwner: wallet1Address,
                 },
                 previousTransaction:
                     '2joDzF1sDVAVv9ej7j8197ZwiZ1hX73kSFW48c1nNxv3',
@@ -56,33 +102,121 @@ export const mockSuiObjects = (
         };
         const coinBalance: CoinBalance = {
             coinType: '0x2::sui::SUI',
-            totalBalance: options.suiBalance.toString(),
+            totalBalance: actualCoinTransaction.amountInMist.toString(),
             coinObjectCount: 1,
             lockedBalance: { number: 0 },
         };
+
+        const coinTransactionBlock = makeCoinTransactionBlock(
+            actualCoinTransaction.toAddress,
+            actualCoinTransaction.fromAddress,
+            actualCoinTransaction.amountInMist,
+            coinObjectId
+        );
+        coinTransactionBlocks.push(coinTransactionBlock);
         objectInfos.push(coinObjectInfo);
         fullObjects.push(coinObject);
         coinBalances.push(coinBalance);
     }
     if (options.nftDetails) {
-        const renderedNftResult = renderTemplate('nftObject', {
-            name: options.nftDetails.name,
-        });
+        const buildNft = (name: string, objectId: string) => {
+            const renderedNftResult = renderTemplate('nftObject', {
+                name,
+                objectId,
+            });
 
-        const nftObjectInfo = {
-            data: {
-                objectId:
-                    '0x3c36fe1eca57222e087352959ab0edf83251fe0a5aa8a0ec87c4e3fa1714f367',
-                version: '10',
-                digest: '3LrFiM2niq5to7XJ466L7b9oVkQtXqTvNhfiLWCNCTTN',
-            },
+            const nftObjectInfo = {
+                data: {
+                    objectId,
+                    version: '10',
+                    digest: '3LrFiM2niq5to7XJ466L7b9oVkQtXqTvNhfiLWCNCTTN',
+                },
+            };
+            objectInfos.push(nftObjectInfo);
+            fullObjects.push(renderedNftResult);
         };
-        objectInfos.push(nftObjectInfo);
-        fullObjects.push(renderedNftResult);
+
+        const name = options.nftDetails.name;
+        const count: number = options.nftDetails?.count ?? 1;
+        const objectIds = getObjectIds(count);
+        for (const objectId of objectIds) {
+            const i = objectId.at(-1);
+            const nftName = i === '0' ? name : `${name}${i}`;
+            buildNft(nftName, objectId);
+        }
+    }
+    if (options.stakedSui) {
+        options.stakedSui.forEach((stake, i) => {
+            stakedSui.push({
+                validatorAddress:
+                    '0x0a392298244ca2694098d015b00cf49ae1168118b28d13cb0baafd5884e5559a',
+                stakingPool:
+                    '0x093136a86b72b6aa1c84e84e72a00ca2260246441976f1ce070b136dbfc6b90f',
+                stakes: [
+                    {
+                        stakedSuiId: `0xd32356af50f7aa6f26b89657c798968eaf5db3d43479ae793a01125e746ee9${i}c`,
+                        stakeRequestEpoch: '778',
+                        stakeActiveEpoch: '779',
+                        principal: stake.principal,
+                        status: 'Active',
+                        estimatedReward: '2388556',
+                    },
+                ],
+            });
+        });
     }
 
-    mockJsonRpc.mockBlockchainCall(
-        { method: 'suix_getOwnedObjects' },
+    mockJsonRpc.mockJsonRpcCall(
+        {
+            method: 'suix_queryTransactionBlocks',
+            params: [
+                {
+                    filter: {
+                        ToAddress: wallet1Address,
+                    },
+                },
+            ],
+        },
+        {
+            data: coinTransactionBlocks,
+            nextCursor: null,
+            hasNextPage: false,
+        },
+        true
+    );
+
+    mockJsonRpc.mockJsonRpcCall(
+        {
+            method: 'suix_queryTransactionBlocks',
+            params: [
+                {
+                    filter: {
+                        FromAddress: wallet1Address,
+                    },
+                },
+            ],
+        },
+        {
+            data: [],
+            nextCursor: null,
+            hasNextPage: false,
+        },
+        true
+    );
+
+    mockJsonRpc.mockJsonRpcCall(
+        {
+            method: 'suix_getStakes',
+        },
+        stakedSui,
+        true
+    );
+
+    mockJsonRpc.mockJsonRpcCall(
+        {
+            method: 'suix_getOwnedObjects',
+            params: [address],
+        },
         {
             data: objectInfos,
             nextCursor: {
@@ -94,15 +228,18 @@ export const mockSuiObjects = (
         true
     );
 
-    mockJsonRpc.mockBlockchainCall(
-        { method: 'suix_getAllBalances' },
+    mockJsonRpc.mockJsonRpcCall(
+        {
+            method: 'suix_getAllBalances',
+            params: [address],
+        },
         coinBalances,
         true
     );
 
     fullObjects.push(suiSystemStateObject);
     fullObjects.forEach((fullObject) => {
-        mockJsonRpc.mockBlockchainCall(
+        mockJsonRpc.mockJsonRpcCall(
             {
                 method: 'suix_getObject',
                 params: [fullObject.data.objectId],
@@ -112,11 +249,15 @@ export const mockSuiObjects = (
         );
     });
 
-    mockJsonRpc.mockBlockchainCall(
+    mockJsonRpc.mockJsonRpcCall(
         { method: 'sui_multiGetObjects' },
         fullObjects,
         true
     );
+
+    if (options.logObjects) {
+        console.log('!! mockchain log !! fullObjects !!\n', fullObjects);
+    }
 };
 
 /**
@@ -128,34 +269,34 @@ export const mockSuiObjects = (
 export const rpcMocks = (mockJsonRpc: MockJsonRpc) => {
     return {
         sui_getNormalizedMoveFunction: () => {
-            mockJsonRpc.mockBlockchainCall(
+            mockJsonRpc.mockJsonRpcCall(
                 { method: 'sui_getNormalizedMoveFunction' },
                 renderTemplate('getNormalizedMoveFunction', {}),
                 true
             );
         },
         suix_getNormalizedMoveFunction: () => {
-            mockJsonRpc.mockBlockchainCall(
+            mockJsonRpc.mockJsonRpcCall(
                 { method: 'sui_getNormalizedMoveFunction' },
                 renderTemplate('getNormalizedMoveFunction', {}),
                 true
             );
         },
         sui_devInspectTransactionBlock: () => {
-            mockJsonRpc.mockBlockchainCall(
+            mockJsonRpc.mockJsonRpcCall(
                 { method: 'sui_devInspectTransactionBlock' },
                 renderTemplate('devInspectTransaction', {})
             );
         },
         suix_getReferenceGasPrice: () => {
-            mockJsonRpc.mockBlockchainCall(
+            mockJsonRpc.mockJsonRpcCall(
                 { method: 'suix_getReferenceGasPrice', params: [] },
                 '1',
                 true
             );
         },
         suix_getCoins: () => {
-            mockJsonRpc.mockBlockchainCall(
+            mockJsonRpc.mockJsonRpcCall(
                 {
                     method: 'suix_getCoins',
                     params: [
@@ -170,7 +311,7 @@ export const rpcMocks = (mockJsonRpc: MockJsonRpc) => {
             );
         },
         sui_dryRunTransactionBlock: (digest: string) => {
-            mockJsonRpc.mockBlockchainCall(
+            mockJsonRpc.mockJsonRpcCall(
                 {
                     method: 'sui_dryRunTransactionBlock',
                     params: [digest],
@@ -180,7 +321,7 @@ export const rpcMocks = (mockJsonRpc: MockJsonRpc) => {
             );
         },
         sui_executeTransactionBlock: (params: (string | string[] | null)[]) => {
-            mockJsonRpc.mockBlockchainCall(
+            mockJsonRpc.mockJsonRpcCall(
                 {
                     method: 'sui_executeTransactionBlock',
                     params: params ?? [

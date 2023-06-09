@@ -2,13 +2,13 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { faker } from './utils/faker';
-import { mockCommonCalls, rpcMocks } from './utils/mockchain';
+import { rpcMocks } from './utils/mockchain';
 import { renderApp } from './utils/react-rendering';
 import { simulateMnemonicUser } from './utils/storage';
 import { PREAPPROVAL_KEY } from '_shared/constants';
 import { setEncrypted } from '_shared/storagex/store';
-import { makeTestDeps } from '_src/test/utils/test-dependencies';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
 describe('transaction pre-approval flow', () => {
     let mockJsonRpc: MockJsonRpc;
@@ -16,7 +16,6 @@ describe('transaction pre-approval flow', () => {
 
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
-        mockCommonCalls(mockJsonRpc);
         simulateMnemonicUser();
         rpcMocks(mockJsonRpc).sui_getNormalizedMoveFunction();
 

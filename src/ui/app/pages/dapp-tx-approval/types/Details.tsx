@@ -18,26 +18,31 @@ import type {
 } from '../lib/analyzeChanges';
 import type { RawSigner, SuiAddress, SuiObjectChange } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 import type { ReactNode } from 'react';
 
 const Row = ({
     title,
     value,
     subvalue,
+    dollars,
     truncate = true,
 }: {
     title: string;
     value?: string;
     subvalue?: ReactNode;
     truncate?: boolean;
+    dollars?: string;
 }) => {
+    const formattedValue =
+        title === 'SUI' ? `${truncateMiddle(value)} ≈ ${dollars} USD` : value;
     return (
         <div className="flex flex-row items-center justify-between">
             <Body isSemibold={!value}>{title}</Body>
             <div className="text-right">
                 {value && (
                     <div title={value}>
-                        <Body>{truncate ? truncateMiddle(value) : value}</Body>
+                        <Body>{truncate ? formattedValue : value}</Body>
                     </div>
                 )}
                 {typeof subvalue === 'string' ? (
@@ -91,12 +96,13 @@ const BalanceChanges = ({
         amount: string;
         coinType: string;
     }) => {
-        const [formatted, symbol] = useFormatCoin(amount, coinType);
+        const [formatted, symbol, dollars] = useFormatCoin(amount, coinType);
 
         return (
             <Row
                 title={symbol ?? coinType}
                 value={formatted}
+                dollars={dollars}
                 subvalue={coinType === SUI_TYPE_ARG ? undefined : coinType}
             />
         );
@@ -137,7 +143,9 @@ const AssetChanges = ({
         (objectChange) =>
             !(
                 'objectType' in objectChange &&
-                objectChange.objectType.indexOf('0x2::coin::Coin') > -1
+                objectChange.objectType.indexOf(
+                    '0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin'
+                ) > -1
             )
     );
 
@@ -258,7 +266,7 @@ const Details = ({
     signer,
 }: {
     analysis: AnalyzeChangesResult;
-    signer: EthosSigner | RawSigner;
+    signer: EthosSigner | LedgerSigner | RawSigner;
 }) => {
     const { resolvedTheme } = useTheme();
     const [details, setDetails] = useState(false);

@@ -1,5 +1,6 @@
 import { useFormatCoin } from '../../hooks';
 import { useValidatorsWithApy } from '../../hooks/staking/useValidatorsWithApy';
+import ValidatorImage from '../../pages/home/home/dapp/dapps/Staking/Validator/ValidatorImage';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 
@@ -33,15 +34,10 @@ const StakingSummary = ({
                 <div className="flex items-center gap-1 !text-xs">
                     {isFailure && (
                         <div>
-                            {validator && validator.imageUrl ? (
-                                <img
-                                    src={validator.imageUrl}
-                                    alt={validator.name}
-                                    className="h-4 w-4 rounded-full"
-                                />
-                            ) : (
-                                <div className="h-4 w-4 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
-                            )}
+                            <ValidatorImage
+                                validator={validator}
+                                className="h-4 w-4 rounded-full"
+                            />
                         </div>
                     )}
                     <Body isTextColorMedium>{validator?.name}</Body>

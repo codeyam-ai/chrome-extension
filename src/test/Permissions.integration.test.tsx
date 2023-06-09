@@ -1,13 +1,13 @@
 import { screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import { mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import {
     simulateConnectedApps,
     simulateMnemonicUser,
 } from '_src/test/utils/storage';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('The Permissions page', () => {
     let mockJsonRpc: MockJsonRpc;
@@ -16,8 +16,7 @@ describe('The Permissions page', () => {
         mockJsonRpc = new MockJsonRpc();
         await simulateMnemonicUser();
         await simulateConnectedApps();
-        mockCommonCalls(mockJsonRpc);
-        mockSuiObjects(mockJsonRpc);
+        mockBlockchain(mockJsonRpc);
     });
 
     test('Allows the user to revoke permissions to connected apps', async () => {

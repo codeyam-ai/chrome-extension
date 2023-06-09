@@ -11,6 +11,7 @@ import { accountAggregateBalancesSelector } from '../../redux/slices/account';
 import { fetchAllBalances } from '../../redux/slices/balances';
 import OnboardingButton from '../../shared/buttons/OnboardingButton';
 import OnboardingCard from '../../shared/layouts/OnboardingCard';
+import DiscordIcon from '../../shared/svg/DiscordIcon';
 import TwitterIcon from '../../shared/svg/TwitterIcon';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Header from '../../shared/typography/Header';
@@ -18,6 +19,7 @@ import JumboTitle from '../../shared/typography/JumboTitle';
 import Sui from '../home/home/Sui';
 import {
     DASHBOARD_LINK,
+    DISCORD_URL,
     MAILTO_SUPPORT_URL,
     TWITTER_URL,
 } from '_src/shared/constants';
@@ -25,6 +27,11 @@ import {
 import type { OnboardingButtonProps } from '../../shared/buttons/OnboardingButton';
 
 const socialLinks: SocialLinkProps[] = [
+    {
+        title: 'Join our Discord',
+        iconWithNoClasses: <DiscordIcon className="h-6 w-6" />,
+        to: DISCORD_URL,
+    },
     {
         title: 'Follow us on Twitter',
         iconWithNoClasses: <TwitterIcon />,

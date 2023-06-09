@@ -20,6 +20,7 @@ const From = () => {
                 <WalletColorAndEmojiCircle
                     color={accountInfo?.color}
                     emoji={accountInfo?.emoji}
+                    nftPfpUrl={accountInfo?.nftPfpUrl}
                     circleSizeClasses="h-6 w-6"
                     emojiSizeInPx={12}
                 />

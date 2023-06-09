@@ -26,6 +26,7 @@ const CoinIcon = ({
     if (iconUrl) {
         return (
             <img
+                data-testid="coin-icon"
                 src={iconUrl}
                 alt={coinName ?? symbol}
                 width={42}
@@ -35,7 +36,7 @@ const CoinIcon = ({
         );
     } else if (coinType === SUI_TYPE_ARG) {
         return (
-            <ActionIcon>
+            <ActionIcon isSui paddingOverride={'p-0'}>
                 <Sui />
             </ActionIcon>
         );

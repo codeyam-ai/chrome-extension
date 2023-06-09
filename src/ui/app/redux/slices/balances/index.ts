@@ -4,6 +4,8 @@ import {
     createSlice,
 } from '@reduxjs/toolkit';
 
+import testConnection from '../../testConnection';
+
 import type { CoinBalance } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
@@ -14,48 +16,27 @@ const balancesAdapter = createEntityAdapter<CoinBalance>({
 });
 
 export const fetchAllBalances = createAsyncThunk<
-    CoinBalance[],
+    CoinBalance[] | null,
     void,
     AppThunkConfig
 >('balances/fetch-all', async (_, { getState, extra: { api } }) => {
     const state = getState();
 
     if (!state.balances.lastSync) {
-        try {
-            const response = await fetch(
-                api.instance.fullNode.connection.fullnode,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        jsonrpc: '2.0',
-                        id: 1,
-                        method: 'rpc.discover',
-                    }),
-                }
-            );
-
-            if (response.status !== 200) {
-                throw new Error('RPC not responding');
-            }
-        } catch (e) {
-            throw new Error('RPC not responding');
-        }
+        await testConnection(api);
     }
 
     const {
         account: { address },
     } = state;
 
-    let allBalances: CoinBalance[] = [];
-
-    if (address) {
-        allBalances = await api.instance.fullNode.getAllBalances({
-            owner: address,
-        });
+    if (!address) {
+        return null;
     }
+
+    const allBalances = await api.instance.fullNode.getAllBalances({
+        owner: address,
+    });
 
     return allBalances;
 });
@@ -65,6 +46,7 @@ interface BalancesManualState {
     error: false | { code?: string; message?: string; name?: string };
     lastSync: number | null;
 }
+
 const initialState = balancesAdapter.getInitialState<BalancesManualState>({
     loading: true,
     error: false,
@@ -86,13 +68,15 @@ const slice = createSlice({
         builder
             .addCase(fetchAllBalances.fulfilled, (state, action) => {
                 if (action.payload) {
-                    balancesAdapter.setAll(state, action.payload);
-                    state.loading = false;
-                    state.error = false;
-                    state.lastSync = Date.now();
+                    if (action.payload) {
+                        balancesAdapter.setAll(state, action.payload);
+                        state.loading = false;
+                        state.error = false;
+                        state.lastSync = Date.now();
+                    }
                 }
             })
-            .addCase(fetchAllBalances.pending, (state, action) => {
+            .addCase(fetchAllBalances.pending, (state) => {
                 state.loading = true;
             })
             .addCase(

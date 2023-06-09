@@ -2,37 +2,36 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { simulateMnemonicUser } from './utils/storage';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
-import { renderApp } from '_src/test/utils/react-rendering';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import { mockBlockchain } from '_src/test/utils/mockchain';
+import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('Top Nav Wallet Management', () => {
     let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
         simulateMnemonicUser();
         mockJsonRpc = new MockJsonRpc();
-        mockCommonCalls(mockJsonRpc);
-        mockSuiObjects(mockJsonRpc);
+        mockBlockchain(mockJsonRpc);
     });
 
     test('Switching current wallet', async () => {
         renderApp();
 
-        let currentWallet = await screen.findByTestId('current-wallet');
+        let currentWallet = await screen.findByTestId('current-wallet-link');
         await within(currentWallet).findByText('Wallet 1');
         await userEvent.click(currentWallet);
 
         const wallet2Link = await screen.findByText('Wallet 2');
         await userEvent.click(wallet2Link);
 
-        currentWallet = await screen.findByTestId('current-wallet');
+        currentWallet = await screen.findByTestId('current-wallet-link');
         await within(currentWallet).findByText('Wallet 2');
     });
 
     test('Editing wallet', async () => {
         renderApp();
 
-        let currentWallet = await screen.findByTestId('current-wallet');
+        let currentWallet = await screen.findByTestId('current-wallet-link');
         await within(currentWallet).findByText('Wallet 1');
         await userEvent.click(currentWallet);
 
@@ -58,7 +57,7 @@ describe('Top Nav Wallet Management', () => {
         await screen.findAllByTestId('color-#EB154C');
 
         // check wallet 1 still current wallet (see https://linear.app/ethoswallet/issue/ETHOS-89)
-        currentWallet = await screen.findByTestId('current-wallet');
+        currentWallet = await screen.findByTestId('current-wallet-link');
         await within(currentWallet).findByText('Wal-1');
     });
 });

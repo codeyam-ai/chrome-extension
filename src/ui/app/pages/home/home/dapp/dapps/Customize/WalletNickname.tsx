@@ -36,7 +36,7 @@ const WalletNickname: React.FC = () => {
 
     const handleOnContinue = useCallback(() => {
         updateCurrentAccountInfo({ name: nickname });
-        navigate('/home/customize/emoji');
+        navigate('/home/customize/profile-picture');
     }, [nickname, updateCurrentAccountInfo, navigate]);
 
     useEffect(() => {

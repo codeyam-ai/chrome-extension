@@ -6,8 +6,8 @@ import { useMemo } from 'react';
 import useAppSelector from './useAppSelector';
 
 export function useObjectsState() {
-    const objectsLoading = useAppSelector(
-        ({ suiObjects }) => suiObjects.loading
+    const { loading: objectsLoading, loadingMore } = useAppSelector(
+        ({ suiObjects }) => suiObjects
     );
     const lastSync = useAppSelector(({ suiObjects }) => suiObjects.lastSync);
     const error = useAppSelector(({ suiObjects }) => suiObjects.error);
@@ -18,10 +18,11 @@ export function useObjectsState() {
     return useMemo(
         () => ({
             loading,
+            loadingMore,
             syncedOnce,
             error,
             showError,
         }),
-        [loading, syncedOnce, error, showError]
+        [loading, loadingMore, syncedOnce, error, showError]
     );
 }

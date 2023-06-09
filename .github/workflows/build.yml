@@ -37,6 +37,12 @@ jobs:
                   API_ENDPOINT_DEVNET_FULLNODE: ${{ secrets.API_ENDPOINT_DEVNET_FULLNODE }}
                   API_ENDPOINT_TESTNET_FULLNODE: ${{ secrets.API_ENDPOINT_TESTNET_FULLNODE }}
                   API_ENDPOINT_MAINNET_FULLNODE: ${{ secrets.API_ENDPOINT_MAINNET_FULLNODE }}
+                  API_ENDPOINT_DEVNET_FULLNODE_2: ${{ secrets.API_ENDPOINT_DEVNET_FULLNODE_2 }}
+                  API_ENDPOINT_TESTNET_FULLNODE_2: ${{ secrets.API_ENDPOINT_TESTNET_FULLNODE_2 }}
+                  API_ENDPOINT_MAINNET_FULLNODE_2: ${{ secrets.API_ENDPOINT_MAINNET_FULLNODE_2 }}
+                  API_ENDPOINT_DEVNET_FULLNODE_3: ${{ secrets.API_ENDPOINT_DEVNET_FULLNODE_3 }}
+                  API_ENDPOINT_TESTNET_FULLNODE_3: ${{ secrets.API_ENDPOINT_TESTNET_FULLNODE_3 }}
+                  API_ENDPOINT_MAINNET_FULLNODE_3: ${{ secrets.API_ENDPOINT_MAINNET_FULLNODE_3 }}
                   ETHOS_API_KEY: ${{ secrets.ETHOS_API_KEY }}
               run: npm run build:prod
 
@@ -86,8 +92,8 @@ jobs:
               run: npm install
 
             # Finally, build the chrome extension
-            - name: Build Chrome Extension
-              run: npm test
+            - name: Run Tests
+              run: DEBUG_PRINT_LIMIT=10000000 NODE_OPTIONS="--max-old-space-size=4096" npm test
 
             - name: Notify if broken
               uses: sarisia/actions-status-discord@v1

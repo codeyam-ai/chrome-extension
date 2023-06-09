@@ -1,6 +1,3 @@
-// Copyright (c) 2022, Mysten Labs, Inc.
-// SPDX-License-Identifier: Apache-2.0
-
 // replaces global fetch with something that works in Node (i.e. tests)
 import 'isomorphic-fetch';
 import { useEffect } from 'react';
@@ -11,6 +8,7 @@ import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval'
 import MoonpayOnboarding from './pages/home/buy';
 import AddressBookNavigation from './pages/home/home/dapp/dapps/AddressBook/AddressBookNavigation';
 import CustomizeNavigation from './pages/home/home/dapp/dapps/Customize/CustomizeNavigation';
+import LedgerNavigation from './pages/home/home/dapp/dapps/Ledger/LedgerNavigation';
 import ManageWallets from './pages/home/home/dapp/dapps/ManageWallets/ManageWalletsNavigation';
 import StakingNavigation from './pages/home/home/dapp/dapps/Staking/StakingNavigation';
 import TransferNftRecipient from './pages/home/nft-details/transfer-nft-recipient';
@@ -31,7 +29,8 @@ import SavePhrasePage from './pages/initialize/save-phrase';
 import StylePage from './pages/initialize/style';
 import OnboardingThemePage from './pages/initialize/theme';
 import VerifyPhrasePage from './pages/initialize/verify-phrase';
-import LockedPage from './pages/locked';
+import ForgotPasswordPage from './pages/locked/ForgotPasswordPage';
+import LockedPage from './pages/locked/locked';
 import PasswordPage from './pages/password';
 import { AppType } from './redux/slices/app/AppType';
 import { loadContactsStorage } from './redux/slices/contacts';
@@ -110,6 +109,10 @@ const App = () => {
                         <Route
                             path="home/manage-wallets/*"
                             element={<ManageWallets />}
+                        />
+                        <Route
+                            path="home/ledger/*"
+                            element={<LedgerNavigation />}
                         />
                         <Route path="tokens" element={<TokensPage />} />
                         <Route path="nfts">
@@ -203,6 +206,10 @@ const App = () => {
                     </Route>
                     <Route path="password" element={<PasswordPage />} />
                     <Route path="locked" element={<LockedPage />} />
+                    <Route
+                        path="locked/forgot-password"
+                        element={<ForgotPasswordPage />}
+                    />
                     <Route path="locked/*" element={<LockedPage />} />
                     <Route
                         path="/connect/:requestID"

@@ -10,6 +10,7 @@ import { type PropsWithChildren, useCallback, useMemo } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
 
+import ValidatorImage from './Validator/ValidatorImage';
 import { useTheme } from '_src/shared/utils/themeContext';
 import { useFormatCoin } from '_src/ui/app/hooks';
 import { useDistanceToStartEarningRewards } from '_src/ui/app/hooks/staking/useDistanceToStartEarningRewards';
@@ -168,15 +169,10 @@ const StakeRow = ({ stake }: { stake: StakeWithValidatorAddress }) => {
                 className="w-full flex flex-row items-center place-content-center justify-between py-4 px-6 hover:bg-ethos-super-light-purple dark:hover:bg-ethos-dark-background-secondary/50 border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke"
             >
                 <div className="flex items-center place-content-center gap-3">
-                    {validator?.imageUrl ? (
-                        <img
-                            src={validator.imageUrl}
-                            alt={validator.name}
-                            className="h-10 w-10 rounded-full"
-                        />
-                    ) : (
-                        <div className="h-10 w-10 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
-                    )}
+                    <ValidatorImage
+                        validator={validator}
+                        className="h-10 w-10 rounded-full"
+                    />
                     <div className="flex flex-col items-start">
                         <Body isTextColorMedium>
                             {isInitialLoading ? (

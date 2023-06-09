@@ -7,13 +7,15 @@ import { toast } from 'react-toastify';
 
 import StakeSummary from './StakeSummary';
 import { LinkType } from '_src/enums/LinkType';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
+import { getSigner } from '_src/ui/app/helpers/getSigner';
+import humanReadableTransactionErrors from '_src/ui/app/helpers/humanReadableTransactionError';
 import { calculateStakeRewardStart } from '_src/ui/app/helpers/staking/calculateStakeRewardStart';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { useSystemState } from '_src/ui/app/hooks/staking/useSystemState';
 import { useValidatorsWithApy } from '_src/ui/app/hooks/staking/useValidatorsWithApy';
 import mistToSui from '_src/ui/app/pages/dapp-tx-approval/lib/mistToSui';
-import { api, thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
@@ -35,10 +37,15 @@ function createStakeTransaction(amount: bigint, validator: string) {
 }
 
 const ReviewStake: React.FC = () => {
+    const { connectToLedger } = useSuiLedgerClient();
     const [loading, setLoading] = useState(false);
-    const { activeAccountIndex, address, authentication } = useAppSelector(
-        ({ account }) => account
-    );
+    const {
+        activeAccountIndex,
+        accountInfos,
+        address,
+        authentication,
+        passphrase,
+    } = useAppSelector(({ account }) => account);
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const validatorSuiAddress = searchParams.get('validator');
@@ -61,15 +68,17 @@ const ReviewStake: React.FC = () => {
     const onConfirm = useCallback(async () => {
         if (!amount) return;
         setLoading(true);
-        let signer;
 
-        if (authentication) {
-            signer = api.getEthosSignerInstance(address || '', authentication);
-        } else {
-            signer = api.getSignerInstance(
-                thunkExtras.keypairVault.getKeyPair(activeAccountIndex)
-            );
-        }
+        const signer = await getSigner(
+            passphrase,
+            accountInfos,
+            address,
+            authentication,
+            activeAccountIndex,
+            connectToLedger
+        );
+
+        if (!signer) return;
 
         const transactionBlock = createStakeTransaction(
             BigInt(new BigNumber(amount).shiftedBy(9).toString()),
@@ -112,15 +121,24 @@ const ReviewStake: React.FC = () => {
             // eslint-disable-next-line no-console
             console.error('error', error);
 
-            toast(<FailAlert text={`Something went wrong. ${error}`} />);
+            toast(
+                <FailAlert
+                    text={`Something went wrong. ${humanReadableTransactionErrors(
+                        `${error}`
+                    )}`}
+                />
+            );
         }
         setLoading(false);
     }, [
+        accountInfos,
         activeAccountIndex,
         address,
         amount,
         authentication,
+        connectToLedger,
         navigate,
+        passphrase,
         queryClient,
         validatorSuiAddress,
     ]);

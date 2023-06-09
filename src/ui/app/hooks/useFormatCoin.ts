@@ -5,8 +5,8 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { useMemo } from 'react';
-// import { useIntl } from 'react-intl';
 
+import { queryCryptoToFiat } from './useCryptoToFiatConversion';
 import { Coin } from '../redux/slices/sui-objects/Coin';
 import { api } from '../redux/store/thunk-extras';
 import ns from '_shared/namespace';
@@ -101,6 +101,23 @@ export function useCoinDecimals(coinType?: string | null) {
     ] as const;
 }
 
+export function useCoinConversion() {
+    const amount = useQuery(
+        ['conversion'],
+        async () => {
+            return queryCryptoToFiat();
+        },
+        {
+            retry: false,
+            enabled: true,
+            staleTime: Infinity,
+            cacheTime: 4000,
+        }
+    );
+
+    return amount.data;
+}
+
 // TODO: This handles undefined values to make it easier to integrate with the reset of the app as it is
 // today, but it really shouldn't in a perfect world.
 export function useFormatCoin(
@@ -108,13 +125,22 @@ export function useFormatCoin(
     coinType?: string | null,
     formattedLength?: number
 ): FormattedCoin {
-    // const intl = useIntl();
+    const verifiedBridgeToken = useMemo<string | undefined>(() => {
+        if (!coinType) return;
+        const packageObjectId = coinType.split('::')[0];
+        if (!packageObjectId) return;
+
+        return VERIFIED_TOKENS[packageObjectId];
+    }, [coinType]);
+
     const symbol = useMemo(
         () => (coinType ? Coin.getCoinSymbol(coinType) : ''),
         [coinType]
     );
 
     const [decimals, coinMetadata, queryResult] = useCoinDecimals(coinType);
+    const conversion = useCoinConversion();
+
     // const { isFetched, isError } = queryResult;
 
     const formatted = useMemo(() => {
@@ -132,7 +158,7 @@ export function useFormatCoin(
         //     return '...';
         // }
 
-        const safeDecimals = decimals ?? 9;
+        const safeDecimals = decimals ?? (verifiedBridgeToken ? 6 : 9);
 
         const decimalsBalance = new BigNumber(balance.toString()).shiftedBy(
             -1 * safeDecimals
@@ -141,7 +167,8 @@ export function useFormatCoin(
         if (
             formattedLength &&
             decimalsBalance.lt(1) &&
-            decimalsBalance.toString().split('.')[1].length > formattedLength
+            (decimalsBalance.toString().split('.')[1]?.length ?? 0) >
+                formattedLength
         ) {
             return ns.format.coinBalance(
                 balance,
@@ -151,7 +178,7 @@ export function useFormatCoin(
         }
 
         return ns.format.coinBalance(balance, safeDecimals);
-    }, [balance, decimals, formattedLength]);
+    }, [balance, decimals, formattedLength, verifiedBridgeToken]);
 
     const dollars = useMemo(() => {
         if (
@@ -159,22 +186,14 @@ export function useFormatCoin(
             balance === null ||
             typeof decimals === 'undefined'
         ) {
-            return '...';
+            return '$0.00';
         }
-        return ns.format.dollars(balance, decimals);
-    }, [balance, decimals]);
-
-    const verifiedBridgeToken = useMemo<string | undefined>(() => {
-        if (!coinType) return;
-        const packageObjectId = coinType.split('::')[0];
-        if (!packageObjectId) return;
-
-        return VERIFIED_TOKENS[packageObjectId];
-    }, [coinType]);
+        return ns.format.dollars(balance, decimals, conversion);
+    }, [balance, decimals, conversion]);
 
     return [
         formatted,
-        coinMetadata?.symbol || symbol,
+        verifiedBridgeToken ?? coinMetadata?.symbol ?? symbol,
         dollars,
         verifiedBridgeToken ?? coinMetadata?.name ?? symbol,
         coinMetadata?.iconUrl || null,

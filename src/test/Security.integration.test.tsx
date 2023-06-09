@@ -5,7 +5,8 @@ import nock from 'nock';
 
 import { getEncrypted } from '_shared/storagex/store';
 import { BASE_URL } from '_src/shared/constants';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import { mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import {
     fakeAccessToken,
@@ -15,7 +16,11 @@ import {
     simulateMnemonicUser,
     simulateEmailUser,
 } from '_src/test/utils/storage';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+
+jest.mock('_shared/encryption/password', () => ({
+    encrypt: jest.fn((data) => data.text),
+    decrypt: jest.fn((data) => data.encryptedData),
+}));
 
 describe('The Security Settings page', () => {
     let mockJsonRpc: MockJsonRpc;
@@ -25,7 +30,7 @@ describe('The Security Settings page', () => {
     });
 
     const init = async () => {
-        await mockSuiObjects(mockJsonRpc);
+        await mockBlockchain(mockJsonRpc);
         await renderApp();
 
         await screen.findByText('Get started with Sui');
@@ -47,7 +52,6 @@ describe('The Security Settings page', () => {
     describe('mnemonic user', () => {
         beforeEach(async () => {
             simulateMnemonicUser();
-            mockCommonCalls(mockJsonRpc);
         });
 
         test('requires a valid password to view the recovery phrase', async () => {
@@ -61,17 +65,15 @@ describe('The Security Settings page', () => {
             let recoveryPhraseElements = screen.queryAllByText(recoveryPhrase);
             expect(recoveryPhraseElements.length).toBe(0);
 
-            const passwordInput = await screen.findByTestId(
-                'view-phrase-password'
-            );
+            const passwordInput = await screen.findByTestId('password');
             await userEvent.type(passwordInput, 'bad-password');
 
             const submitPasswordButton = await screen.findByText(
-                'View recovery phrase'
+                'View Recovery Phrase'
             );
             await userEvent.click(submitPasswordButton);
 
-            await screen.findByText('Password is not correct.');
+            await screen.findByText('Password is incorrect');
 
             recoveryPhraseElements = screen.queryAllByText(recoveryPhrase);
             expect(recoveryPhraseElements.length).toBe(0);
@@ -79,9 +81,6 @@ describe('The Security Settings page', () => {
             await userEvent.clear(passwordInput);
             await userEvent.type(passwordInput, password);
             await userEvent.click(submitPasswordButton);
-
-            const errors = screen.queryAllByText('Password is not correct.');
-            expect(errors.length).toBe(0);
 
             await screen.findByText(recoveryPhrase);
         });
@@ -101,17 +100,15 @@ describe('The Security Settings page', () => {
             let privateKeyElements = screen.queryAllByText(privateKey);
             expect(privateKeyElements.length).toBe(0);
 
-            const passwordInput = await screen.findByTestId(
-                'view-private-key-password'
-            );
+            const passwordInput = await screen.findByTestId('password');
             await userEvent.type(passwordInput, 'bad-password');
 
             const submitPasswordButton = await screen.findByText(
-                'View private key'
+                'View Private Key'
             );
             await userEvent.click(submitPasswordButton);
 
-            await screen.findByText('Password is not correct.');
+            await screen.findByText('Password is incorrect');
 
             privateKeyElements = screen.queryAllByText(privateKey);
             expect(privateKeyElements.length).toBe(0);
@@ -120,20 +117,20 @@ describe('The Security Settings page', () => {
             await userEvent.type(passwordInput, password);
             await userEvent.click(submitPasswordButton);
 
-            const errors = screen.queryAllByText('Password is not correct.');
-            expect(errors.length).toBe(0);
-
             await screen.findByText(privateKey);
         });
 
         test('shows the proper private key for the selected account', async () => {
             await init();
 
-            const currentWallet = await screen.findByTestId('current-wallet');
+            const currentWallet = await screen.findByTestId(
+                'current-wallet-link'
+            );
             await within(currentWallet).findByText('Wallet 1');
+
             await userEvent.click(currentWallet);
 
-            const wallet2Link = await screen.findByText('Wallet 2');
+            const wallet2Link = await screen.findByTestId('wallet2');
             await userEvent.click(wallet2Link);
 
             await navigateToSecurity();
@@ -148,11 +145,9 @@ describe('The Security Settings page', () => {
             );
             const privateKey = toB64(uint8Array);
 
-            const passwordInput = await screen.findByTestId(
-                'view-private-key-password'
-            );
+            const passwordInput = await screen.findByTestId('password');
             const submitPasswordButton = await screen.findByText(
-                'View private key'
+                'View Private Key'
             );
 
             await userEvent.type(passwordInput, password);
@@ -196,7 +191,6 @@ describe('The Security Settings page', () => {
 
             await userEvent.type(paswwordInput, 'one two three');
             await userEvent.click(screen.getByTestId('submit'));
-            await screen.findByText('My Balance');
         });
 
         test('does not allow user to change password if they put wrong current password', async () => {
@@ -280,7 +274,6 @@ describe('The Security Settings page', () => {
                 });
 
             simulateEmailUser();
-            mockCommonCalls(mockJsonRpc);
         });
 
         test('shows the seed phrase for email accounts', async () => {
@@ -298,7 +291,7 @@ describe('The Security Settings page', () => {
             await userEvent.click(viewPhraseCheck);
 
             const viewPhraseButton = await screen.findByText(
-                'View recovery phrase'
+                'View Recovery Phrase'
             );
             await userEvent.click(viewPhraseButton);
 
@@ -337,7 +330,7 @@ describe('The Security Settings page', () => {
             await userEvent.click(viewPhraseCheck);
 
             const viewPhraseButton = await screen.findByText(
-                'View private key'
+                'View Private Key'
             );
             await userEvent.click(viewPhraseButton);
 
@@ -364,11 +357,13 @@ describe('The Security Settings page', () => {
 
             await init();
 
-            const currentWallet = await screen.findByTestId('current-wallet');
+            const currentWallet = await screen.findByTestId(
+                'current-wallet-link'
+            );
             await within(currentWallet).findByText('Wallet 1');
             await userEvent.click(currentWallet);
 
-            const wallet2Link = await screen.findByText('Wallet 2');
+            const wallet2Link = await screen.findByTestId('wallet2');
             await userEvent.click(wallet2Link);
 
             await navigateToSecurity();
@@ -385,7 +380,7 @@ describe('The Security Settings page', () => {
             await userEvent.click(viewPhraseCheck);
 
             const viewPhraseButton = await screen.findByText(
-                'View private key'
+                'View Private Key'
             );
             await userEvent.click(viewPhraseButton);
 

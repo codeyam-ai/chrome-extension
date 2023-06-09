@@ -15,7 +15,9 @@ import { Navigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { Card } from './ExistingStake';
+import ValidatorImage from './Validator/ValidatorImage';
 import ClickableLargeTooltip from '_src/ui/app/components/ClickableTooltip';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
 import { useDistanceToStartEarningRewards } from '_src/ui/app/hooks/staking/useDistanceToStartEarningRewards';
@@ -48,6 +50,7 @@ function revokeStakeTransaction(stakedSuiId: SuiAddress) {
 }
 
 const StakeDetail: React.FC = () => {
+    const { connectToLedger } = useSuiLedgerClient();
     const { validatorAddress, stakedSuiId } = useParams();
 
     const {
@@ -95,8 +98,8 @@ const StakeDetail: React.FC = () => {
     );
 
     const onClickRevokeStake = useCallback(
-        () => setIsModalOpen(true),
-        [setIsModalOpen]
+        () => stake?.status !== 'Pending' && setIsModalOpen(true),
+        [setIsModalOpen, stake?.status]
     );
 
     const onCancelConfirmRevokeStake = useCallback(() => {
@@ -104,7 +107,7 @@ const StakeDetail: React.FC = () => {
     }, [setIsModalOpen]);
 
     const onConfirmRevokeStake = useCallback(async () => {
-        if (!stakedSuiId) return;
+        if (!stakedSuiId || stake?.status === 'Pending') return;
 
         setLoading(true);
 
@@ -113,7 +116,8 @@ const StakeDetail: React.FC = () => {
             accountInfos,
             address,
             authentication,
-            activeAccountIndex
+            activeAccountIndex,
+            connectToLedger
         );
 
         if (!signer) return;
@@ -148,8 +152,10 @@ const StakeDetail: React.FC = () => {
         activeAccountIndex,
         address,
         authentication,
+        connectToLedger,
         passphrase,
         queryClient,
+        stake?.status,
         stakedSuiId,
     ]);
 
@@ -169,15 +175,10 @@ const StakeDetail: React.FC = () => {
                 >
                     <Body>Validator</Body>
                     <div className="flex justify-center place-content-center py-2">
-                        {validator?.imageUrl ? (
-                            <img
-                                src={validator.imageUrl}
-                                alt={validator.name}
-                                className="h-5 w-5 rounded-full"
-                            />
-                        ) : (
-                            <div className="h-5 w-5 rounded-full bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary" />
-                        )}
+                        <ValidatorImage
+                            validator={validator}
+                            className="h-5 w-5 rounded-full"
+                        />
                         <BodyLarge isSemibold className="ml-2">
                             {validator?.name}
                         </BodyLarge>
@@ -288,10 +289,16 @@ const StakeDetail: React.FC = () => {
                     className="mt-4 bg-ethos-light-background-purple"
                     buttonStyle="secondary"
                     removeContainerPadding
+                    disabled={stake?.status === 'Pending'}
                 >
                     <MinusCircleIcon width={18} height={18} />
-                    Unstake SUI
+                    {stake?.status === 'Pending'
+                        ? 'Status: Pending'
+                        : 'Unstake SUI'}
                 </Button>
+                <Body className="py-4">
+                    Staked SUI in Pending state cannot be unstaked.
+                </Body>
             </div>
             <ConfirmDestructiveActionDialog
                 primaryActionIsLoading={loading}

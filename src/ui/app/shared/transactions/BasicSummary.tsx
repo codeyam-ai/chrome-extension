@@ -1,3 +1,4 @@
+import truncateString from '../../helpers/truncate-string';
 import Body from '../typography/Body';
 
 import type { BasicTransactionInfo } from '../../helpers/transactions/basicTransactionAnalysis';
@@ -29,14 +30,19 @@ const BasicSummary = ({
     basicTransactionInfo: BasicTransactionInfo;
     timeDisplay: string;
 }) => {
+    if (!basicTransactionInfo.commands) return <></>;
+
+    const summary = truncateString(
+        basicTransactionInfo.commands
+            .map((c) => translateCommand(c))
+            .join(', '),
+        20
+    );
+
     return (
         <div className="w-full flex justify-between items-center">
             <Body className="text-left">
-                {basicTransactionInfo.commands
-                    ? `${basicTransactionInfo.commands
-                          .map((c) => translateCommand(c))
-                          .join(', ')}`
-                    : translateKind(basicTransactionInfo.type)}
+                {summary || translateKind(basicTransactionInfo.type)}
             </Body>
             <Body isTextColorMedium className="text-right">
                 {timeDisplay}

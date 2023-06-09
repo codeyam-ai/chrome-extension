@@ -22,11 +22,11 @@ const SmallValue = ({ content, type, coinType }: SmallDetail) => {
     const contentArray = Array.isArray(content) ? content : [content];
 
     const CoinItem = ({ balance }: { balance: string }) => {
-        const [value, symbol] = useFormatCoin(balance, coinType);
+        const [value, symbol, dollars] = useFormatCoin(balance, coinType);
 
         return (
             <Body className="flex gap-1 items-center">
-                {value} {symbol}
+                {value} {symbol} ≈ {dollars} USD
             </Body>
         );
     };
@@ -37,7 +37,7 @@ const SmallValue = ({ content, type, coinType }: SmallDetail) => {
 
     return (
         <div className="text-right">
-            {contentArray.map((contentItem, item) =>
+            {contentArray.map((contentItem) =>
                 coinType ? (
                     <CoinItem
                         key={`detail-${contentItem}`}
