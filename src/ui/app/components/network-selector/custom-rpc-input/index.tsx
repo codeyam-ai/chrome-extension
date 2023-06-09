@@ -46,7 +46,7 @@ export function CustomRPCInput() {
         async ({ rpcInput }: { rpcInput: string }) => {
             dispatch(setCustomRPC({ customRPC: rpcInput, queryClient }));
         },
-        [dispatch]
+        [dispatch, queryClient]
     );
 
     return (

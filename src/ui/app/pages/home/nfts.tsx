@@ -3,19 +3,24 @@ import { PhotoIcon } from '@heroicons/react/24/solid';
 import { useCallback, useMemo, useState } from 'react';
 
 import Loading from '../../components/loading';
+import LoadingIndicator from '../../components/loading/LoadingIndicator';
+import { fetchMoreObjects } from '../../redux/slices/sui-objects';
+import Button from '../../shared/buttons/Button';
 import SubpageHeader from '../../shared/headers/SubpageHeader';
 import { Icon } from '../../shared/icons/Icon';
-import { useAppSelector, useObjectsState } from '_hooks';
+import { useAppDispatch, useAppSelector, useObjectsState } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account';
 import { DASHBOARD_COLLECTIBLES } from '_src/shared/constants';
 import NftGrid from '_src/ui/app/shared/content/rows-and-lists/NftGrid';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
 function NftsPage() {
-    const { loading } = useObjectsState();
+    const dispatch = useAppDispatch();
+    const { loading, loadingMore } = useObjectsState();
     const [showAll, setShowAll] = useState(false);
 
     const nfts = useAppSelector(accountNftsSelector);
+    const { kiosksPending } = useAppSelector(({ suiObjects }) => suiObjects);
     const { invalidPackages } = useAppSelector(({ valid }) => valid);
 
     const validNfts = useMemo(() => {
@@ -46,6 +51,11 @@ function NftsPage() {
         );
     }, [showAll, toggleShowAll]);
 
+    const loadMore = useCallback(() => {
+        if (loadingMore) return;
+        dispatch(fetchMoreObjects());
+    }, [dispatch, loadingMore]);
+
     return (
         <Loading loading={loading} big>
             <div className="flex flex-col gap-4">
@@ -60,6 +70,17 @@ function NftsPage() {
                     />
                 ) : (
                     <NftGrid nfts={validNfts} edit={showAll} />
+                )}
+                {kiosksPending && (
+                    <div className="p-6">
+                        <Button onClick={loadMore}>
+                            {loadingMore ? (
+                                <LoadingIndicator />
+                            ) : (
+                                <>Load More</>
+                            )}
+                        </Button>
+                    </div>
                 )}
             </div>
         </Loading>
