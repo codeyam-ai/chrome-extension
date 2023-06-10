@@ -14,6 +14,14 @@ const API_ENV_TO_EXPLORER_URL: Record<API_ENV, string | undefined> = {
     [API_ENV.customRPC]: undefined,
 };
 
+const API_ENV_TO_EXPLORER_QUERY_PARAM: Record<API_ENV, string | undefined> = {
+    [API_ENV.local]: undefined,
+    [API_ENV.devNet]: process.env.EXPLORER_PARAM_DEVNET,
+    [API_ENV.testNet]: process.env.EXPLORER_PARAM_TESTNET,
+    [API_ENV.mainNet]: undefined,
+    [API_ENV.customRPC]: undefined,
+};
+
 // TODO: rewrite this
 function getDefaultUrl(apiEnv?: API_ENV) {
     let url = API_ENV_TO_EXPLORER_URL[apiEnv || DEFAULT_API_ENV];
@@ -25,20 +33,35 @@ function getDefaultUrl(apiEnv?: API_ENV) {
 
 export class Explorer {
     public static getObjectUrl(objectID: ObjectId, apiEnv: API_ENV) {
-        return new URL(`/objects/${objectID}`, getDefaultUrl(apiEnv)).href;
+        const url = new URL(`/objects/${objectID}`, getDefaultUrl(apiEnv));
+        const queryParam = API_ENV_TO_EXPLORER_QUERY_PARAM[apiEnv];
+        if (queryParam) {
+            url.searchParams.set('network', queryParam);
+        }
+        return url.href;
     }
 
     public static getTransactionUrl(
         txDigest: TransactionDigest,
         apiEnv: API_ENV
     ) {
-        return new URL(
+        const url = new URL(
             `/transactions/${encodeURIComponent(txDigest)}`,
             getDefaultUrl(apiEnv)
-        ).href;
+        );
+        const queryParam = API_ENV_TO_EXPLORER_QUERY_PARAM[apiEnv];
+        if (queryParam) {
+            url.searchParams.set('network', queryParam);
+        }
+        return url.href;
     }
 
     public static getAddressUrl(address: SuiAddress, apiEnv: API_ENV) {
-        return new URL(`/addresses/${address}`, getDefaultUrl(apiEnv)).href;
+        const url = new URL(`/addresses/${address}`, getDefaultUrl(apiEnv));
+        const queryParam = API_ENV_TO_EXPLORER_QUERY_PARAM[apiEnv];
+        if (queryParam) {
+            url.searchParams.set('network', queryParam);
+        }
+        return url.href;
     }
 }

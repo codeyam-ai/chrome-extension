@@ -331,7 +331,7 @@ export class EthosWallet implements Wallet {
                 type: 'sign-message-request',
                 args: {
                     message: toB64(message),
-                    accountAddress: account.address,
+                    accountAddress: account.address ?? account,
                 },
             }),
             (response) => {
