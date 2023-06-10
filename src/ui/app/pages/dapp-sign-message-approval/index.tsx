@@ -120,6 +120,7 @@ export function DappSignMessageApprovalPage() {
     if (
         activeAddress &&
         signMessageRequest?.tx?.type === 'sign-message' &&
+        signMessageRequest?.tx?.accountAddress &&
         signMessageRequest?.tx?.accountAddress !== activeAddress
     ) {
         return (
