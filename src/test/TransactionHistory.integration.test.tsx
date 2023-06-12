@@ -6,11 +6,7 @@ import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { mockBlockchain } from '_src/test/utils/mockchain';
 import { makeCoinObject } from '_src/test/utils/mockchain-templates/coinObject';
 import { renderApp } from '_src/test/utils/react-rendering';
-import {
-    simulateMnemonicUser,
-    wallet1Address,
-    wallet2Address,
-} from '_src/test/utils/storage';
+import { simulateMnemonicUser } from '_src/test/utils/storage';
 
 describe('The Transaction History Page', () => {
     let mockJsonRpc: MockJsonRpc;
