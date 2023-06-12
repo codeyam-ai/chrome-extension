@@ -124,7 +124,7 @@ function CoinBalance({ type, balance, replaceUrl, edit }: CoinProps) {
                     <BodyLarge isSemibold>
                         {balanceFormatted} {symbol}
                     </BodyLarge>
-                    {featureFlags.showUsd && (
+                    {symbol === 'SUI' && featureFlags.showUsd && (
                         <div className="flex items-center text-base text-slate-800 dark:text-slate-300">
                             <Typography
                                 className={'text-[12px] leading-[12px]'}
