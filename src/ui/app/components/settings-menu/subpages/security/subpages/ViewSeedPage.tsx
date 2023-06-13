@@ -13,7 +13,7 @@ import ethosIcon from '_images/ethos-icon.png';
 
 export default function ViewSeedPage() {
     const [hasConfirmed, setHasConfirmed] = useState(false);
-    const [showSeed, setShowSeed] = useState(true);
+    const [showSeed, setShowSeed] = useState(false);
     const [hostedSeed, setHostedSeed] = useState('Loading...');
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
