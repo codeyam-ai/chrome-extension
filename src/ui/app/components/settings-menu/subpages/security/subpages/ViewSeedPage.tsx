@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { QRCode } from 'react-qrcode-logo';
 
 import PasswordVerificationForm from './PasswordVerificationForm';
 import Button from '../../../../../shared/buttons/Button';
@@ -7,10 +8,12 @@ import { useAppSelector } from '_src/ui/app/hooks';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 
 import type { ChangeEventHandler } from 'react';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import ethosIcon from '_images/ethos-icon.png';
 
 export default function ViewSeedPage() {
     const [hasConfirmed, setHasConfirmed] = useState(false);
-    const [showSeed, setShowSeed] = useState(false);
+    const [showSeed, setShowSeed] = useState(true);
     const [hostedSeed, setHostedSeed] = useState('Loading...');
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
@@ -58,6 +61,27 @@ export default function ViewSeedPage() {
     if (showSeed) {
         return (
             <div className="p-6 flex flex-col gap-6">
+                <div className="flex flex-col items-center gap-2">
+                    <BodyLarge>
+                        Scan with your Ethos mobile app to easily import your
+                        wallet:
+                    </BodyLarge>
+                    <QRCode
+                        value={mnemonic ?? ''}
+                        eyeColor="#6D28D9"
+                        eyeRadius={[
+                            [10, 10, 0, 10], // top/left eye
+                            [10, 10, 10, 0], // top/right eye
+                            [10, 0, 10, 10], // bottom/left
+                        ]}
+                        fgColor="#6D28D9"
+                        logoImage={ethosIcon}
+                        logoHeight={36}
+                        logoPadding={10}
+                        logoPaddingStyle="circle"
+                        qrStyle="dots"
+                    />
+                </div>
                 <textarea
                     rows={4}
                     value={mnemonic || hostedSeed || ''}
