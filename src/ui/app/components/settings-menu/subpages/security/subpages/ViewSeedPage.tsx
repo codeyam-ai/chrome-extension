@@ -67,7 +67,7 @@ export default function ViewSeedPage() {
                         wallet:
                     </BodyLarge>
                     <QRCode
-                        value={mnemonic ?? ''}
+                        value={`ethos://${encodeURIComponent(mnemonic ?? '')}`}
                         eyeColor="#6D28D9"
                         eyeRadius={[
                             [10, 10, 0, 10], // top/left eye
