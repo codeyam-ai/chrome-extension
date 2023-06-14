@@ -6,7 +6,8 @@ import BodyLarge from '../typography/BodyLarge';
 
 import type { MouseEventHandler } from 'react';
 import Button from '../buttons/Button';
-import { Square2StackIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, Square2StackIcon } from '@heroicons/react/24/outline';
+import classNames from 'classnames';
 
 interface RecoveryPhraseDisplayProps {
     mnemonic: string;
@@ -20,6 +21,16 @@ const RecoveryPhraseDisplay = ({
     forceLightTheme,
 }: RecoveryPhraseDisplayProps) => {
     const [copied, setCopied] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
+
+    const setIsHovering = useCallback(() => {
+        setIsHovered(true);
+    }, []);
+
+    const setIsNotHovering = useCallback(() => {
+        setIsHovered(false);
+    }, []);
+
     const copyToClipboard = useCallback<MouseEventHandler<HTMLElement>>(
         async (e) => {
             e.stopPropagation();
@@ -38,7 +49,9 @@ const RecoveryPhraseDisplay = ({
     return (
         <div className="flex flex-col">
             <div
-                className={`grid grid-cols-3 grid-rows-4 gap-2 py-4 px-6 rounded-lg bg-ethos-light-background-secondary ${
+                onMouseEnter={setIsHovering}
+                onMouseLeave={setIsNotHovering}
+                className={`relative grid grid-cols-3 grid-rows-4 gap-2 py-4 px-6 rounded-lg bg-ethos-light-background-secondary ${
                     forceLightTheme
                         ? ''
                         : 'dark:bg-ethos-dark-background-secondary'
@@ -72,6 +85,23 @@ const RecoveryPhraseDisplay = ({
                         </div>
                     );
                 })}
+                {/* Overlay */}
+                <div
+                    className={`absolute inset-0 flex items-center justify-center gap-2 transition-opacity duration-200 ${
+                        isHovered ? 'opacity-0' : 'opacity-100'
+                    }`}
+                    style={{ backdropFilter: 'blur(6px)' }}
+                >
+                    <EyeIcon
+                        className={classNames(
+                            'h-5 w-5',
+                            forceLightTheme
+                                ? 'text-ethos-light-text-default'
+                                : ''
+                        )}
+                    />
+                    <BodyLarge>Hover to reveal</BodyLarge>
+                </div>
             </div>
             <div className="flex gap-2 h-20 place-content-center items-center">
                 {!copied ? (
