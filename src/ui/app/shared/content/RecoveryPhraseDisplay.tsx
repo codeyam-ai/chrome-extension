@@ -55,7 +55,9 @@ const RecoveryPhraseDisplay = ({
                                 isTextColorMedium
                                 className="text-right col-span-1"
                             >
-                                <code>{index + 1}</code>
+                                <code className="pointer-events-none select-none">
+                                    {index + 1}
+                                </code>
                             </BodyLarge>
                             <BodyLarge
                                 isSemibold
@@ -78,6 +80,7 @@ const RecoveryPhraseDisplay = ({
                         className="flex gap-2 items-center"
                         buttonStyle="secondary"
                         removeContainerPadding
+                        forceLightTheme={forceLightTheme}
                     >
                         <Square2StackIcon className="h-5 w-5" />
                         <Body forceLightMode={forceLightTheme}>

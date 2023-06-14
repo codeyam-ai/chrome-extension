@@ -50,7 +50,11 @@ const SavePhrasePage = () => {
                     forceLightTheme
                 />
                 <div className="px-6 sm:px-10 pb-6 sm:pb-10">
-                    <Button onClick={finishOnboarding} removeContainerPadding>
+                    <Button
+                        onClick={finishOnboarding}
+                        removeContainerPadding
+                        forceLightTheme
+                    >
                         Create Wallet
                     </Button>
                 </div>
