@@ -36,7 +36,7 @@ const providers = [
         },
         link: {
             type: LinkType.External,
-            url: 'https://stripe.com/',
+            url: 'https://transak.com/',
         },
     },
 ];
