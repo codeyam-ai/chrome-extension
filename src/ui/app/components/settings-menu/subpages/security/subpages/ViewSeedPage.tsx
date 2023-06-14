@@ -10,10 +10,11 @@ import Alert from '_src/ui/app/shared/feedback/Alert';
 import type { ChangeEventHandler } from 'react';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ethosIcon from '_images/ethos-icon.png';
+import RecoveryPhraseDisplay from '_src/ui/app/shared/content/RecoveryPhraseDisplay';
 
 export default function ViewSeedPage() {
     const [hasConfirmed, setHasConfirmed] = useState(false);
-    const [showSeed, setShowSeed] = useState(false);
+    const [showSeed, setShowSeed] = useState(true);
     const [hostedSeed, setHostedSeed] = useState('Loading...');
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
@@ -83,14 +84,7 @@ export default function ViewSeedPage() {
                         qrStyle="dots"
                     />
                 </div>
-                <textarea
-                    rows={4}
-                    value={mnemonic || hostedSeed || ''}
-                    id="mnemonic"
-                    className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
-                    name="mnemonic"
-                    disabled={true}
-                />
+                <RecoveryPhraseDisplay mnemonic={mnemonic ?? ''} />
                 <Button to="/" buttonStyle="secondary" isInline>
                     Done
                 </Button>
