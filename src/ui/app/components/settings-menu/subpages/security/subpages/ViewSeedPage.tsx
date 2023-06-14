@@ -63,10 +63,11 @@ export default function ViewSeedPage() {
             <div className="p-6 flex flex-col gap-6">
                 <div className="flex flex-col items-center gap-2">
                     <BodyLarge>
-                        Scan with your Ethos mobile app to easily import your
-                        wallet:
+                        Scan with your Ethos mobile app to automatically import
+                        your wallet:
                     </BodyLarge>
                     <QRCode
+                        // The QR Code scanner in React Native only supports URLs, so I made this a pseudo-deep link
                         value={`ethos://${encodeURIComponent(mnemonic ?? '')}`}
                         eyeColor="#6D28D9"
                         eyeRadius={[
