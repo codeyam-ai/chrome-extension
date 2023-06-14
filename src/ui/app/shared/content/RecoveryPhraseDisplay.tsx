@@ -51,6 +51,9 @@ const RecoveryPhraseDisplay = ({
             <div
                 onMouseEnter={setIsHovering}
                 onMouseLeave={setIsNotHovering}
+                onFocus={setIsHovering}
+                onBlur={setIsNotHovering}
+                tabIndex={0}
                 className={`relative grid grid-cols-3 grid-rows-4 gap-2 py-4 px-6 rounded-lg bg-ethos-light-background-secondary ${
                     forceLightTheme
                         ? ''
@@ -60,6 +63,7 @@ const RecoveryPhraseDisplay = ({
                     marginLeft: horizontalMarginInPx,
                     marginRight: horizontalMarginInPx,
                 }}
+                data-testid="recovery-phrase-display"
             >
                 {mnemonic.split(' ').map((word, index) => {
                     return (
@@ -90,7 +94,12 @@ const RecoveryPhraseDisplay = ({
                     className={`absolute inset-0 flex items-center justify-center gap-2 transition-opacity duration-200 ${
                         isHovered ? 'opacity-0' : 'opacity-100'
                     }`}
-                    style={{ backdropFilter: 'blur(6px)' }}
+                    style={{
+                        backdropFilter: 'blur(6px)',
+                        // Next two lines stop the blur from briefly going away when scrolled back into view
+                        willChange: 'opacity, backdrop-filter',
+                        transform: 'translateZ(0)',
+                    }}
                 >
                     <EyeIcon
                         className={classNames(

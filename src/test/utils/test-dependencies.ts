@@ -4,6 +4,7 @@ export const makeTestDeps = () => {
         heartbeat: { onBeat: jest.fn() },
         featureFlags: {
             showUsd: true,
+            showMobile: true,
             showWipFeatures: true,
         },
     };

@@ -15,11 +15,12 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Header from '_src/ui/app/shared/typography/Header';
 
 import type { ChangeEventHandler } from 'react';
+import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 export default function ViewSeedPage() {
     const [hasConfirmed, setHasConfirmed] = useState(false);
     const [showSeed, setShowSeed] = useState(false);
-    const [hostedSeed, setHostedSeed] = useState('Loading...');
+    const [hostedSeed, setHostedSeed] = useState<string>();
     const { featureFlags } = useDependencies();
     const { resolvedTheme } = useTheme();
     const mnemonic = useAppSelector(
@@ -69,20 +70,25 @@ export default function ViewSeedPage() {
         return (
             <div className="p-6 flex flex-col gap-6">
                 <Header className="text-left">Your Recovery Phrase</Header>
+                <RecoveryPhraseDisplay
+                    mnemonic={hostedSeed ?? mnemonic ?? ''}
+                />
                 {featureFlags.showMobile && (
-                    <div className="flex flex-col items-center gap-2">
-                        <BodyLarge>
+                    <div className="flex flex-col items-center">
+                        <Subheader className="w-full text-left pb-2">
+                            Import Wallet in Mobile App
+                        </Subheader>
+                        <BodyLarge className="w-full text-left pb-4">
                             Scan with your Ethos mobile app to automatically
                             import your wallet:
                         </BodyLarge>
                         <QRCode
                             // The QR Code scanner in React Native only supports URLs, so I made this a pseudo-deep link
                             value={`ethos://${encodeURIComponent(
-                                mnemonic ?? ''
+                                hostedSeed ?? mnemonic ?? ''
                             )}`}
-                            eyeColor={
-                                resolvedTheme === 'light' ? '#6D28D9' : 'white'
-                            }
+                            size={200}
+                            quietZone={0}
                             eyeRadius={[
                                 [10, 10, 0, 10], // top/left eye
                                 [10, 10, 10, 0], // top/right eye
@@ -100,13 +106,14 @@ export default function ViewSeedPage() {
                                     : ethosIconWhite
                             }
                             logoHeight={36}
+                            logoWidth={30}
                             logoPadding={12}
                             logoPaddingStyle="circle"
+                            removeQrCodeBehindLogo
                             qrStyle="dots"
                         />
                     </div>
                 )}
-                <RecoveryPhraseDisplay mnemonic={mnemonic ?? ''} />
                 <Button to="/" buttonStyle="secondary" isInline>
                     Done
                 </Button>
