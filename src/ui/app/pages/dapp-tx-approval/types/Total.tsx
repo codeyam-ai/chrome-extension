@@ -37,11 +37,9 @@ const Total = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
                             bnTotalFee.lt(0) ? 'text-green-700' : ''
                         }`}
                     >
-                        {dollars} USD
-                    </BodyLarge>
-                    <Body className="text-[#74777C]">
                         {formatted} {symbol}
-                    </Body>
+                    </BodyLarge>
+                    <Body className="text-[#74777C]">{dollars} USD</Body>
                 </div>
             ) : (
                 <div className="text-right flex flex-col gap-1">
