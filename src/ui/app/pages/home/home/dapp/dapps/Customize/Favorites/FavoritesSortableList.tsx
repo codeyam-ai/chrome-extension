@@ -17,7 +17,7 @@ import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { DappData } from '_src/types/DappData';
-import type { FC } from 'react';
+import type { FC, MouseEvent } from 'react';
 
 interface SortableItem extends DappData {
     sortId: number;
@@ -112,31 +112,16 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
 
     const allDappsItems = useMemo(
         () =>
-            allDappsAndNftsWithSortIds.map((item) => {
-                const isFavorite = favoritesState.some(
-                    (fav) => fav.id === item.id
-                );
-                return (
-                    <div
-                        key={item.id}
-                        className={`inline-block relative ${
-                            isFavorite ? 'IsFavoriteIndicator' : ''
-                        }`}
-                    >
-                        {isFavorite && (
-                            <div className="absolute -top-[8px] right-[20px] p-1 z-10 rounded-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
-                                <StarIcon className="w-4 h-4 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
-                            </div>
-                        )}
-                        <DappListItem
-                            dapp={item}
-                            isCursorDefault={isFavorite}
-                            dragMode
-                        />
-                    </div>
-                );
-            }),
-        [allDappsAndNftsWithSortIds, favoritesState]
+            allDappsAndNftsWithSortIds.map((item) => (
+                <DappItem
+                    key={item.id}
+                    item={item}
+                    favoritesState={favoritesState}
+                    setFavoritesState={setFavoritesState}
+                    onFavoritesChosen={onFavoritesChosen}
+                />
+            )),
+        [allDappsAndNftsWithSortIds, favoritesState, onFavoritesChosen]
     );
 
     const handleDragStart = useCallback((evt: SortableEvent) => {
@@ -151,14 +136,6 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
         setIsDragging(false);
         setDraggedFromFavorites(false);
         setDraggedItemId(null);
-    }, []);
-
-    const handleClone = useCallback((evt: SortableEvent) => {
-        // Keep the dapp in the UI while dragging
-        if (!evt.item.parentNode) {
-            return;
-        }
-        evt.item.parentNode.insertBefore(evt.item, evt.item.nextSibling);
     }, []);
 
     const onSetFavoritesList = useCallback(
@@ -261,28 +238,73 @@ export const FavoritesSortableList: FC<FavoritesSortableListProps> = ({
                     </Body>
                     <div
                         ref={allDappsContainerRef}
-                        className={`p-2 h-auto bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default`}
+                        className={`grid grid-cols-3 gap-2" p-2 h-auto bg-ethos-light-gray dark:bg-ethos-dark-background-secondary border-b border-ethos-light-purple dark:border-ethos-dark-background-default`}
                     >
-                        <ReactSortable
-                            sort={false}
-                            bubbleScroll
-                            group="shared"
-                            list={allDappsAndNftsWithSortIds}
-                            // eslint-disable-next-line react/jsx-no-bind, @typescript-eslint/no-empty-function
-                            setList={() => {}}
-                            animation={200}
-                            ghostClass="opacity-50"
-                            onStart={handleDragStart}
-                            onEnd={handleDragEnd}
-                            filter={'.IsFavoriteIndicator'} // Exclude favorite dapps from being draggable
-                            onClone={handleClone}
-                            className="grid grid-cols-3 gap-2"
-                        >
-                            {allDappsItems}
-                        </ReactSortable>
+                        {allDappsItems}
                     </div>
                 </div>
             )}
+        </div>
+    );
+};
+
+interface DappItemProps {
+    item: SortableItem;
+    favoritesState: SortableItem[];
+    setFavoritesState: React.Dispatch<React.SetStateAction<SortableItem[]>>;
+    onFavoritesChosen: (
+        favoriteDappsKeys: string[],
+        removedNftKeys: string[]
+    ) => void;
+}
+
+const DappItem: React.FC<DappItemProps> = ({
+    item,
+    favoritesState,
+    setFavoritesState,
+    onFavoritesChosen,
+}) => {
+    const isFavorite = useMemo(
+        () => favoritesState.some((fav) => fav.id === item.id),
+        [favoritesState, item.id]
+    );
+
+    const handleClick = useCallback(
+        (event: MouseEvent<HTMLButtonElement>) => {
+            if (isFavorite) {
+                const updatedFavorites = favoritesState.filter(
+                    (fav) => fav.id !== item.id
+                );
+                setFavoritesState(updatedFavorites);
+                onFavoritesChosen(
+                    updatedFavorites.map((item) => item.key),
+                    [item.key]
+                );
+            } else {
+                setFavoritesState((oldFavorites) => [...oldFavorites, item]);
+                onFavoritesChosen(
+                    [...favoritesState.map((item) => item.key), item.key],
+                    []
+                );
+            }
+        },
+        [isFavorite, favoritesState, setFavoritesState, onFavoritesChosen, item]
+    );
+
+    return (
+        <div key={item.id} className={`inline-block my-2`}>
+            <button className="relative" onClick={handleClick}>
+                <DappListItem
+                    dapp={item}
+                    isCursorDefault={isFavorite}
+                    dragMode
+                />
+                {isFavorite && (
+                    <div className="absolute -top-[8px] right-0 p-1 z-10 rounded-full bg-ethos-light-background-default dark:bg-ethos-dark-background-default">
+                        <StarIcon className="w-4 h-4 text-ethos-light-primary-light dark:text-ethos-dark-primary-dark" />
+                    </div>
+                )}
+            </button>
         </div>
     );
 };
