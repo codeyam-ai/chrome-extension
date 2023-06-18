@@ -1,5 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
 import { memo, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
@@ -46,16 +47,8 @@ function TransferCoinForm({
     );
     const balances = useAppSelector(accountAggregateBalancesSelector);
 
-    const suiBal: Record<string, bigint> = {};
-
-    Object.keys(balances).forEach((key) => {
-        if (key === '0x2::sui::SUI') {
-            suiBal[key] = balances[key];
-        }
-    });
-
     const [searchParams] = useSearchParams();
-    const coinType = searchParams.get('type');
+    const coinType = searchParams.get('type') as string;
 
     const {
         isSubmitting,
@@ -72,7 +65,7 @@ function TransferCoinForm({
     onClearRef.current = onClearSubmitError;
 
     const [decimals] = useCoinDecimals(coinType);
-    const [, , dollars] = useFormatCoin(
+    const [, coinSymbol, dollars] = useFormatCoin(
         amountBigNumber.shiftedBy(decimals || 9).toString(),
         coinType
     );
@@ -109,9 +102,9 @@ function TransferCoinForm({
             </div>
             <div className="flex flex-col mb-8 px-6 text-left">
                 <div className={'mb-3'}>
-                    <AmountField />
+                    <AmountField coinSymbol={coinSymbol} />
                 </div>
-                {featureFlags.showUsd && (
+                {coinSymbol === SUI_TYPE_ARG && featureFlags.showUsd && (
                     <BodyLarge isSemibold isTextColorMedium>
                         ≈ {dollarDisplay} USD
                     </BodyLarge>
@@ -136,7 +129,7 @@ function TransferCoinForm({
                 <Body isSemibold className="ml-1">
                     Available Balance
                 </Body>
-                <CoinList balances={suiBal} />
+                <CoinList balances={{ [coinType]: balances[coinType] }} />
             </ContentBlock>
             <div className="flex flex-col mb-2 absolute w-full bottom-[-10px] bg-ethos-light-background-default dark:bg-ethos-dark-background-default pt-4 rounded-b-2xl">
                 <Button
@@ -152,7 +145,7 @@ function TransferCoinForm({
     );
 }
 
-function AmountField() {
+function AmountField({ coinSymbol }: { coinSymbol: string }) {
     const { isSubmitting } = useFormikContext();
 
     const classes =
@@ -173,7 +166,7 @@ function AmountField() {
                     'absolute top-[18px] right-5 font-weight-ethos-body-large text-size-ethos-body-large leading-line-height-ethos-body-large text-ethos-light-text-medium dark:text-ethos-dark-text-medium'
                 }
             >
-                SUI
+                {coinSymbol}
             </Typography>
         </div>
     );
