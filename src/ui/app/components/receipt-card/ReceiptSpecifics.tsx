@@ -137,7 +137,8 @@ const BalanceChange = ({
                 </CopyBody>
             )}
             <Body>
-                {formattedAmount} {symbol} ≈ {dollars} USD
+                {formattedAmount} {symbol}{' '}
+                {symbol.toLowerCase() === 'sui' && `≈ ${dollars} USD`}
             </Body>
         </div>
     );
