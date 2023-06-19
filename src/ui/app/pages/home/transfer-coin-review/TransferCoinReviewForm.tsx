@@ -105,9 +105,12 @@ function TransferCoinForm({
                     <Header className={'font-weight-ethos-subheader'}>
                         {amount} {truncateString(coinSymbol, 8)}
                     </Header>
-                    {featureFlags.showUsd && (
-                        <Subheader isTextColorMedium>≈ {dollars} USD</Subheader>
-                    )}
+                    {featureFlags.showUsd &&
+                        coinSymbol.toLowerCase() === 'sui' && (
+                            <Subheader isTextColorMedium>
+                                ≈ {dollars} USD
+                            </Subheader>
+                        )}
                 </div>
                 <KeyValueList
                     keyNamesAndValues={[
