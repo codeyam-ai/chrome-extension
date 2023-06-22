@@ -41,7 +41,6 @@ describe('Buy coin flow', () => {
                 ...makeTestDeps(),
                 featureFlags: {
                     showUsd: false,
-                    showMobile: true,
                     showWipFeatures: false,
                 },
             },
@@ -56,7 +55,6 @@ describe('Buy coin flow', () => {
                 ...makeTestDeps(),
                 featureFlags: {
                     showUsd: false,
-                    showMobile: true,
                     showWipFeatures: true,
                 },
             },
