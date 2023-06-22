@@ -87,7 +87,7 @@ function TokensPage() {
                     big={true}
                     loading={!validBalances}
                 >
-                    <div className={'px-6 pb-6'}>
+                    <div className={'px-4 pb-6'}>
                         <CoinList
                             balances={sortedValidBalances}
                             edit={showAll}
