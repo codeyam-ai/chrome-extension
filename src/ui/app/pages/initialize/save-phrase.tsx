@@ -14,6 +14,7 @@ import { loadAccountInformationFromStorage } from '_src/ui/app/redux/slices/acco
 
 const SavePhrasePage = () => {
     // useInitializedGuard(AppState.MNEMONIC);
+    const [copied, setCopied] = useState(false);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const isMobile = useIsMobile();
@@ -23,10 +24,17 @@ const SavePhrasePage = () => {
     );
     const address = useAppSelector(({ account }) => account.address);
 
+    const setCopiedTrue = useCallback(() => {
+        setCopied(true);
+    }, []);
+
     const finishOnboarding = useCallback(async () => {
+        if (!copied) {
+            return;
+        }
         await dispatch(loadAccountInformationFromStorage());
         navigate('/initialize/verify-phrase');
-    }, [dispatch, navigate]);
+    }, [copied, dispatch, navigate]);
 
     useEffect(() => {
         if (address) {
@@ -47,13 +55,14 @@ const SavePhrasePage = () => {
                 <RecoveryPhraseDisplay
                     mnemonic={mnemonic || ''}
                     horizontalMarginInPx={isMobile ? 24 : 40}
+                    onCopy={setCopiedTrue}
                     forceLightTheme
                 />
                 <div className="px-6 sm:px-10 pb-6 sm:pb-10">
                     <Button
                         onClick={finishOnboarding}
+                        disabled={!copied}
                         removeContainerPadding
-                        forceLightTheme
                     >
                         Create Wallet
                     </Button>

@@ -62,9 +62,7 @@ describe('The Security Settings page', () => {
             );
             await userEvent.click(recoveryPhraseButton);
 
-            let recoveryPhraseElements = screen.queryAllByTestId(
-                'recovery-phrase-display'
-            );
+            let recoveryPhraseElements = screen.queryAllByText(recoveryPhrase);
             expect(recoveryPhraseElements.length).toBe(0);
 
             const passwordInput = await screen.findByTestId('password');
@@ -77,24 +75,14 @@ describe('The Security Settings page', () => {
 
             await screen.findByText('Password is incorrect');
 
-            recoveryPhraseElements = screen.queryAllByTestId(
-                'recovery-phrase-display'
-            );
+            recoveryPhraseElements = screen.queryAllByText(recoveryPhrase);
             expect(recoveryPhraseElements.length).toBe(0);
 
             await userEvent.clear(passwordInput);
             await userEvent.type(passwordInput, password);
             await userEvent.click(submitPasswordButton);
 
-            const recoveryPhraseElement = await screen.findByTestId(
-                'recovery-phrase-display'
-            );
-
-            await userEvent.hover(recoveryPhraseElement);
-
-            recoveryPhrase.split(' ').forEach(async (word) => {
-                await screen.findByText(word);
-            });
+            await screen.findByText(recoveryPhrase);
         });
 
         test('requires a valid password to view the private key', async () => {
@@ -296,9 +284,7 @@ describe('The Security Settings page', () => {
             );
             await userEvent.click(recoveryPhraseButton);
 
-            let recoveryPhraseElements = screen.queryAllByTestId(
-                'recovery-phrase-display'
-            );
+            let recoveryPhraseElements = screen.queryAllByText(recoveryPhrase);
             expect(recoveryPhraseElements.length).toBe(0);
 
             const viewPhraseCheck = await screen.findByText('I understand');
@@ -309,9 +295,8 @@ describe('The Security Settings page', () => {
             );
             await userEvent.click(viewPhraseButton);
 
-            recoveryPhraseElements = screen.queryAllByTestId(
-                'recovery-phrase-display'
-            );
+            recoveryPhraseElements = screen.queryAllByText(recoveryPhrase);
+
             expect(recoveryPhraseElements.length).toBe(1);
         });
 

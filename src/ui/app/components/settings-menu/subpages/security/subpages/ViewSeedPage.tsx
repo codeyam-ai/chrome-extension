@@ -1,28 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
-import { QRCode } from 'react-qrcode-logo';
 
 import PasswordVerificationForm from './PasswordVerificationForm';
 import Button from '../../../../../shared/buttons/Button';
-import ethosIconWhite from '_images/ethos-icon-white.png';
-import ethosIcon from '_images/ethos-icon.png';
-import { useDependencies } from '_src/shared/utils/dependenciesContext';
 import { secureApiCall } from '_src/shared/utils/simpleApiCall';
-import { useTheme } from '_src/shared/utils/themeContext';
 import { useAppSelector } from '_src/ui/app/hooks';
-import RecoveryPhraseDisplay from '_src/ui/app/shared/content/RecoveryPhraseDisplay';
 import Alert from '_src/ui/app/shared/feedback/Alert';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import Header from '_src/ui/app/shared/typography/Header';
 
 import type { ChangeEventHandler } from 'react';
-import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 export default function ViewSeedPage() {
     const [hasConfirmed, setHasConfirmed] = useState(false);
     const [showSeed, setShowSeed] = useState(false);
-    const [hostedSeed, setHostedSeed] = useState<string>();
-    const { featureFlags } = useDependencies();
-    const { resolvedTheme } = useTheme();
+    const [hostedSeed, setHostedSeed] = useState('Loading...');
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
     );
@@ -69,51 +58,14 @@ export default function ViewSeedPage() {
     if (showSeed) {
         return (
             <div className="p-6 flex flex-col gap-6">
-                <Header className="text-left">Your Recovery Phrase</Header>
-                <RecoveryPhraseDisplay
-                    mnemonic={hostedSeed ?? mnemonic ?? ''}
+                <textarea
+                    rows={4}
+                    value={mnemonic || hostedSeed || ''}
+                    id="mnemonic"
+                    className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
+                    name="mnemonic"
+                    disabled={true}
                 />
-                {featureFlags.showMobile && (
-                    <div className="flex flex-col items-center">
-                        <Subheader className="w-full text-left pb-2">
-                            Import Wallet in Mobile App
-                        </Subheader>
-                        <BodyLarge className="w-full text-left pb-4">
-                            Scan with your Ethos mobile app to automatically
-                            import your wallet:
-                        </BodyLarge>
-                        <QRCode
-                            // The QR Code scanner in React Native only supports URLs, so I made this a pseudo-deep link
-                            value={`ethos://${encodeURIComponent(
-                                hostedSeed ?? mnemonic ?? ''
-                            )}`}
-                            size={200}
-                            quietZone={0}
-                            eyeRadius={[
-                                [10, 10, 0, 10], // top/left eye
-                                [10, 10, 10, 0], // top/right eye
-                                [10, 0, 10, 10], // bottom/left
-                            ]}
-                            fgColor={
-                                resolvedTheme === 'light' ? '#6D28D9' : 'white'
-                            }
-                            bgColor={
-                                resolvedTheme === 'light' ? 'white' : '#111111'
-                            }
-                            logoImage={
-                                resolvedTheme === 'light'
-                                    ? ethosIcon
-                                    : ethosIconWhite
-                            }
-                            logoHeight={36}
-                            logoWidth={30}
-                            logoPadding={12}
-                            logoPaddingStyle="circle"
-                            removeQrCodeBehindLogo
-                            qrStyle="dots"
-                        />
-                    </div>
-                )}
                 <Button to="/" buttonStyle="secondary" isInline>
                     Done
                 </Button>
