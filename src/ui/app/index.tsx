@@ -62,6 +62,7 @@ import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
 import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
+import HeroswapOnboarding from './pages/home/buy/providers/heroswap';
 
 const App = () => {
     const dispatch = useAppDispatch();
@@ -113,6 +114,10 @@ const App = () => {
                             <Route
                                 path="transak"
                                 element={<TransakOnboarding />}
+                            />
+                            <Route
+                                path="heroswap"
+                                element={<HeroswapOnboarding />}
                             />
                         </Route>
                         <Route

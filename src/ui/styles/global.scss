@@ -73,3 +73,9 @@ textarea {
 em-emoji-picker {
     height: 350px;
 }
+
+@media (prefers-color-scheme: dark) {
+    #heroswap-iframe {
+        color-scheme: light;
+    }
+}

@@ -1,6 +1,9 @@
+import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import HeroswapDark from '_images/payments/logos/heroswap-dark';
+import HeroswapLight from '_images/payments/logos/heroswap-light';
 import MoonpayDark from '_images/payments/logos/moonpay-dark';
 import MoonpayLight from '_images/payments/logos/moonpay-light';
 import TransakDark from '_images/payments/logos/transak-dark';
@@ -11,12 +14,13 @@ import { useTheme } from '_src/shared/utils/themeContext';
 import checkMoonpaySupport from '_src/ui/app/helpers/checkMoonpaySupport';
 import { useAppSelector } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
-import Header from '_src/ui/app/shared/typography/Header';
+import Typography from '_src/ui/app/shared/typography/Typography';
 
 const providers = [
     {
-        isRedirect: false, // corrected here
+        isRedirect: false,
         path: '/home/buy/moonpay',
         logo: {
             light: <MoonpayLight />,
@@ -40,6 +44,22 @@ const providers = [
         },
     },
 ];
+
+const cryptoProviders = [
+    {
+        isRedirect: false,
+        path: '/home/buy/heroswap',
+        logo: {
+            light: <HeroswapLight />,
+            dark: <HeroswapDark />,
+        },
+        link: {
+            type: LinkType.External,
+            url: 'https://heroswap.com/',
+        },
+    },
+];
+
 interface ProviderSelectProps {
     theme: string;
     provider: {
@@ -101,7 +121,7 @@ const ProviderSelect = ({ theme, provider }: ProviderSelectProps) => {
         <button
             onClick={selectProvider}
             className={
-                'flex items-center w-full mb-5 h-20 rounded-lg p-5 text-left border border-ethos-light-background-secondary hover:border-ethos-light-primary-light hover:dark:border-ethos-dark-primary-dark dark:border-ethos-dark-border-dark transition-all'
+                'flex items-center w-full mb-3 h-[60px] rounded-lg p-5 text-left border bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary dark:border-ethos-dark-background-secondary border-ethos-light-background-secondary hover:border-ethos-light-primary-light hover:dark:border-ethos-dark-primary-dark transition-all'
             }
         >
             <div className={'w-full flex flex-col justify-between relative'}>
@@ -130,6 +150,7 @@ const ProviderSelect = ({ theme, provider }: ProviderSelectProps) => {
 const OnboardingProviders = () => {
     const { resolvedTheme } = useTheme();
     const [isAllowed, setAllowed] = useState();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const checkCountrySupport = async () => {
@@ -140,14 +161,41 @@ const OnboardingProviders = () => {
         checkCountrySupport();
     }, []);
 
+    const back = () => {
+        navigate(-1);
+    };
+
     return (
         <>
+            <div className="flex items-center justify-between p-4 shadow-ethos-shadow-small bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
+                <div>
+                    <button onClick={back}>
+                        <ChevronLeftIcon
+                            className={`h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium`}
+                        />
+                    </button>
+                </div>
+                <BodyLarge
+                    isSemibold
+                    className="mx-auto text-center text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
+                >
+                    Get Sui
+                </BodyLarge>
+                <div className={'w-4'}>
+                    {/* This empty div will push the title to the center */}
+                </div>
+            </div>
             <div
                 className={
-                    'p-6 bg-ethos-light-background-default dark:bg-ethos-dark-background-default'
+                    'py-5 px-4 bg-ethos-light-background-default dark:bg-ethos-dark-background-default'
                 }
             >
-                <Header className={'mb-5'}>Select a Provider</Header>
+                <div className="text-left">
+                    <BodyLarge isSemibold>Buy with a credit card</BodyLarge>
+                    <Body isSemibold isTextColorMedium className={'mb-4'}>
+                        Select a provider
+                    </Body>
+                </div>
                 {providers.map((provider, index) => (
                     <ProviderSelect
                         provider={provider}
@@ -155,12 +203,22 @@ const OnboardingProviders = () => {
                         key={index}
                     />
                 ))}
-                <Body className="absolute text-[12px] leading-4 w-full left-0 text-left right-0 bottom-[56px] py-4 px-6 bg-ethos-light-background-light-grey dark:bg-ethos-dark-background-secondary">
+                <BodyLarge isSemibold className={'text-left mb-2 mt-6'}>
+                    Buy with crypto
+                </BodyLarge>
+                {cryptoProviders.map((provider, index) => (
+                    <ProviderSelect
+                        provider={provider}
+                        theme={resolvedTheme}
+                        key={index}
+                    />
+                ))}
+                <Typography className="absolute font-[12px] leading-[16px] w-full left-0 text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium right-0 bottom-[56px] py-3 px-4 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
                     <b>Ethos is not a fiat-to-crypto payment provider</b>, but
                     enables in-wallet access to select payment processors.
                     {isAllowed &&
                         ' MoonPay is our recommended partner for their services in the Europe, UK, Australia, Brazil, and Canada.'}
-                </Body>
+                </Typography>
             </div>
         </>
     );
