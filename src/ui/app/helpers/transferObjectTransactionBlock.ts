@@ -5,6 +5,9 @@ import type {
 } from '@mysten/sui.js';
 import type { ExtendedSuiObjectData } from '_redux/slices/sui-objects';
 
+const obKioskPackageId =
+    '0x1dddbcce1491a365d931a0dc6a64db596dad9c9915c6d0efb13e5c2efd5e95ce';
+
 const transferObjectTransactionBlock = async (
     transactionBlock: TransactionBlock,
     object: ExtendedSuiObjectData,
@@ -35,7 +38,8 @@ const transferObjectTransactionBlock = async (
         });
 
         if (object.kiosk.type.indexOf('ob_kiosk') > -1) {
-            const packageId = object.kiosk.type.split('::')[0] ?? '0x2';
+            // const packageId = object.kiosk.type.split('::')[0] ?? '0x2';
+            const packageId = obKioskPackageId;
             const recipientKiosk = recipientKiosks.data[0]?.data;
 
             if (recipientKiosk) {
