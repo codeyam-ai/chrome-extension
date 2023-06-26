@@ -25,10 +25,8 @@ const LoggingInPage = () => {
 
     useEffect(() => {
         const setAccessToken = async () => {
-            console.log('Auth 1');
             let accessToken = (await getSession('accessToken')) as string;
             if (!accessToken) {
-                console.log('Auth 2');
                 setTimeout(() => {
                     setLoading(false);
                     setAuthenticationSlow(true);
@@ -36,7 +34,7 @@ const LoggingInPage = () => {
                 accessToken = await iframe.listenForAccessToken();
             }
             if (!accessToken) {
-                console.log('Auth 3');
+                
                 setLoading(false);
                 setAuthenticationSlow(true);
             }
@@ -44,9 +42,9 @@ const LoggingInPage = () => {
 
             let accountInfos = await Authentication.getAccountInfos();
 
-            console.log('Auth 4');
+            
             if (!accountInfos || accountInfos.length === 0) {
-                console.log('Auth 5');
+                
                 const newAccountInfo = await Authentication.createAccount(0);
                 if (newAccountInfo) {
                     accountInfos = [newAccountInfo];
@@ -54,18 +52,18 @@ const LoggingInPage = () => {
             }
 
             if (accountInfos && accountInfos.length > 0) {
-                console.log('Auth 6');
+                
                 await dispatch(saveAccountInfos(accountInfos));
                 await dispatch(setAddress(accountInfos[0]?.address));
                 dispatch(saveAuthentication(accessToken));
                 navigate('/');
             } else {
-                console.log('Auth 7');
+                
                 Authentication.set(null);
                 dispatch(saveAuthentication(null));
                 setLoading(false);
             }
-            console.log('Auth 8');
+            
         };
         setAccessToken();
     }, [dispatch, navigate]);
