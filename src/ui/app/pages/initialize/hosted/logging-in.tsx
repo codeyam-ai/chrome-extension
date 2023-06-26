@@ -34,7 +34,6 @@ const LoggingInPage = () => {
                 accessToken = await iframe.listenForAccessToken();
             }
             if (!accessToken) {
-                
                 setLoading(false);
                 setAuthenticationSlow(true);
             }
@@ -42,9 +41,7 @@ const LoggingInPage = () => {
 
             let accountInfos = await Authentication.getAccountInfos();
 
-            
             if (!accountInfos || accountInfos.length === 0) {
-                
                 const newAccountInfo = await Authentication.createAccount(0);
                 if (newAccountInfo) {
                     accountInfos = [newAccountInfo];
@@ -52,18 +49,15 @@ const LoggingInPage = () => {
             }
 
             if (accountInfos && accountInfos.length > 0) {
-                
                 await dispatch(saveAccountInfos(accountInfos));
                 await dispatch(setAddress(accountInfos[0]?.address));
                 dispatch(saveAuthentication(accessToken));
                 navigate('/');
             } else {
-                
                 Authentication.set(null);
                 dispatch(saveAuthentication(null));
                 setLoading(false);
             }
-            
         };
         setAccessToken();
     }, [dispatch, navigate]);

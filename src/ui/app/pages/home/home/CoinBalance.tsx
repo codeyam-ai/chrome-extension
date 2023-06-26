@@ -36,6 +36,8 @@ function CoinBalance({ type, balance, replaceUrl, edit }: CoinProps) {
         name,
         icon,
         verifiedBridgeToken,
+        ,
+        hasConversion,
     ] = useFormatCoin(balance, type, 4);
 
     const hidden = useMemo(
@@ -124,15 +126,17 @@ function CoinBalance({ type, balance, replaceUrl, edit }: CoinProps) {
                     <BodyLarge isSemibold>
                         {balanceFormatted} {symbol}
                     </BodyLarge>
-                    {symbol === 'SUI' && featureFlags.showUsd && (
-                        <div className="flex items-center text-base text-slate-800 dark:text-slate-300">
-                            <Typography
-                                className={'text-[12px] leading-[12px]'}
-                            >
-                                ≈ {usdAmount} USD
-                            </Typography>
-                        </div>
-                    )}
+                    {symbol === 'SUI' &&
+                        featureFlags.showUsd &&
+                        hasConversion && (
+                            <div className="flex items-center text-base text-slate-800 dark:text-slate-300">
+                                <Typography
+                                    className={'text-[12px] leading-[12px]'}
+                                >
+                                    ≈ {usdAmount} USD
+                                </Typography>
+                            </div>
+                        )}
                 </div>
             </button>
             {edit && (

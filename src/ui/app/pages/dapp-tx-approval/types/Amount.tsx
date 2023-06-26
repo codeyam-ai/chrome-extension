@@ -138,13 +138,13 @@ const Amount = ({
     positive: boolean;
 }) => {
     const bnAmount = new BigNumber(balanceChange.amount);
-    const [formatted, symbol, dollars] = useFormatCoin(
+    const [formatted, symbol, dollars, , , , , hasConversion] = useFormatCoin(
         bnAmount.abs().toString(),
         balanceChange.type
     );
 
     const { featureFlags } = useDependencies();
-    return featureFlags.showUsd ? (
+    return featureFlags.showUsd && hasConversion ? (
         <div className="flex flex-col items-end text-right">
             <Body className="text-size-ethos-small">
                 {formatted} {symbol}
