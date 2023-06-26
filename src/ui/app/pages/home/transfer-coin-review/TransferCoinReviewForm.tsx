@@ -67,7 +67,10 @@ function TransferCoinForm({
         .shiftedBy(decimals)
         .toString();
 
-    const [, , dollars, , icon] = useFormatCoin(unformattedAmount, coinType);
+    const [, , dollars, , icon, , , hasConversion] = useFormatCoin(
+        unformattedAmount,
+        coinType
+    );
 
     const [formattedGasFee, gasSymbol] = useFormatCoin(
         formData.gasFee,
@@ -106,6 +109,7 @@ function TransferCoinForm({
                         {amount} {truncateString(coinSymbol, 8)}
                     </Header>
                     {featureFlags.showUsd &&
+                        hasConversion &&
                         coinSymbol.toLowerCase() === 'sui' && (
                             <Subheader isTextColorMedium>
                                 ≈ {dollars} USD

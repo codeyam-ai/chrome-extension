@@ -19,11 +19,8 @@ const WalletBalanceAndIconHomeView = ({
     mistBalance,
 }: WalletBalanceAndIconHomeViewProps) => {
     const { featureFlags } = useDependencies();
-    const [balanceFormatted, symbol, usdAmount] = useFormatCoin(
-        mistBalance,
-        SUI_TYPE_ARG,
-        6
-    );
+    const [balanceFormatted, symbol, usdAmount, , , , , hasConversion] =
+        useFormatCoin(mistBalance, SUI_TYPE_ARG, 6);
 
     const formatted = usdAmount.endsWith('.00')
         ? usdAmount.slice(0, -3)
@@ -44,7 +41,7 @@ const WalletBalanceAndIconHomeView = ({
                 />
             </div>
             <div className="flex flex-col">
-                {featureFlags.showUsd ? (
+                {featureFlags.showUsd && hasConversion ? (
                     <div className="flex flex-col place-content-center items-center">
                         <Title>
                             {balanceFormatted} {symbol}
@@ -56,7 +53,9 @@ const WalletBalanceAndIconHomeView = ({
                         )}
                     </div>
                 ) : (
-                    <JumboTitle>{formatted}</JumboTitle>
+                    <JumboTitle>
+                        {balanceFormatted} {symbol}
+                    </JumboTitle>
                 )}
             </div>
         </div>

@@ -116,10 +116,11 @@ const BalanceChange = ({
     const balanceChange = balanceChanges?.[0];
     const ownerAddress = addressOwner(balanceChange?.owner);
     const ownerWallet = useWalletOrContact(ownerAddress || '');
-    const [formattedAmount, symbol, dollars] = useFormatCoin(
-        balanceChange?.amount || 0,
-        balanceChange?.coinType || ''
-    );
+    const [formattedAmount, symbol, dollars, , , , , hasConversion] =
+        useFormatCoin(
+            balanceChange?.amount || 0,
+            balanceChange?.coinType || ''
+        );
 
     return (
         <div className="flex justify-between items-center w-full">
@@ -136,10 +137,12 @@ const BalanceChange = ({
                     {truncateMiddle(ownerAddress)}
                 </CopyBody>
             )}
-            <Body>
-                {formattedAmount} {symbol}{' '}
-                {symbol.toLowerCase() === 'sui' && `≈ ${dollars} USD`}
-            </Body>
+            {hasConversion && (
+                <Body>
+                    {formattedAmount} {symbol}{' '}
+                    {symbol.toLowerCase() === 'sui' && `≈ ${dollars} USD`}
+                </Body>
+            )}
         </div>
     );
 };

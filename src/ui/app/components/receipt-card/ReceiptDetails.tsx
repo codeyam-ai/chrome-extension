@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
 
 import truncateMiddle from '../../helpers/truncate-middle';
@@ -5,13 +7,22 @@ import { useFormatCoin } from '../../hooks';
 import KeyValueList from '../../shared/content/rows-and-lists/KeyValueList';
 import CopyBody from '../../shared/typography/CopyBody';
 
-import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTransactions';
+type Props = {
+    totalGasUsed?: bigint;
+    digest: string;
+};
 
-const ReceiptDetails = ({ totalGasUsed, digest }: AnalyzedTransaction) => {
-    const [formattedGasFee, gasSymbol, dollars] = useFormatCoin(
-        totalGasUsed,
-        SUI_TYPE_ARG
-    );
+const ReceiptDetails: React.FC<Props> = ({ totalGasUsed, digest }) => {
+    let gasFeeValue;
+
+    const [formattedGasFee, gasSymbol, dollars, , , , , hasConversion] =
+        useFormatCoin(totalGasUsed, SUI_TYPE_ARG);
+
+    if (hasConversion) {
+        gasFeeValue = `${formattedGasFee} ${gasSymbol} ≈ ${dollars} USD`;
+    } else {
+        gasFeeValue = `${formattedGasFee} ${gasSymbol}`;
+    }
 
     return (
         <div className="-mx-6">
@@ -20,7 +31,7 @@ const ReceiptDetails = ({ totalGasUsed, digest }: AnalyzedTransaction) => {
                 keyNamesAndValues={[
                     {
                         keyName: 'Gas Fee',
-                        value: `${formattedGasFee} ${gasSymbol} ≈ ${dollars} USD`,
+                        value: gasFeeValue,
                     },
                     {
                         keyName: 'Digest',

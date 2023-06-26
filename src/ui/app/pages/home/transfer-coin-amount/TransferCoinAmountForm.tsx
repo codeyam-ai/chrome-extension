@@ -65,7 +65,7 @@ function TransferCoinForm({
     onClearRef.current = onClearSubmitError;
 
     const [decimals] = useCoinDecimals(coinType);
-    const [, coinSymbol, dollars] = useFormatCoin(
+    const [, coinSymbol, dollars, , , , , hasConversion] = useFormatCoin(
         amountBigNumber.shiftedBy(decimals || 9).toString(),
         coinType
     );
@@ -104,11 +104,13 @@ function TransferCoinForm({
                 <div className={'mb-3'}>
                     <AmountField coinSymbol={coinSymbol} />
                 </div>
-                {coinSymbol === SUI_TYPE_ARG && featureFlags.showUsd && (
-                    <BodyLarge isSemibold isTextColorMedium>
-                        ≈ {dollarDisplay} USD
-                    </BodyLarge>
-                )}
+                {coinSymbol === SUI_TYPE_ARG &&
+                    featureFlags.showUsd &&
+                    hasConversion && (
+                        <BodyLarge isSemibold isTextColorMedium>
+                            ≈ {dollarDisplay} USD
+                        </BodyLarge>
+                    )}
                 <ErrorMessage
                     className="mt-1 text-ethos-light-red dark:text-ethos-dark-red"
                     name="amount"

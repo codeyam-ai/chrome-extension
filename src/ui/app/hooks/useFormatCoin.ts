@@ -18,7 +18,8 @@ type FormattedCoin = [
     coinName: string,
     coinIcon: string | null,
     verifiedBridgeToken: string | undefined,
-    queryResult: UseQueryResult
+    queryResult: UseQueryResult,
+    hasConversion: boolean
 ];
 
 const VERIFIED_TOKENS: Record<string, string> = {
@@ -199,5 +200,6 @@ export function useFormatCoin(
         coinMetadata?.iconUrl || null,
         verifiedBridgeToken,
         queryResult,
+        !!conversion,
     ];
 }
