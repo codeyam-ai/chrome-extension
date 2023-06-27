@@ -131,7 +131,6 @@ const transferObjectTransactionBlock = async (
         }
     }
 
-    console.log('IN3');
     return transactionBlock;
 };
 

@@ -1,6 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import cn from 'classnames';
 import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
 import { memo, useEffect, useRef } from 'react';
 
@@ -18,7 +19,6 @@ import type { SuiObjectData } from '@mysten/sui.js';
 
 import st from './TransferNFTForm.module.scss';
 import 'react-toastify/dist/ReactToastify.css';
-import cn from 'classnames';
 
 export type TransferNFTFormProps = {
     submitError: string | null;
