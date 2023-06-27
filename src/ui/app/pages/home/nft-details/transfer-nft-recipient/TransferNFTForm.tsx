@@ -18,6 +18,7 @@ import type { SuiObjectData } from '@mysten/sui.js';
 
 import st from './TransferNFTForm.module.scss';
 import 'react-toastify/dist/ReactToastify.css';
+import cn from 'classnames';
 
 export type TransferNFTFormProps = {
     submitError: string | null;
@@ -93,7 +94,7 @@ function TransferNFTForm({
                                 </div>
                             </div>
                             <ErrorMessage
-                                className="mt-1 text-red-500 dark:text-red-400"
+                                className="-mt-3 mb-6 text-red-500 dark:text-red-400"
                                 name="to"
                                 component="div"
                             />
@@ -105,14 +106,14 @@ function TransferNFTForm({
                                 </div>
                             )}
                             <div
-                                className={
-                                    'mt-1 text-red-500 dark:text-red-400' &&
-                                    submitError
-                                        ? 'block'
-                                        : 'hidden'
-                                }
+                                className={cn(
+                                    '-mt-3 mb-6 text-red-500 dark:text-red-400',
+                                    submitError ? 'block' : 'hidden'
+                                )}
                             >
-                                {submitError ? submitError : ' '}
+                                {submitError
+                                    ? humanReadableSubmitError(submitError)
+                                    : ' '}
                             </div>
                         </div>
                         <div className="pb-[80px]">
@@ -155,5 +156,16 @@ function TransferNFTForm({
         </div>
     );
 }
+
+const humanReadableSubmitError = (errorMessage: string) => {
+    if (
+        errorMessage.indexOf(
+            'Identifier("kiosk") }, function: 7, instruction: 38, function_name: Some("take") }, 4'
+        ) > -1
+    ) {
+        return "This NFT is locked in a Kiosk. You can't transfer it until it is unlocked.";
+    }
+    return errorMessage;
+};
 
 export default memo(TransferNFTForm);
