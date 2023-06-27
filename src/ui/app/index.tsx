@@ -7,7 +7,6 @@ import useSizeWindow from './hooks/useSizeWindow';
 import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
 import OnboardingProviders from './pages/home/buy';
 import MoonpayOnboarding from './pages/home/buy/providers/moonpay';
-import TransakOnboarding from './pages/home/buy/providers/transak';
 import AddressBookNavigation from './pages/home/home/dapp/dapps/AddressBook/AddressBookNavigation';
 import CustomizeNavigation from './pages/home/home/dapp/dapps/Customize/CustomizeNavigation';
 import LedgerNavigation from './pages/home/home/dapp/dapps/Ledger/LedgerNavigation';
@@ -110,10 +109,6 @@ const App = () => {
                             <Route
                                 path="moonpay"
                                 element={<MoonpayOnboarding />}
-                            />
-                            <Route
-                                path="transak"
-                                element={<TransakOnboarding />}
                             />
                             <Route
                                 path="heroswap"
