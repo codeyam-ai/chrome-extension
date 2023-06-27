@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
 
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
@@ -60,10 +60,9 @@ describe('Rendering the Home page', () => {
             const walletAndBalance = await screen.findByTestId(
                 'wallet-and-balance'
             );
-            await within(walletAndBalance).findByText(
-                'SUI Balance ≈ $4,000 USD'
-            );
+            
             await within(walletAndBalance).queryByText('40 SUI');
+            await waitFor(() => screen.getByText('SUI Balance ≈ $4,000 USD'));
 
             const coinList = await screen.findByTestId('coin-list');
             await within(coinList).findByText('≈ $4,000.00 USD');
