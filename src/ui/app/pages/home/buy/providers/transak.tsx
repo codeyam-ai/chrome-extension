@@ -8,6 +8,7 @@ export default function TransakOnboarding() {
     // const address = useAppSelector(({ account }) => account.address); => Add when Sui is supported
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
     const { featureFlags } = useDependencies();
+    const { address } = useAppSelector(({ account }) => account);
 
     const isProduction = selectedApiEnv.toString() === API_ENV.mainNet;
     const env = isProduction ? 'production' : 'staging';
@@ -23,7 +24,7 @@ export default function TransakOnboarding() {
     return featureFlags.showWipFeatures ? (
         <iframe
             title="Transak On-Ramp for Ethos Wallet"
-            src={`${baseUrl}?apiKey=${apiKey}&themeColor=${colorCode}&environment=${env}&cryptoCurrencyCode=${code}&hideMenu=true&exchangeScreenTitle=Buy%20SUI`}
+            src={`${baseUrl}?apiKey=${apiKey}&themeColor=${colorCode}&environment=${env}&cryptoCurrencyCode=${code}&hideMenu=true&exchangeScreenTitle=Buy%20SUI&walletAddress=${address}`}
             allowFullScreen={false}
             style={{ display: 'block', width: '100%', height: '100%' }}
         ></iframe>
