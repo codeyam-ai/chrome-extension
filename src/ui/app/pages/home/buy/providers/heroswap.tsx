@@ -19,7 +19,7 @@ export default function HeroswapOnboarding() {
         >
             <iframe
                 id={'heroswap-iframe'}
-                src={`https://heroswap.com/widget?theme=${theme}&network=${network}&destinationTicker=SUI&affiliateAddress=${affiliateAddress}&destinationAddress=${address}`}
+                src={`https://heroswap.com/widget?theme=${theme}&network=${network}&destinationTickers=SUI&affiliateAddress=${affiliateAddress}&destinationAddress=${address}`}
                 className={'border-0 m-0 p-0 w-full h-full relative z-20'}
             />
         </div>
