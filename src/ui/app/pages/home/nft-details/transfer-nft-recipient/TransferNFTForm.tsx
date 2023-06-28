@@ -163,7 +163,13 @@ const humanReadableSubmitError = (errorMessage: string) => {
             'Identifier("kiosk") }, function: 7, instruction: 38, function_name: Some("take") }, 4'
         ) > -1
     ) {
-        return "This NFT is locked in a Kiosk. You can't transfer it until it is unlocked.";
+        return 'This NFT is locked into a potential purchase agreement with another contract and can not be transferred.';
+    } else if (
+        errorMessage.indexOf(
+            'Identifier("kiosk") }, function: 7, instruction: 25, function_name: Some("take") }, 8'
+        )
+    ) {
+        return 'This NFT has been locked into its kiosk and can not be transferred.';
     }
     return errorMessage;
 };
