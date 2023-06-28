@@ -92,7 +92,7 @@ const transferObjectTransactionBlock = async (
             const recipientKiosk = recipientKiosks.data[0]?.data;
             if (recipientKiosk) {
                 if (recipientKiosk?.content?.dataType === 'moveObject') {
-                    recipientKioskId = recipientKiosk.content.fields.kiosk;
+                    recipientKioskId = recipientKiosk.content.fields.for;
                 }
 
                 if (!recipientKioskId) return null;
@@ -101,8 +101,8 @@ const transferObjectTransactionBlock = async (
                     target: `${kioskModule}::place`,
                     typeArguments: [object.type ?? ''],
                     arguments: [
-                        transactionBlock.object(kioskId),
-                        transactionBlock.object(object.kiosk.objectId),
+                        transactionBlock.object(recipientKioskId),
+                        transactionBlock.object(recipientKiosk.objectId),
                         item,
                     ],
                 });

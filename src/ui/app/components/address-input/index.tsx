@@ -26,7 +26,7 @@ function AddressInput<FormValues>({
     className,
     label,
     form: { isSubmitting, setFieldValue },
-    field: { onBlur, name, value },
+    field: { name, value },
 }: AddressInputProps<FormValues>) {
     const [displayedValue, setDisplayedValue] = useState<string>(value);
     const [showAddress, setShowAddress] = useState<boolean>(false);
@@ -76,7 +76,6 @@ function AddressInput<FormValues>({
                 className={className}
                 disabled={disabled}
                 placeholder={placeholder}
-                onBlur={onBlur}
                 value={displayedValue}
                 onChange={handleOnChange}
                 spellCheck={false}
