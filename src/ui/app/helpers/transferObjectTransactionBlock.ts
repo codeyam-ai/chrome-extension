@@ -6,7 +6,7 @@ import type {
 import type { ExtendedSuiObjectData } from '_redux/slices/sui-objects';
 
 const obKioskPackageId =
-    '0x1dddbcce1491a365d931a0dc6a64db596dad9c9915c6d0efb13e5c2efd5e95ce';
+    '0x5f2303aaa5a630adfc8fdadadb162a1f89b0e939978225b0021645e30cb3ab6a';
 const kioskModule = '0x2::kiosk';
 
 const transferObjectTransactionBlock = async (
