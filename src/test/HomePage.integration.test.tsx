@@ -60,7 +60,7 @@ describe('Rendering the Home page', () => {
             const walletAndBalance = await screen.findByTestId(
                 'wallet-and-balance'
             );
-            
+
             await within(walletAndBalance).queryByText('40 SUI');
             await waitFor(() => screen.getByText('SUI Balance ≈ $4,000 USD'));
 
