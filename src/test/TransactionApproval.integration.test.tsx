@@ -226,15 +226,15 @@ describe('The Transaction Approval popup', () => {
             {
                 method: 'suix_getBalance',
                 params: [
-                    "0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de",
-                    "0x2::sui::SUI"
+                    '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de',
+                    '0x2::sui::SUI',
                 ],
             },
             {
-                "coinType": "0x2::sui::SUI",
-                "coinObjectCount": 1,
-                "totalBalance": balance,
-                "lockedBalance": {}
+                coinType: '0x2::sui::SUI',
+                coinObjectCount: 1,
+                totalBalance: balance,
+                lockedBalance: {},
             },
             true
         );

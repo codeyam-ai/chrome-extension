@@ -11,7 +11,7 @@ describe('Rendering the Home page', () => {
     let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
-        simulateMnemonicUser();        
+        simulateMnemonicUser();
     });
 
     test('when wallet has no coins', async () => {
