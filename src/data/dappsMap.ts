@@ -24,7 +24,7 @@ import movePad from '_images/dapps/logos/movepad.jpg';
 import { default as movex } from '_images/dapps/logos/movex.png';
 import polymediachat from '_images/dapps/logos/polymediachat.png';
 import staking from '_images/dapps/logos/staking.png';
-import swaps from '_images/dapps/logos/staking.png';
+// import swaps from '_images/dapps/logos/staking.png';
 import sui8192 from '_images/dapps/logos/sui-8192.png';
 import suiCheckers from '_images/dapps/logos/sui-checkers.png';
 import suiChess from '_images/dapps/logos/sui-chess.png';

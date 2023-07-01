@@ -13,9 +13,9 @@ import RecoveryPhraseDisplay from '_src/ui/app/shared/content/RecoveryPhraseDisp
 import Alert from '_src/ui/app/shared/feedback/Alert';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Header from '_src/ui/app/shared/typography/Header';
+import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { ChangeEventHandler } from 'react';
-import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 export default function ViewSeedPage() {
     const [hasConfirmed, setHasConfirmed] = useState(false);

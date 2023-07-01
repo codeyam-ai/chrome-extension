@@ -17,7 +17,8 @@ import { useMiddleEllipsis, useMediaUrl, useSuiObjectFields } from '_hooks';
 import st from './SuiObject.module.scss';
 
 export type SuiObjectProps = {
-    obj: any; // TODO: Determine the correct type for this
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    obj: any;
     sendNFT?: boolean;
 };
 

@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import http from 'http';
 import https from 'https';
 import { URL } from 'url';

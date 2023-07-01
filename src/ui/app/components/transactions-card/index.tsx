@@ -19,6 +19,7 @@ import st from './TransactionsCard.module.scss';
 const TRUNCATE_MAX_LENGTH = 8;
 const TRUNCATE_PREFIX_LENGTH = 4;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function TransactionCard({ txn }: { txn: any }) {
     const toAddrStr = useMiddleEllipsis(
         txn.to || '',

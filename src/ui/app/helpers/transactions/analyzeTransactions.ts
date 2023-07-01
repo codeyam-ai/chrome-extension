@@ -20,7 +20,6 @@ import sendTransactionAnalysis, {
 import stakingTransactionAnalysis, {
     type StakingTransactionInfo,
 } from './stakingTransactionAnalysis';
-import { useFormatCoin } from '../../hooks';
 
 export type ImportantTransactionInfo = {
     staking?: StakingTransactionInfo[];

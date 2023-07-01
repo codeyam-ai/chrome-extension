@@ -1,8 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { Ed25519Keypair, toB64 } from '@mysten/sui.js';
-
 import {
     generateMnemonicsAndKeypair,
     getKeypairFromMnemonics,

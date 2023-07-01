@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Runtime, Tabs } from 'webextension-polyfill';
 
 import type { Events } from 'webextension-polyfill/namespaces/events';
@@ -46,7 +47,9 @@ export class FakeEvent<T extends (...args: any[]) => any>
         return this.listeners.length > 0;
     }
 
-    removeListener(callback: T): void {}
+    removeListener(callback: T): void {
+        // do nothing
+    }
 }
 
 export class FakePort implements Port {

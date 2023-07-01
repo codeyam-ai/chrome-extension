@@ -1,13 +1,13 @@
-import { ArrowLongUpIcon, CheckIcon } from '@heroicons/react/24/solid';
+import { EyeIcon, Square2StackIcon } from '@heroicons/react/24/outline';
+import { CheckIcon } from '@heroicons/react/24/solid';
+import classNames from 'classnames';
 import { useCallback, useState } from 'react';
 
+import Button from '../buttons/Button';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 
 import type { MouseEventHandler } from 'react';
-import Button from '../buttons/Button';
-import { EyeIcon, Square2StackIcon } from '@heroicons/react/24/outline';
-import classNames from 'classnames';
 
 interface RecoveryPhraseDisplayProps {
     mnemonic: string;
