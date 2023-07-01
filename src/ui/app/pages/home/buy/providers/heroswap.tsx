@@ -3,7 +3,7 @@ import { API_ENV } from '_src/shared/api-env';
 import { useTheme } from '_src/shared/utils/themeContext';
 
 export default function HeroswapOnboarding() {
-    const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+    const selectedApiEnv = useAppSelector(({ app }) => app.apiEnv);
     const { address } = useAppSelector(({ account }) => account);
     const { resolvedTheme } = useTheme();
 
@@ -18,9 +18,10 @@ export default function HeroswapOnboarding() {
             className={`w-full h-full bg-ethos-dark-backround-primary dark:bg-ethos-dark-background-secondary`}
         >
             <iframe
-                id={'heroswap-iframe'}
+                id='heroswap-iframe'
+                title='heroswap-iframe'
                 src={`https://heroswap.com/widget?theme=${theme}&network=${network}&destinationTickers=SUI&affiliateAddress=${affiliateAddress}&destinationAddress=${address}`}
-                className={'border-0 m-0 p-0 w-full h-full relative z-20'}
+                className='border-0 m-0 p-0 w-full h-full relative z-20'
             />
         </div>
     );

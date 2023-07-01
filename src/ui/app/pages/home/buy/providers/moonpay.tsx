@@ -32,7 +32,7 @@ export default function MoonpayOnboarding() {
         checkCountrySupport();
     }, [address]);
 
-    const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+    const selectedApiEnv = useAppSelector(({ app }) => app.apiEnv);
     const [searchParams] = useSearchParams();
     const envParam = searchParams.get('env');
 

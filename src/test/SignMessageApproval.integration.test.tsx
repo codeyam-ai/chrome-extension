@@ -5,7 +5,6 @@ import userEvent from '@testing-library/user-event';
 import { BackgroundClient } from '_app/background-client';
 import { TX_STORE_KEY } from '_shared/constants';
 import { setEncrypted } from '_src/shared/storagex/store';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { accountInfos, simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
@@ -22,9 +21,8 @@ describe('The Sign Message Approval popup', () => {
     );
 
     const txRequestId = '95ae4a0d-0b7b-478b-ab70-bc3fe291540e';
-    let mockJsonRpc: MockJsonRpc;
+
     beforeEach(async () => {
-        mockJsonRpc = new MockJsonRpc();
         await simulateMnemonicUser();
         responseSpy.mockClear();
     });

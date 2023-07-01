@@ -30,7 +30,7 @@ export type FormValues = typeof initialValues;
 function TransferNFTReview() {
     const { connectToLedger } = useSuiLedgerClient();
     const [formSubmitted, submitForm] = useState(false);
-    const { account } = useAppSelector((state) => state);
+    const account = useAppSelector((state) => state.account);
     const formState = useAppSelector(
         ({ forms: { transferNft } }) => transferNft
     );

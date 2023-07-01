@@ -51,7 +51,7 @@ export type DistilledEffect = {
 
 export function DappTxApprovalPage() {
     const { connectToLedger } = useSuiLedgerClient();
-    const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+    const selectedApiEnv = useAppSelector(({ app }) => app.apiEnv);
 
     const activeChain = useMemo(() => {
         switch (selectedApiEnv) {

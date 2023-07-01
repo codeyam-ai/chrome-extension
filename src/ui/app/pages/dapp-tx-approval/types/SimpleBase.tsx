@@ -18,7 +18,7 @@ const SimpleBase = ({
     onComplete: (accept: boolean) => void;
     children: ReactElement;
 }) => {
-    const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+    const selectedApiEnv = useAppSelector(({ app }) => app.apiEnv);
 
     const reject = useCallback(() => {
         onComplete(false);

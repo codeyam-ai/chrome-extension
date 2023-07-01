@@ -78,7 +78,7 @@ interface ProviderSelectProps {
 
 const ProviderSelect = ({ theme, provider }: ProviderSelectProps) => {
     const navigate = useNavigate();
-    const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+    const selectedApiEnv = useAppSelector(({ app }) => app.apiEnv);
     const { address } = useAppSelector(({ account }) => account);
 
     const isProduction = selectedApiEnv.toString() === API_ENV.mainNet;
@@ -101,15 +101,7 @@ const ProviderSelect = ({ theme, provider }: ProviderSelectProps) => {
             const url = `${baseUrl}?apiKey=${apiKey}&themeColor=${colorCode}&environment=${env}&cryptoCurrencyCode=${code}&hideMenu=true&exchangeScreenTitle=Buy%20SUI&walletAddress=${address}`;
             window.location.href = url;
         }
-    }, [
-        navigate,
-        provider.path,
-        apiKey,
-        baseUrl,
-        colorCode,
-        env,
-        provider.isRedirect,
-    ]);
+    }, [provider, navigate, baseUrl, apiKey, colorCode, env, address]);
 
     const preventPropagation = useCallback(
         (e: React.MouseEvent<HTMLElement>) => {
@@ -162,9 +154,9 @@ const OnboardingProviders = () => {
         checkCountrySupport();
     }, []);
 
-    const back = () => {
+    const back = useCallback(() => {
         navigate(-1);
-    };
+    }, [navigate]);
 
     return (
         <>
