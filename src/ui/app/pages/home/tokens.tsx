@@ -13,7 +13,7 @@ import { openInNewTab } from '_src/shared/utils';
 import EmptyPageState from '_src/ui/app/shared/layouts/EmptyPageState';
 
 function TokensPage() {
-    const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+    const selectedApiEnv = useAppSelector(({ app }) => app.apiEnv);
     const [showAll, setShowAll] = useState(false);
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const { invalidPackages } = useAppSelector(({ valid }) => valid);

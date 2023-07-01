@@ -24,8 +24,8 @@ function HomePage() {
         useFavoriteDapps();
     const { totalActivePendingStakedSUI, isLoading: isLoadingStakedSui } =
         useTotalStakedSUI();
-
-    const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+    
+    const selectedApiEnv = useAppSelector(({ app }) => app.apiEnv);
 
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const mistBalance = balances[SUI_TYPE_ARG];

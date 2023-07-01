@@ -88,7 +88,7 @@ const NavItemElement = ({ to, title, outlineIcon, solidIcon }: NavItem) => {
 };
 
 const TabBar = () => {
-    // const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+    // const selectedApiEnv = useAppSelector(({ app }) => app.apiEnv);
 
     // useEffect(() => {
     //     const checkTickets = async () => {

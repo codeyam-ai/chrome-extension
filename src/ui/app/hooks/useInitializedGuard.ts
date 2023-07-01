@@ -45,7 +45,7 @@ export default function useInitializedGuard(
 
     const accountType = useAppSelector(({ account: { accountType } }) => accountType);
     const locked = useAppSelector(({ account: { locked } }) => locked);
-    
+
     if (locked || (!passwordReady && accountType === AccountType.PASSWORD)) {
         currentState = AppState.LOCKED;
     }
