@@ -15,7 +15,7 @@ describe('Minting an NFT', () => {
 
     test('can view multiple NFTs', async () => {
         mockBlockchain(mockJsonRpc, {
-            logObjects: true,
+            logObjects: false,
             nftDetails: {
                 name: 'nft',
                 count: 5,

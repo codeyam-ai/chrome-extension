@@ -1,5 +1,3 @@
-import { SuiTransactionBlockResponse } from '@mysten/sui.js/src/types/transactions';
-
 import { renderTemplate } from './json-templates';
 import { wallet1Address, wallet2Address } from './storage';
 import { getObjectIds } from './test-helpers';

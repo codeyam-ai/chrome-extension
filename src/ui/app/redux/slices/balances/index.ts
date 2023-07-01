@@ -34,9 +34,11 @@ export const fetchAllBalances = createAsyncThunk<
         return null;
     }
 
+    console.log("GET ALL BALANCES", address)
     const allBalances = await api.instance.fullNode.getAllBalances({
         owner: address,
     });
+    console.log("ALL BALANCES", allBalances)
 
     return allBalances;
 });

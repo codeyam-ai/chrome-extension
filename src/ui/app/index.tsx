@@ -6,6 +6,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import useSizeWindow from './hooks/useSizeWindow';
 import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
 import OnboardingProviders from './pages/home/buy';
+import HeroswapOnboarding from './pages/home/buy/providers/heroswap';
 import MoonpayOnboarding from './pages/home/buy/providers/moonpay';
 import TransakOnboarding from './pages/home/buy/providers/transak';
 import AddressBookNavigation from './pages/home/home/dapp/dapps/AddressBook/AddressBookNavigation';
@@ -62,7 +63,6 @@ import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
 import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
-import HeroswapOnboarding from './pages/home/buy/providers/heroswap';
 
 const App = () => {
     const dispatch = useAppDispatch();
