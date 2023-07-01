@@ -14,8 +14,8 @@ import type {
     SuiObjectResponse,
     JsonRpcProvider,
     SuiMoveObject,
+    DynamicFieldInfo,
 } from '@mysten/sui.js';
-import type { DynamicFieldInfo } from '@mysten/sui.js/dist/types/dynamic_fields';
 
 export type BagNFT = {
     id: string;
