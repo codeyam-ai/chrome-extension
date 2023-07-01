@@ -50,7 +50,7 @@ describe('Buy coin flow', () => {
     //     await disabledAndBack();
     // });
 
-    test.todo('Moonpay onboarding widget is displayed')
+    test.todo('Moonpay onboarding widget is displayed');
     // test('Moonpay onboarding widget is displayed', async () => {
     //     renderApp({
     //         dependencies: {
