@@ -1,4 +1,4 @@
-import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
@@ -28,11 +28,11 @@ describe('The Permissions page', () => {
         await userEvent.click(permissionsButton);
 
         await screen.findByText('Connected Apps');
-        const connectedApp = await screen.findByText('Ethos Wallet Explorer');
+        expect(screen.queryAllByText('Ethos Wallet Explorer').length).toBe(1);
         const revokeButton = await screen.findByRole('button', {
             name: 'Revoke',
         });
         await userEvent.click(revokeButton);
-        await waitForElementToBeRemoved(connectedApp, { timeout: 5000 });
+        expect(screen.queryAllByText('Ethos Wallet Explorer').length).toBe(0);
     });
 });

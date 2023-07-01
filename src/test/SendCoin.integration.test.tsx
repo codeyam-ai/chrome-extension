@@ -6,7 +6,6 @@ import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { mockBlockchain, rpcMocks } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
-import nock from 'nock';
 
 describe('send coin flow', () => {
     let mockJsonRpc: MockJsonRpc;
