@@ -275,6 +275,7 @@ const slice = createSlice({
             state.loading = true;
             objectsAdapter.removeAll(state);
         },
+        removeObject: objectsAdapter.removeOne,
     },
     extraReducers: (builder) => {
         builder
@@ -330,7 +331,7 @@ const slice = createSlice({
 
 export default slice.reducer;
 
-export const { clearForNetworkOrWalletSwitch } = slice.actions;
+export const { clearForNetworkOrWalletSwitch, removeObject } = slice.actions;
 
 export const suiObjectsAdapterSelectors = objectsAdapter.getSelectors(
     (state: RootState) => state.suiObjects

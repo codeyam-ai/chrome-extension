@@ -91,7 +91,7 @@ function renderApp(root: Root, queryClient: QueryClient) {
         heartbeat: makeHeartbeat(),
         featureFlags: {
             showUsd: true,
-            showMobile: true,
+            showMobile: false,
             showWipFeatures: isDevMode(),
         },
     };

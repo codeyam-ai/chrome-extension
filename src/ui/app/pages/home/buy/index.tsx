@@ -79,6 +79,7 @@ interface ProviderSelectProps {
 const ProviderSelect = ({ theme, provider }: ProviderSelectProps) => {
     const navigate = useNavigate();
     const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+    const { address } = useAppSelector(({ account }) => account);
 
     const isProduction = selectedApiEnv.toString() === API_ENV.mainNet;
     const env = isProduction ? 'production' : 'staging';
@@ -97,7 +98,7 @@ const ProviderSelect = ({ theme, provider }: ProviderSelectProps) => {
                 navigate(provider.path);
             }
         } else {
-            const url = `${baseUrl}?apiKey=${apiKey}&themeColor=${colorCode}&environment=${env}&cryptoCurrencyCode=${code}&hideMenu=true&exchangeScreenTitle=Buy%20SUI`;
+            const url = `${baseUrl}?apiKey=${apiKey}&themeColor=${colorCode}&environment=${env}&cryptoCurrencyCode=${code}&hideMenu=true&exchangeScreenTitle=Buy%20SUI&walletAddress=${address}`;
             window.location.href = url;
         }
     }, [

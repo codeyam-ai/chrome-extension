@@ -14,6 +14,7 @@ import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClien
 import transferNFT from '_src/ui/app/helpers/transferNFT';
 import { accountNftsSelector } from '_src/ui/app/redux/slices/account';
 import { resettransferNftForm } from '_src/ui/app/redux/slices/forms';
+import { removeObject } from '_src/ui/app/redux/slices/sui-objects';
 import { FailAlert } from '_src/ui/app/shared/alerts/FailAlert';
 import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 import { api } from '_store/thunk-extras';
@@ -78,6 +79,7 @@ function TransferNFTReview() {
             dispatch(resettransferNftForm());
 
             if (response.txId) {
+                await dispatch(removeObject(formState.nftId));
                 // Redirect to nft page
                 navigate('/nfts');
 

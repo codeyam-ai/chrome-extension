@@ -6,7 +6,8 @@ import type {
 import type { ExtendedSuiObjectData } from '_redux/slices/sui-objects';
 
 const obKioskPackageId =
-    '0x1dddbcce1491a365d931a0dc6a64db596dad9c9915c6d0efb13e5c2efd5e95ce';
+    '0x5f2303aaa5a630adfc8fdadadb162a1f89b0e939978225b0021645e30cb3ab6a';
+const kioskModule = '0x2::kiosk';
 
 const transferObjectTransactionBlock = async (
     transactionBlock: TransactionBlock,
@@ -23,6 +24,9 @@ const transferObjectTransactionBlock = async (
         let kioskId: string | undefined;
         if (object.kiosk.content?.dataType === 'moveObject') {
             kioskId = object.kiosk.content.fields.kiosk;
+            if (!kioskId) {
+                kioskId = object.kiosk.content.fields.for;
+            }
         }
 
         if (!kioskId) return null;
@@ -69,6 +73,60 @@ const transferObjectTransactionBlock = async (
                         transactionBlock.pure(object.objectId),
                     ],
                 });
+            }
+        } else if (
+            object.kiosk.type.indexOf('0x2::kiosk::KioskOwnerCap') > -1
+        ) {
+            const [item] = transactionBlock.moveCall({
+                target: `${kioskModule}::take`,
+                typeArguments: [object.type ?? ''],
+                arguments: [
+                    transactionBlock.object(kioskId),
+                    transactionBlock.object(object.kiosk.objectId),
+                    transactionBlock.pure(object.objectId, 'address'),
+                ],
+            });
+
+            let recipientKioskId: string | undefined;
+
+            const recipientKiosk = recipientKiosks.data[0]?.data;
+            if (recipientKiosk) {
+                if (recipientKiosk?.content?.dataType === 'moveObject') {
+                    recipientKioskId = recipientKiosk.content.fields.for;
+                }
+
+                if (!recipientKioskId) return null;
+
+                transactionBlock.moveCall({
+                    target: `${kioskModule}::place`,
+                    typeArguments: [object.type ?? ''],
+                    arguments: [
+                        transactionBlock.object(recipientKioskId),
+                        transactionBlock.object(recipientKiosk.objectId),
+                        item,
+                    ],
+                });
+            } else {
+                const [kiosk, kioskOwnerCap] = transactionBlock.moveCall({
+                    target: `${kioskModule}::new`,
+                });
+
+                transactionBlock.moveCall({
+                    target: `${kioskModule}::place`,
+                    typeArguments: [object.type ?? ''],
+                    arguments: [kiosk, kioskOwnerCap, item],
+                });
+
+                transactionBlock.moveCall({
+                    target: `0x2::transfer::public_share_object`,
+                    typeArguments: [`${kioskModule}::Kiosk`],
+                    arguments: [kiosk],
+                });
+
+                transactionBlock.transferObjects(
+                    [kioskOwnerCap],
+                    transactionBlock.pure(recipient)
+                );
             }
         }
     }
