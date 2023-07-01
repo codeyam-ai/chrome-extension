@@ -35,7 +35,8 @@ export const mockCommonCalls = (mockJsonRpc: MockJsonRpc) => {
 
     mockJsonRpc.mockJsonRpcCall(
         { method: 'sui_getProtocolConfig' },
-        renderTemplate('getProtocolConfig', {})
+        renderTemplate('getProtocolConfig', {}),
+        true
     );
 };
 

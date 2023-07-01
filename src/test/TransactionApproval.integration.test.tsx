@@ -204,8 +204,9 @@ describe('The Transaction Approval popup', () => {
     }
 
     function mockBlockchainTransactionExecution() {
+        const balance = 40000000;
         const coinObj = makeCoinObject(
-            40000000,
+            balance,
             '0x395c50c614cc22156c9de8db24163f48e4ff66ae'
         );
         mockJsonRpc.mockJsonRpcCall(
@@ -219,6 +220,23 @@ describe('The Transaction Approval popup', () => {
                 ],
             },
             [coinObj]
+        );
+
+        mockJsonRpc.mockJsonRpcCall(
+            {
+                method: 'suix_getBalance',
+                params: [
+                    "0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de",
+                    "0x2::sui::SUI"
+                ],
+            },
+            {
+                "coinType": "0x2::sui::SUI",
+                "coinObjectCount": 1,
+                "totalBalance": balance,
+                "lockedBalance": {}
+            },
+            true
         );
 
         mockJsonRpc.mockJsonRpcCall(

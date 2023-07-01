@@ -17,7 +17,7 @@ interface CallContext {
 export class MockJsonRpc {
     registeredCalls: CallContext[];
 
-    constructor(trace = true) {
+    constructor(trace = false) {
         this.registeredCalls = [];
         nock('http://mainNet-fullnode.example.com')
             .persist()
