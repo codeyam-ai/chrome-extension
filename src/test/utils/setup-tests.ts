@@ -143,7 +143,7 @@ beforeEach(() => {
             conversionRate: 100,
             cryptocurrencySymbol: 'sui',
         });
-})
+});
 
 afterEach(() => {
     nock.cleanAll();

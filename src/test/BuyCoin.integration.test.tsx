@@ -35,33 +35,34 @@ describe('Buy coin flow', () => {
         // TODO: Add logic to test async iFrame loading
     };
 
-    xtest('Moonpay onboarding is disabled', async () => {
-        renderApp({
-            dependencies: {
-                ...makeTestDeps(),
-                featureFlags: {
-                    showUsd: false,
-                    showMobile: true,
-                    showWipFeatures: false,
-                },
-            },
-        });
-        // await ShouldClickBuy();
-        // await disabledAndBack();
-    });
+    // test('Moonpay onboarding is disabled', async () => {
+    //     renderApp({
+    //         dependencies: {
+    //             ...makeTestDeps(),
+    //             featureFlags: {
+    //                 showUsd: false,
+    //                 showMobile: true,
+    //                 showWipFeatures: false,
+    //             },
+    //         },
+    //     });
+    //     await ShouldClickBuy();
+    //     await disabledAndBack();
+    // });
 
-    xtest('Moonpay onboarding widget is displayed', async () => {
-        renderApp({
-            dependencies: {
-                ...makeTestDeps(),
-                featureFlags: {
-                    showUsd: false,
-                    showMobile: true,
-                    showWipFeatures: true,
-                },
-            },
-        });
-        // await ShouldClickBuy();
-        // await enabledAndOnboard();
-    });
+    test.todo('Moonpay onboarding widget is displayed');
+    // test('Moonpay onboarding widget is displayed', async () => {
+    //     renderApp({
+    //         dependencies: {
+    //             ...makeTestDeps(),
+    //             featureFlags: {
+    //                 showUsd: false,
+    //                 showMobile: true,
+    //                 showWipFeatures: true,
+    //             },
+    //         },
+    //     });
+    //     await ShouldClickBuy();
+    //     await enabledAndOnboard();
+    // });
 });

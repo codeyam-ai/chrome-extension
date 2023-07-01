@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { JsonRpcProvider } from '@mysten/sui.js';
 
 /**
@@ -110,10 +111,10 @@ export class LoggingJsonRpcProvider extends JsonRpcProvider {
     );
     queryEvents = this.wrapMethod('queryEvents', super.queryEvents);
     subscribeEvent = this.wrapMethod('subscribeEvent', super.subscribeEvent);
-    unsubscribeEvent = this.wrapMethod(
-        'unsubscribeEvent',
-        super.unsubscribeEvent
-    );
+    // unsubscribeEvent = this.wrapMethod(
+    //     'unsubscribeEvent',
+    //     super.unsubscribeEvent
+    // );
     devInspectTransactionBlock = this.wrapMethod(
         'devInspectTransactionBlock',
         super.devInspectTransactionBlock

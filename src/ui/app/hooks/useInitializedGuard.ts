@@ -29,21 +29,31 @@ export default function useInitializedGuard(
 
     if (loading) currentState = AppState.LOADING;
 
-    const passwordReady = useAppSelector(({ account: { passphrase } }) => passphrase);
-    const mnemonicReady = useAppSelector(({ account: { mnemonic } }) => mnemonic);
+    const passwordReady = useAppSelector(
+        ({ account: { passphrase } }) => passphrase
+    );
+    const mnemonicReady = useAppSelector(
+        ({ account: { mnemonic } }) => mnemonic
+    );
 
     if (passwordReady && mnemonicReady) {
         currentState = AppState.MNEMONIC;
     }
 
-    const authentication = useAppSelector(({ account: { authentication } }) => authentication);
-    const accountInfos = useAppSelector(({ account: { accountInfos } }) => accountInfos);
+    const authentication = useAppSelector(
+        ({ account: { authentication } }) => authentication
+    );
+    const accountInfos = useAppSelector(
+        ({ account: { accountInfos } }) => accountInfos
+    );
 
     if (authentication && (accountInfos?.length || 0) > 0) {
         currentState = AppState.HOSTED;
     }
 
-    const accountType = useAppSelector(({ account: { accountType } }) => accountType);
+    const accountType = useAppSelector(
+        ({ account: { accountType } }) => accountType
+    );
     const locked = useAppSelector(({ account: { locked } }) => locked);
 
     if (locked || (!passwordReady && accountType === AccountType.PASSWORD)) {

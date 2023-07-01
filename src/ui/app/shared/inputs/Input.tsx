@@ -47,8 +47,6 @@ const Input = ({
         moveCursorToEndOfInput(inputRef.current);
     }, []);
 
-    
-
     return (
         <div
             className={`${

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { renderTemplate } from './json-templates';
 import { wallet1Address, wallet2Address } from './storage';
 import { getObjectIds } from './test-helpers';

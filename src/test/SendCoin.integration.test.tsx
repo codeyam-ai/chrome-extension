@@ -39,7 +39,7 @@ describe('send coin flow', () => {
             JsonRpcProvider.prototype,
             'resolveNameServiceAddress'
         );
-        nameserviceSpy.mockResolvedValue(null)
+        nameserviceSpy.mockResolvedValue(null);
     });
 
     const shouldSeeRootPageAndClickSend = async () => {
@@ -56,7 +56,7 @@ describe('send coin flow', () => {
 
     const shouldAddRecipientAndClickContinue = async () => {
         const input = await screen.findByPlaceholderText('0x... or SuiNS name');
-        await userEvent.clear(input)
+        await userEvent.clear(input);
         await userEvent.type(
             input,
             '0xec96d320e97cd10146f953a79cf9dc05a8b35c46b3e8428f785ec3ae1b6f8fa6'

@@ -39,9 +39,9 @@ describe('The home page', () => {
             expect(fakeAlarms.alarmsCreated).toHaveLength(1);
         });
 
-        expect(
-            fakeAlarms.alarmsCreated[0].alarmInfo.delayInMinutes
-        ).toEqual(DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES);
+        expect(fakeAlarms.alarmsCreated[0].alarmInfo.delayInMinutes).toEqual(
+            DEFAULT_AUTO_LOCK_TIMEOUT_IN_MINUTES
+        );
 
         // now invoke the alarm, which should trigger the UI to lock
         act(() => {

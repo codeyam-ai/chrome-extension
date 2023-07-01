@@ -86,6 +86,6 @@ describe('Unlocking the wallet', () => {
 
         await userEvent.type(passwordInput, newPassword);
         await userEvent.click(screen.getByTestId('submit'));
-        await screen.findByText("Get started with Sui")
+        await screen.findByText('Get started with Sui');
     }
 });

@@ -1,5 +1,4 @@
-import { screen, waitFor, within } from '@testing-library/react';
-import nock from 'nock';
+import { screen, within } from '@testing-library/react';
 
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { mockBlockchain } from '_src/test/utils/mockchain';
@@ -11,7 +10,7 @@ describe('Rendering the Home page', () => {
     let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
-        simulateMnemonicUser();        
+        simulateMnemonicUser();
     });
 
     test('when wallet has no coins', async () => {

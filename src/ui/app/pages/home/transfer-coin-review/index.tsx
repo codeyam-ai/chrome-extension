@@ -123,7 +123,16 @@ function TransferCoinReviewPage() {
                 setSendError((e as SerializedError).message || null);
             }
         },
-        [locale, coinType, coinDecimals, account, connectToLedger, allCoins, dispatch, navigate]
+        [
+            locale,
+            coinType,
+            coinDecimals,
+            account,
+            connectToLedger,
+            allCoins,
+            dispatch,
+            navigate,
+        ]
     );
     const handleOnClearSubmitError = useCallback(() => {
         setSendError(null);
