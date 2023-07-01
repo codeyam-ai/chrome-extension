@@ -32,6 +32,11 @@ export const mockCommonCalls = (mockJsonRpc: MockJsonRpc) => {
         coinMetadataResponse,
         true
     );
+
+    mockJsonRpc.mockJsonRpcCall(
+        { method: 'sui_getProtocolConfig' },
+        renderTemplate('getProtocolConfig', {})
+    );
 };
 
 interface CoinTransactionSpec {
