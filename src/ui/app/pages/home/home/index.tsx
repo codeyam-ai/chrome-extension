@@ -20,7 +20,6 @@ import Subheader from '_src/ui/app/shared/typography/Subheader';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 function HomePage() {
-    console.log("HOME0")
     const { favoriteDappsForCurrentNetwork, favoriteDapps } =
         useFavoriteDapps();
     const { totalActivePendingStakedSUI, isLoading: isLoadingStakedSui } =
