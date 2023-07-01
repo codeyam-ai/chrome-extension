@@ -37,14 +37,12 @@ export type FormValues = typeof initialValues;
 function TransferNFTRecipient() {
     const { connectToLedger } = useSuiLedgerClient();
     const {
-        account: {
-            address,
-            authentication,
-            activeAccountIndex,
-            accountInfos,
-            passphrase,
-        },
-    } = useAppSelector((state) => state);
+        address,
+        authentication,
+        activeAccountIndex,
+        accountInfos,
+        passphrase,
+    } = useAppSelector((state) => state.account);
     const formData = useAppSelector(
         ({ forms: { transferNft } }) => transferNft
     );

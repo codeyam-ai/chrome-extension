@@ -1,3 +1,4 @@
+import { JsonRpcProvider } from '@mysten/sui.js';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -5,6 +6,7 @@ import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { mockBlockchain, rpcMocks } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
+import nock from 'nock';
 
 describe('send coin flow', () => {
     let mockJsonRpc: MockJsonRpc;
@@ -33,6 +35,12 @@ describe('send coin flow', () => {
             null,
             null,
         ]);
+
+        const nameserviceSpy = jest.spyOn(
+            JsonRpcProvider.prototype,
+            'resolveNameServiceAddress'
+        );
+        nameserviceSpy.mockResolvedValue(null)
     });
 
     const shouldSeeRootPageAndClickSend = async () => {
@@ -49,6 +57,7 @@ describe('send coin flow', () => {
 
     const shouldAddRecipientAndClickContinue = async () => {
         const input = await screen.findByPlaceholderText('0x... or SuiNS name');
+        await userEvent.clear(input)
         await userEvent.type(
             input,
             '0xec96d320e97cd10146f953a79cf9dc05a8b35c46b3e8428f785ec3ae1b6f8fa6'

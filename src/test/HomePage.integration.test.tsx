@@ -11,18 +11,7 @@ describe('Rendering the Home page', () => {
     let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
-        simulateMnemonicUser();
-
-        nock('https://explorer.ethoswallet.xyz')
-            .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
-            .persist()
-            .get('/api/v1/coin/convert')
-            .reply(200, {
-                fiatCurrency: 'usd',
-                fiatSymbol: '$',
-                conversionRate: 100,
-                cryptocurrencySymbol: 'sui',
-            });
+        simulateMnemonicUser();        
     });
 
     test('when wallet has no coins', async () => {

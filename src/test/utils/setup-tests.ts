@@ -127,10 +127,23 @@ process.env.EXPLORER_URL_MAINNET = 'https://suiexplorer.com/';
 
 process.env.MOONPAY_TEST_API_KEY = 'pk_test_8S6mtnLjTUJf4PWM2Ts5lhA08g12P';
 
-nock('https://cdn.growthbook.io')
-    .persist()
-    .get(`/api/features/test`)
-    .reply(200, {});
+beforeEach(() => {
+    nock('https://cdn.growthbook.io')
+        .persist()
+        .get(`/api/features/test`)
+        .reply(200, {});
+
+    nock('https://explorer.ethoswallet.xyz')
+        .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+        .persist()
+        .get('/api/v1/coin/convert')
+        .reply(200, {
+            fiatCurrency: 'usd',
+            fiatSymbol: '$',
+            conversionRate: 100,
+            cryptocurrencySymbol: 'sui',
+        });
+})
 
 afterEach(() => {
     nock.cleanAll();

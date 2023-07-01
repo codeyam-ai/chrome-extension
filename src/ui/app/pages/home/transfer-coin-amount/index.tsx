@@ -118,15 +118,15 @@ function useOnHandleSubmit({
 }: UseOnHandleSubmit) {
     const { connectToLedger } = useSuiLedgerClient();
     const {
-        account: {
-            authentication,
-            address,
-            activeAccountIndex,
-            accountInfos,
-            passphrase,
-        },
-    } = useAppSelector((state) => state);
-    const state = useAppSelector((state) => state);
+        authentication,
+        address,
+        activeAccountIndex,
+        accountInfos,
+        passphrase,
+    } = useAppSelector((state) => state.account);
+    // const state = useAppSelector((state) => state);
+    const allCoins: SuiMoveObject[] = useAppSelector(accountCoinsSelector);
+
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { locale } = useIntl();
@@ -169,7 +169,6 @@ function useOnHandleSubmit({
 
             const safeTo = safeAddress(formState.to);
 
-            const allCoins: SuiMoveObject[] = accountCoinsSelector(state);
             const [primaryCoin, ...mergeCoins] = allCoins.filter(
                 (c) => c.type === `0x2::coin::Coin<${coin.type}>`
             );
@@ -252,7 +251,7 @@ function useOnHandleSubmit({
             activeAccountIndex,
             connectToLedger,
             formState.to,
-            state,
+            allCoins,
             dispatch,
             setSendError,
             navigate,
