@@ -25,7 +25,7 @@ function AddressInput<FormValues>({
     placeholder = '0x... or SuiNS name',
     className,
     label,
-    form: { isSubmitting, setFieldValue },
+    form: { isSubmitting, setFieldValue, isValid },
     field: { name, value },
 }: AddressInputProps<FormValues>) {
     const [displayedValue, setDisplayedValue] = useState<string>(value);
@@ -52,10 +52,24 @@ function AddressInput<FormValues>({
 
             const _value = e.currentTarget.value;
             setDisplayedValue(_value);
-            if (!_value.startsWith('0x')) {
-                getSuiAddress(_value).then((address: string) => {
-                    setShowAddress(address !== _value);
-                    setFieldValue(name, SUI_ADDRESS_VALIDATION.cast(address));
+            if (_value === '') {
+                setShowAddress(false);
+                setFieldValue(name, '');
+            } else if (!_value.startsWith('0x')) {
+                getSuiAddress(_value).then((address: string | null) => {
+                    if (address) {
+                        setShowAddress(address !== _value);
+                        setFieldValue(
+                            name,
+                            SUI_ADDRESS_VALIDATION.cast(address)
+                        );
+                    } else {
+                        setShowAddress(true);
+                        setFieldValue(
+                            name,
+                            SUI_ADDRESS_VALIDATION.cast(_value)
+                        );
+                    }
                 });
             } else {
                 setFieldValue(name, SUI_ADDRESS_VALIDATION.cast(_value));
@@ -90,7 +104,7 @@ function AddressInput<FormValues>({
                     name,
                 }}
             />
-            {showAddress && (
+            {isValid && showAddress && (
                 <CheckCircleIcon
                     className={'absolute right-6 bottom-11'}
                     width={20}

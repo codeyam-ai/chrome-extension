@@ -61,8 +61,8 @@ describe('Rendering the Home page', () => {
                 'wallet-and-balance'
             );
 
-            await within(walletAndBalance).queryByText('40 SUI');
-            await waitFor(() => screen.getByText('SUI Balance ≈ $4,000 USD'));
+            within(walletAndBalance).queryByText('40 SUI');
+            await screen.findByText('SUI Balance ≈ $4,000 USD');
 
             const coinList = await screen.findByTestId('coin-list');
             await within(coinList).findByText('≈ $4,000.00 USD');

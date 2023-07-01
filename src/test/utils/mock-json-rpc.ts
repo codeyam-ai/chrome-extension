@@ -102,6 +102,7 @@ export class MockJsonRpc {
             });
         });
 
+        const id = requestBody instanceof Object ? requestBody.id : uuidV4()
         if (allJsonRpcCalls.length === allJsonRpcResponses.length) {
             if (isBatch) {
                 // return an array where each object corresponds to an incoming request
@@ -109,14 +110,14 @@ export class MockJsonRpc {
                     return {
                         jsonrpc: '2.0',
                         result: response,
-                        id: uuidV4(),
+                        id,
                     };
                 });
             } else {
                 return {
                     jsonrpc: '2.0',
                     result: allJsonRpcResponses[0],
-                    id: uuidV4(),
+                    id,
                 };
             }
         } else {
