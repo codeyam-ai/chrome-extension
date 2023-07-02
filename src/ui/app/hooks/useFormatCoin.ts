@@ -187,7 +187,7 @@ export function useFormatCoin(
             balance === null ||
             typeof decimals === 'undefined'
         ) {
-            return '$0.00';
+            return 'N/A';
         }
         return ns.format.dollars(balance, decimals, conversion);
     }, [balance, decimals, conversion]);

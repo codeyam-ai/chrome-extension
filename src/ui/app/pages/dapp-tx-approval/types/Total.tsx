@@ -11,7 +11,7 @@ import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 
 const Total = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
     const bnTotalFee = new BigNumber(analysis.totalFee);
-    const [formatted, symbol, dollars] = useFormatCoin(
+    const [formatted, symbol, dollars, , , , , hasConversion] = useFormatCoin(
         bnTotalFee.abs().toString(),
         SUI_TYPE_ARG
     );
@@ -29,7 +29,7 @@ const Total = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
                 {bnTotalFee.lt(0) && ' (Gain)'}
             </BodyLarge>
 
-            {featureFlags.showUsd ? (
+            {featureFlags.showUsd && hasConversion ? (
                 <div className="text-right flex flex-col gap-1">
                     <BodyLarge
                         isSemibold
