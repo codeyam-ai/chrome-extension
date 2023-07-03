@@ -254,6 +254,7 @@ const dappsMap: Map<string, DappData> = new Map([
             urls: {
                 [NetworkName.DEVNET]: 'https://www.suins.io/',
                 [NetworkName.TESTNET]: 'https://www.suins.io/',
+                [NetworkName.MAINNET]: 'https://www.suins.io/',
             },
             tags: [TagName.TOOLS],
         } as DappData,
