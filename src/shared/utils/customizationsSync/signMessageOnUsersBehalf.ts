@@ -1,11 +1,9 @@
 import {
     fromB64,
-    toB64,
     type SignedMessage,
     type SuiTransactionBlockResponse,
 } from '@mysten/sui.js';
 
-import { thunkExtras } from '_redux/store/thunk-extras';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';

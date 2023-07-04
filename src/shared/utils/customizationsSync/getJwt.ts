@@ -1,10 +1,6 @@
-import { fromB64 } from '@mysten/bcs';
+import { authApiCall } from './ethosPlatformApiCall';
 import signMessageOnUsersBehalf from '_src/shared/utils/customizationsSync/signMessageOnUsersBehalf';
-import {
-    authApiCall,
-    explorerApiCall,
-    simpleApiCall,
-} from '_src/shared/utils/simpleApiCall';
+
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
 
 async function getJwt(
@@ -39,12 +35,12 @@ async function getJwt(
         b64Signature: txResult?.signature ?? '',
     };
 
-    const res = await authApiCall({
-        relativePath: 'v1/auth/sui/signature',
-        method: 'POST',
-        accessToken: '',
-        body: authReqBody,
-    });
+    const res = await authApiCall(
+        'v1/auth/sui/signature',
+        'POST',
+        '',
+        authReqBody
+    );
 
     const { jwt } = res.json;
 

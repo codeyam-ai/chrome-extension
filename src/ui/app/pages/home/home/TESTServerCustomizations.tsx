@@ -1,15 +1,10 @@
-import { fromB64 } from '@mysten/bcs';
+import { useCallback } from 'react';
+
+import { explorerApiCall } from '_src/shared/utils/customizationsSync/ethosPlatformApiCall';
 import getJwt from '_src/shared/utils/customizationsSync/getJwt';
-import signMessageOnUsersBehalf from '_src/shared/utils/customizationsSync/signMessageOnUsersBehalf';
-import {
-    authApiCall,
-    explorerApiCall,
-    simpleApiCall,
-} from '_src/shared/utils/simpleApiCall';
 import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import { useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
-import { useCallback } from 'react';
 
 const TestServerCustomizations: React.FC = () => {
     const { connectToLedger } = useSuiLedgerClient();
@@ -33,11 +28,7 @@ const TestServerCustomizations: React.FC = () => {
 
         console.log('jwt :>> ', jwt);
 
-        const res = await explorerApiCall({
-            relativePath: 'v1/user/profile',
-            method: 'GET',
-            accessToken: jwt,
-        });
+        const res = await explorerApiCall('v1/user/profile', 'GET', jwt);
 
         console.log('res :>> ', res);
     }, [
