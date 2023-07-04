@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 
-import { explorerApiCall } from '_src/shared/utils/customizationsSync/ethosPlatformApiCall';
+import getCustomizations from '_src/shared/utils/customizationsSync/getCustomizations';
 import getJwt from '_src/shared/utils/customizationsSync/getJwt';
+import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomizations';
 import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import { useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
@@ -16,7 +17,7 @@ const TestServerCustomizations: React.FC = () => {
         passphrase,
     } = useAppSelector(({ account }) => account);
 
-    const getCustomization = useCallback(async () => {
+    const handleGetCustomization = useCallback(async () => {
         const jwt = await getJwt(
             connectToLedger,
             passphrase || '',
@@ -25,24 +26,18 @@ const TestServerCustomizations: React.FC = () => {
             accountInfos,
             activeAccountIndex
         );
-
-        console.log('jwt :>> ', jwt);
-
-        const res = await explorerApiCall('v1/user/profile', 'GET', jwt);
-
-        const customizations = res.json.data;
-
+        const customizations = await getCustomizations(jwt);
         console.log('customizations :>> ', customizations);
     }, [
-        accountInfos,
-        activeAccountIndex,
-        activeAddress,
-        authentication,
         connectToLedger,
         passphrase,
+        authentication,
+        activeAddress,
+        accountInfos,
+        activeAccountIndex,
     ]);
 
-    const saveCustomization = useCallback(async () => {
+    const handleSaveCustomization = useCallback(async () => {
         const jwt = await getJwt(
             connectToLedger,
             passphrase || '',
@@ -51,35 +46,27 @@ const TestServerCustomizations: React.FC = () => {
             accountInfos,
             activeAccountIndex
         );
-
-        console.log('jwt :>> ', jwt);
-
-        const requestBody: Record<string, string> = {
-            data: JSON.stringify(accountInfos[activeAccountIndex]),
-        };
-
-        const res = await explorerApiCall(
-            'v1/user/profile',
-            'PUT',
+        const res = await saveCustomizations(
             jwt,
-            requestBody
+            accountInfos[activeAccountIndex]
         );
-
         console.log('res :>> ', res);
     }, [
-        accountInfos,
-        activeAccountIndex,
-        activeAddress,
-        authentication,
         connectToLedger,
         passphrase,
+        authentication,
+        activeAddress,
+        accountInfos,
+        activeAccountIndex,
     ]);
 
     return (
         <div>
             <h1>Test Server Customizations</h1>
-            <Button onClick={getCustomization}>Get Customization</Button>
-            <Button onClick={saveCustomization}>Save Customization</Button>
+            <Button onClick={handleGetCustomization}>Get Customization</Button>
+            <Button onClick={handleSaveCustomization}>
+                Save Customization
+            </Button>
         </div>
     );
 };
