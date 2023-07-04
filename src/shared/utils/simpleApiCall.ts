@@ -82,15 +82,14 @@ export const secureApiCall = async (
 export const explorerApiCall = async ({
     relativePath,
     method = 'GET',
-    // accessToken,
+    accessToken,
     body,
-}: // secure,
-ApiCallArgs) => {
+}: ApiCallArgs) => {
     const data: FetchData = {
         method: method,
         headers: {
             'Content-Type': 'application/json',
-            // 'X-Supabase-Access-Token': accessToken,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
 
@@ -100,10 +99,7 @@ ApiCallArgs) => {
 
     const baseUrl = EXPLORER_BASE_URL;
 
-    console.log(
-        '`${baseUrl}/api/${relativePath}` :>> ',
-        `${baseUrl}/api/${relativePath}`
-    );
+    console.log('Sending req to :>> ', `${baseUrl}/api/${relativePath}`);
 
     const response = await fetch(`${baseUrl}/api/${relativePath}`, data);
     const { status } = response;
@@ -135,10 +131,7 @@ ApiCallArgs) => {
 
     const baseUrl = API_BASE_URL;
 
-    console.log(
-        '`${baseUrl}/api/${relativePath}` :>> ',
-        `${baseUrl}/api/${relativePath}`
-    );
+    console.log('Sending req to :>> ', `${baseUrl}/api/${relativePath}`);
 
     const response = await fetch(`${baseUrl}/api/${relativePath}`, data);
     const { status } = response;

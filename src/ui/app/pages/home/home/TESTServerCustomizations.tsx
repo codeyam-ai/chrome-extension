@@ -21,7 +21,7 @@ const TestServerCustomizations: React.FC = () => {
         passphrase,
     } = useAppSelector(({ account }) => account);
 
-    const sign = useCallback(async () => {
+    const uploadCustomization = useCallback(async () => {
         const jwt = await getJwt(
             connectToLedger,
             passphrase || '',
@@ -32,6 +32,14 @@ const TestServerCustomizations: React.FC = () => {
         );
 
         console.log('jwt :>> ', jwt);
+
+        const res = await explorerApiCall({
+            relativePath: 'v1/user/profile',
+            method: 'GET',
+            accessToken: jwt,
+        });
+
+        console.log('res :>> ', res);
     }, [
         accountInfos,
         activeAccountIndex,
@@ -41,25 +49,10 @@ const TestServerCustomizations: React.FC = () => {
         passphrase,
     ]);
 
-    const testSimple = useCallback(async () => {
-        // const res = await explorerApiCall({
-        //     relativePath: 'v1/user/profile',
-        //     method: 'GET',
-        //     accessToken: '',
-        // });
-        const res = await authApiCall({
-            relativePath: 'v1/swagger',
-            method: 'GET',
-            accessToken: '',
-        });
-        console.log('res :>> ', res);
-    }, []);
-
     return (
         <div>
             <h1>Test Server Customizations</h1>
-            <Button onClick={sign}>Sign</Button>
-            <Button onClick={testSimple}>Auth API Call</Button>
+            <Button onClick={uploadCustomization}>Upload Customization</Button>
         </div>
     );
 };
