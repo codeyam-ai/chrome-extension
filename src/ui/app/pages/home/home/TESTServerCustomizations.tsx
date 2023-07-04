@@ -16,7 +16,7 @@ const TestServerCustomizations: React.FC = () => {
         passphrase,
     } = useAppSelector(({ account }) => account);
 
-    const uploadCustomization = useCallback(async () => {
+    const getCustomization = useCallback(async () => {
         const jwt = await getJwt(
             connectToLedger,
             passphrase || '',
@@ -29,6 +29,41 @@ const TestServerCustomizations: React.FC = () => {
         console.log('jwt :>> ', jwt);
 
         const res = await explorerApiCall('v1/user/profile', 'GET', jwt);
+
+        const customizations = res.json.data;
+
+        console.log('customizations :>> ', customizations);
+    }, [
+        accountInfos,
+        activeAccountIndex,
+        activeAddress,
+        authentication,
+        connectToLedger,
+        passphrase,
+    ]);
+
+    const saveCustomization = useCallback(async () => {
+        const jwt = await getJwt(
+            connectToLedger,
+            passphrase || '',
+            authentication,
+            activeAddress || '',
+            accountInfos,
+            activeAccountIndex
+        );
+
+        console.log('jwt :>> ', jwt);
+
+        const requestBody: Record<string, string> = {
+            data: JSON.stringify(accountInfos[activeAccountIndex]),
+        };
+
+        const res = await explorerApiCall(
+            'v1/user/profile',
+            'PUT',
+            jwt,
+            requestBody
+        );
 
         console.log('res :>> ', res);
     }, [
@@ -43,7 +78,8 @@ const TestServerCustomizations: React.FC = () => {
     return (
         <div>
             <h1>Test Server Customizations</h1>
-            <Button onClick={uploadCustomization}>Upload Customization</Button>
+            <Button onClick={getCustomization}>Get Customization</Button>
+            <Button onClick={saveCustomization}>Save Customization</Button>
         </div>
     );
 };
