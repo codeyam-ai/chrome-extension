@@ -1,5 +1,6 @@
 import { fromB64 } from '@mysten/bcs';
-import signMessageOnUsersBehalf from '_src/shared/utils/signMessageOnUsersBehalf';
+import getJwt from '_src/shared/utils/customizationsSync/getJwt';
+import signMessageOnUsersBehalf from '_src/shared/utils/customizationsSync/signMessageOnUsersBehalf';
 import {
     authApiCall,
     explorerApiCall,
@@ -21,39 +22,14 @@ const TestServerCustomizations: React.FC = () => {
     } = useAppSelector(({ account }) => account);
 
     const sign = useCallback(async () => {
-        const dataToSign = {
-            tenantId: '92dd81a5-dd8b-480c-b468-66f69a74c1bc',
-            timestamp: Date.now(),
-        };
-
-        // const dataToSignBase64 = fromB64(JSON.stringify(dataToSign));
-        const dataToSignBase64 = Buffer.from(
-            JSON.stringify(dataToSign)
-        ).toString('base64');
-
-        const txResult = await signMessageOnUsersBehalf(
+        const jwt = await getJwt(
             connectToLedger,
-            dataToSignBase64,
-            passphrase,
+            passphrase || '',
             authentication,
-            activeAddress,
+            activeAddress || '',
             accountInfos,
             activeAccountIndex
         );
-
-        const authReqBody: Record<string, string> = {
-            b64Message: dataToSignBase64,
-            b64Signature: txResult?.signature ?? '',
-        };
-
-        const res = await authApiCall({
-            relativePath: 'v1/auth/sui/signature',
-            method: 'POST',
-            accessToken: '',
-            body: authReqBody,
-        });
-
-        const { jwt } = res.json;
 
         console.log('jwt :>> ', jwt);
     }, [
