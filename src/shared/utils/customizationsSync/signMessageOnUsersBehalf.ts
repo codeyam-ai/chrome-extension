@@ -22,6 +22,10 @@ const signMessageOnUsersBehalf = async (
         undefined;
     let txResultError: string | undefined;
 
+    console.log('address :>> ', address);
+    console.log('activeAccountIndex :>> ', activeAccountIndex);
+    console.log('accountInfos :>> ', accountInfos);
+
     const signer = await getSigner(
         passphrase,
         accountInfos,

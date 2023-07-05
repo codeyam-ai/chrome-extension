@@ -10,10 +10,13 @@ import {
     setAccountInfos,
 } from '../../redux/slices/account';
 import { thunkExtras } from '../../redux/store/thunk-extras';
+import { useSuiLedgerClient } from '../ledger/SuiLedgerClientProvider';
 import { clearForNetworkOrWalletSwitch as clearBalancesForNetworkOrWalletSwitch } from '_redux/slices/balances';
 import { clearForNetworkOrWalletSwitch as clearTokensForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
 import Authentication from '_src/background/Authentication';
 import Permissions from '_src/background/Permissions';
+import getJwt from '_src/shared/utils/customizationsSync/getJwt';
+import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomizations';
 
 import type { Dispatch, SetStateAction } from 'react';
 
@@ -35,12 +38,36 @@ const CreateWalletProvider = ({
     children,
 }: CreateWalletProviderProps) => {
     const dispatch = useAppDispatch();
-    const accountInfos = useAppSelector(({ account }) => account.accountInfos);
-    const authentication = useAppSelector(
-        ({ account }) => account.authentication
+    const { connectToLedger } = useSuiLedgerClient();
+    const { accountInfos, authentication, passphrase } = useAppSelector(
+        ({ account }) => account
     );
+
     const keypairVault = thunkExtras.keypairVault;
     const draftAccountInfos = useRef<AccountInfo[]>(accountInfos);
+
+    const handleSaveCustomization = useCallback(
+        async (
+            _address: string,
+            _accountInfos: AccountInfo[],
+            accountIndex: number
+        ) => {
+            const jwt = await getJwt(
+                connectToLedger,
+                passphrase || '',
+                authentication,
+                _address,
+                _accountInfos,
+                accountIndex
+            );
+            try {
+                await saveCustomizations(jwt, _accountInfos[accountIndex]);
+            } catch (error) {
+                console.error('Failed saving customizations to server:', error);
+            }
+        },
+        [connectToLedger, passphrase, authentication]
+    );
 
     const getAccountInfos = useCallback(async () => {
         if (authentication) return;
@@ -140,6 +167,12 @@ const CreateWalletProvider = ({
             );
 
             setAccountInfos(newAccountInfos);
+
+            await handleSaveCustomization(
+                keypairVault.getAddress(nextAccountIndex) || '',
+                newAccountInfos,
+                nextAccountIndex
+            );
         };
 
         const executeWithLoading = async () => {
@@ -150,11 +183,12 @@ const CreateWalletProvider = ({
         };
         executeWithLoading();
     }, [
-        keypairVault,
-        authentication,
         accountInfos,
+        authentication,
         _saveAccountInfos,
+        keypairVault,
         setLoading,
+        handleSaveCustomization,
     ]);
 
     useEffect(() => {

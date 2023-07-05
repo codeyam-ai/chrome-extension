@@ -2,13 +2,14 @@ import { authApiCall } from './ethosPlatformApiCall';
 import signMessageOnUsersBehalf from '_src/shared/utils/customizationsSync/signMessageOnUsersBehalf';
 
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
+import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 async function getJwt(
     connectToLedger: () => Promise<SuiLedgerClient>,
     passphrase: string,
-    authentication: any,
+    authentication: string | null,
     activeAddress: string,
-    accountInfos: any,
+    accountInfos: AccountInfo[],
     activeAccountIndex: number
 ): Promise<string> {
     const dataToSign = {
