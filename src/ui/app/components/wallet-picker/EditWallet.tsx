@@ -18,6 +18,9 @@ import Authentication from '_src/background/Authentication';
 
 import type { AccountInfo } from '../../KeypairVault';
 import type { EmojiPickerResult } from '../../shared/inputs/emojis/EmojiPickerMenu';
+import getJwt from '_src/shared/utils/customizationsSync/getJwt';
+import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomizations';
+import { useSuiLedgerClient } from '../ledger/SuiLedgerClientProvider';
 
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,7 +32,13 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     const [isEmojiPickerMenuOpen, setIsEmojiPickerMenuOpen] = useState(false);
     const [searchParams] = useSearchParams();
 
-    const _accountInfos = useAppSelector(({ account }) => account.accountInfos);
+    const { connectToLedger } = useSuiLedgerClient();
+    const {
+        accountInfos: _accountInfos,
+        authentication,
+        passphrase,
+    } = useAppSelector(({ account }) => account);
+
     let walletIndex = 0;
     const indexFromParam = searchParams.get('index');
     if (indexFromParam !== null) {
@@ -52,9 +61,6 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
         currentAccountInfo.emoji
     );
 
-    const authentication = useAppSelector(
-        ({ account }) => account.authentication
-    );
     const keypairVault = thunkExtras.keypairVault;
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -87,6 +93,33 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
             ];
         }
     }, [authentication, keypairVault]);
+
+    const handleSaveCustomization = useCallback(
+        async (
+            _address: string,
+            _accountInfos: AccountInfo[],
+            accountIndex: number
+        ) => {
+            const jwt = await getJwt(
+                connectToLedger,
+                passphrase || '',
+                authentication,
+                _address,
+                _accountInfos,
+                accountIndex
+            );
+            try {
+                const res = await saveCustomizations(
+                    jwt,
+                    _accountInfos[accountIndex]
+                );
+                console.log('res :>> ', res);
+            } catch (error) {
+                console.error('Failed saving customizations to server:', error);
+            }
+        },
+        [connectToLedger, passphrase, authentication]
+    );
 
     const _saveAccountInfos = useCallback(async () => {
         setLoading(true);
@@ -137,6 +170,20 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
         },
         [currentAccountInfo.index]
     );
+
+    const onClickDone = useCallback(async () => {
+        await _saveAccountInfos();
+        await handleSaveCustomization(
+            currentAccountInfo.address,
+            draftAccountInfos.current,
+            walletIndex
+        );
+    }, [
+        _saveAccountInfos,
+        currentAccountInfo.address,
+        handleSaveCustomization,
+        walletIndex,
+    ]);
 
     const _handleNameChange = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -211,7 +258,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                     />
                 </div>
                 <div className="relative mx-6"></div>
-                <Button buttonStyle="primary" onClick={_saveAccountInfos}>
+                <Button buttonStyle="primary" onClick={onClickDone}>
                     <Loading loading={loading}>Done</Loading>
                 </Button>
             </div>
