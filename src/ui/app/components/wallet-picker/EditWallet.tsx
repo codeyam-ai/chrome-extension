@@ -109,11 +109,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                 accountIndex
             );
             try {
-                const res = await saveCustomizations(
-                    jwt,
-                    _accountInfos[accountIndex]
-                );
-                console.log('res :>> ', res);
+                await saveCustomizations(jwt, _accountInfos[accountIndex]);
             } catch (error) {
                 console.error('Failed saving customizations to server:', error);
             }
