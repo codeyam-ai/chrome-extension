@@ -102,14 +102,14 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
             _accountInfos: AccountInfo[],
             accountIndex: number
         ) => {
-            const jwt = await getCachedJwt();
+            const jwt = await getCachedJwt(_address, accountIndex);
             try {
                 await saveCustomizations(jwt, _accountInfos[accountIndex]);
             } catch (error) {
                 console.error('Failed saving customizations to server:', error);
             }
         },
-        [connectToLedger, passphrase, authentication]
+        [getCachedJwt]
     );
 
     const _saveAccountInfos = useCallback(async () => {
