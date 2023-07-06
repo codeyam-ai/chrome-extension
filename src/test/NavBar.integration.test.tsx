@@ -5,13 +5,30 @@ import { simulateMnemonicUser } from './utils/storage';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 import { mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
+import nock from 'nock';
 
 describe('Top Nav Wallet Management', () => {
     let mockJsonRpc: MockJsonRpc;
+
     beforeEach(async () => {
         simulateMnemonicUser();
         mockJsonRpc = new MockJsonRpc();
         mockBlockchain(mockJsonRpc);
+
+        // Mock customizations saving
+        nock('http://localhost:3000')
+            .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+            .persist()
+            .post('/api/v1/auth/sui/signature')
+            .reply(200, {
+                jwt: 'anything',
+            });
+
+        nock('http://localhost:3000')
+            .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+            .persist()
+            .put('/api/v1/user/profile')
+            .reply(200, {});
     });
 
     test('Switching current wallet', async () => {
