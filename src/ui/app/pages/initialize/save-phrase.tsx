@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { loadAccountInformationFromStorage } from '_src/ui/app/redux/slices/account';
 
 import type { AccountInfo } from '../../KeypairVault';
+import { useDependencies } from '_src/shared/utils/dependenciesContext';
 
 const SavePhrasePage = () => {
     // useInitializedGuard(AppState.MNEMONIC);
@@ -24,6 +25,7 @@ const SavePhrasePage = () => {
     const navigate = useNavigate();
     const isMobile = useIsMobile();
     const { getCachedJwt } = useJwt();
+    const { featureFlags } = useDependencies();
 
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
@@ -38,12 +40,14 @@ const SavePhrasePage = () => {
             emoji: getNextEmoji(0),
             address,
         } as AccountInfo;
-        const jwt = await getCachedJwt();
+        if (featureFlags.showWipFeatures) {
+            const jwt = await getCachedJwt();
 
-        await saveCustomizations(jwt, accountInfo);
+            await saveCustomizations(jwt, accountInfo);
+        }
 
         navigate('/initialize/verify-phrase');
-    }, [address, getCachedJwt, navigate]);
+    }, [address, featureFlags.showWipFeatures, getCachedJwt, navigate]);
 
     useEffect(() => {
         if (address) {

@@ -18,6 +18,7 @@ import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomi
 import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 
 import type { Dispatch, SetStateAction } from 'react';
+import { useDependencies } from '_src/shared/utils/dependenciesContext';
 
 /*
     Because creating a wallet extensively uses hooks (and hooks can't be used outside
@@ -41,6 +42,7 @@ const CreateWalletProvider = ({
         ({ account }) => account
     );
     const { getCachedJwt } = useJwt();
+    const { featureFlags } = useDependencies();
 
     const keypairVault = thunkExtras.keypairVault;
     const draftAccountInfos = useRef<AccountInfo[]>(accountInfos);
@@ -160,11 +162,13 @@ const CreateWalletProvider = ({
 
             setAccountInfos(newAccountInfos);
 
-            await handleSaveCustomization(
-                keypairVault.getAddress(nextAccountIndex) || '',
-                newAccountInfos,
-                nextAccountIndex
-            );
+            if (featureFlags.showWipFeatures) {
+                await handleSaveCustomization(
+                    keypairVault.getAddress(nextAccountIndex) || '',
+                    newAccountInfos,
+                    nextAccountIndex
+                );
+            }
         };
 
         const executeWithLoading = async () => {
@@ -177,10 +181,11 @@ const CreateWalletProvider = ({
     }, [
         accountInfos,
         authentication,
+        featureFlags.showWipFeatures,
         _saveAccountInfos,
         keypairVault,
-        setLoading,
         handleSaveCustomization,
+        setLoading,
     ]);
 
     useEffect(() => {

@@ -11,10 +11,12 @@ import {
     saveAccountInfos,
     setAccountInfos,
 } from '_src/ui/app/redux/slices/account';
+import { useDependencies } from '_src/shared/utils/dependenciesContext';
 
 export const useUpdateCurrentAccountInfo = () => {
     const [isHostedWallet, setIsHostedWallet] = useState<boolean>(false);
     const dispatch = useAppDispatch();
+    const { featureFlags } = useDependencies();
     const { getCachedJwt } = useJwt();
     const { accountInfos, activeAccountIndex } = useAppSelector(
         ({ account }) => account
@@ -58,7 +60,12 @@ export const useUpdateCurrentAccountInfo = () => {
 
         await _saveAccountInfos(newAccountInfos);
 
-        await handleSaveCustomization(newAccountInfos, currentAccountInfoIndex);
+        if (featureFlags.showWipFeatures) {
+            await handleSaveCustomization(
+                newAccountInfos,
+                currentAccountInfoIndex
+            );
+        }
     };
 
     const _saveAccountInfos = async (newAccountInfos: AccountInfo[]) => {

@@ -21,6 +21,7 @@ import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 
 import type { AccountInfo } from '../../KeypairVault';
 import type { EmojiPickerResult } from '../../shared/inputs/emojis/EmojiPickerMenu';
+import { useDependencies } from '_src/shared/utils/dependenciesContext';
 
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -31,15 +32,12 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     const [isColorPickerMenuOpen, setIsColorPickerMenuOpen] = useState(false);
     const [isEmojiPickerMenuOpen, setIsEmojiPickerMenuOpen] = useState(false);
     const [searchParams] = useSearchParams();
-
+    const { featureFlags } = useDependencies();
     const { getCachedJwt } = useJwt();
 
-    const { connectToLedger } = useSuiLedgerClient();
-    const {
-        accountInfos: _accountInfos,
-        authentication,
-        passphrase,
-    } = useAppSelector(({ account }) => account);
+    const { accountInfos: _accountInfos, authentication } = useAppSelector(
+        ({ account }) => account
+    );
 
     let walletIndex = 0;
     const indexFromParam = searchParams.get('index');
@@ -164,14 +162,17 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
 
     const onClickDone = useCallback(async () => {
         await _saveAccountInfos();
-        await handleSaveCustomization(
-            currentAccountInfo.address,
-            draftAccountInfos.current,
-            walletIndex
-        );
+        if (featureFlags.showWipFeatures) {
+            await handleSaveCustomization(
+                currentAccountInfo.address,
+                draftAccountInfos.current,
+                walletIndex
+            );
+        }
     }, [
         _saveAccountInfos,
         currentAccountInfo.address,
+        featureFlags.showWipFeatures,
         handleSaveCustomization,
         walletIndex,
     ]);
