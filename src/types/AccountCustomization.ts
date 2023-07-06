@@ -1,6 +1,6 @@
 import type { SuiAddress } from '@mysten/sui.js';
 
-export interface Account {
+export interface AccountCustomization {
     address: SuiAddress;
     nickname: string;
     color: string;
@@ -11,8 +11,4 @@ export interface Account {
         invalidPackageAdditions: string[];
         invalidPackageSubtractions: string[];
     };
-}
-
-export interface AccountCustomization extends Account {
-    contacts?: Account[];
 }
