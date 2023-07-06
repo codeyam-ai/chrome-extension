@@ -62,6 +62,7 @@ import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
 import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
+import JwtProvider from '_src/shared/utils/customizationsSync/JwtProvider';
 
 const App = () => {
     const dispatch = useAppDispatch();
@@ -85,162 +86,182 @@ const App = () => {
     return (
         <ThemeProvider initialTheme={undefined}>
             <HeartbeatProvider>
-                <Routes>
-                    <Route
-                        path="/"
-                        element={<Navigate to="/home" replace={true} />}
-                    />
-                    <Route path="/*" element={<AppContainer />}>
-                        <Route path="home" element={<HomePage />} />
+                <JwtProvider>
+                    <Routes>
                         <Route
-                            path="home/customize/*"
-                            element={<CustomizeNavigation />}
+                            path="/"
+                            element={<Navigate to="/home" replace={true} />}
                         />
-                        <Route
-                            path="home/address-book/*"
-                            element={<AddressBookNavigation />}
-                        />
-                        <Route
-                            path="home/staking/*"
-                            element={<StakingNavigation />}
-                        />
-                        <Route path="home/buy">
-                            <Route path="*" element={<OnboardingProviders />} />
+                        <Route path="/*" element={<AppContainer />}>
+                            <Route path="home" element={<HomePage />} />
                             <Route
-                                path="moonpay"
-                                element={<MoonpayOnboarding />}
+                                path="home/customize/*"
+                                element={<CustomizeNavigation />}
                             />
                             <Route
-                                path="heroswap"
-                                element={<HeroswapOnboarding />}
+                                path="home/address-book/*"
+                                element={<AddressBookNavigation />}
+                            />
+                            <Route
+                                path="home/staking/*"
+                                element={<StakingNavigation />}
+                            />
+                            <Route path="home/buy">
+                                <Route
+                                    path="*"
+                                    element={<OnboardingProviders />}
+                                />
+                                <Route
+                                    path="moonpay"
+                                    element={<MoonpayOnboarding />}
+                                />
+                                <Route
+                                    path="heroswap"
+                                    element={<HeroswapOnboarding />}
+                                />
+                            </Route>
+                            <Route
+                                path="home/manage-wallets/*"
+                                element={<ManageWallets />}
+                            />
+                            <Route
+                                path="home/ledger/*"
+                                element={<LedgerNavigation />}
+                            />
+                            <Route path="tokens" element={<TokensPage />} />
+                            <Route path="nfts">
+                                <Route path={'*'} element={<NftsPage />} />
+                                <Route
+                                    path="details"
+                                    element={<NFTDetailsPage />}
+                                />
+                                <Route
+                                    path="transfer/recipient"
+                                    element={<TransferNftRecipient />}
+                                />
+                                <Route
+                                    path="transfer/review"
+                                    element={<TransferNftReview />}
+                                />
+                            </Route>
+                            <Route path="tickets" element={<TicketsPage />} />
+                            <Route
+                                path="my_tickets"
+                                element={<TicketsPage />}
+                            />
+                            <Route path="ticket">
+                                <Route
+                                    path="details"
+                                    element={<TicketDetailsPage />}
+                                />
+                            </Route>
+                            <Route
+                                path="ticket-project"
+                                element={<TicketProjectDetailsPage />}
+                            />
+                            <Route path="transactions">
+                                <Route
+                                    path="*"
+                                    element={<TransactionsPage />}
+                                />
+                                <Route
+                                    path="receipt"
+                                    element={<ReceiptPage />}
+                                />
+                            </Route>
+                            <Route path="send">
+                                <Route
+                                    path="recipient"
+                                    element={<TransferCoinRecipientPage />}
+                                />
+                                <Route
+                                    path="amount"
+                                    element={<TransferCoinAmountPage />}
+                                />
+                                <Route
+                                    path="review"
+                                    element={<TransferCoinReviewPage />}
+                                />
+                            </Route>
+                            <Route path="receive" element={<ReceivePage />} />
+                            <Route
+                                path="tx/:txDigest"
+                                element={<TransactionDetailsPage />}
                             />
                         </Route>
-                        <Route
-                            path="home/manage-wallets/*"
-                            element={<ManageWallets />}
-                        />
-                        <Route
-                            path="home/ledger/*"
-                            element={<LedgerNavigation />}
-                        />
-                        <Route path="tokens" element={<TokensPage />} />
-                        <Route path="nfts">
-                            <Route path={'*'} element={<NftsPage />} />
+                        <Route path="welcome" element={<WelcomePage />} />
+                        <Route path="initialize" element={<InitializePage />}>
+                            <Route path="hosted">
+                                <Route path="" element={<HostedPage />} />
+                                <Route
+                                    path="logging-in"
+                                    element={<LoggingInPage />}
+                                />
+                            </Route>
+                            <Route path="import">
+                                <Route path="" element={<ImportPage />} />
+                                <Route
+                                    path="key"
+                                    element={<ImportPrivateKeyPage />}
+                                />
+                                <Route
+                                    path="seed"
+                                    element={<ImportSeedPage />}
+                                />
+                                <Route
+                                    path="confirm"
+                                    element={<ConfirmImportPage />}
+                                />
+                            </Route>
                             <Route
-                                path="details"
-                                element={<NFTDetailsPage />}
+                                path="create-password"
+                                element={<CreatePasswordPage />}
                             />
                             <Route
-                                path="transfer/recipient"
-                                element={<TransferNftRecipient />}
+                                path="save-phrase"
+                                element={<SavePhrasePage />}
                             />
                             <Route
-                                path="transfer/review"
-                                element={<TransferNftReview />}
+                                path="verify-phrase"
+                                element={<VerifyPhrasePage />}
                             />
+                            <Route path="style" element={<StylePage />} />
+                            <Route
+                                path="theme"
+                                element={<OnboardingThemePage />}
+                            />
+                            <Route path="pin" element={<PinPage />} />
+                            <Route path="complete" element={<CompletePage />} />
                         </Route>
-                        <Route path="tickets" element={<TicketsPage />} />
-                        <Route path="my_tickets" element={<TicketsPage />} />
-                        <Route path="ticket">
-                            <Route
-                                path="details"
-                                element={<TicketDetailsPage />}
-                            />
-                        </Route>
+                        <Route path="password" element={<PasswordPage />} />
+                        <Route path="locked" element={<LockedPage />} />
                         <Route
-                            path="ticket-project"
-                            element={<TicketProjectDetailsPage />}
+                            path="locked/forgot-password"
+                            element={<ForgotPasswordPage />}
                         />
-                        <Route path="transactions">
-                            <Route path="*" element={<TransactionsPage />} />
-                            <Route path="receipt" element={<ReceiptPage />} />
-                        </Route>
-                        <Route path="send">
-                            <Route
-                                path="recipient"
-                                element={<TransferCoinRecipientPage />}
-                            />
-                            <Route
-                                path="amount"
-                                element={<TransferCoinAmountPage />}
-                            />
-                            <Route
-                                path="review"
-                                element={<TransferCoinReviewPage />}
-                            />
-                        </Route>
-                        <Route path="receive" element={<ReceivePage />} />
+                        <Route path="locked/*" element={<LockedPage />} />
                         <Route
-                            path="tx/:txDigest"
-                            element={<TransactionDetailsPage />}
-                        />
-                    </Route>
-                    <Route path="welcome" element={<WelcomePage />} />
-                    <Route path="initialize" element={<InitializePage />}>
-                        <Route path="hosted">
-                            <Route path="" element={<HostedPage />} />
-                            <Route
-                                path="logging-in"
-                                element={<LoggingInPage />}
-                            />
-                        </Route>
-                        <Route path="import">
-                            <Route path="" element={<ImportPage />} />
-                            <Route
-                                path="key"
-                                element={<ImportPrivateKeyPage />}
-                            />
-                            <Route path="seed" element={<ImportSeedPage />} />
-                            <Route
-                                path="confirm"
-                                element={<ConfirmImportPage />}
-                            />
-                        </Route>
-                        <Route
-                            path="create-password"
-                            element={<CreatePasswordPage />}
+                            path="/connect/:requestID"
+                            element={<SiteConnectPage />}
                         />
                         <Route
-                            path="save-phrase"
-                            element={<SavePhrasePage />}
+                            path="/tx-approval/:txID"
+                            element={<DappTxApprovalPage />}
                         />
                         <Route
-                            path="verify-phrase"
-                            element={<VerifyPhrasePage />}
+                            path="/sign-message-approval/:signMessageRequestID"
+                            element={<DappSignMessageApprovalPage />}
                         />
-                        <Route path="style" element={<StylePage />} />
-                        <Route path="theme" element={<OnboardingThemePage />} />
-                        <Route path="pin" element={<PinPage />} />
-                        <Route path="complete" element={<CompletePage />} />
-                    </Route>
-                    <Route path="password" element={<PasswordPage />} />
-                    <Route path="locked" element={<LockedPage />} />
-                    <Route
-                        path="locked/forgot-password"
-                        element={<ForgotPasswordPage />}
-                    />
-                    <Route path="locked/*" element={<LockedPage />} />
-                    <Route
-                        path="/connect/:requestID"
-                        element={<SiteConnectPage />}
-                    />
-                    <Route
-                        path="/tx-approval/:txID"
-                        element={<DappTxApprovalPage />}
-                    />
-                    <Route
-                        path="/sign-message-approval/:signMessageRequestID"
-                        element={<DappSignMessageApprovalPage />}
-                    />
-                    <Route
-                        path="/preapproval/:preapprovalRequestID"
-                        element={<DappPreapprovalPage />}
-                    />
-                    <Route
-                        path="*"
-                        element={<Navigate to="/home" replace={true} />}
-                    />
-                </Routes>
+                        <Route
+                            path="/preapproval/:preapprovalRequestID"
+                            element={<DappPreapprovalPage />}
+                        />
+                        <Route
+                            path="*"
+                            element={<Navigate to="/home" replace={true} />}
+                        />
+                    </Routes>
+                </JwtProvider>
             </HeartbeatProvider>
         </ThemeProvider>
     );

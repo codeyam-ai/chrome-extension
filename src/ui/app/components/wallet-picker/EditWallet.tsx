@@ -13,14 +13,14 @@ import Input from '../../shared/inputs/Input';
 import ColorPickerMenu from '../../shared/inputs/colors/ColorPickerMenu';
 import EmojiPickerMenu from '../../shared/inputs/emojis/EmojiPickerMenu';
 import BodyLarge from '../../shared/typography/BodyLarge';
+import { useSuiLedgerClient } from '../ledger/SuiLedgerClientProvider';
 import Loading from '../loading';
 import Authentication from '_src/background/Authentication';
+import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomizations';
+import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 
 import type { AccountInfo } from '../../KeypairVault';
 import type { EmojiPickerResult } from '../../shared/inputs/emojis/EmojiPickerMenu';
-import getJwt from '_src/shared/utils/customizationsSync/getJwt';
-import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomizations';
-import { useSuiLedgerClient } from '../ledger/SuiLedgerClientProvider';
 
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -31,6 +31,8 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     const [isColorPickerMenuOpen, setIsColorPickerMenuOpen] = useState(false);
     const [isEmojiPickerMenuOpen, setIsEmojiPickerMenuOpen] = useState(false);
     const [searchParams] = useSearchParams();
+
+    const { getCachedJwt } = useJwt();
 
     const { connectToLedger } = useSuiLedgerClient();
     const {
@@ -100,14 +102,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
             _accountInfos: AccountInfo[],
             accountIndex: number
         ) => {
-            const jwt = await getJwt(
-                connectToLedger,
-                passphrase || '',
-                authentication,
-                _address,
-                _accountInfos,
-                accountIndex
-            );
+            const jwt = await getCachedJwt();
             try {
                 await saveCustomizations(jwt, _accountInfos[accountIndex]);
             } catch (error) {

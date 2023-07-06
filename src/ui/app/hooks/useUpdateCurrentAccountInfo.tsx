@@ -1,31 +1,24 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useEffect, useState } from 'react';
 
 import useAppDispatch from './useAppDispatch';
+import useAppSelector from './useAppSelector';
 import { type AccountInfo } from '../KeypairVault';
-import { type RootState } from '_redux/RootReducer';
 import Authentication from '_src/background/Authentication';
 import { getEncrypted } from '_src/shared/storagex/store';
+import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomizations';
+import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 import {
     saveAccountInfos,
     setAccountInfos,
 } from '_src/ui/app/redux/slices/account';
-import useAppSelector from './useAppSelector';
-import { useSuiLedgerClient } from '../components/ledger/SuiLedgerClientProvider';
-import getJwt from '_src/shared/utils/customizationsSync/getJwt';
-import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomizations';
 
 export const useUpdateCurrentAccountInfo = () => {
     const [isHostedWallet, setIsHostedWallet] = useState<boolean>(false);
     const dispatch = useAppDispatch();
-    const { connectToLedger } = useSuiLedgerClient();
-    const {
-        accountInfos,
-        authentication,
-        passphrase,
-        activeAccountIndex,
-        address,
-    } = useAppSelector(({ account }) => account);
+    const { getCachedJwt } = useJwt();
+    const { accountInfos, activeAccountIndex } = useAppSelector(
+        ({ account }) => account
+    );
 
     useEffect(() => {
         const _setIsHosted = async () => {
@@ -41,21 +34,14 @@ export const useUpdateCurrentAccountInfo = () => {
 
     const handleSaveCustomization = useCallback(
         async (_accountInfos: AccountInfo[], accountIndex: number) => {
-            const jwt = await getJwt(
-                connectToLedger,
-                passphrase || '',
-                authentication,
-                address || '',
-                _accountInfos,
-                accountIndex
-            );
+            const jwt = await getCachedJwt();
             try {
                 await saveCustomizations(jwt, _accountInfos[accountIndex]);
             } catch (error) {
                 console.error('Failed saving customizations to server:', error);
             }
         },
-        [connectToLedger, passphrase, authentication, address]
+        [getCachedJwt]
     );
 
     const updateCurrentAccountInfo = async (

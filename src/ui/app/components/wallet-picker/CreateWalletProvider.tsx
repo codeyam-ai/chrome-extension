@@ -10,13 +10,12 @@ import {
     setAccountInfos,
 } from '../../redux/slices/account';
 import { thunkExtras } from '../../redux/store/thunk-extras';
-import { useSuiLedgerClient } from '../ledger/SuiLedgerClientProvider';
 import { clearForNetworkOrWalletSwitch as clearBalancesForNetworkOrWalletSwitch } from '_redux/slices/balances';
 import { clearForNetworkOrWalletSwitch as clearTokensForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
 import Authentication from '_src/background/Authentication';
 import Permissions from '_src/background/Permissions';
-import getJwt from '_src/shared/utils/customizationsSync/getJwt';
 import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomizations';
+import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 
 import type { Dispatch, SetStateAction } from 'react';
 
@@ -38,10 +37,10 @@ const CreateWalletProvider = ({
     children,
 }: CreateWalletProviderProps) => {
     const dispatch = useAppDispatch();
-    const { connectToLedger } = useSuiLedgerClient();
-    const { accountInfos, authentication, passphrase } = useAppSelector(
+    const { accountInfos, authentication } = useAppSelector(
         ({ account }) => account
     );
+    const { getCachedJwt } = useJwt();
 
     const keypairVault = thunkExtras.keypairVault;
     const draftAccountInfos = useRef<AccountInfo[]>(accountInfos);
@@ -52,21 +51,14 @@ const CreateWalletProvider = ({
             _accountInfos: AccountInfo[],
             accountIndex: number
         ) => {
-            const jwt = await getJwt(
-                connectToLedger,
-                passphrase || '',
-                authentication,
-                _address,
-                _accountInfos,
-                accountIndex
-            );
+            const jwt = await getCachedJwt();
             try {
                 await saveCustomizations(jwt, _accountInfos[accountIndex]);
             } catch (error) {
                 console.error('Failed saving customizations to server:', error);
             }
         },
-        [connectToLedger, passphrase, authentication]
+        [getCachedJwt]
     );
 
     const getAccountInfos = useCallback(async () => {
