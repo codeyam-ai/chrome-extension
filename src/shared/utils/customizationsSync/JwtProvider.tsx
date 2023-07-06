@@ -1,16 +1,26 @@
 import { createContext, useState } from 'react';
 
+import type { SuiAddress } from '@mysten/sui.js';
 import type { ReactNode } from 'react';
 
 export const JwtContext = createContext<
-    [string | undefined, (jwt: string) => void]
->([undefined, () => null]);
+    [
+        { [address: SuiAddress]: string },
+        (jwt: string, address: SuiAddress) => void
+    ]
+>([{}, () => null]);
 
 export const JwtProvider = ({ children }: { children: ReactNode }) => {
-    const [cachedJwt, setCachedJwt] = useState<string | undefined>();
+    const [cachedJwt, setCachedJwt] = useState<{
+        [address: SuiAddress]: string;
+    }>({});
+
+    const setJwtForAddress = (jwt: string, address: SuiAddress) => {
+        setCachedJwt((prevState) => ({ ...prevState, [address]: jwt }));
+    };
 
     return (
-        <JwtContext.Provider value={[cachedJwt, setCachedJwt]}>
+        <JwtContext.Provider value={[cachedJwt, setJwtForAddress]}>
             {children}
         </JwtContext.Provider>
     );

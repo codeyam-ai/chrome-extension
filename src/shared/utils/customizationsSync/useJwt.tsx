@@ -21,52 +21,55 @@ export const useJwt = () => {
     } = useAppSelector(({ account }) => account);
 
     const getCachedJwt = useCallback(async () => {
-        let token = cachedJwt;
+        let token = activeAddress ? cachedJwt[activeAddress] : undefined;
 
         try {
-            if (!token) {
+            if (!token && activeAddress) {
                 token = await getJwt(
                     connectToLedger,
                     passphrase || '',
                     authentication,
-                    activeAddress || '',
+                    activeAddress,
                     accountInfos,
                     activeAccountIndex
                 );
-                setCachedJwt(token);
+                setCachedJwt(token, activeAddress);
             }
 
-            const { exp } = jwt_decode(token) as {
+            const { exp } = jwt_decode(token || '') as {
                 exp?: number;
             };
 
             const currentTimestamp = Math.floor(new Date().getTime() / 1000);
             const tokenIsExpired = exp && exp < currentTimestamp;
 
-            if (tokenIsExpired) {
+            if (tokenIsExpired && activeAddress) {
                 token = await getJwt(
                     connectToLedger,
                     passphrase || '',
                     authentication,
-                    activeAddress || '',
+                    activeAddress,
                     accountInfos,
                     activeAccountIndex
                 );
-                setCachedJwt(token);
+                setCachedJwt(token, activeAddress);
             }
         } catch (error) {
             console.log('error decoding JWT', error);
-            token = await getJwt(
-                connectToLedger,
-                passphrase || '',
-                authentication,
-                activeAddress || '',
-                accountInfos,
-                activeAccountIndex
-            );
+            if (activeAddress) {
+                token = await getJwt(
+                    connectToLedger,
+                    passphrase || '',
+                    authentication,
+                    activeAddress,
+                    accountInfos,
+                    activeAccountIndex
+                );
+                setCachedJwt(token, activeAddress);
+            }
         }
 
-        return token;
+        return token || '';
     }, [
         accountInfos,
         activeAccountIndex,
