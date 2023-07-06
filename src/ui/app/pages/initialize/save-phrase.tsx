@@ -4,19 +4,26 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import getNextEmoji from '../../helpers/getNextEmoji';
+import getNextWalletColor from '../../helpers/getNextWalletColor';
 import useIsMobile from '../../hooks/useIsMobile';
 import Button from '../../shared/buttons/Button';
 import RecoveryPhraseDisplay from '../../shared/content/RecoveryPhraseDisplay';
 import OnboardingCard from '../../shared/layouts/OnboardingCard';
 import Permissions from '_src/background/Permissions';
+import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomizations';
+import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { loadAccountInformationFromStorage } from '_src/ui/app/redux/slices/account';
+
+import type { AccountInfo } from '../../KeypairVault';
 
 const SavePhrasePage = () => {
     // useInitializedGuard(AppState.MNEMONIC);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const isMobile = useIsMobile();
+    const { getCachedJwt } = useJwt();
 
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
@@ -24,15 +31,29 @@ const SavePhrasePage = () => {
     const address = useAppSelector(({ account }) => account.address);
 
     const finishOnboarding = useCallback(async () => {
-        await dispatch(loadAccountInformationFromStorage());
+        const accountInfo = {
+            index: 0,
+            name: 'Wallet',
+            color: getNextWalletColor(0),
+            emoji: getNextEmoji(0),
+            address,
+        } as AccountInfo;
+        const jwt = await getCachedJwt();
+
+        await saveCustomizations(jwt, accountInfo);
+
         navigate('/initialize/verify-phrase');
-    }, [dispatch, navigate]);
+    }, [address, getCachedJwt, navigate]);
 
     useEffect(() => {
         if (address) {
             Permissions.grantEthosDashboardBasicPermissionsForAccount(address);
         }
     }, [address]);
+
+    useEffect(() => {
+        dispatch(loadAccountInformationFromStorage());
+    }, [dispatch]);
 
     return (
         <OnboardingCard
