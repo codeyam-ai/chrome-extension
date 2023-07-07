@@ -53,7 +53,7 @@ import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { OpenWallet } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
-import type { AccountCustomization } from '_src/types/AccountCustomization';
+import type { AccountCustomizationWithAddress } from '_src/types/AccountCustomization';
 import type { Contact } from '_src/ui/app/redux/slices/contacts';
 import type { Observable } from 'rxjs';
 
@@ -156,7 +156,9 @@ export class DAppInterface {
         );
     }
 
-    public getAccountCustomizations(): Promise<AccountCustomization[]> {
+    public getAccountCustomizations(): Promise<
+        AccountCustomizationWithAddress[]
+    > {
         return mapToPromise(
             this.send<
                 GetAccountCustomizations,
@@ -169,7 +171,7 @@ export class DAppInterface {
     }
 
     public setAccountCustomizations(
-        accountCustomizations: AccountCustomization[]
+        accountCustomizations: AccountCustomizationWithAddress[]
     ) {
         return mapToPromise(
             this.send<

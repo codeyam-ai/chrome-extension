@@ -88,7 +88,7 @@ const WalletAvatarItem = ({
     const activeAccount =
         accountInfos.find((a) => a.index === activeAccountIndex) ??
         accountInfos[0];
-    const header = fullHeader ? undefined : wallet?.name ?? address;
+    const header = fullHeader ? undefined : wallet?.nickname ?? address;
     const subheader = header === address ? undefined : address;
 
     if (address === activeAccount.address) {

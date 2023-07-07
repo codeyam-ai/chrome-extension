@@ -44,7 +44,7 @@ function TransferCoinRecipientPage() {
                         from:
                             account.accountInfos.find(
                                 (a) => a.index === activeAccountIndex
-                            )?.name || 'Wallet',
+                            )?.nickname || 'Wallet',
                     })
                 );
 

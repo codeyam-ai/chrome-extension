@@ -193,7 +193,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 accountInfos = [
                     {
                         index: 0,
-                        name: 'Wallet',
+                        nickname: 'Wallet',
                         color: getNextWalletColor(0),
                         emoji: getNextEmoji(0),
                         address: keypairVault.getAddress(0) ?? '',
@@ -876,7 +876,7 @@ export const savePassphrase: AsyncThunk<
                 value: JSON.stringify([
                     {
                         index: 0,
-                        name: 'Wallet',
+                        nickname: 'Wallet',
                         color: getNextWalletColor(0),
                         emoji: getNextEmoji(0),
                         address: keypairVault.getAddress() || '',

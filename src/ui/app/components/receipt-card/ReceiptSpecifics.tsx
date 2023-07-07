@@ -40,7 +40,7 @@ const ObjectChange = ({ change }: { change: ObjectChangeInfo }) => {
                             {...wallet}
                             circleSizeClasses={'w-5 h-5'}
                         />
-                        <Body isTextColorMedium>{wallet.name}</Body>
+                        <Body isTextColorMedium>{wallet.nickname}</Body>
                     </div>
                 )}
                 {!wallet && (change.ownerAddress ?? change.sender) && (
@@ -130,7 +130,7 @@ const BalanceChange = ({
                         {...ownerWallet}
                         circleSizeClasses={'w-5 h-5'}
                     />
-                    <Body isTextColorMedium>{ownerWallet.name}</Body>
+                    <Body isTextColorMedium>{ownerWallet.nickname}</Body>
                 </div>
             ) : (
                 <CopyBody txt={ownerAddress || ''} isTextColorMedium>

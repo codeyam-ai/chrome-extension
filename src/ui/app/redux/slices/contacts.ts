@@ -7,7 +7,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface Contact {
     address: SuiAddress;
-    name: string;
+    nickname: string;
     emoji?: string;
     color: string;
 }

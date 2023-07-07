@@ -37,6 +37,7 @@ function HomePage() {
                     (accountInfo.index || 0) === activeAccountIndex
             )
     );
+    console.log('ACC INFO: ', accountInfo);
 
     const showDappList = true;
 

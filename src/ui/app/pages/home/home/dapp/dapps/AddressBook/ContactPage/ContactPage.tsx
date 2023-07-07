@@ -77,7 +77,7 @@ const ContactPage = () => {
                     >
                         <EmojiDisplay emoji={contact.emoji} sizeInPx={44} />
                     </div>
-                    <BodyLarge isSemibold>{contact.name}</BodyLarge>
+                    <BodyLarge isSemibold>{contact.nickname}</BodyLarge>
                     <AddressTooltip address={contact.address}>
                         <BodyLarge isTextColorMedium>
                             {truncateMiddle(contact.address)}{' '}

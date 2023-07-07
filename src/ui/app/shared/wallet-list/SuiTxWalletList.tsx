@@ -38,7 +38,7 @@ const WalletSelector = ({ wallet, setFieldValue }: WalletSelectorProps) => {
                 />
                 <div className="flex flex-col text-left" title={wallet.address}>
                     <BodyLarge>
-                        {wallet.name ||
+                        {wallet.nickname ||
                             `Wallet${
                                 'index' in wallet
                                     ? wallet.index > 0

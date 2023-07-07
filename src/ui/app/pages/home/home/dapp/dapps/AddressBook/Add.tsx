@@ -17,8 +17,8 @@ const Add: React.FC = () => {
     const [color, setColor] = useState<string>(getNextWalletColor(0));
 
     const onSubmit = useCallback(
-        ({ address, name }: FormikValues) => {
-            addContact({ address, name, emoji, color: color });
+        ({ address, name: nickname }: FormikValues) => {
+            addContact({ address, nickname, emoji, color: color });
             navigate(-1);
         },
         [addContact, emoji, color, navigate]

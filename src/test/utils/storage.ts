@@ -21,7 +21,7 @@ export const wallet2Address =
 export const accountInfos = [
     {
         index: 0,
-        name: 'Wallet 1',
+        nickname: 'Wallet 1',
         color: '#7E23CA',
         address: wallet1Address,
         privateKey:
@@ -29,7 +29,7 @@ export const accountInfos = [
     },
     {
         index: 1,
-        name: 'Wallet 2',
+        nickname: 'Wallet 2',
         color: '#2eca23',
         address: wallet2Address,
         privateKey:

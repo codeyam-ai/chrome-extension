@@ -69,7 +69,7 @@ import type { GetThemeResponse } from '_src/shared/messaging/messages/payloads/a
 import type { SwitchAccountResponse } from '_src/shared/messaging/messages/payloads/account/SwitchAccountResponse';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
-import type { AccountCustomization } from '_src/types/AccountCustomization';
+import type { AccountCustomizationWithAddress } from '_src/types/AccountCustomization';
 import type { Contact } from '_src/ui/app/redux/slices/contacts';
 import type { Runtime } from 'webextension-polyfill';
 
@@ -186,11 +186,12 @@ export class ContentScriptConnection extends Connection {
                 } else {
                     const accountInfos = await this.getAccountInfos();
                     const invalidPackages = await this.getInvalidPackages();
-                    const accountCustomizations: AccountCustomization[] = [];
+                    const accountCustomizations: AccountCustomizationWithAddress[] =
+                        [];
                     for (const accountInfo of accountInfos) {
                         accountCustomizations.push({
                             address: accountInfo.address,
-                            nickname: accountInfo.name || '',
+                            nickname: accountInfo.nickname || '',
                             color:
                                 accountInfo.color ??
                                 getNextWalletColor(accountInfo.index),
@@ -528,7 +529,9 @@ export class ContentScriptConnection extends Connection {
         return JSON.parse(accountInfosString || '[]');
     }
 
-    private async setAccountCustomizations(updates: AccountCustomization[]) {
+    private async setAccountCustomizations(
+        updates: AccountCustomizationWithAddress[]
+    ) {
         const accountInfosString = await getEncrypted({
             key: 'accountInfos',
             session: false,
@@ -671,7 +674,7 @@ export class ContentScriptConnection extends Connection {
     }
 
     private sendAccountCustomizations(
-        accountCustomizations: AccountCustomization[],
+        accountCustomizations: AccountCustomizationWithAddress[],
         responseForID?: string
     ) {
         this.send(

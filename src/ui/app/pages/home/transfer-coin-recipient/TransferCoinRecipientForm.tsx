@@ -74,7 +74,7 @@ function TransferCoinRecipientForm({
                     to: e.target.name,
                     from:
                         accountInfos.find((a) => a.index === activeAccountIndex)
-                            ?.name || 'Wallet',
+                            ?.nickname || 'Wallet',
                 })
             );
         },
