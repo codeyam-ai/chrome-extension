@@ -18,6 +18,7 @@ import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import TestServerCustomizations from './TESTServerCustomizations';
 
 function HomePage() {
     const { favoriteDappsForCurrentNetwork, favoriteDapps } =
@@ -37,12 +38,12 @@ function HomePage() {
                     (accountInfo.index || 0) === activeAccountIndex
             )
     );
-    console.log('ACC INFO: ', accountInfo);
 
     const showDappList = true;
 
     return (
         <div className="flex flex-col">
+            <TestServerCustomizations />
             {showDappList && (
                 <DappList
                     dapps={favoriteDappsForCurrentNetwork ?? favoriteDapps}

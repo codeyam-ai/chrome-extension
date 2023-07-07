@@ -53,7 +53,11 @@ const CreateWalletProvider = ({
             _accountInfos: AccountInfo[],
             accountIndex: number
         ) => {
-            const jwt = await getCachedJwt();
+            const jwt = await getCachedJwt(
+                _address,
+                accountIndex,
+                _accountInfos
+            );
             try {
                 await saveCustomizations(jwt, _accountInfos[accountIndex]);
             } catch (error) {
