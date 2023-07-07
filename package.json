@@ -80,7 +80,7 @@
         "react-devtools": "^4.27.4",
         "sass": "^1.58.0",
         "sass-loader": "^13.0.2",
-        "stylelint": "^14.9.1",
+        "stylelint": "^15.10.1",
         "stylelint-config-prettier-scss": "^0.0.1",
         "stylelint-config-standard-scss": "^6.1.0",
         "stylelint-webpack-plugin": "^3.3.0",
