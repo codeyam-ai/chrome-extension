@@ -254,6 +254,7 @@ const dappsMap: Map<string, DappData> = new Map([
             urls: {
                 [NetworkName.DEVNET]: 'https://www.suins.io/',
                 [NetworkName.TESTNET]: 'https://www.suins.io/',
+                [NetworkName.MAINNET]: 'https://www.suins.io/',
             },
             tags: [TagName.TOOLS],
         } as DappData,
@@ -477,12 +478,9 @@ const dappsMap: Map<string, DappData> = new Map([
             description:
                 'Interest Protocol is a DeFi Platform that allows you to Swap, Lend & Borrow.',
             urls: {
-                [NetworkName.DEVNET]:
-                    'https://sui.interestprotocol.com/en-US/dapp/dex',
-                [NetworkName.TESTNET]:
-                    'https://sui.interestprotocol.com/en-US/dapp/dex',
-                [NetworkName.MAINNET]:
-                    'https://sui.interestprotocol.com/en-US/dapp/dex',
+                [NetworkName.DEVNET]: 'https://www.interestprotocol.com/dapp',
+                [NetworkName.TESTNET]: 'https://www.interestprotocol.com/dapp',
+                [NetworkName.MAINNET]: 'https://www.interestprotocol.com/dapp',
             },
             tags: [TagName.FINANCE],
         } as DappData,
