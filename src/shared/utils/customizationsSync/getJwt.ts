@@ -10,7 +10,8 @@ async function getJwt(
     authentication: string | null,
     activeAddress: string,
     accountInfos: AccountInfo[],
-    activeAccountIndex: number
+    activeAccountIndex: number,
+    isNewAddress?: boolean
 ): Promise<string> {
     const dataToSign = {
         tenantId: '92dd81a5-dd8b-480c-b468-66f69a74c1bc',
@@ -28,7 +29,8 @@ async function getJwt(
         authentication,
         activeAddress,
         accountInfos,
-        activeAccountIndex
+        activeAccountIndex,
+        isNewAddress
     );
 
     const authReqBody: Record<string, string> = {

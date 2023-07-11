@@ -1,3 +1,4 @@
+import jwt_decode from 'jwt-decode';
 import { useCallback, useEffect, useRef } from 'react';
 
 import { type AccountInfo } from '../../KeypairVault';
@@ -56,7 +57,8 @@ const CreateWalletProvider = ({
             const jwt = await getCachedJwt(
                 _address,
                 accountIndex,
-                _accountInfos
+                _accountInfos,
+                true
             );
             try {
                 await saveCustomizations(jwt, _accountInfos[accountIndex]);
