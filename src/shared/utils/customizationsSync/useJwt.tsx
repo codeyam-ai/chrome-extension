@@ -25,9 +25,7 @@ export const useJwt = () => {
         async (
             _address?: SuiAddress,
             _accountIndex?: number,
-            _accountInfos?: AccountInfo[],
-            // When new wallet is getting created
-            isNewAddress?: boolean
+            _accountInfos?: AccountInfo[]
         ) => {
             const address = _address || activeAddress;
             const accountIndex = _accountIndex || activeAccountIndex;
@@ -45,7 +43,7 @@ export const useJwt = () => {
                         address,
                         accountInfos,
                         accountIndex,
-                        isNewAddress
+                        true
                     );
                     setCachedJwt(token, address);
                 }
@@ -66,7 +64,8 @@ export const useJwt = () => {
                         authentication,
                         address,
                         accountInfos,
-                        accountIndex
+                        accountIndex,
+                        true
                     );
                     setCachedJwt(token, address);
                 }
@@ -79,7 +78,8 @@ export const useJwt = () => {
                         authentication,
                         address,
                         accountInfos,
-                        accountIndex
+                        accountIndex,
+                        true
                     );
                     setCachedJwt(token, address);
                 }

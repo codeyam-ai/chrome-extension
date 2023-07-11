@@ -16,7 +16,7 @@ export const getSigner = async (
     authentication: string | null,
     activeAccountIndex: number,
     connectToLedger: () => Promise<SuiLedgerClient>,
-    isNewAddress?: boolean
+    forceCreateNewSigner?: boolean
 ) => {
     let keypair: Keypair;
     let signer;
@@ -73,7 +73,7 @@ export const getSigner = async (
             keypair = keypairVault.getKeyPair(activeAccountIndex);
         }
 
-        signer = api.getSignerInstance(keypair, isNewAddress);
+        signer = api.getSignerInstance(keypair, forceCreateNewSigner);
     }
 
     return signer;
