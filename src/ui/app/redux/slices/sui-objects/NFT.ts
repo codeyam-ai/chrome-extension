@@ -33,9 +33,14 @@ export class NFT {
         if (
             data.display?.data &&
             typeof data.display.data === 'object' &&
-            ('image_url' in data.display.data || 'img_url' in data.display.data)
+            ('image_url' in data.display.data ||
+                'img_url' in data.display.data ||
+                'url' in data.display.data)
         ) {
-            url = data.display.data.image_url ?? data.display.data.img_url;
+            url =
+                data.display.data.image_url ??
+                data.display.data.img_url ??
+                data.display.data.url;
         }
 
         if (

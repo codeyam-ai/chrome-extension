@@ -337,7 +337,8 @@ export function DappPreapprovalPage() {
                         <div className="flex flex-col gap-3">
                             <div className="flex flex-col justify-center items-center gap-2 bg-ethos-pale-purple dark:bg-ethos-dark-background-secondary mx-6 p-3 rounded-xl">
                                 <Body isTextColorMedium>
-                                    Transactions can only interact with this NFT:
+                                    Transactions can only interact with this
+                                    NFT:
                                 </Body>
                                 {nft && (
                                     <div className="text-center px-6">
