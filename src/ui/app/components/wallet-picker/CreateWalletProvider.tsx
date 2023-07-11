@@ -1,3 +1,4 @@
+import jwt_decode from 'jwt-decode';
 import { useCallback, useEffect, useRef } from 'react';
 
 import { type AccountInfo } from '../../KeypairVault';
@@ -15,10 +16,10 @@ import { clearForNetworkOrWalletSwitch as clearTokensForNetworkOrWalletSwitch } 
 import Authentication from '_src/background/Authentication';
 import Permissions from '_src/background/Permissions';
 import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomizations';
-import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 
 import type { Dispatch, SetStateAction } from 'react';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
+import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 
 /*
     Because creating a wallet extensively uses hooks (and hooks can't be used outside
@@ -53,7 +54,12 @@ const CreateWalletProvider = ({
             _accountInfos: AccountInfo[],
             accountIndex: number
         ) => {
-            const jwt = await getCachedJwt();
+            const jwt = await getCachedJwt(
+                _address,
+                accountIndex,
+                _accountInfos,
+                true
+            );
             try {
                 await saveCustomizations(jwt, _accountInfos[accountIndex]);
             } catch (error) {
@@ -128,7 +134,7 @@ const CreateWalletProvider = ({
                     nextAccountIndex
                 );
                 if (newAccount) {
-                    newAccount.name = `Wallet ${
+                    newAccount.nickname = `Wallet ${
                         relevantAccountInfos.length + 1
                     }`;
                     newAccount.color = getNextWalletColor(nextAccountIndex);
@@ -145,7 +151,7 @@ const CreateWalletProvider = ({
                     ...accountInfos,
                     {
                         index: nextAccountIndex,
-                        name: `Wallet ${relevantAccountInfos.length + 1}`,
+                        nickname: `Wallet ${relevantAccountInfos.length + 1}`,
                         color: getNextWalletColor(nextAccountIndex),
                         emoji: getNextEmoji(nextAccountIndex),
                         address:

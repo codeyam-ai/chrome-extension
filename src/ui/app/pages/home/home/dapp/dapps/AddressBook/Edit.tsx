@@ -25,7 +25,7 @@ const Edit: React.FC = () => {
     );
 
     const onSubmit = useCallback(
-        async ({ name, address: newAddress }: FormikValues) => {
+        async ({ nickname, address: newAddress }: FormikValues) => {
             if (!contact?.address) {
                 return;
             }
@@ -40,7 +40,7 @@ const Edit: React.FC = () => {
                         address: newAddress,
                         color: draftColor,
                         emoji: draftEmoji,
-                        name,
+                        nickname,
                     },
                     updatedContacts
                 );
@@ -54,7 +54,7 @@ const Edit: React.FC = () => {
                 await editContact(contact.address, {
                     color: draftColor,
                     emoji: draftEmoji,
-                    name,
+                    nickname,
                 });
                 navigate(-1);
             }
@@ -77,7 +77,7 @@ const Edit: React.FC = () => {
     return (
         <Formik
             initialValues={{
-                name: contact.name,
+                name: contact.nickname,
                 address: contact.address,
                 termsOfService: false,
             }}
@@ -90,7 +90,7 @@ const Edit: React.FC = () => {
             <Form>
                 <ContactForm
                     formMode="Edit"
-                    name={contact.name}
+                    name={contact.nickname}
                     address={contact.address}
                     emoji={draftEmoji}
                     setEmoji={setDraftEmoji}

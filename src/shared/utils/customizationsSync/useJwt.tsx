@@ -3,27 +3,36 @@ import { useCallback, useContext } from 'react';
 
 import { JwtContext } from './JwtProvider';
 import getJwt from './getJwt';
+import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
+import { useAppSelector } from '_src/ui/app/hooks';
 
 import type { RawSigner, SuiAddress } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
-import { useAppSelector } from '_src/ui/app/hooks';
+import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 export const useJwt = () => {
     const [cachedJwt, setCachedJwt] = useContext(JwtContext);
     const { connectToLedger } = useSuiLedgerClient();
     const {
         activeAccountIndex,
-        accountInfos,
+        accountInfos: currentAccountInfos,
         address: activeAddress,
         authentication,
         passphrase,
     } = useAppSelector(({ account }) => account);
 
     const getCachedJwt = useCallback(
-        async (_address?: SuiAddress, _accountIndex?: number) => {
+        async (
+            _address?: SuiAddress,
+            _accountIndex?: number,
+            _accountInfos?: AccountInfo[],
+            // When new wallet is getting created
+            isNewAddress?: boolean
+        ) => {
             const address = _address || activeAddress;
             const accountIndex = _accountIndex || activeAccountIndex;
+            // In the case we need a signer from an account not in current account infos, like when creating a new wallet
+            const accountInfos = _accountInfos || currentAccountInfos;
 
             let token = address ? cachedJwt[address] : undefined;
 
@@ -35,7 +44,8 @@ export const useJwt = () => {
                         authentication,
                         address,
                         accountInfos,
-                        accountIndex
+                        accountIndex,
+                        isNewAddress
                     );
                     setCachedJwt(token, address);
                 }
@@ -78,12 +88,12 @@ export const useJwt = () => {
             return token || '';
         },
         [
-            accountInfos,
             activeAccountIndex,
             activeAddress,
             authentication,
             cachedJwt,
             connectToLedger,
+            currentAccountInfos,
             passphrase,
             setCachedJwt,
         ]

@@ -147,10 +147,10 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                     if (accountInfo.index === currentAccountInfo.index) {
                         return {
                             ...accountInfo,
-                            name: name || accountInfo.name,
+                            nickname: name || accountInfo.nickname,
                             color: color || accountInfo.color,
                             emoji: emoji || accountInfo.emoji,
-                        };
+                        } as AccountInfo;
                     } else {
                         return accountInfo;
                     }

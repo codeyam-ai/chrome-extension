@@ -35,7 +35,7 @@ const SavePhrasePage = () => {
     const finishOnboarding = useCallback(async () => {
         const accountInfo = {
             index: 0,
-            name: 'Wallet',
+            nickname: 'Wallet',
             color: getNextWalletColor(0),
             emoji: getNextEmoji(0),
             address,

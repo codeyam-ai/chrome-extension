@@ -16,7 +16,8 @@ const signMessageOnUsersBehalf = async (
     authentication: string | null,
     address: string | null,
     accountInfos: AccountInfo[],
-    activeAccountIndex: number
+    activeAccountIndex: number,
+    isNewAddress?: boolean
 ) => {
     let txResult: SuiTransactionBlockResponse | SignedMessage | undefined =
         undefined;
@@ -28,7 +29,8 @@ const signMessageOnUsersBehalf = async (
         address,
         authentication,
         activeAccountIndex,
-        connectToLedger
+        connectToLedger,
+        isNewAddress
     );
 
     if (!signer) {

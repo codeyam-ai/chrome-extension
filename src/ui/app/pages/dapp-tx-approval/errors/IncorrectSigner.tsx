@@ -92,8 +92,8 @@ const IncorrectSigner = ({
                                     emojiSizeInPx={12}
                                 />
                             )}
-                            {correctAccount.name && (
-                                <div>{correctAccount.name}</div>
+                            {correctAccount.nickname && (
+                                <div>{correctAccount.nickname}</div>
                             )}
                             <AccountAddress
                                 showName={false}

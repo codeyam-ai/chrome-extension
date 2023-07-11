@@ -144,7 +144,7 @@ export function ImportLedgerAccounts() {
                 ledgerAccountIndex: index,
                 color: getNextWalletColor(index),
                 emoji: getNextEmoji(index),
-                name: `Ledger ${index + 1}`,
+                nickname: `Ledger ${index + 1}`,
                 ...existingAccountInfo,
             });
         }

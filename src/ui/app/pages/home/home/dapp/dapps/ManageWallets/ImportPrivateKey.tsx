@@ -49,7 +49,7 @@ const ImportPrivateKey = () => {
             importedPrivateKeyName: name,
             color: getNextWalletColor(index),
             emoji: getNextEmoji(index),
-            name,
+            nickname: name,
         });
 
         await dispatch(saveAccountInfos(mutableAccountInfos));
