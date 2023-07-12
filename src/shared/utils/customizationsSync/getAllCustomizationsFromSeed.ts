@@ -6,7 +6,6 @@ import KeypairVault from '_src/ui/app/KeypairVault';
 
 import type { JsonRpcProvider, SuiAddress } from '@mysten/sui.js';
 import type { AccountCustomization } from '_src/types/AccountCustomization';
-import account from '_src/ui/app/redux/slices/account';
 
 export const getAllCustomizationsFromSeed = async (
     mnemonic: string,
@@ -29,7 +28,6 @@ export const getAllCustomizationsFromSeed = async (
         const jwt = await getJwtWithSigner(signer);
 
         const accountCustomization = await getCustomizations(jwt);
-        console.log('accountCustomization :>> ', accountCustomization);
 
         if (!accountCustomization) {
             break;
