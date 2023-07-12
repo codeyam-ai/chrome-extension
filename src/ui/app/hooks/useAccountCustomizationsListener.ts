@@ -1,19 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
-import { isEqual } from 'lodash-es';
+import { isEqual } from 'lodash';
 
-import useAppSelector from './useAppSelector';
-import { api } from '../redux/store/thunk-extras';
-import { getAllCustomizationsFromSeed } from '_src/shared/utils/customizationsSync/getAllCustomizationsFromSeed';
-
-import type { AccountInfo } from '../KeypairVault';
-import Authentication from '_src/background/Authentication';
 import useAppDispatch from './useAppDispatch';
+import useAppSelector from './useAppSelector';
 import {
-    loadAccountInformationFromStorage,
     saveAccountInfos,
     setAccountInfos,
 } from '../redux/slices/account';
+import { api } from '../redux/store/thunk-extras';
+import Authentication from '_src/background/Authentication';
+import { getAllCustomizationsFromSeed } from '_src/shared/utils/customizationsSync/getAllCustomizationsFromSeed';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
+
+import type { AccountInfo } from '../KeypairVault';
 
 const useAccountCustomizations = () => {
     const mnemonic = useAppSelector(

@@ -22,7 +22,6 @@ const config: Config.InitialOptions = {
     transform: { ...cssMappings },
     moduleNameMapper: { ...pathsMappings, ...cssMappings, ...esmMappings },
     testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-    transformIgnorePatterns: ['/node_modules/lodash-es/'],
     setupFilesAfterEnv: [
         './src/test/utils/setup-tests.ts',
         './src/background/index.ts',
