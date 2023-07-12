@@ -2,9 +2,20 @@ import { explorerApiCall } from '_src/shared/utils/customizationsSync/ethosPlatf
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
-const getCustomizations = async (jwt: string): Promise<AccountInfo> => {
-    const res = await explorerApiCall('v1/user/profile', 'GET', jwt);
-    const customizations = res.json.data as AccountInfo;
+const getCustomizations = async (
+    jwt: string
+): Promise<AccountInfo | undefined> => {
+    const { json, status } = await explorerApiCall(
+        'v1/user/profile',
+        'GET',
+        jwt
+    );
+
+    if (status !== 200 && !json) {
+        return undefined;
+    }
+
+    const customizations = JSON.parse(json.data) as AccountInfo;
     return customizations;
 };
 
