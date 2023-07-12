@@ -1,5 +1,6 @@
 import {
     fromB64,
+    type RawSigner,
     type SignedMessage,
     type SuiTransactionBlockResponse,
 } from '@mysten/sui.js';
@@ -7,31 +8,17 @@ import {
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
+import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 const signMessageOnUsersBehalf = async (
-    connectToLedger: () => Promise<SuiLedgerClient>,
-    message: string,
-    passphrase: string | null,
-    authentication: string | null,
-    address: string | null,
-    accountInfos: AccountInfo[],
-    activeAccountIndex: number,
-    isNewAddress?: boolean
+    signer: LedgerSigner | EthosSigner | RawSigner | null,
+    message: string
 ) => {
     let txResult: SuiTransactionBlockResponse | SignedMessage | undefined =
         undefined;
     let txResultError: string | undefined;
-
-    const signer = await getSigner(
-        passphrase,
-        accountInfos,
-        address,
-        authentication,
-        activeAccountIndex,
-        connectToLedger,
-        isNewAddress
-    );
 
     if (!signer) {
         throw new Error(`Signer not found`);
@@ -42,6 +29,7 @@ const signMessageOnUsersBehalf = async (
             message: fromB64(message),
         });
     } catch (e) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         txResultError = (e as Error).message;
     }
 

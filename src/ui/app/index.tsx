@@ -63,6 +63,7 @@ import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
 import JwtProvider from '_src/shared/utils/customizationsSync/JwtProvider';
+import useAccountCustomizations from './hooks/useAccountCustomizationsListener';
 
 const App = () => {
     const dispatch = useAppDispatch();
@@ -82,6 +83,9 @@ const App = () => {
     useEffect(() => {
         document.body.classList[isPopup ? 'add' : 'remove']('is-popup');
     }, [isPopup]);
+
+    const r = useAccountCustomizations();
+    console.log('r', r);
 
     return (
         <ThemeProvider initialTheme={undefined}>
