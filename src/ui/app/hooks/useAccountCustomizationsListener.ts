@@ -13,6 +13,7 @@ import {
     saveAccountInfos,
     setAccountInfos,
 } from '../redux/slices/account';
+import { useDependencies } from '_src/shared/utils/dependenciesContext';
 
 const useAccountCustomizations = () => {
     const mnemonic = useAppSelector(
@@ -21,8 +22,9 @@ const useAccountCustomizations = () => {
     const { accountInfos, authentication } = useAppSelector(
         ({ account }) => account
     );
-    const provider = api.instance.fullNode;
     const dispatch = useAppDispatch();
+    const { featureFlags } = useDependencies();
+    const provider = api.instance.fullNode;
 
     const result = useQuery({
         queryKey: ['accountCustomizations'],
@@ -44,7 +46,7 @@ const useAccountCustomizations = () => {
                     'latestAccountInfos are DIFFERENT :>> ',
                     latestAccountInfos
                 );
-                console.log('accountInfos :>> ', accountInfos);
+                console.log('current accountInfos :>> ', accountInfos);
                 if (authentication) {
                     await Authentication.updateAccountInfos(latestAccountInfos);
                     await dispatch(setAccountInfos(latestAccountInfos));
@@ -57,7 +59,7 @@ const useAccountCustomizations = () => {
             }
             return { test: latestServerCustomizations };
         },
-        enabled: !!mnemonic && !!provider,
+        enabled: !!mnemonic && !!provider && featureFlags.showWipFeatures,
         refetchInterval: 3000, // 3 seconds
     });
 
