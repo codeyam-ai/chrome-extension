@@ -15,7 +15,7 @@ const getCustomizations = async (
         return undefined;
     }
 
-    const customizations = json.data as AccountInfo;
+    const customizations = JSON.parse(json.data) as AccountInfo;
     return customizations;
 };
 

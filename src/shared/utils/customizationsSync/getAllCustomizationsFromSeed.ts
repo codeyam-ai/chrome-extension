@@ -29,6 +29,7 @@ export const getAllCustomizationsFromSeed = async (
         const jwt = await getJwtWithSigner(signer);
 
         const accountCustomization = await getCustomizations(jwt);
+        console.log('accountCustomization :>> ', accountCustomization);
 
         if (!accountCustomization) {
             break;
