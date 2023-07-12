@@ -45,13 +45,13 @@ const useAccountCustomizations = () => {
                     latestAccountInfos
                 );
                 console.log('accountInfos :>> ', accountInfos);
-                // if (authentication) {
-                //     await Authentication.updateAccountInfos(latestAccountInfos);
-                //     await dispatch(setAccountInfos(latestAccountInfos));
-                //     await Authentication.getAccountInfos(true);
-                // } else {
-                //     await dispatch(saveAccountInfos(latestAccountInfos));
-                // }
+                if (authentication) {
+                    await Authentication.updateAccountInfos(latestAccountInfos);
+                    await dispatch(setAccountInfos(latestAccountInfos));
+                    await Authentication.getAccountInfos(true);
+                } else {
+                    await dispatch(saveAccountInfos(latestAccountInfos));
+                }
 
                 return { test: latestAccountInfos };
             }
