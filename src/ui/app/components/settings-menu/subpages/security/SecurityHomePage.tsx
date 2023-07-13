@@ -48,6 +48,13 @@ const SecurityHomePage = () => {
             buttonText: 'View Private Key',
             path: '/settings/security/view-private-key',
         },
+        {
+            title: 'Personalization Sync',
+            description:
+                "Choose if you want your wallets' personalizations such as nickname, color, and profile picture to be synced across your devices.",
+            buttonText: 'Change Sync Settings',
+            path: '/settings/security/personalization-sync',
+        },
     ];
 
     return (

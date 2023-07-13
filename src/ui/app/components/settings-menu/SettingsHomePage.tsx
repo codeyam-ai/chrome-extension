@@ -32,6 +32,7 @@ export const SubpageUrls = {
     password: '/settings/security/change-password',
     seed: '/settings/security/view-seed',
     key: '/settings/security/view-private-key',
+    personalizationSync: '/settings/security/personalization-sync',
     permissions: '/settings/permissions',
     lock: '/settings/lock',
     changeAutoLockTimeout: '/settings/change-auto-lock-timeout',
