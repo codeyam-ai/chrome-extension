@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { QRCode } from 'react-qrcode-logo';
 
-import PasswordVerificationForm from './PasswordVerificationForm';
-import Button from '../../../../../shared/buttons/Button';
+import PasswordVerificationForm from '../PasswordVerificationForm';
+import Button from '../../../../../../shared/buttons/Button';
 import ethosIconWhite from '_images/ethos-icon-white.png';
 import ethosIcon from '_images/ethos-icon.png';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
@@ -16,6 +16,8 @@ import Header from '_src/ui/app/shared/typography/Header';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { ChangeEventHandler } from 'react';
+import MnemonicQrCode from './MnemonicQrCode';
+import QrCodeSection from './QrCodeSection';
 
 export default function ViewSeedPage() {
     const [hasConfirmed, setHasConfirmed] = useState(false);
@@ -74,45 +76,7 @@ export default function ViewSeedPage() {
                     mnemonic={hostedSeed ?? mnemonic ?? ''}
                 />
                 {featureFlags.showMobile && (
-                    <div className="flex flex-col items-center">
-                        <Subheader className="w-full text-left pb-2">
-                            Import Wallet in Mobile App
-                        </Subheader>
-                        <BodyLarge className="w-full text-left pb-4">
-                            Scan with your Ethos mobile app to automatically
-                            import your wallet:
-                        </BodyLarge>
-                        <QRCode
-                            // The QR Code scanner in React Native only supports URLs, so I made this a pseudo-deep link
-                            value={`ethos://${encodeURIComponent(
-                                hostedSeed ?? mnemonic ?? ''
-                            )}`}
-                            size={200}
-                            quietZone={0}
-                            eyeRadius={[
-                                [10, 10, 0, 10], // top/left eye
-                                [10, 10, 10, 0], // top/right eye
-                                [10, 0, 10, 10], // bottom/left
-                            ]}
-                            fgColor={
-                                resolvedTheme === 'light' ? '#6D28D9' : 'white'
-                            }
-                            bgColor={
-                                resolvedTheme === 'light' ? 'white' : '#111111'
-                            }
-                            logoImage={
-                                resolvedTheme === 'light'
-                                    ? ethosIcon
-                                    : ethosIconWhite
-                            }
-                            logoHeight={36}
-                            logoWidth={30}
-                            logoPadding={12}
-                            logoPaddingStyle="circle"
-                            removeQrCodeBehindLogo
-                            qrStyle="dots"
-                        />
-                    </div>
+                    <QrCodeSection mnemonic={hostedSeed ?? mnemonic ?? ''} />
                 )}
                 <Button to="/" buttonStyle="secondary" isInline>
                     Done
