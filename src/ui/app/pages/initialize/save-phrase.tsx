@@ -11,7 +11,7 @@ import Button from '../../shared/buttons/Button';
 import RecoveryPhraseDisplay from '../../shared/content/RecoveryPhraseDisplay';
 import OnboardingCard from '../../shared/layouts/OnboardingCard';
 import Permissions from '_src/background/Permissions';
-import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomizations';
+import saveCustomization from '_src/shared/utils/customizationsSync/saveCustomization';
 import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { loadAccountInformationFromStorage } from '_src/ui/app/redux/slices/account';
@@ -52,7 +52,7 @@ const SavePhrasePage = () => {
             const encryptedAccountCustomization =
                 await encryptAccountCustomization(accountInfo, privateKey);
 
-            await saveCustomizations(jwt, encryptedAccountCustomization);
+            await saveCustomization(jwt, encryptedAccountCustomization);
         }
 
         navigate('/initialize/verify-phrase');

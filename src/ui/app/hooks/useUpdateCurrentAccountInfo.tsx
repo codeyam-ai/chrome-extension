@@ -5,7 +5,7 @@ import useAppSelector from './useAppSelector';
 import { type AccountInfo } from '../KeypairVault';
 import Authentication from '_src/background/Authentication';
 import { getEncrypted } from '_src/shared/storagex/store';
-import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomizations';
+import saveCustomization from '_src/shared/utils/customizationsSync/saveCustomization';
 import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 import {
     saveAccountInfos,
@@ -53,7 +53,7 @@ export const useUpdateCurrentAccountInfo = () => {
                 );
 
             try {
-                await saveCustomizations(jwt, encryptedAccountCustomization);
+                await saveCustomization(jwt, encryptedAccountCustomization);
             } catch (error) {
                 console.error('Failed saving customizations to server:', error);
             }

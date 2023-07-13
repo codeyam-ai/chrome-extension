@@ -29,6 +29,13 @@ const useAccountCustomizations = () => {
             const latestServerCustomizations =
                 await getAllCustomizationsFromSeed(mnemonic ?? '', provider);
 
+            if (latestServerCustomizations === 'deleted') {
+                console.log(
+                    'Customization is deleted. User must have Sync turned off on at least one device. Skipping sync.'
+                );
+                return null;
+            }
+
             const latestAccountInfos: AccountInfo[] = Object.values(
                 latestServerCustomizations
             ) as AccountInfo[];
@@ -50,9 +57,9 @@ const useAccountCustomizations = () => {
                     await dispatch(saveAccountInfos(latestAccountInfos));
                 }
 
-                return { test: latestAccountInfos };
+                return { latestAccountInfos };
             }
-            return { test: latestServerCustomizations };
+            return { latestServerCustomizations };
         },
         enabled:
             !!mnemonic &&

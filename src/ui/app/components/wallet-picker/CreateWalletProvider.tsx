@@ -15,7 +15,7 @@ import { clearForNetworkOrWalletSwitch as clearBalancesForNetworkOrWalletSwitch 
 import { clearForNetworkOrWalletSwitch as clearTokensForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
 import Authentication from '_src/background/Authentication';
 import Permissions from '_src/background/Permissions';
-import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomizations';
+import saveCustomization from '_src/shared/utils/customizationsSync/saveCustomization';
 
 import type { Dispatch, SetStateAction } from 'react';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
@@ -73,7 +73,7 @@ const CreateWalletProvider = ({
                 );
 
             try {
-                await saveCustomizations(jwt, encryptedAccountCustomization);
+                await saveCustomization(jwt, encryptedAccountCustomization);
             } catch (error) {
                 console.error('Failed saving customizations to server:', error);
             }

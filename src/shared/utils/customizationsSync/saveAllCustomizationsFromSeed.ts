@@ -2,7 +2,7 @@ import { RawSigner } from '@mysten/sui.js';
 
 import { encryptAccountCustomization } from './accountCustomizationEncryption';
 import getJwtWithSigner from './getJwtWithSigner';
-import saveCustomizations from './saveCustomizations';
+import saveCustomization from './saveCustomization';
 import KeypairVault, { type AccountInfo } from '_src/ui/app/KeypairVault';
 
 import type { JsonRpcProvider, SuiAddress } from '@mysten/sui.js';
@@ -33,7 +33,7 @@ export const saveAllCustomizationsFromSeed = async (
             privateKey
         );
 
-        await saveCustomizations(jwt, encryptedAccountCustomization);
+        await saveCustomization(jwt, encryptedAccountCustomization);
     });
 
     await Promise.all(jobs);

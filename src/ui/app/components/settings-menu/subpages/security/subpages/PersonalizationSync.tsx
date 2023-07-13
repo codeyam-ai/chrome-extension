@@ -13,10 +13,12 @@ import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Header from '_src/ui/app/shared/typography/Header';
 import { toast } from 'react-toastify';
 import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
+import { deleteAllCustomizationsFromSeed } from '_src/shared/utils/customizationsSync/deleteAllCustomizationsFromSeed';
+import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
 
 const PersonalizationSync: React.FC = () => {
     const [isEnabled, setIsEnabled] = useState(false);
-    const [loadingText, setLoadingText] = useState<string>();
+    const [loadingText, setLoadingText] = useState<string>('hi');
     const dispatch = useAppDispatch();
     const { accountInfos, mnemonic } = useAppSelector(({ account }) => account);
     const provider = api.instance.fullNode;
@@ -35,6 +37,11 @@ const PersonalizationSync: React.FC = () => {
                 toast(<SuccessAlert text={'Personalization synced'} />);
             } else {
                 setLoadingText('Deleting synced data from server');
+                await deleteAllCustomizationsFromSeed(
+                    mnemonic ?? '',
+                    accountInfos,
+                    provider
+                );
                 toast(<SuccessAlert text={'Synced data removed'} />);
             }
             setLoadingText(undefined);
@@ -74,7 +81,12 @@ const PersonalizationSync: React.FC = () => {
                 <Toggle isChecked={isEnabled} onToggle={handleToggle} />
             </div>
 
-            {loadingText && <Body>{loadingText}</Body>}
+            {loadingText && (
+                <div className="flex gap-4 items-center place-content-center">
+                    <LoadingIndicator />
+                    <Body>{loadingText}</Body>
+                </div>
+            )}
         </div>
     );
 };

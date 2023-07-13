@@ -10,7 +10,7 @@ import type { AccountCustomization } from '_src/types/AccountCustomization';
 export const getAllCustomizationsFromSeed = async (
     mnemonic: string,
     provider: JsonRpcProvider
-): Promise<Record<SuiAddress, AccountCustomization>> => {
+): Promise<Record<SuiAddress, AccountCustomization> | 'deleted'> => {
     const keypairVault = new KeypairVault();
     keypairVault.mnemonic = mnemonic;
 
@@ -39,6 +39,10 @@ export const getAllCustomizationsFromSeed = async (
 
         if (!accountCustomization) {
             break;
+        }
+
+        if (accountCustomization === 'deleted') {
+            return 'deleted';
         }
 
         const address = await signer.getAddress();

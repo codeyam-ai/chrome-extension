@@ -16,7 +16,7 @@ import BodyLarge from '../../shared/typography/BodyLarge';
 import { useSuiLedgerClient } from '../ledger/SuiLedgerClientProvider';
 import Loading from '../loading';
 import Authentication from '_src/background/Authentication';
-import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomizations';
+import saveCustomization from '_src/shared/utils/customizationsSync/saveCustomization';
 import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 
 import type { AccountInfo } from '../../KeypairVault';
@@ -116,7 +116,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                 );
 
             try {
-                await saveCustomizations(jwt, encryptedAccountCustomization);
+                await saveCustomization(jwt, encryptedAccountCustomization);
             } catch (error) {
                 console.error('Failed saving customizations to server:', error);
             }
