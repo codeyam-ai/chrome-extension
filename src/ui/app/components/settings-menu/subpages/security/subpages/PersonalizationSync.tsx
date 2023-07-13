@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useState } from 'react';
+
 import { saveAllCustomizationsFromSeed } from '_src/shared/utils/customizationsSync/saveAllCustomizationsFromSeed';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import {
@@ -9,11 +11,12 @@ import Toggle from '_src/ui/app/shared/inputs/Toggle';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Header from '_src/ui/app/shared/typography/Header';
-import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 
 const PersonalizationSync: React.FC = () => {
     const [isEnabled, setIsEnabled] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [loadingText, setLoadingText] = useState<string>();
     const dispatch = useAppDispatch();
     const { accountInfos, mnemonic } = useAppSelector(({ account }) => account);
     const provider = api.instance.fullNode;
@@ -21,18 +24,20 @@ const PersonalizationSync: React.FC = () => {
     const handleToggle = useCallback(
         async (value: boolean) => {
             setIsEnabled(value);
-            setLoading(true);
             await dispatch(saveCustomizationsSyncPreference(value));
             if (value) {
+                setLoadingText('Syncing personalization');
                 await saveAllCustomizationsFromSeed(
                     mnemonic ?? '',
                     accountInfos,
                     provider
                 );
+                toast(<SuccessAlert text={'Personalization synced'} />);
             } else {
-                console.log('delete all');
+                setLoadingText('Deleting synced data from server');
+                toast(<SuccessAlert text={'Synced data removed'} />);
             }
-            setLoading(false);
+            setLoadingText(undefined);
         },
         [accountInfos, dispatch, mnemonic, provider]
     );
@@ -69,7 +74,7 @@ const PersonalizationSync: React.FC = () => {
                 <Toggle isChecked={isEnabled} onToggle={handleToggle} />
             </div>
 
-            {loading && <Body>LOADING</Body>}
+            {loadingText && <Body>{loadingText}</Body>}
         </div>
     );
 };
