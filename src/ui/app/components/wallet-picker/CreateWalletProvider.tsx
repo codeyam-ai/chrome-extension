@@ -1,4 +1,3 @@
-import jwt_decode from 'jwt-decode';
 import { useCallback, useEffect, useRef } from 'react';
 
 import { type AccountInfo } from '../../KeypairVault';
@@ -15,13 +14,11 @@ import { clearForNetworkOrWalletSwitch as clearBalancesForNetworkOrWalletSwitch 
 import { clearForNetworkOrWalletSwitch as clearTokensForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
 import Authentication from '_src/background/Authentication';
 import Permissions from '_src/background/Permissions';
+import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
 import saveCustomization from '_src/shared/utils/customizationsSync/saveCustomization';
+import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 
 import type { Dispatch, SetStateAction } from 'react';
-import { useDependencies } from '_src/shared/utils/dependenciesContext';
-import useJwt from '_src/shared/utils/customizationsSync/useJwt';
-import { encrypt } from '_src/shared/encryption/password';
-import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
 
 /*
     Because creating a wallet extensively uses hooks (and hooks can't be used outside
@@ -45,7 +42,6 @@ const CreateWalletProvider = ({
         ({ account }) => account
     );
     const { getCachedJwt } = useJwt();
-    const { featureFlags } = useDependencies();
 
     const keypairVault = thunkExtras.keypairVault;
     const draftAccountInfos = useRef<AccountInfo[]>(accountInfos);
@@ -180,13 +176,11 @@ const CreateWalletProvider = ({
 
             setAccountInfos(newAccountInfos);
 
-            if (featureFlags.showWipFeatures) {
-                await handleSaveCustomization(
-                    keypairVault.getAddress(nextAccountIndex) || '',
-                    newAccountInfos,
-                    nextAccountIndex
-                );
-            }
+            await handleSaveCustomization(
+                keypairVault.getAddress(nextAccountIndex) || '',
+                newAccountInfos,
+                nextAccountIndex
+            );
         };
 
         const executeWithLoading = async () => {
@@ -199,7 +193,6 @@ const CreateWalletProvider = ({
     }, [
         accountInfos,
         authentication,
-        featureFlags.showWipFeatures,
         _saveAccountInfos,
         keypairVault,
         handleSaveCustomization,

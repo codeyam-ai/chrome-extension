@@ -3,23 +3,20 @@ import { useCallback, useEffect, useState } from 'react';
 import useAppDispatch from './useAppDispatch';
 import useAppSelector from './useAppSelector';
 import { type AccountInfo } from '../KeypairVault';
+import { thunkExtras } from '../redux/store/thunk-extras';
 import Authentication from '_src/background/Authentication';
 import { getEncrypted } from '_src/shared/storagex/store';
+import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
 import saveCustomization from '_src/shared/utils/customizationsSync/saveCustomization';
 import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 import {
     saveAccountInfos,
     setAccountInfos,
 } from '_src/ui/app/redux/slices/account';
-import { useDependencies } from '_src/shared/utils/dependenciesContext';
-import { encrypt } from '_src/shared/encryption/password';
-import { thunkExtras } from '../redux/store/thunk-extras';
-import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
 
 export const useUpdateCurrentAccountInfo = () => {
     const [isHostedWallet, setIsHostedWallet] = useState<boolean>(false);
     const dispatch = useAppDispatch();
-    const { featureFlags } = useDependencies();
     const { getCachedJwt } = useJwt();
     const { accountInfos, activeAccountIndex } = useAppSelector(
         ({ account }) => account
@@ -75,12 +72,7 @@ export const useUpdateCurrentAccountInfo = () => {
 
         await _saveAccountInfos(newAccountInfos);
 
-        if (featureFlags.showWipFeatures) {
-            await handleSaveCustomization(
-                newAccountInfos,
-                currentAccountInfoIndex
-            );
-        }
+        await handleSaveCustomization(newAccountInfos, currentAccountInfoIndex);
     };
 
     const _saveAccountInfos = async (newAccountInfos: AccountInfo[]) => {

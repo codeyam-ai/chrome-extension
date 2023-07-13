@@ -61,11 +61,7 @@ const useAccountCustomizations = () => {
             }
             return { latestServerCustomizations };
         },
-        enabled:
-            !!mnemonic &&
-            !!provider &&
-            customizationsSyncPreference &&
-            featureFlags.showWipFeatures,
+        enabled: !!mnemonic && !!provider && customizationsSyncPreference,
         refetchInterval: 3000, // 3 seconds
     });
 
