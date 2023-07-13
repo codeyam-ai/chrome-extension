@@ -15,11 +15,14 @@ import { toast } from 'react-toastify';
 import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 import { deleteAllCustomizationsFromSeed } from '_src/shared/utils/customizationsSync/deleteAllCustomizationsFromSeed';
 import LoadingIndicator from '_src/ui/app/components/loading/LoadingIndicator';
+import { PuffLoader } from 'react-spinners';
+import { useTheme } from '_src/shared/utils/themeContext';
 
 const PersonalizationSync: React.FC = () => {
     const [isEnabled, setIsEnabled] = useState(false);
-    const [loadingText, setLoadingText] = useState<string>('hi');
+    const [loadingText, setLoadingText] = useState<string>();
     const dispatch = useAppDispatch();
+    const { resolvedTheme } = useTheme();
     const { accountInfos, mnemonic } = useAppSelector(({ account }) => account);
     const provider = api.instance.fullNode;
 
@@ -83,7 +86,15 @@ const PersonalizationSync: React.FC = () => {
 
             {loadingText && (
                 <div className="flex gap-4 items-center place-content-center">
-                    <LoadingIndicator />
+                    <PuffLoader
+                        color={
+                            resolvedTheme === 'light' ? '#6D28D9' : '#9C78F7'
+                        }
+                        loading={true}
+                        size={24}
+                        aria-label="Loading Spinner"
+                        data-testid="loader"
+                    />
                     <Body>{loadingText}</Body>
                 </div>
             )}
