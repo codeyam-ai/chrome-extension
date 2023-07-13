@@ -53,6 +53,7 @@ import AppContainer, {
 import InitializePage from '_pages/initialize';
 import {
     loadAccountInformationFromStorage,
+    loadCustomizationsSyncPreference,
     loadExcludedDappsKeysFromStorage,
     loadFavoriteDappsKeysFromStorage,
 } from '_redux/slices/account';
@@ -73,6 +74,7 @@ const App = () => {
         dispatch(loadAccountInformationFromStorage());
         dispatch(loadFavoriteDappsKeysFromStorage());
         dispatch(loadExcludedDappsKeysFromStorage());
+        dispatch(loadCustomizationsSyncPreference());
         dispatch(loadContactsStorage());
     }, [dispatch]);
 
