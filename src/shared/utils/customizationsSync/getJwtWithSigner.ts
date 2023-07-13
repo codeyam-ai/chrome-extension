@@ -9,7 +9,7 @@ async function getJwtWithSigner(
     signer: LedgerSigner | EthosSigner | RawSigner | null
 ): Promise<string> {
     const dataToSign = {
-        tenantId: '92dd81a5-dd8b-480c-b468-66f69a74c1bc',
+        tenantId: process.env.TENANT_ID || '',
         timestamp: Date.now(),
     };
 
