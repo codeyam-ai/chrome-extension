@@ -44,6 +44,9 @@ jobs:
                   API_ENDPOINT_TESTNET_FULLNODE_3: ${{ secrets.API_ENDPOINT_TESTNET_FULLNODE_3 }}
                   API_ENDPOINT_MAINNET_FULLNODE_3: ${{ secrets.API_ENDPOINT_MAINNET_FULLNODE_3 }}
                   ETHOS_API_KEY: ${{ secrets.ETHOS_API_KEY }}
+                  ETHOS_API_BASE_URL: ${{ secrets.ETHOS_API_BASE_URL }}
+                  ETHOS_EXPLORER_BASE_URL: ${{ secrets.ETHOS_EXPLORER_BASE_URL }}
+                  TENANT_ID: ${{ secrets.TENANT_ID }}
               run: npm run build:prod
 
             # Archive build artifacts
