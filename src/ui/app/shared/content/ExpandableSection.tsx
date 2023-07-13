@@ -38,7 +38,7 @@ const ExpandableSection: React.FC<ExpandableSectionProps> = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
         >
-            <div className="py-4">{children}</div>
+            <div className="pt-4">{children}</div>
         </Transition>
     </div>
 );
