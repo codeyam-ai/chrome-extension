@@ -24,7 +24,7 @@ import type { EmojiPickerResult } from '../../shared/inputs/emojis/EmojiPickerMe
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
 import { encrypt } from '_src/shared/encryption/password';
 import { getKeypairFromMnemonics } from '_src/shared/cryptography/mnemonics';
-import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/encryption';
+import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
 
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;

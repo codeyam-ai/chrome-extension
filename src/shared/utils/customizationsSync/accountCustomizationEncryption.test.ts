@@ -1,7 +1,7 @@
 import {
     decryptAccountCustomization,
     encryptAccountCustomization,
-} from './encryption';
+} from './accountCustomizationEncryption';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 
 describe('account customization encryption', () => {

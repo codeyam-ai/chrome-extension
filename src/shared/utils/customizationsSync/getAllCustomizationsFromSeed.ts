@@ -27,8 +27,9 @@ export const getAllCustomizationsFromSeed = async (
 
         const jwt = await getJwtWithSigner(signer);
 
-        const keypair = keypairVault.getKeyPair(walletIndex);
-        const privateKey = keypair.export().privateKey;
+        const privateKey = keypairVault
+            .getKeyPair(walletIndex)
+            .export().privateKey;
 
         const accountCustomization = await getCustomizations(jwt, privateKey);
         console.log('accountCustomization :>> ', accountCustomization);

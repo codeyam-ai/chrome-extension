@@ -14,7 +14,7 @@ import {
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
 import { encrypt } from '_src/shared/encryption/password';
 import { thunkExtras } from '../redux/store/thunk-extras';
-import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/encryption';
+import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
 
 export const useUpdateCurrentAccountInfo = () => {
     const [isHostedWallet, setIsHostedWallet] = useState<boolean>(false);

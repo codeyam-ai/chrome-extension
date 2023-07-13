@@ -20,7 +20,7 @@ import type { AccountInfo } from '../../KeypairVault';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
 import { thunkExtras } from '../../redux/store/thunk-extras';
 import { encrypt } from '_src/shared/encryption/password';
-import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/encryption';
+import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
 
 const SavePhrasePage = () => {
     // useInitializedGuard(AppState.MNEMONIC);

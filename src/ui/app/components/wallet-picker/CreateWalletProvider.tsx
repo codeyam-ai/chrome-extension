@@ -21,7 +21,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
 import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 import { encrypt } from '_src/shared/encryption/password';
-import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/encryption';
+import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
 
 /*
     Because creating a wallet extensively uses hooks (and hooks can't be used outside

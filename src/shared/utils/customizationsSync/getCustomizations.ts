@@ -1,4 +1,4 @@
-import { decryptAccountCustomization } from './encryption';
+import { decryptAccountCustomization } from './accountCustomizationEncryption';
 import { explorerApiCall } from '_src/shared/utils/customizationsSync/ethosPlatformApiCall';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
