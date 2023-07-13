@@ -1,23 +1,40 @@
-import { useAppDispatch } from '_src/ui/app/hooks';
+import { saveAllCustomizationsFromSeed } from '_src/shared/utils/customizationsSync/saveAllCustomizationsFromSeed';
+import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import {
     loadCustomizationsSyncPreference,
     saveCustomizationsSyncPreference,
 } from '_src/ui/app/redux/slices/account';
+import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Toggle from '_src/ui/app/shared/inputs/Toggle';
+import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Header from '_src/ui/app/shared/typography/Header';
 import { useCallback, useEffect, useState } from 'react';
 
 const PersonalizationSync: React.FC = () => {
     const [isEnabled, setIsEnabled] = useState(false);
+    const [loading, setLoading] = useState(false);
     const dispatch = useAppDispatch();
+    const { accountInfos, mnemonic } = useAppSelector(({ account }) => account);
+    const provider = api.instance.fullNode;
 
     const handleToggle = useCallback(
         async (value: boolean) => {
             setIsEnabled(value);
+            setLoading(true);
             await dispatch(saveCustomizationsSyncPreference(value));
+            if (value) {
+                await saveAllCustomizationsFromSeed(
+                    mnemonic ?? '',
+                    accountInfos,
+                    provider
+                );
+            } else {
+                console.log('delete all');
+            }
+            setLoading(false);
         },
-        [dispatch]
+        [accountInfos, dispatch, mnemonic, provider]
     );
 
     useEffect(() => {
@@ -51,6 +68,8 @@ const PersonalizationSync: React.FC = () => {
                 </BodyLarge>
                 <Toggle isChecked={isEnabled} onToggle={handleToggle} />
             </div>
+
+            {loading && <Body>LOADING</Body>}
         </div>
     );
 };

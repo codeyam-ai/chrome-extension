@@ -18,7 +18,6 @@ import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
-import TESTCustSyncPref from '_src/shared/utils/customizationsSync/TESTCustSyncPref';
 
 function HomePage() {
     const { favoriteDappsForCurrentNetwork, favoriteDapps } =
@@ -43,7 +42,6 @@ function HomePage() {
 
     return (
         <div className="flex flex-col">
-            <TESTCustSyncPref />
             {showDappList && (
                 <DappList
                     dapps={favoriteDappsForCurrentNetwork ?? favoriteDapps}

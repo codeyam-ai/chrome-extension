@@ -15,9 +15,8 @@ const useAccountCustomizations = () => {
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
     );
-    const { accountInfos, authentication } = useAppSelector(
-        ({ account }) => account
-    );
+    const { accountInfos, authentication, customizationsSyncPreference } =
+        useAppSelector(({ account }) => account);
     const dispatch = useAppDispatch();
     const { featureFlags } = useDependencies();
     const provider = api.instance.fullNode;
@@ -55,7 +54,11 @@ const useAccountCustomizations = () => {
             }
             return { test: latestServerCustomizations };
         },
-        enabled: !!mnemonic && !!provider && featureFlags.showWipFeatures,
+        enabled:
+            !!mnemonic &&
+            !!provider &&
+            customizationsSyncPreference &&
+            featureFlags.showWipFeatures,
         refetchInterval: 3000, // 3 seconds
     });
 
