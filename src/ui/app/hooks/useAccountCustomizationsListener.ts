@@ -3,10 +3,7 @@ import { isEqual } from 'lodash';
 
 import useAppDispatch from './useAppDispatch';
 import useAppSelector from './useAppSelector';
-import {
-    saveAccountInfos,
-    setAccountInfos,
-} from '../redux/slices/account';
+import { saveAccountInfos, setAccountInfos } from '../redux/slices/account';
 import { api } from '../redux/store/thunk-extras';
 import Authentication from '_src/background/Authentication';
 import { getAllCustomizationsFromSeed } from '_src/shared/utils/customizationsSync/getAllCustomizationsFromSeed';

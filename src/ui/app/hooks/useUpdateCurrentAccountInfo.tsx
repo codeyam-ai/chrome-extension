@@ -12,6 +12,9 @@ import {
     setAccountInfos,
 } from '_src/ui/app/redux/slices/account';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
+import { encrypt } from '_src/shared/encryption/password';
+import { thunkExtras } from '../redux/store/thunk-extras';
+import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
 
 export const useUpdateCurrentAccountInfo = () => {
     const [isHostedWallet, setIsHostedWallet] = useState<boolean>(false);
@@ -21,6 +24,7 @@ export const useUpdateCurrentAccountInfo = () => {
     const { accountInfos, activeAccountIndex } = useAppSelector(
         ({ account }) => account
     );
+    const keypairVault = thunkExtras.keypairVault;
 
     useEffect(() => {
         const _setIsHosted = async () => {
@@ -37,8 +41,19 @@ export const useUpdateCurrentAccountInfo = () => {
     const handleSaveCustomization = useCallback(
         async (_accountInfos: AccountInfo[], accountIndex: number) => {
             const jwt = await getCachedJwt();
+
+            const privateKey = keypairVault
+                .getKeyPair(accountIndex)
+                .export().privateKey;
+
+            const encryptedAccountCustomization =
+                await encryptAccountCustomization(
+                    _accountInfos[accountIndex],
+                    privateKey
+                );
+
             try {
-                await saveCustomizations(jwt, _accountInfos[accountIndex]);
+                await saveCustomizations(jwt, encryptedAccountCustomization);
             } catch (error) {
                 console.error('Failed saving customizations to server:', error);
             }

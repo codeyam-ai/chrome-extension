@@ -1,9 +1,11 @@
+import { decryptAccountCustomization } from './accountCustomizationEncryption';
 import { explorerApiCall } from '_src/shared/utils/customizationsSync/ethosPlatformApiCall';
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
-const getCustomizations = async (
-    jwt: string
+const getCustomization = async (
+    jwt: string,
+    privateKey: string
 ): Promise<AccountInfo | undefined> => {
     const { json, status } = await explorerApiCall(
         'v1/user/profile',
@@ -15,8 +17,7 @@ const getCustomizations = async (
         return undefined;
     }
 
-    const customizations = JSON.parse(json.data) as AccountInfo;
-    return customizations;
+    return decryptAccountCustomization(json.data, privateKey);
 };
 
-export default getCustomizations;
+export default getCustomization;

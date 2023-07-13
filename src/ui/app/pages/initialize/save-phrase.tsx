@@ -18,6 +18,9 @@ import { loadAccountInformationFromStorage } from '_src/ui/app/redux/slices/acco
 
 import type { AccountInfo } from '../../KeypairVault';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
+import { thunkExtras } from '../../redux/store/thunk-extras';
+import { encrypt } from '_src/shared/encryption/password';
+import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
 
 const SavePhrasePage = () => {
     // useInitializedGuard(AppState.MNEMONIC);
@@ -31,6 +34,7 @@ const SavePhrasePage = () => {
         ({ account }) => account.createdMnemonic || account.mnemonic
     );
     const address = useAppSelector(({ account }) => account.address);
+    const keypairVault = thunkExtras.keypairVault;
 
     const finishOnboarding = useCallback(async () => {
         const accountInfo = {
@@ -43,11 +47,22 @@ const SavePhrasePage = () => {
         if (featureFlags.showWipFeatures) {
             const jwt = await getCachedJwt();
 
-            await saveCustomizations(jwt, accountInfo);
+            const privateKey = keypairVault.getKeyPair(0).export().privateKey;
+
+            const encryptedAccountCustomization =
+                await encryptAccountCustomization(accountInfo, privateKey);
+
+            await saveCustomizations(jwt, encryptedAccountCustomization);
         }
 
         navigate('/initialize/verify-phrase');
-    }, [address, featureFlags.showWipFeatures, getCachedJwt, navigate]);
+    }, [
+        address,
+        featureFlags.showWipFeatures,
+        getCachedJwt,
+        keypairVault,
+        navigate,
+    ]);
 
     useEffect(() => {
         if (address) {

@@ -22,6 +22,9 @@ import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 import type { AccountInfo } from '../../KeypairVault';
 import type { EmojiPickerResult } from '../../shared/inputs/emojis/EmojiPickerMenu';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
+import { encrypt } from '_src/shared/encryption/password';
+import { getKeypairFromMnemonics } from '_src/shared/cryptography/mnemonics';
+import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
 
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -101,13 +104,24 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
             accountIndex: number
         ) => {
             const jwt = await getCachedJwt(_address, accountIndex);
+
+            const privateKey = keypairVault
+                .getKeyPair(accountIndex)
+                .export().privateKey;
+
+            const encryptedAccountCustomization =
+                await encryptAccountCustomization(
+                    _accountInfos[accountIndex],
+                    privateKey
+                );
+
             try {
-                await saveCustomizations(jwt, _accountInfos[accountIndex]);
+                await saveCustomizations(jwt, encryptedAccountCustomization);
             } catch (error) {
                 console.error('Failed saving customizations to server:', error);
             }
         },
-        [getCachedJwt]
+        [getCachedJwt, keypairVault]
     );
 
     const _saveAccountInfos = useCallback(async () => {

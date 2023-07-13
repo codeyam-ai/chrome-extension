@@ -84,8 +84,7 @@ const App = () => {
         document.body.classList[isPopup ? 'add' : 'remove']('is-popup');
     }, [isPopup]);
 
-    const r = useAccountCustomizations();
-    console.log('r', r);
+    useAccountCustomizations();
 
     return (
         <ThemeProvider initialTheme={undefined}>
