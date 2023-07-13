@@ -2,6 +2,7 @@ import { Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import { type ReactNode } from 'react';
 import Header from '../typography/Header';
+import Subheader from '../typography/Subheader';
 
 interface ExpandableSectionProps {
     isOpen: boolean;
@@ -21,7 +22,7 @@ const ExpandableSection: React.FC<ExpandableSectionProps> = ({
             className="cursor-pointer flex items-center justify-between py-4"
             onClick={onToggle}
         >
-            <Header>{title}</Header>
+            <Subheader>{title}</Subheader>
             <ChevronDownIcon
                 className={`${
                     isOpen ? 'transform rotate-180' : ''

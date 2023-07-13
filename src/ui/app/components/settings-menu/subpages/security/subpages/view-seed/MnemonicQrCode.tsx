@@ -15,9 +15,6 @@ const MnemonicQrCode: React.FC<MnemonicQrCodeProps> = ({ mnemonic }) => {
 
     return (
         <div className="flex flex-col items-center">
-            <Subheader className="w-full text-left pb-2">
-                Import Wallet in Mobile App
-            </Subheader>
             <BodyLarge className="w-full text-left pb-4">
                 Scan with your Ethos mobile app to automatically import your
                 wallet:
