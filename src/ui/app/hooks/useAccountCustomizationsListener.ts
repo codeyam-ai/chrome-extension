@@ -15,9 +15,8 @@ const useAccountCustomizations = () => {
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
     );
-    const { accountInfos, authentication } = useAppSelector(
-        ({ account }) => account
-    );
+    const { accountInfos, authentication, customizationsSyncPreference } =
+        useAppSelector(({ account }) => account);
     const dispatch = useAppDispatch();
     const { featureFlags } = useDependencies();
     const provider = api.instance.fullNode;
@@ -30,6 +29,13 @@ const useAccountCustomizations = () => {
             const latestServerCustomizations =
                 await getAllCustomizationsFromSeed(mnemonic ?? '', provider);
 
+            if (latestServerCustomizations === 'deleted') {
+                // console.log(
+                //     'Customization is deleted. User must have Sync turned off on at least one device. Skipping sync.'
+                // );
+                return null;
+            }
+
             const latestAccountInfos: AccountInfo[] = Object.values(
                 latestServerCustomizations
             ) as AccountInfo[];
@@ -38,11 +44,11 @@ const useAccountCustomizations = () => {
                 latestServerCustomizations &&
                 !isEqual(latestAccountInfos, accountInfos)
             ) {
-                console.log(
-                    'latestAccountInfos are DIFFERENT :>> ',
-                    latestAccountInfos
-                );
-                console.log('current accountInfos :>> ', accountInfos);
+                // console.log(
+                //     'latestAccountInfos are DIFFERENT :>> ',
+                //     latestAccountInfos
+                // );
+                // console.log('current accountInfos :>> ', accountInfos);
                 if (authentication) {
                     await Authentication.updateAccountInfos(latestAccountInfos);
                     await dispatch(setAccountInfos(latestAccountInfos));
@@ -51,11 +57,11 @@ const useAccountCustomizations = () => {
                     await dispatch(saveAccountInfos(latestAccountInfos));
                 }
 
-                return { test: latestAccountInfos };
+                return { latestAccountInfos };
             }
-            return { test: latestServerCustomizations };
+            return { latestServerCustomizations };
         },
-        enabled: !!mnemonic && !!provider && featureFlags.showWipFeatures,
+        enabled: !!mnemonic && !!provider && customizationsSyncPreference,
         refetchInterval: 3000, // 3 seconds
     });
 

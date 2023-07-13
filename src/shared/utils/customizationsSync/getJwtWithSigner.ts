@@ -1,12 +1,9 @@
 import { authApiCall } from './ethosPlatformApiCall';
 import signMessageOnUsersBehalf from '_src/shared/utils/customizationsSync/signMessageOnUsersBehalf';
-import { getSigner } from '_src/ui/app/helpers/getSigner';
 
-import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
 import type { RawSigner } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
-import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 async function getJwtWithSigner(
     signer: LedgerSigner | EthosSigner | RawSigner | null

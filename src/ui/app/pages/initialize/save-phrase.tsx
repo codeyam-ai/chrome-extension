@@ -7,20 +7,18 @@ import { useNavigate } from 'react-router-dom';
 import getNextEmoji from '../../helpers/getNextEmoji';
 import getNextWalletColor from '../../helpers/getNextWalletColor';
 import useIsMobile from '../../hooks/useIsMobile';
+import { thunkExtras } from '../../redux/store/thunk-extras';
 import Button from '../../shared/buttons/Button';
 import RecoveryPhraseDisplay from '../../shared/content/RecoveryPhraseDisplay';
 import OnboardingCard from '../../shared/layouts/OnboardingCard';
 import Permissions from '_src/background/Permissions';
-import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomizations';
+import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
+import saveCustomization from '_src/shared/utils/customizationsSync/saveCustomization';
 import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { loadAccountInformationFromStorage } from '_src/ui/app/redux/slices/account';
 
 import type { AccountInfo } from '../../KeypairVault';
-import { useDependencies } from '_src/shared/utils/dependenciesContext';
-import { thunkExtras } from '../../redux/store/thunk-extras';
-import { encrypt } from '_src/shared/encryption/password';
-import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
 
 const SavePhrasePage = () => {
     // useInitializedGuard(AppState.MNEMONIC);
@@ -28,7 +26,6 @@ const SavePhrasePage = () => {
     const navigate = useNavigate();
     const isMobile = useIsMobile();
     const { getCachedJwt } = useJwt();
-    const { featureFlags } = useDependencies();
 
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
@@ -44,25 +41,19 @@ const SavePhrasePage = () => {
             emoji: getNextEmoji(0),
             address,
         } as AccountInfo;
-        if (featureFlags.showWipFeatures) {
-            const jwt = await getCachedJwt();
+        const jwt = await getCachedJwt();
 
-            const privateKey = keypairVault.getKeyPair(0).export().privateKey;
+        const privateKey = keypairVault.getKeyPair(0).export().privateKey;
 
-            const encryptedAccountCustomization =
-                await encryptAccountCustomization(accountInfo, privateKey);
+        const encryptedAccountCustomization = await encryptAccountCustomization(
+            accountInfo,
+            privateKey
+        );
 
-            await saveCustomizations(jwt, encryptedAccountCustomization);
-        }
+        await saveCustomization(jwt, encryptedAccountCustomization);
 
         navigate('/initialize/verify-phrase');
-    }, [
-        address,
-        featureFlags.showWipFeatures,
-        getCachedJwt,
-        keypairVault,
-        navigate,
-    ]);
+    }, [address, getCachedJwt, keypairVault, navigate]);
 
     useEffect(() => {
         if (address) {

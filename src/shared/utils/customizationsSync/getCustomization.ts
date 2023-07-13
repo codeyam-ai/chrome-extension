@@ -6,7 +6,7 @@ import type { AccountInfo } from '_src/ui/app/KeypairVault';
 const getCustomization = async (
     jwt: string,
     privateKey: string
-): Promise<AccountInfo | undefined> => {
+): Promise<AccountInfo | undefined | 'deleted'> => {
     const { json, status } = await explorerApiCall(
         'v1/user/profile',
         'GET',
@@ -15,6 +15,10 @@ const getCustomization = async (
 
     if (status !== 200 && !json) {
         return undefined;
+    }
+
+    if (json.data === 'deleted') {
+        return 'deleted';
     }
 
     return decryptAccountCustomization(json.data, privateKey);

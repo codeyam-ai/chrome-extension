@@ -1145,6 +1145,33 @@ export const saveExcludedDappsKeys = createAsyncThunk(
     }
 );
 
+export const loadCustomizationsSyncPreference = createAsyncThunk(
+    'account/getCustomizationsSyncPreference',
+    async (): Promise<boolean> => {
+        const isCustomizationSyncEnabled = await getEncrypted({
+            key: 'customizationSync',
+            session: false,
+            strong: false,
+        });
+
+        return isCustomizationSyncEnabled === 'true';
+    }
+);
+
+export const saveCustomizationsSyncPreference = createAsyncThunk(
+    'account/saveCustomizationsSyncPreference',
+    async (isCustomizationSyncEnabled: boolean): Promise<boolean> => {
+        await setEncrypted({
+            key: 'customizationSync',
+            value: isCustomizationSyncEnabled.toString(),
+            session: false,
+            strong: false,
+        });
+
+        return isCustomizationSyncEnabled;
+    }
+);
+
 export type AccountState = {
     loading: boolean;
     authentication: string | null;
@@ -1160,6 +1187,7 @@ export type AccountState = {
     locked: boolean;
     favoriteDappsKeys: string[];
     excludedDappsKeys: string[];
+    customizationsSyncPreference: boolean;
     importNames: { mnemonics: string[]; privateKeys: string[] };
     ledgerConnected: boolean;
 };
@@ -1179,6 +1207,7 @@ const initialState: AccountState = {
     locked: false,
     favoriteDappsKeys: [],
     excludedDappsKeys: [],
+    customizationsSyncPreference: false,
     importNames: {
         mnemonics: [],
         privateKeys: [],
@@ -1303,6 +1332,18 @@ const accountSlice = createSlice({
             .addCase(saveExcludedDappsKeys.fulfilled, (state, action) => {
                 state.excludedDappsKeys = action.payload;
             })
+            .addCase(
+                loadCustomizationsSyncPreference.fulfilled,
+                (state, action) => {
+                    state.customizationsSyncPreference = action.payload;
+                }
+            )
+            .addCase(
+                saveCustomizationsSyncPreference.fulfilled,
+                (state, action) => {
+                    state.customizationsSyncPreference = action.payload;
+                }
+            )
             .addCase(saveImportedMnemonic.fulfilled, (state, action) => {
                 state.importNames.mnemonics.push(action.payload || '');
             })

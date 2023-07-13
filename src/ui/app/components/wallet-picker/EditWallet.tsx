@@ -13,18 +13,14 @@ import Input from '../../shared/inputs/Input';
 import ColorPickerMenu from '../../shared/inputs/colors/ColorPickerMenu';
 import EmojiPickerMenu from '../../shared/inputs/emojis/EmojiPickerMenu';
 import BodyLarge from '../../shared/typography/BodyLarge';
-import { useSuiLedgerClient } from '../ledger/SuiLedgerClientProvider';
 import Loading from '../loading';
 import Authentication from '_src/background/Authentication';
-import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomizations';
+import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
+import saveCustomization from '_src/shared/utils/customizationsSync/saveCustomization';
 import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 
 import type { AccountInfo } from '../../KeypairVault';
 import type { EmojiPickerResult } from '../../shared/inputs/emojis/EmojiPickerMenu';
-import { useDependencies } from '_src/shared/utils/dependenciesContext';
-import { encrypt } from '_src/shared/encryption/password';
-import { getKeypairFromMnemonics } from '_src/shared/cryptography/mnemonics';
-import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
 
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -35,7 +31,6 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     const [isColorPickerMenuOpen, setIsColorPickerMenuOpen] = useState(false);
     const [isEmojiPickerMenuOpen, setIsEmojiPickerMenuOpen] = useState(false);
     const [searchParams] = useSearchParams();
-    const { featureFlags } = useDependencies();
     const { getCachedJwt } = useJwt();
 
     const { accountInfos: _accountInfos, authentication } = useAppSelector(
@@ -116,7 +111,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                 );
 
             try {
-                await saveCustomizations(jwt, encryptedAccountCustomization);
+                await saveCustomization(jwt, encryptedAccountCustomization);
             } catch (error) {
                 console.error('Failed saving customizations to server:', error);
             }
@@ -176,17 +171,14 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
 
     const onClickDone = useCallback(async () => {
         await _saveAccountInfos();
-        if (featureFlags.showWipFeatures) {
-            await handleSaveCustomization(
-                currentAccountInfo.address,
-                draftAccountInfos.current,
-                walletIndex
-            );
-        }
+        await handleSaveCustomization(
+            currentAccountInfo.address,
+            draftAccountInfos.current,
+            walletIndex
+        );
     }, [
         _saveAccountInfos,
         currentAccountInfo.address,
-        featureFlags.showWipFeatures,
         handleSaveCustomization,
         walletIndex,
     ]);

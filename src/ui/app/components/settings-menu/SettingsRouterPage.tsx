@@ -13,7 +13,8 @@ import NetworkPage from '_src/ui/app/components/settings-menu/subpages/network/N
 import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/permissions/PermissionsPage';
 import SecurityHomePage from '_src/ui/app/components/settings-menu/subpages/security/SecurityHomePage';
 import ViewPrivateKeyPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewPrivateKeyPage';
-import ViewSeedPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewSeedPage';
+import ViewSeedPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/view-seed/ViewSeedPage';
+import PersonalizationSync from './subpages/security/subpages/PersonalizationSync';
 
 function SettingsRouterPage() {
     return (
@@ -33,6 +34,14 @@ function SettingsRouterPage() {
                         path="view-private-key"
                         element={<ViewPrivateKeyPage />}
                     />
+                    <Route
+                        path="personalization-sync"
+                        element={<PersonalizationSync />}
+                    />
+                    {/* 
+                        When adding routes to the security page, make sure to add them to the logic to show the
+                        back button in the header at the top of SettingsHomePage.tsx
+                    */}
                 </Route>
                 <Route path="permissions" element={<PermissionsPage />} />
                 <Route path="lock" element={<LockOrResetPage />} />

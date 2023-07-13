@@ -1,6 +1,6 @@
 import { explorerApiCall } from '_src/shared/utils/customizationsSync/ethosPlatformApiCall';
 
-const saveCustomizations = async (
+const saveCustomization = async (
     jwt: string,
     encryptedAccountCustomization: string
 ): Promise<any> => {
@@ -17,4 +17,4 @@ const saveCustomizations = async (
     return res;
 };
 
-export default saveCustomizations;
+export default saveCustomization;
