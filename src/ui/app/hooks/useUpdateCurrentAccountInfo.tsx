@@ -18,9 +18,8 @@ export const useUpdateCurrentAccountInfo = () => {
     const [isHostedWallet, setIsHostedWallet] = useState<boolean>(false);
     const dispatch = useAppDispatch();
     const { getCachedJwt } = useJwt();
-    const { accountInfos, activeAccountIndex } = useAppSelector(
-        ({ account }) => account
-    );
+    const { accountInfos, activeAccountIndex, customizationsSyncPreference } =
+        useAppSelector(({ account }) => account);
     const keypairVault = thunkExtras.keypairVault;
 
     useEffect(() => {
@@ -72,7 +71,12 @@ export const useUpdateCurrentAccountInfo = () => {
 
         await _saveAccountInfos(newAccountInfos);
 
-        await handleSaveCustomization(newAccountInfos, currentAccountInfoIndex);
+        if (customizationsSyncPreference) {
+            await handleSaveCustomization(
+                newAccountInfos,
+                currentAccountInfoIndex
+            );
+        }
     };
 
     const _saveAccountInfos = async (newAccountInfos: AccountInfo[]) => {

@@ -38,9 +38,8 @@ const CreateWalletProvider = ({
     children,
 }: CreateWalletProviderProps) => {
     const dispatch = useAppDispatch();
-    const { accountInfos, authentication } = useAppSelector(
-        ({ account }) => account
-    );
+    const { accountInfos, authentication, customizationsSyncPreference } =
+        useAppSelector(({ account }) => account);
     const { getCachedJwt } = useJwt();
 
     const keypairVault = thunkExtras.keypairVault;
@@ -176,11 +175,13 @@ const CreateWalletProvider = ({
 
             setAccountInfos(newAccountInfos);
 
-            await handleSaveCustomization(
-                keypairVault.getAddress(nextAccountIndex) || '',
-                newAccountInfos,
-                nextAccountIndex
-            );
+            if (customizationsSyncPreference) {
+                await handleSaveCustomization(
+                    keypairVault.getAddress(nextAccountIndex) || '',
+                    newAccountInfos,
+                    nextAccountIndex
+                );
+            }
         };
 
         const executeWithLoading = async () => {

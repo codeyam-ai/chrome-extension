@@ -33,9 +33,11 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     const [searchParams] = useSearchParams();
     const { getCachedJwt } = useJwt();
 
-    const { accountInfos: _accountInfos, authentication } = useAppSelector(
-        ({ account }) => account
-    );
+    const {
+        accountInfos: _accountInfos,
+        authentication,
+        customizationsSyncPreference,
+    } = useAppSelector(({ account }) => account);
 
     let walletIndex = 0;
     const indexFromParam = searchParams.get('index');
@@ -171,14 +173,17 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
 
     const onClickDone = useCallback(async () => {
         await _saveAccountInfos();
-        await handleSaveCustomization(
-            currentAccountInfo.address,
-            draftAccountInfos.current,
-            walletIndex
-        );
+        if (customizationsSyncPreference) {
+            await handleSaveCustomization(
+                currentAccountInfo.address,
+                draftAccountInfos.current,
+                walletIndex
+            );
+        }
     }, [
         _saveAccountInfos,
         currentAccountInfo.address,
+        customizationsSyncPreference,
         handleSaveCustomization,
         walletIndex,
     ]);
