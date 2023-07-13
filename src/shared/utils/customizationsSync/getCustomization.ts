@@ -3,7 +3,7 @@ import { explorerApiCall } from '_src/shared/utils/customizationsSync/ethosPlatf
 
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
-const getCustomizations = async (
+const getCustomization = async (
     jwt: string,
     privateKey: string
 ): Promise<AccountInfo | undefined> => {
@@ -20,4 +20,4 @@ const getCustomizations = async (
     return decryptAccountCustomization(json.data, privateKey);
 };
 
-export default getCustomizations;
+export default getCustomization;

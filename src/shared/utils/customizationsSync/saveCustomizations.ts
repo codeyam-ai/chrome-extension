@@ -8,11 +8,6 @@ const saveCustomizations = async (
         data: encryptedAccountCustomization,
     };
 
-    console.log(
-        '💾💾💾💾💾💾💾 Saving customizations with',
-        encryptedAccountCustomization
-    );
-
     const res = await explorerApiCall(
         'v1/user/profile',
         'PUT',

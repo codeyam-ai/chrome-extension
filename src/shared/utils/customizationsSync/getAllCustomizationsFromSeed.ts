@@ -1,6 +1,6 @@
 import { RawSigner } from '@mysten/sui.js';
 
-import getCustomizations from './getCustomizations';
+import getCustomization from './getCustomization';
 import getJwtWithSigner from './getJwtWithSigner';
 import KeypairVault from '_src/ui/app/KeypairVault';
 
@@ -31,7 +31,7 @@ export const getAllCustomizationsFromSeed = async (
             .getKeyPair(walletIndex)
             .export().privateKey;
 
-        const accountCustomization = await getCustomizations(jwt, privateKey);
+        const accountCustomization = await getCustomization(jwt, privateKey);
         console.log('accountCustomization :>> ', accountCustomization);
 
         if (!accountCustomization) {

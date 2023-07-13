@@ -17,7 +17,5 @@ export const decryptAccountCustomization = (
     privateKey: string
 ): AccountInfo => {
     const decryptedText = simpleDecryptMessage(encryptedData, privateKey);
-    console.log('decryptedText :>> ', decryptedText);
-
     return JSON.parse(decryptedText) as AccountInfo;
 };
