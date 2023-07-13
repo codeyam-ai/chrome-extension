@@ -1,14 +1,13 @@
 import { explorerApiCall } from '_src/shared/utils/customizationsSync/ethosPlatformApiCall';
 
-import type { AccountInfo } from '_src/ui/app/KeypairVault';
-
 const saveCustomizations = async (
     jwt: string,
-    accountCustomization: AccountInfo
+    encryptedAccountCustomization: string
 ): Promise<any> => {
     const requestBody: Record<string, string> = {
-        data: JSON.stringify(accountCustomization),
+        data: encryptedAccountCustomization,
     };
+
     const res = await explorerApiCall(
         'v1/user/profile',
         'PUT',

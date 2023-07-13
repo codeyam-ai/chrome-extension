@@ -20,6 +20,8 @@ import saveCustomizations from '_src/shared/utils/customizationsSync/saveCustomi
 import type { Dispatch, SetStateAction } from 'react';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
 import useJwt from '_src/shared/utils/customizationsSync/useJwt';
+import { encrypt } from '_src/shared/encryption/password';
+import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/encryption';
 
 /*
     Because creating a wallet extensively uses hooks (and hooks can't be used outside
@@ -59,8 +61,19 @@ const CreateWalletProvider = ({
                 accountIndex,
                 _accountInfos
             );
+
+            const privateKey = keypairVault
+                .getKeyPair(accountIndex)
+                .export().privateKey;
+
+            const encryptedAccountCustomization =
+                await encryptAccountCustomization(
+                    _accountInfos[accountIndex],
+                    privateKey
+                );
+
             try {
-                await saveCustomizations(jwt, _accountInfos[accountIndex]);
+                await saveCustomizations(jwt, encryptedAccountCustomization);
             } catch (error) {
                 console.error('Failed saving customizations to server:', error);
             }
