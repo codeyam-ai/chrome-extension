@@ -13,8 +13,6 @@ const getCustomization = async (
         jwt
     );
 
-    console.log('json :>> ', json);
-
     if (status !== 200 && !json) {
         return undefined;
     }

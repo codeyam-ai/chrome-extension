@@ -30,9 +30,9 @@ const useAccountCustomizations = () => {
                 await getAllCustomizationsFromSeed(mnemonic ?? '', provider);
 
             if (latestServerCustomizations === 'deleted') {
-                console.log(
-                    'Customization is deleted. User must have Sync turned off on at least one device. Skipping sync.'
-                );
+                // console.log(
+                //     'Customization is deleted. User must have Sync turned off on at least one device. Skipping sync.'
+                // );
                 return null;
             }
 
@@ -44,11 +44,11 @@ const useAccountCustomizations = () => {
                 latestServerCustomizations &&
                 !isEqual(latestAccountInfos, accountInfos)
             ) {
-                console.log(
-                    'latestAccountInfos are DIFFERENT :>> ',
-                    latestAccountInfos
-                );
-                console.log('current accountInfos :>> ', accountInfos);
+                // console.log(
+                //     'latestAccountInfos are DIFFERENT :>> ',
+                //     latestAccountInfos
+                // );
+                // console.log('current accountInfos :>> ', accountInfos);
                 if (authentication) {
                     await Authentication.updateAccountInfos(latestAccountInfos);
                     await dispatch(setAccountInfos(latestAccountInfos));
