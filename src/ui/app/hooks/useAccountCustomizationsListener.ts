@@ -24,15 +24,25 @@ const useAccountCustomizations = () => {
     const result = useQuery({
         queryKey: ['accountCustomizations'],
         queryFn: async () => {
+            // console.log('=================');
+            // console.log('fetching acc cust...');
+
             if (!mnemonic) return null;
 
             const latestServerCustomizations =
                 await getAllCustomizationsFromSeed(mnemonic ?? '', provider);
 
-            if (latestServerCustomizations === 'deleted') {
-                // console.log(
-                //     'Customization is deleted. User must have Sync turned off on at least one device. Skipping sync.'
-                // );
+            // console.log(
+            //     'latestServerCustomizations :>> ',
+            //     latestServerCustomizations
+            // );
+
+            const isFirstSyncInProgress =
+                Object.keys(latestServerCustomizations).length === 0;
+            if (
+                latestServerCustomizations === 'deleted' ||
+                isFirstSyncInProgress
+            ) {
                 return null;
             }
 
