@@ -14,7 +14,7 @@ import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/permi
 import SecurityHomePage from '_src/ui/app/components/settings-menu/subpages/security/SecurityHomePage';
 import ViewPrivateKeyPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewPrivateKeyPage';
 import ViewSeedPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/view-seed/ViewSeedPage';
-import PersonalizationSync from './subpages/security/subpages/PersonalizationSync';
+import CustomizationSync from './subpages/security/subpages/CustomizationSync';
 
 function SettingsRouterPage() {
     return (
@@ -34,10 +34,6 @@ function SettingsRouterPage() {
                         path="view-private-key"
                         element={<ViewPrivateKeyPage />}
                     />
-                    <Route
-                        path="personalization-sync"
-                        element={<PersonalizationSync />}
-                    />
                     {/* 
                         When adding routes to the security page, make sure to add them to the logic to show the
                         back button in the header at the top of SettingsHomePage.tsx
@@ -45,6 +41,10 @@ function SettingsRouterPage() {
                 </Route>
                 <Route path="permissions" element={<PermissionsPage />} />
                 <Route path="lock" element={<LockOrResetPage />} />
+                <Route
+                    path="customization-sync"
+                    element={<CustomizationSync />}
+                />
                 <Route
                     path="change-auto-lock-timeout"
                     element={<ChangeAutoLockTimeoutPage />}

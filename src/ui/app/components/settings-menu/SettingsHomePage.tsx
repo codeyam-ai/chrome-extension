@@ -1,4 +1,5 @@
 import {
+    ArrowPathIcon,
     ArrowsPointingOutIcon,
     DocumentCheckIcon,
     DocumentTextIcon,
@@ -32,7 +33,7 @@ export const SubpageUrls = {
     password: '/settings/security/change-password',
     seed: '/settings/security/view-seed',
     key: '/settings/security/view-private-key',
-    personalizationSync: '/settings/security/personalization-sync',
+    customizationSync: '/settings/customization-sync',
     permissions: '/settings/permissions',
     lock: '/settings/lock',
     changeAutoLockTimeout: '/settings/change-auto-lock-timeout',
@@ -106,6 +107,11 @@ const SettingsHomePage = () => {
                                     text: 'Lock / Reset Ethos',
                                     iconWithNoClasses: <LockClosedIcon />,
                                     to: SubpageUrls.lock,
+                                },
+                                {
+                                    text: 'Customizations Sync',
+                                    iconWithNoClasses: <ArrowPathIcon />,
+                                    to: SubpageUrls.customizationSync,
                                 },
                             ],
                         },
