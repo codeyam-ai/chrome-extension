@@ -5,8 +5,7 @@ import getJwtWithSigner from './getJwtWithSigner';
 import saveCustomization from './saveCustomization';
 import KeypairVault, { type AccountInfo } from '_src/ui/app/KeypairVault';
 
-import type { JsonRpcProvider, SuiAddress } from '@mysten/sui.js';
-import type { AccountCustomization } from '_src/types/AccountCustomization';
+import type { JsonRpcProvider } from '@mysten/sui.js';
 
 export const saveAllCustomizationsFromSeed = async (
     mnemonic: string,
@@ -22,18 +21,21 @@ export const saveAllCustomizationsFromSeed = async (
             provider
         );
 
-        const jwt = await getJwtWithSigner(signer);
+        try {
+            const jwt = await getJwtWithSigner(signer);
 
-        const privateKey = keypairVault
-            .getKeyPair(accountInfo.index)
-            .export().privateKey;
+            const privateKey = keypairVault
+                .getKeyPair(accountInfo.index)
+                .export().privateKey;
 
-        const encryptedAccountCustomization = await encryptAccountCustomization(
-            accountInfo,
-            privateKey
-        );
+            const encryptedAccountCustomization =
+                await encryptAccountCustomization(accountInfo, privateKey);
 
-        await saveCustomization(jwt, encryptedAccountCustomization);
+            await saveCustomization(jwt, encryptedAccountCustomization);
+        } catch (e: unknown) {
+            // eslint-disable-next-line no-console
+            console.error('saveAllCustomizationsFromSeed error :>> ', e);
+        }
     });
 
     await Promise.all(jobs);

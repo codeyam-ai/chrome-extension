@@ -72,7 +72,7 @@ const useAccountCustomizations = () => {
             return { latestServerCustomizations };
         },
         enabled: !!mnemonic && !!provider && customizationsSyncPreference,
-        refetchInterval: 3000, // 3 seconds
+        refetchInterval: 10000, // 10 seconds
     });
 
     return result;

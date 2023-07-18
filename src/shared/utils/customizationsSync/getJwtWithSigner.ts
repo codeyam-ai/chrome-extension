@@ -31,6 +31,8 @@ async function getJwtWithSigner(
         authReqBody
     );
 
+    if (!res.json) throw new Error('No json in response');
+
     const { jwt } = res.json;
 
     return jwt;

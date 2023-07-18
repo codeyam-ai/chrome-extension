@@ -1,5 +1,7 @@
-import { PuffLoader } from 'react-spinners';
+import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
+import { SparklesIcon } from '@heroicons/react/24/solid';
 import { useCallback, useEffect, useState } from 'react';
+import { PuffLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
 
 import Authentication from '_src/background/Authentication';
@@ -18,11 +20,9 @@ import {
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 import InfoDialog from '_src/ui/app/shared/dialog/InfoDialog';
-import { SparklesIcon } from '@heroicons/react/24/solid';
 import Toggle from '_src/ui/app/shared/inputs/Toggle';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 
 interface SyncCustomizationsToggleProps {
     showModalButton?: boolean;
