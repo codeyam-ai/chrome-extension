@@ -32,6 +32,7 @@ import suins from '_images/dapps/logos/suins.png';
 import tokens from '_images/dapps/logos/tokens.png';
 import turbos from '_images/dapps/logos/turbos.png';
 import typus from '_images/dapps/logos/typus.png';
+import runLegends from '_images/dapps/logos/run-legends.jpg';
 import { LINK_URL } from '_src/shared/constants';
 
 import type { DappData } from 'src/types/DappData';
@@ -568,6 +569,20 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.MAINNET]: 'https://sui.hyperspace.xyz',
             },
             tags: [TagName.MARKETPLACE, TagName.NFTS],
+        } as DappData,
+    ],
+    [
+        '29ec6f19-5364-47e8-a7b6-ccc5c3caf76b',
+        {
+            id: '29ec6f19-5364-47e8-a7b6-ccc5c3caf76b',
+            image: runLegends,
+            title: 'Run Legends',
+            description:
+                "Walk or run outside to fight “Sappers” - enemies that represent real-life anxieties. Build mental and physical health as you upgrade your gear, make new friends, and learn more about the characters' backstories.",
+            urls: {
+                [NetworkName.MAINNET]: 'https://runlegends.talofagames.com/',
+            },
+            tags: [TagName.NFTS, TagName.GAMES],
         } as DappData,
     ],
 ]);
