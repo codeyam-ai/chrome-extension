@@ -54,7 +54,7 @@
         "@types/uuid": "^9.0.0",
         "@types/webextension-polyfill": "^0.10.0",
         "@types/webpack": "^5.28.0",
-        "concurrently": "^7.6.0",
+        "concurrently": "^8.2.0",
         "copy-webpack-plugin": "^11.0.0",
         "cross-env": "^7.0.3",
         "css-loader": "^6.7.3",
