@@ -14,6 +14,10 @@ const EmojiDisplay = ({ emoji, sizeInPx }: EmojiDisplayProps) => {
         init({ data });
     }, []);
 
+    if (emoji && isEmojiNative(emoji)) {
+        return <p style={{ fontSize: `${sizeInPx}px` }}>{emoji}</p>;
+    }
+
     return (
         <em-emoji
             shortcodes={emoji || defaultEmojis[0]}
@@ -23,3 +27,11 @@ const EmojiDisplay = ({ emoji, sizeInPx }: EmojiDisplayProps) => {
 };
 
 export default EmojiDisplay;
+
+const isEmojiNative = (emoji: string): boolean => {
+    const emojiPattern = /\p{Emoji}/u;
+    if (emojiPattern.test(emoji)) {
+        return true;
+    }
+    return false;
+};
