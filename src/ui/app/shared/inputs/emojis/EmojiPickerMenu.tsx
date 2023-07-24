@@ -1,8 +1,15 @@
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
+import { useCallback } from 'react';
 
 export type EmojiPickerResult = {
+    id: string;
+    name: string;
+    native: string;
+    unified: string;
+    keywords: string[];
     shortcodes: string;
+    aliases: string[];
 };
 
 interface EmojiPickerMenuProps {
@@ -18,6 +25,16 @@ const EmojiPickerMenu = ({
     closeEmojiPickerMenu,
     forceLightMode,
 }: EmojiPickerMenuProps) => {
+    const onEmojiSelect = useCallback(
+        (emoji: EmojiPickerResult) => {
+            console.log('emoji :>> ', emoji);
+            console.log('emoji.shortcodes :>> ', emoji.shortcodes);
+            console.log('emoji.native :>> ', emoji.native);
+            setSelectedEmoji(emoji);
+        },
+        [setSelectedEmoji]
+    );
+
     if (isOpen) {
         return (
             <>
@@ -31,7 +48,7 @@ const EmojiPickerMenu = ({
                 <div className="absolute">
                     <Picker
                         data={data}
-                        onEmojiSelect={setSelectedEmoji}
+                        onEmojiSelect={onEmojiSelect}
                         theme={forceLightMode ? 'light' : 'auto'}
                     />
                 </div>

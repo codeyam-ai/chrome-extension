@@ -29,9 +29,5 @@ const EmojiDisplay = ({ emoji, sizeInPx }: EmojiDisplayProps) => {
 export default EmojiDisplay;
 
 const isEmojiNative = (emoji: string): boolean => {
-    const emojiPattern = /\p{Emoji}/u;
-    if (emojiPattern.test(emoji)) {
-        return true;
-    }
-    return false;
+    return !emoji.startsWith(':');
 };
