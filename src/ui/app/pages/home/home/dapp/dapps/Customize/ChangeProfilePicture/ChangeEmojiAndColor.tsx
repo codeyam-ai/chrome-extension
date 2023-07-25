@@ -9,9 +9,7 @@ import { useUpdateCurrentAccountInfo } from '_src/ui/app/hooks/useUpdateCurrentA
 import EmojiDisplay from '_src/ui/app/shared/EmojiDisplay';
 import Button from '_src/ui/app/shared/buttons/Button';
 import ColorPickerMenu from '_src/ui/app/shared/inputs/colors/ColorPickerMenu';
-import EmojiPickerMenu, {
-    type EmojiPickerResult,
-} from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
+import EmojiPickerMenu from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
 
 const ChangeEmojiAndColor: React.FC = () => {
     const [isEmojiPickerMenuOpen, setIsEmojiPickerMenuOpen] = useState(false);
@@ -55,13 +53,10 @@ const ChangeEmojiAndColor: React.FC = () => {
         setIsColorPickerMenuOpen(false);
     }, []);
 
-    const _handleEmojiChange = useCallback(
-        (emojiPickerResult: EmojiPickerResult) => {
-            setDraftEmoji(emojiPickerResult.shortcodes);
-            setIsEmojiPickerMenuOpen(false);
-        },
-        []
-    );
+    const _handleEmojiChange = useCallback((emoji: string) => {
+        setDraftEmoji(emoji);
+        setIsEmojiPickerMenuOpen(false);
+    }, []);
 
     const handleOnContinue = useCallback(() => {
         updateCurrentAccountInfo({

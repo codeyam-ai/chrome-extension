@@ -3,18 +3,18 @@ import Picker from '@emoji-mart/react';
 import { useCallback } from 'react';
 
 export type EmojiPickerResult = {
-    id: string;
-    name: string;
-    native: string;
-    unified: string;
-    keywords: string[];
-    shortcodes: string;
-    aliases: string[];
+    id?: string;
+    name?: string;
+    native?: string;
+    unified?: string;
+    keywords?: string[];
+    shortcodes?: string;
+    aliases?: string[];
 };
 
 interface EmojiPickerMenuProps {
     isOpen: boolean;
-    setSelectedEmoji: (emojiPickerResult: EmojiPickerResult) => void;
+    setSelectedEmoji: (emojiPickerResult: string) => void;
     closeEmojiPickerMenu: () => void;
     forceLightMode?: boolean;
 }
@@ -27,10 +27,10 @@ const EmojiPickerMenu = ({
 }: EmojiPickerMenuProps) => {
     const onEmojiSelect = useCallback(
         (emoji: EmojiPickerResult) => {
-            console.log('emoji :>> ', emoji);
-            console.log('emoji.shortcodes :>> ', emoji.shortcodes);
-            console.log('emoji.native :>> ', emoji.native);
-            setSelectedEmoji(emoji);
+            if (!emoji.native) {
+                throw new Error('No native emoji');
+            }
+            setSelectedEmoji(emoji.native);
         },
         [setSelectedEmoji]
     );
