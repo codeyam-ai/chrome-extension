@@ -11,7 +11,6 @@ import EmojiPickerMenu from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { SuiAddress } from '@mysten/sui.js';
-import type { EmojiPickerResult } from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
 
 export const addressValidation = Yup.string()
     .ensure()
@@ -55,8 +54,8 @@ const ContactForm = ({
     const [nameField, nameMeta] = useField('name');
 
     const handleEmojiChange = useCallback(
-        (emojiPickerResult: EmojiPickerResult) => {
-            setEmoji(emojiPickerResult.shortcodes);
+        (emoji: string) => {
+            setEmoji(emoji);
             setEmojiPickerOpen(false);
         },
         [setEmoji]

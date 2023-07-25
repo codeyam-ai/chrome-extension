@@ -20,7 +20,6 @@ import saveCustomization from '_src/shared/utils/customizationsSync/saveCustomiz
 import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 
 import type { AccountInfo } from '../../KeypairVault';
-import type { EmojiPickerResult } from '../../shared/inputs/emojis/EmojiPickerMenu';
 
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -208,9 +207,9 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     );
 
     const _handleEmojiChange = useCallback(
-        (emojiPickerResult: EmojiPickerResult) => {
-            setDraftEmoji(emojiPickerResult.shortcodes);
-            _handleChange({ emoji: emojiPickerResult.shortcodes });
+        (emoji: string) => {
+            setDraftEmoji(emoji);
+            _handleChange({ emoji });
             setIsEmojiPickerMenuOpen(false);
         },
         [_handleChange]
