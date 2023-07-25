@@ -14,7 +14,11 @@ const EmojiDisplay = ({ emoji, sizeInPx }: EmojiDisplayProps) => {
         init({ data });
     }, []);
 
-    if (emoji && isEmojiNative(emoji)) {
+    if (!emoji) {
+        return <></>;
+    }
+
+    if (isEmojiNative(emoji)) {
         return <p style={{ fontSize: `${sizeInPx}px` }}>{emoji}</p>;
     }
 

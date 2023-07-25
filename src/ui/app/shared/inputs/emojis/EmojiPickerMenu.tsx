@@ -2,6 +2,7 @@ import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { useCallback } from 'react';
 
+// emoji-mart does not have typescript support, so here is the type
 export type EmojiPickerResult = {
     id?: string;
     name?: string;
