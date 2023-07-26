@@ -1,36 +1,41 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { QRCode } from 'react-qrcode-logo';
+import { useCallback, useEffect, useState } from 'react';
 
-import PasswordVerificationForm from '../PasswordVerificationForm';
+import QrCodeSection from './QrCodeSection';
 import Button from '../../../../../../shared/buttons/Button';
-import ethosIconWhite from '_images/ethos-icon-white.png';
-import ethosIcon from '_images/ethos-icon.png';
+import PasswordVerificationForm from '../PasswordVerificationForm';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
 import { secureApiCall } from '_src/shared/utils/simpleApiCall';
-import { useTheme } from '_src/shared/utils/themeContext';
-import { useAppSelector } from '_src/ui/app/hooks';
+import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
+import { getImportedMnemonic } from '_src/ui/app/redux/slices/account';
 import RecoveryPhraseDisplay from '_src/ui/app/shared/content/RecoveryPhraseDisplay';
 import Alert from '_src/ui/app/shared/feedback/Alert';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Header from '_src/ui/app/shared/typography/Header';
-import Subheader from '_src/ui/app/shared/typography/Subheader';
 
 import type { ChangeEventHandler } from 'react';
-import MnemonicQrCode from './MnemonicQrCode';
-import QrCodeSection from './QrCodeSection';
 
 export default function ViewSeedPage() {
+    const dispatch = useAppDispatch();
     const [hasConfirmed, setHasConfirmed] = useState(false);
     const [showSeed, setShowSeed] = useState(false);
-    const [hostedSeed, setHostedSeed] = useState<string>();
     const { featureFlags } = useDependencies();
-    const { resolvedTheme } = useTheme();
-    const mnemonic = useAppSelector(
-        ({ account }) => account.createdMnemonic || account.mnemonic
+    const activeAccountIndex = useAppSelector(
+        ({ account }) => account.activeAccountIndex
     );
+    const activeAccountInfo = useAppSelector(({ account }) => {
+        return account.accountInfos.find(
+            (accountInfo) => accountInfo.index === activeAccountIndex
+        );
+    });
+    const mnemonic = useAppSelector(({ account }) => {
+        if (activeAccountInfo?.importedMnemonicName) return;
+        if (activeAccountInfo?.importedPrivateKeyName) return;
+        return account.createdMnemonic || account.mnemonic;
+    });
     const { passphrase, authentication } = useAppSelector(
         ({ account }) => account
     );
+    const [hostedSeed, setHostedSeed] = useState<string>();
+    const [importedSeed, setImportedSeed] = useState<string>();
 
     useEffect(() => {
         if (!hasConfirmed) return;
@@ -56,6 +61,25 @@ export default function ViewSeedPage() {
         getHostedSeed();
     }, [authentication, hasConfirmed]);
 
+    useEffect(() => {
+        if (!activeAccountInfo) return;
+
+        const name = activeAccountInfo?.importedMnemonicName;
+        if (!name) return;
+
+        const getImportedSeed = async () => {
+            const mnemonic = await dispatch(
+                getImportedMnemonic({ name })
+            ).unwrap();
+
+            if (!mnemonic) return;
+
+            setImportedSeed(mnemonic);
+        };
+
+        getImportedSeed();
+    }, [activeAccountInfo, dispatch]);
+
     const onHandleConfirmed = useCallback<ChangeEventHandler<HTMLInputElement>>(
         (event) => {
             const checked = event.target.checked;
@@ -73,10 +97,12 @@ export default function ViewSeedPage() {
             <div className="p-6 flex flex-col gap-6">
                 <Header className="text-left">Your Recovery Phrase</Header>
                 <RecoveryPhraseDisplay
-                    mnemonic={hostedSeed ?? mnemonic ?? ''}
+                    mnemonic={hostedSeed ?? mnemonic ?? importedSeed ?? ''}
                 />
                 {featureFlags.showMobile && (
-                    <QrCodeSection mnemonic={hostedSeed ?? mnemonic ?? ''} />
+                    <QrCodeSection
+                        mnemonic={hostedSeed ?? mnemonic ?? importedSeed ?? ''}
+                    />
                 )}
                 <Button to="/" buttonStyle="secondary" isInline>
                     Done

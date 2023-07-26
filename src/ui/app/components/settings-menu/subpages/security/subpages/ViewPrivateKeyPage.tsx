@@ -18,7 +18,9 @@ export default function ViewPrivateKeyPage() {
     const dispatch = useAppDispatch();
     const [hasConfirmed, setHasConfirmed] = useState(false);
     const [showPrivateKey, setShowPrivateKey] = useState(false);
-    const { activeAccountIndex } = useAppSelector(({ account }) => account);
+    const activeAccountIndex = useAppSelector(
+        ({ account }) => account.activeAccountIndex
+    );
     const activeAccountInfo = useAppSelector(({ account }) => {
         return account.accountInfos.find(
             (accountInfo) => accountInfo.index === activeAccountIndex
@@ -104,7 +106,7 @@ export default function ViewPrivateKeyPage() {
         };
 
         getImportedPrivateKey();
-    }, [activeAccountInfo, dispatch, hasConfirmed, privateKey]);
+    }, [activeAccountInfo, dispatch, privateKey]);
 
     useEffect(() => {
         if (!activeAccountInfo) return;
@@ -123,7 +125,7 @@ export default function ViewPrivateKeyPage() {
         };
 
         getImported();
-    }, [activeAccountInfo, dispatch, hasConfirmed, privateKey]);
+    }, [activeAccountInfo, dispatch, privateKey]);
 
     const safePrivateKey = privateKey ?? hostedPrivateKey ?? importedPrivateKey;
 
