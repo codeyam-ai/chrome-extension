@@ -23,5 +23,6 @@
         "DEBUG_PRINT_LIMIT": "10000000"
     },
     "jest.jestCommandLine": "npm run test --",
-    "editor.tabSize": 4
+    "editor.tabSize": 4,
+    "cSpell.words": ["shortcodes"]
 }

@@ -15,7 +15,6 @@ import BodyLarge from '../../shared/typography/BodyLarge';
 import { getEncrypted } from '_src/shared/storagex/store';
 
 import type { AccountInfo } from '../../KeypairVault';
-import type { EmojiPickerResult } from '../../shared/inputs/emojis/EmojiPickerMenu';
 
 const StylePage = () => {
     const [isHostedWallet, setIsHostedWallet] = useState(false);
@@ -68,13 +67,10 @@ const StylePage = () => {
         setIsColorPickerMenuOpen(false);
     }, []);
 
-    const _handleEmojiChange = useCallback(
-        (emojiPickerResult: EmojiPickerResult) => {
-            setDraftEmoji(emojiPickerResult.shortcodes);
-            setIsEmojiPickerMenuOpen(false);
-        },
-        []
-    );
+    const _handleEmojiChange = useCallback((emoji: string) => {
+        setDraftEmoji(emoji);
+        setIsEmojiPickerMenuOpen(false);
+    }, []);
 
     useEffect(() => {
         const _setIsHosted = async () => {

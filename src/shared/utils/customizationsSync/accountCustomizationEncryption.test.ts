@@ -10,7 +10,7 @@ describe('account customization encryption', () => {
             address: '0x123',
             index: 0,
             color: 'blue',
-            emoji: ':scream:',
+            emoji: '😱',
         };
 
         const privateKey = '0x789';
