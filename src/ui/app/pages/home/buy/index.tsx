@@ -154,10 +154,6 @@ const OnboardingProviders = () => {
         checkCountrySupport();
     }, []);
 
-    const back = useCallback(() => {
-        navigate(-1);
-    }, [navigate]);
-
     return (
         <>
             <div className="flex items-center justify-between p-4 shadow-ethos-shadow-small bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
