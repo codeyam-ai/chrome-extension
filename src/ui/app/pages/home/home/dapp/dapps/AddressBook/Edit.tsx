@@ -25,7 +25,7 @@ const Edit: React.FC = () => {
     );
 
     const onSubmit = useCallback(
-        async ({ nickname, address: newAddress }: FormikValues) => {
+        async ({ name: nickname, address: newAddress }: FormikValues) => {
             if (!contact?.address) {
                 return;
             }
