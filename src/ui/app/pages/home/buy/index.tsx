@@ -161,13 +161,6 @@ const OnboardingProviders = () => {
     return (
         <>
             <div className="flex items-center justify-between p-4 shadow-ethos-shadow-small bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
-                <div>
-                    <button onClick={back}>
-                        <ChevronLeftIcon
-                            className={`h-5 w-5 text-ethos-light-text-medium dark:text-ethos-dark-text-medium`}
-                        />
-                    </button>
-                </div>
                 <BodyLarge
                     isSemibold
                     className="mx-auto text-center text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
