@@ -649,12 +649,17 @@ export class ContentScriptConnection extends Connection {
         );
     }
 
-    private sendAccounts(accounts: SuiAddress[], responseForID?: string) {
+    private async sendAccounts(accounts: string[], responseForID?: string) {
+        const allAccountsPublicInfo = await getStoredAccountsPublicInfo();
         this.send(
             createMessage<GetAccountResponse>(
                 {
                     type: 'get-account-response',
-                    accounts,
+                    accounts: accounts.map((anAddress) => ({
+                        address: anAddress,
+                        publicKey:
+                            allAccountsPublicInfo[anAddress]?.publicKey || null,
+                    })),
                 },
                 responseForID
             )
