@@ -85,7 +85,10 @@ const CreateWalletProvider = ({
                 {
                     index: 0,
                     address: keypairVault.getAddress(0) || '',
-                    publicKey: keypairVault.getKeyPair(0).getPublicKey().toBase64(),
+                    publicKey: keypairVault
+                        .getKeyPair(0)
+                        .getPublicKey()
+                        .toBase64(),
                 },
             ];
         }
@@ -165,7 +168,10 @@ const CreateWalletProvider = ({
                         emoji: getNextEmoji(nextAccountIndex),
                         address:
                             keypairVault.getAddress(nextAccountIndex) || '',
-                        publicKey: keypairVault.getKeyPair(nextAccountIndex).getPublicKey().toBase64()
+                        publicKey: keypairVault
+                            .getKeyPair(nextAccountIndex)
+                            .getPublicKey()
+                            .toBase64(),
                     },
                 ];
 
@@ -194,7 +200,15 @@ const CreateWalletProvider = ({
             setLoading(false);
         };
         executeWithLoading();
-    }, [accountInfos, authentication, customizationsSyncPreference, _saveAccountInfos, keypairVault, handleSaveCustomization, setLoading]);
+    }, [
+        accountInfos,
+        authentication,
+        customizationsSyncPreference,
+        _saveAccountInfos,
+        keypairVault,
+        handleSaveCustomization,
+        setLoading,
+    ]);
 
     useEffect(() => {
         setCreateWallet(() => createWallet);

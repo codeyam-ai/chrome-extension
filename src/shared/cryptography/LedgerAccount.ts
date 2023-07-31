@@ -20,7 +20,7 @@ export class LedgerAccount {
         address,
         derivationPath,
         index,
-        publicKey
+        publicKey,
     }: {
         address: SuiAddress;
         derivationPath: string;
@@ -43,10 +43,10 @@ export class LedgerAccount {
     }
 
     getPublicKey() {
-		return this.#publicKey;
-	}
+        return this.#publicKey;
+    }
 
-	setPublicKey(publicKey: string) {
-		this.#publicKey = publicKey;
-	}
+    setPublicKey(publicKey: string) {
+        this.#publicKey = publicKey;
+    }
 }
