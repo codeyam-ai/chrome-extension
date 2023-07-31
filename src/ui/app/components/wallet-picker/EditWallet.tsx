@@ -88,6 +88,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                 {
                     index: 0,
                     address: keypairVault.getAddress(0) || '',
+                    publicKey: keypairVault.getKeyPair(0).getPublicKey().toBase64(),
                 },
             ];
         }

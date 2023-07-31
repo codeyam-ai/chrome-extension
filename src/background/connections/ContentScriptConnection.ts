@@ -191,6 +191,7 @@ export class ContentScriptConnection extends Connection {
                     for (const accountInfo of accountInfos) {
                         accountCustomizations.push({
                             address: accountInfo.address,
+                            publicKey: accountInfo.publicKey,
                             nickname: accountInfo.nickname || '',
                             color:
                                 accountInfo.color ??
@@ -650,7 +651,17 @@ export class ContentScriptConnection extends Connection {
     }
 
     private async sendAccounts(accounts: string[], responseForID?: string) {
-        const allAccountsPublicInfo = await getStoredAccountsPublicInfo();
+        const accountInfos = await this.getAccountInfos();
+        const allAccountsPublicInfo = accountInfos.reduce(
+            (acc, accountInfo) => {
+                acc[accountInfo.address] = {
+                    publicKey: accountInfo.publicKey,
+                };
+                return acc;
+            },
+            {} as Record<string, { publicKey: string | null }>
+        );
+
         this.send(
             createMessage<GetAccountResponse>(
                 {

@@ -46,6 +46,7 @@ const ImportPrivateKey = () => {
         mutableAccountInfos.push({
             index,
             address,
+            publicKey: keypair.getPublicKey().toBase64(),
             importedPrivateKeyName: name,
             color: getNextWalletColor(index),
             emoji: getNextEmoji(index),

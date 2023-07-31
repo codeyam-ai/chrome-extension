@@ -14,4 +14,5 @@ export interface AccountCustomization {
 
 export interface AccountCustomizationWithAddress extends AccountCustomization {
     address: SuiAddress;
+    publicKey: string | null;
 }

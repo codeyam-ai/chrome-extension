@@ -1,7 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { toB64, TransactionBlock, fromB64 } from '@mysten/sui.js';
+import { type SuiAddress, toB64, TransactionBlock } from '@mysten/sui.js';
 import {
     SUI_CHAINS,
     ReadonlyWalletAccount,
@@ -149,14 +149,13 @@ export class EthosWallet implements Wallet {
         return this.#accounts;
     }
 
-    #setAccounts(accounts: GetAccountResponse['accounts']) {
-        this.#accounts = accounts.map(
-            ({ address, publicKey }) =>
+    #setAccounts(addresses: SuiAddress[]) {
+        this.#accounts = addresses.map(
+            (address) =>
                 new ReadonlyWalletAccount({
                     address,
-                    publicKey: publicKey
-                        ? fromB64(publicKey)
-                        : new Uint8Array(),
+                    // TODO: Expose public key instead of address:
+                    publicKey: new Uint8Array(),
                     chains: this.#activeChain ? [this.#activeChain] : [],
                     features: [
                         'standard:connect',
@@ -182,10 +181,6 @@ export class EthosWallet implements Wallet {
         this.#messagesStream.messages.subscribe(({ payload }) => {
             if (isWalletStatusChangePayload(payload)) {
                 const { network, accounts } = payload;
-                if (payload)
-                    throw new Error(
-                        `payload: ${JSON.stringify(payload, null, 2)}`
-                    );
                 if (network) {
                     this.#setActiveChain(network);
                     if (!accounts) {

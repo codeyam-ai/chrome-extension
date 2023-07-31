@@ -64,6 +64,7 @@ async function deriveAccountsFromLedger(
         const suiAddress = publicKey.toSuiAddress();
         ledgerAccounts.push({
             address: suiAddress,
+            publicKey: publicKey.toBase64(),
             derivationPath,
             index,
         });
