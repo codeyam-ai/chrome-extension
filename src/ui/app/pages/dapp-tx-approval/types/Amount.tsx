@@ -154,10 +154,14 @@ const Amount = ({
                     positive ? 'text-green-700' : ''
                 }`}
             >
-                <Body isSemibold className={'font-light'}>
-                    {dollars}
-                </Body>
-                <Body className="font-light">USD</Body>
+                {symbol === 'SUI' && (
+                    <>
+                        <Body isSemibold className={'font-light'}>
+                            {dollars}
+                        </Body>
+                        <Body className="font-light">USD</Body>
+                    </>
+                )}
             </div>
         </div>
     ) : (
