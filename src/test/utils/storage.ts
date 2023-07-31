@@ -1,4 +1,3 @@
-import { toHEX } from '@mysten/bcs';
 import { setLocked, setUnlocked } from '_app/helpers/lock-wallet';
 import { setEncrypted } from '_shared/storagex/store';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
