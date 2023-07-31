@@ -8,6 +8,7 @@ describe('account customization encryption', () => {
     test('should encrypt and decrypt', async () => {
         const accountInfo: AccountInfo = {
             address: '0x123',
+            publicKey: '0x456',
             index: 0,
             color: 'blue',
             emoji: '😱',

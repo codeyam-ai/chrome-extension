@@ -1,3 +1,4 @@
+import { toHEX } from '@mysten/bcs';
 import { setLocked, setUnlocked } from '_app/helpers/lock-wallet';
 import { setEncrypted } from '_shared/storagex/store';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
@@ -24,6 +25,7 @@ export const accountInfos = [
         nickname: 'Wallet 1',
         color: '#7E23CA',
         address: wallet1Address,
+        publicKey: 'h6oNExzfKZ9Qup0pDYJ8BXO6Oe1NMf613tqkeEDcNAk=',
         privateKey:
             '138,218,84,37,236,236,197,76,166,86,150,23,223,51,107,198,3,149,112,132,37,250,167,223,74,224,28,199,243,20,181,211',
     },
@@ -32,6 +34,7 @@ export const accountInfos = [
         nickname: 'Wallet 2',
         color: '#2eca23',
         address: wallet2Address,
+        publicKey: 'AaqDCit6sNWX9cUUqC+ddBPjdzfC0D59AhpSQ4MDzLc=',
         privateKey:
             '39,152,242,153,62,243,130,133,194,63,255,73,56,234,127,189,45,66,228,56,187,248,98,49,146,17,246,230,110,0,222,26',
     },

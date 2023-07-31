@@ -93,6 +93,7 @@ const ManageSeed = () => {
         mutableAccountInfos.push({
             index,
             address,
+            publicKey: keypair.getPublicKey().toBase64(),
             importedMnemonicName: name,
             importedMnemonicIndex: nextIndex,
             color: getNextWalletColor(index),

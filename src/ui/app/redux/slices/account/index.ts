@@ -160,6 +160,15 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     (accountInfos[i].importedLedgerIndex ?? 0) + 1;
                 accountInfos[i].importedLedgerIndex = undefined;
             }
+            if (!accountInfos[i].publicKey && mnemonic) {
+                const keypairVault = new KeypairVault();
+                keypairVault.mnemonic = mnemonic;
+                accountInfos[i].publicKey =
+                    keypairVault
+                        .getKeyPair(accountInfos[i].index)
+                        ?.getPublicKey()
+                        .toBase64() ?? '';
+            }
         }
 
         const importNames = JSON.parse(
@@ -197,6 +206,10 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                         color: getNextWalletColor(0),
                         emoji: getNextEmoji(0),
                         address: keypairVault.getAddress(0) ?? '',
+                        publicKey: keypairVault
+                            .getKeyPair(0)
+                            ?.getPublicKey()
+                            .toBase64(),
                     },
                 ];
                 activeSeed = {
