@@ -247,6 +247,7 @@ const DisplayDomainRegex =
 export const NftParser: SuiObjectParser<NftRpcResponse, NftRaw> = {
     parser: (data, suiData, rpcResponse) => {
         if (
+            rpcResponse.data &&
             typeof rpcResponse.data === 'object' &&
             'owner' in rpcResponse.data
         ) {
