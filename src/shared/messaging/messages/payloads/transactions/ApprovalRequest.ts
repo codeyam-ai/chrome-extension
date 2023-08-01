@@ -4,8 +4,8 @@
 import type {
     SignedTransaction,
     SuiAddress,
-    SuiTransactionBlockResponse,
 } from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type {
     IdentifierString,
     SuiSignAndExecuteTransactionBlockInput,

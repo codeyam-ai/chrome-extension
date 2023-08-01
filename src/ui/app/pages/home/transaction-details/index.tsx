@@ -18,9 +18,9 @@ import { txSelectors } from '_redux/slices/transactions';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 
 import type {
-    TransactionKindName,
     SuiTransactionBlockResponse,
 } from '@mysten/sui.js';
+import type { TransactionKindName } from '@mysten/sui.js/src/types/transactions';
 import type { RootState } from '_redux/RootReducer';
 
 import st from './TransactionDetailsPage.module.scss';
