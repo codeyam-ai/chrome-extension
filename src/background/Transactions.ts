@@ -6,8 +6,8 @@ import {
     Ed25519Keypair,
     JsonRpcProvider,
     RawSigner,
-    TransactionBlock,
 } from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
 import {
     SUI_MAINNET_CHAIN,
     type IdentifierString,
@@ -27,11 +27,8 @@ import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
-import type {
-    SignedTransaction,
-    SuiAddress,
-    SuiTransactionBlockResponse,
-} from '@mysten/sui.js';
+import type { SignedTransaction, SuiAddress } from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type {
     PreapprovalRequest,
     PreapprovalResponse,
@@ -152,12 +149,12 @@ class Transactions {
                 `Transaction failed with the following error. ${txResultError}`
             );
         }
-        if (tx) {
-            if (!txResult || !('digest' in txResult)) {
-                throw new Error(`Transaction result is empty ${txResult}`);
-            }
-            return txResult;
-        }
+        // if (tx) {
+        //     if (!txResult || !('digest' in txResult)) {
+        //         throw new Error(`Transaction result is empty ${txResult}`);
+        //     }
+        //     return txResult;
+        // }
         if (!txSigned) {
             throw new Error('Transaction signature is empty');
         }

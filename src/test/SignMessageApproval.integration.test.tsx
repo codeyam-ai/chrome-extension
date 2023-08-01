@@ -53,7 +53,7 @@ describe('The Sign Message Approval popup', () => {
         expect(result).toBeDefined();
         expect(result.messageBytes).toEqual('aGVsbG8=');
         expect(result.signature).toEqual(
-            'ABepCVvd/lL8SI3ncsVWVqgw186yzFiT5kBuvxkLxqbh/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4='
+            'AODqBuGDqJhM2N0HJECuKowhEl2ZSpQ1t8jGGIa8CH1q/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4='
         );
     });
 
