@@ -17,9 +17,7 @@ import { useAppSelector } from '_hooks';
 import { txSelectors } from '_redux/slices/transactions';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 
-import type {
-    SuiTransactionBlockResponse,
-} from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 import type { TransactionKindName } from '@mysten/sui.js/src/types/transactions';
 import type { RootState } from '_redux/RootReducer';
 

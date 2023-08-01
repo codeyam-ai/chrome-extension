@@ -71,10 +71,12 @@ const transferNFT = async ({
     });
 
     const txnResp = {
-        timestamp_ms: utils.getTimestampFromTransactionResponse(executedTransaction.timestampMs ),
+        timestamp_ms: utils.getTimestampFromTransactionResponse(
+            executedTransaction.timestampMs
+        ),
         status: utils.getExecutionStatusType(executedTransaction.effects),
         gasFee: utils.getTotalGasUsed(executedTransaction.effects).toString(),
-        txId: executedTransaction.digest //getTransactionDigest(executedTransaction),
+        txId: executedTransaction.digest, //getTransactionDigest(executedTransaction),
     };
 
     return txnResp;

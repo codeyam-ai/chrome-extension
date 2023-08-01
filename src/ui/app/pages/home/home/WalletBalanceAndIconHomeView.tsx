@@ -1,7 +1,7 @@
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
-
 import { useFormatCoin } from '_hooks';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
+
 import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
 import JumboTitle from '_src/ui/app/shared/typography/JumboTitle';
 import Title from '_src/ui/app/shared/typography/Title';
@@ -26,6 +26,8 @@ const WalletBalanceAndIconHomeView = ({
         ? usdAmount.slice(0, -3)
         : usdAmount;
 
+    const hasValue = parseFloat(balanceFormatted) > 0;
+
     return (
         <div
             className="flex flex-col place-items-center"
@@ -41,7 +43,7 @@ const WalletBalanceAndIconHomeView = ({
                 />
             </div>
             <div className="flex flex-col">
-                {featureFlags.showUsd && hasConversion ? (
+                {featureFlags.showUsd && hasConversion && hasValue ? (
                     <div className="flex flex-col place-content-center items-center">
                         <Title>
                             {balanceFormatted} {symbol}

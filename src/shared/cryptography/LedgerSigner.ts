@@ -6,7 +6,8 @@ import {
     type SignatureScheme,
     type SuiAddress,
     toSerializedSignature,
-    type JsonRpcProvider} from '@mysten/sui.js';
+    type JsonRpcProvider,
+} from '@mysten/sui.js';
 import { Ed25519PublicKey } from '@mysten/sui.js/keypairs/ed25519';
 
 import { WalletSigner } from './WalletSigner';
