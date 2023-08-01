@@ -10,6 +10,7 @@ import {
 
 import { getSigner } from './getSigner';
 import transferObjectTransactionBlock from './transferObjectTransactionBlock';
+import utils from './utils';
 
 import type { AccountInfo } from '../KeypairVault';
 import type { ExtendedSuiObjectData } from '../redux/slices/sui-objects';
@@ -70,12 +71,10 @@ const transferNFT = async ({
     });
 
     const txnResp = {
-        timestamp_ms: getTimestampFromTransactionResponse(executedTransaction),
-        status: getExecutionStatusType(executedTransaction),
-        gasFee: executedTransaction
-            ? getTotalGasUsed(executedTransaction)?.toString()
-            : '0',
-        txId: getTransactionDigest(executedTransaction),
+        timestamp_ms: utils.getTimestampFromTransactionResponse(executedTransaction.timestampMs ),
+        status: utils.getExecutionStatusType(executedTransaction.effects),
+        gasFee: utils.getTotalGasUsed(executedTransaction.effects).toString(),
+        txId: executedTransaction.digest //getTransactionDigest(executedTransaction),
     };
 
     return txnResp;

@@ -18,8 +18,8 @@ import type {
     SignedMessage,
     SignedTransaction,
     SuiAddress,
-    SuiTransactionBlockResponse,
 } from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type { Message } from '_messages';
 import type { HeartbeatPayload } from '_payloads/locking/HeartbeatPayload';
 import type { LockWalletRequest } from '_payloads/locking/LockWalletRequest';
