@@ -105,6 +105,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                 })
                 .map((anObj) => {
                     if (
+                        anObj.data &&
                         typeof anObj.data === 'object' &&
                         'objectId' in anObj.data
                     ) {

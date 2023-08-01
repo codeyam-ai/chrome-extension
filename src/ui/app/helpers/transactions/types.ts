@@ -18,24 +18,6 @@ export interface TransactionObjectInfo {
     uri?: string;
 }
 
-export interface BalanceChange {
-    owner:
-        | {
-              AddressOwner: string;
-          }
-        | {
-              ObjectOwner: string;
-          }
-        | {
-              Shared: {
-                  initial_shared_version: number;
-              };
-          }
-        | 'Immutable';
-    coinType: string;
-    amount: string;
-}
-
 export interface HumanReadableTransactionValues {
     timeDisplay?: string;
     image?: ReactNode;
