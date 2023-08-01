@@ -1,4 +1,4 @@
-import { getTotalGasUsed, SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js';
 import BigNumber from 'bignumber.js';
 
 import addressOwner from '_src/ui/app/helpers/transactions/addressOwner';
@@ -8,8 +8,8 @@ import type {
     SuiAddress,
     SuiObjectChange,
     TransactionBlock,
-    DryRunTransactionBlockResponse,
 } from '@mysten/sui.js';
+import type { DryRunTransactionBlockResponse }from '@mysten/sui.js/client';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 
@@ -56,6 +56,11 @@ export type AnalyzeChangesResult = {
     rawAmount: string;
     totalFee: string;
 };
+
+const getTotalGasUsed = (effects: DryRunTransactionBlockResponse['effects']) => {
+    const gasUsed = effects.gasUsed;
+    return BigInt(gasUsed.computationCost) + BigInt(gasUsed.storageCost) - BigInt(gasUsed.storageRebate);
+}
 
 const assetChanges = (
     address: SuiAddress,

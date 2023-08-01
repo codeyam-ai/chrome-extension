@@ -9,7 +9,7 @@ export type Owner =
       }
     | {
           Shared: {
-              initial_shared_version: number;
+              initial_shared_version: number | string | null;
           };
       }
     | 'Immutable';

@@ -5,12 +5,8 @@ import {
     type SuiTransactionBlockResponse,
 } from '@mysten/sui.js';
 
-import { getSigner } from '_src/ui/app/helpers/getSigner';
-
-import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
-import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 const signMessageOnUsersBehalf = async (
     signer: LedgerSigner | EthosSigner | RawSigner | null,
