@@ -159,7 +159,9 @@ const Amount = ({
                         <Body className="font-light text-size-ethos-small">
                             {dollars}
                         </Body>
-                        <Body className="font-light text-size-ethos-small">USD</Body>
+                        <Body className="font-light text-size-ethos-small">
+                            USD
+                        </Body>
                     </>
                 )}
             </div>
