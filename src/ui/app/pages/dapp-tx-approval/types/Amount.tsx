@@ -146,18 +146,18 @@ const Amount = ({
     const { featureFlags } = useDependencies();
     return featureFlags.showUsd && hasConversion ? (
         <div className="flex flex-col items-end text-right">
-            <Body className="text-size-ethos-small">
+            <Body isSemibold className="text-size-ethos-body">
                 {formatted} {symbol}
             </Body>
             <div
-                className={`flex items-center gap-1 text-base ${
-                    positive ? 'text-green-700' : ''
+                className={`flex items-center gap-1 ${
+                    positive ? 'text-green-700' : 'text-[#74777C]'
                 }`}
             >
-                <Body isSemibold className={'font-light'}>
+                <Body className="font-light text-size-ethos-small">
                     {dollars}
                 </Body>
-                <Body className="font-light">USD</Body>
+                <Body className="font-light text-size-ethos-small">USD</Body>
             </div>
         </div>
     ) : (
