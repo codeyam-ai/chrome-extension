@@ -1412,6 +1412,7 @@ export const ownedObjects = createSelector(
         if (address) {
             return objects.filter(
                 ({ owner }) =>
+                    owner &&
                     typeof owner === 'object' &&
                     ('ObjectOwner' in owner ||
                         ('AddressOwner' in owner &&
