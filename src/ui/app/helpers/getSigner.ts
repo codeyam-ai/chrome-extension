@@ -30,6 +30,14 @@ export const getSigner = async (
 
     if (!activeAccount) return null;
 
+    if (activeAccount.ledgerAccountIndex !== undefined) {
+        return new LedgerSigner(
+            connectToLedger,
+            derivationPathForLedger(activeAccount.ledgerAccountIndex),
+            api.instance.fullNode
+        );
+    }
+
     if (authentication) {
         signer = api.getEthosSignerInstance(address || '', authentication);
     } else {
@@ -64,12 +72,6 @@ export const getSigner = async (
             if (!importedPrivateKey) return null;
 
             keypair = Ed25519Keypair.fromSecretKey(fromHEX(importedPrivateKey));
-        } else if (activeAccount.ledgerAccountIndex !== undefined) {
-            return new LedgerSigner(
-                connectToLedger,
-                derivationPathForLedger(activeAccount.ledgerAccountIndex),
-                api.instance.fullNode
-            );
         } else {
             const keypairVault = thunkExtras.keypairVault;
 
