@@ -221,7 +221,8 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     ) {
                         continue;
                     }
-                    accountInfos[i].address = keypairVault.getAddress(i) ?? '';
+                    accountInfos[i].address =
+                        keypairVault.getAddress(accountInfos[i].index) ?? '';
                 }
 
                 const activeAccount = accountInfos.find(
