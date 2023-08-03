@@ -11,8 +11,7 @@ import Input from '../../shared/inputs/Input';
 import type { FieldProps } from 'formik';
 import type { ChangeEventHandler } from 'react';
 
-export interface AddressInputProps<Values>
-    extends FieldProps<string, Values> {
+export interface AddressInputProps<Values> extends FieldProps<string, Values> {
     disabled?: boolean;
     placeholder?: string;
     className?: string;

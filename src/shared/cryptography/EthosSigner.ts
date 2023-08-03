@@ -4,10 +4,7 @@ import { SignerWithProvider } from '@mysten/sui.js';
 import { deleteEncrypted } from '../storagex/store';
 import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
 
-import type {
-    SerializedSignature,
-    JsonRpcProvider,
-} from '@mysten/sui.js';
+import type { SerializedSignature, JsonRpcProvider } from '@mysten/sui.js';
 
 export class EthosSigner extends SignerWithProvider {
     private readonly accessToken: string;

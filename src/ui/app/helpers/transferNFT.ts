@@ -1,7 +1,4 @@
-import {
-    type JsonRpcProvider,
-    TransactionBlock,
-} from '@mysten/sui.js';
+import { type JsonRpcProvider, TransactionBlock } from '@mysten/sui.js';
 
 import { getSigner } from './getSigner';
 import transferObjectTransactionBlock from './transferObjectTransactionBlock';

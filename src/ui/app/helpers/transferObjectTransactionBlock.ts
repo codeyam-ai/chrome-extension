@@ -1,7 +1,4 @@
-import type {
-    JsonRpcProvider,
-    TransactionBlock,
-} from '@mysten/sui.js';
+import type { JsonRpcProvider, TransactionBlock } from '@mysten/sui.js';
 import type { ExtendedSuiObjectData } from '_redux/slices/sui-objects';
 
 const obKioskPackageId =

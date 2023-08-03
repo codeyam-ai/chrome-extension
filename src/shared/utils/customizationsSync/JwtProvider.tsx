@@ -3,10 +3,7 @@ import { createContext, useState } from 'react';
 import type { ReactNode } from 'react';
 
 export const JwtContext = createContext<
-    [
-        { [address: string]: string },
-        (jwt: string, address: string) => void
-    ]
+    [{ [address: string]: string }, (jwt: string, address: string) => void]
 >([{}, () => null]);
 
 export const JwtProvider = ({ children }: { children: ReactNode }) => {

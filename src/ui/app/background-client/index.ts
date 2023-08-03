@@ -14,10 +14,7 @@ import { setPreapprovalRequests } from '_redux/slices/preapproval-requests';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
 import { isGetPreapprovalResponse } from '_src/shared/messaging/messages/payloads/transactions/ui/GetPreapprovalResponse';
 
-import type {
-    SignedMessage,
-    SignedTransaction,
-} from '@mysten/sui.js';
+import type { SignedMessage, SignedTransaction } from '@mysten/sui.js';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type { Message } from '_messages';
 import type { HeartbeatPayload } from '_payloads/locking/HeartbeatPayload';

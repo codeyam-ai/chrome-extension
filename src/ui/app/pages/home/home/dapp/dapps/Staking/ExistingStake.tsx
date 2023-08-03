@@ -1,9 +1,6 @@
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { CircleStackIcon } from '@heroicons/react/24/solid';
-import {
-    SUI_TYPE_ARG,
-    type DelegatedStake,
-} from '@mysten/sui.js';
+import { SUI_TYPE_ARG, type DelegatedStake } from '@mysten/sui.js';
 import classNames from 'classnames';
 import { type PropsWithChildren, useCallback, useMemo } from 'react';
 import Skeleton from 'react-loading-skeleton';

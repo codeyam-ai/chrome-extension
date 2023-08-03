@@ -67,10 +67,7 @@ const getTotalGasUsed = (
     );
 };
 
-const assetChanges = (
-    address: string,
-    objectChanges: SuiObjectChange[]
-) => {
+const assetChanges = (address: string, objectChanges: SuiObjectChange[]) => {
     const transfers = objectChanges.filter(
         (objectChange) =>
             objectChange.type === 'mutated' &&
