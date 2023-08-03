@@ -55,27 +55,27 @@ describe('Email Authentication', () => {
         await screen.findByText('We sent you an email!');
     });
 
-    // test('User can see tokens page after logged in via the iframe', async () => {
-    //     const fakeAccessToken = '12345';
-    //     await setSession({ accessToken: fakeAccessToken });
-    //     mockBlockchain(mockJsonRpc, { address });
-    //     nock(BASE_URL, {
-    //         reqheaders: { 'x-supabase-access-token': fakeAccessToken },
-    //     })
-    //         .post('/api/wallet/accounts')
-    //         .reply(200, {
-    //             accounts: [
-    //                 {
-    //                     address,
-    //                     index: 0,
-    //                 },
-    //             ],
-    //         });
+    test('User can see tokens page after logged in via the iframe', async () => {
+        const fakeAccessToken = '12345';
+        await setSession({ accessToken: fakeAccessToken });
+        mockBlockchain(mockJsonRpc, { address });
+        nock(BASE_URL, {
+            reqheaders: { 'x-supabase-access-token': fakeAccessToken },
+        })
+            .post('/api/wallet/accounts')
+            .reply(200, {
+                accounts: [
+                    {
+                        address,
+                        index: 0,
+                    },
+                ],
+            });
 
-    //     renderApp({
-    //         initialRoute: '/initialize/hosted/logging-in',
-    //     });
+        renderApp({
+            initialRoute: '/initialize/hosted/logging-in',
+        });
 
-    //     await screen.findByText('Get started with Sui');
-    // });
+        await screen.findByText('Get started with Sui');
+    });
 });
