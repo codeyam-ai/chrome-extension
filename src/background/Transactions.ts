@@ -149,12 +149,14 @@ class Transactions {
                 `Transaction failed with the following error. ${txResultError}`
             );
         }
-        // if (tx) {
-        //     if (!txResult || !('digest' in txResult)) {
-        //         throw new Error(`Transaction result is empty ${txResult}`);
-        //     }
-        //     return txResult;
-        // }
+
+        if (tx) {
+            if (!txResult || !('digest' in txResult)) {
+                throw new Error(`Transaction result is empty ${txResult}`);
+            }
+            return txResult;
+        }
+
         if (!txSigned) {
             throw new Error('Transaction signature is empty');
         }
@@ -598,6 +600,7 @@ class Transactions {
             race(popUpClose, txResponseMessage).pipe(
                 take(1),
                 map(async (response) => {
+                    console.log('RESPONSE', response);
                     if (response) {
                         const { approved, txResult, txSigned, txResultError } =
                             response;
