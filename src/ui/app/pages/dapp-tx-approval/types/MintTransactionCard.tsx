@@ -53,6 +53,9 @@ const MintTransactionCard = ({
             'supply',
             'redeem',
             'add',
+            'trade',
+            'loan',
+            'repay',
         ];
         for (const commonAction of commonActions) {
             const moveCall = analysis.moveCalls[0];
