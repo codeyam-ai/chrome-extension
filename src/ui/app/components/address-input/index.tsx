@@ -8,12 +8,11 @@ import { getSuiAddress } from './nameservice';
 import { SUI_ADDRESS_VALIDATION } from './validation';
 import Input from '../../shared/inputs/Input';
 
-import type { SuiAddress } from '@mysten/sui.js';
 import type { FieldProps } from 'formik';
 import type { ChangeEventHandler } from 'react';
 
 export interface AddressInputProps<Values>
-    extends FieldProps<SuiAddress, Values> {
+    extends FieldProps<string, Values> {
     disabled?: boolean;
     placeholder?: string;
     className?: string;

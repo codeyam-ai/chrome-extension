@@ -18,7 +18,6 @@ import type { Section } from '../SectionElement';
 import type { SmallDetail } from '../SmallValue';
 import type {
     RawSigner,
-    SuiAddress,
     SuiObjectChange,
     TransactionEffects,
 } from '@mysten/sui.js';
@@ -43,7 +42,7 @@ export type BaseProps = {
     transactionBlock: TransactionBlock | null;
     objectChanges?: SuiObjectChange[] | null;
     effects?: TransactionEffects | null;
-    address: SuiAddress | null;
+    address: string | null;
     setDone: (done: boolean) => void;
 };
 

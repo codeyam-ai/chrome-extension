@@ -1,11 +1,6 @@
 import {
-    type SuiAddress,
     type JsonRpcProvider,
     TransactionBlock,
-    getTimestampFromTransactionResponse,
-    getExecutionStatusType,
-    getTotalGasUsed,
-    getTransactionDigest,
 } from '@mysten/sui.js';
 
 import { getSigner } from './getSigner';
@@ -34,7 +29,7 @@ const transferNFT = async ({
     address: string | null;
     authentication: string | null;
     activeAccountIndex: number;
-    recipientAddress: SuiAddress;
+    recipientAddress: string;
     provider: JsonRpcProvider;
 }) => {
     if (!nft) return;

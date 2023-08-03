@@ -6,16 +6,15 @@ import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
 
 import type {
     SerializedSignature,
-    SuiAddress,
     JsonRpcProvider,
 } from '@mysten/sui.js';
 
 export class EthosSigner extends SignerWithProvider {
     private readonly accessToken: string;
-    private readonly address: SuiAddress;
+    private readonly address: string;
 
     constructor(
-        address: SuiAddress,
+        address: string,
         accessToken: string,
         provider: JsonRpcProvider
     ) {
@@ -24,7 +23,7 @@ export class EthosSigner extends SignerWithProvider {
         this.accessToken = accessToken;
     }
 
-    async getAddress(): Promise<SuiAddress> {
+    async getAddress(): Promise<string> {
         return this.address;
     }
 

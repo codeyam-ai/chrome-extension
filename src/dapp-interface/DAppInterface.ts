@@ -10,7 +10,6 @@ import { ALL_PERMISSION_TYPES } from '_payloads/permissions';
 import { type GetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
 import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
 
-import type { SuiAddress } from '@mysten/sui.js';
 import type { Payload } from '_payloads';
 import type {
     PermissionType,
@@ -97,7 +96,7 @@ export class DAppInterface {
         );
     }
 
-    public switchAccount(address: string): Promise<SuiAddress> {
+    public switchAccount(address: string): Promise<string> {
         return mapToPromise(
             this.send<SwitchAccount, SwitchAccountResponse>({
                 type: 'switch-account',

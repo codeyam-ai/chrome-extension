@@ -9,7 +9,7 @@ import { useFormatCoin } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { BalanceReduction, BalanceAddition } from '../lib/analyzeChanges';
-import type { SuiAddress, SuiObjectChange } from '@mysten/sui.js';
+import type { SuiObjectChange } from '@mysten/sui.js';
 
 export const Costs = ({
     balanceReductions,
@@ -63,7 +63,7 @@ export const Sending = ({
     owner,
     transfers,
 }: {
-    owner: SuiAddress;
+    owner: string;
     transfers: SuiObjectChange[];
 }) => {
     const sending = transfers.filter(
@@ -88,7 +88,7 @@ export const Receiving = ({
     owner,
     transfers,
 }: {
-    owner: SuiAddress;
+    owner: string;
     transfers: SuiObjectChange[];
 }) => {
     const receiving = transfers.filter(

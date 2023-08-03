@@ -14,7 +14,6 @@ import BodyLarge from '../../shared/typography/BodyLarge';
 import CopyBody from '../../shared/typography/CopyBody';
 
 import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTransactions';
-import type { SuiAddress } from '@mysten/sui.js';
 
 const AvatarItem = ({
     color,
@@ -79,7 +78,7 @@ const WalletAvatarItem = ({
 }: {
     pre: string;
     fullHeader?: string;
-    address: SuiAddress;
+    address: string;
 }) => {
     const wallet = useWalletOrContact(address);
     const { activeAccountIndex, accountInfos } = useAppSelector(

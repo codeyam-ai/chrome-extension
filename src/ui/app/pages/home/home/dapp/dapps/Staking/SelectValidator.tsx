@@ -7,16 +7,14 @@ import Button from '_src/ui/app/shared/buttons/Button';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Subheader from '_src/ui/app/shared/typography/Subheader';
 
-import type { SuiAddress } from '@mysten/sui.js';
-
 const SelectValidator: React.FC = () => {
     const navigate = useNavigate();
     const [selectedValidator, setSelectedValidator] = useState<
-        SuiAddress | undefined
+        string | undefined
     >();
 
     const onSelectValidator = useCallback(
-        (validatorAddress: SuiAddress) => {
+        (validatorAddress: string) => {
             setSelectedValidator(validatorAddress);
         },
         [setSelectedValidator]

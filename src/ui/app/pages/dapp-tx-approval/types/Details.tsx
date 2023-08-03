@@ -16,7 +16,7 @@ import type {
     AnalyzeChangesResult,
     GasCostSummary,
 } from '../lib/analyzeChanges';
-import type { RawSigner, SuiAddress, SuiObjectChange } from '@mysten/sui.js';
+import type { RawSigner, SuiObjectChange } from '@mysten/sui.js';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 import type { ReactNode } from 'react';
@@ -87,7 +87,7 @@ const BalanceChanges = ({
     address,
 }: {
     analysis: AnalyzeChangesResult;
-    address?: SuiAddress;
+    address?: string;
 }) => {
     if (analysis.dryRunResponse.balanceChanges.length === 0) return null;
 
@@ -143,7 +143,7 @@ const AssetChanges = ({
     address,
 }: {
     analysis: AnalyzeChangesResult;
-    address?: SuiAddress;
+    address?: string;
 }) => {
     if (analysis.dryRunResponse.objectChanges.length === 0) return <></>;
 
@@ -278,7 +278,7 @@ const Details = ({
 }) => {
     const { resolvedTheme } = useTheme();
     const [details, setDetails] = useState(false);
-    const [address, setAddress] = useState<SuiAddress | undefined>(undefined);
+    const [address, setAddress] = useState<string | undefined>(undefined);
 
     useEffect(() => {
         signer.getAddress().then(setAddress);

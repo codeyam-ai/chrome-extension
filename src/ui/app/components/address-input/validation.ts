@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { isValidSuiAddress } from '@mysten/sui.js';
+import { isValidSuiAddress } from '@mysten/sui.js/utils';
 import * as Yup from 'yup';
 
 export const SUI_ADDRESS_VALIDATION = Yup.string()

@@ -10,7 +10,6 @@ import { BASE_URL, LINK_URL } from '_src/shared/constants';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 
 import type { ContentScriptConnection } from './connections/ContentScriptConnection';
-import type { SuiAddress } from '@mysten/sui.js';
 import type {
     Permission,
     PermissionResponse,
@@ -33,7 +32,7 @@ class Permissions {
     public async acquirePermissions(
         permissionTypes: readonly PermissionType[],
         connection: ContentScriptConnection,
-        address: SuiAddress
+        address: string
     ): Promise<Permission> {
         const { origin } = connection;
         const existingPermission = await this.getPermission({ origin });
@@ -227,7 +226,7 @@ class Permissions {
         origin: string,
         permissionTypes: readonly PermissionType[],
         permission?: Permission | null,
-        address?: SuiAddress
+        address?: string
     ): Promise<boolean> {
         if (origin === LINK_URL) return true;
 

@@ -5,7 +5,7 @@ import { Connection, JsonRpcProvider, RawSigner } from '@mysten/sui.js';
 
 import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
-import type { Keypair, SuiAddress } from '@mysten/sui.js';
+import type { Keypair } from '@mysten/sui.js';
 import type { QueryClient } from '@tanstack/react-query';
 
 export enum API_ENV {
@@ -227,7 +227,7 @@ export default class ApiProvider {
     }
 
     public getEthosSignerInstance(
-        address: SuiAddress,
+        address: string,
         accessToken: string
     ): EthosSigner {
         if (!this._apiFullNodeProvider) {

@@ -6,8 +6,6 @@ import getJwt from './getJwt';
 import { useSuiLedgerClient } from '_src/ui/app/components/ledger/SuiLedgerClientProvider';
 import { useAppSelector } from '_src/ui/app/hooks';
 
-import type { RawSigner, SuiAddress } from '@mysten/sui.js';
-import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 export const useJwt = () => {
@@ -23,7 +21,7 @@ export const useJwt = () => {
 
     const getCachedJwt = useCallback(
         async (
-            _address?: SuiAddress,
+            _address?: string,
             _accountIndex?: number,
             _accountInfos?: AccountInfo[]
         ) => {

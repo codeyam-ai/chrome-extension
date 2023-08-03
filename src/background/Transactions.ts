@@ -27,7 +27,7 @@ import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
-import type { SignedTransaction, SuiAddress } from '@mysten/sui.js';
+import type { SignedTransaction } from '@mysten/sui.js';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type {
     PreapprovalRequest,
@@ -172,7 +172,7 @@ class Transactions {
     }: {
         target?: `${string}::${string}::${string}`;
         objectIds?: string[];
-        address?: SuiAddress;
+        address?: string;
         chain?: IdentifierString;
         preapproval?: Preapproval;
     }) {
@@ -199,7 +199,7 @@ class Transactions {
 
     private async tryDirectExecution(
         tx: TransactionBlock,
-        address: SuiAddress,
+        address: string,
         chain: IdentifierString | undefined,
         preapprovalRequest: PreapprovalRequest,
         requestType?: SuiSignAndExecuteTransactionBlockInput['requestType'],
@@ -278,7 +278,7 @@ class Transactions {
         options,
     }: {
         transactionBlock: TransactionBlock;
-        address: SuiAddress;
+        address: string;
         chain?: IdentifierString;
         requestType?: SuiSignAndExecuteTransactionBlockInput['requestType'];
         options?: SuiSignAndExecuteTransactionBlockInput['options'];

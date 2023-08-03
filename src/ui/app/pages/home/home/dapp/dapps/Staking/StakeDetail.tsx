@@ -30,14 +30,12 @@ import ConfirmDestructiveActionDialog from '_src/ui/app/shared/dialog/ConfirmDes
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
-import type { SuiAddress } from '@mysten/sui.js';
-
 const APY_HELP_TEXT =
     "Annualized Percentage Yield of validator's past operations. Note, there is no guarantee APY will true indefinitely";
 const COMMISSION_HELP_TEXT =
     'Fee charged against earned rewards by the validator for staking services';
 
-function revokeStakeTransaction(stakedSuiId: SuiAddress) {
+function revokeStakeTransaction(stakedSuiId: string) {
     const tx = new TransactionBlock();
     tx.moveCall({
         target: '0x3::sui_system::request_withdraw_stake',

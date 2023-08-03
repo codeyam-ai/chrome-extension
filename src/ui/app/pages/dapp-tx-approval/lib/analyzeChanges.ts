@@ -5,7 +5,6 @@ import addressOwner from '_src/ui/app/helpers/transactions/addressOwner';
 
 import type {
     RawSigner,
-    SuiAddress,
     SuiObjectChange,
     TransactionBlock,
 } from '@mysten/sui.js';
@@ -44,7 +43,7 @@ export type BalanceAddition = {
 };
 
 export type AnalyzeChangesResult = {
-    owner: SuiAddress;
+    owner: string;
     blockData?: TransactionBlock['blockData'];
     moveCalls: TransactionBlock['blockData']['transactions'];
     dryRunResponse: DryRunTransactionBlockResponse;
@@ -69,7 +68,7 @@ const getTotalGasUsed = (
 };
 
 const assetChanges = (
-    address: SuiAddress,
+    address: string,
     objectChanges: SuiObjectChange[]
 ) => {
     const transfers = objectChanges.filter(
@@ -95,7 +94,7 @@ const assetChanges = (
 };
 
 const coinChanges = (
-    address: SuiAddress,
+    address: string,
     { balanceChanges, effects }: DryRunTransactionBlockResponse
 ) => {
     const gasUsed = getTotalGasUsed(effects);

@@ -4,7 +4,6 @@
 import { fromHEX } from '@mysten/bcs';
 import {
     Ed25519Keypair,
-    type SuiAddress,
     type SuiMoveObject,
 } from '@mysten/sui.js';
 import {
@@ -1193,7 +1192,7 @@ export type AccountState = {
     passphrase: string | null;
     creating: boolean;
     createdMnemonic: string | null;
-    address: SuiAddress | null;
+    address: string | null;
     accountInfos: AccountInfo[];
     activeAccountIndex: number;
     accountType: AccountType;

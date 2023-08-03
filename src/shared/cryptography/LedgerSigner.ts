@@ -4,7 +4,6 @@
 import {
     type SerializedSignature,
     type SignatureScheme,
-    type SuiAddress,
     toSerializedSignature,
     type JsonRpcProvider,
 } from '@mysten/sui.js';
@@ -40,7 +39,7 @@ export class LedgerSigner extends WalletSigner {
         return this.#suiLedgerClient;
     }
 
-    async getAddress(): Promise<SuiAddress> {
+    async getAddress(): Promise<string> {
         const ledgerClient = await this.#initializeSuiLedgerClient();
         const publicKeyResult = await ledgerClient.getPublicKey(
             this.#derivationPath

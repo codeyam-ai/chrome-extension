@@ -1,5 +1,3 @@
-import type { SuiAddress } from '@mysten/sui.js';
-
 export interface AccountCustomization {
     nickname?: string;
     color?: string;
@@ -13,6 +11,6 @@ export interface AccountCustomization {
 }
 
 export interface AccountCustomizationWithAddress extends AccountCustomization {
-    address: SuiAddress;
+    address: string;
     publicKey: string | null;
 }

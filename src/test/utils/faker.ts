@@ -5,7 +5,7 @@ export const faker = {
     preapproval(): Preapproval {
         return {
             type: 'preapproval',
-            address: 'abc', // type: SuiAddress
+            address: 'abc',
             chain: 'abc:123', // type: IdentifierString
             target: 'target',
             objectId: 'abc', // type: ObjectId
