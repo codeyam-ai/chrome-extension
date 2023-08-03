@@ -3,12 +3,11 @@
 
 import { isBasePayload } from '_payloads';
 
-import type { SuiAddress } from '@mysten/sui.js';
 import type { BasePayload, Payload } from '_payloads';
 
 export interface SwitchAccount extends BasePayload {
     type: 'switch-account';
-    address: SuiAddress;
+    address: string;
 }
 
 export function isSwitchAccount(payload: Payload): payload is SwitchAccount {

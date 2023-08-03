@@ -1,6 +1,5 @@
 import type {
     JsonRpcProvider,
-    SuiAddress,
     TransactionBlock,
 } from '@mysten/sui.js';
 import type { ExtendedSuiObjectData } from '_redux/slices/sui-objects';
@@ -12,7 +11,7 @@ const kioskModule = '0x2::kiosk';
 const transferObjectTransactionBlock = async (
     transactionBlock: TransactionBlock,
     object: ExtendedSuiObjectData,
-    recipient: SuiAddress,
+    recipient: string,
     provider: JsonRpcProvider
 ) => {
     if (!object.kiosk?.type) {

@@ -2,11 +2,10 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 
-import type { SuiAddress } from '@mysten/sui.js';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface Contact {
-    address: SuiAddress;
+    address: string;
     nickname: string;
     emoji?: string;
     color: string;

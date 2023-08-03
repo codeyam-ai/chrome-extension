@@ -1,4 +1,4 @@
-import { type SuiAddress, type SuiValidatorSummary } from '@mysten/sui.js';
+import { type SuiValidatorSummary } from '@mysten/sui.js';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
@@ -12,7 +12,7 @@ import type { SuiValidatorSummaryWithApy } from '../../pages/home/home/dapp/dapp
 const DEFAULT_APY_DECIMALS = 2;
 
 export interface ApyWithValidatorMap {
-    [validatorAddress: SuiAddress]: SuiValidatorSummaryWithApy;
+    [validatorAddress: string]: SuiValidatorSummaryWithApy;
 }
 
 // For small APY or epoch before stakeSubsidyStartEpoch, show ~0% instead of 0%

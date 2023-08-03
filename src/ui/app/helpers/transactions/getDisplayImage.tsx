@@ -9,7 +9,6 @@ import { getIcon } from '_src/ui/app/helpers/transactions';
 
 import type { AnalyzedTransaction } from './analyzeTransactions';
 import type { TxAction } from './getTxAction';
-import type { SuiAddress } from '@mysten/sui.js';
 import type { ReactNode } from 'react';
 
 export type TxType = string;
@@ -70,7 +69,7 @@ const ObjectIcon = ({
     return <ActionIcon>{getIcon(txAction)}</ActionIcon>;
 };
 
-const StakingIcon = ({ address }: { address: SuiAddress }) => {
+const StakingIcon = ({ address }: { address: string }) => {
     const { data: validators } = useValidatorsWithApy();
     const validator = validators?.[address ?? ''];
 

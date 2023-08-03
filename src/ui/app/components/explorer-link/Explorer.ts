@@ -3,7 +3,7 @@
 
 import { API_ENV, DEFAULT_API_ENV } from '_app/ApiProvider';
 
-import type { ObjectId, SuiAddress, TransactionDigest } from '@mysten/sui.js';
+import type { ObjectId, TransactionDigest } from '@mysten/sui.js';
 
 const API_ENV_TO_EXPLORER_URL: Record<API_ENV, string | undefined> = {
     [API_ENV.local]: process.env.EXPLORER_URL_LOCAL,
@@ -56,7 +56,7 @@ export class Explorer {
         return url.href;
     }
 
-    public static getAddressUrl(address: SuiAddress, apiEnv: API_ENV) {
+    public static getAddressUrl(address: string, apiEnv: API_ENV) {
         const url = new URL(`/addresses/${address}`, getDefaultUrl(apiEnv));
         const queryParam = API_ENV_TO_EXPLORER_QUERY_PARAM[apiEnv];
         if (queryParam) {

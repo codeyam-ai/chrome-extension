@@ -1,8 +1,6 @@
 import useAppSelector from './useAppSelector';
 
-import type { SuiAddress } from '@mysten/sui.js';
-
-const useWalletOrContact = (address: SuiAddress) => {
+const useWalletOrContact = (address: string) => {
     return useAppSelector(({ account, contacts }) => {
         const accountInfos = account.accountInfos;
         const contactsInfos = contacts.contacts;

@@ -1,11 +1,11 @@
-import type { SuiAddress, SuiTransactionBlockResponse } from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 
 export type FaucetTransactionInfo = {
     amount: bigint;
 };
 
 const faucetTransactionAnalysis = (
-    ownerAddress: SuiAddress,
+    ownerAddress: string,
     transactionResponse: SuiTransactionBlockResponse
 ) => {
     const analysis: FaucetTransactionInfo | undefined = undefined;

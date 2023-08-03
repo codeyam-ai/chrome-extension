@@ -1,5 +1,4 @@
 import {
-    type SuiAddress,
     type SuiTransactionBlockResponse,
     getTotalGasUsed,
 } from '@mysten/sui.js';
@@ -30,11 +29,11 @@ export type ImportantTransactionInfo = {
 };
 
 export type AnalyzedTransaction = {
-    owner: SuiAddress;
+    owner: string;
     digest: string;
     timestampMs?: string;
     isSender: boolean;
-    from?: SuiAddress;
+    from?: string;
     totalGasUsed?: bigint;
     ownerBalanceChanges?: Record<string, bigint>;
     important: ImportantTransactionInfo;
@@ -43,7 +42,7 @@ export type AnalyzedTransaction = {
 };
 
 const analyzeTransactions = (
-    ownerAddress: SuiAddress,
+    ownerAddress: string,
     transactions: SuiTransactionBlockResponse[]
 ) => {
     const results: AnalyzedTransaction[] = [];

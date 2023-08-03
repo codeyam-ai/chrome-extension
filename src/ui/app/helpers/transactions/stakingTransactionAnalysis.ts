@@ -1,5 +1,4 @@
 import {
-    type SuiAddress,
     type SuiTransactionBlockResponse,
     type SuiJsonValue,
     getTotalGasUsed,
@@ -15,7 +14,7 @@ export type StakingTransactionInfo = {
 };
 
 const stakingTransactionAnalysis = (
-    ownerAddress: SuiAddress,
+    ownerAddress: string,
     transaction: SuiTransactionBlockResponse
 ) => {
     const analysis: StakingTransactionInfo[] = [];

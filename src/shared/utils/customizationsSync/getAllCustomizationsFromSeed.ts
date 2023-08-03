@@ -4,17 +4,17 @@ import getCustomization from './getCustomization';
 import getJwtWithSigner from './getJwtWithSigner';
 import KeypairVault from '_src/ui/app/KeypairVault';
 
-import type { JsonRpcProvider, SuiAddress } from '@mysten/sui.js';
+import type { JsonRpcProvider } from '@mysten/sui.js';
 import type { AccountCustomization } from '_src/types/AccountCustomization';
 
 export const getAllCustomizationsFromSeed = async (
     mnemonic: string,
     provider: JsonRpcProvider
-): Promise<Record<SuiAddress, AccountCustomization> | 'deleted'> => {
+): Promise<Record<string, AccountCustomization> | 'deleted'> => {
     const keypairVault = new KeypairVault();
     keypairVault.mnemonic = mnemonic;
 
-    const accountCustomizations: Record<SuiAddress, AccountCustomization> = {};
+    const accountCustomizations: Record<string, AccountCustomization> = {};
 
     let walletIndex = 0;
 

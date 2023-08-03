@@ -1,7 +1,6 @@
 import {
     Coin,
     SUI_TYPE_ARG,
-    type SuiAddress,
     type SuiMoveObject,
     TransactionBlock,
 } from '@mysten/sui.js';
@@ -32,7 +31,7 @@ const sendTokens = async ({
     activeAccountIndex: number;
     tokenTypeArg: string;
     amount: bigint;
-    recipientAddress: SuiAddress;
+    recipientAddress: string;
 }) => {
     const signer = await getSigner(
         passphrase,

@@ -17,7 +17,6 @@ import { isGetPreapprovalResponse } from '_src/shared/messaging/messages/payload
 import type {
     SignedMessage,
     SignedTransaction,
-    SuiAddress,
 } from '@mysten/sui.js';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type { Message } from '_messages';
@@ -55,7 +54,7 @@ export class BackgroundClient {
 
     public sendPermissionResponse(
         id: string,
-        accounts: SuiAddress[],
+        accounts: string[],
         allowed: boolean,
         responseDate: string
     ) {

@@ -3,7 +3,6 @@ import { CircleStackIcon } from '@heroicons/react/24/solid';
 import {
     SUI_TYPE_ARG,
     type DelegatedStake,
-    type SuiAddress,
 } from '@mysten/sui.js';
 import classNames from 'classnames';
 import { type PropsWithChildren, useCallback, useMemo } from 'react';
@@ -29,7 +28,7 @@ export interface Stake {
 }
 
 export interface StakeWithValidatorAddress extends Stake {
-    validatorAddress: SuiAddress;
+    validatorAddress: string;
 }
 
 interface ExistingStakeProps {

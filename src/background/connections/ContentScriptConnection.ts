@@ -55,7 +55,6 @@ import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 import type { NetworkEnvType } from '../NetworkEnv';
 import type {
     SignedTransaction,
-    SuiAddress,
     SuiTransactionBlockResponse,
 } from '@mysten/sui.js';
 import type { Message } from '_messages';
@@ -596,7 +595,7 @@ export class ContentScriptConnection extends Connection {
         });
     }
 
-    private async setActiveAccount(address: SuiAddress): Promise<SuiAddress> {
+    private async setActiveAccount(address: string): Promise<string> {
         const accountInfos = await this.getAccountInfos();
         const activeAccount = accountInfos.find((a) => a.address === address);
 
@@ -677,7 +676,7 @@ export class ContentScriptConnection extends Connection {
         );
     }
 
-    private sendAddress(address: SuiAddress, responseForID?: string) {
+    private sendAddress(address: string, responseForID?: string) {
         this.send(
             createMessage<SwitchAccountResponse>(
                 {
@@ -754,7 +753,7 @@ export class ContentScriptConnection extends Connection {
 
     private async ensurePermissions(
         permissions: PermissionType[],
-        account?: SuiAddress
+        account?: string
     ) {
         const existingPermission = await Permissions.getPermission({
             origin: this.origin,

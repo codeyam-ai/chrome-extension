@@ -1,5 +1,5 @@
 import { fromHEX } from '@mysten/bcs';
-import { type SuiAddress, type Keypair, type RawSigner } from '@mysten/sui.js';
+import { type Keypair, type RawSigner } from '@mysten/sui.js';
 import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 
 import { derivationPathForLedger } from '../pages/home/home/dapp/dapps/Ledger/hooks/useDeriveLedgerAccounts';
@@ -15,7 +15,7 @@ import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 export const getSigner = async (
     passphrase: string | null,
     accountInfos: AccountInfo[],
-    address: SuiAddress | null,
+    address: string | null,
     authentication: string | null,
     activeAccountIndex: number,
     connectToLedger: () => Promise<SuiLedgerClient>,

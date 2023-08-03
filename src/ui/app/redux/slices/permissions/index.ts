@@ -7,7 +7,6 @@ import {
     createSlice,
 } from '@reduxjs/toolkit';
 
-import type { SuiAddress } from '@mysten/sui.js';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { Permission } from '_messages/payloads/permissions';
 import type { RootState } from '_redux/RootReducer';
@@ -24,11 +23,11 @@ const permissionsAdapter = createEntityAdapter<Permission>({
 export const respondToPermissionRequest = createAsyncThunk<
     {
         id: string;
-        accounts: SuiAddress[];
+        accounts: string[];
         allowed: boolean;
         responseDate: string;
     },
-    { id: string; accounts: SuiAddress[]; allowed: boolean },
+    { id: string; accounts: string[]; allowed: boolean },
     AppThunkConfig
 >(
     'respond-to-permission-request',
