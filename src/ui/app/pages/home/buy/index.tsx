@@ -2,24 +2,28 @@ import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { LinkType } from '_src/enums/LinkType';
+import { API_ENV } from '_src/shared/api-env';
+import { useTheme } from '_src/shared/utils/themeContext';
+import checkMoonpaySupport from '_src/ui/app/helpers/checkMoonpaySupport';
+import { useAppSelector } from '_src/ui/app/hooks';
+import { generateOnRampURL } from '@coinbase/cbpay-js';
 import HeroswapDark from '_images/payments/logos/heroswap-dark';
 import HeroswapLight from '_images/payments/logos/heroswap-light';
 import MoonpayDark from '_images/payments/logos/moonpay-dark';
 import MoonpayLight from '_images/payments/logos/moonpay-light';
 import TransakDark from '_images/payments/logos/transak-dark';
 import TransakLight from '_images/payments/logos/transak-light';
-import { LinkType } from '_src/enums/LinkType';
-import { API_ENV } from '_src/shared/api-env';
-import { useTheme } from '_src/shared/utils/themeContext';
-import checkMoonpaySupport from '_src/ui/app/helpers/checkMoonpaySupport';
-import { useAppSelector } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Typography from '_src/ui/app/shared/typography/Typography';
+import CoinbaseLight from '_src/ui/assets/images/payments/logos/coinbase-light';
+import CoinbaseDark from '_src/ui/assets/images/payments/logos/coinbase-dark';
 
 const providers = [
     {
+        name: 'Moonpay',
         isRedirect: false,
         path: '/home/buy/moonpay',
         logo: {
@@ -32,6 +36,7 @@ const providers = [
         },
     },
     {
+        name: 'Transak',
         isRedirect: true,
         path: undefined,
         logo: {
@@ -43,10 +48,24 @@ const providers = [
             url: 'https://transak.com/',
         },
     },
+    {
+        name: 'Coinbase',
+        isRedirect: true,
+        path: undefined,
+        logo: {
+            light: <CoinbaseLight />,
+            dark: <CoinbaseDark />,
+        },
+        link: {
+            type: LinkType.External,
+            url: 'https://coinbase.com/',
+        },
+    },
 ];
 
 const cryptoProviders = [
     {
+        name: 'Heroswap',
         isRedirect: false,
         path: '/home/buy/heroswap',
         logo: {
@@ -63,6 +82,7 @@ const cryptoProviders = [
 interface ProviderSelectProps {
     theme: string;
     provider: {
+        name: string;
         isRedirect: boolean;
         path: string | undefined;
         logo: {
@@ -92,14 +112,28 @@ const ProviderSelect = ({ theme, provider }: ProviderSelectProps) => {
         : 'https://global-stg.transak.com';
     const colorCode = encodeURIComponent('#6D28D9');
 
+    const getCoinbaseUrl = () => {
+        const onRampURL = generateOnRampURL({
+            appId: '1dbd2a0b94',
+            destinationWallets: [
+                { address: address as string, blockchains: ['sui'] },
+            ],
+        });
+        return onRampURL;
+    };
+
     const selectProvider = useCallback(() => {
-        if (!provider.isRedirect) {
+        if (provider.name === 'Transak') {
+            const url = `${baseUrl}?apiKey=${apiKey}&themeColor=${colorCode}&environment=${env}&cryptoCurrencyCode=${code}&hideMenu=true&exchangeScreenTitle=Buy%20SUI&walletAddress=${address}`;
+            window.location.href = url;
+        } else if (provider.name === 'Coinbase') {
+            if (address && typeof address === 'string') {
+                window.location.href = getCoinbaseUrl();
+            }
+        } else {
             if (provider.path) {
                 navigate(provider.path);
             }
-        } else {
-            const url = `${baseUrl}?apiKey=${apiKey}&themeColor=${colorCode}&environment=${env}&cryptoCurrencyCode=${code}&hideMenu=true&exchangeScreenTitle=Buy%20SUI&walletAddress=${address}`;
-            window.location.href = url;
         }
     }, [provider, navigate, baseUrl, apiKey, colorCode, env, address]);
 
@@ -143,7 +177,6 @@ const ProviderSelect = ({ theme, provider }: ProviderSelectProps) => {
 const OnboardingProviders = () => {
     const { resolvedTheme } = useTheme();
     const [isAllowed, setAllowed] = useState();
-    const navigate = useNavigate();
 
     useEffect(() => {
         const checkCountrySupport = async () => {
@@ -169,7 +202,7 @@ const OnboardingProviders = () => {
             </div>
             <div
                 className={
-                    'py-5 px-4 bg-ethos-light-background-default dark:bg-ethos-dark-background-default'
+                    'py-5 px-4 bg-ethos-light-background-default dark:bg-ethos-dark-background-default overflow-auto h-[350px]'
                 }
             >
                 <div className="text-left">
