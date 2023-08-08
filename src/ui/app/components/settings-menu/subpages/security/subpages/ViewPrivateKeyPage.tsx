@@ -134,44 +134,34 @@ export default function ViewPrivateKeyPage() {
             <div className="flex flex-col gap-6 p-6">
                 <div>
                     <div className="text-lg">Hex</div>
-                    <textarea
-                        rows={3}
-                        value={
-                            !safePrivateKey
-                                ? 'Loading...'
-                                : toHEX(fromB64(safePrivateKey))
-                        }
+                    <div
                         id="hexPrivateKey"
-                        className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
-                        name="hexPrivateKey"
-                        disabled={true}
-                    />
+                        className="break-words p-3 max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
+                    >
+                        {!safePrivateKey
+                            ? 'Loading...'
+                            : toHEX(fromB64(safePrivateKey))}
+                    </div>
                 </div>
                 <div>
                     <div className="text-lg">Base-64</div>
-                    <textarea
-                        rows={3}
-                        value={!safePrivateKey ? 'Loading...' : safePrivateKey}
-                        id="hexPrivateKey"
-                        className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
-                        name="hexPrivateKey"
-                        disabled={true}
-                    />
+                    <div
+                        id="b64PrivateKey"
+                        className="break-words p-3 max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
+                    >
+                        {!safePrivateKey ? 'Loading...' : safePrivateKey}
+                    </div>
                 </div>
                 <div>
                     <div className="text-lg">UInt8Array</div>
-                    <textarea
-                        rows={3}
-                        value={
-                            !safePrivateKey
-                                ? 'Loading...'
-                                : fromB64(safePrivateKey).toString()
-                        }
-                        id="hexPrivateKey"
-                        className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
-                        name="hexPrivateKey"
-                        disabled={true}
-                    />
+                    <div
+                        id="UInt8ArrayPrivateKey"
+                        className="break-words p-3 max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
+                    >
+                        {!safePrivateKey
+                            ? 'Loading...'
+                            : fromB64(safePrivateKey).toString()}
+                    </div>
                 </div>
                 <Button to="/" buttonStyle="secondary" isInline>
                     Done
