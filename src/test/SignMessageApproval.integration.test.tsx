@@ -1,4 +1,5 @@
-import { type SignedMessage, toB64 } from '@mysten/sui.js';
+import { type SignedMessage } from '@mysten/sui.js';
+import { toB64 } from '@mysten/sui.js/utils';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
