@@ -59,7 +59,7 @@
         "cross-env": "^7.0.3",
         "css-loader": "^6.7.3",
         "dotenv-webpack": "^8.0.0",
-        "esbuild-loader": "^3.0.1",
+        "esbuild-loader": "^4.0.0",
         "eslint": "^8.37.0",
         "eslint-config-prettier": "^8.5.0",
         "eslint-config-react-app": "^7.0.1",
