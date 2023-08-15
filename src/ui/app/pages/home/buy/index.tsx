@@ -8,14 +8,12 @@ import MoonpayDark from '_images/payments/logos/moonpay-dark';
 import MoonpayLight from '_images/payments/logos/moonpay-light';
 import TransakDark from '_images/payments/logos/transak-dark';
 import TransakLight from '_images/payments/logos/transak-light';
-import { LinkType } from '_src/enums/LinkType';
 import { API_ENV } from '_src/shared/api-env';
 import { useTheme } from '_src/shared/utils/themeContext';
 import checkMoonpaySupport from '_src/ui/app/helpers/checkMoonpaySupport';
 import { useAppSelector } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Typography from '_src/ui/app/shared/typography/Typography';
 import CoinbaseDark from '_src/ui/assets/images/payments/logos/coinbase-dark';
 import CoinbaseLight from '_src/ui/assets/images/payments/logos/coinbase-light';
@@ -29,10 +27,6 @@ const providers = [
             light: <MoonpayLight />,
             dark: <MoonpayDark />,
         },
-        link: {
-            type: LinkType.External,
-            url: 'https://www.moonpay.com/',
-        },
     },
     {
         name: 'Transak',
@@ -42,10 +36,6 @@ const providers = [
             light: <TransakLight />,
             dark: <TransakDark />,
         },
-        link: {
-            type: LinkType.External,
-            url: 'https://transak.com/',
-        },
     },
     {
         name: 'Coinbase',
@@ -54,10 +44,6 @@ const providers = [
         logo: {
             light: <CoinbaseLight />,
             dark: <CoinbaseDark />,
-        },
-        link: {
-            type: LinkType.External,
-            url: 'https://coinbase.com/',
         },
     },
 ];
@@ -71,10 +57,6 @@ const cryptoProviders = [
             light: <HeroswapLight />,
             dark: <HeroswapDark />,
         },
-        link: {
-            type: LinkType.External,
-            url: 'https://heroswap.com/',
-        },
     },
 ];
 
@@ -87,10 +69,6 @@ interface ProviderSelectProps {
         logo: {
             light: JSX.Element;
             dark: JSX.Element;
-        };
-        link: {
-            type: LinkType;
-            url: string;
         };
     };
 }
@@ -136,13 +114,6 @@ const ProviderSelect = ({ theme, provider }: ProviderSelectProps) => {
         }
     }, [provider, navigate, baseUrl, apiKey, colorCode, env, address]);
 
-    const preventPropagation = useCallback(
-        (e: React.MouseEvent<HTMLElement>) => {
-            e.stopPropagation();
-        },
-        []
-    );
-
     return (
         <button
             onClick={selectProvider}
@@ -150,23 +121,19 @@ const ProviderSelect = ({ theme, provider }: ProviderSelectProps) => {
                 'flex items-center w-full mb-3 h-[60px] rounded-lg p-5 text-left border bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary dark:border-ethos-dark-background-secondary border-ethos-light-background-secondary hover:border-ethos-light-primary-light hover:dark:border-ethos-dark-primary-dark transition-all'
             }
         >
-            <div className={'w-full flex flex-col justify-between relative'}>
+            <div
+                className={
+                    'w-full flex flex-col items-center relative justify-center'
+                }
+            >
                 <div
                     className={
-                        'flex w-full flex-row justify-between items-center'
+                        'flex w-full flex-row justify-center items-center'
                     }
                 >
                     {theme === 'light'
                         ? provider.logo.light
                         : provider.logo.dark}
-                    <EthosLink
-                        className={'text-sm underline text-right'}
-                        to={provider.link.url}
-                        type={provider.link.type}
-                        onClick={preventPropagation}
-                    >
-                        Details
-                    </EthosLink>
                 </div>
             </div>
         </button>
@@ -201,7 +168,7 @@ const OnboardingProviders = () => {
             </div>
             <div
                 className={
-                    'py-5 px-4 bg-ethos-light-background-default dark:bg-ethos-dark-background-default overflow-auto h-[350px]'
+                    'py-5 px-4 bg-ethos-light-background-default dark:bg-ethos-dark-background-default overflow-auto'
                 }
             >
                 <div className="text-left">
@@ -227,7 +194,7 @@ const OnboardingProviders = () => {
                         key={index}
                     />
                 ))}
-                <Typography className="absolute font-[12px] leading-[16px] w-full left-0 text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium right-0 bottom-[56px] py-3 px-4 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
+                <Typography className="mt-6 font-[12px] rounded-md leading-[16px] w-full left-0 text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium right-0 bottom-[56px] py-3 px-4 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
                     <b>Ethos is not a fiat-to-crypto payment provider</b>, but
                     enables in-wallet access to select payment processors.
                     {isAllowed &&
