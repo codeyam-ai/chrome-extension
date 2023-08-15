@@ -1,4 +1,4 @@
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
 import CardRow from './CardRow';
 import { useDependencies } from '_shared/utils/dependenciesContext';

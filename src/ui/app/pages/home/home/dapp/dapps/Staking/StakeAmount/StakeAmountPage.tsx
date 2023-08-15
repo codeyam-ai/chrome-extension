@@ -1,4 +1,4 @@
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { Formik } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';

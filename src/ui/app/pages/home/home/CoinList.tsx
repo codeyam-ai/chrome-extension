@@ -1,4 +1,4 @@
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
 import CoinBalanceElement from './CoinBalance';
 import { LinkType } from '_src/enums/LinkType';

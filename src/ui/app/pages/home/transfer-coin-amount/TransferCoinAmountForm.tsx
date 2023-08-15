@@ -1,6 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { ErrorMessage, Field, Form, useFormikContext } from 'formik';
 import { memo, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';

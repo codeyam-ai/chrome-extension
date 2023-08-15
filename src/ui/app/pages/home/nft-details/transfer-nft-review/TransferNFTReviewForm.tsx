@@ -1,7 +1,8 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { SUI_TYPE_ARG, type SuiObjectData } from '@mysten/sui.js';
+import { type SuiObjectData } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { memo, useCallback } from 'react';
 
 import { Content } from '_app/shared/bottom-menu-layout';

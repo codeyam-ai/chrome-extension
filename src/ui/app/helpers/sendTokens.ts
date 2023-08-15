@@ -1,9 +1,9 @@
 import {
     Coin,
-    SUI_TYPE_ARG,
     type SuiMoveObject,
     TransactionBlock,
 } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
 import { getSigner } from './getSigner';
 

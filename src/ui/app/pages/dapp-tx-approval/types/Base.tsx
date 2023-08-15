@@ -1,4 +1,5 @@
-import { SUI_TYPE_ARG, TransactionBlock } from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { type ReactElement, useMemo, useState, useCallback } from 'react';
 
 import truncateMiddle from '../../../helpers/truncate-middle';

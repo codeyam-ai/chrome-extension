@@ -1,18 +1,14 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
 import type {
     ObjectId,
-    // RawSigner,
-    // SuiAddress,
     SuiMoveObject,
     SuiObjectData,
-    // SuiObjectInfo,
     JsonRpcProvider,
 } from '@mysten/sui.js';
-// import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
 const COIN_TYPE = '0x2::coin::Coin';
 const COIN_TYPE_ARG_REGEX = /^0x2::coin::Coin<(.+)>$/;

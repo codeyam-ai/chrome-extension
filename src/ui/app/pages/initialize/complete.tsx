@@ -2,7 +2,7 @@ import {
     ChatBubbleOvalLeftIcon,
     GlobeAltIcon,
 } from '@heroicons/react/24/solid';
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { useEffect, type ReactNode } from 'react';
 
 import ConfettiPop from '../../components/Confetti';
