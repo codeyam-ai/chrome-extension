@@ -1,11 +1,10 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { TrashIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 import { Fragment, useCallback } from 'react';
 
-import HeaderWithIcons from '_src/ui/app/shared/headers/page-headers/HeaderWithIcons';
 import Button from '../buttons/Button';
-import Title from '../typography/Title';
 import BodyLarge from '../typography/BodyLarge';
+import Title from '../typography/Title';
 
 interface ConfirmDestructiveActionDialogProps {
     isOpen: boolean;

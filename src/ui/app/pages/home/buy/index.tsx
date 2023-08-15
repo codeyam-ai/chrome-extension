@@ -1,25 +1,24 @@
-import { ChevronLeftIcon } from '@heroicons/react/24/solid';
+import { generateOnRampURL } from '@coinbase/cbpay-js';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { LinkType } from '_src/enums/LinkType';
-import { API_ENV } from '_src/shared/api-env';
-import { useTheme } from '_src/shared/utils/themeContext';
-import checkMoonpaySupport from '_src/ui/app/helpers/checkMoonpaySupport';
-import { useAppSelector } from '_src/ui/app/hooks';
-import { generateOnRampURL } from '@coinbase/cbpay-js';
 import HeroswapDark from '_images/payments/logos/heroswap-dark';
 import HeroswapLight from '_images/payments/logos/heroswap-light';
 import MoonpayDark from '_images/payments/logos/moonpay-dark';
 import MoonpayLight from '_images/payments/logos/moonpay-light';
 import TransakDark from '_images/payments/logos/transak-dark';
 import TransakLight from '_images/payments/logos/transak-light';
+import { LinkType } from '_src/enums/LinkType';
+import { API_ENV } from '_src/shared/api-env';
+import { useTheme } from '_src/shared/utils/themeContext';
+import checkMoonpaySupport from '_src/ui/app/helpers/checkMoonpaySupport';
+import { useAppSelector } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 import Typography from '_src/ui/app/shared/typography/Typography';
-import CoinbaseLight from '_src/ui/assets/images/payments/logos/coinbase-light';
 import CoinbaseDark from '_src/ui/assets/images/payments/logos/coinbase-dark';
+import CoinbaseLight from '_src/ui/assets/images/payments/logos/coinbase-light';
 
 const providers = [
     {

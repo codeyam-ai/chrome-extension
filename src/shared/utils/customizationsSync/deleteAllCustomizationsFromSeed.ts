@@ -1,8 +1,8 @@
 import { RawSigner } from '@mysten/sui.js';
 
-import KeypairVault, { type AccountInfo } from '_src/ui/app/KeypairVault';
 import getJwtWithSigner from './getJwtWithSigner';
 import saveCustomization from './saveCustomization';
+import KeypairVault, { type AccountInfo } from '_src/ui/app/KeypairVault';
 
 import type { JsonRpcProvider } from '@mysten/sui.js';
 

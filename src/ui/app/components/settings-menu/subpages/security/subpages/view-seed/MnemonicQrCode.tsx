@@ -2,9 +2,8 @@ import { QRCode } from 'react-qrcode-logo';
 
 import ethosIconWhite from '_images/ethos-icon-white.png';
 import ethosIcon from '_images/ethos-icon.png';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import Subheader from '_src/ui/app/shared/typography/Subheader';
 import { useTheme } from '_src/shared/utils/themeContext';
+import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 interface MnemonicQrCodeProps {
     mnemonic: string;

@@ -9,7 +9,6 @@ import Button from '../../shared/buttons/Button';
 import RecoveryPhraseDisplay from '../../shared/content/RecoveryPhraseDisplay';
 import OnboardingCard from '../../shared/layouts/OnboardingCard';
 import Permissions from '_src/background/Permissions';
-import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { loadAccountInformationFromStorage } from '_src/ui/app/redux/slices/account';
 
@@ -18,7 +17,7 @@ const SavePhrasePage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const isMobile = useIsMobile();
-    const { getCachedJwt } = useJwt();
+    // const { getCachedJwt } = useJwt();
 
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
