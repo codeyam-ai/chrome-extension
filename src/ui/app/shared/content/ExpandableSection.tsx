@@ -1,7 +1,7 @@
 import { Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import { type ReactNode } from 'react';
-import Header from '../typography/Header';
+
 import Subheader from '../typography/Subheader';
 
 interface ExpandableSectionProps {

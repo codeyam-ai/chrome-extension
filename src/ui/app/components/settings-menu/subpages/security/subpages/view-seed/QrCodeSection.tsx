@@ -1,31 +1,10 @@
-import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import { useCallback, useEffect, useState } from 'react';
-import { PuffLoader } from 'react-spinners';
-import { toast } from 'react-toastify';
 
 import MnemonicQrCode from './MnemonicQrCode';
-import Authentication from '_src/background/Authentication';
-import { deleteAllCustomizationsFromSeed } from '_src/shared/utils/customizationsSync/deleteAllCustomizationsFromSeed';
-import { getAllCustomizationsFromSeed } from '_src/shared/utils/customizationsSync/getAllCustomizationsFromSeed';
-import { saveAllCustomizationsFromSeed } from '_src/shared/utils/customizationsSync/saveAllCustomizationsFromSeed';
-import { useTheme } from '_src/shared/utils/themeContext';
-import { type AccountInfo } from '_src/ui/app/KeypairVault';
-import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
-import {
-    loadCustomizationsSyncPreference,
-    saveAccountInfos,
-    saveCustomizationsSyncPreference,
-    setAccountInfos,
-} from '_src/ui/app/redux/slices/account';
-import { api } from '_src/ui/app/redux/store/thunk-extras';
-import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
+import SyncCustomizationsToggle from '_src/shared/utils/customizationsSync/SyncCustomizationsToggle';
 import ExpandableSection from '_src/ui/app/shared/content/ExpandableSection';
 import InfoDialog from '_src/ui/app/shared/dialog/InfoDialog';
-import Toggle from '_src/ui/app/shared/inputs/Toggle';
-import Body from '_src/ui/app/shared/typography/Body';
-import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-import SyncCustomizationsToggle from '_src/shared/utils/customizationsSync/SyncCustomizationsToggle';
 
 interface QrCodeSectionProps {
     mnemonic: string;

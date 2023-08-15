@@ -1,7 +1,7 @@
 import { SUI_TYPE_ARG } from '@mysten/sui.js';
+
 import { useFormatCoin } from '_hooks';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
-
 import WalletColorAndEmojiCircle from '_src/ui/app/shared/WalletColorAndEmojiCircle';
 import JumboTitle from '_src/ui/app/shared/typography/JumboTitle';
 import Title from '_src/ui/app/shared/typography/Title';

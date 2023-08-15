@@ -7,7 +7,6 @@ import { saveAccountInfos, setAccountInfos } from '../redux/slices/account';
 import { api } from '../redux/store/thunk-extras';
 import Authentication from '_src/background/Authentication';
 import { getAllCustomizationsFromSeed } from '_src/shared/utils/customizationsSync/getAllCustomizationsFromSeed';
-import { useDependencies } from '_src/shared/utils/dependenciesContext';
 
 import type { AccountInfo } from '../KeypairVault';
 
@@ -18,7 +17,7 @@ const useAccountCustomizations = () => {
     const { accountInfos, authentication, customizationsSyncPreference } =
         useAppSelector(({ account }) => account);
     const dispatch = useAppDispatch();
-    const { featureFlags } = useDependencies();
+    // const { featureFlags } = useDependencies();
     const provider = api.instance.fullNode;
 
     const result = useQuery({

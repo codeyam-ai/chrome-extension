@@ -3,6 +3,7 @@ import 'isomorphic-fetch';
 import { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
+import useAccountCustomizations from './hooks/useAccountCustomizationsListener';
 import useSizeWindow from './hooks/useSizeWindow';
 import { DappSignMessageApprovalPage } from './pages/dapp-sign-message-approval';
 import OnboardingProviders from './pages/home/buy';
@@ -57,14 +58,13 @@ import {
     loadExcludedDappsKeysFromStorage,
     loadFavoriteDappsKeysFromStorage,
 } from '_redux/slices/account';
+import JwtProvider from '_src/shared/utils/customizationsSync/JwtProvider';
 import { ThemeProvider } from '_src/shared/utils/themeContext';
 import { DappPreapprovalPage } from '_src/ui/app/pages/dapp-preapproval';
 import CreatePasswordPage from '_src/ui/app/pages/initialize/create-password';
 import HostedPage from '_src/ui/app/pages/initialize/hosted';
 import SiteConnectPage from '_src/ui/app/pages/site-connect';
 import WelcomePage from '_src/ui/app/pages/welcome';
-import JwtProvider from '_src/shared/utils/customizationsSync/JwtProvider';
-import useAccountCustomizations from './hooks/useAccountCustomizationsListener';
 
 const App = () => {
     const dispatch = useAppDispatch();

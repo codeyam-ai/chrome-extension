@@ -23,6 +23,7 @@ import kriya from '_images/dapps/logos/kriya.png';
 import movePad from '_images/dapps/logos/movepad.jpg';
 import { default as movex } from '_images/dapps/logos/movex.png';
 import polymediachat from '_images/dapps/logos/polymediachat.png';
+import runLegends from '_images/dapps/logos/run-legends.jpg';
 import staking from '_images/dapps/logos/staking.png';
 // import swaps from '_images/dapps/logos/staking.png';
 import sui8192 from '_images/dapps/logos/sui-8192.png';
@@ -32,7 +33,6 @@ import suins from '_images/dapps/logos/suins.png';
 import tokens from '_images/dapps/logos/tokens.png';
 import turbos from '_images/dapps/logos/turbos.png';
 import typus from '_images/dapps/logos/typus.png';
-import runLegends from '_images/dapps/logos/run-legends.jpg';
 import { LINK_URL } from '_src/shared/constants';
 
 import type { DappData } from 'src/types/DappData';

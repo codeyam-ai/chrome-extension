@@ -5,6 +5,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import LockOrResetPage from './subpages/LockOrReset/LockOrResetPage';
 import ThemePage from './subpages/ThemePage';
+import CustomizationSync from './subpages/security/subpages/CustomizationSync';
 import ChangePasswordPage from './subpages/security/subpages/change-password/ChangePasswordPage';
 import { SettingsContainer } from '../../shared/navigation/nav-bar/SettingsContainer';
 import ChangeAutoLockTimeoutPage from '_src/ui/app/components/settings-menu/ChangeAutoLockTimeoutPage';
@@ -14,7 +15,6 @@ import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/permi
 import SecurityHomePage from '_src/ui/app/components/settings-menu/subpages/security/SecurityHomePage';
 import ViewPrivateKeyPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewPrivateKeyPage';
 import ViewSeedPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/view-seed/ViewSeedPage';
-import CustomizationSync from './subpages/security/subpages/CustomizationSync';
 
 function SettingsRouterPage() {
     return (
