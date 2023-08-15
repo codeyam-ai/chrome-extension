@@ -11,7 +11,6 @@ import { useAppSelector } from '_hooks';
 import { activeAccountSelector } from '_redux/slices/account';
 import { LinkType } from '_src/enums/LinkType';
 
-import type { ObjectId, TransactionDigest } from '@mysten/sui.js';
 import type { ReactNode } from 'react';
 
 export type ExplorerLinkProps = (
@@ -24,8 +23,8 @@ export type ExplorerLinkProps = (
           type: ExplorerLinkType.address;
           useActiveAddress: true;
       }
-    | { type: ExplorerLinkType.object; objectID: ObjectId }
-    | { type: ExplorerLinkType.transaction; transactionID: TransactionDigest }
+    | { type: ExplorerLinkType.object; objectID: string }
+    | { type: ExplorerLinkType.transaction; transactionID: string }
 ) & {
     children?: ReactNode;
     className?: string;

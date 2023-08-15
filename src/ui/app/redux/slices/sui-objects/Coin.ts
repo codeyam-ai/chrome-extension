@@ -4,7 +4,6 @@
 import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
 import type {
-    ObjectId,
     SuiMoveObject,
     SuiObjectData,
     JsonRpcProvider,
@@ -55,7 +54,7 @@ export class Coin {
         return BigInt(obj.fields.balance);
     }
 
-    public static getID(obj: SuiMoveObject): ObjectId {
+    public static getID(obj: SuiMoveObject): string {
         return obj.fields.id.id;
     }
 
@@ -115,7 +114,7 @@ export class Coin {
     //     signer: RawSigner | EthosSigner | LedgerSigner,
     //     coins: SuiMoveObject[],
     //     amount: bigint
-    // ): Promise<ObjectId> {
+    // ): Promise<string> {
     //     const coinWithExactAmount = await Coin.selectSuiCoinWithExactAmount(
     //         signer,
     //         coins,
@@ -152,7 +151,7 @@ export class Coin {
     //     coins: SuiMoveObject[],
     //     amount: bigint,
     //     refreshData = false
-    // ): Promise<ObjectId | undefined> {
+    // ): Promise<string | undefined> {
     //     const coinsWithSufficientAmount = refreshData
     //         ? await signer.provider.selectCoinsWithBalanceGreaterThanOrEqual(
     //               await signer.getAddress(),
