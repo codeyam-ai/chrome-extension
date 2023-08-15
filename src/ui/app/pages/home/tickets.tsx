@@ -29,7 +29,7 @@ function TicketsPage() {
         if (!tickets) return;
 
         const checkTickets = async () => {
-            const provider = api.instance.fullNode;
+            const client = api.instance.client;
             const validTickets: SuiObjectData[] = [];
             for (const ticket of tickets) {
                 if (
@@ -38,7 +38,7 @@ function TicketsPage() {
                     'fields' in ticket.content
                 ) {
                     const isValid = await isValidTicket(
-                        provider,
+                        client,
                         ticket.content,
                         address || '',
                         ticket.content?.fields.ticket_agent_id

@@ -106,7 +106,7 @@ function TransferNFTRecipient() {
                 transactionBlock,
                 selectedNFTObj,
                 safeTo,
-                api.instance.fullNode
+                api.instance.client
             );
 
             if (!transactionBlock) return;

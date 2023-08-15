@@ -1,8 +1,5 @@
-import {
-    type EventId,
-    type SuiEvent,
-    VALIDATORS_EVENTS_QUERY,
-} from '@mysten/sui.js';
+import { VALIDATORS_EVENTS_QUERY } from '@mysten/sui.js';
+import { type EventId, type SuiEvent } from '@mysten/sui.js/client';
 import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../redux/store/thunk-extras';
@@ -16,7 +13,7 @@ type GetValidatorsEvent = {
 const QUERY_MAX_RESULT_LIMIT = 50;
 
 export function useValidatorsEvents({ limit, order }: GetValidatorsEvent) {
-    const provider = api.instance.fullNode;
+    const client = api.instance.client;
 
     return useQuery(
         ['validatorEvents', limit, order],
@@ -33,7 +30,7 @@ export function useValidatorsEvents({ limit, order }: GetValidatorsEvent) {
                 const results: SuiEvent[] = [];
 
                 while (hasNextPage && results.length < limit) {
-                    const validatorEventsResponse = await provider.queryEvents({
+                    const validatorEventsResponse = await client.queryEvents({
                         query: { MoveEventType: VALIDATORS_EVENTS_QUERY },
                         cursor: currCursor,
                         limit: Math.min(limit, QUERY_MAX_RESULT_LIMIT),
@@ -47,7 +44,7 @@ export function useValidatorsEvents({ limit, order }: GetValidatorsEvent) {
                 return results.slice(0, limit);
             }
 
-            const validatorEventsResponse = await provider.queryEvents({
+            const validatorEventsResponse = await client.queryEvents({
                 query: { MoveEventType: VALIDATORS_EVENTS_QUERY },
                 limit,
                 order,

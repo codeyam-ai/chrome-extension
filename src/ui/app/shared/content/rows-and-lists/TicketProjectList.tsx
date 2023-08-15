@@ -48,7 +48,7 @@ const TicketProjectList = () => {
             );
 
             const ticketProjectObjects: SuiObjectResponse[] =
-                await api.instance.fullNode.multiGetObjects({
+                await api.instance.client.multiGetObjects({
                     ids: ticketProjectIds,
                     options: {
                         showContent: true,
@@ -99,7 +99,7 @@ const TicketProjectList = () => {
                     ) {
                         const fields = ticket.content.fields;
                         const isValid = await isValidTicket(
-                            api.instance.fullNode,
+                            api.instance.client,
                             { type: ticket.type, fields: fields },
                             address || '',
                             ticketProject.agentObjectId

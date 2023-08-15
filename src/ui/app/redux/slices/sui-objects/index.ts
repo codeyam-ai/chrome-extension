@@ -70,7 +70,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         let objectsRefPage = 0;
         while (nextCursor !== null) {
             objectsRefPage += 1;
-            const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
+            const allObjectRefs = await api.instance.client.getOwnedObjects({
                 owner: address,
                 cursor,
             });
@@ -116,7 +116,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                 })
                 .filter((objId) => objId.length > 0);
 
-            const newObjRes = await api.instance.fullNode.multiGetObjects({
+            const newObjRes = await api.instance.client.multiGetObjects({
                 ids: objectIDs,
                 options: {
                     showOwner: true,
@@ -138,7 +138,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                 if (NFT.isKiosk(suiObjectData)) {
                     if (kioskObjectsLoaded < 10) {
                         const kioskObjects = await NFT.getKioskObjects(
-                            api.instance.fullNode,
+                            api.instance.client,
                             suiObjectData
                         );
 
@@ -220,7 +220,7 @@ export const fetchMoreObjects = createAsyncThunk<
             }
 
             const kioskObjects = await NFT.getKioskObjects(
-                api.instance.fullNode,
+                api.instance.client,
                 suiObjectData
             );
 

@@ -34,7 +34,7 @@ export const getSigner = async (
         return new LedgerSigner(
             connectToLedger,
             derivationPathForLedger(activeAccount.ledgerAccountIndex),
-            api.instance.fullNode
+            api.instance.client
         );
     }
 

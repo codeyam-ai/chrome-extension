@@ -5,13 +5,13 @@ import {
     type SerializedSignature,
     type SignatureScheme,
     toSerializedSignature,
-    type JsonRpcProvider,
 } from '@mysten/sui.js';
 import { Ed25519PublicKey } from '@mysten/sui.js/keypairs/ed25519';
 
 import { WalletSigner } from './WalletSigner';
 
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
+import type { SuiClient } from '@mysten/sui.js/client';
 
 export class LedgerSigner extends WalletSigner {
     #suiLedgerClient: SuiLedgerClient | null;
@@ -22,9 +22,9 @@ export class LedgerSigner extends WalletSigner {
     constructor(
         connectToLedger: () => Promise<SuiLedgerClient>,
         derivationPath: string,
-        provider: JsonRpcProvider
+        client: SuiClient
     ) {
-        super(provider);
+        super(client);
         this.#connectToLedger = connectToLedger;
         this.#suiLedgerClient = null;
         this.#derivationPath = derivationPath;
@@ -70,11 +70,11 @@ export class LedgerSigner extends WalletSigner {
         });
     }
 
-    connect(provider: JsonRpcProvider): WalletSigner {
+    connect(client: SuiClient): WalletSigner {
         return new LedgerSigner(
             this.#connectToLedger,
             this.#derivationPath,
-            provider
+            client
         );
     }
 }

@@ -4,9 +4,12 @@
 import {
     Connection,
     Ed25519Keypair,
-    JsonRpcProvider,
     RawSigner,
 } from '@mysten/sui.js';
+import {
+    SuiClient,
+    type SuiTransactionBlockResponse,
+} from '@mysten/sui.js/client';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 import {
     SUI_MAINNET_CHAIN,
@@ -28,7 +31,6 @@ import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 import type { SignedTransaction } from '@mysten/sui.js';
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type {
     PreapprovalRequest,
     PreapprovalResponse,
@@ -43,12 +45,6 @@ import type { TransactionRequestResponse } from '_payloads/transactions/ui/Trans
 import type { ContentScriptConnection } from '_src/background/connections/ContentScriptConnection';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { SeedInfo } from '_src/ui/app/KeypairVault';
-
-// type SimpleCoin = {
-//     balance: number;
-//     coinObjectId: string;
-//     coinType: string;
-// };
 
 function openTxWindow(txRequestId: string) {
     return new Window({
@@ -328,14 +324,14 @@ class Transactions {
             throw new Error('No connection found');
         }
 
-        const provider = new JsonRpcProvider(connection);
+        const client = new SuiClient({ url: connection.fullnode });
 
         try {
             let signer;
 
             const authentication = await this.getAuthentication();
             if (authentication) {
-                signer = new EthosSigner(address, authentication, provider);
+                signer = new EthosSigner(address, authentication, client);
             } else {
                 const activeSeed = await this.getActiveSeed();
 
@@ -349,7 +345,7 @@ class Transactions {
                     activeSeed.seed.split(',').map((n) => parseInt(n))
                 );
                 const keypair = Ed25519Keypair.fromSecretKey(secretKey);
-                signer = new RawSigner(keypair, provider);
+                signer = new RawSigner(keypair, client);
             }
 
             const txResponse = await signer.signAndExecuteTransactionBlock({

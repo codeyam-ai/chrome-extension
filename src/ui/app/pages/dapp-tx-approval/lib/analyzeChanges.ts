@@ -234,12 +234,11 @@ const analyzeChanges = async ({
         const {
             totalBalance,
             lockedBalance: { number },
-        } = await signer.provider.getBalance({
+        } = await signer.client.getBalance({
             owner: address,
             coinType: SUI_TYPE_ARG,
         });
 
-        // const gasPrice = await signer.provider.getReferenceGasPrice();
         const gasAvailable = new BigNumber(totalBalance)
             .minus(number || 0)
             .dividedBy(Math.pow(10, 9));

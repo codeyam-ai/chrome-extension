@@ -61,7 +61,7 @@ function TransferNFTReview() {
                 connectToLedger,
                 recipientAddress: formState.to,
                 nft: selectedNFTObj,
-                provider: api.instance.fullNode,
+                client: api.instance.client,
             });
 
             // const resp = await dispatch(

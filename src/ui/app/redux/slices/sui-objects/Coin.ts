@@ -6,8 +6,8 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import type {
     SuiMoveObject,
     SuiObjectData,
-    JsonRpcProvider,
 } from '@mysten/sui.js';
+import type { SuiClient } from '@mysten/sui.js/client';
 
 const COIN_TYPE = '0x2::coin::Coin';
 const COIN_TYPE_ARG_REGEX = /^0x2::coin::Coin<(.+)>$/;
@@ -153,7 +153,7 @@ export class Coin {
     //     refreshData = false
     // ): Promise<string | undefined> {
     //     const coinsWithSufficientAmount = refreshData
-    //         ? await signer.provider.selectCoinsWithBalanceGreaterThanOrEqual(
+    //         ? await signer.client.selectCoinsWithBalanceGreaterThanOrEqual(
     //               await signer.getAddress(),
     //               amount,
     //               SUI_TYPE_ARG,
@@ -176,9 +176,9 @@ export class Coin {
     // }
 
     public static async getActiveValidators(
-        provider: JsonRpcProvider
+        client: SuiClient
     ): Promise<Array<SuiMoveObject>> {
-        const contents = await provider.getObject({
+        const contents = await client.getObject({
             id: SUI_SYSTEM_STATE_OBJECT_ID,
             options: {
                 showContent: true,

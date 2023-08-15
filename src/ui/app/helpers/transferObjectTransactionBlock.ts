@@ -1,4 +1,5 @@
-import type { JsonRpcProvider, TransactionBlock } from '@mysten/sui.js';
+import type { TransactionBlock } from '@mysten/sui.js';
+import type { SuiClient } from '@mysten/sui.js/client';
 import type { ExtendedSuiObjectData } from '_redux/slices/sui-objects';
 
 const obKioskPackageId =
@@ -9,7 +10,7 @@ const transferObjectTransactionBlock = async (
     transactionBlock: TransactionBlock,
     object: ExtendedSuiObjectData,
     recipient: string,
-    provider: JsonRpcProvider
+    client: SuiClient
 ) => {
     if (!object.kiosk?.type) {
         transactionBlock.transferObjects(
@@ -27,7 +28,7 @@ const transferObjectTransactionBlock = async (
 
         if (!kioskId) return null;
 
-        const recipientKiosks = await provider.getOwnedObjects({
+        const recipientKiosks = await client.getOwnedObjects({
             owner: recipient,
             options: {
                 showContent: true,
@@ -45,7 +46,14 @@ const transferObjectTransactionBlock = async (
             if (recipientKiosk) {
                 let recipientKioskId: string | undefined;
                 if (recipientKiosk?.content?.dataType === 'moveObject') {
-                    recipientKioskId = recipientKiosk.content.fields.kiosk;
+                    const fields = recipientKiosk.content.fields;
+                    if (
+                        'kiosk' in fields &&
+                        (typeof fields.kiosk === 'string' ||
+                            typeof fields.kiosk === 'undefined')
+                    ) {
+                        recipientKioskId = fields.kiosk;
+                    }
                 }
 
                 if (!recipientKioskId) return null;
@@ -88,7 +96,14 @@ const transferObjectTransactionBlock = async (
             const recipientKiosk = recipientKiosks.data[0]?.data;
             if (recipientKiosk) {
                 if (recipientKiosk?.content?.dataType === 'moveObject') {
-                    recipientKioskId = recipientKiosk.content.fields.for;
+                    const fields = recipientKiosk.content.fields;
+                    if (
+                        'for' in fields &&
+                        (typeof fields.for === 'string' ||
+                            typeof fields.for === 'undefined')
+                    ) {
+                        recipientKioskId = fields.for;
+                    }
                 }
 
                 if (!recipientKioskId) return null;

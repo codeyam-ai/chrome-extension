@@ -41,8 +41,8 @@ export default function useNFTBasicData(nftObj: SuiObjectData) {
         if (!NFT.isBagNFT(nftObj)) return;
 
         const getBagNft = async () => {
-            const provider = api.instance.fullNode;
-            const bagNFT = await NFT.parseBagNFT(provider, nftObj);
+            const client = api.instance.client;
+            const bagNFT = await NFT.parseBagNFT(client, nftObj);
             if ('url' in bagNFT && bagNFT.url) {
                 setNftFields(bagNFT);
                 setFilePath(bagNFT.url);

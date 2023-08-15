@@ -1,6 +1,6 @@
 // import { BCS, getSuiMoveConfig } from '@mysten/bcs';
 
-import type { JsonRpcProvider, SuiObjectData } from '@mysten/sui.js';
+import type { SuiClient, SuiObjectData } from '@mysten/sui.js/client';
 
 export class Ticket {
     public static isTicket(obj: SuiObjectData): boolean {
@@ -12,7 +12,7 @@ export class Ticket {
     }
 
     public static async lookupTicketRecord(
-        provider: JsonRpcProvider,
+        client: SuiClient,
         contract: string,
         address: string,
         ticketId: string,
@@ -20,7 +20,7 @@ export class Ticket {
         typeArguments: string[] = []
     ) {
         return;
-        // const ticketResponse = await provider.devInspectTransaction(address, {
+        // const ticketResponse = await client.devInspectTransaction(address, {
         //     kind: 'moveCall',
         //     data: {
         //         packageObjectId: contract,

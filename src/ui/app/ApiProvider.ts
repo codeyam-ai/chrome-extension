@@ -1,7 +1,8 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { Connection, JsonRpcProvider, RawSigner } from '@mysten/sui.js';
+import { Connection, RawSigner } from '@mysten/sui.js';
+import { SuiClient } from '@mysten/sui.js/client';
 
 import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
@@ -148,10 +149,11 @@ export const generateActiveNetworkList = (): NetworkTypes[] => {
 export default class ApiProvider {
     public fallbackNumber: number | undefined = undefined;
 
-    private _apiFullNodeProvider?: JsonRpcProvider;
+    private _apiFullNodeClient?: SuiClient;
     private _signer: RawSigner | null = null;
     private _apiEnv: API_ENV = DEFAULT_API_ENV;
     private _customRPC: string | null = null;
+    private _connection: Connection | null = null;
 
     public setNewJsonRpcProvider(
         apiEnv: API_ENV = DEFAULT_API_ENV,
@@ -166,11 +168,11 @@ export default class ApiProvider {
         // Make sure that state is cleared when switching networks
         queryClient?.clear();
 
-        const connection = customRPC
+        this._connection = customRPC
             ? new Connection({ fullnode: customRPC })
             : getDefaultAPI(apiEnv, this.fallbackNumber);
 
-        this._apiFullNodeProvider = new JsonRpcProvider(connection);
+        this._apiFullNodeClient = new SuiClient({url: this._connection.fullnode});
 
         this._signer = null;
     }
@@ -194,7 +196,7 @@ export default class ApiProvider {
     }
 
     public get instance() {
-        if (!this._apiFullNodeProvider) {
+        if (!this._apiFullNodeClient) {
             this.setNewJsonRpcProvider(
                 this._apiEnv,
                 this.fallbackNumber,
@@ -203,12 +205,14 @@ export default class ApiProvider {
         }
         return {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            fullNode: this._apiFullNodeProvider!,
+            fullNode: this._connection?.fullnode,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            client: this._apiFullNodeClient!,
         };
     }
 
     public getSignerInstance(keypair: Keypair, force?: boolean): RawSigner {
-        if (!this._apiFullNodeProvider) {
+        if (!this._apiFullNodeClient) {
             this.setNewJsonRpcProvider(
                 this._apiEnv,
                 this.fallbackNumber,
@@ -217,7 +221,7 @@ export default class ApiProvider {
         }
 
         if (!this._signer || force) {
-            this._signer = new RawSigner(keypair, this.instance.fullNode);
+            this._signer = new RawSigner(keypair, this.instance.client);
         }
         return this._signer;
     }
@@ -230,7 +234,7 @@ export default class ApiProvider {
         address: string,
         accessToken: string
     ): EthosSigner {
-        if (!this._apiFullNodeProvider) {
+        if (!this._apiFullNodeClient) {
             this.setNewJsonRpcProvider(
                 this._apiEnv,
                 this.fallbackNumber,
@@ -241,7 +245,7 @@ export default class ApiProvider {
             address,
             accessToken,
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            this._apiFullNodeProvider!
+            this._apiFullNodeClient!
         );
     }
 }

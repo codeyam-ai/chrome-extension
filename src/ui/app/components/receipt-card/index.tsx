@@ -55,7 +55,7 @@ function ReceiptCard({ txDigest }: TxResponseProps) {
             const getTransaction = async () => {
                 const digest = txDigestFromUrl as string;
                 try {
-                    const tx = await api.instance.fullNode.getTransactionBlock({
+                    const tx = await api.instance.client.getTransactionBlock({
                         digest: digest,
                         options: {
                             showInput: true,
