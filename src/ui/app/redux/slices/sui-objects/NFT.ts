@@ -2,16 +2,15 @@ import {
     getObjectFields,
     getObjectType,
     getSuiObjectData,
-    SuiObjectData,
-    is,
 } from '@mysten/sui.js';
 import get from 'lodash/get';
 
 import ipfs from '_src/ui/app/helpers/ipfs';
 import { safeUrl } from '_src/ui/app/hooks/useMediaUrl';
 
-import type { SuiObjectResponse } from '@mysten/sui.js';
 import type {
+    SuiObjectData,
+    SuiObjectResponse,
     SuiClient,
     DynamicFieldInfo,
     SuiMoveObject,
@@ -50,7 +49,11 @@ export class NFT {
             'url' in data.content.fields &&
             !('ticket_id' in data.content.fields)
         ) {
-            url = data.content.fields.url;
+            url =
+                data.content.fields.url &&
+                typeof data.content.fields.url === 'string'
+                    ? data.content.fields.url
+                    : undefined;
         }
 
         if (url) {
@@ -282,7 +285,7 @@ export const NftParser: SuiObjectParser<NftRpcResponse, NftRaw> = {
 
 const isTypeMatchRegex = (d: SuiObjectResponse, regex: RegExp) => {
     const { data } = d;
-    if (is(data, SuiObjectData)) {
+    if (data) {
         const { content } = data;
         if (content && 'type' in content) {
             return content.type.match(regex);
@@ -325,8 +328,18 @@ export class NftClient {
     parseObjects = async (objects: SuiObjectResponse[]): Promise<NftRaw[]> => {
         const parsedObjects = objects
             .map((object) => {
-                if (getObjectType(object)?.match(NftParser.regex)) {
-                    const data = getSuiObjectData(object);
+                // if (getObjectType(object)?.match(NftParser.regex)) {
+                //     const data = getSuiObjectData(object);
+                //     if (data) {
+                //         return NftParser.parser(
+                //             getObjectFields(object) as NftRpcResponse,
+                //             data,
+                //             object
+                //         );
+                //     }
+                // }
+                if (object.data) {
+                    const data = object.data;
                     if (data) {
                         return NftParser.parser(
                             getObjectFields(object) as NftRpcResponse,

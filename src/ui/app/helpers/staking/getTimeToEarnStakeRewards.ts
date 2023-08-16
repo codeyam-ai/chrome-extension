@@ -1,4 +1,4 @@
-import type { SuiSystemStateSummary } from '@mysten/sui.js';
+import type { SuiSystemStateSummary } from '@mysten/sui.js/client';
 
 const getTimeToEarnStakingRewards = (
     startEarningEpoch: number,

@@ -24,7 +24,6 @@
 // import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 // import Title from '_src/ui/app/shared/typography/Title';
 
-// import type { SuiObjectData as SuiObject } from '@mysten/sui.js';
 import type { TicketProjectProps } from '_src/ui/app/shared/content/rows-and-lists/TicketProjectList';
 
 // type RPCError = {

@@ -1,5 +1,5 @@
-import type { TransactionBlock } from '@mysten/sui.js';
 import type { SuiClient } from '@mysten/sui.js/client';
+import type { TransactionBlock } from '@mysten/sui.js/transactions';
 import type { ExtendedSuiObjectData } from '_redux/slices/sui-objects';
 
 const obKioskPackageId =
@@ -20,9 +20,17 @@ const transferObjectTransactionBlock = async (
     } else {
         let kioskId: string | undefined;
         if (object.kiosk.content?.dataType === 'moveObject') {
-            kioskId = object.kiosk.content.fields.kiosk;
+            const fields = object.kiosk.content.fields;
+            // kioskId = object.kiosk.content.fields.kiosk;
+            kioskId =
+                'kiosk' in fields && typeof fields.kiosk === 'string'
+                    ? fields.kiosk
+                    : undefined;
             if (!kioskId) {
-                kioskId = object.kiosk.content.fields.for;
+                // kioskId = object.kiosk.content.fields.for;
+                kioskId = 'for' in fields && typeof fields.for === 'string'
+                    ? fields.for
+                    : undefined;
             }
         }
 

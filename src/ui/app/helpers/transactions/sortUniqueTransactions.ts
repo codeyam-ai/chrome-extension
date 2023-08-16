@@ -1,4 +1,4 @@
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 
 const sortUniqueTransactions = (
     transactionBlockResponses: SuiTransactionBlockResponse[]

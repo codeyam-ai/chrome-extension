@@ -1,6 +1,6 @@
 import TicketItem from './TicketItem';
 
-import type { SuiObjectData } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js/client';
 
 const TicketList = ({ tickets }: { tickets: SuiObjectData[] }) => {
     return (

@@ -155,7 +155,7 @@ export default class ApiProvider {
     private _customRPC: string | null = null;
     private _connection: Connection | null = null;
 
-    public setNewJsonRpcProvider(
+    public setNewSuiClient(
         apiEnv: API_ENV = DEFAULT_API_ENV,
         fallbackNumber?: number,
         customRPC?: string | null,
@@ -187,7 +187,7 @@ export default class ApiProvider {
     public fallback(currentFallbackNumber?: number) {
         if (this.fallbackNumber !== currentFallbackNumber) return true;
         if (this.fallbackNumber === 3) return false;
-        this.setNewJsonRpcProvider(
+        this.setNewSuiClient(
             this._apiEnv,
             (this.fallbackNumber ?? 1) + 1,
             this._customRPC
@@ -197,7 +197,7 @@ export default class ApiProvider {
 
     public get instance() {
         if (!this._apiFullNodeClient) {
-            this.setNewJsonRpcProvider(
+            this.setNewSuiClient(
                 this._apiEnv,
                 this.fallbackNumber,
                 this._customRPC
@@ -213,7 +213,7 @@ export default class ApiProvider {
 
     public getSignerInstance(keypair: Keypair, force?: boolean): RawSigner {
         if (!this._apiFullNodeClient) {
-            this.setNewJsonRpcProvider(
+            this.setNewSuiClient(
                 this._apiEnv,
                 this.fallbackNumber,
                 this._customRPC
@@ -235,7 +235,7 @@ export default class ApiProvider {
         accessToken: string
     ): EthosSigner {
         if (!this._apiFullNodeClient) {
-            this.setNewJsonRpcProvider(
+            this.setNewSuiClient(
                 this._apiEnv,
                 this.fallbackNumber,
                 this._customRPC

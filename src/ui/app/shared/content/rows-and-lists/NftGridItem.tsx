@@ -14,7 +14,7 @@ import {
     removeInvalidPackage,
 } from '_src/ui/app/redux/slices/valid';
 
-import type { SuiObjectData } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js/client';
 
 interface NftGridItemProps {
     nft: SuiObjectData;
@@ -101,7 +101,11 @@ const NftGridItem = ({
                 >
                     {filePath && (
                         <img
-                            data-testid={`${nft.content.fields.name}`}
+                            data-testid={`${
+                                'name' in nft.content.fields
+                                    ? nft.content.fields.name
+                                    : ''
+                            }`}
                             className="object-cover h-36 w-36 shadow-sm rounded-2xl transition-opacity duration-200 ease-in-out"
                             src={filePath}
                             alt={nftFields?.name || 'NFT'}

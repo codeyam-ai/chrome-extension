@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { fromHEX } from '@mysten/bcs';
-import { Ed25519Keypair, type SuiMoveObject } from '@mysten/sui.js';
+import { Ed25519Keypair } from '@mysten/sui.js';
+import { type SuiMoveObject } from '@mysten/sui.js/client';
 import {
     createAsyncThunk,
     createSelector,

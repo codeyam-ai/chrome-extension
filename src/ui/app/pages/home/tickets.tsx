@@ -13,7 +13,7 @@ import TicketList from '_src/ui/app/shared/content/rows-and-lists/TicketList';
 import TicketProjectList from '_src/ui/app/shared/content/rows-and-lists/TicketProjectList';
 import TextPageTitle from '_src/ui/app/shared/headers/page-headers/TextPageTitle';
 
-import type { SuiObjectData } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js/client';
 
 function TicketsPage() {
     const navigate = useNavigate();
@@ -41,7 +41,12 @@ function TicketsPage() {
                         client,
                         ticket.content,
                         address || '',
-                        ticket.content?.fields.ticket_agent_id
+                        ticket.content.fields &&
+                            'ticket_agent_id' in ticket.content.fields &&
+                            typeof ticket.content.fields.ticket_agent_id ===
+                                'string'
+                            ? ticket.content?.fields.ticket_agent_id
+                            : ''
                     );
 
                     if (isValid) {

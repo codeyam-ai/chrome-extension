@@ -10,7 +10,7 @@ import BodyLarge from '../../shared/typography/BodyLarge';
 import CopyBody from '../../shared/typography/CopyBody';
 
 import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTransactions';
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 
 type ObjectChangeInfo = {
     type: string;

@@ -4,7 +4,7 @@ import getTimeToEarnStakingRewards from './getTimeToEarnStakeRewards';
 import capitalize from '../capitalize';
 import { NUM_OF_EPOCH_BEFORE_EARNING } from '_src/shared/constants';
 
-import type { SuiSystemStateSummary } from '@mysten/sui.js';
+import type { SuiSystemStateSummary } from '@mysten/sui.js/client';
 
 export function calculateStakeRewardStart(systemState?: SuiSystemStateSummary) {
     const startEarningRewardsEpoch =

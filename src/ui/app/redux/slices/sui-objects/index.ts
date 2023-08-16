@@ -1,11 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-    getObjectId,
-    getObjectVersion,
-    getSuiObjectData,
-} from '@mysten/sui.js';
+import { getObjectId, getObjectVersion } from '@mysten/sui.js';
 import {
     createAsyncThunk,
     createEntityAdapter,
@@ -17,12 +13,10 @@ import { NFT } from './NFT';
 import testConnection from '../../testConnection';
 
 import type {
-    // SuiAddress,
-    // ObjectId,
-    SuiObjectData,
     PaginatedObjectsResponse,
+    SuiObjectData,
     SuiObjectResponse,
-} from '@mysten/sui.js';
+} from '@mysten/sui.js/client';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
@@ -132,7 +126,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         let objectIndex = 0;
         let kioskObjectsLoaded = 0;
         for (const objRes of objectResponses) {
-            const suiObjectData = getSuiObjectData(objRes);
+            const suiObjectData = objRes.data;
 
             if (suiObjectData) {
                 if (NFT.isKiosk(suiObjectData)) {
@@ -143,8 +137,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                         );
 
                         for (const kioskObject of kioskObjects) {
-                            const kioskObjectData =
-                                getSuiObjectData(kioskObject);
+                            const kioskObjectData = kioskObject.data;
                             if (kioskObjectData) {
                                 suiObjects.push({
                                     index: objectIndex,
@@ -225,7 +218,7 @@ export const fetchMoreObjects = createAsyncThunk<
             );
 
             for (const kioskObject of kioskObjects) {
-                const kioskObjectData = getSuiObjectData(kioskObject);
+                const kioskObjectData = kioskObject.data;
                 if (kioskObjectData) {
                     newSuiObjects.push({
                         kiosk: suiObjectData,
@@ -266,6 +259,10 @@ const initialState = objectsAdapter.getInitialState<SuiObjectsManualState>({
     objectResponses: [],
 });
 
+// This is probably dangerous and should be removed as soon a possible
+// The error is: Type instantiation is excessively deep and possibly infinite.ts(2589)
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 const slice = createSlice({
     name: 'sui-objects',
     initialState: initialState,

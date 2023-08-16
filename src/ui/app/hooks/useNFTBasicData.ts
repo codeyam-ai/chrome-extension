@@ -9,7 +9,7 @@ import useMediaUrl from './useMediaUrl';
 import { NFT } from '_redux/slices/sui-objects/NFT';
 import { api } from '_redux/store/thunk-extras';
 
-import type { SuiObjectData } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js/client';
 
 export default function useNFTBasicData(nftObj: SuiObjectData) {
     const nftObjectID = getObjectId(nftObj);

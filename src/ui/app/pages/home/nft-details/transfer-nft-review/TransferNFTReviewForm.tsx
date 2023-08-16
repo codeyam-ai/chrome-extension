@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { type SuiObjectData } from '@mysten/sui.js';
+import { type SuiObjectData } from '@mysten/sui.js/client';
 import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { memo, useCallback } from 'react';
 
@@ -80,9 +80,23 @@ function TransferNftReviewForm({
 
     const nftDisplay = getDisplay(nftobj.display);
     const display = {
-        name: nftDisplay?.name ?? fields?.name,
-        description: nftDisplay?.description ?? fields?.description,
-        url: nftDisplay?.image_url ?? fields?.url,
+        name:
+            nftDisplay?.name ??
+            (fields && 'name' in fields && typeof fields.name === 'string'
+                ? fields.name
+                : undefined),
+        description:
+            nftDisplay?.description ??
+            (fields &&
+            'description' in fields &&
+            typeof fields.description === 'string'
+                ? fields.description
+                : undefined),
+        url:
+            nftDisplay?.image_url ??
+            (fields && 'url' in fields && typeof fields.url === 'string'
+                ? fields.url
+                : undefined),
     };
 
     return (
@@ -138,7 +152,7 @@ function TransferNftReviewForm({
                                         },
                                         {
                                             keyName: 'NFT',
-                                            value: display?.name,
+                                            value: display?.name || '',
                                         },
                                         {
                                             keyName: 'Transaction Fee',

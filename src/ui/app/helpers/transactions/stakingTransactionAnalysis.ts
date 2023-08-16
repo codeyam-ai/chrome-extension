@@ -1,8 +1,8 @@
+import { getTotalGasUsed } from '@mysten/sui.js';
 import {
     type SuiTransactionBlockResponse,
     type SuiJsonValue,
-    getTotalGasUsed,
-} from '@mysten/sui.js';
+} from '@mysten/sui.js/client';
 import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
 import addressOwner from './addressOwner';
@@ -39,8 +39,26 @@ const stakingTransactionAnalysis = (
 
     for (const stakingEvent of stakingEvents) {
         let coinType;
-        const amount = BigInt(stakingEvent.parsedJson?.amount || 0);
-        const validator = stakingEvent.parsedJson?.validator_address;
+        // const amount = BigInt(stakingEvent.parsedJson?.amount || 0);
+        const amount = BigInt(
+            stakingEvent.parsedJson &&
+                typeof stakingEvent.parsedJson === 'object' &&
+                'amount' in stakingEvent.parsedJson &&
+                (typeof stakingEvent.parsedJson.amount === 'string' ||
+                    typeof stakingEvent.parsedJson.amount === 'number' ||
+                    typeof stakingEvent.parsedJson.amount === 'bigint' ||
+                    typeof stakingEvent.parsedJson.amount === 'boolean')
+                ? stakingEvent.parsedJson.amount
+                : 0
+        );
+        // const validator = stakingEvent.parsedJson?.validator_address;
+        const validator =
+            stakingEvent.parsedJson &&
+            typeof stakingEvent.parsedJson === 'object' &&
+            'validator_address' in stakingEvent.parsedJson &&
+            typeof stakingEvent.parsedJson.validator_address === 'string'
+                ? stakingEvent.parsedJson?.validator_address
+                : '';
         if (transaction.balanceChanges) {
             const stakeBalanceChange = transaction.balanceChanges.find(
                 (balanceChange) =>
@@ -111,10 +129,10 @@ const getStakingFailureInfo = (
 
     internalTransaction.inputs.forEach((input) => {
         if ('valueType' in input && input.valueType === 'address') {
-            validatorAddress = input.value;
+            validatorAddress = input.value as SuiJsonValue | undefined;
         }
         if ('valueType' in input && input.valueType === 'u64') {
-            suiAmount = input.value;
+            suiAmount = input.value as SuiJsonValue | undefined;
         }
     });
 

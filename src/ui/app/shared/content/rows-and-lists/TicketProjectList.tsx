@@ -10,7 +10,7 @@ import { useAppSelector } from '_src/ui/app/hooks';
 import { TicketProjectDetailsContent } from '_src/ui/app/pages/home/ticket-project-details';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
-import type { SuiObjectResponse, SuiObjectData } from '@mysten/sui.js';
+import type { SuiObjectResponse, SuiObjectData } from '@mysten/sui.js/client';
 
 export interface TicketProjectProps {
     objectId: string;

@@ -109,7 +109,7 @@ export const mockBlockchain = (
             coinType: '0x2::sui::SUI',
             totalBalance: actualCoinTransaction.amountInMist.toString(),
             coinObjectCount: 1,
-            lockedBalance: { number: 0 },
+            lockedBalance: { number: '0' },
         };
 
         const coinTransactionBlock = makeCoinTransactionBlock(
