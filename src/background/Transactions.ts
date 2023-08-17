@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-    Connection,
     Ed25519Keypair,
     RawSigner,
 } from '@mysten/sui.js';
@@ -311,20 +310,20 @@ class Transactions {
             envEndpoint = envInfo?.sui_Env_RPC;
         }
 
-        let connection: Connection;
+        let url: string;
         if (envEndpoint) {
-            connection = new Connection({ fullnode: envEndpoint });
+            url = envEndpoint
         } else if (env) {
-            connection = api.getEndPoints(env);
+            url = api.getEndPoints(env);
         } else {
             throw new Error('No connection found');
         }
 
-        if (!connection) {
-            throw new Error('No connection found');
+        if (!url) {
+            throw new Error('No url found with which to establish a SuiClient connection');
         }
 
-        const client = new SuiClient({ url: connection.fullnode });
+        const client = new SuiClient({ url });
 
         try {
             let signer;
