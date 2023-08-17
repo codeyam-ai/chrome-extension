@@ -1,4 +1,3 @@
-
 import { type BasePayload, isBasePayload } from '../BasePayload';
 import { type Payload } from '../Payload';
 
@@ -16,5 +15,8 @@ export interface SignPersonalMessageRequest extends BasePayload {
 export function isSignPersonalMessageRequest(
     payload: Payload
 ): payload is SignPersonalMessageRequest {
-    return isBasePayload(payload) && payload.type === 'sign-personal-message-request';
+    return (
+        isBasePayload(payload) &&
+        payload.type === 'sign-personal-message-request'
+    );
 }

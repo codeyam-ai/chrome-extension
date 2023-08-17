@@ -256,7 +256,7 @@ class Transactions {
         if (!txResult) {
             throw new Error('Sign message result is empty');
         }
-        if (!('messageBytes' in txResult)) {
+        if (!('bytes' in txResult)) {
             throw new Error('Sign message error, unknown result');
         }
         return txResult;

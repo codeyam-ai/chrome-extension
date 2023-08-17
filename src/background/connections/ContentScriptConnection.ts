@@ -432,7 +432,10 @@ export class ContentScriptConnection extends Connection {
                 );
                 this.send(
                     createMessage<SignPersonalMessageRequest>(
-                        { type: 'sign-personal-message-request', return: result },
+                        {
+                            type: 'sign-personal-message-request',
+                            return: result,
+                        },
                         msg.id
                     )
                 );

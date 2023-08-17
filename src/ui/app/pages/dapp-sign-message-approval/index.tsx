@@ -57,13 +57,11 @@ export function DappSignMessageApprovalPage() {
     const { message } = useMemo(() => {
         if (signMessageRequest?.tx?.type !== 'sign-message') return {};
 
-        const messageBytes = fromB64(signMessageRequest.tx.message);
+        const bytes = fromB64(signMessageRequest.tx.message);
         let message: string = signMessageRequest.tx.message;
         let type: 'utf8' | 'base64' = 'base64';
         try {
-            message = new TextDecoder('utf8', { fatal: true }).decode(
-                messageBytes
-            );
+            message = new TextDecoder('utf8', { fatal: true }).decode(bytes);
             type = 'utf8';
         } catch (e) {
             // do nothing
