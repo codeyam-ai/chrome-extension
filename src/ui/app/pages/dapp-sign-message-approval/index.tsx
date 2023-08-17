@@ -10,7 +10,7 @@ import { AppState } from '../../hooks/useInitializedGuard';
 import Body from '../../shared/typography/Body';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import IncorrectSigner from '../dapp-tx-approval/errors/IncorrectSigner';
-import signMessage from '../dapp-tx-approval/lib/signMessage';
+import signPersonalMessage from '../dapp-tx-approval/lib/signPersonalMessage';
 import SimpleBase from '../dapp-tx-approval/types/SimpleBase';
 import Loading from '_components/loading';
 import UserApproveContainer from '_components/user-approve-container';
@@ -82,7 +82,7 @@ export function DappSignMessageApprovalPage() {
             if (
                 signPersonalMessageRequest?.tx?.type === 'sign-personal-message'
             ) {
-                await signMessage(
+                await signPersonalMessage(
                     connectToLedger,
                     signPersonalMessageRequest.tx.message,
                     signPersonalMessageRequest.id,

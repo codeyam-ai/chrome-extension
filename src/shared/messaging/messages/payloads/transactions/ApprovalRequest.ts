@@ -1,12 +1,12 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import type { SignedTransaction } from '@mysten/sui.js';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type {
     IdentifierString,
     SuiSignAndExecuteTransactionBlockInput,
     SuiSignPersonalMessageOutput,
+    SuiSignTransactionBlockOutput
 } from '@mysten/wallet-standard';
 
 export type TransactionDataType = {
@@ -32,7 +32,7 @@ export type ApprovalRequest = {
     originFavIcon?: string;
     txResult?: SuiTransactionBlockResponse | SuiSignPersonalMessageOutput;
     txResultError?: string;
-    txSigned?: SignedTransaction;
+    txSigned?: SuiSignTransactionBlockOutput;
     createdDate: string;
     tx: TransactionDataType | SignMessageDataType;
 };

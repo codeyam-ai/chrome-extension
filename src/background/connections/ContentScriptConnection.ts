@@ -53,8 +53,8 @@ import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
 import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 
 import type { NetworkEnvType } from '../NetworkEnv';
-import type { SignedTransaction } from '@mysten/sui.js';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
+import type { SuiSignTransactionBlockOutput } from '@mysten/wallet-standard';
 import type { Message } from '_messages';
 import type { PortChannelName } from '_messaging/PortChannelName';
 import type { ErrorPayload } from '_payloads';
@@ -416,7 +416,7 @@ export class ContentScriptConnection extends Connection {
                     createMessage<SignTransactionResponse>(
                         {
                             type: 'sign-transaction-response',
-                            result: result as SignedTransaction,
+                            result: result as SuiSignTransactionBlockOutput,
                         },
                         msg.id
                     )
@@ -426,6 +426,7 @@ export class ContentScriptConnection extends Connection {
                     ['viewAccount', 'suggestTransactions'],
                     payload.args.accountAddress
                 );
+                
                 const result = await Transactions.signPersonalMessage(
                     payload.args,
                     this

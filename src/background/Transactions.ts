@@ -10,8 +10,8 @@ import { TransactionBlock } from '@mysten/sui.js/transactions';
 import {
     SUI_MAINNET_CHAIN,
     type IdentifierString,
+    type SuiSignPersonalMessageOutput,
     type SuiSignAndExecuteTransactionBlockInput,
-    type SuiSignMessageOutput,
     SUI_TESTNET_CHAIN,
     SUI_DEVNET_CHAIN,
 } from '@mysten/wallet-standard';
@@ -243,7 +243,7 @@ class Transactions {
             message,
         }: Required<Pick<SignPersonalMessageRequest, 'args'>>['args'],
         connection: ContentScriptConnection
-    ): Promise<SuiSignMessageOutput> {
+    ): Promise<SuiSignPersonalMessageOutput> {
         const { txResult, txResultError } = await this.requestApproval(
             { type: 'sign-personal-message', accountAddress, message },
             true,

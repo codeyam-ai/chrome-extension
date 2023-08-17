@@ -1,4 +1,3 @@
-import { type SignedMessage } from '@mysten/sui.js';
 import { toB64 } from '@mysten/sui.js/utils';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -10,6 +9,7 @@ import { renderApp } from '_src/test/utils/react-rendering';
 import { accountInfos, simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
+import type { SuiSignPersonalMessageOutput } from '@mysten/wallet-standard';
 import type {
     ApprovalRequest,
     SignPersonalMessageApprovalRequest,
@@ -50,7 +50,7 @@ describe('The Sign Message Approval popup', () => {
 
         expect(responseSpy.mock.calls[0][1]).toBe(true);
 
-        const result = responseSpy.mock.calls[0][2] as SignedMessage;
+        const result = responseSpy.mock.calls[0][2] as SuiSignPersonalMessageOutput;
         expect(result).toBeDefined();
         expect(result.bytes).toEqual('aGVsbG8=');
         expect(result.signature).toEqual(
