@@ -48,14 +48,17 @@ export function DappSignMessageApprovalPage() {
             null,
         [signMessageRequestID]
     );
-    const signPersonalMessageRequest = useAppSelector(signPersonalMessageRequestSelector);
+    const signPersonalMessageRequest = useAppSelector(
+        signPersonalMessageRequestSelector
+    );
     const loading = guardLoading || signMessageRequestLoading;
     // const dispatch = useAppDispatch();
 
     const { closeWindow } = useDependencies();
 
     const { message } = useMemo(() => {
-        if (signPersonalMessageRequest?.tx?.type !== 'sign-personal-message') return {};
+        if (signPersonalMessageRequest?.tx?.type !== 'sign-personal-message')
+            return {};
 
         const bytes = fromB64(signPersonalMessageRequest.tx.message);
         let message: string = signPersonalMessageRequest.tx.message;
@@ -76,7 +79,9 @@ export function DappSignMessageApprovalPage() {
         async (approved: boolean) => {
             if (!message) return;
 
-            if (signPersonalMessageRequest?.tx?.type === 'sign-personal-message') {
+            if (
+                signPersonalMessageRequest?.tx?.type === 'sign-personal-message'
+            ) {
                 await signMessage(
                     connectToLedger,
                     signPersonalMessageRequest.tx.message,
@@ -130,7 +135,9 @@ export function DappSignMessageApprovalPage() {
                     <IncorrectSigner
                         txID={signPersonalMessageRequest.id}
                         txRequest={signPersonalMessageRequest}
-                        correctAddress={signPersonalMessageRequest.tx.accountAddress}
+                        correctAddress={
+                            signPersonalMessageRequest.tx.accountAddress
+                        }
                     />
                 </div>
             </SimpleBase>
@@ -164,7 +171,9 @@ export function DappSignMessageApprovalPage() {
                             )}
                             <div>
                                 <div className="text-base">
-                                    {formatUrl(signPersonalMessageRequest.origin)}
+                                    {formatUrl(
+                                        signPersonalMessageRequest.origin
+                                    )}
                                 </div>
                                 <div>has requested you sign a message</div>
                             </div>

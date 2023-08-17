@@ -17,11 +17,11 @@ export abstract class WalletSigner extends SignerWithProvider {
         clientIdentifier?: string
     ): Promise<SerializedSignature>;
 
-    async signPersonalMessage(
+    async signMessage(
         input: { message: Uint8Array },
         clientIdentifier?: string
     ): Promise<SignedMessage> {
-        return super.signPersonalMessage(input);
+        return super.signMessage(input);
     }
     async signTransactionBlock(
         input: {

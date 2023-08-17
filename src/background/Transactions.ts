@@ -11,7 +11,7 @@ import {
     SUI_MAINNET_CHAIN,
     type IdentifierString,
     type SuiSignAndExecuteTransactionBlockInput,
-    type SuiSignPersonalMessageOutput,
+    type SuiSignMessageOutput,
     SUI_TESTNET_CHAIN,
     SUI_DEVNET_CHAIN,
 } from '@mysten/wallet-standard';
@@ -55,7 +55,9 @@ function openSignPersonalMessageWindow(txRequestId: string) {
     return new Window({
         url:
             Browser.runtime.getURL('ui.html') +
-            `#/sign-personal-message-approval/${encodeURIComponent(txRequestId)}`,
+            `#/sign-personal-message-approval/${encodeURIComponent(
+                txRequestId
+            )}`,
         height: 720,
     });
 }
@@ -241,7 +243,7 @@ class Transactions {
             message,
         }: Required<Pick<SignPersonalMessageRequest, 'args'>>['args'],
         connection: ContentScriptConnection
-    ): Promise<SuiSignPersonalMessageOutput> {
+    ): Promise<SuiSignMessageOutput> {
         const { txResult, txResultError } = await this.requestApproval(
             { type: 'sign-personal-message', accountAddress, message },
             true,

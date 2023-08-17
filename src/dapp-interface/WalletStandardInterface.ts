@@ -18,7 +18,7 @@ import {
     type StandardEventsOnMethod,
     type StandardEventsListeners,
     type SuiSignTransactionBlockMethod,
-    type SuiSignPersonalMessageMethod,
+    type SuiSignMessageMethod,
     type StandardDisconnectFeature,
     type StandardDisconnectMethod,
     SUI_MAINNET_CHAIN,
@@ -139,9 +139,9 @@ export class EthosWallet implements Wallet {
                 version: '0.0.1',
                 stake: this.#stake,
             },
-            'sui:signPersonalMessage': {
+            'sui:signMessage': {
                 version: '1.0.0',
-                signPersonalMessage: this.#signPersonalMessage,
+                signMessage: this.#signPersonalMessage,
             },
         };
     }
@@ -327,7 +327,7 @@ export class EthosWallet implements Wallet {
         });
     };
 
-    #signPersonalMessage: SuiSignPersonalMessageMethod = async ({
+    #signPersonalMessage: SuiSignMessageMethod = async ({
         message,
         account,
     }) => {
