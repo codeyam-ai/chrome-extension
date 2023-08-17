@@ -56,7 +56,7 @@ const SendReceiveButtonGroup = ({
     const _faucet = useCallback(() => {
         setIsFaucetInProgress(true);
         const faucet = async () => {
-            const result = await fetch(`${api.getEndPoints().faucet}gas`, {
+            const result = await fetch(`${api.faucetUrl}gas`, {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
