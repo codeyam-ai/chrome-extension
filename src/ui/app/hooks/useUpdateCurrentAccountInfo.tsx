@@ -51,10 +51,11 @@ export const useUpdateCurrentAccountInfo = () => {
             try {
                 await saveCustomization(jwt, encryptedAccountCustomization);
             } catch (error) {
+                // eslint-disable-next-line no-console
                 console.error('Failed saving customizations to server:', error);
             }
         },
-        [getCachedJwt]
+        [getCachedJwt, keypairVault]
     );
 
     const updateCurrentAccountInfo = async (

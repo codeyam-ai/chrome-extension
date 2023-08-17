@@ -594,7 +594,6 @@ class Transactions {
             race(popUpClose, txResponseMessage).pipe(
                 take(1),
                 map(async (response) => {
-                    console.log('RESPONSE', response);
                     if (response) {
                         const { approved, txResult, txSigned, txResultError } =
                             response;

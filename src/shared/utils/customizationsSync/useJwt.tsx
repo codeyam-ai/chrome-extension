@@ -68,7 +68,6 @@ export const useJwt = () => {
                     setCachedJwt(token, address);
                 }
             } catch (error) {
-                console.log('error decoding JWT', error);
                 if (address) {
                     token = await getJwt(
                         connectToLedger,

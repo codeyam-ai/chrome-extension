@@ -72,6 +72,7 @@ const ValidatorDetail = () => {
             );
             return validator_address === validatorAddress;
         });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const tallyingRuleGlobalScore = maybeGetValue<any>(
             validatorEvent?.parsedJson,
             'tallying_rule_global_score'
