@@ -6,7 +6,7 @@ import { createEntityAdapter } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
 
-const signMessageRequestsAdapter = createEntityAdapter<ApprovalRequest>({
+const signPersonalMessageRequestsAdapter = createEntityAdapter<ApprovalRequest>({
     sortComparer: (a, b) => {
         const aDate: Date = new Date(a.createdDate);
         const bDate: Date = new Date(b.createdDate);
@@ -14,7 +14,7 @@ const signMessageRequestsAdapter = createEntityAdapter<ApprovalRequest>({
     },
 });
 
-export const signMessageRequestsSelectors =
-    signMessageRequestsAdapter.getSelectors(
+export const signPersonalMessageRequestsSelectors =
+    signPersonalMessageRequestsAdapter.getSelectors(
         (state: RootState) => state.transactionRequests
     );

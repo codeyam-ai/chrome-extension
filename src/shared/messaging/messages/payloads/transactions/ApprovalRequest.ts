@@ -20,7 +20,7 @@ export type TransactionDataType = {
 };
 
 export type SignMessageDataType = {
-    type: 'sign-message';
+    type: 'sign-personal-message';
     message: string;
     accountAddress: string;
 };
@@ -37,7 +37,7 @@ export type ApprovalRequest = {
     tx: TransactionDataType | SignMessageDataType;
 };
 
-export interface SignMessageApprovalRequest
+export interface SignPersonalMessageApprovalRequest
     extends Omit<ApprovalRequest, 'txResult' | 'tx'> {
     tx: SignMessageDataType;
     txResult?: SuiSignPersonalMessageOutput;
@@ -49,14 +49,14 @@ export interface TransactionApprovalRequest
     txResult?: SuiTransactionBlockResponse;
 }
 
-export function isSignMessageApprovalRequest(
+export function isSignPersonalMessageApprovalRequest(
     request: ApprovalRequest
-): request is SignMessageApprovalRequest {
-    return request.tx.type === 'sign-message';
+): request is SignPersonalMessageApprovalRequest {
+    return request.tx.type === 'sign-personal-message';
 }
 
 export function isTransactionApprovalRequest(
     request: ApprovalRequest
 ): request is TransactionApprovalRequest {
-    return request.tx.type !== 'sign-message';
+    return request.tx.type !== 'sign-personal-message';
 }

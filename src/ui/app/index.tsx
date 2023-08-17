@@ -254,7 +254,7 @@ const App = () => {
                             element={<DappTxApprovalPage />}
                         />
                         <Route
-                            path="/sign-message-approval/:signMessageRequestID"
+                            path="/sign-personal-message-approval/:signMessageRequestID"
                             element={<DappSignMessageApprovalPage />}
                         />
                         <Route

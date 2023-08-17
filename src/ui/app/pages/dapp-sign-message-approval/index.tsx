@@ -15,7 +15,7 @@ import SimpleBase from '../dapp-tx-approval/types/SimpleBase';
 import Loading from '_components/loading';
 import UserApproveContainer from '_components/user-approve-container';
 import { useAppSelector, useInitializedGuard } from '_hooks';
-import { signMessageRequestsSelectors } from '_redux/slices/sign-message-requests';
+import { signPersonalMessageRequestsSelectors } from '_redux/slices/sign-personal-message-requests';
 import { useDependencies } from '_src/shared/utils/dependenciesContext';
 
 import type { RootState } from '_redux/RootReducer';
@@ -38,27 +38,27 @@ export function DappSignMessageApprovalPage() {
     const signMessageRequestLoading = useAppSelector(
         ({ transactionRequests }) => !transactionRequests.initialized
     );
-    const signMessageRequestSelector = useMemo(
+    const signPersonalMessageRequestSelector = useMemo(
         () => (state: RootState) =>
             (signMessageRequestID &&
-                signMessageRequestsSelectors.selectById(
+                signPersonalMessageRequestsSelectors.selectById(
                     state,
                     signMessageRequestID
                 )) ||
             null,
         [signMessageRequestID]
     );
-    const signMessageRequest = useAppSelector(signMessageRequestSelector);
+    const signPersonalMessageRequest = useAppSelector(signPersonalMessageRequestSelector);
     const loading = guardLoading || signMessageRequestLoading;
     // const dispatch = useAppDispatch();
 
     const { closeWindow } = useDependencies();
 
     const { message } = useMemo(() => {
-        if (signMessageRequest?.tx?.type !== 'sign-message') return {};
+        if (signPersonalMessageRequest?.tx?.type !== 'sign-personal-message') return {};
 
-        const bytes = fromB64(signMessageRequest.tx.message);
-        let message: string = signMessageRequest.tx.message;
+        const bytes = fromB64(signPersonalMessageRequest.tx.message);
+        let message: string = signPersonalMessageRequest.tx.message;
         let type: 'utf8' | 'base64' = 'base64';
         try {
             message = new TextDecoder('utf8', { fatal: true }).decode(bytes);
@@ -70,17 +70,17 @@ export function DappSignMessageApprovalPage() {
             message,
             type,
         };
-    }, [signMessageRequest]);
+    }, [signPersonalMessageRequest]);
 
     const handleOnSubmit = useCallback(
         async (approved: boolean) => {
             if (!message) return;
 
-            if (signMessageRequest?.tx?.type === 'sign-message') {
+            if (signPersonalMessageRequest?.tx?.type === 'sign-personal-message') {
                 await signMessage(
                     connectToLedger,
-                    signMessageRequest.tx.message,
-                    signMessageRequest.id,
+                    signPersonalMessageRequest.tx.message,
+                    signPersonalMessageRequest.id,
                     approved,
                     passphrase,
                     authentication,
@@ -101,7 +101,7 @@ export function DappSignMessageApprovalPage() {
             connectToLedger,
             message,
             passphrase,
-            signMessageRequest,
+            signPersonalMessageRequest,
         ]
     );
 
@@ -110,27 +110,27 @@ export function DappSignMessageApprovalPage() {
     }, []);
 
     useEffect(() => {
-        if (signMessageRequest) {
-            setSiteFaviconSrc(signMessageRequest.originFavIcon);
+        if (signPersonalMessageRequest) {
+            setSiteFaviconSrc(signPersonalMessageRequest.originFavIcon);
         }
-    }, [signMessageRequest]);
+    }, [signPersonalMessageRequest]);
 
     if (
         activeAddress &&
-        signMessageRequest?.tx?.type === 'sign-message' &&
-        signMessageRequest?.tx?.accountAddress &&
-        signMessageRequest?.tx?.accountAddress !== activeAddress
+        signPersonalMessageRequest?.tx?.type === 'sign-personal-message' &&
+        signPersonalMessageRequest?.tx?.accountAddress &&
+        signPersonalMessageRequest?.tx?.accountAddress !== activeAddress
     ) {
         return (
             <SimpleBase
-                approval={signMessageRequest}
+                approval={signPersonalMessageRequest}
                 onComplete={handleOnSubmit}
             >
                 <div className="py-12">
                     <IncorrectSigner
-                        txID={signMessageRequest.id}
-                        txRequest={signMessageRequest}
-                        correctAddress={signMessageRequest.tx.accountAddress}
+                        txID={signPersonalMessageRequest.id}
+                        txRequest={signPersonalMessageRequest}
+                        correctAddress={signPersonalMessageRequest.tx.accountAddress}
                     />
                 </div>
             </SimpleBase>
@@ -139,13 +139,13 @@ export function DappSignMessageApprovalPage() {
 
     return (
         <Loading loading={loading} big={true} resize={true}>
-            {signMessageRequest && (
+            {signPersonalMessageRequest && (
                 <UserApproveContainer
                     title="Sign Message"
                     approveTitle="Sign"
                     rejectTitle="Reject"
-                    origin={signMessageRequest.origin}
-                    originFavIcon={signMessageRequest.originFavIcon}
+                    origin={signPersonalMessageRequest.origin}
+                    originFavIcon={signPersonalMessageRequest.originFavIcon}
                     onSubmit={handleOnSubmit}
                 >
                     <div className="flex flex-col justify-center items-center gap-6 dark:text-slate-300 pb-6">
@@ -164,7 +164,7 @@ export function DappSignMessageApprovalPage() {
                             )}
                             <div>
                                 <div className="text-base">
-                                    {formatUrl(signMessageRequest.origin)}
+                                    {formatUrl(signPersonalMessageRequest.origin)}
                                 </div>
                                 <div>has requested you sign a message</div>
                             </div>

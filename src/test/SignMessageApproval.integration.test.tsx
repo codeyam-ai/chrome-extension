@@ -12,7 +12,7 @@ import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
 import type {
     ApprovalRequest,
-    SignMessageApprovalRequest,
+    SignPersonalMessageApprovalRequest,
 } from '_payloads/transactions';
 
 describe('The Sign Message Approval popup', () => {
@@ -33,7 +33,7 @@ describe('The Sign Message Approval popup', () => {
         const testDeps = makeTestDeps();
         const mockWindowCloser = testDeps.closeWindow;
         renderApp({
-            initialRoute: `/sign-message-approval/${txRequestId}`,
+            initialRoute: `/sign-personal-message-approval/${txRequestId}`,
             dependencies: testDeps,
         });
 
@@ -63,7 +63,7 @@ describe('The Sign Message Approval popup', () => {
         const testDeps = makeTestDeps();
         const mockWindowCloser = testDeps.closeWindow;
         renderApp({
-            initialRoute: `/sign-message-approval/${txRequestId}`,
+            initialRoute: `/sign-personal-message-approval/${txRequestId}`,
             dependencies: testDeps,
         });
 
@@ -96,14 +96,14 @@ describe('The Sign Message Approval popup', () => {
 
     async function simulateReduxStateWithSignMessage(txRequestId: string) {
         const message = toB64(new TextEncoder().encode('hello'));
-        const txRequest: SignMessageApprovalRequest = {
+        const txRequest: SignPersonalMessageApprovalRequest = {
             id: txRequestId,
             origin: 'https://ethoswallet.xyz',
             originFavIcon: 'https://ethoswallet.xyz/favicon.ico',
             createdDate: '2022-11-29T23:33:53.084Z',
             approved: true,
             tx: {
-                type: 'sign-message',
+                type: 'sign-personal-message',
                 message,
                 accountAddress: accountInfos[0].address,
             },

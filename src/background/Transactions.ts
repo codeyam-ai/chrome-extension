@@ -51,11 +51,11 @@ function openTxWindow(txRequestId: string) {
     });
 }
 
-function openSignMessageWindow(txRequestId: string) {
+function openSignPersonalMessageWindow(txRequestId: string) {
     return new Window({
         url:
             Browser.runtime.getURL('ui.html') +
-            `#/sign-message-approval/${encodeURIComponent(txRequestId)}`,
+            `#/sign-personal-message-approval/${encodeURIComponent(txRequestId)}`,
         height: 720,
     });
 }
@@ -243,7 +243,7 @@ class Transactions {
         connection: ContentScriptConnection
     ): Promise<SuiSignPersonalMessageOutput> {
         const { txResult, txResultError } = await this.requestApproval(
-            { type: 'sign-message', accountAddress, message },
+            { type: 'sign-personal-message', accountAddress, message },
             true,
             connection.origin,
             connection.originFavIcon
@@ -580,7 +580,7 @@ class Transactions {
         );
         await this.storeTransactionRequest(txRequest);
         const popUp = sign
-            ? openSignMessageWindow(txRequest.id)
+            ? openSignPersonalMessageWindow(txRequest.id)
             : openTxWindow(txRequest.id);
         const popUpClose = (await popUp.show()).pipe(
             take(1),

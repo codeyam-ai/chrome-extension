@@ -163,7 +163,7 @@ export class EthosWallet implements Wallet {
                         'standard:connect',
                         'standard:disconnect',
                         'standard:events',
-                        'sui:signMessage',
+                        'sui:signPersonalMessage',
                         'sui:signTransactionBlock',
                         'sui:signAndExecuteTransactionBlock',
                     ],
