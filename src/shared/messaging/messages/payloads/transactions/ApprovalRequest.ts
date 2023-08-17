@@ -6,7 +6,7 @@ import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type {
     IdentifierString,
     SuiSignAndExecuteTransactionBlockInput,
-    SuiSignMessageOutput,
+    SuiSignPersonalMessageOutput,
 } from '@mysten/wallet-standard';
 
 export type TransactionDataType = {
@@ -30,7 +30,7 @@ export type ApprovalRequest = {
     approved: boolean | null;
     origin: string;
     originFavIcon?: string;
-    txResult?: SuiTransactionBlockResponse | SuiSignMessageOutput;
+    txResult?: SuiTransactionBlockResponse | SuiSignPersonalMessageOutput;
     txResultError?: string;
     txSigned?: SignedTransaction;
     createdDate: string;
@@ -40,7 +40,7 @@ export type ApprovalRequest = {
 export interface SignMessageApprovalRequest
     extends Omit<ApprovalRequest, 'txResult' | 'tx'> {
     tx: SignMessageDataType;
-    txResult?: SuiSignMessageOutput;
+    txResult?: SuiSignPersonalMessageOutput;
 }
 
 export interface TransactionApprovalRequest

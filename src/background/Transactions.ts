@@ -11,7 +11,7 @@ import {
     SUI_MAINNET_CHAIN,
     type IdentifierString,
     type SuiSignAndExecuteTransactionBlockInput,
-    type SuiSignMessageOutput,
+    type SuiSignPersonalMessageOutput,
     SUI_TESTNET_CHAIN,
     SUI_DEVNET_CHAIN,
 } from '@mysten/wallet-standard';
@@ -30,7 +30,7 @@ import type { SignedTransaction } from '@mysten/sui.js';
 import type {
     PreapprovalRequest,
     PreapprovalResponse,
-    SignMessageRequest,
+    SignPersonalMessageRequest,
     SuiSignTransactionSerialized,
 } from '_payloads/transactions';
 import type {
@@ -235,13 +235,13 @@ class Transactions {
         }
     }
 
-    public async signMessage(
+    public async signPersonalMessage(
         {
             accountAddress,
             message,
-        }: Required<Pick<SignMessageRequest, 'args'>>['args'],
+        }: Required<Pick<SignPersonalMessageRequest, 'args'>>['args'],
         connection: ContentScriptConnection
-    ): Promise<SuiSignMessageOutput> {
+    ): Promise<SuiSignPersonalMessageOutput> {
         const { txResult, txResultError } = await this.requestApproval(
             { type: 'sign-message', accountAddress, message },
             true,
