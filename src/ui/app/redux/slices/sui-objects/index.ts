@@ -262,7 +262,7 @@ const initialState = objectsAdapter.getInitialState<SuiObjectsManualState>({
 // This is probably dangerous and should be removed as soon a possible
 // The error is: Type instantiation is excessively deep and possibly infinite.ts(2589)
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// @ts-ignore: Not sure how to fix this
 const slice = createSlice({
     name: 'sui-objects',
     initialState: initialState,
