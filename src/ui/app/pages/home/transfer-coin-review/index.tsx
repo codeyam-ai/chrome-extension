@@ -19,7 +19,7 @@ import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
 import { accountCoinsSelector } from '_src/ui/app/redux/slices/account';
 import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 
-import type { SuiMoveObject } from '@mysten/sui.js';
+import type { SuiMoveObject } from '@mysten/sui.js/client';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
 

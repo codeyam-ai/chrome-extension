@@ -6,7 +6,7 @@ import {
 
 import testConnection from '../../testConnection';
 
-import type { CoinBalance } from '@mysten/sui.js';
+import type { CoinBalance } from '@mysten/sui.js/client';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
 

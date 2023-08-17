@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { TransactionBlock } from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';

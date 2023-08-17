@@ -1,7 +1,8 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { is, SuiMovePackage } from '@mysten/sui.js';
+import { SuiMovePackage } from '@mysten/sui.js';
+import { is } from '@mysten/sui.js/utils';
 import cl from 'classnames';
 import { memo, useMemo } from 'react';
 import { Link } from 'react-router-dom';
@@ -11,8 +12,6 @@ import CopyToClipboard from '_components/copy-to-clipboard';
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { useMiddleEllipsis, useMediaUrl, useSuiObjectFields } from '_hooks';
-
-//import type { SuiObject as SuiObjectType } from '@mysten/sui.js';
 
 import st from './SuiObject.module.scss';
 

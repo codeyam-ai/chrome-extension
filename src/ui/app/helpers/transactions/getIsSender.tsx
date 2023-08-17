@@ -1,6 +1,6 @@
 import safeAddress from '../safeAddress';
 
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 
 const getIsSender = (
     address: string,

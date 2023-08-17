@@ -1,4 +1,5 @@
-import { SuiMoveObject, is, getSuiObjectData } from '@mysten/sui.js';
+import { SuiMoveObject, getSuiObjectData } from '@mysten/sui.js';
+import { is } from '@mysten/sui.js/utils';
 import { useEffect, useState } from 'react';
 
 import isValidTicket from '../../../helpers/isValidTicket';

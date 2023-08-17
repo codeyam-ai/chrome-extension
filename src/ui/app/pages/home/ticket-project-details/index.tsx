@@ -1,4 +1,3 @@
-// import { SUI_TYPE_ARG } from '@mysten/sui.js';
 // import { useCallback, useEffect, useMemo, useState } from 'react';
 // import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 

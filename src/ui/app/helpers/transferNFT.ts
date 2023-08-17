@@ -1,4 +1,4 @@
-import { TransactionBlock } from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
 
 import { getSigner } from './getSigner';
 import transferObjectTransactionBlock from './transferObjectTransactionBlock';

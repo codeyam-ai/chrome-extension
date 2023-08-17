@@ -1,13 +1,15 @@
 import type {
-    TransactionEffects,
+    ExecutionStatus,
     SuiTransactionBlockResponse,
-    ExecutionStatusType,
-} from '@mysten/sui.js';
+    TransactionEffects,
+} from '@mysten/sui.js/client';
+
+type ExecutionStatusType = ExecutionStatus['status'];
 
 const utils = {
     getTransactionEffects: (
         data: SuiTransactionBlockResponse
-    ): TransactionEffects | undefined => {
+    ) => {
         return data.effects;
     },
 

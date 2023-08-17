@@ -3,12 +3,12 @@ import BigNumber from 'bignumber.js';
 
 import addressOwner from '_src/ui/app/helpers/transactions/addressOwner';
 
+import type { RawSigner } from '@mysten/sui.js';
 import type {
-    RawSigner,
+    DryRunTransactionBlockResponse,
     SuiObjectChange,
-    TransactionBlock,
-} from '@mysten/sui.js';
-import type { DryRunTransactionBlockResponse } from '@mysten/sui.js/client';
+} from '@mysten/sui.js/client';
+import type { TransactionBlock } from '@mysten/sui.js/transactions';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 

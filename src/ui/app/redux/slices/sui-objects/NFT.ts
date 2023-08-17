@@ -1,8 +1,4 @@
-import {
-    getObjectFields,
-    getObjectType,
-    getSuiObjectData,
-} from '@mysten/sui.js';
+import { getObjectFields } from '@mysten/sui.js';
 import get from 'lodash/get';
 
 import ipfs from '_src/ui/app/helpers/ipfs';

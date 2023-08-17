@@ -7,7 +7,8 @@ import { makeDryRunTransactionResponse } from '_src/test/utils/mockchain-templat
 import { suiSystemStateObject } from '_src/test/utils/mockchain-templates/sui-system-state';
 import { makeCoinTransactionBlock } from '_src/test/utils/mockchain-templates/transactionBlock';
 
-import type { CoinBalance, DelegatedStake } from '@mysten/sui.js/client';
+import type { DelegatedStake } from '@mysten/sui.js';
+import type { CoinBalance } from '@mysten/sui.js/client';
 import type { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 /**

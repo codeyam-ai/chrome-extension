@@ -1,7 +1,6 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-// import { fromB64, TransactionBlock } from '@mysten/sui.js';
 import {
     // createAsyncThunk,
     createEntityAdapter,
@@ -10,12 +9,6 @@ import {
 
 // import { getSigner } from '_src/ui/app/helpers/getSigner';
 
-// import type {
-//     SignedMessage,
-//     SignedTransaction,
-//     SuiAddress,
-//     SuiTransactionBlockResponse,
-// } from '@mysten/sui.js';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { ApprovalRequest } from '_payloads/transactions/ApprovalRequest';
 import type { RootState } from '_redux/RootReducer';
