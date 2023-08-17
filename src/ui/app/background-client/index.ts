@@ -15,7 +15,10 @@ import { setTransactionRequests } from '_redux/slices/transaction-requests';
 import { isGetPreapprovalResponse } from '_src/shared/messaging/messages/payloads/transactions/ui/GetPreapprovalResponse';
 
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
-import type { SuiSignPersonalMessageOutput, SuiSignTransactionBlockOutput } from '@mysten/wallet-standard';
+import type {
+    SuiSignPersonalMessageOutput,
+    SuiSignTransactionBlockOutput,
+} from '@mysten/wallet-standard';
 import type { Message } from '_messages';
 import type { HeartbeatPayload } from '_payloads/locking/HeartbeatPayload';
 import type { LockWalletRequest } from '_payloads/locking/LockWalletRequest';

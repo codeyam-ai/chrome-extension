@@ -426,7 +426,7 @@ export class ContentScriptConnection extends Connection {
                     ['viewAccount', 'suggestTransactions'],
                     payload.args.accountAddress
                 );
-                
+
                 const result = await Transactions.signPersonalMessage(
                     payload.args,
                     this

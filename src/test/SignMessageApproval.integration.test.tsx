@@ -50,7 +50,8 @@ describe('The Sign Message Approval popup', () => {
 
         expect(responseSpy.mock.calls[0][1]).toBe(true);
 
-        const result = responseSpy.mock.calls[0][2] as SuiSignPersonalMessageOutput;
+        const result = responseSpy.mock
+            .calls[0][2] as SuiSignPersonalMessageOutput;
         expect(result).toBeDefined();
         expect(result.bytes).toEqual('aGVsbG8=');
         expect(result.signature).toEqual(

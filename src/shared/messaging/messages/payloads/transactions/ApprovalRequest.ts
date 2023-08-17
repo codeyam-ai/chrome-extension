@@ -6,7 +6,7 @@ import type {
     IdentifierString,
     SuiSignAndExecuteTransactionBlockInput,
     SuiSignPersonalMessageOutput,
-    SuiSignTransactionBlockOutput
+    SuiSignTransactionBlockOutput,
 } from '@mysten/wallet-standard';
 
 export type TransactionDataType = {

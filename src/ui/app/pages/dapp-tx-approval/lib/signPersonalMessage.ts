@@ -23,8 +23,10 @@ const signPersonalMessage = async (
         throw new Error(`ApprovalRequest ${txID} not found`);
     }
 
-    let txResult: SuiTransactionBlockResponse | SuiSignMessageOutput | undefined =
-        undefined;
+    let txResult:
+        | SuiTransactionBlockResponse
+        | SuiSignMessageOutput
+        | undefined = undefined;
     let txResultError: string | undefined;
 
     if (approved) {
@@ -53,7 +55,9 @@ const signPersonalMessage = async (
     thunkExtras.background.sendTransactionRequestResponse(
         txID,
         approved,
-        txResult ? { bytes: txResult.messageBytes, signature: txResult.signature } : undefined,
+        txResult
+            ? { bytes: txResult.messageBytes, signature: txResult.signature }
+            : undefined,
         txResultError
     );
 };
