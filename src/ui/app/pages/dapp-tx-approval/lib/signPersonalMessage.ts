@@ -5,7 +5,7 @@ import { getSigner } from '_src/ui/app/helpers/getSigner';
 
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
-import type { SuiSignMessageOutput, SuiSignPersonalMessageOutput } from '@mysten/wallet-standard';
+import type { SuiSignMessageOutput } from '@mysten/wallet-standard';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 const signPersonalMessage = async (
