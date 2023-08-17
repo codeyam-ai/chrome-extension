@@ -37,9 +37,9 @@ import { isSetFavorites } from '_src/shared/messaging/messages/payloads/account/
 import { isSwitchAccount } from '_src/shared/messaging/messages/payloads/account/SwitchAccount';
 import { isDisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import {
-    isSignMessageRequest,
-    type SignMessageRequest,
-} from '_src/shared/messaging/messages/payloads/transactions/SignMessage';
+    isSignPersonalMessageRequest,
+    type SignPersonalMessageRequest,
+} from '_src/shared/messaging/messages/payloads/transactions/SignPersonalMessage';
 import { isGetUrl } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
 import {
     getEncrypted,
@@ -53,8 +53,8 @@ import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
 import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 
 import type { NetworkEnvType } from '../NetworkEnv';
-import type { SignedTransaction } from '@mysten/sui.js';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
+import type { SuiSignTransactionBlockOutput } from '@mysten/wallet-standard';
 import type { Message } from '_messages';
 import type { PortChannelName } from '_messaging/PortChannelName';
 import type { ErrorPayload } from '_payloads';
@@ -416,23 +416,27 @@ export class ContentScriptConnection extends Connection {
                     createMessage<SignTransactionResponse>(
                         {
                             type: 'sign-transaction-response',
-                            result: result as SignedTransaction,
+                            result: result as SuiSignTransactionBlockOutput,
                         },
                         msg.id
                     )
                 );
-            } else if (isSignMessageRequest(payload) && payload.args) {
+            } else if (isSignPersonalMessageRequest(payload) && payload.args) {
                 await this.ensurePermissions(
                     ['viewAccount', 'suggestTransactions'],
                     payload.args.accountAddress
                 );
-                const result = await Transactions.signMessage(
+                
+                const result = await Transactions.signPersonalMessage(
                     payload.args,
                     this
                 );
                 this.send(
-                    createMessage<SignMessageRequest>(
-                        { type: 'sign-message-request', return: result },
+                    createMessage<SignPersonalMessageRequest>(
+                        {
+                            type: 'sign-personal-message-request',
+                            return: result,
+                        },
                         msg.id
                     )
                 );

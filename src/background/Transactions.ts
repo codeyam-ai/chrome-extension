@@ -10,8 +10,8 @@ import { TransactionBlock } from '@mysten/sui.js/transactions';
 import {
     SUI_MAINNET_CHAIN,
     type IdentifierString,
+    type SuiSignPersonalMessageOutput,
     type SuiSignAndExecuteTransactionBlockInput,
-    type SuiSignMessageOutput,
     SUI_TESTNET_CHAIN,
     SUI_DEVNET_CHAIN,
 } from '@mysten/wallet-standard';
@@ -30,7 +30,7 @@ import type { SignedTransaction } from '@mysten/sui.js';
 import type {
     PreapprovalRequest,
     PreapprovalResponse,
-    SignMessageRequest,
+    SignPersonalMessageRequest,
     SuiSignTransactionSerialized,
 } from '_payloads/transactions';
 import type {
@@ -51,11 +51,13 @@ function openTxWindow(txRequestId: string) {
     });
 }
 
-function openSignMessageWindow(txRequestId: string) {
+function openSignPersonalMessageWindow(txRequestId: string) {
     return new Window({
         url:
             Browser.runtime.getURL('ui.html') +
-            `#/sign-message-approval/${encodeURIComponent(txRequestId)}`,
+            `#/sign-personal-message-approval/${encodeURIComponent(
+                txRequestId
+            )}`,
         height: 720,
     });
 }
@@ -235,15 +237,15 @@ class Transactions {
         }
     }
 
-    public async signMessage(
+    public async signPersonalMessage(
         {
             accountAddress,
             message,
-        }: Required<Pick<SignMessageRequest, 'args'>>['args'],
+        }: Required<Pick<SignPersonalMessageRequest, 'args'>>['args'],
         connection: ContentScriptConnection
-    ): Promise<SuiSignMessageOutput> {
+    ): Promise<SuiSignPersonalMessageOutput> {
         const { txResult, txResultError } = await this.requestApproval(
-            { type: 'sign-message', accountAddress, message },
+            { type: 'sign-personal-message', accountAddress, message },
             true,
             connection.origin,
             connection.originFavIcon
@@ -256,7 +258,7 @@ class Transactions {
         if (!txResult) {
             throw new Error('Sign message result is empty');
         }
-        if (!('messageBytes' in txResult)) {
+        if (!('bytes' in txResult)) {
             throw new Error('Sign message error, unknown result');
         }
         return txResult;
@@ -580,7 +582,7 @@ class Transactions {
         );
         await this.storeTransactionRequest(txRequest);
         const popUp = sign
-            ? openSignMessageWindow(txRequest.id)
+            ? openSignPersonalMessageWindow(txRequest.id)
             : openTxWindow(txRequest.id);
         const popUpClose = (await popUp.show()).pipe(
             take(1),

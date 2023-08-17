@@ -74,7 +74,7 @@ const txRequestsAdapter = createEntityAdapter<ApprovalRequest>({
 //             }
 
 //             try {
-//                 if (txRequest.tx.type === 'sign-message') {
+//                 if (txRequest.tx.type === 'sign-personal-message') {
 //                     txResult = await signer.signMessage({
 //                         message: fromB64(txRequest.tx.message),
 //                     });

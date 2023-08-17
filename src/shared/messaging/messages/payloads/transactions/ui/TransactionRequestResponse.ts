@@ -1,21 +1,19 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { type SuiSignMessageOutput } from '@mysten/wallet-standard';
-
 import { isBasePayload } from '_payloads';
 
-import type { SignedTransaction } from '@mysten/sui.js';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
+import type { SuiSignPersonalMessageOutput, SuiSignTransactionBlockOutput } from '@mysten/wallet-standard';
 import type { BasePayload, Payload } from '_payloads';
 
 export interface TransactionRequestResponse extends BasePayload {
     type: 'transaction-request-response';
     txID: string;
     approved: boolean;
-    txResult?: SuiTransactionBlockResponse | SuiSignMessageOutput;
+    txResult?: SuiTransactionBlockResponse | SuiSignPersonalMessageOutput;
     txResultError?: string;
-    txSigned?: SignedTransaction;
+    txSigned?: SuiSignTransactionBlockOutput;
 }
 
 export function isTransactionRequestResponse(

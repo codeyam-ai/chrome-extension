@@ -1,4 +1,3 @@
-import { type SignedMessage } from '@mysten/sui.js';
 import { toB64 } from '@mysten/sui.js/utils';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -10,9 +9,10 @@ import { renderApp } from '_src/test/utils/react-rendering';
 import { accountInfos, simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
 
+import type { SuiSignPersonalMessageOutput } from '@mysten/wallet-standard';
 import type {
     ApprovalRequest,
-    SignMessageApprovalRequest,
+    SignPersonalMessageApprovalRequest,
 } from '_payloads/transactions';
 
 describe('The Sign Message Approval popup', () => {
@@ -33,7 +33,7 @@ describe('The Sign Message Approval popup', () => {
         const testDeps = makeTestDeps();
         const mockWindowCloser = testDeps.closeWindow;
         renderApp({
-            initialRoute: `/sign-message-approval/${txRequestId}`,
+            initialRoute: `/sign-personal-message-approval/${txRequestId}`,
             dependencies: testDeps,
         });
 
@@ -50,9 +50,9 @@ describe('The Sign Message Approval popup', () => {
 
         expect(responseSpy.mock.calls[0][1]).toBe(true);
 
-        const result = responseSpy.mock.calls[0][2] as SignedMessage;
+        const result = responseSpy.mock.calls[0][2] as SuiSignPersonalMessageOutput;
         expect(result).toBeDefined();
-        expect(result.messageBytes).toEqual('aGVsbG8=');
+        expect(result.bytes).toEqual('aGVsbG8=');
         expect(result.signature).toEqual(
             'AODqBuGDqJhM2N0HJECuKowhEl2ZSpQ1t8jGGIa8CH1q/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4='
         );
@@ -63,7 +63,7 @@ describe('The Sign Message Approval popup', () => {
         const testDeps = makeTestDeps();
         const mockWindowCloser = testDeps.closeWindow;
         renderApp({
-            initialRoute: `/sign-message-approval/${txRequestId}`,
+            initialRoute: `/sign-personal-message-approval/${txRequestId}`,
             dependencies: testDeps,
         });
 
@@ -96,14 +96,14 @@ describe('The Sign Message Approval popup', () => {
 
     async function simulateReduxStateWithSignMessage(txRequestId: string) {
         const message = toB64(new TextEncoder().encode('hello'));
-        const txRequest: SignMessageApprovalRequest = {
+        const txRequest: SignPersonalMessageApprovalRequest = {
             id: txRequestId,
             origin: 'https://ethoswallet.xyz',
             originFavIcon: 'https://ethoswallet.xyz/favicon.ico',
             createdDate: '2022-11-29T23:33:53.084Z',
             approved: true,
             tx: {
-                type: 'sign-message',
+                type: 'sign-personal-message',
                 message,
                 accountAddress: accountInfos[0].address,
             },

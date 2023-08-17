@@ -37,7 +37,7 @@ import {
     ALL_PERMISSION_TYPES,
 } from '_payloads/permissions';
 import { API_ENV } from '_src/shared/api-env';
-import { type SignMessageRequest } from '_src/shared/messaging/messages/payloads/transactions';
+import { type SignPersonalMessageRequest } from '_src/shared/messaging/messages/payloads/transactions';
 import { isWalletStatusChangePayload } from '_src/shared/messaging/messages/payloads/wallet-status-change';
 
 import type { IconString } from '@wallet-standard/standard';
@@ -141,7 +141,7 @@ export class EthosWallet implements Wallet {
             },
             'sui:signMessage': {
                 version: '1.0.0',
-                signMessage: this.#signMessage,
+                signMessage: this.#signPersonalMessage,
             },
         };
     }
@@ -163,7 +163,7 @@ export class EthosWallet implements Wallet {
                         'standard:connect',
                         'standard:disconnect',
                         'standard:events',
-                        'sui:signMessage',
+                        'sui:signPersonalMessage',
                         'sui:signTransactionBlock',
                         'sui:signAndExecuteTransactionBlock',
                     ],
@@ -327,10 +327,13 @@ export class EthosWallet implements Wallet {
         });
     };
 
-    #signMessage: SuiSignMessageMethod = async ({ message, account }) => {
+    #signPersonalMessage: SuiSignMessageMethod = async ({
+        message,
+        account,
+    }) => {
         return mapToPromise(
-            this.#send<SignMessageRequest, SignMessageRequest>({
-                type: 'sign-message-request',
+            this.#send<SignPersonalMessageRequest, SignPersonalMessageRequest>({
+                type: 'sign-personal-message-request',
                 args: {
                     message: toB64(message),
                     accountAddress: account.address ?? account,

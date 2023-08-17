@@ -14,8 +14,8 @@ import { setPreapprovalRequests } from '_redux/slices/preapproval-requests';
 import { setTransactionRequests } from '_redux/slices/transaction-requests';
 import { isGetPreapprovalResponse } from '_src/shared/messaging/messages/payloads/transactions/ui/GetPreapprovalResponse';
 
-import type { SignedMessage, SignedTransaction } from '@mysten/sui.js';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
+import type { SuiSignPersonalMessageOutput, SuiSignTransactionBlockOutput } from '@mysten/wallet-standard';
 import type { Message } from '_messages';
 import type { HeartbeatPayload } from '_payloads/locking/HeartbeatPayload';
 import type { LockWalletRequest } from '_payloads/locking/LockWalletRequest';
@@ -79,9 +79,9 @@ export class BackgroundClient {
     public sendTransactionRequestResponse(
         txID: string,
         approved: boolean,
-        txResult?: SuiTransactionBlockResponse | SignedMessage,
+        txResult?: SuiTransactionBlockResponse | SuiSignPersonalMessageOutput,
         txResultError?: string,
-        txSigned?: SignedTransaction
+        txSigned?: SuiSignTransactionBlockOutput
     ) {
         this.sendMessage(
             createMessage<TransactionRequestResponse>({
