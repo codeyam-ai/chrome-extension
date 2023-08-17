@@ -39,10 +39,7 @@ export class Explorer {
         return url.href;
     }
 
-    public static getTransactionUrl(
-        txDigest: string,
-        apiEnv: API_ENV
-    ) {
+    public static getTransactionUrl(txDigest: string, apiEnv: API_ENV) {
         const url = new URL(
             `/transactions/${encodeURIComponent(txDigest)}`,
             getDefaultUrl(apiEnv)

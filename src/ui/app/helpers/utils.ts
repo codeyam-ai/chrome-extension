@@ -7,9 +7,7 @@ import type {
 type ExecutionStatusType = ExecutionStatus['status'];
 
 const utils = {
-    getTransactionEffects: (
-        data: SuiTransactionBlockResponse
-    ) => {
+    getTransactionEffects: (data: SuiTransactionBlockResponse) => {
         return data.effects;
     },
 

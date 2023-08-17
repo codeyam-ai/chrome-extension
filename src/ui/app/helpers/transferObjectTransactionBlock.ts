@@ -28,9 +28,10 @@ const transferObjectTransactionBlock = async (
                     : undefined;
             if (!kioskId) {
                 // kioskId = object.kiosk.content.fields.for;
-                kioskId = 'for' in fields && typeof fields.for === 'string'
-                    ? fields.for
-                    : undefined;
+                kioskId =
+                    'for' in fields && typeof fields.for === 'string'
+                        ? fields.for
+                        : undefined;
             }
         }
 

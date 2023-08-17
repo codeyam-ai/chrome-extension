@@ -48,10 +48,7 @@ const SyncCustomizationsToggle: React.FC<SyncCustomizationsToggleProps> = ({
             if (value) {
                 setLoadingText('Syncing personalization');
                 const customizationsFromServer =
-                    await getAllCustomizationsFromSeed(
-                        mnemonic ?? '',
-                        client
-                    );
+                    await getAllCustomizationsFromSeed(mnemonic ?? '', client);
                 if (
                     customizationsFromServer !== 'deleted' &&
                     Object.keys(customizationsFromServer).length > 0

@@ -52,7 +52,10 @@ export default function useMediaUrl(objData: SuiObjectData, fieldName = 'url') {
         }
 
         if (!mediaUrl) {
-            const maybeFieldNameValue = fields && `${fieldName}` in fields ? fields[fieldName as keyof typeof fields] : undefined
+            const maybeFieldNameValue =
+                fields && `${fieldName}` in fields
+                    ? fields[fieldName as keyof typeof fields]
+                    : undefined;
             mediaUrl = objDisplay?.[fieldName] ?? maybeFieldNameValue;
         }
 

@@ -1,10 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-    Ed25519Keypair,
-    RawSigner,
-} from '@mysten/sui.js';
+import { Ed25519Keypair, RawSigner } from '@mysten/sui.js';
 import {
     SuiClient,
     type SuiTransactionBlockResponse,
@@ -312,7 +309,7 @@ class Transactions {
 
         let url: string;
         if (envEndpoint) {
-            url = envEndpoint
+            url = envEndpoint;
         } else if (env) {
             url = api.getEndPoints(env);
         } else {
@@ -320,7 +317,9 @@ class Transactions {
         }
 
         if (!url) {
-            throw new Error('No url found with which to establish a SuiClient connection');
+            throw new Error(
+                'No url found with which to establish a SuiClient connection'
+            );
         }
 
         const client = new SuiClient({ url });
