@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import getDisplay from '../helpers/getDisplay';
 import ipfs from '../helpers/ipfs';
 
-import type { SuiObjectData } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js/client';
 
 export const safeUrl = (testUrl: string) => {
     if (testUrl.startsWith('data:')) {
@@ -27,19 +27,36 @@ export const safeUrl = (testUrl: string) => {
 export default function useMediaUrl(objData: SuiObjectData, fieldName = 'url') {
     const { display, content } = objData ?? {};
     const { fields } = (content?.dataType === 'moveObject' && content) || {};
+
     return useMemo(() => {
         const objDisplay = getDisplay(display);
         let mediaUrl: string | undefined;
         if (fieldName === 'url') {
-            mediaUrl = objDisplay?.['image_url'] ?? fields?.['image_url'];
+            mediaUrl =
+                objDisplay?.['image_url'] ??
+                (fields &&
+                'image_url' in fields &&
+                typeof fields.image_url === 'string'
+                    ? fields.image_url
+                    : undefined); //fields?.['image_url']
 
             if (!mediaUrl) {
-                mediaUrl = objDisplay?.['img_url'] ?? fields?.['img_url'];
+                mediaUrl =
+                    objDisplay?.['img_url'] ??
+                    (fields &&
+                    'img_url' in fields &&
+                    typeof fields.img_url === 'string'
+                        ? fields.img_url
+                        : undefined); //fields?.['img_url'];
             }
         }
 
         if (!mediaUrl) {
-            mediaUrl = objDisplay?.[fieldName] ?? fields?.[fieldName];
+            const maybeFieldNameValue =
+                fields && `${fieldName}` in fields
+                    ? fields[fieldName as keyof typeof fields]
+                    : undefined;
+            mediaUrl = objDisplay?.[fieldName] ?? maybeFieldNameValue;
         }
 
         if (typeof mediaUrl === 'string') {

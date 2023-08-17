@@ -1,4 +1,4 @@
-import { TransactionBlock } from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { SUI_MAINNET_CHAIN } from '@mysten/wallet-standard';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

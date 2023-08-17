@@ -163,7 +163,7 @@ const SimpleCoinTransfer = ({
         const getBalance = async () => {
             if (!signer) return;
             const owner = await signer.getAddress();
-            const balance = await signer.provider.getBalance({
+            const balance = await signer.client.getBalance({
                 owner,
                 coinType: reduction.type,
             });

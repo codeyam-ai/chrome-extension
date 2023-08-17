@@ -1,7 +1,8 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { Coin, SUI_TYPE_ARG } from '@mysten/sui.js';
+import { Coin } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { BigNumber } from 'bignumber.js';
 import { Form, useFormikContext } from 'formik';
 import { memo, useEffect, useMemo, useRef } from 'react';

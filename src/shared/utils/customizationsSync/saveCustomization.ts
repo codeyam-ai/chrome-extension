@@ -3,7 +3,7 @@ import { explorerApiCall } from '_src/shared/utils/customizationsSync/ethosPlatf
 const saveCustomization = async (
     jwt: string,
     encryptedAccountCustomization: string
-): Promise<any> => {
+): Promise<unknown> => {
     const requestBody: Record<string, string> = {
         data: encryptedAccountCustomization,
     };

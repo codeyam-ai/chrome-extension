@@ -19,7 +19,7 @@ import {
     saveFavoriteDappsKeys,
 } from '_src/ui/app/redux/slices/account';
 
-import type { SuiObjectData } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js/client';
 import type { DappData } from '_src/types/DappData';
 
 export const useFavoriteDapps = () => {

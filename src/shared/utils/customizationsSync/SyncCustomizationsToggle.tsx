@@ -38,7 +38,7 @@ const SyncCustomizationsToggle: React.FC<SyncCustomizationsToggleProps> = ({
     const { accountInfos, authentication, mnemonic } = useAppSelector(
         ({ account }) => account
     );
-    const provider = api.instance.fullNode;
+    const client = api.instance.client;
     const dispatch = useAppDispatch();
 
     const handleToggleSync = useCallback(
@@ -48,10 +48,7 @@ const SyncCustomizationsToggle: React.FC<SyncCustomizationsToggleProps> = ({
             if (value) {
                 setLoadingText('Syncing personalization');
                 const customizationsFromServer =
-                    await getAllCustomizationsFromSeed(
-                        mnemonic ?? '',
-                        provider
-                    );
+                    await getAllCustomizationsFromSeed(mnemonic ?? '', client);
                 if (
                     customizationsFromServer !== 'deleted' &&
                     Object.keys(customizationsFromServer).length > 0
@@ -72,7 +69,7 @@ const SyncCustomizationsToggle: React.FC<SyncCustomizationsToggleProps> = ({
                     await saveAllCustomizationsFromSeed(
                         mnemonic ?? '',
                         accountInfos,
-                        provider
+                        client
                     );
                 }
                 toast(<SuccessAlert text={'Personalization synced'} />);
@@ -81,13 +78,13 @@ const SyncCustomizationsToggle: React.FC<SyncCustomizationsToggleProps> = ({
                 await deleteAllCustomizationsFromSeed(
                     mnemonic ?? '',
                     accountInfos,
-                    provider
+                    client
                 );
                 toast(<SuccessAlert text={'Synced data removed'} />);
             }
             setLoadingText(undefined);
         },
-        [accountInfos, authentication, dispatch, mnemonic, provider]
+        [accountInfos, authentication, dispatch, mnemonic, client]
     );
 
     const openModal = useCallback(() => {

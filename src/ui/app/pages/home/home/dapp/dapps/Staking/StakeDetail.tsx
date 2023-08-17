@@ -3,11 +3,8 @@ import {
     MinusCircleIcon,
     QuestionMarkCircleIcon,
 } from '@heroicons/react/24/outline';
-import {
-    SUI_SYSTEM_STATE_OBJECT_ID,
-    SUI_TYPE_ARG,
-    TransactionBlock,
-} from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
+import { SUI_SYSTEM_STATE_OBJECT_ID, SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useCallback, useMemo, useState } from 'react';

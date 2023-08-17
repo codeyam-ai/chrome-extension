@@ -1,6 +1,6 @@
 import NftGridItem from './NftGridItem';
 
-import type { SuiObjectData } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js/client';
 
 interface NftGridProps {
     nfts: SuiObjectData[];

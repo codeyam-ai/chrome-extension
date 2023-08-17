@@ -22,7 +22,7 @@ import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 
-import type { SuiObjectData } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js/client';
 import type { ButtonHTMLAttributes } from 'react';
 
 function NFTdetailsContent({

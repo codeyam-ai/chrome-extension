@@ -1,6 +1,7 @@
 // import { Ticket } from '../redux/slices/sui-objects/Ticket';
 
-import type { JsonRpcProvider, ObjectContentFields } from '@mysten/sui.js';
+import type { ObjectContentFields } from '@mysten/sui.js';
+import type { SuiClient } from '@mysten/sui.js/client';
 
 export type SuiTicketData = {
     type: string;
@@ -8,7 +9,7 @@ export type SuiTicketData = {
 };
 
 const isValidTicket = async (
-    provider: JsonRpcProvider,
+    client: SuiClient,
     ticketData: SuiTicketData,
     walletAddress: string,
     ticketAgentId: string
@@ -22,7 +23,7 @@ const isValidTicket = async (
     //         }
     //     }
     //     const ticketRecord = await Ticket.lookupTicketRecord(
-    //         provider,
+    //         client,
     //         ticketData.type.split('::')[0],
     //         walletAddress,
     //         ticketData.fields.ticket_id as string,

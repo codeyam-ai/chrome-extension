@@ -1,6 +1,6 @@
 import { CreditCardIcon } from '@heroicons/react/24/outline';
 import { ArrowUpCircleIcon } from '@heroicons/react/24/solid';
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import InlineButtonGroup from './InlineButtonGroup';
@@ -56,7 +56,7 @@ const SendReceiveButtonGroup = ({
     const _faucet = useCallback(() => {
         setIsFaucetInProgress(true);
         const faucet = async () => {
-            const result = await fetch(`${api.getEndPoints().faucet}gas`, {
+            const result = await fetch(`${api.faucetUrl}gas`, {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',

@@ -12,7 +12,7 @@ export const queryTransactionsByAddress = async (
     cursorFrom?: string,
     limit?: number
 ) => {
-    const rpc = api.instance.fullNode;
+    const rpc = api.instance.client;
 
     // combine from and to transactions
     const [toBlocks, fromBlocks] = await Promise.all([

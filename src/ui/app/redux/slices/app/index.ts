@@ -64,7 +64,7 @@ export const changeRPCNetwork = createAsyncThunk<
 
         dispatch(setApiEnv(apiEnv));
 
-        api.setNewJsonRpcProvider(apiEnv, undefined, customRPCURL, queryClient);
+        api.setNewSuiClient(apiEnv, undefined, customRPCURL, queryClient);
 
         // dispatch(getTransactionsByAddress());
         dispatch(fetchAllBalances());

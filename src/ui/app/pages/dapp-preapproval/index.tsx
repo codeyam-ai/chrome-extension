@@ -29,7 +29,7 @@ import Alert from '_src/ui/app/shared/feedback/Alert';
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { KeyNameAndValue } from '../../shared/content/rows-and-lists/KeyValueList';
-import type { SuiObjectData as SuiObject } from '@mysten/sui.js';
+import type { SuiObjectData as SuiObject } from '@mysten/sui.js/client';
 import type { RootState } from '_redux/RootReducer';
 
 const truncateMiddle = (s = '', length = 6) =>
@@ -195,8 +195,8 @@ export function DappPreapprovalPage() {
         const retrieveDetails = async () => {
             const [packageObjectId, module, fun] =
                 preapproval.target.split('::');
-            const provider = api.instance.fullNode;
-            const functionDetails = await provider.getNormalizedMoveFunction({
+            const client = api.instance.client;
+            const functionDetails = await client.getNormalizedMoveFunction({
                 package: packageObjectId,
                 module,
                 function: fun,
@@ -237,7 +237,7 @@ export function DappPreapprovalPage() {
                 return;
             }
 
-            const object = await provider.getObject({
+            const object = await client.getObject({
                 id: preapproval.objectId,
                 options: { showContent: true, showDisplay: true },
             });

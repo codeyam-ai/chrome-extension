@@ -1,6 +1,6 @@
 import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
 
-import type { SuiJsonValue } from '@mysten/sui.js';
+import type { SuiJsonValue } from '@mysten/sui.js/client';
 
 const generateTicketData = async (
     name: string,

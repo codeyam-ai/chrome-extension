@@ -1,12 +1,11 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { Ed25519Keypair, RawSigner } from '@mysten/sui.js';
 import {
-    Connection,
-    Ed25519Keypair,
-    JsonRpcProvider,
-    RawSigner,
-} from '@mysten/sui.js';
+    SuiClient,
+    type SuiTransactionBlockResponse,
+} from '@mysten/sui.js/client';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 import {
     SUI_MAINNET_CHAIN,
@@ -28,7 +27,6 @@ import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
 import type { SignedTransaction } from '@mysten/sui.js';
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type {
     PreapprovalRequest,
     PreapprovalResponse,
@@ -43,12 +41,6 @@ import type { TransactionRequestResponse } from '_payloads/transactions/ui/Trans
 import type { ContentScriptConnection } from '_src/background/connections/ContentScriptConnection';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { SeedInfo } from '_src/ui/app/KeypairVault';
-
-// type SimpleCoin = {
-//     balance: number;
-//     coinObjectId: string;
-//     coinType: string;
-// };
 
 function openTxWindow(txRequestId: string) {
     return new Window({
@@ -315,27 +307,29 @@ class Transactions {
             envEndpoint = envInfo?.sui_Env_RPC;
         }
 
-        let connection: Connection;
+        let url: string;
         if (envEndpoint) {
-            connection = new Connection({ fullnode: envEndpoint });
+            url = envEndpoint;
         } else if (env) {
-            connection = api.getEndPoints(env);
+            url = api.getEndPoints(env);
         } else {
             throw new Error('No connection found');
         }
 
-        if (!connection) {
-            throw new Error('No connection found');
+        if (!url) {
+            throw new Error(
+                'No url found with which to establish a SuiClient connection'
+            );
         }
 
-        const provider = new JsonRpcProvider(connection);
+        const client = new SuiClient({ url });
 
         try {
             let signer;
 
             const authentication = await this.getAuthentication();
             if (authentication) {
-                signer = new EthosSigner(address, authentication, provider);
+                signer = new EthosSigner(address, authentication, client);
             } else {
                 const activeSeed = await this.getActiveSeed();
 
@@ -349,7 +343,7 @@ class Transactions {
                     activeSeed.seed.split(',').map((n) => parseInt(n))
                 );
                 const keypair = Ed25519Keypair.fromSecretKey(secretKey);
-                signer = new RawSigner(keypair, provider);
+                signer = new RawSigner(keypair, client);
             }
 
             const txResponse = await signer.signAndExecuteTransactionBlock({
@@ -600,7 +594,6 @@ class Transactions {
             race(popUpClose, txResponseMessage).pipe(
                 take(1),
                 map(async (response) => {
-                    console.log('RESPONSE', response);
                     if (response) {
                         const { approved, txResult, txSigned, txResultError } =
                             response;

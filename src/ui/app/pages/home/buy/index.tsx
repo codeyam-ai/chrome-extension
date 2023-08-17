@@ -89,7 +89,7 @@ const ProviderSelect = ({ theme, provider }: ProviderSelectProps) => {
         : 'https://global-stg.transak.com';
     const colorCode = encodeURIComponent('#6D28D9');
 
-    const getCoinbaseUrl = () => {
+    const getCoinbaseUrl = useCallback(() => {
         const onRampURL = generateOnRampURL({
             appId: '1dbd2a0b94',
             destinationWallets: [
@@ -97,7 +97,7 @@ const ProviderSelect = ({ theme, provider }: ProviderSelectProps) => {
             ],
         });
         return onRampURL;
-    };
+    }, [address]);
 
     const selectProvider = useCallback(() => {
         if (provider.name === 'Transak') {
@@ -112,7 +112,16 @@ const ProviderSelect = ({ theme, provider }: ProviderSelectProps) => {
                 navigate(provider.path);
             }
         }
-    }, [provider, navigate, baseUrl, apiKey, colorCode, env, address]);
+    }, [
+        provider,
+        baseUrl,
+        apiKey,
+        colorCode,
+        env,
+        address,
+        getCoinbaseUrl,
+        navigate,
+    ]);
 
     return (
         <button

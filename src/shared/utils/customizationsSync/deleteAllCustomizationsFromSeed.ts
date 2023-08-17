@@ -4,12 +4,12 @@ import getJwtWithSigner from './getJwtWithSigner';
 import saveCustomization from './saveCustomization';
 import KeypairVault, { type AccountInfo } from '_src/ui/app/KeypairVault';
 
-import type { JsonRpcProvider } from '@mysten/sui.js';
+import type { SuiClient } from '@mysten/sui.js/client';
 
 export const deleteAllCustomizationsFromSeed = async (
     mnemonic: string,
     accountInfos: AccountInfo[],
-    provider: JsonRpcProvider
+    client: SuiClient
 ): Promise<void> => {
     const keypairVault = new KeypairVault();
     keypairVault.mnemonic = mnemonic;
@@ -17,7 +17,7 @@ export const deleteAllCustomizationsFromSeed = async (
     const jobs = accountInfos.map(async (accountInfo) => {
         const signer = new RawSigner(
             keypairVault.getKeyPair(accountInfo.index),
-            provider
+            client
         );
 
         const jwt = await getJwtWithSigner(signer);

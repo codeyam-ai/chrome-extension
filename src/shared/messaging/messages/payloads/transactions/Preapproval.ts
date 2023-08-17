@@ -1,4 +1,3 @@
-import type { ObjectId } from '@mysten/sui.js';
 import type { IdentifierString } from '@wallet-standard/standard';
 
 export interface Preapproval {
@@ -6,7 +5,7 @@ export interface Preapproval {
     address: string;
     chain: IdentifierString;
     target: string;
-    objectId: ObjectId;
+    objectId: string;
     description: string;
     totalGasLimit: number;
     perTransactionGasLimit: number;

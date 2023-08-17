@@ -1,7 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { useMemo } from 'react';
@@ -59,7 +59,7 @@ export function useCoinDecimals(coinType?: string | null) {
                 );
             }
 
-            return api.instance.fullNode.getCoinMetadata({ coinType });
+            return api.instance.client.getCoinMetadata({ coinType });
         },
         {
             // This is currently expected to fail for non-SUI tokens, so disable retries:

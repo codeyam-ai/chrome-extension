@@ -19,7 +19,8 @@ import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
-import type { RawSigner, SuiObjectChange } from '@mysten/sui.js';
+import type { RawSigner } from '@mysten/sui.js';
+import type { SuiObjectChange } from '@mysten/sui.js/client';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 

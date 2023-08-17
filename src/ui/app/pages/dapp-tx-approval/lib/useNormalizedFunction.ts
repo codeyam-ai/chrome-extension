@@ -2,7 +2,6 @@
 
 // import { thunkExtras } from '_src/ui/app/redux/store/thunk-extras';
 
-// import type { SuiMoveNormalizedFunction } from '@mysten/sui.js';
 import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
 
 const useNormalizedFunction = (txRequest: ApprovalRequest | null) => {

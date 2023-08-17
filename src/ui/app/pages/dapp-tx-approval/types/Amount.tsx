@@ -9,7 +9,7 @@ import { useFormatCoin } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { BalanceReduction, BalanceAddition } from '../lib/analyzeChanges';
-import type { SuiObjectChange } from '@mysten/sui.js';
+import type { SuiObjectChange } from '@mysten/sui.js/client';
 
 export const Costs = ({
     balanceReductions,

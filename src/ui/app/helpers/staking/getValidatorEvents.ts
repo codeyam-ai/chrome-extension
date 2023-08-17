@@ -2,7 +2,7 @@ import { VALIDATORS_EVENTS_QUERY } from '@mysten/sui.js';
 
 import { api } from '../../redux/store/thunk-extras';
 
-import type { EventId, SuiEvent } from '@mysten/sui.js';
+import type { EventId, SuiEvent } from '@mysten/sui.js/client';
 
 // NOTE: This copys the query limit from our Rust JSON RPC backend, this needs to be kept in sync!
 const QUERY_MAX_RESULT_LIMIT = 1000;
@@ -13,7 +13,7 @@ type GetValidatorsEvent = {
 };
 
 const getValidatorEvents = async ({ limit, order }: GetValidatorsEvent) => {
-    const provider = api.instance.fullNode;
+    const client = api.instance.client;
 
     if (!limit) {
         // Do some validation at the runtime level for some extra type-safety
@@ -29,7 +29,7 @@ const getValidatorEvents = async ({ limit, order }: GetValidatorsEvent) => {
         const results: SuiEvent[] = [];
 
         while (hasNextPage && results.length < limit) {
-            const validatorEventsResponse = await provider.queryEvents({
+            const validatorEventsResponse = await client.queryEvents({
                 query: { MoveEventType: VALIDATORS_EVENTS_QUERY },
                 cursor: currCursor,
                 limit: Math.min(limit, QUERY_MAX_RESULT_LIMIT),
@@ -43,7 +43,7 @@ const getValidatorEvents = async ({ limit, order }: GetValidatorsEvent) => {
         return results.slice(0, limit);
     }
 
-    const validatorEventsResponse = await provider.queryEvents({
+    const validatorEventsResponse = await client.queryEvents({
         query: { MoveEventType: VALIDATORS_EVENTS_QUERY },
         limit,
         order,

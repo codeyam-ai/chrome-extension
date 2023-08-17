@@ -1,4 +1,4 @@
-import type { SuiObjectData } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js/client';
 
 const getDisplay = (
     display?: SuiObjectData['display']

@@ -3,8 +3,6 @@
 
 import { API_ENV, DEFAULT_API_ENV } from '_app/ApiProvider';
 
-import type { ObjectId, TransactionDigest } from '@mysten/sui.js';
-
 const API_ENV_TO_EXPLORER_URL: Record<API_ENV, string | undefined> = {
     [API_ENV.local]: process.env.EXPLORER_URL_LOCAL,
     [API_ENV.devNet]: process.env.EXPLORER_URL_DEVNET,
@@ -32,7 +30,7 @@ function getDefaultUrl(apiEnv?: API_ENV) {
 }
 
 export class Explorer {
-    public static getObjectUrl(objectID: ObjectId, apiEnv: API_ENV) {
+    public static getObjectUrl(objectID: string, apiEnv: API_ENV) {
         const url = new URL(`/objects/${objectID}`, getDefaultUrl(apiEnv));
         const queryParam = API_ENV_TO_EXPLORER_QUERY_PARAM[apiEnv];
         if (queryParam) {
@@ -41,10 +39,7 @@ export class Explorer {
         return url.href;
     }
 
-    public static getTransactionUrl(
-        txDigest: TransactionDigest,
-        apiEnv: API_ENV
-    ) {
+    public static getTransactionUrl(txDigest: string, apiEnv: API_ENV) {
         const url = new URL(
             `/transactions/${encodeURIComponent(txDigest)}`,
             getDefaultUrl(apiEnv)

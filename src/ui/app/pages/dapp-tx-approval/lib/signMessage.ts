@@ -1,13 +1,11 @@
-import {
-    type SignedMessage,
-    type SuiTransactionBlockResponse,
-} from '@mysten/sui.js';
+import { type SignedMessage } from '@mysten/sui.js';
 import { fromB64 } from '@mysten/sui.js/utils';
 
 import { thunkExtras } from '_redux/store/thunk-extras';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 const signMessage = async (

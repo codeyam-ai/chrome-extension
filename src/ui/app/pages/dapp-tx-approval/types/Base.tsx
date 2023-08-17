@@ -1,4 +1,5 @@
-import { SUI_TYPE_ARG, TransactionBlock } from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { type ReactElement, useMemo, useState, useCallback } from 'react';
 
 import truncateMiddle from '../../../helpers/truncate-middle';
@@ -16,11 +17,11 @@ import { useFormatCoin } from '_src/ui/app/hooks';
 import type { Detail } from '../DetailElement';
 import type { Section } from '../SectionElement';
 import type { SmallDetail } from '../SmallValue';
+import type { RawSigner } from '@mysten/sui.js';
 import type {
-    RawSigner,
     SuiObjectChange,
     TransactionEffects,
-} from '@mysten/sui.js';
+} from '@mysten/sui.js/client';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';

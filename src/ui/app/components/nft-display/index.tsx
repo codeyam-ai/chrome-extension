@@ -5,10 +5,10 @@ import truncateString from '../../helpers/truncate-string';
 import Body from '../../shared/typography/Body';
 import { useNFTBasicData } from '_hooks';
 
-import type { SuiObjectData as SuiObjectType } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js/client';
 
 export type NFTsProps = {
-    nftobj: SuiObjectType;
+    nftobj: SuiObjectData;
     showlabel?: boolean;
     wideview?: boolean;
 };

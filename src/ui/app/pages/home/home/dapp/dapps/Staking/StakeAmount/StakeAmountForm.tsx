@@ -1,5 +1,5 @@
 import { ChevronRightIcon } from '@heroicons/react/24/solid';
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import BigNumber from 'bignumber.js';
 import { Form, useField, useFormikContext } from 'formik';
 import { useMemo } from 'react';

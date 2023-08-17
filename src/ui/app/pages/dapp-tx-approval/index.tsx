@@ -1,4 +1,4 @@
-import { TransactionBlock } from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
 import {
     SUI_DEVNET_CHAIN,
     SUI_MAINNET_CHAIN,
@@ -31,7 +31,8 @@ import { txRequestsSelectors } from '_redux/slices/transaction-requests';
 import { useDependencies } from '_shared/utils/dependenciesContext';
 
 import type { AnalyzeChangesResult } from './lib/analyzeChanges';
-import type { RawSigner, SuiMoveNormalizedType } from '@mysten/sui.js';
+import type { RawSigner } from '@mysten/sui.js';
+import type { SuiMoveNormalizedType } from '@mysten/sui.js/client';
 import type { RootState } from '_redux/RootReducer';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';

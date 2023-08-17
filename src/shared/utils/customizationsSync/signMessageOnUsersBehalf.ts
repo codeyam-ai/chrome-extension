@@ -1,10 +1,7 @@
-import {
-    type RawSigner,
-    type SignedMessage,
-    type SuiTransactionBlockResponse,
-} from '@mysten/sui.js';
+import { type RawSigner, type SignedMessage } from '@mysten/sui.js';
 import { fromB64 } from '@mysten/sui.js/utils';
 
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 

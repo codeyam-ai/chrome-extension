@@ -4,7 +4,7 @@ import {
     TrashIcon,
 } from '@heroicons/react/24/outline';
 import { ArrowUpIcon } from '@heroicons/react/24/solid';
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { useCallback, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 

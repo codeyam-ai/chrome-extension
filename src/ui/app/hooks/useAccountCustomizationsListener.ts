@@ -18,7 +18,7 @@ const useAccountCustomizations = () => {
         useAppSelector(({ account }) => account);
     const dispatch = useAppDispatch();
     // const { featureFlags } = useDependencies();
-    const provider = api.instance.fullNode;
+    const client = api.instance.client;
 
     const result = useQuery({
         queryKey: ['accountCustomizations'],
@@ -29,7 +29,7 @@ const useAccountCustomizations = () => {
             if (!mnemonic) return null;
 
             const latestServerCustomizations =
-                await getAllCustomizationsFromSeed(mnemonic ?? '', provider);
+                await getAllCustomizationsFromSeed(mnemonic ?? '', client);
 
             // console.log(
             //     'latestServerCustomizations :>> ',
@@ -70,7 +70,7 @@ const useAccountCustomizations = () => {
             }
             return { latestServerCustomizations };
         },
-        enabled: !!mnemonic && !!provider && customizationsSyncPreference,
+        enabled: !!mnemonic && !!client && customizationsSyncPreference,
         refetchInterval: 10000, // 10 seconds
     });
 

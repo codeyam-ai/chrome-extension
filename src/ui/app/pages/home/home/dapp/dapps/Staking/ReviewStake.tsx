@@ -1,4 +1,5 @@
-import { TransactionBlock, SUI_SYSTEM_STATE_OBJECT_ID } from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
+import { SUI_SYSTEM_STATE_OBJECT_ID } from '@mysten/sui.js/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { useMemo, useCallback, useState } from 'react';

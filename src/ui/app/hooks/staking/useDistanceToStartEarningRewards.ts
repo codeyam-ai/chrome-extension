@@ -5,7 +5,7 @@ import getTimeToEarnStakeRewards from '../../helpers/staking/getTimeToEarnStakeR
 import { NUM_OF_EPOCH_BEFORE_EARNING } from '_src/shared/constants';
 
 import type { Stake } from '../../pages/home/home/dapp/dapps/Staking/ExistingStake';
-import type { SuiSystemStateSummary } from '@mysten/sui.js';
+import type { SuiSystemStateSummary } from '@mysten/sui.js/client';
 
 export const useDistanceToStartEarningRewards = (
     stake?: Stake,

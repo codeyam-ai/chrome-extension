@@ -9,7 +9,7 @@ import ArrowUpDownSort from '_src/ui/app/shared/svg/ArrowUpDownSort';
 import Body from '_src/ui/app/shared/typography/Body';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 
-import type { SuiValidatorSummary } from '@mysten/sui.js';
+import type { SuiValidatorSummary } from '@mysten/sui.js/client';
 
 export interface SuiValidatorSummaryWithApy extends SuiValidatorSummary {
     apy: number;

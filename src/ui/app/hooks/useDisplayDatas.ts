@@ -14,13 +14,13 @@ const useDisplayDatas = (objectIds: string[]): Record<string, DisplayData> => {
     const queryResult = useQuery(
         [`1multiget-object-${objectIds.join('-')}`, objectIds],
         async () => {
-            const provider = api.instance.fullNode;
+            const client = api.instance.client;
 
-            if (!provider) {
-                throw new Error('Provider has not been instantiated');
+            if (!client) {
+                throw new Error('Client has not been instantiated');
             }
 
-            return provider.multiGetObjects({
+            return client.multiGetObjects({
                 ids: objectIds,
                 options: {
                     showContent: true,
@@ -70,14 +70,32 @@ const useDisplayDatas = (objectIds: string[]): Record<string, DisplayData> => {
                     'url' in data.content.fields ||
                     'img_url' in data.content.fields)
             ) {
+                const imageUrl =
+                    'image_url' in data.content.fields &&
+                    typeof data.content.fields.image_url === 'string'
+                        ? data.content.fields.image_url
+                        : 'url' in data.content.fields &&
+                          typeof data.content.fields.url === 'string'
+                        ? data.content.fields.url
+                        : 'img_url' in data.content.fields &&
+                          typeof data.content.fields.img_url === 'string'
+                        ? data.content.fields.img_url
+                        : '';
                 acc[data.objectId] = {
-                    imageUrl: ipfs(
-                        data.content.fields.image_url ??
-                            data.content.fields.img_url ??
-                            data.content.fields.url
-                    ),
-                    name: data.content.fields.name,
-                    description: data.content.fields.description,
+                    imageUrl: ipfs(imageUrl),
+                    name:
+                        'name' in data.content.fields &&
+                        (typeof data.content.fields.name === 'string' ||
+                            typeof data.content.fields.name === 'undefined')
+                            ? data.content.fields.name
+                            : undefined,
+                    description:
+                        'description' in data.content.fields &&
+                        (typeof data.content.fields.description === 'string' ||
+                            typeof data.content.fields.description ===
+                                'undefined')
+                            ? data.content.fields.description
+                            : undefined,
                 };
             }
             return acc;

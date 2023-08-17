@@ -8,7 +8,7 @@ import type { UseQueryResult } from '@tanstack/react-query';
 export default function useGetDelegatedStakes(
     address: string
 ): UseQueryResult<DelegatedStake[], Error> {
-    const rpc = api.instance.fullNode;
+    const rpc = api.instance.client;
 
     return useQuery(['validator', address], () => {
         return rpc.getStakes({ owner: address });

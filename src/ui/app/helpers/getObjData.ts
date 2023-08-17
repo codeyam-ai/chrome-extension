@@ -1,8 +1,8 @@
-import { JsonRpcProvider } from '@mysten/sui.js';
+import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client';
 
 const getObjData = async (id: string) => {
-    const provider = new JsonRpcProvider();
-    const res = await provider.getObject({
+    const client = new SuiClient({ url: getFullnodeUrl('mainnet') });
+    const res = await client.getObject({
         id: id,
         options: {
             showContent: true,

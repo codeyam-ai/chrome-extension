@@ -1,5 +1,5 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { useCallback, useEffect, useState } from 'react';
 
 import owner from '../lib/owner';
@@ -16,7 +16,8 @@ import type {
     AnalyzeChangesResult,
     GasCostSummary,
 } from '../lib/analyzeChanges';
-import type { RawSigner, SuiObjectChange } from '@mysten/sui.js';
+import type { RawSigner } from '@mysten/sui.js';
+import type { SuiObjectChange } from '@mysten/sui.js/client';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 import type { ReactNode } from 'react';

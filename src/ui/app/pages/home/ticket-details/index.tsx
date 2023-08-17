@@ -1,4 +1,3 @@
-// import { getObjectId } from '@mysten/sui.js';
 import { useMemo, useState } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
@@ -11,7 +10,7 @@ import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 
-import type { SuiObjectData } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js/client';
 
 const TIcketDetailsContent = ({ ticket }: { ticket: SuiObjectData }) => {
     const { filePath, ticketFields } = useTicketBasicData(ticket);

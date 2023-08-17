@@ -1,7 +1,5 @@
-import {
-    type SuiTransactionBlockResponse,
-    getTotalGasUsed,
-} from '@mysten/sui.js';
+import { getTotalGasUsed } from '@mysten/sui.js';
+import { type SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 
 import addressOwner from './addressOwner';
 import findBalanceChanges from './findBalanceChanges';

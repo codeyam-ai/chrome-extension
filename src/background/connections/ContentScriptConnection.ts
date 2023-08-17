@@ -53,10 +53,8 @@ import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
 import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 
 import type { NetworkEnvType } from '../NetworkEnv';
-import type {
-    SignedTransaction,
-    SuiTransactionBlockResponse,
-} from '@mysten/sui.js';
+import type { SignedTransaction } from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type { Message } from '_messages';
 import type { PortChannelName } from '_messaging/PortChannelName';
 import type { ErrorPayload } from '_payloads';

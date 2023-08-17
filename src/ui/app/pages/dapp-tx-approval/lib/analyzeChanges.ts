@@ -1,14 +1,14 @@
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import BigNumber from 'bignumber.js';
 
 import addressOwner from '_src/ui/app/helpers/transactions/addressOwner';
 
+import type { RawSigner } from '@mysten/sui.js';
 import type {
-    RawSigner,
+    DryRunTransactionBlockResponse,
     SuiObjectChange,
-    TransactionBlock,
-} from '@mysten/sui.js';
-import type { DryRunTransactionBlockResponse } from '@mysten/sui.js/client';
+} from '@mysten/sui.js/client';
+import type { TransactionBlock } from '@mysten/sui.js/transactions';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 
@@ -234,12 +234,11 @@ const analyzeChanges = async ({
         const {
             totalBalance,
             lockedBalance: { number },
-        } = await signer.provider.getBalance({
+        } = await signer.client.getBalance({
             owner: address,
             coinType: SUI_TYPE_ARG,
         });
 
-        // const gasPrice = await signer.provider.getReferenceGasPrice();
         const gasAvailable = new BigNumber(totalBalance)
             .minus(number || 0)
             .dividedBy(Math.pow(10, 9));

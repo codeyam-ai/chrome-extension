@@ -1,4 +1,4 @@
-import { type JsonRpcProvider, TransactionBlock } from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
 
 import { getSigner } from './getSigner';
 import transferObjectTransactionBlock from './transferObjectTransactionBlock';
@@ -7,6 +7,7 @@ import utils from './utils';
 import type { AccountInfo } from '../KeypairVault';
 import type { ExtendedSuiObjectData } from '../redux/slices/sui-objects';
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
+import type { SuiClient } from '@mysten/sui.js/client';
 
 const transferNFT = async ({
     connectToLedger,
@@ -17,7 +18,7 @@ const transferNFT = async ({
     authentication,
     activeAccountIndex,
     recipientAddress,
-    provider,
+    client,
 }: {
     connectToLedger: () => Promise<SuiLedgerClient>;
     nft: ExtendedSuiObjectData;
@@ -27,7 +28,7 @@ const transferNFT = async ({
     authentication: string | null;
     activeAccountIndex: number;
     recipientAddress: string;
-    provider: JsonRpcProvider;
+    client: SuiClient;
 }) => {
     if (!nft) return;
 
@@ -48,7 +49,7 @@ const transferNFT = async ({
         transactionBlock,
         nft,
         recipientAddress,
-        provider
+        client
     );
 
     if (!transactionBlock) return;

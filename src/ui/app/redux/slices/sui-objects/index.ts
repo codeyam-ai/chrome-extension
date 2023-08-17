@@ -1,11 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-    getObjectId,
-    getObjectVersion,
-    getSuiObjectData,
-} from '@mysten/sui.js';
+import { getObjectId, getObjectVersion } from '@mysten/sui.js';
 import {
     createAsyncThunk,
     createEntityAdapter,
@@ -17,12 +13,10 @@ import { NFT } from './NFT';
 import testConnection from '../../testConnection';
 
 import type {
-    // SuiAddress,
-    // ObjectId,
-    SuiObjectData,
     PaginatedObjectsResponse,
+    SuiObjectData,
     SuiObjectResponse,
-} from '@mysten/sui.js';
+} from '@mysten/sui.js/client';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
@@ -70,7 +64,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         let objectsRefPage = 0;
         while (nextCursor !== null) {
             objectsRefPage += 1;
-            const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
+            const allObjectRefs = await api.instance.client.getOwnedObjects({
                 owner: address,
                 cursor,
             });
@@ -116,7 +110,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                 })
                 .filter((objId) => objId.length > 0);
 
-            const newObjRes = await api.instance.fullNode.multiGetObjects({
+            const newObjRes = await api.instance.client.multiGetObjects({
                 ids: objectIDs,
                 options: {
                     showOwner: true,
@@ -132,19 +126,18 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         let objectIndex = 0;
         let kioskObjectsLoaded = 0;
         for (const objRes of objectResponses) {
-            const suiObjectData = getSuiObjectData(objRes);
+            const suiObjectData = objRes.data;
 
             if (suiObjectData) {
                 if (NFT.isKiosk(suiObjectData)) {
                     if (kioskObjectsLoaded < 10) {
                         const kioskObjects = await NFT.getKioskObjects(
-                            api.instance.fullNode,
+                            api.instance.client,
                             suiObjectData
                         );
 
                         for (const kioskObject of kioskObjects) {
-                            const kioskObjectData =
-                                getSuiObjectData(kioskObject);
+                            const kioskObjectData = kioskObject.data;
                             if (kioskObjectData) {
                                 suiObjects.push({
                                     index: objectIndex,
@@ -220,12 +213,12 @@ export const fetchMoreObjects = createAsyncThunk<
             }
 
             const kioskObjects = await NFT.getKioskObjects(
-                api.instance.fullNode,
+                api.instance.client,
                 suiObjectData
             );
 
             for (const kioskObject of kioskObjects) {
-                const kioskObjectData = getSuiObjectData(kioskObject);
+                const kioskObjectData = kioskObject.data;
                 if (kioskObjectData) {
                     newSuiObjects.push({
                         kiosk: suiObjectData,
@@ -266,6 +259,10 @@ const initialState = objectsAdapter.getInitialState<SuiObjectsManualState>({
     objectResponses: [],
 });
 
+// This is probably dangerous and should be removed as soon a possible
+// The error is: Type instantiation is excessively deep and possibly infinite.ts(2589)
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Not sure how to fix this
 const slice = createSlice({
     name: 'sui-objects',
     initialState: initialState,

@@ -1,11 +1,8 @@
 import { thunkExtras } from '_redux/store/thunk-extras';
 
-import type {
-    RawSigner,
-    SignedTransaction,
-    TransactionBlock,
-} from '@mysten/sui.js';
+import type { RawSigner, SignedTransaction } from '@mysten/sui.js';
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
+import type { TransactionBlock } from '@mysten/sui.js/transactions';
 import type { SuiSignAndExecuteTransactionBlockInput } from '@mysten/wallet-standard';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';

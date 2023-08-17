@@ -3,7 +3,7 @@ import { useFormatCoin } from '../../hooks';
 import Body from '../../shared/typography/Body';
 import CopyBody from '../../shared/typography/CopyBody';
 
-import type { SuiJsonValue } from '@mysten/sui.js';
+import type { SuiJsonValue } from '@mysten/sui.js/client';
 
 export type SmallDetail = {
     type: 'small';

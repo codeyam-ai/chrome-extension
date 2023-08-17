@@ -7,7 +7,7 @@ const cleanRawObjType = (rawCoinType: string): string => {
 const getObjTypeFromObjId = async (
     objId: string
 ): Promise<string | undefined> => {
-    const obj = await api.instance.fullNode.getObject({
+    const obj = await api.instance.client.getObject({
         id: objId,
         options: { showType: true },
     });
