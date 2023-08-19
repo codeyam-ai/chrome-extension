@@ -23,6 +23,8 @@ import type {
     PreapprovalResponse,
 } from '_payloads/transactions';
 import type { NetworkEnvType } from '_src/background/NetworkEnv';
+import type { GetAccounts } from '_src/shared/messaging/messages/payloads/account/GetAccounts';
+import type { GetAccountsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountsResponse';
 import type { GetContacts } from '_src/shared/messaging/messages/payloads/account/GetContacts';
 import type { GetContactsResponse } from '_src/shared/messaging/messages/payloads/account/GetContactsResponse';
 import type { GetFavorites } from '_src/shared/messaging/messages/payloads/account/GetFavorites';
@@ -93,6 +95,15 @@ export class DAppInterface {
                 permissions,
             }),
             (response) => response.result
+        );
+    }
+
+    public getAccounts(): Promise<string[]> {
+        return mapToPromise(
+            this.send<GetAccounts, GetAccountsResponse>({
+                type: 'get-accounts',
+            }),
+            (response) => response.accounts
         );
     }
 
