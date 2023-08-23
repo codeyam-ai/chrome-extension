@@ -10,7 +10,7 @@ export default function HeroswapOnboarding() {
     const isProduction = selectedApiEnv.toString() === API_ENV.mainNet;
     const network = isProduction ? 'mainnet' : 'testnet';
     const theme = resolvedTheme === 'dark' ? 'dark-purple' : 'light-purple';
-    const affiliateAddress = '0x10742A09435949F4bA49460E9EA689cA9cBa4550';
+    const affiliateAddress = '0x5a457230B6AE02dFD8549293138AeD5565884434';
 
     return (
         <div
