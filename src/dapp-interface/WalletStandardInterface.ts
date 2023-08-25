@@ -332,20 +332,17 @@ export class EthosWallet implements Wallet {
         });
     };
 
-    #signMessage: SuiSignMessageMethod = async ({
-        message,
-        account,
-    }) => {
+    #signMessage: SuiSignMessageMethod = async ({ message, account }) => {
         const response = await this.#signPersonalMessage({
             message,
             account,
-        })
+        });
 
         return {
             messageBytes: response.bytes,
-            signature: response.signature
-        }
-    }
+            signature: response.signature,
+        };
+    };
 
     #signPersonalMessage: SuiSignPersonalMessageMethod = async ({
         message,

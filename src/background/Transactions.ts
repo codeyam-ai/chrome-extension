@@ -250,6 +250,7 @@ class Transactions {
             connection.origin,
             connection.originFavIcon
         );
+
         if (txResultError) {
             throw new Error(
                 `Signing message failed with the following error ${txResultError}`
