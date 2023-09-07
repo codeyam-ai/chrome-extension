@@ -200,6 +200,6 @@ export function useFormatCoin(
         coinMetadata?.iconUrl || null,
         verifiedBridgeToken,
         queryResult,
-        !!conversion,
+        !!conversion && coinType === SUI_TYPE_ARG,
     ];
 }
