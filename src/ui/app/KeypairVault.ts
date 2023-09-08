@@ -5,7 +5,7 @@ import { fromB64 } from '@mysten/bcs';
 
 import { getKeypairFromMnemonics } from '_shared/cryptography/mnemonics';
 
-import type { Ed25519Keypair } from '@mysten/sui.js';
+import type { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 import type { AccountCustomization } from '_src/types/AccountCustomization';
 
 export type AccountInfo = AccountCustomization & {

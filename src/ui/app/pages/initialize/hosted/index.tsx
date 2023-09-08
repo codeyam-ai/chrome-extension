@@ -53,8 +53,8 @@ const HostedPage = () => {
     return (
         <Loading loading={checkingInitialized} big={true}>
             <OnboardingCard
-                title="Create a Wallet With Email"
-                subtitle="A link will be sent to your e-mail to log in."
+                title="Sign in with Email"
+                subtitle="A link will be sent to your e-mail to sign in."
                 accentColor="blue"
                 icon="envelope"
             >
