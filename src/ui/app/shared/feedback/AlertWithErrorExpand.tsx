@@ -6,7 +6,7 @@ import {
     PaperAirplaneIcon,
 } from '@heroicons/react/24/solid';
 import { BCS, fromHEX, getSuiMoveConfig, toHEX } from '@mysten/bcs';
-import { Ed25519Keypair } from '@mysten/sui.js';
+import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 import { useCallback, useState, type ReactElement } from 'react';
 import ReactDOM from 'react-dom';
 import Browser from 'webextension-polyfill';

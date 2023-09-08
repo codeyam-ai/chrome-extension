@@ -1,4 +1,4 @@
-import { Ed25519PublicKey } from '@mysten/sui.js';
+import { Ed25519PublicKey } from '@mysten/sui.js/keypairs/ed25519';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';

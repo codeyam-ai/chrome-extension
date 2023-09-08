@@ -1,11 +1,12 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { Ed25519Keypair, RawSigner } from '@mysten/sui.js';
+import { RawSigner } from '@mysten/sui.js';
 import {
     SuiClient,
     type SuiTransactionBlockResponse,
 } from '@mysten/sui.js/client';
+import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 import {
     SUI_MAINNET_CHAIN,
