@@ -2,13 +2,13 @@ const CLIENT_ID =
     '117215743679-hq8b07jk94fl8fpohlg8j2oo7h1i0a35.apps.googleusercontent.com';
 
 // TODO: I'm 75% sure the redirect url is our "chrome extension url"
-const REDIRET_URL = 'chrome-extension://mcbigmjiafegjnnogedioegffbooigli';
+const REDIRECT_URL = 'chrome-extension://mcbigmjiafegjnnogedioegffbooigli';
 
 export function getOAuthUrlGoogle({ nonce }: { nonce: string }) {
     const searchParamsData = {
         client_id: CLIENT_ID,
         response_type: 'id_token',
-        redirect_uri: REDIRET_URL,
+        redirect_uri: REDIRECT_URL,
         scope: 'openid',
         nonce: nonce,
     };
