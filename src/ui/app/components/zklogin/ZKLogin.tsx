@@ -12,8 +12,23 @@ import { getOAuthUrlGoogle } from './oauthUrls';
 import type { SuiClient } from '@mysten/sui.js/client';
 import type { TransactionBlock } from '@mysten/sui.js/transactions';
 
+type Proof = object;
+
+type ZKData = {
+    maxEpoch: number,
+    ephemeralKeyPair: Ed25519Keypair,
+    proof: Proof
+}
+
+const stub: ZKData = {
+    maxEpoch: 200,
+    ephemeralKeyPair: new Ed25519Keypair(),
+    proof: {}
+}
+
 export function ZKLoginButtons() {
-    const handleClick = useCallback(() => {
+    const handleClick = useCallback(async () => {
+        const payload: ZKData = await zkloginWithGoogle();
         return;
     }, []);
 
@@ -24,7 +39,8 @@ export function ZKLoginButtons() {
     );
 }
 
-async function zkloginWithGoogle(client: SuiClient) {
+async function zkloginWithGoogle(client: SuiClient): Promise<ZKData> {
+    // return stub;
     const currentEpochInfo = await client.getCurrentEpoch();
 
     // how many epochs in addition to current we want
@@ -87,7 +103,6 @@ async function getSalt({ jwt }: { jwt: string }): Promise<{ salt: bigint }> {
     return { salt };
 }
 
-type Proof = object;
 
 /**
  * TODO: Integrate with mysten a proving service
@@ -143,10 +158,13 @@ async function getProof({
     return { proof };
 }
 
-async function signAndExecuteTx({
+/**
+ * TODO: What are the `inputs` 
+ */
+async function signAndExecuteTxWithZk({
     client,
     txb,
-    ephKeyPair,
+    ephKeyPair, // or ZKData
 }: {
     client: SuiClient;
     txb: TransactionBlock;
