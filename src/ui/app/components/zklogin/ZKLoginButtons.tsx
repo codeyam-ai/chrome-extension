@@ -7,6 +7,7 @@ import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Body from '_src/ui/app/shared/typography/Body';
 import { useNavigate } from 'react-router-dom';
 import LoadingIndicator from '../loading/LoadingIndicator';
+import { ZkSigner } from '_src/shared/cryptography/ZkSigner';
 
 export function ZKLoginButtons() {
     const client = api.instance.client;
@@ -20,12 +21,17 @@ export function ZKLoginButtons() {
     const onClickGoogle = useCallback(async () => {
         setIsLoadingService('Google');
         // const payload: ZKData = await zkloginWithGoogle(client);
-        setTimeout(() => {
+        setTimeout(async () => {
             const result = stub;
             setIsLoadingService(undefined);
-        }, 3000);
+            const zkSigner = new ZkSigner(result.ephemeralKeyPair, client);
+            const addy = await zkSigner.getAddress();
+            console.log('addy :>> ', addy);
+            const pubKey = await zkSigner.getPublicKey();
+            console.log('pubKey :>> ', pubKey);
+        }, 1000);
         return;
-    }, []);
+    }, [client]);
 
     return (
         <>
