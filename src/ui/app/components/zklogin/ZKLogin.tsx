@@ -5,7 +5,6 @@ import {
     getZkSignature,
     jwtToAddress,
 } from '@mysten/zklogin';
-import { useCallback } from 'react';
 
 import { getOAuthUrlGoogle } from './oauthUrls';
 
@@ -14,32 +13,19 @@ import type { TransactionBlock } from '@mysten/sui.js/transactions';
 
 type Proof = object;
 
-type ZKData = {
-    maxEpoch: number,
-    ephemeralKeyPair: Ed25519Keypair,
-    proof: Proof
-}
+export type ZKData = {
+    maxEpoch: number;
+    ephemeralKeyPair: Ed25519Keypair;
+    proof: Proof;
+};
 
-const stub: ZKData = {
+export const stub: ZKData = {
     maxEpoch: 200,
     ephemeralKeyPair: new Ed25519Keypair(),
-    proof: {}
-}
+    proof: {},
+};
 
-export function ZKLoginButtons() {
-    const handleClick = useCallback(async () => {
-        const payload: ZKData = await zkloginWithGoogle();
-        return;
-    }, []);
-
-    return (
-        <div className="">
-            <button onClick={handleClick}>Sign in with google</button>
-        </div>
-    );
-}
-
-async function zkloginWithGoogle(client: SuiClient): Promise<ZKData> {
+export async function zkloginWithGoogle(client: SuiClient): Promise<ZKData> {
     // return stub;
     const currentEpochInfo = await client.getCurrentEpoch();
 
@@ -74,6 +60,8 @@ async function zkloginWithGoogle(client: SuiClient): Promise<ZKData> {
         randomness,
         salt,
     });
+
+    return Promise.resolve(stub);
 }
 
 type JWTPartsWeCareAbout = {
@@ -102,7 +90,6 @@ async function getSalt({ jwt }: { jwt: string }): Promise<{ salt: bigint }> {
     const salt = BigInt(resBody.salt);
     return { salt };
 }
-
 
 /**
  * TODO: Integrate with mysten a proving service
@@ -159,7 +146,7 @@ async function getProof({
 }
 
 /**
- * TODO: What are the `inputs` 
+ * TODO: What are the `inputs`
  */
 async function signAndExecuteTxWithZk({
     client,

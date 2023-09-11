@@ -15,7 +15,7 @@ import Title from '../shared/typography/Title';
 import { DEFAULT_DAPP_KEYS } from '_src/data/dappsMap';
 
 import type { OnboardingButtonProps } from '../shared/buttons/OnboardingButton';
-import { ZKLoginButtons } from '../components/zklogin/ZKLogin';
+import { ZKLoginButtons } from '../components/zklogin/ZKLoginButtons';
 
 const setupButtons: OnboardingButtonProps[] = [
     {
