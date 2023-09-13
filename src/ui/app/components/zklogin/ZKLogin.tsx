@@ -40,9 +40,14 @@ export const Zk = {
         );
         console.log('nonce', nonce);
 
-        const jwt = await getJwtViaOAuthFlow({ nonce });
+        const { jwt } = await getJwtViaOAuthFlow({ nonce });
+        if (!jwt) return;
+        // const jwt = 'a.b.c';
         console.log('jwt', jwt);
-        // const { salt } = await getSalt({ jwt: jwt });
+
+        const { salt } = await getSalt({ jwt });
+        console.log('salt', salt);
+        if (!salt) return;
 
         // const address = jwtToAddress(jwt, salt);
         // const { proof } = await getProof({
@@ -73,29 +78,35 @@ async function getJwtViaOAuthFlow({
     nonce,
 }: {
     nonce: string;
-}): Promise<string | null> {
+}): Promise<{ jwt: string | null }> {
     const oAuthUrl = getOAuthUrl({ type: OAuthType.Google, nonce });
 
     const oauthCompleteUrl = await chrome.identity.launchWebAuthFlow({
         url: oAuthUrl,
         interactive: true,
     });
-    if (!oauthCompleteUrl) return null;
+    if (!oauthCompleteUrl) return { jwt: null };
 
     const jwt = extractJwtFromUrl(oauthCompleteUrl);
-    return jwt;
+    return { jwt };
 }
 
-/**
- * TODO: create a backend salt service
- */
-async function getSalt({ jwt }: { jwt: string }): Promise<{ salt: bigint }> {
-    const saltServiceUrl = '';
-    const headers = new Headers({ 'content-type': 'application/json' });
-    const body = JSON.stringify({ token: jwt });
-    const response = await fetch(saltServiceUrl, { headers, body });
-    const resBody = (await response.json()) as { salt: string };
-    const salt = BigInt(resBody.salt);
+async function getSalt({
+    jwt,
+}: {
+    jwt: string;
+}): Promise<{ salt: bigint | null }> {
+    const SALT_SERVICE_URL = 'http://localhost:3005';
+
+    const response = await fetch(`${SALT_SERVICE_URL}/get_salt`, {
+        method: 'POST',
+        headers: new Headers({ 'content-type': 'application/json' }),
+        body: JSON.stringify({ jwt }),
+    });
+
+    const json = await response.json();
+    const salt = BigInt(json.salt);
+
     return { salt };
 }
 
