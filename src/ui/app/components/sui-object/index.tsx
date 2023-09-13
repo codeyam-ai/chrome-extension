@@ -1,7 +1,8 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { is, SuiMovePackage } from '@mysten/sui.js';
+import { SuiMovePackage } from '@mysten/sui.js';
+import { is } from '@mysten/sui.js/utils';
 import cl from 'classnames';
 import { memo, useMemo } from 'react';
 import { Link } from 'react-router-dom';
@@ -12,12 +13,11 @@ import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import { useMiddleEllipsis, useMediaUrl, useSuiObjectFields } from '_hooks';
 
-//import type { SuiObject as SuiObjectType } from '@mysten/sui.js';
-
 import st from './SuiObject.module.scss';
 
 export type SuiObjectProps = {
-    obj: any; // TODO: Determine the correct type for this
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    obj: any;
     sendNFT?: boolean;
 };
 

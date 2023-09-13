@@ -5,6 +5,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import LockOrResetPage from './subpages/LockOrReset/LockOrResetPage';
 import ThemePage from './subpages/ThemePage';
+import CustomizationSync from './subpages/security/subpages/CustomizationSync';
 import ChangePasswordPage from './subpages/security/subpages/change-password/ChangePasswordPage';
 import { SettingsContainer } from '../../shared/navigation/nav-bar/SettingsContainer';
 import ChangeAutoLockTimeoutPage from '_src/ui/app/components/settings-menu/ChangeAutoLockTimeoutPage';
@@ -13,7 +14,7 @@ import NetworkPage from '_src/ui/app/components/settings-menu/subpages/network/N
 import PermissionsPage from '_src/ui/app/components/settings-menu/subpages/permissions/PermissionsPage';
 import SecurityHomePage from '_src/ui/app/components/settings-menu/subpages/security/SecurityHomePage';
 import ViewPrivateKeyPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewPrivateKeyPage';
-import ViewSeedPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/ViewSeedPage';
+import ViewSeedPage from '_src/ui/app/components/settings-menu/subpages/security/subpages/view-seed/ViewSeedPage';
 
 function SettingsRouterPage() {
     return (
@@ -33,9 +34,17 @@ function SettingsRouterPage() {
                         path="view-private-key"
                         element={<ViewPrivateKeyPage />}
                     />
+                    {/* 
+                        When adding routes to the security page, make sure to add them to the logic to show the
+                        back button in the header at the top of SettingsHomePage.tsx
+                    */}
                 </Route>
                 <Route path="permissions" element={<PermissionsPage />} />
                 <Route path="lock" element={<LockOrResetPage />} />
+                <Route
+                    path="customization-sync"
+                    element={<CustomizationSync />}
+                />
                 <Route
                     path="change-auto-lock-timeout"
                     element={<ChangeAutoLockTimeoutPage />}

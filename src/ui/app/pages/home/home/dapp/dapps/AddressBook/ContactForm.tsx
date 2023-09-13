@@ -1,4 +1,4 @@
-import { isValidSuiAddress } from '@mysten/sui.js';
+import { isValidSuiAddress } from '@mysten/sui.js/utils';
 import { useField } from 'formik';
 import { useState, useCallback } from 'react';
 import * as Yup from 'yup';
@@ -9,9 +9,6 @@ import Input from '_src/ui/app/shared/inputs/Input';
 import ColorPickerMenu from '_src/ui/app/shared/inputs/colors/ColorPickerMenu';
 import EmojiPickerMenu from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
-
-import type { SuiAddress } from '@mysten/sui.js';
-import type { EmojiPickerResult } from '_src/ui/app/shared/inputs/emojis/EmojiPickerMenu';
 
 export const addressValidation = Yup.string()
     .ensure()
@@ -28,7 +25,7 @@ export const nameValidation = Yup.string().required('Enter a name');
 
 interface ContactFormProps {
     name?: string;
-    address?: SuiAddress;
+    address?: string;
     emoji?: string;
     setEmoji: React.Dispatch<React.SetStateAction<string | undefined>>;
     color: string;
@@ -55,8 +52,8 @@ const ContactForm = ({
     const [nameField, nameMeta] = useField('name');
 
     const handleEmojiChange = useCallback(
-        (emojiPickerResult: EmojiPickerResult) => {
-            setEmoji(emojiPickerResult.shortcodes);
+        (emoji: string) => {
+            setEmoji(emoji);
             setEmojiPickerOpen(false);
         },
         [setEmoji]

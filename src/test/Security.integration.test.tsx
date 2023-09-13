@@ -6,7 +6,7 @@ import nock from 'nock';
 import { getEncrypted } from '_shared/storagex/store';
 import { BASE_URL } from '_src/shared/constants';
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import {
     fakeAccessToken,
@@ -30,7 +30,7 @@ describe('The Security Settings page', () => {
     });
 
     const init = async () => {
-        await mockSuiObjects(mockJsonRpc);
+        await mockBlockchain(mockJsonRpc);
         await renderApp();
 
         await screen.findByText('Get started with Sui');
@@ -52,7 +52,6 @@ describe('The Security Settings page', () => {
     describe('mnemonic user', () => {
         beforeEach(async () => {
             simulateMnemonicUser();
-            mockCommonCalls(mockJsonRpc);
         });
 
         test('requires a valid password to view the recovery phrase', async () => {
@@ -63,7 +62,9 @@ describe('The Security Settings page', () => {
             );
             await userEvent.click(recoveryPhraseButton);
 
-            let recoveryPhraseElements = screen.queryAllByText(recoveryPhrase);
+            let recoveryPhraseElements = screen.queryAllByTestId(
+                'recovery-phrase-display'
+            );
             expect(recoveryPhraseElements.length).toBe(0);
 
             const passwordInput = await screen.findByTestId('password');
@@ -76,14 +77,24 @@ describe('The Security Settings page', () => {
 
             await screen.findByText('Password is incorrect');
 
-            recoveryPhraseElements = screen.queryAllByText(recoveryPhrase);
+            recoveryPhraseElements = screen.queryAllByTestId(
+                'recovery-phrase-display'
+            );
             expect(recoveryPhraseElements.length).toBe(0);
 
             await userEvent.clear(passwordInput);
             await userEvent.type(passwordInput, password);
             await userEvent.click(submitPasswordButton);
 
-            await screen.findByText(recoveryPhrase);
+            const recoveryPhraseElement = await screen.findByTestId(
+                'recovery-phrase-display'
+            );
+
+            await userEvent.hover(recoveryPhraseElement);
+
+            recoveryPhrase.split(' ').forEach(async (word) => {
+                await screen.findByText(word);
+            });
         });
 
         test('requires a valid password to view the private key', async () => {
@@ -192,7 +203,6 @@ describe('The Security Settings page', () => {
 
             await userEvent.type(paswwordInput, 'one two three');
             await userEvent.click(screen.getByTestId('submit'));
-            await screen.findByText('My Balance');
         });
 
         test('does not allow user to change password if they put wrong current password', async () => {
@@ -276,7 +286,6 @@ describe('The Security Settings page', () => {
                 });
 
             simulateEmailUser();
-            mockCommonCalls(mockJsonRpc);
         });
 
         test('shows the seed phrase for email accounts', async () => {
@@ -287,7 +296,9 @@ describe('The Security Settings page', () => {
             );
             await userEvent.click(recoveryPhraseButton);
 
-            let recoveryPhraseElements = screen.queryAllByText(recoveryPhrase);
+            let recoveryPhraseElements = screen.queryAllByTestId(
+                'recovery-phrase-display'
+            );
             expect(recoveryPhraseElements.length).toBe(0);
 
             const viewPhraseCheck = await screen.findByText('I understand');
@@ -298,8 +309,9 @@ describe('The Security Settings page', () => {
             );
             await userEvent.click(viewPhraseButton);
 
-            recoveryPhraseElements = screen.queryAllByText(recoveryPhrase);
-
+            recoveryPhraseElements = screen.queryAllByTestId(
+                'recovery-phrase-display'
+            );
             expect(recoveryPhraseElements.length).toBe(1);
         });
 

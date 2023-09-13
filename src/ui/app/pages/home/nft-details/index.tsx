@@ -5,20 +5,24 @@ import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 import { getObjectId, hasPublicTransfer } from '@mysten/sui.js';
 import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import ExplorerLink from '_components/explorer-link';
 import { ExplorerLinkType } from '_components/explorer-link/ExplorerLinkType';
 import Loading from '_components/loading';
-import { useAppSelector, useNFTBasicData } from '_hooks';
+import { useAppDispatch, useAppSelector, useNFTBasicData } from '_hooks';
 import { accountNftsSelector } from '_redux/slices/account';
 import { truncateMiddle } from '_src/ui/app/helpers/truncate-string-middle';
+import { useUpdateCurrentAccountInfo } from '_src/ui/app/hooks/useUpdateCurrentAccountInfo';
+import { addInvalidPackage } from '_src/ui/app/redux/slices/valid';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
+import ConfirmDestructiveActionDialog from '_src/ui/app/shared/dialog/ConfirmDestructiveActionDialog';
 import { BlurredImage } from '_src/ui/app/shared/images/BlurredBgImage';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import Title from '_src/ui/app/shared/typography/Title';
 
-import type { SuiObjectData } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js/client';
 import type { ButtonHTMLAttributes } from 'react';
 
 function NFTdetailsContent({
@@ -28,8 +32,37 @@ function NFTdetailsContent({
     nft: SuiObjectData;
     onClick?: ButtonHTMLAttributes<HTMLButtonElement>['onClick'];
 }) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const { updateCurrentAccountInfo } = useUpdateCurrentAccountInfo();
+
     const { filePath, nftObjectID, nftFields, fileExtentionType } =
         useNFTBasicData(nft);
+
+    const setAsPfp = useCallback(async () => {
+        if (filePath && nftObjectID) {
+            await updateCurrentAccountInfo({
+                nftPfpId: nftObjectID,
+                nftPfpUrl: filePath,
+            });
+            toast('NFT set as profile picture');
+        }
+    }, [filePath, nftObjectID, updateCurrentAccountInfo]);
+
+    const hide = useCallback(async () => {
+        await dispatch(addInvalidPackage(nft.type?.split('::')[0] ?? ''));
+        toast('NFT type has been hidden');
+        navigate('/nfts', { replace: true });
+    }, [dispatch, nft, navigate]);
+
+    const showModal = useCallback(() => {
+        setIsModalOpen(true);
+    }, []);
+
+    const closeModal = useCallback(() => {
+        setIsModalOpen(false);
+    }, []);
 
     let address;
     if (
@@ -67,16 +100,30 @@ function NFTdetailsContent({
                             {nftFields?.description}
                         </BodyLarge>
 
-                        {hasPublicTransfer(nft) && (
-                            <Button
-                                isInline
-                                buttonStyle="primary"
-                                className={'inline-block mb-0'}
-                                onClick={onClick}
-                            >
-                                Send
-                            </Button>
-                        )}
+                        <div className="flex gap-6 items-center justify-center">
+                            {hasPublicTransfer(nft) && (
+                                <Button
+                                    buttonStyle="primary"
+                                    wrapperClassName="flex-1 w-full"
+                                    className="flex-1"
+                                    onClick={onClick}
+                                    removeContainerPadding
+                                >
+                                    Send
+                                </Button>
+                            )}
+                            {filePath && (
+                                <Button
+                                    buttonStyle="secondary"
+                                    wrapperClassName="flex-1 w-full"
+                                    className="flex-1"
+                                    onClick={setAsPfp}
+                                    removeContainerPadding
+                                >
+                                    Set as PFP
+                                </Button>
+                            )}
+                        </div>
                     </div>
 
                     <div className={'w-full text-left'}>
@@ -149,6 +196,25 @@ function NFTdetailsContent({
                                     <ArrowUpRightIcon width={16} height={16} />
                                 </ExplorerLink>
                             </div>
+                        </div>
+                        <div className="p-12 flex justify-center">
+                            <Button
+                                buttonStyle="secondary"
+                                onClick={showModal}
+                                removeContainerPadding
+                            >
+                                Hide This Type of NFTs
+                            </Button>
+                            <ConfirmDestructiveActionDialog
+                                onCancel={closeModal}
+                                onConfirm={hide}
+                                isOpen={isModalOpen}
+                                setIsOpen={setIsModalOpen}
+                                title="Are you sure you want to hide this type of NFTs?"
+                                description="You can show them again using the controls on the NFTs page."
+                                primaryButtonText="Hide NFTs"
+                                secondaryButtonText="Cancel"
+                            />
                         </div>
                         {/*
                                 

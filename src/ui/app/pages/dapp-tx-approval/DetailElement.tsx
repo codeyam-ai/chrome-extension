@@ -8,7 +8,7 @@ import CopyBody from '../../shared/typography/CopyBody';
 import type { Cost } from './CostValue';
 import type { NumberedDetail } from './NumberedValue';
 import type { SmallDetail } from './SmallValue';
-import type { SuiJsonValue } from '@mysten/sui.js';
+import type { SuiJsonValue } from '@mysten/sui.js/client';
 
 export type Detail = {
     label?: string;

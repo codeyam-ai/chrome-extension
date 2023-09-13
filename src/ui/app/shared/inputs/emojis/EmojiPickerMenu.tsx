@@ -1,13 +1,21 @@
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
+import { useCallback } from 'react';
 
+// emoji-mart does not have typescript support, so here is the type
 export type EmojiPickerResult = {
-    shortcodes: string;
+    id?: string;
+    name?: string;
+    native?: string;
+    unified?: string;
+    keywords?: string[];
+    shortcodes?: string;
+    aliases?: string[];
 };
 
 interface EmojiPickerMenuProps {
     isOpen: boolean;
-    setSelectedEmoji: (emojiPickerResult: EmojiPickerResult) => void;
+    setSelectedEmoji: (emojiPickerResult: string) => void;
     closeEmojiPickerMenu: () => void;
     forceLightMode?: boolean;
 }
@@ -18,6 +26,16 @@ const EmojiPickerMenu = ({
     closeEmojiPickerMenu,
     forceLightMode,
 }: EmojiPickerMenuProps) => {
+    const onEmojiSelect = useCallback(
+        (emoji: EmojiPickerResult) => {
+            if (!emoji.native) {
+                throw new Error('No native emoji');
+            }
+            setSelectedEmoji(emoji.native);
+        },
+        [setSelectedEmoji]
+    );
+
     if (isOpen) {
         return (
             <>
@@ -31,7 +49,7 @@ const EmojiPickerMenu = ({
                 <div className="absolute">
                     <Picker
                         data={data}
-                        onEmojiSelect={setSelectedEmoji}
+                        onEmojiSelect={onEmojiSelect}
                         theme={forceLightMode ? 'light' : 'auto'}
                     />
                 </div>

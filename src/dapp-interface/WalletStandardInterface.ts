@@ -1,7 +1,8 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { type SuiAddress, toB64, TransactionBlock } from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
+import { toB64, fromB64 } from '@mysten/sui.js/utils';
 import {
     SUI_CHAINS,
     ReadonlyWalletAccount,
@@ -18,6 +19,7 @@ import {
     type StandardEventsListeners,
     type SuiSignTransactionBlockMethod,
     type SuiSignMessageMethod,
+    type SuiSignPersonalMessageMethod,
     type StandardDisconnectFeature,
     type StandardDisconnectMethod,
     SUI_MAINNET_CHAIN,
@@ -36,7 +38,7 @@ import {
     ALL_PERMISSION_TYPES,
 } from '_payloads/permissions';
 import { API_ENV } from '_src/shared/api-env';
-import { type SignMessageRequest } from '_src/shared/messaging/messages/payloads/transactions';
+import { type SignPersonalMessageRequest } from '_src/shared/messaging/messages/payloads/transactions';
 import { isWalletStatusChangePayload } from '_src/shared/messaging/messages/payloads/wallet-status-change';
 
 import type { IconString } from '@wallet-standard/standard';
@@ -138,6 +140,10 @@ export class EthosWallet implements Wallet {
                 version: '0.0.1',
                 stake: this.#stake,
             },
+            'sui:signPersonalMessage': {
+                version: '1.0.0',
+                signPersonalMessage: this.#signPersonalMessage,
+            },
             'sui:signMessage': {
                 version: '1.0.0',
                 signMessage: this.#signMessage,
@@ -149,19 +155,20 @@ export class EthosWallet implements Wallet {
         return this.#accounts;
     }
 
-    #setAccounts(addresses: SuiAddress[]) {
-        this.#accounts = addresses.map(
-            (address) =>
+    #setAccounts(accounts: GetAccountResponse['accounts']) {
+        this.#accounts = accounts.map(
+            ({ address, publicKey }) =>
                 new ReadonlyWalletAccount({
                     address,
-                    // TODO: Expose public key instead of address:
-                    publicKey: new Uint8Array(),
+                    publicKey: publicKey
+                        ? fromB64(publicKey)
+                        : new Uint8Array(),
                     chains: this.#activeChain ? [this.#activeChain] : [],
                     features: [
                         'standard:connect',
                         'standard:disconnect',
                         'standard:events',
-                        'sui:signMessage',
+                        'sui:signPersonalMessage',
                         'sui:signTransactionBlock',
                         'sui:signAndExecuteTransactionBlock',
                     ],
@@ -326,12 +333,27 @@ export class EthosWallet implements Wallet {
     };
 
     #signMessage: SuiSignMessageMethod = async ({ message, account }) => {
+        const response = await this.#signPersonalMessage({
+            message,
+            account,
+        });
+
+        return {
+            messageBytes: response.bytes,
+            signature: response.signature,
+        };
+    };
+
+    #signPersonalMessage: SuiSignPersonalMessageMethod = async ({
+        message,
+        account,
+    }) => {
         return mapToPromise(
-            this.#send<SignMessageRequest, SignMessageRequest>({
-                type: 'sign-message-request',
+            this.#send<SignPersonalMessageRequest, SignPersonalMessageRequest>({
+                type: 'sign-personal-message-request',
                 args: {
                     message: toB64(message),
-                    accountAddress: account.address,
+                    accountAddress: account.address ?? account,
                 },
             }),
             (response) => {

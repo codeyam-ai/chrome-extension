@@ -8,10 +8,11 @@ const WalletTo = ({
 }: {
     addressTo?: string;
     walletTo?: {
-        name?: string;
+        nickname?: string;
         address: string;
         emoji?: string;
         color?: string;
+        nftPfpUrl?: string;
     };
     noTo?: boolean;
 }) => {
@@ -28,11 +29,12 @@ const WalletTo = ({
             <WalletColorAndEmojiCircle
                 color={walletTo.color}
                 emoji={walletTo.emoji}
+                nftPfpUrl={walletTo.nftPfpUrl}
                 circleSizeClasses="h-5 w-5"
                 emojiSizeInPx={12}
             />
-            <div>{walletTo.name || truncateMiddle(walletTo.address)}</div>
-            {!!walletTo.name && (
+            <div>{walletTo.nickname || truncateMiddle(walletTo.address)}</div>
+            {!!walletTo.nickname && (
                 <div>({truncateMiddle(walletTo.address, 4)})</div>
             )}
         </div>

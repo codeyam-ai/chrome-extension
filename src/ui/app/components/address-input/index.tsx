@@ -8,12 +8,10 @@ import { getSuiAddress } from './nameservice';
 import { SUI_ADDRESS_VALIDATION } from './validation';
 import Input from '../../shared/inputs/Input';
 
-import type { SuiAddress } from '@mysten/sui.js';
 import type { FieldProps } from 'formik';
 import type { ChangeEventHandler } from 'react';
 
-export interface AddressInputProps<Values>
-    extends FieldProps<SuiAddress, Values> {
+export interface AddressInputProps<Values> extends FieldProps<string, Values> {
     disabled?: boolean;
     placeholder?: string;
     className?: string;
@@ -25,8 +23,8 @@ function AddressInput<FormValues>({
     placeholder = '0x... or SuiNS name',
     className,
     label,
-    form: { isSubmitting, setFieldValue },
-    field: { onBlur, name, value },
+    form: { isSubmitting, setFieldValue, isValid },
+    field: { name, value },
 }: AddressInputProps<FormValues>) {
     const [displayedValue, setDisplayedValue] = useState<string>(value);
     const [showAddress, setShowAddress] = useState<boolean>(false);
@@ -52,10 +50,24 @@ function AddressInput<FormValues>({
 
             const _value = e.currentTarget.value;
             setDisplayedValue(_value);
-            if (!_value.startsWith('0x')) {
-                getSuiAddress(_value).then((address: string) => {
-                    setShowAddress(address !== _value);
-                    setFieldValue(name, SUI_ADDRESS_VALIDATION.cast(address));
+            if (_value === '') {
+                setShowAddress(false);
+                setFieldValue(name, '');
+            } else if (!_value.startsWith('0x')) {
+                getSuiAddress(_value).then((address: string | null) => {
+                    if (address) {
+                        setShowAddress(address !== _value);
+                        setFieldValue(
+                            name,
+                            SUI_ADDRESS_VALIDATION.cast(address)
+                        );
+                    } else {
+                        setShowAddress(true);
+                        setFieldValue(
+                            name,
+                            SUI_ADDRESS_VALIDATION.cast(_value)
+                        );
+                    }
                 });
             } else {
                 setFieldValue(name, SUI_ADDRESS_VALIDATION.cast(_value));
@@ -76,7 +88,6 @@ function AddressInput<FormValues>({
                 className={className}
                 disabled={disabled}
                 placeholder={placeholder}
-                onBlur={onBlur}
                 value={displayedValue}
                 onChange={handleOnChange}
                 spellCheck={false}
@@ -91,7 +102,7 @@ function AddressInput<FormValues>({
                     name,
                 }}
             />
-            {showAddress && (
+            {isValid && showAddress && (
                 <CheckCircleIcon
                     className={'absolute right-6 bottom-11'}
                     width={20}

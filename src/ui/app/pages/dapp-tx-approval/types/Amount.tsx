@@ -9,7 +9,7 @@ import { useFormatCoin } from '_src/ui/app/hooks';
 import Body from '_src/ui/app/shared/typography/Body';
 
 import type { BalanceReduction, BalanceAddition } from '../lib/analyzeChanges';
-import type { SuiAddress, SuiObjectChange } from '@mysten/sui.js';
+import type { SuiObjectChange } from '@mysten/sui.js/client';
 
 export const Costs = ({
     balanceReductions,
@@ -63,7 +63,7 @@ export const Sending = ({
     owner,
     transfers,
 }: {
-    owner: SuiAddress;
+    owner: string;
     transfers: SuiObjectChange[];
 }) => {
     const sending = transfers.filter(
@@ -88,7 +88,7 @@ export const Receiving = ({
     owner,
     transfers,
 }: {
-    owner: SuiAddress;
+    owner: string;
     transfers: SuiObjectChange[];
 }) => {
     const receiving = transfers.filter(
@@ -138,25 +138,33 @@ const Amount = ({
     positive: boolean;
 }) => {
     const bnAmount = new BigNumber(balanceChange.amount);
-    const [formatted, symbol, dollars] = useFormatCoin(
+    const [formatted, symbol, dollars, , , , , hasConversion] = useFormatCoin(
         bnAmount.abs().toString(),
         balanceChange.type
     );
 
     const { featureFlags } = useDependencies();
-    return featureFlags.showUsd ? (
+    return featureFlags.showUsd && hasConversion ? (
         <div className="flex flex-col items-end text-right">
-            <div
-                className={`flex items-center gap-1 text-base ${
-                    positive ? 'text-green-700' : ''
-                }`}
-            >
-                <Body className="font-light">USD</Body>
-                <Body isSemibold>{dollars}</Body>
-            </div>
-            <Body className="text-size-ethos-small text-[#74777C]">
+            <Body isSemibold className="text-size-ethos-body">
                 {formatted} {symbol}
             </Body>
+            <div
+                className={`flex items-center gap-1 ${
+                    positive ? 'text-green-700' : 'text-[#74777C]'
+                }`}
+            >
+                {symbol === 'SUI' && (
+                    <>
+                        <Body className="font-light text-size-ethos-small">
+                            {dollars}
+                        </Body>
+                        <Body className="font-light text-size-ethos-small">
+                            USD
+                        </Body>
+                    </>
+                )}
+            </div>
         </div>
     ) : (
         <div className="flex flex-col items-end text-right">

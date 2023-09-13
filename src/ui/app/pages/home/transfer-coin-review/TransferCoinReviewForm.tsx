@@ -1,7 +1,8 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { Coin, SUI_TYPE_ARG } from '@mysten/sui.js';
+import { Coin } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { BigNumber } from 'bignumber.js';
 import { Form, useFormikContext } from 'formik';
 import { memo, useEffect, useMemo, useRef } from 'react';
@@ -67,7 +68,10 @@ function TransferCoinForm({
         .shiftedBy(decimals)
         .toString();
 
-    const [, , dollars, , icon] = useFormatCoin(unformattedAmount, coinType);
+    const [, , dollars, , icon, , , hasConversion] = useFormatCoin(
+        unformattedAmount,
+        coinType
+    );
 
     const [formattedGasFee, gasSymbol] = useFormatCoin(
         formData.gasFee,
@@ -105,9 +109,13 @@ function TransferCoinForm({
                     <Header className={'font-weight-ethos-subheader'}>
                         {amount} {truncateString(coinSymbol, 8)}
                     </Header>
-                    {featureFlags.showUsd && (
-                        <Subheader isTextColorMedium>{dollars}</Subheader>
-                    )}
+                    {featureFlags.showUsd &&
+                        hasConversion &&
+                        coinSymbol.toLowerCase() === 'sui' && (
+                            <Subheader isTextColorMedium>
+                                ≈ {dollars} USD
+                            </Subheader>
+                        )}
                 </div>
                 <KeyValueList
                     keyNamesAndValues={[

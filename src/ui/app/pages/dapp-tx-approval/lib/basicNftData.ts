@@ -16,7 +16,7 @@ const basicNftData = async ({
     signer: RawSigner | EthosSigner | LedgerSigner;
     objectId: string;
 }): Promise<BasicNFtData> => {
-    const objectData = await signer.provider.getObject({
+    const objectData = await signer.client.getObject({
         id: objectId,
         options: {
             showContent: true,
@@ -35,8 +35,16 @@ const basicNftData = async ({
 
     const nftDisplay = getDisplay(object?.display);
     return {
-        name: nftDisplay?.name ?? fields?.name,
-        imageUrl: nftDisplay?.image_url ?? fields?.url,
+        name:
+            nftDisplay?.name ??
+            (fields && 'name' in fields && typeof fields.name === 'string'
+                ? fields.name
+                : undefined),
+        imageUrl:
+            nftDisplay?.image_url ??
+            (fields && 'url' in fields && typeof fields.url === 'string'
+                ? fields.url
+                : undefined),
     };
 };
 

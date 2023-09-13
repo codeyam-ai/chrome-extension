@@ -17,6 +17,7 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
     isInline?: boolean;
     removeContainerPadding?: boolean;
     isDanger?: boolean;
+    forceLightTheme?: boolean;
     children?: React.ReactNode;
 }
 
@@ -29,6 +30,7 @@ const Button = (props: ButtonProps) => {
         isInline,
         removeContainerPadding,
         isDanger,
+        forceLightTheme,
         children,
         ...reactProps
     } = props;
@@ -50,10 +52,13 @@ const Button = (props: ButtonProps) => {
             : 'text-ethos-light-background-default bg-ethos-light-primary-light'
     );
 
-    const secondaryButtonClassNames =
-        baseButtonClassNames +
-        ' ' +
-        'bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary text-ethos-light-primary-light dark:text-ethos-dark-primary-dark';
+    const secondaryButtonClassNames = classNames(
+        baseButtonClassNames,
+        'bg-ethos-light-background-secondary text-ethos-light-primary-light',
+        forceLightTheme
+            ? ''
+            : 'dark:bg-ethos-dark-background-secondary dark:text-ethos-dark-primary-dark'
+    );
 
     const dangerPrimaryButtonClassNames =
         baseButtonClassNames +

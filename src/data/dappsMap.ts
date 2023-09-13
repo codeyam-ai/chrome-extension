@@ -16,13 +16,16 @@ import display from '_images/dapps/logos/display.png';
 import explorer from '_images/dapps/logos/explorer.png';
 import finalStardust from '_images/dapps/logos/final-stardust.png';
 import gotbeef from '_images/dapps/logos/gotbeef.png';
+import hyperspace from '_images/dapps/logos/hyperspace.png';
 import interestProtocol from '_images/dapps/logos/interest-protocol.png';
 import keepsake from '_images/dapps/logos/keepsake.png';
 import kriya from '_images/dapps/logos/kriya.png';
 import movePad from '_images/dapps/logos/movepad.jpg';
 import { default as movex } from '_images/dapps/logos/movex.png';
 import polymediachat from '_images/dapps/logos/polymediachat.png';
+import runLegends from '_images/dapps/logos/run-legends.jpg';
 import staking from '_images/dapps/logos/staking.png';
+// import swaps from '_images/dapps/logos/staking.png';
 import sui8192 from '_images/dapps/logos/sui-8192.png';
 import suiCheckers from '_images/dapps/logos/sui-checkers.png';
 import suiChess from '_images/dapps/logos/sui-chess.png';
@@ -134,6 +137,7 @@ const dappsMap: Map<string, DappData> = new Map([
             tags: [TagName.TOOLS],
         } as DappData,
     ],
+
     [
         DISPLAY_ID,
         {
@@ -251,6 +255,7 @@ const dappsMap: Map<string, DappData> = new Map([
             urls: {
                 [NetworkName.DEVNET]: 'https://www.suins.io/',
                 [NetworkName.TESTNET]: 'https://www.suins.io/',
+                [NetworkName.MAINNET]: 'https://www.suins.io/',
             },
             tags: [TagName.TOOLS],
         } as DappData,
@@ -474,12 +479,9 @@ const dappsMap: Map<string, DappData> = new Map([
             description:
                 'Interest Protocol is a DeFi Platform that allows you to Swap, Lend & Borrow.',
             urls: {
-                [NetworkName.DEVNET]:
-                    'https://sui.interestprotocol.com/en-US/dapp/dex',
-                [NetworkName.TESTNET]:
-                    'https://sui.interestprotocol.com/en-US/dapp/dex',
-                [NetworkName.MAINNET]:
-                    'https://sui.interestprotocol.com/en-US/dapp/dex',
+                [NetworkName.DEVNET]: 'https://www.interestprotocol.com/dapp',
+                [NetworkName.TESTNET]: 'https://www.interestprotocol.com/dapp',
+                [NetworkName.MAINNET]: 'https://www.interestprotocol.com/dapp',
             },
             tags: [TagName.FINANCE],
         } as DappData,
@@ -495,6 +497,7 @@ const dappsMap: Map<string, DappData> = new Map([
             urls: {
                 [NetworkName.DEVNET]: 'https://sui.apass.network',
                 [NetworkName.TESTNET]: 'https://sui.apass.network',
+                [NetworkName.MAINNET]: 'https://sui.apass.network',
             },
             tags: [TagName.GAMES, TagName.NFTS],
         } as DappData,
@@ -507,7 +510,9 @@ const dappsMap: Map<string, DappData> = new Map([
             title: 'Final Stardust: Cosmic Nexus',
             description:
                 'Final Stardust is a media franchise in the making, with its first installment being "Final Stardust: Cosmic Nexus", a digital collectible card game inspired by big Japanese/Anime TCG games.',
-            urls: {},
+            urls: {
+                [NetworkName.MAINNET]: 'https://demo.finalstardust.com/',
+            },
             tags: [TagName.GAMES, TagName.NFTS],
         } as DappData,
     ],
@@ -550,6 +555,34 @@ const dappsMap: Map<string, DappData> = new Map([
                 [NetworkName.TESTNET]: 'https://www.cubicgames.xyz/games',
             },
             tags: [TagName.GAMES, TagName.TOOLS],
+        } as DappData,
+    ],
+    [
+        '3874aba4-e78a-4f12-8f9d-dc9dddc85e52',
+        {
+            id: '3874aba4-e78a-4f12-8f9d-dc9dddc85e52',
+            image: hyperspace,
+            title: 'Hyperspace',
+            description:
+                'Hyperspace is the premiere NFT marketplace and launchpad on Sui on a mission to unlock the future of NFT trading and utilization.',
+            urls: {
+                [NetworkName.MAINNET]: 'https://sui.hyperspace.xyz',
+            },
+            tags: [TagName.MARKETPLACE, TagName.NFTS],
+        } as DappData,
+    ],
+    [
+        '29ec6f19-5364-47e8-a7b6-ccc5c3caf76b',
+        {
+            id: '29ec6f19-5364-47e8-a7b6-ccc5c3caf76b',
+            image: runLegends,
+            title: 'Run Legends',
+            description:
+                "Walk or run outside to fight “Sappers” - enemies that represent real-life anxieties. Build mental and physical health as you upgrade your gear, make new friends, and learn more about the characters' backstories.",
+            urls: {
+                [NetworkName.MAINNET]: 'https://runlegends.talofagames.com/',
+            },
+            tags: [TagName.NFTS, TagName.GAMES],
         } as DappData,
     ],
 ]);

@@ -1,33 +1,51 @@
-import { fromB64, toHEX } from '@mysten/bcs';
+import { fromB64, toHEX, fromHEX, toB64 } from '@mysten/bcs';
 import { useCallback, useEffect, useState } from 'react';
 
 import PasswordVerificationForm from './PasswordVerificationForm';
 import { secureApiCall } from '../../../../../../../shared/utils/simpleApiCall';
 import Button from '../../../../../shared/buttons/Button';
 import { getKeypairFromMnemonics } from '_src/shared/cryptography/mnemonics';
-import { useAppSelector } from '_src/ui/app/hooks';
+import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
+import {
+    getImportedMnemonic,
+    getImportedPrivateKey,
+} from '_src/ui/app/redux/slices/account';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 
 import type { ChangeEventHandler } from 'react';
 
 export default function ViewPrivateKeyPage() {
+    const dispatch = useAppDispatch();
     const [hasConfirmed, setHasConfirmed] = useState(false);
     const [showPrivateKey, setShowPrivateKey] = useState(false);
     const activeAccountIndex = useAppSelector(
         ({ account }) => account.activeAccountIndex
     );
+    const activeAccountInfo = useAppSelector(({ account }) => {
+        return account.accountInfos.find(
+            (accountInfo) => accountInfo.index === activeAccountIndex
+        );
+    });
     const privateKey = useAppSelector(({ account }) => {
-        const mnenonic = account.createdMnemonic || account.mnemonic;
-        if (!mnenonic) return;
+        if (activeAccountInfo?.importedMnemonicName) return;
+        if (activeAccountInfo?.importedPrivateKeyName) return;
 
-        const keypair = getKeypairFromMnemonics(mnenonic, activeAccountIndex);
+        const mnemonic = account.createdMnemonic || account.mnemonic;
+        if (!mnemonic) return;
+
+        const keypair = getKeypairFromMnemonics(mnemonic, activeAccountIndex);
         return keypair.export().privateKey;
     });
-    const [hostedPrivateKey, setHostedPrivateKey] = useState('Loading...');
     const passphrase = useAppSelector(({ account }) => account.passphrase);
     const authentication = useAppSelector(
         ({ account }) => account.authentication
     );
+    const [hostedPrivateKey, setHostedPrivateKey] = useState<
+        string | undefined
+    >();
+    const [importedPrivateKey, setImportedPrivateKey] = useState<
+        string | undefined
+    >();
 
     const onHandleConfirmed = useCallback<ChangeEventHandler<HTMLInputElement>>(
         (event) => {
@@ -66,43 +84,84 @@ export default function ViewPrivateKeyPage() {
         getHostedPrivateKey();
     }, [activeAccountIndex, authentication, hasConfirmed, privateKey]);
 
+    useEffect(() => {
+        if (!activeAccountInfo) return;
+
+        const name = activeAccountInfo?.importedMnemonicName;
+        if (!name) return;
+
+        const getImportedPrivateKey = async () => {
+            const mnemonic = await dispatch(
+                getImportedMnemonic({ name })
+            ).unwrap();
+
+            if (!mnemonic) return;
+
+            const keypair = getKeypairFromMnemonics(
+                mnemonic,
+                activeAccountInfo.importedMnemonicIndex
+            );
+
+            setImportedPrivateKey(keypair.export().privateKey);
+        };
+
+        getImportedPrivateKey();
+    }, [activeAccountInfo, dispatch, privateKey]);
+
+    useEffect(() => {
+        if (!activeAccountInfo) return;
+
+        const name = activeAccountInfo?.importedPrivateKeyName;
+        if (!name) return;
+
+        const getImported = async () => {
+            const privateKey = await dispatch(
+                getImportedPrivateKey({ name })
+            ).unwrap();
+
+            if (!privateKey) return;
+
+            setImportedPrivateKey(toB64(fromHEX(privateKey)));
+        };
+
+        getImported();
+    }, [activeAccountInfo, dispatch, privateKey]);
+
+    const safePrivateKey = privateKey ?? hostedPrivateKey ?? importedPrivateKey;
+
     if (showPrivateKey) {
         return (
             <div className="flex flex-col gap-6 p-6">
                 <div>
                     <div className="text-lg">Hex</div>
-                    <textarea
-                        rows={3}
-                        value={toHEX(fromB64(privateKey || hostedPrivateKey))}
+                    <div
                         id="hexPrivateKey"
-                        className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
-                        name="hexPrivateKey"
-                        disabled={true}
-                    />
+                        className="break-words p-3 max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
+                    >
+                        {!safePrivateKey
+                            ? 'Loading...'
+                            : toHEX(fromB64(safePrivateKey))}
+                    </div>
                 </div>
                 <div>
                     <div className="text-lg">Base-64</div>
-                    <textarea
-                        rows={3}
-                        value={privateKey ?? hostedPrivateKey}
-                        id="hexPrivateKey"
-                        className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
-                        name="hexPrivateKey"
-                        disabled={true}
-                    />
+                    <div
+                        id="b64PrivateKey"
+                        className="break-words p-3 max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
+                    >
+                        {!safePrivateKey ? 'Loading...' : safePrivateKey}
+                    </div>
                 </div>
                 <div>
                     <div className="text-lg">UInt8Array</div>
-                    <textarea
-                        rows={3}
-                        value={fromB64(
-                            privateKey ?? hostedPrivateKey
-                        ).toString()}
-                        id="hexPrivateKey"
-                        className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
-                        name="hexPrivateKey"
-                        disabled={true}
-                    />
+                    <div
+                        id="UInt8ArrayPrivateKey"
+                        className="break-words p-3 max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
+                    >
+                        {!safePrivateKey
+                            ? 'Loading...'
+                            : fromB64(safePrivateKey).toString()}
+                    </div>
                 </div>
                 <Button to="/" buttonStyle="secondary" isInline>
                     Done

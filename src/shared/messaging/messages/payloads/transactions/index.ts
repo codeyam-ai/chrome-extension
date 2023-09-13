@@ -7,4 +7,4 @@ export * from './ApprovalRequest';
 export * from './PreapprovalRequest';
 export * from './PreapprovalResponse';
 export * from './Staking';
-export * from './SignMessage';
+export * from './SignPersonalMessage';

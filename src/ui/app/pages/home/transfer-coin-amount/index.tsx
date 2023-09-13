@@ -1,9 +1,8 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-// import { getTransactionDigest, Transaction, SUI_TYPE_ARG } from '@mysten/sui.js';
-
-import { SUI_TYPE_ARG, TransactionBlock } from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -118,15 +117,15 @@ function useOnHandleSubmit({
 }: UseOnHandleSubmit) {
     const { connectToLedger } = useSuiLedgerClient();
     const {
-        account: {
-            authentication,
-            address,
-            activeAccountIndex,
-            accountInfos,
-            passphrase,
-        },
-    } = useAppSelector((state) => state);
-    const state = useAppSelector((state) => state);
+        authentication,
+        address,
+        activeAccountIndex,
+        accountInfos,
+        passphrase,
+    } = useAppSelector((state) => state.account);
+    // const state = useAppSelector((state) => state);
+    const allCoins: SuiMoveObject[] = useAppSelector(accountCoinsSelector);
+
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { locale } = useIntl();
@@ -169,7 +168,6 @@ function useOnHandleSubmit({
 
             const safeTo = safeAddress(formState.to);
 
-            const allCoins: SuiMoveObject[] = accountCoinsSelector(state);
             const [primaryCoin, ...mergeCoins] = allCoins.filter(
                 (c) => c.type === `0x2::coin::Coin<${coin.type}>`
             );
@@ -252,7 +250,7 @@ function useOnHandleSubmit({
             activeAccountIndex,
             connectToLedger,
             formState.to,
-            state,
+            allCoins,
             dispatch,
             setSendError,
             navigate,

@@ -9,7 +9,7 @@ import useMediaUrl from './useMediaUrl';
 import { NFT } from '_redux/slices/sui-objects/NFT';
 import { api } from '_redux/store/thunk-extras';
 
-import type { SuiObjectData } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js/client';
 
 export default function useNFTBasicData(nftObj: SuiObjectData) {
     const nftObjectID = getObjectId(nftObj);
@@ -41,8 +41,8 @@ export default function useNFTBasicData(nftObj: SuiObjectData) {
         if (!NFT.isBagNFT(nftObj)) return;
 
         const getBagNft = async () => {
-            const provider = api.instance.fullNode;
-            const bagNFT = await NFT.parseBagNFT(provider, nftObj);
+            const client = api.instance.client;
+            const bagNFT = await NFT.parseBagNFT(client, nftObj);
             if ('url' in bagNFT && bagNFT.url) {
                 setNftFields(bagNFT);
                 setFilePath(bagNFT.url);

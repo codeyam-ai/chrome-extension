@@ -1,4 +1,4 @@
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { useMemo } from 'react';
 
 import { Costs, Gains } from './Amount';
@@ -44,6 +44,29 @@ const SwapTransactionCard = ({
     const [, reductionSymbol, , reductionName, reductionIconUrl] =
         useFormatCoin(0, reduction.type);
 
+    const action = useMemo(() => {
+        const commonActions = [
+            'mint',
+            'swap',
+            'borrow',
+            'supply',
+            'redeem',
+            'add',
+            'trade',
+            'loan',
+            'repay',
+        ];
+        for (const commonAction of commonActions) {
+            const moveCall = analysis.moveCalls[0];
+            if (!moveCall || !('target' in moveCall) || !moveCall.target)
+                continue;
+            if (moveCall.target.includes(commonAction)) {
+                return commonAction;
+            }
+        }
+        return 'swap';
+    }, [analysis.moveCalls]);
+
     return (
         <TransactionBody>
             <div className="w-full rounded-xl bg-ethos-light-gray dark:bg-ethos-dark-background-secondary flex flex-col divide-y divide-ethos-light-purple dark:divide-ethos-dark-text-stroke overflow-hidden">
@@ -64,7 +87,7 @@ const SwapTransactionCard = ({
                             </div>
                         </div>
                     )}
-                    <BodyLarge>You are about to swap:</BodyLarge>
+                    <BodyLarge>You are about to {action}:</BodyLarge>
                     <div className="text-lg flex justify-center items-center gap-1 pt-1">
                         <BodyLarge isSemibold>
                             {reductionName ?? simpleReductionType}

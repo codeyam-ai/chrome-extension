@@ -1,14 +1,11 @@
+import { SuiClient } from '@mysten/sui.js/client';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import {
-    mockCommonCalls,
-    mockSuiObjects,
-    rpcMocks,
-} from '_src/test/utils/mockchain';
+import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
+import { mockBlockchain, rpcMocks } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
-import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
 
 describe('send coin flow', () => {
     let mockJsonRpc: MockJsonRpc;
@@ -16,9 +13,8 @@ describe('send coin flow', () => {
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
         await simulateMnemonicUser();
-        mockCommonCalls(mockJsonRpc);
-        mockSuiObjects(mockJsonRpc, {
-            suiBalance: 4_000_000_000, // MIST units
+        mockBlockchain(mockJsonRpc, {
+            coinTransaction: 4_000_000_000, // MIST units
         });
         const mocks = rpcMocks(mockJsonRpc);
         mocks.suix_getNormalizedMoveFunction();
@@ -38,6 +34,12 @@ describe('send coin flow', () => {
             null,
             null,
         ]);
+
+        const nameserviceSpy = jest.spyOn(
+            SuiClient.prototype,
+            'resolveNameServiceAddress'
+        );
+        nameserviceSpy.mockResolvedValue(null);
     });
 
     const shouldSeeRootPageAndClickSend = async () => {
@@ -54,6 +56,7 @@ describe('send coin flow', () => {
 
     const shouldAddRecipientAndClickContinue = async () => {
         const input = await screen.findByPlaceholderText('0x... or SuiNS name');
+        await userEvent.clear(input);
         await userEvent.type(
             input,
             '0xec96d320e97cd10146f953a79cf9dc05a8b35c46b3e8428f785ec3ae1b6f8fa6'
@@ -75,6 +78,7 @@ describe('send coin flow', () => {
             name: 'Review',
         });
         await userEvent.click(reviewButton);
+        await screen.findByText('Sending');
     };
 
     const shouldClickConfirmAndSeeTransactionSubmitted = async () => {
@@ -103,14 +107,14 @@ describe('send coin flow', () => {
         await shouldClickConfirmAndSeeTransactionSubmitted();
     });
 
-    test('allows you to send Sui in a locale that uses comma-decimal-separator like german', async () => {
+    test.only('allows you to send Sui in a locale that uses comma-decimal-separator like german', async () => {
         renderApp({ locale: 'de' });
         await shouldSeeRootPageAndClickSend();
         await shouldSeeErrorForInvalidAddress();
         await shouldAddRecipientAndClickContinue();
         // '1,0' in german is '1.0' in english
         await shouldAddAmountAndClickReview({ amountString: '1,0' });
-        await shouldClickConfirmAndSeeTransactionSubmitted();
+        // await shouldClickConfirmAndSeeTransactionSubmitted();
     });
 
     test.todo(

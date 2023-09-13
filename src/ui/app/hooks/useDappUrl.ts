@@ -6,10 +6,7 @@ import { NetworkName } from '_src/data/dappsMap';
 export default function useDappUrl(
     dappUrls: Record<string, string> | undefined
 ): { dappUrl: string | undefined; isLocal: boolean } {
-    const [selectedApiEnv] = useAppSelector(({ app }) => [
-        app.apiEnv,
-        app.customRPC,
-    ]);
+    const selectedApiEnv = useAppSelector(({ app }) => app.apiEnv);
 
     const dappUrl = useMemo(() => {
         if (!dappUrls) {

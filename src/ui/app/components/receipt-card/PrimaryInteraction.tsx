@@ -14,7 +14,6 @@ import BodyLarge from '../../shared/typography/BodyLarge';
 import CopyBody from '../../shared/typography/CopyBody';
 
 import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTransactions';
-import type { SuiAddress } from '@mysten/sui.js';
 
 const AvatarItem = ({
     color,
@@ -23,6 +22,7 @@ const AvatarItem = ({
     subheader,
     emoji,
     fullHeader,
+    nftPfpUrl,
 }: {
     color?: string;
     pre?: string;
@@ -30,6 +30,7 @@ const AvatarItem = ({
     subheader?: string;
     emoji?: string;
     fullHeader?: string;
+    nftPfpUrl?: string;
 }) => (
     <div className={'flex items-center gap-3'}>
         <WalletColorAndEmojiCircle
@@ -37,6 +38,7 @@ const AvatarItem = ({
             circleSizeClasses={'w-[40px] h-[40px] auto'}
             color={color || '#7E23CA'}
             emoji={emoji}
+            nftPfpUrl={nftPfpUrl}
         />
         <div className={'flex flex-col items-start'}>
             <div className="flex gap-1 items-center">
@@ -76,7 +78,7 @@ const WalletAvatarItem = ({
 }: {
     pre: string;
     fullHeader?: string;
-    address: SuiAddress;
+    address: string;
 }) => {
     const wallet = useWalletOrContact(address);
     const { activeAccountIndex, accountInfos } = useAppSelector(
@@ -85,7 +87,7 @@ const WalletAvatarItem = ({
     const activeAccount =
         accountInfos.find((a) => a.index === activeAccountIndex) ??
         accountInfos[0];
-    const header = fullHeader ? undefined : wallet?.name ?? address;
+    const header = fullHeader ? undefined : wallet?.nickname ?? address;
     const subheader = header === address ? undefined : address;
 
     if (address === activeAccount.address) {

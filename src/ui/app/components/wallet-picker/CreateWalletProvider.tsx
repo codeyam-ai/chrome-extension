@@ -14,6 +14,9 @@ import { clearForNetworkOrWalletSwitch as clearBalancesForNetworkOrWalletSwitch 
 import { clearForNetworkOrWalletSwitch as clearTokensForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
 import Authentication from '_src/background/Authentication';
 import Permissions from '_src/background/Permissions';
+import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
+import saveCustomization from '_src/shared/utils/customizationsSync/saveCustomization';
+import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 
 import type { Dispatch, SetStateAction } from 'react';
 
@@ -35,12 +38,44 @@ const CreateWalletProvider = ({
     children,
 }: CreateWalletProviderProps) => {
     const dispatch = useAppDispatch();
-    const accountInfos = useAppSelector(({ account }) => account.accountInfos);
-    const authentication = useAppSelector(
-        ({ account }) => account.authentication
-    );
+    const { accountInfos, authentication, customizationsSyncPreference } =
+        useAppSelector(({ account }) => account);
+    const { getCachedJwt } = useJwt();
+
     const keypairVault = thunkExtras.keypairVault;
     const draftAccountInfos = useRef<AccountInfo[]>(accountInfos);
+
+    const handleSaveCustomization = useCallback(
+        async (
+            _address: string,
+            _accountInfos: AccountInfo[],
+            accountIndex: number
+        ) => {
+            const jwt = await getCachedJwt(
+                _address,
+                accountIndex,
+                _accountInfos
+            );
+
+            const privateKey = keypairVault
+                .getKeyPair(accountIndex)
+                .export().privateKey;
+
+            const encryptedAccountCustomization =
+                await encryptAccountCustomization(
+                    _accountInfos[accountIndex],
+                    privateKey
+                );
+
+            try {
+                await saveCustomization(jwt, encryptedAccountCustomization);
+            } catch (error) {
+                // eslint-disable-next-line no-console
+                console.error('Failed saving customizations to server:', error);
+            }
+        },
+        [getCachedJwt, keypairVault]
+    );
 
     const getAccountInfos = useCallback(async () => {
         if (authentication) return;
@@ -50,6 +85,10 @@ const CreateWalletProvider = ({
                 {
                     index: 0,
                     address: keypairVault.getAddress(0) || '',
+                    publicKey: keypairVault
+                        .getKeyPair(0)
+                        .getPublicKey()
+                        .toBase64(),
                 },
             ];
         }
@@ -107,7 +146,7 @@ const CreateWalletProvider = ({
                     nextAccountIndex
                 );
                 if (newAccount) {
-                    newAccount.name = `Wallet ${
+                    newAccount.nickname = `Wallet ${
                         relevantAccountInfos.length + 1
                     }`;
                     newAccount.color = getNextWalletColor(nextAccountIndex);
@@ -124,11 +163,15 @@ const CreateWalletProvider = ({
                     ...accountInfos,
                     {
                         index: nextAccountIndex,
-                        name: `Wallet ${relevantAccountInfos.length + 1}`,
+                        nickname: `Wallet ${relevantAccountInfos.length + 1}`,
                         color: getNextWalletColor(nextAccountIndex),
                         emoji: getNextEmoji(nextAccountIndex),
                         address:
                             keypairVault.getAddress(nextAccountIndex) || '',
+                        publicKey: keypairVault
+                            .getKeyPair(nextAccountIndex)
+                            .getPublicKey()
+                            .toBase64(),
                     },
                 ];
 
@@ -140,6 +183,14 @@ const CreateWalletProvider = ({
             );
 
             setAccountInfos(newAccountInfos);
+
+            if (customizationsSyncPreference) {
+                await handleSaveCustomization(
+                    keypairVault.getAddress(nextAccountIndex) || '',
+                    newAccountInfos,
+                    nextAccountIndex
+                );
+            }
         };
 
         const executeWithLoading = async () => {
@@ -150,10 +201,12 @@ const CreateWalletProvider = ({
         };
         executeWithLoading();
     }, [
-        keypairVault,
-        authentication,
         accountInfos,
+        authentication,
+        customizationsSyncPreference,
         _saveAccountInfos,
+        keypairVault,
+        handleSaveCustomization,
         setLoading,
     ]);
 

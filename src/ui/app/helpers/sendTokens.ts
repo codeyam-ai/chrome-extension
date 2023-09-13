@@ -1,15 +1,12 @@
-import {
-    Coin,
-    SUI_TYPE_ARG,
-    type SuiAddress,
-    type SuiMoveObject,
-    TransactionBlock,
-} from '@mysten/sui.js';
+import { Coin } from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
 import { getSigner } from './getSigner';
 
 import type { AccountInfo } from '../KeypairVault';
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
+import type { SuiMoveObject } from '@mysten/sui.js/client';
 
 const sendTokens = async ({
     connectToLedger,
@@ -32,7 +29,7 @@ const sendTokens = async ({
     activeAccountIndex: number;
     tokenTypeArg: string;
     amount: bigint;
-    recipientAddress: SuiAddress;
+    recipientAddress: string;
 }) => {
     const signer = await getSigner(
         passphrase,

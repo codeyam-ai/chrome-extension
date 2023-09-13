@@ -1,4 +1,4 @@
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
 import CoinList from './CoinList';
 import StakedInfo from './StakedInfo';
@@ -25,7 +25,7 @@ function HomePage() {
     const { totalActivePendingStakedSUI, isLoading: isLoadingStakedSui } =
         useTotalStakedSUI();
 
-    const [selectedApiEnv] = useAppSelector(({ app }) => [app.apiEnv]);
+    const selectedApiEnv = useAppSelector(({ app }) => app.apiEnv);
 
     const balances = useAppSelector(accountAggregateBalancesSelector);
     const mistBalance = balances[SUI_TYPE_ARG];
@@ -48,7 +48,7 @@ function HomePage() {
                 />
             )}
             <ChainIndicator apiEnv={selectedApiEnv} className="mt-3" />
-            <div className="pt-5 pb-4">
+            <div className="pt-3 pb-5">
                 <WalletBalanceAndIconHomeView
                     accountInfo={accountInfo}
                     mistBalance={mistBalance}
@@ -67,7 +67,14 @@ function HomePage() {
                             />
                         )}
 
-                    <CoinList balances={balances} />
+                    <div className="flex flex-col gap-2">
+                        {Object.keys(balances || {}).length > 1 && (
+                            <Body isSemibold className="ml-1">
+                                My Tokens
+                            </Body>
+                        )}
+                        <CoinList balances={balances} />
+                    </div>
 
                     {(!balances || Object.keys(balances).length < 2) && (
                         <div className="py-3">

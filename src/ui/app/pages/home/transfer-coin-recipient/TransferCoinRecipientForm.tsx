@@ -74,7 +74,7 @@ function TransferCoinRecipientForm({
                     to: e.target.name,
                     from:
                         accountInfos.find((a) => a.index === activeAccountIndex)
-                            ?.name || 'Wallet',
+                            ?.nickname || 'Wallet',
                 })
             );
         },
@@ -99,9 +99,8 @@ function TransferCoinRecipientForm({
                         {disableToInput && contact ? (
                             <div className="flex flex-row items-center w-full gap-2 py-[16px] px-[20px] shadow-sm rounded-[16px] bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary font-weight-ethos-body-large text-size-ethos-body-large leading-line-height-ethos-body-large tracking-letter-spacing-ethos-body-large border border-ethos-light-text-stroke">
                                 <WalletColorAndEmojiCircle
+                                    {...contact}
                                     circleSizeClasses="w-8 h-8"
-                                    color={contact.color}
-                                    emoji={contact.emoji}
                                     emojiSizeInPx={20}
                                 />
                                 <BodyLarge>

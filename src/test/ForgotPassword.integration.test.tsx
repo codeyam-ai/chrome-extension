@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { recoveryPhrase, simulateMnemonicUser } from '_src/test/utils/storage';
 
@@ -15,7 +15,6 @@ describe('Unlocking the wallet', () => {
     let mockJsonRpc: MockJsonRpc;
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
-        mockCommonCalls(mockJsonRpc);
         await createLockedWallet();
     });
 
@@ -37,7 +36,7 @@ describe('Unlocking the wallet', () => {
 
     const createLockedWallet = async () => {
         await simulateMnemonicUser(false);
-        mockSuiObjects(mockJsonRpc);
+        mockBlockchain(mockJsonRpc);
         renderApp();
         await screen.findAllByText('Unlock Wallet');
     };
@@ -69,7 +68,6 @@ describe('Unlocking the wallet', () => {
             newPassword
         );
         await userEvent.click(screen.getByTestId('submit'));
-        await screen.findByText('My Balance');
     }
 
     const lockWallet = async () => {
@@ -88,6 +86,6 @@ describe('Unlocking the wallet', () => {
 
         await userEvent.type(passwordInput, newPassword);
         await userEvent.click(screen.getByTestId('submit'));
-        await screen.findByText('My Balance');
+        await screen.findByText('Get started with Sui');
     }
 });

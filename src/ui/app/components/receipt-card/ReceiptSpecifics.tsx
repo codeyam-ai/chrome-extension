@@ -10,7 +10,7 @@ import BodyLarge from '../../shared/typography/BodyLarge';
 import CopyBody from '../../shared/typography/CopyBody';
 
 import type { AnalyzedTransaction } from '../../helpers/transactions/analyzeTransactions';
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 
 type ObjectChangeInfo = {
     type: string;
@@ -40,7 +40,7 @@ const ObjectChange = ({ change }: { change: ObjectChangeInfo }) => {
                             {...wallet}
                             circleSizeClasses={'w-5 h-5'}
                         />
-                        <Body isTextColorMedium>{wallet.name}</Body>
+                        <Body isTextColorMedium>{wallet.nickname}</Body>
                     </div>
                 )}
                 {!wallet && (change.ownerAddress ?? change.sender) && (
@@ -116,10 +116,11 @@ const BalanceChange = ({
     const balanceChange = balanceChanges?.[0];
     const ownerAddress = addressOwner(balanceChange?.owner);
     const ownerWallet = useWalletOrContact(ownerAddress || '');
-    const [formattedAmount, symbol] = useFormatCoin(
-        balanceChange?.amount || 0,
-        balanceChange?.coinType || ''
-    );
+    const [formattedAmount, symbol, dollars, , , , , hasConversion] =
+        useFormatCoin(
+            balanceChange?.amount || 0,
+            balanceChange?.coinType || ''
+        );
 
     return (
         <div className="flex justify-between items-center w-full">
@@ -129,16 +130,19 @@ const BalanceChange = ({
                         {...ownerWallet}
                         circleSizeClasses={'w-5 h-5'}
                     />
-                    <Body isTextColorMedium>{ownerWallet.name}</Body>
+                    <Body isTextColorMedium>{ownerWallet.nickname}</Body>
                 </div>
             ) : (
                 <CopyBody txt={ownerAddress || ''} isTextColorMedium>
                     {truncateMiddle(ownerAddress)}
                 </CopyBody>
             )}
-            <Body>
-                {formattedAmount} {symbol}
-            </Body>
+            {hasConversion && (
+                <Body>
+                    {formattedAmount} {symbol}{' '}
+                    {symbol.toLowerCase() === 'sui' && `≈ ${dollars} USD`}
+                </Body>
+            )}
         </div>
     );
 };

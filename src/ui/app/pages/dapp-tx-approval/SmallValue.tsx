@@ -3,7 +3,7 @@ import { useFormatCoin } from '../../hooks';
 import Body from '../../shared/typography/Body';
 import CopyBody from '../../shared/typography/CopyBody';
 
-import type { SuiJsonValue } from '@mysten/sui.js';
+import type { SuiJsonValue } from '@mysten/sui.js/client';
 
 export type SmallDetail = {
     type: 'small';
@@ -22,11 +22,11 @@ const SmallValue = ({ content, type, coinType }: SmallDetail) => {
     const contentArray = Array.isArray(content) ? content : [content];
 
     const CoinItem = ({ balance }: { balance: string }) => {
-        const [value, symbol] = useFormatCoin(balance, coinType);
+        const [value, symbol, dollars] = useFormatCoin(balance, coinType);
 
         return (
             <Body className="flex gap-1 items-center">
-                {value} {symbol}
+                {value} {symbol} ≈ {dollars} USD
             </Body>
         );
     };
@@ -37,7 +37,7 @@ const SmallValue = ({ content, type, coinType }: SmallDetail) => {
 
     return (
         <div className="text-right">
-            {contentArray.map((contentItem, item) =>
+            {contentArray.map((contentItem) =>
                 coinType ? (
                     <CoinItem
                         key={`detail-${contentItem}`}

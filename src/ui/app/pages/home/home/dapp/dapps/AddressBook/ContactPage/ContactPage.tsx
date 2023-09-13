@@ -4,7 +4,7 @@ import {
     TrashIcon,
 } from '@heroicons/react/24/outline';
 import { ArrowUpIcon } from '@heroicons/react/24/solid';
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { useCallback, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
@@ -77,7 +77,7 @@ const ContactPage = () => {
                     >
                         <EmojiDisplay emoji={contact.emoji} sizeInPx={44} />
                     </div>
-                    <BodyLarge isSemibold>{contact.name}</BodyLarge>
+                    <BodyLarge isSemibold>{contact.nickname}</BodyLarge>
                     <AddressTooltip address={contact.address}>
                         <BodyLarge isTextColorMedium>
                             {truncateMiddle(contact.address)}{' '}

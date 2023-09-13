@@ -6,7 +6,7 @@ const useWalletName = (wallet?: AccountInfo) => {
     const name = useMemo(() => {
         if (!wallet) return 'Wallet';
 
-        if (wallet.name) return wallet.name;
+        if (wallet.nickname) return wallet.nickname;
 
         if (
             wallet.importedMnemonicName !== undefined &&

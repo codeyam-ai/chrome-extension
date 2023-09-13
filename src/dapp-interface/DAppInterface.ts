@@ -1,12 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-    ReadonlyWalletAccount,
-    SUI_DEVNET_CHAIN,
-    SUI_MAINNET_CHAIN,
-    SUI_TESTNET_CHAIN,
-} from '@mysten/wallet-standard';
 import { filter, map } from 'rxjs';
 
 import { mapToPromise } from './utils';
@@ -16,7 +10,6 @@ import { ALL_PERMISSION_TYPES } from '_payloads/permissions';
 import { type GetAccountCustomizations } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizations';
 import { type GetAccountCustomizationsResponse } from '_src/shared/messaging/messages/payloads/account/GetAccountCustomizationsResponse';
 
-import type { SuiAddress } from '@mysten/sui.js';
 import type { Payload } from '_payloads';
 import type {
     PermissionType,
@@ -53,7 +46,7 @@ import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { OpenWallet } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
-import type { AccountCustomization } from '_src/types/AccountCustomization';
+import type { AccountCustomizationWithAddress } from '_src/types/AccountCustomization';
 import type { Contact } from '_src/ui/app/redux/slices/contacts';
 import type { Observable } from 'rxjs';
 
@@ -105,37 +98,16 @@ export class DAppInterface {
         );
     }
 
-    public getAccounts(address?: string): Promise<ReadonlyWalletAccount[]> {
+    public getAccounts(): Promise<string[]> {
         return mapToPromise(
             this.send<GetAccounts, GetAccountsResponse>({
                 type: 'get-accounts',
             }),
-            (response) => {
-                return response.accounts.map(
-                    (address) =>
-                        new ReadonlyWalletAccount({
-                            address,
-                            publicKey: new Uint8Array(),
-                            chains: [
-                                SUI_DEVNET_CHAIN,
-                                SUI_TESTNET_CHAIN,
-                                SUI_MAINNET_CHAIN,
-                            ],
-                            features: [
-                                'standard:connect',
-                                'standard:disconnect',
-                                'standard:events',
-                                'sui:signMessage',
-                                'sui:signTransactionBlock',
-                                'sui:signAndExecuteTransactionBlock',
-                            ],
-                        })
-                );
-            }
+            (response) => response.accounts
         );
     }
 
-    public switchAccount(address: string): Promise<SuiAddress> {
+    public switchAccount(address: string): Promise<string> {
         return mapToPromise(
             this.send<SwitchAccount, SwitchAccountResponse>({
                 type: 'switch-account',
@@ -156,7 +128,9 @@ export class DAppInterface {
         );
     }
 
-    public getAccountCustomizations(): Promise<AccountCustomization[]> {
+    public getAccountCustomizations(): Promise<
+        AccountCustomizationWithAddress[]
+    > {
         return mapToPromise(
             this.send<
                 GetAccountCustomizations,
@@ -169,7 +143,7 @@ export class DAppInterface {
     }
 
     public setAccountCustomizations(
-        accountCustomizations: AccountCustomization[]
+        accountCustomizations: AccountCustomizationWithAddress[]
     ) {
         return mapToPromise(
             this.send<

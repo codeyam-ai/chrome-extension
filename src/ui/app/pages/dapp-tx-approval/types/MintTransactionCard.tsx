@@ -1,4 +1,5 @@
-import { Coin, SUI_TYPE_ARG } from '@mysten/sui.js';
+import { Coin } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { useMemo } from 'react';
 
 import { Costs, Gains } from './Amount';
@@ -32,7 +33,41 @@ const MintTransactionCard = ({
         () => coinType ?? type ?? SUI_TYPE_ARG,
         [coinType, type]
     );
-    const simpleType = useMemo(() => primaryType.split('::')[2], [primaryType]);
+    const simpleType = useMemo(
+        () =>
+            /*
+                From data that looks like:
+                0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<0x1cbfdf7de5004f887705fa53bb345d4372e5004bd8b04a6f8868f5e1ca1af9c7::ethos_example_coin::ETHOS_EXAMPLE_COIN>
+                extract ETHOS_EXAMPLE_COIN
+            */
+            primaryType
+                .substring(primaryType.indexOf('<'), primaryType.indexOf('>'))
+                .split('::')[2],
+        [primaryType]
+    );
+
+    const action = useMemo(() => {
+        const commonActions = [
+            'mint',
+            'swap',
+            'borrow',
+            'supply',
+            'redeem',
+            'add',
+            'trade',
+            'loan',
+            'repay',
+        ];
+        for (const commonAction of commonActions) {
+            const moveCall = analysis.moveCalls[0];
+            if (!moveCall || !('target' in moveCall) || !moveCall.target)
+                continue;
+            if (moveCall.target.includes(commonAction)) {
+                return commonAction;
+            }
+        }
+        return 'mint';
+    }, [analysis.moveCalls]);
 
     return (
         <TransactionBody>
@@ -43,7 +78,7 @@ const MintTransactionCard = ({
                             <CoinImage coinType={coinType} />
                         </div>
                     )}
-                    <BodyLarge>You are about to mint</BodyLarge>
+                    <BodyLarge>You are about to {action}</BodyLarge>
                     <div className="text-lg flex justify-center gap-6">
                         <BodyLarge isSemibold>{simpleType}</BodyLarge>
                     </div>

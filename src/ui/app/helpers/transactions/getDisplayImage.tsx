@@ -1,4 +1,4 @@
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
 import { useValidatorsWithApy } from '../../hooks/staking/useValidatorsWithApy';
 import useDisplayDatas from '../../hooks/useDisplayDatas';
@@ -9,7 +9,6 @@ import { getIcon } from '_src/ui/app/helpers/transactions';
 
 import type { AnalyzedTransaction } from './analyzeTransactions';
 import type { TxAction } from './getTxAction';
-import type { SuiAddress } from '@mysten/sui.js';
 import type { ReactNode } from 'react';
 
 export type TxType = string;
@@ -26,6 +25,7 @@ const CoinIcon = ({
     if (iconUrl) {
         return (
             <img
+                data-testid="coin-icon"
                 src={iconUrl}
                 alt={coinName ?? symbol}
                 width={42}
@@ -35,7 +35,7 @@ const CoinIcon = ({
         );
     } else if (coinType === SUI_TYPE_ARG) {
         return (
-            <ActionIcon>
+            <ActionIcon isSui paddingOverride={'p-0'}>
                 <Sui />
             </ActionIcon>
         );
@@ -69,7 +69,7 @@ const ObjectIcon = ({
     return <ActionIcon>{getIcon(txAction)}</ActionIcon>;
 };
 
-const StakingIcon = ({ address }: { address: SuiAddress }) => {
+const StakingIcon = ({ address }: { address: string }) => {
     const { data: validators } = useValidatorsWithApy();
     const validator = validators?.[address ?? ''];
 

@@ -1,35 +1,15 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-    getTransactionDigest,
-    // Coin as CoinAPI,
-    // SUI_TYPE_ARG,
-    // TransactionBlock,
-} from '@mysten/sui.js';
+import { getTransactionDigest } from '@mysten/sui.js';
 import {
     // createAsyncThunk,
     createEntityAdapter,
     createSlice,
 } from '@reduxjs/toolkit';
 
-// import { fetchAllBalances } from '../balances';
-// import { accountCoinsSelector } from '_redux/slices/account';
-// import {
-//     fetchAllOwnedAndRequiredObjects,
-//     // suiObjectsAdapterSelectors,
-// } from '_redux/slices/sui-objects';
-// import { Coin } from '_redux/slices/sui-objects/Coin';
-// import { getSigner } from '_src/ui/app/helpers/getSigner';
-
-import type {
-    // SuiAddress,
-    // SuiMoveObject,
-    // SuiObjectData,
-    SuiTransactionBlockResponse,
-} from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
 import type { RootState } from '_redux/RootReducer';
-// import type { AppThunkConfig } from '_store/thunk-extras';
 
 // type SendTokensTXArgs = {
 //     tokenTypeArg: string;
@@ -73,7 +53,7 @@ type TransactionBlockResult = SuiTransactionBlockResponse;
 
 //         const allCoins: SuiMoveObject[] = accountCoinsSelector(state);
 //         const [primaryCoin, ...mergeCoins] = allCoins.filter(
-//             (coin) => coin.type === `0x2::coin::Coin<${tokenTypeArg}>`
+//             (coin) => coin.type === `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${tokenTypeArg}>`
 //         );
 
 //         const transactionBlock = new TransactionBlock();

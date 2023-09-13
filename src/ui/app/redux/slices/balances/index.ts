@@ -3,11 +3,10 @@ import {
     createEntityAdapter,
     createSlice,
 } from '@reduxjs/toolkit';
-import Browser from 'webextension-polyfill';
 
 import testConnection from '../../testConnection';
 
-import type { CoinBalance } from '@mysten/sui.js';
+import type { CoinBalance } from '@mysten/sui.js/client';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
@@ -35,55 +34,23 @@ export const fetchAllBalances = createAsyncThunk<
         return null;
     }
 
-    const allBalances = await api.instance.fullNode.getAllBalances({
+    const allBalances = await api.instance.client.getAllBalances({
         owner: address,
     });
 
-    let validBalances = allBalances;
-    let invalidTokens = state.balances.invalidTokens;
-    if (invalidTokens.length === 0) {
-        invalidTokens = (await Browser.storage.local.get('invalidTokens'))
-            .invalidTokens;
-    }
-    if (!invalidTokens) {
-        invalidTokens = [];
-    }
-    validBalances = validBalances.filter((coinBalance) => {
-        const split = coinBalance.coinType.split('::');
-        return !invalidTokens.includes(split[0]);
-    });
-
-    return validBalances;
-});
-
-export const fetchInvalidTokens = createAsyncThunk<
-    string[] | null,
-    void,
-    AppThunkConfig
->('balances/fetch-invalid-tokens', async () => {
-    try {
-        const invalidTokensResponse = await fetch(
-            'https://raw.githubusercontent.com/EthosWallet/valid_packages/main/public/invalid_tokens.json'
-        );
-        const invalidTokens = await invalidTokensResponse.json();
-        return invalidTokens;
-    } catch (e) {
-        return null;
-    }
+    return allBalances;
 });
 
 interface BalancesManualState {
     loading: boolean;
     error: false | { code?: string; message?: string; name?: string };
     lastSync: number | null;
-    invalidTokens: string[];
 }
 
 const initialState = balancesAdapter.getInitialState<BalancesManualState>({
     loading: true,
     error: false,
     lastSync: null,
-    invalidTokens: [],
 });
 
 const slice = createSlice({
@@ -118,15 +85,7 @@ const slice = createSlice({
                     state.loading = false;
                     state.error = { code, message, name };
                 }
-            )
-            .addCase(fetchInvalidTokens.fulfilled, (state, action) => {
-                if (action.payload) {
-                    Browser.storage.local.set({
-                        invalidTokens: action.payload,
-                    });
-                    state.invalidTokens = action.payload;
-                }
-            });
+            );
     },
 });
 

@@ -1,10 +1,11 @@
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 
 import ValidatorImage from './Validator/ValidatorImage';
 import ns from '_shared/namespace';
+import { maybeGetValue } from '_src/shared/namespace/unknown';
 import { AnimatedTooltip } from '_src/ui/app/components/AnimatedTooltip';
 import { TooltipDirection } from '_src/ui/app/components/Tooltip';
 import CopyToClipboard from '_src/ui/app/components/copy-to-clipboard';
@@ -64,20 +65,39 @@ const ValidatorDetail = () => {
         });
 
     const tallyingScore = useMemo(() => {
-        return (
-            validatorEvents?.find(
-                ({ parsedJson }) =>
-                    parsedJson?.validator_address === validatorAddress
-            )?.parsedJson?.tallying_rule_global_score || null
+        const validatorEvent = validatorEvents?.find(({ parsedJson }) => {
+            const validator_address = maybeGetValue<string>(
+                parsedJson,
+                'validator_address'
+            );
+            return validator_address === validatorAddress;
+        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const tallyingRuleGlobalScore = maybeGetValue<any>(
+            validatorEvent?.parsedJson,
+            'tallying_rule_global_score'
         );
+        return tallyingRuleGlobalScore || null;
     }, [validatorAddress, validatorEvents]);
 
     const validatorRewards = useMemo(() => {
         if (!validatorEvents || !validatorAddress) return 0;
-        const rewards = getValidatorMoveEvent(
+        // const rewards = getValidatorMoveEvent(
+        //     validatorEvents,
+        //     validatorAddress
+        // )?.pool_staking_reward;
+        const moveEvent = getValidatorMoveEvent(
             validatorEvents,
             validatorAddress
-        )?.pool_staking_reward;
+        );
+        let rewards;
+        if (
+            moveEvent &&
+            typeof moveEvent === 'object' &&
+            'pool_staking_reward' in moveEvent
+        ) {
+            rewards = moveEvent.pool_staking_reward;
+        }
 
         return rewards ? Number(rewards) : null;
     }, [validatorAddress, validatorEvents]);

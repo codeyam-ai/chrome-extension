@@ -1,11 +1,11 @@
 import addressOwner from './addressOwner';
 
-import type { SuiAddress, SuiTransactionBlockResponse } from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 
 export type FindBalanceChangeProps = {
     balanceChanges: SuiTransactionBlockResponse['balanceChanges'];
     value?: bigint;
-    ownerAddress?: SuiAddress;
+    ownerAddress?: string;
 };
 
 const findBalanceChanges = ({

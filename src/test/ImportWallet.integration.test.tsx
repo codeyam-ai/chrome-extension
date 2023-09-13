@@ -2,15 +2,14 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 
 describe('Importing a wallet using a seed phrase', () => {
     let mockJsonRpc: MockJsonRpc;
     beforeEach(() => {
         mockJsonRpc = new MockJsonRpc();
-        mockCommonCalls(mockJsonRpc);
-        mockSuiObjects(mockJsonRpc, { suiBalance: 40_000_000_000 });
+        mockBlockchain(mockJsonRpc, { coinTransaction: 40_000_000_000 });
     });
 
     test('Entire flow works', async () => {

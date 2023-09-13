@@ -73,9 +73,11 @@ const ForgotPasswordPage = () => {
                 <BaseLayout className="!min-h-0 sm:!w-[500px]">
                     <HeaderWithLargeEthosIcon description="Forgot Password" />
                     {isMnemonicCorrect ? (
-                        <ChangePasswordFromMnemonicForm
-                            onSubmit={updatePassword}
-                        />
+                        <div className="px-6">
+                            <ChangePasswordFromMnemonicForm
+                                onSubmit={updatePassword}
+                            />
+                        </div>
                     ) : (
                         <CheckMnemonicForm
                             onSubmit={checkMnemonic}

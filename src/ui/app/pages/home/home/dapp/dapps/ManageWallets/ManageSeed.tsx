@@ -93,11 +93,12 @@ const ManageSeed = () => {
         mutableAccountInfos.push({
             index,
             address,
+            publicKey: keypair.getPublicKey().toBase64(),
             importedMnemonicName: name,
             importedMnemonicIndex: nextIndex,
             color: getNextWalletColor(index),
             emoji: getNextEmoji(index),
-            name: `${name} ${nextIndex + 1}`,
+            nickname: `${name} ${nextIndex + 1}`,
         });
 
         await dispatch(saveAccountInfos(mutableAccountInfos));

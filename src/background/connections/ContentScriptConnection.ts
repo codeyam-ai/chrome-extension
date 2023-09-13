@@ -1,6 +1,8 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import Browser from 'webextension-polyfill';
+
 import { Connection } from './Connection';
 import { isSignTransactionRequest } from '../../shared/messaging/messages/payloads/transactions/ExecuteTransactionRequest';
 import networkEnv from '../NetworkEnv';
@@ -35,9 +37,9 @@ import { isSetFavorites } from '_src/shared/messaging/messages/payloads/account/
 import { isSwitchAccount } from '_src/shared/messaging/messages/payloads/account/SwitchAccount';
 import { isDisconnectRequest } from '_src/shared/messaging/messages/payloads/connections/DisconnectRequest';
 import {
-    isSignMessageRequest,
-    type SignMessageRequest,
-} from '_src/shared/messaging/messages/payloads/transactions/SignMessage';
+    isSignPersonalMessageRequest,
+    type SignPersonalMessageRequest,
+} from '_src/shared/messaging/messages/payloads/transactions/SignPersonalMessage';
 import { isGetUrl } from '_src/shared/messaging/messages/payloads/url/OpenWallet';
 import {
     getEncrypted,
@@ -47,13 +49,12 @@ import {
 } from '_src/shared/storagex/store';
 import { openInNewTab } from '_src/shared/utils';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
+import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
+import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 
 import type { NetworkEnvType } from '../NetworkEnv';
-import type {
-    SignedTransaction,
-    SuiAddress,
-    SuiTransactionBlockResponse,
-} from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
+import type { SuiSignTransactionBlockOutput } from '@mysten/wallet-standard';
 import type { Message } from '_messages';
 import type { PortChannelName } from '_messaging/PortChannelName';
 import type { ErrorPayload } from '_payloads';
@@ -65,7 +66,7 @@ import type { GetThemeResponse } from '_src/shared/messaging/messages/payloads/a
 import type { SwitchAccountResponse } from '_src/shared/messaging/messages/payloads/account/SwitchAccountResponse';
 import type { DisconnectResponse } from '_src/shared/messaging/messages/payloads/connections/DisconnectResponse';
 import type { OpenWalletResponse } from '_src/shared/messaging/messages/payloads/url/OpenWalletResponse';
-import type { AccountCustomization } from '_src/types/AccountCustomization';
+import type { AccountCustomizationWithAddress } from '_src/types/AccountCustomization';
 import type { Contact } from '_src/ui/app/redux/slices/contacts';
 import type { Runtime } from 'webextension-polyfill';
 
@@ -101,7 +102,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('getAccount', msg.id);
                 } else {
                     this.sendAccounts([activeAccount.address], msg.id);
                 }
@@ -118,7 +119,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('switchAccount', msg.id);
                 } else {
                     const activeAddress = await this.setActiveAccount(
                         payload.address
@@ -139,7 +140,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('getAccounts', msg.id);
                 } else {
                     const accountInfos = await this.getAccountInfos();
                     const addresses = accountInfos.map(
@@ -178,16 +179,26 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('getAccountCustomizatios', msg.id);
                 } else {
                     const accountInfos = await this.getAccountInfos();
-                    const accountCustomizations: AccountCustomization[] = [];
+                    const invalidPackages = await this.getInvalidPackages();
+                    const accountCustomizations: AccountCustomizationWithAddress[] =
+                        [];
                     for (const accountInfo of accountInfos) {
                         accountCustomizations.push({
                             address: accountInfo.address,
-                            nickname: accountInfo.name || '',
-                            color: accountInfo.color || '',
-                            emoji: accountInfo.emoji || '',
+                            publicKey: accountInfo.publicKey,
+                            nickname: accountInfo.nickname || '',
+                            color:
+                                accountInfo.color ??
+                                getNextWalletColor(accountInfo.index),
+                            emoji:
+                                accountInfo.emoji ??
+                                getNextEmoji(accountInfo.index),
+                            nftPfpId: accountInfo.nftPfpId || '',
+                            nftPfpUrl: accountInfo.nftPfpUrl || '',
+                            invalidPackages,
                         });
                     }
 
@@ -211,7 +222,10 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError(
+                        'setAccountCustomizations',
+                        msg.id
+                    );
                 } else {
                     this.setAccountCustomizations(
                         payload.accountCustomizations
@@ -232,7 +246,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('getTheme', msg.id);
                 } else {
                     const theme = (await getLocal('theme')) as string;
                     this.sendTheme(theme, msg.id);
@@ -252,7 +266,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('getContacts', msg.id);
                 } else {
                     const contacts = await this.getContacts();
                     this.sendContacts(contacts, msg.id);
@@ -272,7 +286,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('setContacts', msg.id);
                 } else {
                     this.setContacts(payload.contacts);
                 }
@@ -291,7 +305,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('getFavorites', msg.id);
                 } else {
                     const favorites = await this.getFavorites();
                     this.sendFavorites(favorites, msg.id);
@@ -311,7 +325,7 @@ export class ContentScriptConnection extends Connection {
                     )) ||
                     !existingPermission
                 ) {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('setFavorites', msg.id);
                 } else {
                     this.setFavorites(payload.favorites);
                 }
@@ -402,23 +416,27 @@ export class ContentScriptConnection extends Connection {
                     createMessage<SignTransactionResponse>(
                         {
                             type: 'sign-transaction-response',
-                            result: result as SignedTransaction,
+                            result: result as SuiSignTransactionBlockOutput,
                         },
                         msg.id
                     )
                 );
-            } else if (isSignMessageRequest(payload) && payload.args) {
+            } else if (isSignPersonalMessageRequest(payload) && payload.args) {
                 await this.ensurePermissions(
                     ['viewAccount', 'suggestTransactions'],
                     payload.args.accountAddress
                 );
-                const result = await Transactions.signMessage(
+
+                const result = await Transactions.signPersonalMessage(
                     payload.args,
                     this
                 );
                 this.send(
-                    createMessage<SignMessageRequest>(
-                        { type: 'sign-message-request', return: result },
+                    createMessage<SignPersonalMessageRequest>(
+                        {
+                            type: 'sign-personal-message-request',
+                            return: result,
+                        },
                         msg.id
                     )
                 );
@@ -447,7 +465,7 @@ export class ContentScriptConnection extends Connection {
                         );
                     }
                 } else {
-                    this.sendNotAllowedError(msg.id);
+                    this.sendNotAllowedError('preapproval', msg.id);
                 }
             } else if (isDisconnectRequest(payload)) {
                 let success = true;
@@ -491,6 +509,19 @@ export class ContentScriptConnection extends Connection {
         );
     }
 
+    private async getInvalidPackages(): Promise<{
+        invalidPackageAdditions: string[];
+        invalidPackageSubtractions: string[];
+    }> {
+        const { invalidPackageAdditions, invalidPackageSubtractions } =
+            await Browser.storage.local.get({
+                invalidPackageAdditions: [],
+                invalidPackageSubtractions: [],
+            });
+
+        return { invalidPackageAdditions, invalidPackageSubtractions };
+    }
+
     private async getAccountInfos(): Promise<AccountInfo[]> {
         const accountInfosString = await getEncrypted({
             key: 'accountInfos',
@@ -500,7 +531,9 @@ export class ContentScriptConnection extends Connection {
         return JSON.parse(accountInfosString || '[]');
     }
 
-    private async setAccountCustomizations(updates: AccountCustomization[]) {
+    private async setAccountCustomizations(
+        updates: AccountCustomizationWithAddress[]
+    ) {
         const accountInfosString = await getEncrypted({
             key: 'accountInfos',
             session: false,
@@ -564,7 +597,7 @@ export class ContentScriptConnection extends Connection {
         });
     }
 
-    private async setActiveAccount(address: SuiAddress): Promise<SuiAddress> {
+    private async setActiveAccount(address: string): Promise<string> {
         const accountInfos = await this.getAccountInfos();
         const activeAccount = accountInfos.find((a) => a.address === address);
 
@@ -607,31 +640,45 @@ export class ContentScriptConnection extends Connection {
         this.send(createMessage(error, responseForID));
     }
 
-    private sendNotAllowedError(requestID?: string) {
+    private sendNotAllowedError(operation: string, requestID?: string) {
         this.sendError(
             {
                 error: true,
-                message:
-                    "Operation not allowed, dapp doesn't have the required permissions",
+                message: `${operation} operation not allowed, dapp doesn't have the required permissions`,
                 code: -2,
             },
             requestID
         );
     }
 
-    private sendAccounts(accounts: SuiAddress[], responseForID?: string) {
+    private async sendAccounts(accounts: string[], responseForID?: string) {
+        const accountInfos = await this.getAccountInfos();
+        const allAccountsPublicInfo = accountInfos.reduce(
+            (acc, accountInfo) => {
+                acc[accountInfo.address] = {
+                    publicKey: accountInfo.publicKey,
+                };
+                return acc;
+            },
+            {} as Record<string, { publicKey: string | null }>
+        );
+
         this.send(
             createMessage<GetAccountResponse>(
                 {
                     type: 'get-account-response',
-                    accounts,
+                    accounts: accounts.map((anAddress) => ({
+                        address: anAddress,
+                        publicKey:
+                            allAccountsPublicInfo[anAddress]?.publicKey || null,
+                    })),
                 },
                 responseForID
             )
         );
     }
 
-    private sendAddress(address: SuiAddress, responseForID?: string) {
+    private sendAddress(address: string, responseForID?: string) {
         this.send(
             createMessage<SwitchAccountResponse>(
                 {
@@ -644,7 +691,7 @@ export class ContentScriptConnection extends Connection {
     }
 
     private sendAccountCustomizations(
-        accountCustomizations: AccountCustomization[],
+        accountCustomizations: AccountCustomizationWithAddress[],
         responseForID?: string
     ) {
         this.send(
@@ -708,7 +755,7 @@ export class ContentScriptConnection extends Connection {
 
     private async ensurePermissions(
         permissions: PermissionType[],
-        account?: SuiAddress
+        account?: string
     ) {
         const existingPermission = await Permissions.getPermission({
             origin: this.origin,

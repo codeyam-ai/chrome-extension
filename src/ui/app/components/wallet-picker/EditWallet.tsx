@@ -15,9 +15,11 @@ import EmojiPickerMenu from '../../shared/inputs/emojis/EmojiPickerMenu';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import Loading from '../loading';
 import Authentication from '_src/background/Authentication';
+import { encryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
+import saveCustomization from '_src/shared/utils/customizationsSync/saveCustomization';
+import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 
 import type { AccountInfo } from '../../KeypairVault';
-import type { EmojiPickerResult } from '../../shared/inputs/emojis/EmojiPickerMenu';
 
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,8 +30,14 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     const [isColorPickerMenuOpen, setIsColorPickerMenuOpen] = useState(false);
     const [isEmojiPickerMenuOpen, setIsEmojiPickerMenuOpen] = useState(false);
     const [searchParams] = useSearchParams();
+    const { getCachedJwt } = useJwt();
 
-    const _accountInfos = useAppSelector(({ account }) => account.accountInfos);
+    const {
+        accountInfos: _accountInfos,
+        authentication,
+        customizationsSyncPreference,
+    } = useAppSelector(({ account }) => account);
+
     let walletIndex = 0;
     const indexFromParam = searchParams.get('index');
     if (indexFromParam !== null) {
@@ -52,9 +60,6 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
         currentAccountInfo.emoji
     );
 
-    const authentication = useAppSelector(
-        ({ account }) => account.authentication
-    );
     const keypairVault = thunkExtras.keypairVault;
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -83,10 +88,42 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                 {
                     index: 0,
                     address: keypairVault.getAddress(0) || '',
+                    publicKey: keypairVault
+                        .getKeyPair(0)
+                        .getPublicKey()
+                        .toBase64(),
                 },
             ];
         }
     }, [authentication, keypairVault]);
+
+    const handleSaveCustomization = useCallback(
+        async (
+            _address: string,
+            _accountInfos: AccountInfo[],
+            accountIndex: number
+        ) => {
+            const jwt = await getCachedJwt(_address, accountIndex);
+
+            const privateKey = keypairVault
+                .getKeyPair(accountIndex)
+                .export().privateKey;
+
+            const encryptedAccountCustomization =
+                await encryptAccountCustomization(
+                    _accountInfos[accountIndex],
+                    privateKey
+                );
+
+            try {
+                await saveCustomization(jwt, encryptedAccountCustomization);
+            } catch (error) {
+                // eslint-disable-next-line no-console
+                console.error('Failed saving customizations to server:', error);
+            }
+        },
+        [getCachedJwt, keypairVault]
+    );
 
     const _saveAccountInfos = useCallback(async () => {
         setLoading(true);
@@ -125,10 +162,10 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                     if (accountInfo.index === currentAccountInfo.index) {
                         return {
                             ...accountInfo,
-                            name: name || accountInfo.name,
+                            nickname: name || accountInfo.nickname,
                             color: color || accountInfo.color,
                             emoji: emoji || accountInfo.emoji,
-                        };
+                        } as AccountInfo;
                     } else {
                         return accountInfo;
                     }
@@ -137,6 +174,23 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
         },
         [currentAccountInfo.index]
     );
+
+    const onClickDone = useCallback(async () => {
+        await _saveAccountInfos();
+        if (customizationsSyncPreference) {
+            await handleSaveCustomization(
+                currentAccountInfo.address,
+                draftAccountInfos.current,
+                walletIndex
+            );
+        }
+    }, [
+        _saveAccountInfos,
+        currentAccountInfo.address,
+        customizationsSyncPreference,
+        handleSaveCustomization,
+        walletIndex,
+    ]);
 
     const _handleNameChange = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -158,9 +212,9 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     );
 
     const _handleEmojiChange = useCallback(
-        (emojiPickerResult: EmojiPickerResult) => {
-            setDraftEmoji(emojiPickerResult.shortcodes);
-            _handleChange({ emoji: emojiPickerResult.shortcodes });
+        (emoji: string) => {
+            setDraftEmoji(emoji);
+            _handleChange({ emoji });
             setIsEmojiPickerMenuOpen(false);
         },
         [_handleChange]
@@ -211,7 +265,7 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                     />
                 </div>
                 <div className="relative mx-6"></div>
-                <Button buttonStyle="primary" onClick={_saveAccountInfos}>
+                <Button buttonStyle="primary" onClick={onClickDone}>
                     <Loading loading={loading}>Done</Loading>
                 </Button>
             </div>

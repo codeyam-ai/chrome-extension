@@ -23,8 +23,8 @@ const NumberedValue = ({ label, truncate, count }: NumberedDetail) => {
                     label
                 )}
             </div>
-            {count > 0 &&
-                (count > 10 ? (
+            {Number(count) > 0 &&
+                (Number(count) ? (
                     <div className="text-xs text-slate-500 ml-1 font-normal">
                         {count}
                     </div>

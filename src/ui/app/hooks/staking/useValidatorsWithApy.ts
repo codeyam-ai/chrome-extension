@@ -1,4 +1,4 @@
-import { type SuiAddress, type SuiValidatorSummary } from '@mysten/sui.js';
+import { type SuiValidatorSummary } from '@mysten/sui.js/client';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
@@ -12,7 +12,7 @@ import type { SuiValidatorSummaryWithApy } from '../../pages/home/home/dapp/dapp
 const DEFAULT_APY_DECIMALS = 2;
 
 export interface ApyWithValidatorMap {
-    [validatorAddress: SuiAddress]: SuiValidatorSummaryWithApy;
+    [validatorAddress: string]: SuiValidatorSummaryWithApy;
 }
 
 // For small APY or epoch before stakeSubsidyStartEpoch, show ~0% instead of 0%
@@ -20,7 +20,7 @@ export interface ApyWithValidatorMap {
 const MINIMUM_THRESHOLD = 0.001;
 
 export function useValidatorsWithApy() {
-    const provider = api.instance.fullNode;
+    const client = api.instance.client;
     const { data: systemState, isFetched } = useSystemState();
 
     const totalStake = useMemo(() => {
@@ -34,7 +34,7 @@ export function useValidatorsWithApy() {
     return useQuery(
         ['get-rolling-average-apys'],
         async () => {
-            const apy = await provider.getValidatorsApy();
+            const apy = await client.getValidatorsApy();
 
             // check if stakeSubsidyStartEpoch is greater than current epoch, flag for UI to show ~0% instead of 0%
             const currentEpoch = Number(systemState?.epoch);

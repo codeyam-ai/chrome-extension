@@ -1,6 +1,9 @@
-import { ArrowLongUpIcon, CheckIcon } from '@heroicons/react/24/solid';
+import { EyeIcon, Square2StackIcon } from '@heroicons/react/24/outline';
+import { CheckIcon } from '@heroicons/react/24/solid';
+import classNames from 'classnames';
 import { useCallback, useState } from 'react';
 
+import Button from '../buttons/Button';
 import Body from '../typography/Body';
 import BodyLarge from '../typography/BodyLarge';
 
@@ -8,18 +11,26 @@ import type { MouseEventHandler } from 'react';
 
 interface RecoveryPhraseDisplayProps {
     mnemonic: string;
-    horizontalMarginInPx: number;
-    onCopy?: () => void;
+    horizontalMarginInPx?: number;
     forceLightTheme?: boolean;
 }
 
 const RecoveryPhraseDisplay = ({
     mnemonic,
-    horizontalMarginInPx,
-    onCopy,
+    horizontalMarginInPx = 0,
     forceLightTheme,
 }: RecoveryPhraseDisplayProps) => {
     const [copied, setCopied] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
+
+    const setIsHovering = useCallback(() => {
+        setIsHovered(true);
+    }, []);
+
+    const setIsNotHovering = useCallback(() => {
+        setIsHovered(false);
+    }, []);
+
     const copyToClipboard = useCallback<MouseEventHandler<HTMLElement>>(
         async (e) => {
             e.stopPropagation();
@@ -29,14 +40,21 @@ const RecoveryPhraseDisplay = ({
             }
             await navigator.clipboard.writeText(mnemonic);
             setCopied(true);
-            onCopy && onCopy();
+            setTimeout(() => {
+                setCopied(false);
+            }, 3000);
         },
-        [mnemonic, onCopy]
+        [mnemonic]
     );
     return (
         <div className="flex flex-col">
             <div
-                className={`grid grid-cols-3 grid-rows-4 gap-2 py-4 px-6 cursor-pointer rounded-lg bg-ethos-light-background-secondary ${
+                onMouseEnter={setIsHovering}
+                onMouseLeave={setIsNotHovering}
+                onFocus={setIsHovering}
+                onBlur={setIsNotHovering}
+                tabIndex={0}
+                className={`relative grid grid-cols-3 grid-rows-4 gap-2 py-4 px-6 rounded-lg bg-ethos-light-background-secondary ${
                     forceLightTheme
                         ? ''
                         : 'dark:bg-ethos-dark-background-secondary'
@@ -45,7 +63,7 @@ const RecoveryPhraseDisplay = ({
                     marginLeft: horizontalMarginInPx,
                     marginRight: horizontalMarginInPx,
                 }}
-                onClick={copyToClipboard}
+                data-testid="recovery-phrase-display"
             >
                 {mnemonic.split(' ').map((word, index) => {
                     return (
@@ -54,7 +72,9 @@ const RecoveryPhraseDisplay = ({
                                 isTextColorMedium
                                 className="text-right col-span-1"
                             >
-                                <code>{index + 1}</code>
+                                <code className="pointer-events-none select-none">
+                                    {index + 1}
+                                </code>
                             </BodyLarge>
                             <BodyLarge
                                 isSemibold
@@ -69,28 +89,50 @@ const RecoveryPhraseDisplay = ({
                         </div>
                     );
                 })}
+                {/* Overlay */}
+                <div
+                    className={`absolute inset-0 flex items-center justify-center gap-2 transition-opacity duration-200 ${
+                        isHovered ? 'opacity-0' : 'opacity-100'
+                    }`}
+                    style={{
+                        backdropFilter: 'blur(6px)',
+                        // Next two lines stop the blur from briefly going away when scrolled back into view
+                        willChange: 'opacity, backdrop-filter',
+                        transform: 'translateZ(0)',
+                    }}
+                >
+                    <EyeIcon
+                        className={classNames(
+                            'h-5 w-5',
+                            forceLightTheme
+                                ? 'text-ethos-light-text-default'
+                                : ''
+                        )}
+                    />
+                    <BodyLarge>Hover to reveal</BodyLarge>
+                </div>
             </div>
-            <div className="flex gap-2 py-4 px-5 place-content-center items-center">
+            <div className="flex gap-2 h-20 place-content-center items-center">
                 {!copied ? (
-                    <>
-                        <ArrowLongUpIcon
-                            className={`h-5 w-5 text-ethos-light-text-medium ${
-                                forceLightTheme
-                                    ? ''
-                                    : 'dark:text-ethos-dark-text-medium'
-                            }`}
-                        />
+                    <Button
+                        onClick={copyToClipboard}
+                        className="flex gap-2 items-center"
+                        buttonStyle="secondary"
+                        removeContainerPadding
+                        forceLightTheme={forceLightTheme}
+                    >
+                        <Square2StackIcon className="h-5 w-5" />
                         <Body forceLightMode={forceLightTheme}>
-                            Click above to copy recovery phrase
+                            Copy Recovery Phrase
                         </Body>
-                    </>
+                    </Button>
                 ) : (
                     <>
                         <CheckIcon
-                            className={`h-5 w-5 text-ethos-light-text-medium ${
+                            className={`h-5 w-5 text-ethos-light-green ${
                                 forceLightTheme
                                     ? ''
-                                    : 'dark:text-ethos-dark-text-medium'
+                                    : 'dark:text-ethos-dark-green'
                             }`}
                         />
                         <Body forceLightMode={forceLightTheme}>

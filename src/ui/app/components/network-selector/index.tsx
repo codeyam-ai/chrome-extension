@@ -1,6 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { useQueryClient } from '@tanstack/react-query';
 import cl from 'classnames';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useMemo, useCallback } from 'react';
@@ -16,7 +17,6 @@ import { useAppSelector, useAppDispatch } from '_hooks';
 import { changeRPCNetwork } from '_redux/slices/app';
 
 import st from './NetworkSelector.module.scss';
-import { useQueryClient } from '@tanstack/react-query';
 
 const NetworkSelector = () => {
     const [selectedApiEnv, customRPC] = useAppSelector(({ app }) => [
@@ -64,7 +64,7 @@ const NetworkSelector = () => {
             const apiEnv = API_ENV[networkName as keyof typeof API_ENV];
             dispatch(changeRPCNetwork({ apiEnv, queryClient }));
         },
-        [customRPC, dispatch]
+        [customRPC, dispatch, queryClient]
     );
 
     return (

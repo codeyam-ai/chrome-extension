@@ -5,10 +5,11 @@ import { defer, filter, from, of, repeat, switchMap } from 'rxjs';
 
 import { useBalancesState } from '../../hooks/useBalancesState';
 import { AppState } from '../../hooks/useInitializedGuard';
+import { fetchAllBalances } from '../../redux/slices/balances';
 import {
-    fetchAllBalances,
-    fetchInvalidTokens,
-} from '../../redux/slices/balances';
+    fetchInvalidPackages,
+    initializeInvalidPackages,
+} from '../../redux/slices/valid';
 import { WarningAlert } from '../../shared/alerts/WarningAlert';
 import Alert from '../../shared/feedback/Alert';
 import BaseLayout from '../../shared/layouts/BaseLayout';
@@ -23,6 +24,7 @@ import PageLayout from '_src/ui/app/pages/PageLayout';
 import type { AppDispatch } from '../../redux/store';
 
 export const POLL_SUI_OBJECTS_INTERVAL = 4000;
+export const POLL_INVALID_PACKAGES = 300000;
 
 const AppContainer = () => {
     const { pathname } = useLocation();
@@ -34,7 +36,11 @@ const AppContainer = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        const sub = fetchAllInvalidTokensSubscription(
+        dispatch(initializeInvalidPackages());
+    }, [guardChecking, dispatch]);
+
+    useEffect(() => {
+        const sub = fetchAllInvalidPackagesSubscription(
             guardChecking,
             dispatch
         ).subscribe();
@@ -151,15 +157,15 @@ export function fetchAllBalancesSubscription(
     );
 }
 
-export function fetchAllInvalidTokensSubscription(
+export function fetchAllInvalidPackagesSubscription(
     guardChecking: boolean,
     dispatch: AppDispatch
 ) {
     return of(guardChecking).pipe(
         filter(() => !guardChecking),
         switchMap(() =>
-            defer(() => from(dispatch(fetchInvalidTokens()))).pipe(
-                repeat({ delay: POLL_SUI_OBJECTS_INTERVAL })
+            defer(() => from(dispatch(fetchInvalidPackages()))).pipe(
+                repeat({ delay: POLL_INVALID_PACKAGES })
             )
         )
     );

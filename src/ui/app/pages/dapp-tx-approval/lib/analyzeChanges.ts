@@ -1,15 +1,14 @@
-import { getTotalGasUsed, SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import BigNumber from 'bignumber.js';
 
 import addressOwner from '_src/ui/app/helpers/transactions/addressOwner';
 
+import type { RawSigner } from '@mysten/sui.js';
 import type {
-    RawSigner,
-    SuiAddress,
-    SuiObjectChange,
-    TransactionBlock,
     DryRunTransactionBlockResponse,
-} from '@mysten/sui.js';
+    SuiObjectChange,
+} from '@mysten/sui.js/client';
+import type { TransactionBlock } from '@mysten/sui.js/transactions';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 
@@ -44,7 +43,7 @@ export type BalanceAddition = {
 };
 
 export type AnalyzeChangesResult = {
-    owner: SuiAddress;
+    owner: string;
     blockData?: TransactionBlock['blockData'];
     moveCalls: TransactionBlock['blockData']['transactions'];
     dryRunResponse: DryRunTransactionBlockResponse;
@@ -57,10 +56,18 @@ export type AnalyzeChangesResult = {
     totalFee: string;
 };
 
-const assetChanges = (
-    address: SuiAddress,
-    objectChanges: SuiObjectChange[]
+const getTotalGasUsed = (
+    effects: DryRunTransactionBlockResponse['effects']
 ) => {
+    const gasUsed = effects.gasUsed;
+    return (
+        BigInt(gasUsed.computationCost) +
+        BigInt(gasUsed.storageCost) -
+        BigInt(gasUsed.storageRebate)
+    );
+};
+
+const assetChanges = (address: string, objectChanges: SuiObjectChange[]) => {
     const transfers = objectChanges.filter(
         (objectChange) =>
             objectChange.type === 'mutated' &&
@@ -73,7 +80,8 @@ const assetChanges = (
         (objectChange) =>
             objectChange.type === 'created' &&
             objectChange.sender === address &&
-            objectChange.sender === addressOwner(objectChange.owner)
+            objectChange.sender === addressOwner(objectChange.owner) &&
+            objectChange.objectType.indexOf(SUI_TYPE_ARG) === -1
     );
 
     return {
@@ -83,7 +91,7 @@ const assetChanges = (
 };
 
 const coinChanges = (
-    address: SuiAddress,
+    address: string,
     { balanceChanges, effects }: DryRunTransactionBlockResponse
 ) => {
     const gasUsed = getTotalGasUsed(effects);
@@ -226,12 +234,11 @@ const analyzeChanges = async ({
         const {
             totalBalance,
             lockedBalance: { number },
-        } = await signer.provider.getBalance({
+        } = await signer.client.getBalance({
             owner: address,
             coinType: SUI_TYPE_ARG,
         });
 
-        // const gasPrice = await signer.provider.getReferenceGasPrice();
         const gasAvailable = new BigNumber(totalBalance)
             .minus(number || 0)
             .dividedBy(Math.pow(10, 9));

@@ -6,7 +6,7 @@ import { getObjectId, getObjectFields } from '@mysten/sui.js';
 import useFileExtentionType from './useFileExtentionType';
 import useMediaUrl from './useMediaUrl';
 
-import type { SuiObjectData } from '@mysten/sui.js';
+import type { SuiObjectData } from '@mysten/sui.js/client';
 
 export default function useTicketBasicData(ticketObj: SuiObjectData) {
     const ticketObjectID = getObjectId(ticketObj);

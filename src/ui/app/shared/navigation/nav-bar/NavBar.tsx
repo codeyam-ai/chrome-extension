@@ -160,11 +160,13 @@ const NavBar = () => {
 
     const isDetailsPage = params.length > 0;
 
-    const isDappPage =
-        pathname.includes('customize') ||
-        pathname.includes('address-book') ||
-        pathname.includes('staking') ||
-        pathname.includes('manage-wallets');
+    const hideBackBtn = [
+        'buy',
+        'customize',
+        'address-book',
+        'staking',
+        'manage-wallets',
+    ].some((path) => pathname.includes(path));
 
     const goBack = useCallback(() => {
         navigate(-1);
@@ -220,7 +222,7 @@ const NavBar = () => {
 
     return (
         <div className="flex flex-row items-center justify-between px-6 h-[50px] sm:rounded-t-[20px] border-b border-b-ethos-light-text-stroke dark:border-b-ethos-dark-text-stroke dark:bg-ethos-dark-background-secondary">
-            {!isDappPage && isDetailsPage ? (
+            {!hideBackBtn && isDetailsPage ? (
                 <button
                     onClick={goBack}
                     className={'flex flex-row gap-1 items-start'}

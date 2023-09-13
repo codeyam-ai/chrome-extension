@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import type {
     SuiMoveNormalizedFunction,
     SuiObjectChange,
-} from '@mysten/sui.js';
+} from '@mysten/sui.js/client';
 
 export type useCategorizedEventsArgs = {
     normalizedFunction?: SuiMoveNormalizedFunction;

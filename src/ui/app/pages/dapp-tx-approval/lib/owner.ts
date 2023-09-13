@@ -1,5 +1,3 @@
-import type { SuiAddress } from '@mysten/sui.js';
-
 export type Owner =
     | {
           AddressOwner: string;
@@ -9,12 +7,12 @@ export type Owner =
       }
     | {
           Shared: {
-              initial_shared_version: number;
+              initial_shared_version: number | string | null;
           };
       }
     | 'Immutable';
 
-const owner = (owner?: Owner, you?: SuiAddress) => {
+const owner = (owner?: Owner, you?: string) => {
     if (!owner) return 'Immutable';
     if (typeof owner === 'string') return owner;
     if ('AddressOwner' in owner) {

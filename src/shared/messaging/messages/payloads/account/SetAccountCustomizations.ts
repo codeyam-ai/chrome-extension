@@ -1,11 +1,11 @@
 import { isBasePayload } from '_payloads';
 
 import type { BasePayload, Payload } from '_payloads';
-import type { AccountCustomization } from '_src/types/AccountCustomization';
+import type { AccountCustomizationWithAddress } from '_src/types/AccountCustomization';
 
 export interface SetAccountCustomizations extends BasePayload {
     type: 'set-account-customizations';
-    accountCustomizations: AccountCustomization[];
+    accountCustomizations: AccountCustomizationWithAddress[];
 }
 
 export function isSetAccountCustomizations(

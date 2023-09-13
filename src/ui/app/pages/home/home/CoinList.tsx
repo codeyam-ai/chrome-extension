@@ -1,10 +1,19 @@
-import CoinBalanceElement from './CoinBalance';
-import Body from '_src/ui/app/shared/typography/Body';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
-const CoinList = ({ balances }: { balances: Record<string, bigint> }) => {
+import CoinBalanceElement from './CoinBalance';
+import { LinkType } from '_src/enums/LinkType';
+import EthosLink from '_src/ui/app/shared/typography/EthosLink';
+import Typography from '_src/ui/app/shared/typography/Typography';
+
+const CoinList = ({
+    balances,
+    edit = false,
+}: {
+    balances: Record<string, bigint>;
+    edit?: boolean;
+}) => {
     return (
         <div className="text-left space-y-2" data-testid="coin-list">
-            <Body className="ml-1">My Tokens</Body>
             {Object.keys(balances).map((type: string) => {
                 const balance = balances[type];
                 return (
@@ -12,9 +21,23 @@ const CoinList = ({ balances }: { balances: Record<string, bigint> }) => {
                         key={type}
                         type={type}
                         balance={balance.toString()}
+                        edit={edit}
                     />
                 );
             })}
+            {!!balances[SUI_TYPE_ARG] && (
+                <div className={'w-full text-left'}>
+                    <Typography isTextColorMedium>
+                        Conversion data provided by{' '}
+                        <EthosLink
+                            type={LinkType.External}
+                            to={'https://www.coingecko.com'}
+                        >
+                            CoinGecko
+                        </EthosLink>
+                    </Typography>
+                </div>
+            )}
         </div>
     );
 };

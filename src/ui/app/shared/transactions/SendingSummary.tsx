@@ -45,7 +45,7 @@ const SendingSummary = ({
                                 circleSizeClasses="h-5 w-5"
                                 emojiSizeInPx={12}
                             />
-                            <Body>{otherAddressWallet.name}</Body>
+                            <Body>{otherAddressWallet.nickname}</Body>
                         </div>
                     ) : (
                         <CopyBody txt={otherAddress}>

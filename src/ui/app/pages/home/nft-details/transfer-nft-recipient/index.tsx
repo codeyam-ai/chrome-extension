@@ -1,7 +1,8 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { SUI_TYPE_ARG, TransactionBlock } from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { Formik } from 'formik';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -37,14 +38,12 @@ export type FormValues = typeof initialValues;
 function TransferNFTRecipient() {
     const { connectToLedger } = useSuiLedgerClient();
     const {
-        account: {
-            address,
-            authentication,
-            activeAccountIndex,
-            accountInfos,
-            passphrase,
-        },
-    } = useAppSelector((state) => state);
+        address,
+        authentication,
+        activeAccountIndex,
+        accountInfos,
+        passphrase,
+    } = useAppSelector((state) => state.account);
     const formData = useAppSelector(
         ({ forms: { transferNft } }) => transferNft
     );
@@ -107,7 +106,7 @@ function TransferNFTRecipient() {
                 transactionBlock,
                 selectedNFTObj,
                 safeTo,
-                api.instance.fullNode
+                api.instance.client
             );
 
             if (!transactionBlock) return;

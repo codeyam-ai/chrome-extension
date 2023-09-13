@@ -10,7 +10,7 @@
 
 html,
 body {
-    min-width: 0;
+    min-width: 360px;
     min-height: 0;
     margin: 0;
     padding: 0;
@@ -72,4 +72,10 @@ textarea {
 
 em-emoji-picker {
     height: 350px;
+}
+
+@media (prefers-color-scheme: dark) {
+    #heroswap-iframe {
+        color-scheme: light;
+    }
 }

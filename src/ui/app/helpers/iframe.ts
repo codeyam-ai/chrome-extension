@@ -1,6 +1,7 @@
 import { BASE_URL, LOGIN_URL } from '_src/shared/constants';
 
-import type { SuiJsonValue, TypeTag } from '@mysten/sui.js';
+import type { TypeTag } from '@mysten/sui.js/bcs';
+import type { SuiJsonValue } from '@mysten/sui.js/client';
 
 export interface IframeMessage {
     action: string;

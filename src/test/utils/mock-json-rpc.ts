@@ -17,17 +17,17 @@ interface CallContext {
 export class MockJsonRpc {
     registeredCalls: CallContext[];
 
-    constructor() {
+    constructor(trace = false) {
         this.registeredCalls = [];
         nock('http://mainNet-fullnode.example.com')
             .persist()
             .post('/')
             .reply(200, (uri: string, requestBody: nock.Body) => {
-                return this.matchIncomingRequest(uri, requestBody);
+                return this.matchIncomingRequest(uri, requestBody, trace);
             });
     }
 
-    mockBlockchainCall(
+    mockJsonRpcCall(
         request: { method: string; params?: unknown[] },
         result: unknown,
         persist?: boolean
@@ -50,7 +50,7 @@ export class MockJsonRpc {
         return callContext;
     }
 
-    matchIncomingRequest(uri: string, requestBody: nock.Body) {
+    matchIncomingRequest(uri: string, requestBody: nock.Body, trace: boolean) {
         const allJsonRpcResponses: unknown[] = [];
 
         let isBatch: boolean;
@@ -64,6 +64,7 @@ export class MockJsonRpc {
         }
 
         allJsonRpcCalls.forEach((jsonRpcCall) => {
+            const method = _.get(jsonRpcCall, 'method');
             this.registeredCalls.forEach((callContext) => {
                 const expectedBody: { method: string; params?: unknown[] } = {
                     method: callContext.expectedCall.method,
@@ -79,6 +80,14 @@ export class MockJsonRpc {
                     callContext.actualCalls === numExpectedCalls;
                 if (matches) {
                     if (!reachedLimit) {
+                        if (trace) {
+                            // eslint-disable-next-line no-console
+                            console.log(
+                                `for ${method} returning ${JSON.stringify(
+                                    callContext.expectedCall.result
+                                )}`
+                            );
+                        }
                         callContext.actualCalls += 1;
                         allJsonRpcResponses.push(
                             callContext.expectedCall.result
@@ -93,6 +102,7 @@ export class MockJsonRpc {
             });
         });
 
+        const id = requestBody instanceof Object ? requestBody.id : uuidV4();
         if (allJsonRpcCalls.length === allJsonRpcResponses.length) {
             if (isBatch) {
                 // return an array where each object corresponds to an incoming request
@@ -100,14 +110,14 @@ export class MockJsonRpc {
                     return {
                         jsonrpc: '2.0',
                         result: response,
-                        id: uuidV4(),
+                        id,
                     };
                 });
             } else {
                 return {
                     jsonrpc: '2.0',
                     result: allJsonRpcResponses[0],
-                    id: uuidV4(),
+                    id,
                 };
             }
         } else {

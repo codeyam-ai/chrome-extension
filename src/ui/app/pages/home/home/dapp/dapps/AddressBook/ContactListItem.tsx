@@ -32,7 +32,7 @@ const ContactListItem: React.FC<ContactListItemProps> = ({ contact }) => {
                     <EmojiDisplay emoji={contact.emoji} sizeInPx={22} />
                 </div>
                 <div className="flex flex-col text-left">
-                    <Body isSemibold>{contact.name}</Body>
+                    <Body isSemibold>{contact.nickname}</Body>
                     <Body>{truncateMiddle(contact.address)}</Body>
                 </div>
             </div>

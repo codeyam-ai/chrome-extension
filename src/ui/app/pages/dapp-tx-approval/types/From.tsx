@@ -11,7 +11,7 @@ const From = () => {
                 (accountInfo) => (accountInfo.index || 0) === activeAccountIndex
             )
     );
-    const shortenedName = truncateString(accountInfo?.name || 'Wallet', 8);
+    const shortenedName = truncateString(accountInfo?.nickname || 'Wallet', 8);
 
     return (
         <CardRow>
@@ -20,6 +20,7 @@ const From = () => {
                 <WalletColorAndEmojiCircle
                     color={accountInfo?.color}
                     emoji={accountInfo?.emoji}
+                    nftPfpUrl={accountInfo?.nftPfpUrl}
                     circleSizeClasses="h-6 w-6"
                     emojiSizeInPx={12}
                 />

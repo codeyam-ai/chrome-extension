@@ -32,14 +32,13 @@ const WalletSelector = ({ wallet, setFieldValue }: WalletSelectorProps) => {
         >
             <div className="flex gap-3">
                 <WalletColorAndEmojiCircle
-                    color={wallet.color}
-                    emoji={wallet.emoji}
+                    {...wallet}
                     circleSizeClasses="h-10 w-10"
                     emojiSizeInPx={22}
                 />
                 <div className="flex flex-col text-left" title={wallet.address}>
                     <BodyLarge>
-                        {wallet.name ||
+                        {wallet.nickname ||
                             `Wallet${
                                 'index' in wallet
                                     ? wallet.index > 0

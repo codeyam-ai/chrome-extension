@@ -1,21 +1,18 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import type {
-    SignedTransaction,
-    SuiAddress,
-    SuiTransactionBlockResponse,
-} from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type {
     IdentifierString,
     SuiSignAndExecuteTransactionBlockInput,
-    SuiSignMessageOutput,
+    SuiSignPersonalMessageOutput,
+    SuiSignTransactionBlockOutput,
 } from '@mysten/wallet-standard';
 
 export type TransactionDataType = {
     type: 'transaction';
     data: string;
-    account: SuiAddress;
+    account: string;
     chain: IdentifierString;
     justSign?: boolean;
     requestType?: SuiSignAndExecuteTransactionBlockInput['requestType'];
@@ -23,9 +20,9 @@ export type TransactionDataType = {
 };
 
 export type SignMessageDataType = {
-    type: 'sign-message';
+    type: 'sign-personal-message';
     message: string;
-    accountAddress: SuiAddress;
+    accountAddress: string;
 };
 
 export type ApprovalRequest = {
@@ -33,17 +30,17 @@ export type ApprovalRequest = {
     approved: boolean | null;
     origin: string;
     originFavIcon?: string;
-    txResult?: SuiTransactionBlockResponse | SuiSignMessageOutput;
+    txResult?: SuiTransactionBlockResponse | SuiSignPersonalMessageOutput;
     txResultError?: string;
-    txSigned?: SignedTransaction;
+    txSigned?: SuiSignTransactionBlockOutput;
     createdDate: string;
     tx: TransactionDataType | SignMessageDataType;
 };
 
-export interface SignMessageApprovalRequest
+export interface SignPersonalMessageApprovalRequest
     extends Omit<ApprovalRequest, 'txResult' | 'tx'> {
     tx: SignMessageDataType;
-    txResult?: SuiSignMessageOutput;
+    txResult?: SuiSignPersonalMessageOutput;
 }
 
 export interface TransactionApprovalRequest
@@ -52,14 +49,14 @@ export interface TransactionApprovalRequest
     txResult?: SuiTransactionBlockResponse;
 }
 
-export function isSignMessageApprovalRequest(
+export function isSignPersonalMessageApprovalRequest(
     request: ApprovalRequest
-): request is SignMessageApprovalRequest {
-    return request.tx.type === 'sign-message';
+): request is SignPersonalMessageApprovalRequest {
+    return request.tx.type === 'sign-personal-message';
 }
 
 export function isTransactionApprovalRequest(
     request: ApprovalRequest
 ): request is TransactionApprovalRequest {
-    return request.tx.type !== 'sign-message';
+    return request.tx.type !== 'sign-personal-message';
 }

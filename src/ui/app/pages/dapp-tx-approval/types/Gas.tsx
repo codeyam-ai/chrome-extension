@@ -1,4 +1,4 @@
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
 import CardRow from './CardRow';
 import { useDependencies } from '_shared/utils/dependenciesContext';
@@ -8,7 +8,7 @@ import Body from '_src/ui/app/shared/typography/Body';
 import type { GasCostSummary } from '../lib/analyzeChanges';
 
 const Gas = ({ gasSummary }: { gasSummary: GasCostSummary }) => {
-    const [formatted, symbol, dollars] = useFormatCoin(
+    const [formatted, symbol, dollars, , , , , hasConversion] = useFormatCoin(
         gasSummary.total,
         SUI_TYPE_ARG
     );
@@ -18,14 +18,15 @@ const Gas = ({ gasSummary }: { gasSummary: GasCostSummary }) => {
     return (
         <CardRow>
             <Body>Gas Fee</Body>
-            {featureFlags.showUsd ? (
+            {featureFlags.showUsd && hasConversion ? (
                 <div className="flex flex-col items-end text-right">
                     <div className="flex items-center gap-1 text-base">
-                        <Body className="font-light">USD</Body>
-                        <Body isSemibold>{dollars}</Body>
+                        <Body isSemibold>
+                            {formatted} {symbol}
+                        </Body>
                     </div>
                     <Body className="text-size-ethos-small text-[#74777C]">
-                        {formatted} {symbol}
+                        {dollars} USD
                     </Body>
                 </div>
             ) : (

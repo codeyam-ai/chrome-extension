@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import useIsMobile from '../../hooks/useIsMobile';
@@ -14,33 +14,48 @@ import { loadAccountInformationFromStorage } from '_src/ui/app/redux/slices/acco
 
 const SavePhrasePage = () => {
     // useInitializedGuard(AppState.MNEMONIC);
-    const [copied, setCopied] = useState(false);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const isMobile = useIsMobile();
+    // const { getCachedJwt } = useJwt();
 
     const mnemonic = useAppSelector(
         ({ account }) => account.createdMnemonic || account.mnemonic
     );
     const address = useAppSelector(({ account }) => account.address);
 
-    const setCopiedTrue = useCallback(() => {
-        setCopied(true);
-    }, []);
-
     const finishOnboarding = useCallback(async () => {
-        if (!copied) {
-            return;
-        }
-        await dispatch(loadAccountInformationFromStorage());
+        // Uncomment this when customization sync is automatic with new wallets
+        // const accountInfo = {
+        //     index: 0,
+        //     nickname: 'Wallet',
+        //     color: getNextWalletColor(0),
+        //     emoji: getNextEmoji(0),
+        //     address,
+        // } as AccountInfo;
+        // const jwt = await getCachedJwt();
+
+        // const privateKey = keypairVault.getKeyPair(0).export().privateKey;
+
+        // const encryptedAccountCustomization = await encryptAccountCustomization(
+        //     accountInfo,
+        //     privateKey
+        // );
+
+        // await saveCustomization(jwt, encryptedAccountCustomization);
+
         navigate('/initialize/verify-phrase');
-    }, [copied, dispatch, navigate]);
+    }, [navigate]);
 
     useEffect(() => {
         if (address) {
             Permissions.grantEthosDashboardBasicPermissionsForAccount(address);
         }
     }, [address]);
+
+    useEffect(() => {
+        dispatch(loadAccountInformationFromStorage());
+    }, [dispatch]);
 
     return (
         <OnboardingCard
@@ -55,14 +70,13 @@ const SavePhrasePage = () => {
                 <RecoveryPhraseDisplay
                     mnemonic={mnemonic || ''}
                     horizontalMarginInPx={isMobile ? 24 : 40}
-                    onCopy={setCopiedTrue}
                     forceLightTheme
                 />
                 <div className="px-6 sm:px-10 pb-6 sm:pb-10">
                     <Button
                         onClick={finishOnboarding}
-                        disabled={!copied}
                         removeContainerPadding
+                        forceLightTheme
                     >
                         Create Wallet
                     </Button>

@@ -1,4 +1,4 @@
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import BigNumber from 'bignumber.js';
 
 import CardRow from './CardRow';
@@ -11,7 +11,7 @@ import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 
 const Total = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
     const bnTotalFee = new BigNumber(analysis.totalFee);
-    const [formatted, symbol, dollars] = useFormatCoin(
+    const [formatted, symbol, dollars, , , , , hasConversion] = useFormatCoin(
         bnTotalFee.abs().toString(),
         SUI_TYPE_ARG
     );
@@ -29,7 +29,7 @@ const Total = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
                 {bnTotalFee.lt(0) && ' (Gain)'}
             </BodyLarge>
 
-            {featureFlags.showUsd ? (
+            {featureFlags.showUsd && hasConversion ? (
                 <div className="text-right flex flex-col gap-1">
                     <BodyLarge
                         isSemibold
@@ -37,11 +37,9 @@ const Total = ({ analysis }: { analysis: AnalyzeChangesResult }) => {
                             bnTotalFee.lt(0) ? 'text-green-700' : ''
                         }`}
                     >
-                        {dollars} USD
-                    </BodyLarge>
-                    <Body className="text-[#74777C]">
                         {formatted} {symbol}
-                    </Body>
+                    </BodyLarge>
+                    <Body className="text-[#74777C]">{dollars} USD</Body>
                 </div>
             ) : (
                 <div className="text-right flex flex-col gap-1">

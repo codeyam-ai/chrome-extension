@@ -60,7 +60,7 @@ function AccountAddress({
                         }}
                     ></div>
                     <div className="text-slate-800 dark:text-slate-200">
-                        {accountInfo.name || 'Wallet'}:
+                        {accountInfo.nickname || 'Wallet'}:
                     </div>
                 </>
             )}

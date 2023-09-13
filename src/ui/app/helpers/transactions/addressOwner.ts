@@ -1,16 +1,8 @@
 export type Owner =
-    | {
-          AddressOwner: string;
-      }
-    | {
-          ObjectOwner: string;
-      }
-    | {
-          Shared: {
-              initial_shared_version: number;
-          };
-      }
-    | 'Immutable';
+    | 'Immutable'
+    | { AddressOwner: string }
+    | { ObjectOwner: string }
+    | { Shared: { initial_shared_version: string | null } };
 
 const addressOwner = (owner?: Owner): string | undefined => {
     return (

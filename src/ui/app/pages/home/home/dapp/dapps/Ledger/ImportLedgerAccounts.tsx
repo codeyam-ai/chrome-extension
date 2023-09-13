@@ -43,6 +43,7 @@ const LedgerItem = ({
         return {
             index,
             address: account.address,
+            publicKey: account.publicKey,
             name: `Ledger ${index + 1}`,
             color: getNextWalletColor(index),
             emoji: getNextEmoji(index),
@@ -93,6 +94,7 @@ export function ImportLedgerAccounts() {
             )
             .map((accountInfo) => ({
                 address: accountInfo.address,
+                publicKey: accountInfo.publicKey,
                 index: accountInfo.ledgerAccountIndex ?? 0,
                 derivationPath: derivationPathForLedger(
                     accountInfo.ledgerAccountIndex ?? 0
@@ -133,7 +135,7 @@ export function ImportLedgerAccounts() {
         );
 
         for (const account of selectedLedgerAccounts) {
-            const { index, address } = account;
+            const { index, address, publicKey } = account;
             const rawIndex = LEDGER_OFFSET + index;
             const existingAccountInfo = accountInfos.find(
                 (accountInfo) => accountInfo.address === address
@@ -141,10 +143,11 @@ export function ImportLedgerAccounts() {
             mutableAccountInfos.push({
                 index: rawIndex,
                 address,
+                publicKey,
                 ledgerAccountIndex: index,
                 color: getNextWalletColor(index),
                 emoji: getNextEmoji(index),
-                name: `Ledger ${index + 1}`,
+                nickname: `Ledger ${index + 1}`,
                 ...existingAccountInfo,
             });
         }

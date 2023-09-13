@@ -10,6 +10,7 @@ export interface Heartbeat {
 
 export interface FeatureFlags {
     showUsd: boolean;
+    showMobile: boolean;
     showWipFeatures: boolean;
 }
 

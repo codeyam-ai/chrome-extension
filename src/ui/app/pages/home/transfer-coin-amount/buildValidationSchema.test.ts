@@ -4,7 +4,7 @@ describe('buildValidationSchema', () => {
     it('validates against alphabet characters', async () => {
         const input = {
             coin: {
-                type: '0x2::sui::SUI',
+                type: '0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI',
                 balance: BigInt(4000000000),
                 symbol: 'SUI',
                 decimals: 9,
@@ -25,7 +25,7 @@ describe('buildValidationSchema', () => {
     it('works for period-decimal-separator langs like english', async () => {
         const input = {
             coin: {
-                type: '0x2::sui::SUI',
+                type: '0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI',
                 balance: BigInt(4000000000),
                 symbol: 'SUI',
                 decimals: 9,
@@ -45,7 +45,7 @@ describe('buildValidationSchema', () => {
     it('works for comma-decimal-separator langs like german', async () => {
         const input = {
             coin: {
-                type: '0x2::sui::SUI',
+                type: '0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI',
                 balance: BigInt(4000000000),
                 symbol: 'SUI',
                 decimals: 9,

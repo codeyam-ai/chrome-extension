@@ -1,18 +1,10 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
-import type {
-    ObjectId,
-    // RawSigner,
-    // SuiAddress,
-    SuiMoveObject,
-    SuiObjectData,
-    // SuiObjectInfo,
-    JsonRpcProvider,
-} from '@mysten/sui.js';
-// import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import type { SuiMoveObject, SuiObjectData } from '@mysten/sui.js';
+import type { SuiClient } from '@mysten/sui.js/client';
 
 const COIN_TYPE = '0x2::coin::Coin';
 const COIN_TYPE_ARG_REGEX = /^0x2::coin::Coin<(.+)>$/;
@@ -59,7 +51,7 @@ export class Coin {
         return BigInt(obj.fields.balance);
     }
 
-    public static getID(obj: SuiMoveObject): ObjectId {
+    public static getID(obj: SuiMoveObject): string {
         return obj.fields.id.id;
     }
 
@@ -89,7 +81,7 @@ export class Coin {
      * such that `validator` will stake the `amount` of Coin<T> for the user.
      *
      * @param signer A signer with connection to fullnode
-     * @param coins A list of Coins owned by the signer with the same generic type(e.g., 0x2::Sui::Sui)
+     * @param coins A list of Coins owned by the signer with the same generic type(e.g., 0x0000000000000000000000000000000000000000000000000000000000000002::Sui::Sui)
      * @param amount The amount to be staked
      * @param validator The sui address of the chosen validator
      */
@@ -119,7 +111,7 @@ export class Coin {
     //     signer: RawSigner | EthosSigner | LedgerSigner,
     //     coins: SuiMoveObject[],
     //     amount: bigint
-    // ): Promise<ObjectId> {
+    // ): Promise<string> {
     //     const coinWithExactAmount = await Coin.selectSuiCoinWithExactAmount(
     //         signer,
     //         coins,
@@ -156,9 +148,9 @@ export class Coin {
     //     coins: SuiMoveObject[],
     //     amount: bigint,
     //     refreshData = false
-    // ): Promise<ObjectId | undefined> {
+    // ): Promise<string | undefined> {
     //     const coinsWithSufficientAmount = refreshData
-    //         ? await signer.provider.selectCoinsWithBalanceGreaterThanOrEqual(
+    //         ? await signer.client.selectCoinsWithBalanceGreaterThanOrEqual(
     //               await signer.getAddress(),
     //               amount,
     //               SUI_TYPE_ARG,
@@ -181,9 +173,9 @@ export class Coin {
     // }
 
     public static async getActiveValidators(
-        provider: JsonRpcProvider
+        client: SuiClient
     ): Promise<Array<SuiMoveObject>> {
-        const contents = await provider.getObject({
+        const contents = await client.getObject({
             id: SUI_SYSTEM_STATE_OBJECT_ID,
             options: {
                 showContent: true,

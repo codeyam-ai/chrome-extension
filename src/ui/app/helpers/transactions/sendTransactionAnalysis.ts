@@ -1,16 +1,13 @@
-import {
-    type SuiAddress,
-    type SuiTransactionBlockResponse,
-    getTotalGasUsed,
-} from '@mysten/sui.js';
+import { getTotalGasUsed } from '@mysten/sui.js';
+import { type SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 
 import addressOwner from './addressOwner';
 import findBalanceChanges from './findBalanceChanges';
 
 export type SendTransactionInfo = {
     isSender: boolean;
-    sender: SuiAddress;
-    recipient: SuiAddress;
+    sender: string;
+    recipient: string;
     coinType?: string;
     coinAmount?: bigint;
     objectId?: string;
@@ -18,7 +15,7 @@ export type SendTransactionInfo = {
 };
 
 const sendTransactionAnalysis = (
-    ownerAddress: SuiAddress,
+    ownerAddress: string,
     transactionResponse: SuiTransactionBlockResponse
 ) => {
     const analysis: SendTransactionInfo[] = [];

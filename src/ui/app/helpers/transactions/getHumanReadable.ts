@@ -7,12 +7,15 @@ import capitalize from '../capitalize';
 import type { AnalyzedTransaction } from './analyzeTransactions';
 
 const getHumanReadable = (analyzedTransaction: AnalyzedTransaction) => {
-    const timeDisplay = capitalize(
-        formatRelative(
-            new Date(Number(analyzedTransaction.timestampMs) || 0),
-            new Date()
-        )
-    );
+    const timeDisplay = analyzedTransaction.timestampMs
+        ? capitalize(
+              formatRelative(
+                  new Date(Number(analyzedTransaction.timestampMs) || 0),
+                  new Date()
+              )
+          )
+        : '';
+
     const action = getTxAction(analyzedTransaction);
     const image = getDisplayImage(analyzedTransaction, action);
 

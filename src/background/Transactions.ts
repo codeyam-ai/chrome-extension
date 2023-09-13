@@ -1,18 +1,18 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { RawSigner } from '@mysten/sui.js';
 import {
-    Connection,
-    Ed25519Keypair,
-    JsonRpcProvider,
-    RawSigner,
-    TransactionBlock,
-} from '@mysten/sui.js';
+    SuiClient,
+    type SuiTransactionBlockResponse,
+} from '@mysten/sui.js/client';
+import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
 import {
     SUI_MAINNET_CHAIN,
     type IdentifierString,
+    type SuiSignPersonalMessageOutput,
     type SuiSignAndExecuteTransactionBlockInput,
-    type SuiSignMessageOutput,
     SUI_TESTNET_CHAIN,
     SUI_DEVNET_CHAIN,
 } from '@mysten/wallet-standard';
@@ -23,18 +23,15 @@ import Browser from 'webextension-polyfill';
 import { Window } from './Window';
 import { API_ENV } from '../ui/app/ApiProvider';
 import { PREAPPROVAL_KEY, TX_STORE_KEY } from '_src/shared/constants';
+import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
-import type {
-    SignedTransaction,
-    SuiAddress,
-    SuiTransactionBlockResponse,
-} from '@mysten/sui.js';
+import type { SignedTransaction } from '@mysten/sui.js';
 import type {
     PreapprovalRequest,
     PreapprovalResponse,
-    SignMessageRequest,
+    SignPersonalMessageRequest,
     SuiSignTransactionSerialized,
 } from '_payloads/transactions';
 import type {
@@ -46,12 +43,6 @@ import type { ContentScriptConnection } from '_src/background/connections/Conten
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { SeedInfo } from '_src/ui/app/KeypairVault';
 
-// type SimpleCoin = {
-//     balance: number;
-//     coinObjectId: string;
-//     coinType: string;
-// };
-
 function openTxWindow(txRequestId: string) {
     return new Window({
         url:
@@ -61,11 +52,13 @@ function openTxWindow(txRequestId: string) {
     });
 }
 
-function openSignMessageWindow(txRequestId: string) {
+function openSignPersonalMessageWindow(txRequestId: string) {
     return new Window({
         url:
             Browser.runtime.getURL('ui.html') +
-            `#/sign-message-approval/${encodeURIComponent(txRequestId)}`,
+            `#/sign-personal-message-approval/${encodeURIComponent(
+                txRequestId
+            )}`,
         height: 720,
     });
 }
@@ -151,12 +144,14 @@ class Transactions {
                 `Transaction failed with the following error. ${txResultError}`
             );
         }
+
         if (tx) {
             if (!txResult || !('digest' in txResult)) {
                 throw new Error(`Transaction result is empty ${txResult}`);
             }
             return txResult;
         }
+
         if (!txSigned) {
             throw new Error('Transaction signature is empty');
         }
@@ -172,7 +167,7 @@ class Transactions {
     }: {
         target?: `${string}::${string}::${string}`;
         objectIds?: string[];
-        address?: SuiAddress;
+        address?: string;
         chain?: IdentifierString;
         preapproval?: Preapproval;
     }) {
@@ -199,7 +194,7 @@ class Transactions {
 
     private async tryDirectExecution(
         tx: TransactionBlock,
-        address: SuiAddress,
+        address: string,
         chain: IdentifierString | undefined,
         preapprovalRequest: PreapprovalRequest,
         requestType?: SuiSignAndExecuteTransactionBlockInput['requestType'],
@@ -243,19 +238,20 @@ class Transactions {
         }
     }
 
-    public async signMessage(
+    public async signPersonalMessage(
         {
             accountAddress,
             message,
-        }: Required<Pick<SignMessageRequest, 'args'>>['args'],
+        }: Required<Pick<SignPersonalMessageRequest, 'args'>>['args'],
         connection: ContentScriptConnection
-    ): Promise<SuiSignMessageOutput> {
+    ): Promise<SuiSignPersonalMessageOutput> {
         const { txResult, txResultError } = await this.requestApproval(
-            { type: 'sign-message', accountAddress, message },
+            { type: 'sign-personal-message', accountAddress, message },
             true,
             connection.origin,
             connection.originFavIcon
         );
+
         if (txResultError) {
             throw new Error(
                 `Signing message failed with the following error ${txResultError}`
@@ -264,7 +260,7 @@ class Transactions {
         if (!txResult) {
             throw new Error('Sign message result is empty');
         }
-        if (!('messageBytes' in txResult)) {
+        if (!('bytes' in txResult)) {
             throw new Error('Sign message error, unknown result');
         }
         return txResult;
@@ -278,17 +274,11 @@ class Transactions {
         options,
     }: {
         transactionBlock: TransactionBlock;
-        address: SuiAddress;
+        address: string;
         chain?: IdentifierString;
         requestType?: SuiSignAndExecuteTransactionBlockInput['requestType'];
         options?: SuiSignAndExecuteTransactionBlockInput['options'];
     }) {
-        const activeSeed = await this.getActiveSeed();
-
-        if (activeSeed.address !== address) {
-            throw new Error('Requested address for transaction is not active.');
-        }
-
         let env;
         let envEndpoint;
         switch (chain) {
@@ -321,26 +311,44 @@ class Transactions {
             envEndpoint = envInfo?.sui_Env_RPC;
         }
 
-        let connection: Connection;
+        let url: string;
         if (envEndpoint) {
-            connection = new Connection({ fullnode: envEndpoint });
+            url = envEndpoint;
         } else if (env) {
-            connection = api.getEndPoints(env);
+            url = api.getEndPoints(env);
         } else {
             throw new Error('No connection found');
         }
 
-        if (!connection) {
-            throw new Error('No connection found');
+        if (!url) {
+            throw new Error(
+                'No url found with which to establish a SuiClient connection'
+            );
         }
 
+        const client = new SuiClient({ url });
+
         try {
-            const provider = new JsonRpcProvider(connection);
-            const secretKey = Uint8Array.from(
-                activeSeed.seed.split(',').map((n) => parseInt(n))
-            );
-            const keypair = Ed25519Keypair.fromSecretKey(secretKey);
-            const signer = new RawSigner(keypair, provider);
+            let signer;
+
+            const authentication = await this.getAuthentication();
+            if (authentication) {
+                signer = new EthosSigner(address, authentication, client);
+            } else {
+                const activeSeed = await this.getActiveSeed();
+
+                if (activeSeed.address !== address) {
+                    throw new Error(
+                        'Requested address for transaction is not active.'
+                    );
+                }
+
+                const secretKey = Uint8Array.from(
+                    activeSeed.seed.split(',').map((n) => parseInt(n))
+                );
+                const keypair = Ed25519Keypair.fromSecretKey(secretKey);
+                signer = new RawSigner(keypair, client);
+            }
 
             const txResponse = await signer.signAndExecuteTransactionBlock({
                 transactionBlock,
@@ -465,6 +473,16 @@ class Transactions {
         return JSON.parse(activeSeedString || '[]');
     }
 
+    private async getAuthentication(): Promise<string | null> {
+        const authentication = await getEncrypted({
+            key: 'authentication',
+            session: true,
+            strong: false,
+        });
+
+        return authentication;
+    }
+
     private createTransactionRequest(
         tx: ApprovalRequest['tx'],
         origin: string,
@@ -566,7 +584,7 @@ class Transactions {
         );
         await this.storeTransactionRequest(txRequest);
         const popUp = sign
-            ? openSignMessageWindow(txRequest.id)
+            ? openSignPersonalMessageWindow(txRequest.id)
             : openTxWindow(txRequest.id);
         const popUpClose = (await popUp.show()).pipe(
             take(1),

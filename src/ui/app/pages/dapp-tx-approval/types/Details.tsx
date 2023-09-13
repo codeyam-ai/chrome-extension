@@ -1,5 +1,5 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { useCallback, useEffect, useState } from 'react';
 
 import owner from '../lib/owner';
@@ -16,7 +16,8 @@ import type {
     AnalyzeChangesResult,
     GasCostSummary,
 } from '../lib/analyzeChanges';
-import type { RawSigner, SuiAddress, SuiObjectChange } from '@mysten/sui.js';
+import type { RawSigner } from '@mysten/sui.js';
+import type { SuiObjectChange } from '@mysten/sui.js/client';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 import type { ReactNode } from 'react';
@@ -25,20 +26,30 @@ const Row = ({
     title,
     value,
     subvalue,
+    dollars,
+    hasConversion,
     truncate = true,
 }: {
     title: string;
     value?: string;
     subvalue?: ReactNode;
     truncate?: boolean;
+    hasConversion?: boolean;
+    dollars?: string;
 }) => {
+    const formattedValue =
+        title === 'SUI' && hasConversion
+            ? `${truncateMiddle(value)} ≈ ${dollars} USD`
+            : value;
     return (
         <div className="flex flex-row items-center justify-between">
             <Body isSemibold={!value}>{title}</Body>
             <div className="text-right">
                 {value && (
                     <div title={value}>
-                        <Body>{truncate ? truncateMiddle(value) : value}</Body>
+                        <Body className={'text-[12px]'}>
+                            {truncate ? formattedValue : value}
+                        </Body>
                     </div>
                 )}
                 {typeof subvalue === 'string' ? (
@@ -77,7 +88,7 @@ const BalanceChanges = ({
     address,
 }: {
     analysis: AnalyzeChangesResult;
-    address?: SuiAddress;
+    address?: string;
 }) => {
     if (analysis.dryRunResponse.balanceChanges.length === 0) return null;
 
@@ -92,12 +103,15 @@ const BalanceChanges = ({
         amount: string;
         coinType: string;
     }) => {
-        const [formatted, symbol] = useFormatCoin(amount, coinType);
+        const [formatted, symbol, dollars, , , , , hasConversion] =
+            useFormatCoin(amount, coinType);
 
         return (
             <Row
                 title={symbol ?? coinType}
                 value={formatted}
+                dollars={dollars}
+                hasConversion={hasConversion}
                 subvalue={coinType === SUI_TYPE_ARG ? undefined : coinType}
             />
         );
@@ -130,7 +144,7 @@ const AssetChanges = ({
     address,
 }: {
     analysis: AnalyzeChangesResult;
-    address?: SuiAddress;
+    address?: string;
 }) => {
     if (analysis.dryRunResponse.objectChanges.length === 0) return <></>;
 
@@ -138,7 +152,9 @@ const AssetChanges = ({
         (objectChange) =>
             !(
                 'objectType' in objectChange &&
-                objectChange.objectType.indexOf('0x2::coin::Coin') > -1
+                objectChange.objectType.indexOf(
+                    '0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin'
+                ) > -1
             )
     );
 
@@ -263,7 +279,7 @@ const Details = ({
 }) => {
     const { resolvedTheme } = useTheme();
     const [details, setDetails] = useState(false);
-    const [address, setAddress] = useState<SuiAddress | undefined>(undefined);
+    const [address, setAddress] = useState<string | undefined>(undefined);
 
     useEffect(() => {
         signer.getAddress().then(setAddress);

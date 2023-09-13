@@ -1,4 +1,5 @@
-import { SuiMoveObject, is, getSuiObjectData } from '@mysten/sui.js';
+import { SuiMoveObject, getSuiObjectData } from '@mysten/sui.js';
+import { is } from '@mysten/sui.js/utils';
 import { useEffect, useState } from 'react';
 
 import isValidTicket from '../../../helpers/isValidTicket';
@@ -10,7 +11,7 @@ import { useAppSelector } from '_src/ui/app/hooks';
 import { TicketProjectDetailsContent } from '_src/ui/app/pages/home/ticket-project-details';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
-import type { SuiObjectResponse, SuiObjectData } from '@mysten/sui.js';
+import type { SuiObjectResponse, SuiObjectData } from '@mysten/sui.js/client';
 
 export interface TicketProjectProps {
     objectId: string;
@@ -48,7 +49,7 @@ const TicketProjectList = () => {
             );
 
             const ticketProjectObjects: SuiObjectResponse[] =
-                await api.instance.fullNode.multiGetObjects({
+                await api.instance.client.multiGetObjects({
                     ids: ticketProjectIds,
                     options: {
                         showContent: true,
@@ -99,7 +100,7 @@ const TicketProjectList = () => {
                     ) {
                         const fields = ticket.content.fields;
                         const isValid = await isValidTicket(
-                            api.instance.fullNode,
+                            api.instance.client,
                             { type: ticket.type, fields: fields },
                             address || '',
                             ticketProject.agentObjectId

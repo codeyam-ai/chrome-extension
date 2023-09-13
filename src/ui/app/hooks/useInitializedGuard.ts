@@ -25,26 +25,37 @@ export default function useInitializedGuard(
 
     let currentState = AppState.UNINITIALIZED;
 
-    const accountType = useAppSelector((state) => state.account.accountType);
-    const loading = useAppSelector((state) => state.account.loading);
+    const loading = useAppSelector(({ account: { loading } }) => loading);
+
     if (loading) currentState = AppState.LOADING;
 
-    const passwordReady = useAppSelector((state) => !!state.account.passphrase);
-    const mnemonicReady = useAppSelector((state) => !!state.account.mnemonic);
+    const passwordReady = useAppSelector(
+        ({ account: { passphrase } }) => passphrase
+    );
+    const mnemonicReady = useAppSelector(
+        ({ account: { mnemonic } }) => mnemonic
+    );
 
     if (passwordReady && mnemonicReady) {
         currentState = AppState.MNEMONIC;
     }
 
-    const { authentication, accountInfos } = useAppSelector(
-        ({ account }) => account
+    const authentication = useAppSelector(
+        ({ account: { authentication } }) => authentication
+    );
+    const accountInfos = useAppSelector(
+        ({ account: { accountInfos } }) => accountInfos
     );
 
     if (authentication && (accountInfos?.length || 0) > 0) {
         currentState = AppState.HOSTED;
     }
 
+    const accountType = useAppSelector(
+        ({ account: { accountType } }) => accountType
+    );
     const locked = useAppSelector(({ account: { locked } }) => locked);
+
     if (locked || (!passwordReady && accountType === AccountType.PASSWORD)) {
         currentState = AppState.LOCKED;
     }

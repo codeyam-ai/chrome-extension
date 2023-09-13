@@ -1,23 +1,41 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import PasswordVerificationForm from './PasswordVerificationForm';
-import Button from '../../../../../shared/buttons/Button';
+import QrCodeSection from './QrCodeSection';
+import Button from '../../../../../../shared/buttons/Button';
+import PasswordVerificationForm from '../PasswordVerificationForm';
+import { useDependencies } from '_src/shared/utils/dependenciesContext';
 import { secureApiCall } from '_src/shared/utils/simpleApiCall';
-import { useAppSelector } from '_src/ui/app/hooks';
+import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
+import { getImportedMnemonic } from '_src/ui/app/redux/slices/account';
+import RecoveryPhraseDisplay from '_src/ui/app/shared/content/RecoveryPhraseDisplay';
 import Alert from '_src/ui/app/shared/feedback/Alert';
+import Header from '_src/ui/app/shared/typography/Header';
 
 import type { ChangeEventHandler } from 'react';
 
 export default function ViewSeedPage() {
+    const dispatch = useAppDispatch();
     const [hasConfirmed, setHasConfirmed] = useState(false);
     const [showSeed, setShowSeed] = useState(false);
-    const [hostedSeed, setHostedSeed] = useState('Loading...');
-    const mnemonic = useAppSelector(
-        ({ account }) => account.createdMnemonic || account.mnemonic
+    const { featureFlags } = useDependencies();
+    const activeAccountIndex = useAppSelector(
+        ({ account }) => account.activeAccountIndex
     );
+    const activeAccountInfo = useAppSelector(({ account }) => {
+        return account.accountInfos.find(
+            (accountInfo) => accountInfo.index === activeAccountIndex
+        );
+    });
+    const mnemonic = useAppSelector(({ account }) => {
+        if (activeAccountInfo?.importedMnemonicName) return;
+        if (activeAccountInfo?.importedPrivateKeyName) return;
+        return account.createdMnemonic || account.mnemonic;
+    });
     const { passphrase, authentication } = useAppSelector(
         ({ account }) => account
     );
+    const [hostedSeed, setHostedSeed] = useState<string>();
+    const [importedSeed, setImportedSeed] = useState<string>();
 
     useEffect(() => {
         if (!hasConfirmed) return;
@@ -43,6 +61,25 @@ export default function ViewSeedPage() {
         getHostedSeed();
     }, [authentication, hasConfirmed]);
 
+    useEffect(() => {
+        if (!activeAccountInfo) return;
+
+        const name = activeAccountInfo?.importedMnemonicName;
+        if (!name) return;
+
+        const getImportedSeed = async () => {
+            const mnemonic = await dispatch(
+                getImportedMnemonic({ name })
+            ).unwrap();
+
+            if (!mnemonic) return;
+
+            setImportedSeed(mnemonic);
+        };
+
+        getImportedSeed();
+    }, [activeAccountInfo, dispatch]);
+
     const onHandleConfirmed = useCallback<ChangeEventHandler<HTMLInputElement>>(
         (event) => {
             const checked = event.target.checked;
@@ -58,14 +95,15 @@ export default function ViewSeedPage() {
     if (showSeed) {
         return (
             <div className="p-6 flex flex-col gap-6">
-                <textarea
-                    rows={4}
-                    value={mnemonic || hostedSeed || ''}
-                    id="mnemonic"
-                    className="max-w-sm mx-auto text-center shadow-sm block w-full resize-none text-sm rounded-md border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:focus:ring-violet-700 dark:focus:border-violet-700 dark:border-gray-500 dark:bg-gray-700"
-                    name="mnemonic"
-                    disabled={true}
+                <Header className="text-left">Your Recovery Phrase</Header>
+                <RecoveryPhraseDisplay
+                    mnemonic={hostedSeed ?? mnemonic ?? importedSeed ?? ''}
                 />
+                {featureFlags.showMobile && (
+                    <QrCodeSection
+                        mnemonic={hostedSeed ?? mnemonic ?? importedSeed ?? ''}
+                    />
+                )}
                 <Button to="/" buttonStyle="secondary" isInline>
                     Done
                 </Button>

@@ -1,16 +1,14 @@
-import {
-    fromB64,
-    type SignedMessage,
-    type SuiTransactionBlockResponse,
-} from '@mysten/sui.js';
+import { fromB64 } from '@mysten/sui.js/utils';
 
 import { thunkExtras } from '_redux/store/thunk-extras';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
+import type { SuiSignMessageOutput } from '@mysten/wallet-standard';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
-const signMessage = async (
+const signPersonalMessage = async (
     connectToLedger: () => Promise<SuiLedgerClient>,
     message: string,
     txID: string | undefined,
@@ -25,8 +23,10 @@ const signMessage = async (
         throw new Error(`ApprovalRequest ${txID} not found`);
     }
 
-    let txResult: SuiTransactionBlockResponse | SignedMessage | undefined =
-        undefined;
+    let txResult:
+        | SuiTransactionBlockResponse
+        | SuiSignMessageOutput
+        | undefined = undefined;
     let txResultError: string | undefined;
 
     if (approved) {
@@ -55,9 +55,11 @@ const signMessage = async (
     thunkExtras.background.sendTransactionRequestResponse(
         txID,
         approved,
-        txResult,
+        txResult
+            ? { bytes: txResult.messageBytes, signature: txResult.signature }
+            : undefined,
         txResultError
     );
 };
 
-export default signMessage;
+export default signPersonalMessage;

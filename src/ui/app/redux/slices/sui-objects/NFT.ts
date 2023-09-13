@@ -1,20 +1,16 @@
-import {
-    getObjectFields,
-    getObjectType,
-    getSuiObjectData,
-    SuiObjectData,
-    is,
-} from '@mysten/sui.js';
+import { getObjectFields } from '@mysten/sui.js';
 import get from 'lodash/get';
 
 import ipfs from '_src/ui/app/helpers/ipfs';
+import { safeUrl } from '_src/ui/app/hooks/useMediaUrl';
 
 import type {
+    SuiObjectData,
     SuiObjectResponse,
-    JsonRpcProvider,
+    SuiClient,
+    DynamicFieldInfo,
     SuiMoveObject,
-} from '@mysten/sui.js';
-import type { DynamicFieldInfo } from '@mysten/sui.js/dist/types/dynamic_fields';
+} from '@mysten/sui.js/client';
 
 export type BagNFT = {
     id: string;
@@ -28,20 +24,39 @@ export class NFT {
     public static isNFT(data: SuiObjectData): boolean {
         if (this.isBagNFT(data)) return true;
 
+        let url: string | undefined;
         if (
             data.display?.data &&
             typeof data.display.data === 'object' &&
-            ('image_url' in data.display.data || 'img_url' in data.display.data)
+            ('image_url' in data.display.data ||
+                'img_url' in data.display.data ||
+                'url' in data.display.data)
         ) {
-            return true;
+            url =
+                data.display.data.image_url ??
+                data.display.data.img_url ??
+                data.display.data.url;
         }
 
-        return (
+        if (
+            !url &&
             !!data.content &&
             'fields' in data.content &&
             'url' in data.content.fields &&
             !('ticket_id' in data.content.fields)
-        );
+        ) {
+            url =
+                data.content.fields.url &&
+                typeof data.content.fields.url === 'string'
+                    ? data.content.fields.url
+                    : undefined;
+        }
+
+        if (url) {
+            return safeUrl(ipfs(url));
+        }
+
+        return false;
     }
 
     public static isKiosk(data: SuiObjectData): boolean {
@@ -50,21 +65,22 @@ export class NFT {
             data.type.includes('kiosk') &&
             !!data.content &&
             'fields' in data.content &&
-            'kiosk' in data.content.fields
+            ('kiosk' in data.content.fields || 'for' in data.content.fields)
         );
     }
 
     public static async getKioskObjects(
-        provider: JsonRpcProvider,
+        client: SuiClient,
         data: SuiObjectData
     ): Promise<SuiObjectResponse[]> {
         if (!this.isKiosk(data)) return [];
-        const kiosk = get(data, 'content.fields.kiosk');
+        let kiosk = get(data, 'content.fields.kiosk');
+        if (!kiosk) kiosk = get(data, 'content.fields.for');
         if (!kiosk) return [];
         let allKioskObjects: DynamicFieldInfo[] = [];
         let cursor: string | undefined | null;
         while (cursor !== null) {
-            const response = await provider.getDynamicFields({
+            const response = await client.getDynamicFields({
                 parentId: kiosk,
                 cursor,
             });
@@ -78,7 +94,10 @@ export class NFT {
         }
 
         const relevantKioskObjects = allKioskObjects.filter(
-            (kioskObject) => kioskObject.name.type === '0x2::kiosk::Item'
+            (kioskObject) =>
+                kioskObject.name.type ===
+                    '0x0000000000000000000000000000000000000000000000000000000000000002::kiosk::Item' ||
+                kioskObject.name.type === '0x2::kiosk::Item'
         );
         const objectIds = relevantKioskObjects.map((item) => item.objectId);
 
@@ -87,7 +106,7 @@ export class NFT {
         for (let i = 0; i < objectIds.length; i += groupSize) {
             const group = objectIds.slice(i, i + groupSize);
 
-            const groupObjects = await provider.multiGetObjects({
+            const groupObjects = await client.multiGetObjects({
                 ids: group,
                 options: {
                     showContent: true,
@@ -113,7 +132,7 @@ export class NFT {
     }
 
     public static async parseBagNFT(
-        provider: JsonRpcProvider,
+        client: SuiClient,
         data: SuiObjectData
     ): Promise<SuiObjectData | BagNFT> {
         if (!this.isBagNFT(data)) return data;
@@ -124,11 +143,11 @@ export class NFT {
 
         if (!bagId) return data;
 
-        const { data: bagObjects } = await provider.getDynamicFields({
+        const { data: bagObjects } = await client.getDynamicFields({
             parentId: bagId,
         });
         const objectIds = bagObjects.map((bagObject) => bagObject.objectId);
-        const objects = await provider.multiGetObjects({
+        const objects = await client.multiGetObjects({
             ids: objectIds,
             options: {
                 showContent: true,
@@ -220,13 +239,14 @@ export type Nft = {
 const NftRegex =
     /(0x[a-f0-9]{39,40})::nft::Nft<0x[a-f0-9]{39,40}::([a-zA-Z]{1,})::([a-zA-Z]{1,})>/;
 const UrlDomainRegex =
-    /0x2::dynamic_field::Field<(0x[a-f0-9]{39,40})::utils::Marker<(0x[a-f0-9]{39,40})::display::UrlDomain>, (0x[a-f0-9]{39,40})::display::UrlDomain>/;
+    /0x0000000000000000000000000000000000000000000000000000000000000002::dynamic_field::Field<(0x[a-f0-9]{39,40})::utils::Marker<(0x[a-f0-9]{39,40})::display::UrlDomain>, (0x[a-f0-9]{39,40})::display::UrlDomain>/;
 const DisplayDomainRegex =
-    /0x2::dynamic_field::Field<(0x[a-f0-9]{39,40})::utils::Marker<(0x[a-f0-9]{39,40})::display::DisplayDomain>, (0x[a-f0-9]{39,40})::display::DisplayDomain>/;
+    /0x0000000000000000000000000000000000000000000000000000000000000002::dynamic_field::Field<(0x[a-f0-9]{39,40})::utils::Marker<(0x[a-f0-9]{39,40})::display::DisplayDomain>, (0x[a-f0-9]{39,40})::display::DisplayDomain>/;
 
 export const NftParser: SuiObjectParser<NftRpcResponse, NftRaw> = {
     parser: (data, suiData, rpcResponse) => {
         if (
+            rpcResponse.data &&
             typeof rpcResponse.data === 'object' &&
             'owner' in rpcResponse.data
         ) {
@@ -261,7 +281,7 @@ export const NftParser: SuiObjectParser<NftRpcResponse, NftRaw> = {
 
 const isTypeMatchRegex = (d: SuiObjectResponse, regex: RegExp) => {
     const { data } = d;
-    if (is(data, SuiObjectData)) {
+    if (data) {
         const { content } = data;
         if (content && 'type' in content) {
             return content.type.match(regex);
@@ -295,17 +315,27 @@ export const parseDomains = (domains: SuiObjectResponse[]) => {
 };
 
 export class NftClient {
-    private provider: JsonRpcProvider;
+    private client: SuiClient;
 
-    constructor(provider: JsonRpcProvider) {
-        this.provider = provider;
+    constructor(client: SuiClient) {
+        this.client = client;
     }
 
     parseObjects = async (objects: SuiObjectResponse[]): Promise<NftRaw[]> => {
         const parsedObjects = objects
             .map((object) => {
-                if (getObjectType(object)?.match(NftParser.regex)) {
-                    const data = getSuiObjectData(object);
+                // if (getObjectType(object)?.match(NftParser.regex)) {
+                //     const data = getSuiObjectData(object);
+                //     if (data) {
+                //         return NftParser.parser(
+                //             getObjectFields(object) as NftRpcResponse,
+                //             data,
+                //             object
+                //         );
+                //     }
+                // }
+                if (object.data) {
+                    const data = object.data;
                     if (data) {
                         return NftParser.parser(
                             getObjectFields(object) as NftRpcResponse,
@@ -325,7 +355,7 @@ export class NftClient {
         if (ids.length === 0) {
             return new Array<NftRaw>();
         }
-        const objects = await this.provider.multiGetObjects({
+        const objects = await this.client.multiGetObjects({
             ids,
             options: {
                 showContent: true,
@@ -338,13 +368,13 @@ export class NftClient {
     };
 
     getBagContent = async (bagId: string) => {
-        const bagObjects = await this.provider.getDynamicFields({
+        const bagObjects = await this.client.getDynamicFields({
             parentId: bagId,
         });
         const objectIds = bagObjects.data.map(
             (bagObject) => bagObject.objectId
         );
-        return this.provider.multiGetObjects({
+        return this.client.multiGetObjects({
             ids: objectIds,
             options: {
                 showContent: true,

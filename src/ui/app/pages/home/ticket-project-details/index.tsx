@@ -1,4 +1,3 @@
-// import { SUI_TYPE_ARG } from '@mysten/sui.js';
 // import { useCallback, useEffect, useMemo, useState } from 'react';
 // import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -24,7 +23,6 @@
 // import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 // import Title from '_src/ui/app/shared/typography/Title';
 
-// import type { SuiObjectData as SuiObject } from '@mysten/sui.js';
 import type { TicketProjectProps } from '_src/ui/app/shared/content/rows-and-lists/TicketProjectList';
 
 // type RPCError = {

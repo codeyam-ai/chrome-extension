@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react';
 
 import { MockJsonRpc } from '_src/test/utils/mock-json-rpc';
-import { mockCommonCalls, mockSuiObjects } from '_src/test/utils/mockchain';
+import { mockBlockchain } from '_src/test/utils/mockchain';
 import { renderApp } from '_src/test/utils/react-rendering';
 import { simulateMnemonicUser } from '_src/test/utils/storage';
 import { makeTestDeps } from '_src/test/utils/test-dependencies';
@@ -11,11 +11,10 @@ describe('Rendering the Home page', () => {
     beforeEach(async () => {
         mockJsonRpc = new MockJsonRpc();
         simulateMnemonicUser();
-        mockCommonCalls(mockJsonRpc);
     });
 
     test('when wallet has no coins', async () => {
-        mockSuiObjects(mockJsonRpc, {
+        mockBlockchain(mockJsonRpc, {
             stakedSui: [
                 {
                     principal: '1000000000',
@@ -31,8 +30,8 @@ describe('Rendering the Home page', () => {
 
     describe('when the wallet has some coins', () => {
         beforeEach(async () => {
-            mockSuiObjects(mockJsonRpc, {
-                suiBalance: 40000000000,
+            mockBlockchain(mockJsonRpc, {
+                coinTransaction: 40000000000,
                 stakedSui: [
                     {
                         principal: '1000000000',
@@ -49,11 +48,12 @@ describe('Rendering the Home page', () => {
             const walletAndBalance = await screen.findByTestId(
                 'wallet-and-balance'
             );
-            await within(walletAndBalance).findByText('$4,000');
-            expect(within(walletAndBalance).queryByText('40 SUI')).toBeNull();
+
+            within(walletAndBalance).queryByText('40 SUI');
+            await screen.findByText('SUI Balance ≈ $4,000 USD');
 
             const coinList = await screen.findByTestId('coin-list');
-            await within(coinList).findByText('$4,000.00');
+            await within(coinList).findByText('≈ $4,000.00 USD');
             await within(coinList).findByText('40 SUI');
         });
 
@@ -72,20 +72,19 @@ describe('Rendering the Home page', () => {
             const walletAndBalance = await screen.findByTestId(
                 'wallet-and-balance'
             );
-            expect(within(walletAndBalance).queryByText('$4,000')).toBeNull();
-            // Amount and coin symbol are in separate elements
-            await within(walletAndBalance).findByText('40');
-            await within(walletAndBalance).findByText('SUI');
+            expect(
+                within(walletAndBalance).queryByText('SUI Balance ≈ $4,000 USD')
+            ).toBeNull();
 
             const coinList = await screen.findByTestId('coin-list');
-            expect(within(coinList).queryByText('$4,000.00')).toBeNull();
+            expect(within(coinList).queryByText('$4,000.00 USD')).toBeNull();
             await within(coinList).findByText('40 SUI');
         });
     });
 
     describe('when the wallet has staked SUI', () => {
         beforeEach(async () => {
-            mockSuiObjects(mockJsonRpc, {
+            mockBlockchain(mockJsonRpc, {
                 stakedSui: [
                     {
                         principal: '1000000000',

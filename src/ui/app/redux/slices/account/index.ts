@@ -2,11 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { fromHEX } from '@mysten/bcs';
-import {
-    Ed25519Keypair,
-    type SuiAddress,
-    type SuiMoveObject,
-} from '@mysten/sui.js';
+import { type SuiMoveObject } from '@mysten/sui.js/client';
+import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 import {
     createAsyncThunk,
     createSelector,
@@ -160,6 +157,15 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     (accountInfos[i].importedLedgerIndex ?? 0) + 1;
                 accountInfos[i].importedLedgerIndex = undefined;
             }
+            if (!accountInfos[i].publicKey && mnemonic) {
+                const keypairVault = new KeypairVault();
+                keypairVault.mnemonic = mnemonic;
+                accountInfos[i].publicKey =
+                    keypairVault
+                        .getKeyPair(accountInfos[i].index)
+                        ?.getPublicKey()
+                        .toBase64() ?? '';
+            }
         }
 
         const importNames = JSON.parse(
@@ -193,10 +199,14 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 accountInfos = [
                     {
                         index: 0,
-                        name: 'Wallet',
+                        nickname: 'Wallet',
                         color: getNextWalletColor(0),
                         emoji: getNextEmoji(0),
                         address: keypairVault.getAddress(0) ?? '',
+                        publicKey: keypairVault
+                            .getKeyPair(0)
+                            ?.getPublicKey()
+                            .toBase64(),
                     },
                 ];
                 activeSeed = {
@@ -212,7 +222,8 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     ) {
                         continue;
                     }
-                    accountInfos[i].address = keypairVault.getAddress(i) ?? '';
+                    accountInfos[i].address =
+                        keypairVault.getAddress(accountInfos[i].index) ?? '';
                 }
 
                 const activeAccount = accountInfos.find(
@@ -876,7 +887,7 @@ export const savePassphrase: AsyncThunk<
                 value: JSON.stringify([
                     {
                         index: 0,
-                        name: 'Wallet',
+                        nickname: 'Wallet',
                         color: getNextWalletColor(0),
                         emoji: getNextEmoji(0),
                         address: keypairVault.getAddress() || '',
@@ -1145,6 +1156,33 @@ export const saveExcludedDappsKeys = createAsyncThunk(
     }
 );
 
+export const loadCustomizationsSyncPreference = createAsyncThunk(
+    'account/getCustomizationsSyncPreference',
+    async (): Promise<boolean> => {
+        const isCustomizationSyncEnabled = await getEncrypted({
+            key: 'customizationSync',
+            session: false,
+            strong: false,
+        });
+
+        return isCustomizationSyncEnabled === 'true';
+    }
+);
+
+export const saveCustomizationsSyncPreference = createAsyncThunk(
+    'account/saveCustomizationsSyncPreference',
+    async (isCustomizationSyncEnabled: boolean): Promise<boolean> => {
+        await setEncrypted({
+            key: 'customizationSync',
+            value: isCustomizationSyncEnabled.toString(),
+            session: false,
+            strong: false,
+        });
+
+        return isCustomizationSyncEnabled;
+    }
+);
+
 export type AccountState = {
     loading: boolean;
     authentication: string | null;
@@ -1153,13 +1191,14 @@ export type AccountState = {
     passphrase: string | null;
     creating: boolean;
     createdMnemonic: string | null;
-    address: SuiAddress | null;
+    address: string | null;
     accountInfos: AccountInfo[];
     activeAccountIndex: number;
     accountType: AccountType;
     locked: boolean;
     favoriteDappsKeys: string[];
     excludedDappsKeys: string[];
+    customizationsSyncPreference: boolean;
     importNames: { mnemonics: string[]; privateKeys: string[] };
     ledgerConnected: boolean;
 };
@@ -1179,6 +1218,7 @@ const initialState: AccountState = {
     locked: false,
     favoriteDappsKeys: [],
     excludedDappsKeys: [],
+    customizationsSyncPreference: false,
     importNames: {
         mnemonics: [],
         privateKeys: [],
@@ -1303,6 +1343,18 @@ const accountSlice = createSlice({
             .addCase(saveExcludedDappsKeys.fulfilled, (state, action) => {
                 state.excludedDappsKeys = action.payload;
             })
+            .addCase(
+                loadCustomizationsSyncPreference.fulfilled,
+                (state, action) => {
+                    state.customizationsSyncPreference = action.payload;
+                }
+            )
+            .addCase(
+                saveCustomizationsSyncPreference.fulfilled,
+                (state, action) => {
+                    state.customizationsSyncPreference = action.payload;
+                }
+            )
             .addCase(saveImportedMnemonic.fulfilled, (state, action) => {
                 state.importNames.mnemonics.push(action.payload || '');
             })
@@ -1358,6 +1410,7 @@ export const ownedObjects = createSelector(
         if (address) {
             return objects.filter(
                 ({ owner }) =>
+                    owner &&
                     typeof owner === 'object' &&
                     ('ObjectOwner' in owner ||
                         ('AddressOwner' in owner &&
@@ -1412,9 +1465,9 @@ export const accountItemizedBalancesSelector = createSelector(
 export const accountNftsSelector = createSelector(
     ownedObjects,
     (allSuiObjects) => {
-        return allSuiObjects.filter(
-            (anObj) => !Coin.isCoin(anObj) && NFT.isNFT(anObj)
-        );
+        return allSuiObjects
+            .filter((anObj) => !Coin.isCoin(anObj) && NFT.isNFT(anObj))
+            .sort((a, b) => a.index - b.index);
     }
 );
 

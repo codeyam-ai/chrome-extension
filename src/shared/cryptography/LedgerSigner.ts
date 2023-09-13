@@ -1,19 +1,16 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-    Ed25519PublicKey,
-    type SerializedSignature,
-    type SignatureScheme,
-    SignerWithProvider,
-    type SuiAddress,
-    toSerializedSignature,
-    type JsonRpcProvider,
-} from '@mysten/sui.js';
+import { type SerializedSignature, type SignatureScheme } from '@mysten/sui.js';
+import { toSerializedSignature } from '@mysten/sui.js/cryptography';
+import { Ed25519PublicKey } from '@mysten/sui.js/keypairs/ed25519';
+
+import { WalletSigner } from './WalletSigner';
 
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
+import type { SuiClient } from '@mysten/sui.js/client';
 
-export class LedgerSigner extends SignerWithProvider {
+export class LedgerSigner extends WalletSigner {
     #suiLedgerClient: SuiLedgerClient | null;
     readonly #connectToLedger: () => Promise<SuiLedgerClient>;
     readonly #derivationPath: string;
@@ -22,9 +19,9 @@ export class LedgerSigner extends SignerWithProvider {
     constructor(
         connectToLedger: () => Promise<SuiLedgerClient>,
         derivationPath: string,
-        provider: JsonRpcProvider
+        client: SuiClient
     ) {
-        super(provider);
+        super(client);
         this.#connectToLedger = connectToLedger;
         this.#suiLedgerClient = null;
         this.#derivationPath = derivationPath;
@@ -39,7 +36,7 @@ export class LedgerSigner extends SignerWithProvider {
         return this.#suiLedgerClient;
     }
 
-    async getAddress(): Promise<SuiAddress> {
+    async getAddress(): Promise<string> {
         const ledgerClient = await this.#initializeSuiLedgerClient();
         const publicKeyResult = await ledgerClient.getPublicKey(
             this.#derivationPath
@@ -70,11 +67,11 @@ export class LedgerSigner extends SignerWithProvider {
         });
     }
 
-    connect(provider: JsonRpcProvider): SignerWithProvider {
+    connect(client: SuiClient): WalletSigner {
         return new LedgerSigner(
             this.#connectToLedger,
             this.#derivationPath,
-            provider
+            client
         );
     }
 }

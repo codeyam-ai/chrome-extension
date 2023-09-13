@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { SUI_TYPE_ARG } from '@mysten/sui.js';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import cl from 'classnames';
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
@@ -19,6 +19,7 @@ import st from './TransactionsCard.module.scss';
 const TRUNCATE_MAX_LENGTH = 8;
 const TRUNCATE_PREFIX_LENGTH = 4;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function TransactionCard({ txn }: { txn: any }) {
     const toAddrStr = useMiddleEllipsis(
         txn.to || '',

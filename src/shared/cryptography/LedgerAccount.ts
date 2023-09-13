@@ -1,31 +1,36 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { normalizeSuiAddress, type SuiAddress } from '@mysten/sui.js';
+import { normalizeSuiAddress } from '@mysten/sui.js/utils';
 
 export type SerializedLedgerAccount = {
-    address: SuiAddress;
+    address: string;
     derivationPath: string;
     index: number;
+    publicKey: string | null;
 };
 
 export class LedgerAccount {
-    readonly address: SuiAddress;
+    readonly address: string;
     readonly derivationPath: string;
     readonly index: number;
+    #publicKey: string | null;
 
     constructor({
         address,
         derivationPath,
         index,
+        publicKey,
     }: {
-        address: SuiAddress;
+        address: string;
         derivationPath: string;
         index: number;
+        publicKey: string | null;
     }) {
         this.address = normalizeSuiAddress(address);
         this.derivationPath = derivationPath;
         this.index = index;
+        this.#publicKey = publicKey;
     }
 
     toJSON(): SerializedLedgerAccount {
@@ -33,6 +38,15 @@ export class LedgerAccount {
             address: this.address,
             derivationPath: this.derivationPath,
             index: this.index,
+            publicKey: this.#publicKey,
         };
+    }
+
+    getPublicKey() {
+        return this.#publicKey;
+    }
+
+    setPublicKey(publicKey: string) {
+        this.#publicKey = publicKey;
     }
 }

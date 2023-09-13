@@ -3,11 +3,8 @@ import {
     MinusCircleIcon,
     QuestionMarkCircleIcon,
 } from '@heroicons/react/24/outline';
-import {
-    SUI_SYSTEM_STATE_OBJECT_ID,
-    SUI_TYPE_ARG,
-    TransactionBlock,
-} from '@mysten/sui.js';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
+import { SUI_SYSTEM_STATE_OBJECT_ID, SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useCallback, useMemo, useState } from 'react';
@@ -30,14 +27,12 @@ import ConfirmDestructiveActionDialog from '_src/ui/app/shared/dialog/ConfirmDes
 import Body from '_src/ui/app/shared/typography/Body';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
-import type { SuiAddress } from '@mysten/sui.js';
-
 const APY_HELP_TEXT =
     "Annualized Percentage Yield of validator's past operations. Note, there is no guarantee APY will true indefinitely";
 const COMMISSION_HELP_TEXT =
     'Fee charged against earned rewards by the validator for staking services';
 
-function revokeStakeTransaction(stakedSuiId: SuiAddress) {
+function revokeStakeTransaction(stakedSuiId: string) {
     const tx = new TransactionBlock();
     tx.moveCall({
         target: '0x3::sui_system::request_withdraw_stake',
@@ -98,8 +93,8 @@ const StakeDetail: React.FC = () => {
     );
 
     const onClickRevokeStake = useCallback(
-        () => setIsModalOpen(true),
-        [setIsModalOpen]
+        () => stake?.status !== 'Pending' && setIsModalOpen(true),
+        [setIsModalOpen, stake?.status]
     );
 
     const onCancelConfirmRevokeStake = useCallback(() => {
@@ -107,7 +102,7 @@ const StakeDetail: React.FC = () => {
     }, [setIsModalOpen]);
 
     const onConfirmRevokeStake = useCallback(async () => {
-        if (!stakedSuiId) return;
+        if (!stakedSuiId || stake?.status === 'Pending') return;
 
         setLoading(true);
 
@@ -155,6 +150,7 @@ const StakeDetail: React.FC = () => {
         connectToLedger,
         passphrase,
         queryClient,
+        stake?.status,
         stakedSuiId,
     ]);
 
@@ -288,10 +284,16 @@ const StakeDetail: React.FC = () => {
                     className="mt-4 bg-ethos-light-background-purple"
                     buttonStyle="secondary"
                     removeContainerPadding
+                    disabled={stake?.status === 'Pending'}
                 >
                     <MinusCircleIcon width={18} height={18} />
-                    Unstake SUI
+                    {stake?.status === 'Pending'
+                        ? 'Status: Pending'
+                        : 'Unstake SUI'}
                 </Button>
+                <Body className="py-4">
+                    Staked SUI in Pending state cannot be unstaked.
+                </Body>
             </div>
             <ConfirmDestructiveActionDialog
                 primaryActionIsLoading={loading}

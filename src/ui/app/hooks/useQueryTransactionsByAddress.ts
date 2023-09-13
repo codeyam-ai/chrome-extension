@@ -1,20 +1,18 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { type SuiAddress } from '@mysten/sui.js';
-
 import { getHumanReadable } from '../helpers/transactions';
 import analyzeTransactions from '../helpers/transactions/analyzeTransactions';
 import sortUniqueTransactions from '../helpers/transactions/sortUniqueTransactions';
 import { api } from '_redux/store/thunk-extras';
 
 export const queryTransactionsByAddress = async (
-    address: SuiAddress,
+    address: string,
     cursorTo?: string,
     cursorFrom?: string,
     limit?: number
 ) => {
-    const rpc = api.instance.fullNode;
+    const rpc = api.instance.client;
 
     // combine from and to transactions
     const [toBlocks, fromBlocks] = await Promise.all([

@@ -4,27 +4,20 @@ import { SignerWithProvider } from '@mysten/sui.js';
 import { deleteEncrypted } from '../storagex/store';
 import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
 
-import type {
-    SerializedSignature,
-    SuiAddress,
-    JsonRpcProvider,
-} from '@mysten/sui.js';
+import type { SuiClient } from '@mysten/sui.js/client';
+import type { SerializedSignature } from '@mysten/sui.js/cryptography';
 
 export class EthosSigner extends SignerWithProvider {
     private readonly accessToken: string;
-    private readonly address: SuiAddress;
+    private readonly address: string;
 
-    constructor(
-        address: SuiAddress,
-        accessToken: string,
-        provider: JsonRpcProvider
-    ) {
-        super(provider);
+    constructor(address: string, accessToken: string, client: SuiClient) {
+        super(client);
         this.address = address;
         this.accessToken = accessToken;
     }
 
-    async getAddress(): Promise<SuiAddress> {
+    async getAddress(): Promise<string> {
         return this.address;
     }
 
@@ -54,7 +47,7 @@ export class EthosSigner extends SignerWithProvider {
         return signature;
     }
 
-    connect(provider: JsonRpcProvider): SignerWithProvider {
-        return new EthosSigner(this.address, this.accessToken, provider);
+    connect(client: SuiClient): SignerWithProvider {
+        return new EthosSigner(this.address, this.accessToken, client);
     }
 }

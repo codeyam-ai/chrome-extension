@@ -1,5 +1,3 @@
-import { useCallback } from 'react';
-
 import { LinkType } from '_src/enums/LinkType';
 import Button from '_src/ui/app/shared/buttons/Button';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';

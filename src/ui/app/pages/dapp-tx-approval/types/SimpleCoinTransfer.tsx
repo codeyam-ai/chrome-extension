@@ -35,6 +35,7 @@ export type StepInformation = {
     dollars: string;
     to: string;
     analysis: AnalyzeChangesResult;
+    hasConversion: boolean;
 };
 
 const StepOne = ({
@@ -58,6 +59,7 @@ const StepOne = ({
         symbol,
         dollars,
         to,
+        hasConversion,
     } = stepInformation;
     return (
         <div className="h-full flex flex-col w-full gap-3">
@@ -79,9 +81,9 @@ const StepOne = ({
                             {formatted} {symbol.toUpperCase()}
                         </BodyLarge>
                     )}
-                    {featureFlags?.showUsd && (
+                    {featureFlags?.showUsd && hasConversion && (
                         <Body className="text-ethos-light-text-medium text-sm">
-                            ≈ {dollars}
+                            ≈ {dollars} USD
                         </Body>
                     )}
                 </div>
@@ -149,10 +151,8 @@ const SimpleCoinTransfer = ({
         () => new BigNumber(reduction.amount).abs(),
         [reduction]
     );
-    const [formatted, symbol, dollars, name, iconUrl] = useFormatCoin(
-        absReduction.toString(),
-        reduction.type
-    );
+    const [formatted, symbol, dollars, name, iconUrl, , , hasConversion] =
+        useFormatCoin(absReduction.toString(), reduction.type);
 
     const [formattedRemainder] = useFormatCoin(
         new BigNumber(balance).minus(absReduction).toString(),
@@ -163,7 +163,7 @@ const SimpleCoinTransfer = ({
         const getBalance = async () => {
             if (!signer) return;
             const owner = await signer.getAddress();
-            const balance = await signer.provider.getBalance({
+            const balance = await signer.client.getBalance({
                 owner,
                 coinType: reduction.type,
             });
@@ -191,6 +191,7 @@ const SimpleCoinTransfer = ({
             dollars,
             to,
             analysis,
+            hasConversion,
         }),
         [
             dollars,
@@ -201,6 +202,7 @@ const SimpleCoinTransfer = ({
             symbol,
             to,
             analysis,
+            hasConversion,
         ]
     );
 

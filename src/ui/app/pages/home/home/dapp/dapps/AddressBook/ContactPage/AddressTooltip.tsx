@@ -5,11 +5,10 @@ import { toast } from 'react-toastify';
 import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 import Body from '_src/ui/app/shared/typography/Body';
 
-import type { SuiAddress } from '@mysten/sui.js';
 import type { ReactNode } from 'react';
 
 interface AddressTooltipProps {
-    address: SuiAddress;
+    address: string;
     children: ReactNode;
 }
 

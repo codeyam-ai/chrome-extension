@@ -22,6 +22,7 @@ export function createStore(
                 thunk: {
                     extraArgument: thunkExtras,
                 },
+                serializableCheck: false,
             }).concat(KeypairVaultMiddleware, NetworkSwitchMiddleware),
     });
 }

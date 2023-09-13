@@ -1,11 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-    getObjectId,
-    getObjectVersion,
-    getSuiObjectData,
-} from '@mysten/sui.js';
+import { getObjectId, getObjectVersion } from '@mysten/sui.js';
 import {
     createAsyncThunk,
     createEntityAdapter,
@@ -17,17 +13,17 @@ import { NFT } from './NFT';
 import testConnection from '../../testConnection';
 
 import type {
-    // SuiAddress,
-    // ObjectId,
-    SuiObjectData,
     PaginatedObjectsResponse,
+    SuiObjectData,
     SuiObjectResponse,
-} from '@mysten/sui.js';
+} from '@mysten/sui.js/client';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
 
 export interface ExtendedSuiObjectData extends SuiObjectData {
+    index: number;
     kiosk?: SuiObjectData;
+    kioskLoaded?: boolean;
 }
 
 const objectsAdapter = createEntityAdapter<ExtendedSuiObjectData>({
@@ -36,44 +32,50 @@ const objectsAdapter = createEntityAdapter<ExtendedSuiObjectData>({
 });
 
 export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
-    ExtendedSuiObjectData[] | null,
+    {
+        suiObjects: ExtendedSuiObjectData[];
+        kiosksPending: boolean;
+        cursor?: PaginatedObjectsResponse['nextCursor'];
+    } | null,
     void,
     AppThunkConfig
 >('sui-objects/fetch-all', async (_, { getState, extra: { api } }) => {
     const state = getState();
 
-    if (!state.suiObjects.lastSync) {
-        await testConnection(api);
-    }
-
     const {
         account: { address },
+        suiObjects: { lastSync },
     } = state;
 
     if (!address) {
         return null;
     }
 
-    const allSuiObjects: ExtendedSuiObjectData[] = [];
+    if (!lastSync) {
+        await testConnection(api);
+    }
+
+    let objectResponses: SuiObjectResponse[] = [];
+    let nextCursor: PaginatedObjectsResponse['nextCursor'] | undefined;
+    let cursor: PaginatedObjectsResponse['nextCursor'] | undefined;
+    let kiosksPending = state.suiObjects.kiosksPending;
+    const suiObjects: ExtendedSuiObjectData[] = [];
     if (address) {
-        let allObjRes: SuiObjectResponse[] = [];
-        let nextCursor: PaginatedObjectsResponse['nextCursor'] | undefined;
-        let page = 0;
+        let objectsRefPage = 0;
         while (nextCursor !== null) {
-            page += 1;
-            const allObjectRefs = await api.instance.fullNode.getOwnedObjects({
+            objectsRefPage += 1;
+            const allObjectRefs = await api.instance.client.getOwnedObjects({
                 owner: address,
-                cursor: nextCursor,
+                cursor,
             });
 
-            if (page > 20) {
+            cursor = allObjectRefs.nextCursor;
+
+            if (objectsRefPage > 10) {
                 nextCursor = null;
             } else {
-                if (
-                    allObjectRefs.hasNextPage &&
-                    nextCursor !== allObjectRefs.nextCursor
-                ) {
-                    nextCursor = allObjectRefs.nextCursor;
+                if (allObjectRefs.hasNextPage && nextCursor !== cursor) {
+                    nextCursor = cursor;
                 } else {
                     nextCursor = null;
                 }
@@ -91,12 +93,13 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                         : null;
                     const objOutdated = fetchedVersion !== storedVersion;
                     if (!objOutdated && storedObj) {
-                        allSuiObjects.push(storedObj);
+                        suiObjects.push(storedObj);
                     }
                     return objOutdated;
                 })
                 .map((anObj) => {
                     if (
+                        anObj.data &&
                         typeof anObj.data === 'object' &&
                         'objectId' in anObj.data
                     ) {
@@ -107,7 +110,7 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                 })
                 .filter((objId) => objId.length > 0);
 
-            const newObjRes = await api.instance.fullNode.multiGetObjects({
+            const newObjRes = await api.instance.client.multiGetObjects({
                 ids: objectIDs,
                 options: {
                     showOwner: true,
@@ -117,34 +120,58 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
                 },
             });
 
-            allObjRes = [...allObjRes, ...newObjRes];
+            objectResponses = [...objectResponses, ...newObjRes];
         }
 
-        for (const objRes of allObjRes) {
-            const suiObjectData = getSuiObjectData(objRes);
+        let objectIndex = 0;
+        let kioskObjectsLoaded = 0;
+        for (const objRes of objectResponses) {
+            const suiObjectData = objRes.data;
+
             if (suiObjectData) {
                 if (NFT.isKiosk(suiObjectData)) {
-                    const kioskObjects = await NFT.getKioskObjects(
-                        api.instance.fullNode,
-                        suiObjectData
-                    );
+                    if (kioskObjectsLoaded < 10) {
+                        const kioskObjects = await NFT.getKioskObjects(
+                            api.instance.client,
+                            suiObjectData
+                        );
 
-                    for (const kioskObject of kioskObjects) {
-                        const kioskObjectData = getSuiObjectData(kioskObject);
-                        if (kioskObjectData) {
-                            allSuiObjects.push({
-                                kiosk: suiObjectData,
-                                ...kioskObjectData,
-                            });
+                        for (const kioskObject of kioskObjects) {
+                            const kioskObjectData = kioskObject.data;
+                            if (kioskObjectData) {
+                                suiObjects.push({
+                                    index: objectIndex,
+                                    kiosk: suiObjectData,
+                                    ...kioskObjectData,
+                                });
+                            }
+                            kioskObjectsLoaded += 1;
                         }
+
+                        suiObjects.push({
+                            index: objectIndex,
+                            kioskLoaded: true,
+                            ...suiObjectData,
+                        });
+                    } else {
+                        suiObjects.push({
+                            index: objectIndex,
+                            ...suiObjectData,
+                        });
+                        kiosksPending = true;
                     }
                 } else {
-                    allSuiObjects.push(suiObjectData);
+                    suiObjects.push({
+                        index: objectIndex,
+                        ...suiObjectData,
+                    });
                 }
             }
+
+            objectIndex += 1;
         }
 
-        // for (const o of allSuiObjects) {
+        // for (const o of suiObjects) {
         //     if (
         //         o.owner &&
         //         typeof o.owner === 'object' &&
@@ -155,91 +182,87 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
         // }
     }
 
-    return allSuiObjects;
+    return { suiObjects, kiosksPending, cursor };
 });
 
-// type NFTTxResponse = {
-//     timestamp_ms?: number;
-//     status?: string;
-//     gasFee?: string;
-//     txId?: string;
-// };
+export const fetchMoreObjects = createAsyncThunk<
+    {
+        newSuiObjects: ExtendedSuiObjectData[];
+        kiosksPending: boolean;
+        cursor?: PaginatedObjectsResponse['nextCursor'];
+    } | null,
+    void,
+    AppThunkConfig
+>('sui-objects/fetch-more', async (_, { getState, extra: { api } }) => {
+    const { suiObjects } = getState();
 
-// export const transferNFT = createAsyncThunk<
-//     NFTTxResponse | undefined,
-//     { nftId: ObjectId; recipientAddress: SuiAddress; transferCost: number },
-//     AppThunkConfig
-// >('transferNFT', async (data, { getState, dispatch, extra: { api } }) => {
-//     const {
-//         account: {
-//             activeAccountIndex,
-//             authentication,
-//             address,
-//             accountInfos,
-//             passphrase,
-//         },
-//         suiObjects: { entities },
-//     } = getState();
+    const suiObjectDatas = objectsAdapter.getSelectors().selectAll(suiObjects);
+    const newSuiObjects: ExtendedSuiObjectData[] = [];
+    let objectIndex = suiObjectDatas.length;
+    let kiosksPending = true;
+    let kioskObjectsLoaded = 0;
+    if (suiObjects.kiosksPending) {
+        for (const suiObjectData of suiObjectDatas) {
+            if (!NFT.isKiosk(suiObjectData) || suiObjectData.kioskLoaded) {
+                continue;
+            }
 
-//     const nft = entities[data.nftId];
+            if (kioskObjectsLoaded >= 10) {
+                kiosksPending = true;
+                break;
+            }
 
-//     if (!nft) return;
+            const kioskObjects = await NFT.getKioskObjects(
+                api.instance.client,
+                suiObjectData
+            );
 
-//     const signer = await getSigner(
-//         passphrase,
-//         accountInfos,
-//         address,
-//         authentication,
-//         activeAccountIndex
-//     );
+            for (const kioskObject of kioskObjects) {
+                const kioskObjectData = kioskObject.data;
+                if (kioskObjectData) {
+                    newSuiObjects.push({
+                        kiosk: suiObjectData,
+                        index: objectIndex,
+                        ...kioskObjectData,
+                    });
+                }
+                kioskObjectsLoaded += 1;
+            }
 
-//     if (!signer) return;
+            newSuiObjects.push({
+                kioskLoaded: true,
+                ...suiObjectData,
+            });
 
-//     let transactionBlock: TransactionBlock | null = new TransactionBlock();
+            objectIndex += 1;
+        }
+    }
 
-//     transactionBlock = await transferObjectTransactionBlock(
-//         transactionBlock,
-//         nft,
-//         data.recipientAddress,
-//         api.instance.fullNode
-//     );
-
-//     if (!transactionBlock) return;
-
-//     const executedTransaction = await signer.signAndExecuteTransactionBlock({
-//         transactionBlock,
-//         options: {
-//             showEffects: true,
-//             showEvents: true,
-//             showInput: true,
-//         },
-//     });
-
-//     dispatch(fetchAllBalances());
-//     await dispatch(fetchAllOwnedAndRequiredObjects());
-//     const txnResp = {
-//         timestamp_ms: getTimestampFromTransactionResponse(executedTransaction),
-//         status: getExecutionStatusType(executedTransaction),
-//         gasFee: executedTransaction
-//             ? getTotalGasUsed(executedTransaction)?.toString()
-//             : '0',
-//         txId: getTransactionDigest(executedTransaction),
-//     };
-
-//     return txnResp as NFTTxResponse;
-// });
+    return { newSuiObjects, kiosksPending };
+});
 
 interface SuiObjectsManualState {
     loading: boolean;
+    loadingMore: boolean;
     error: false | { code?: string; message?: string; name?: string };
     lastSync: number | null;
+    cursor?: PaginatedObjectsResponse['nextCursor'];
+    kiosksPending: boolean;
+    objectResponses: SuiObjectResponse[];
 }
 const initialState = objectsAdapter.getInitialState<SuiObjectsManualState>({
     loading: true,
+    loadingMore: false,
     error: false,
     lastSync: null,
+    kiosksPending: false,
+    objectResponses: [],
 });
 
+// This is probably dangerous and should be removed as soon a possible
+// The error is: Type instantiation is excessively deep and possibly infinite.ts(2589)
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Not sure how to fix this
 const slice = createSlice({
     name: 'sui-objects',
     initialState: initialState,
@@ -250,6 +273,7 @@ const slice = createSlice({
             state.loading = true;
             objectsAdapter.removeAll(state);
         },
+        removeObject: objectsAdapter.removeOne,
     },
     extraReducers: (builder) => {
         builder
@@ -257,23 +281,46 @@ const slice = createSlice({
                 fetchAllOwnedAndRequiredObjects.fulfilled,
                 (state, action) => {
                     if (action.payload) {
-                        objectsAdapter.setAll(state, action.payload);
+                        objectsAdapter.upsertMany(
+                            state,
+                            action.payload.suiObjects
+                        );
+                        state.cursor = action.payload.cursor;
+                        state.kiosksPending = action.payload.kiosksPending;
                         state.loading = false;
                         state.error = false;
                         state.lastSync = Date.now();
                     }
                 }
             )
-            .addCase(
-                fetchAllOwnedAndRequiredObjects.pending,
-                (state, action) => {
-                    state.loading = true;
-                }
-            )
+            .addCase(fetchAllOwnedAndRequiredObjects.pending, (state) => {
+                state.loading = true;
+            })
             .addCase(
                 fetchAllOwnedAndRequiredObjects.rejected,
                 (state, { error: { code, name, message } }) => {
                     state.loading = false;
+                    state.error = { code, message, name };
+                }
+            )
+            .addCase(fetchMoreObjects.pending, (state) => {
+                state.loadingMore = true;
+            })
+            .addCase(fetchMoreObjects.fulfilled, (state, action) => {
+                if (action.payload) {
+                    objectsAdapter.upsertMany(
+                        state,
+                        action.payload.newSuiObjects
+                    );
+                    // state.cursor = action.payload.cursor;
+                    state.kiosksPending = action.payload.kiosksPending;
+                    state.loadingMore = false;
+                }
+            })
+            .addCase(
+                fetchMoreObjects.rejected,
+                (state, { error: { code, name, message } }) => {
+                    state.loadingMore = false;
                     state.error = { code, message, name };
                 }
             );
@@ -282,7 +329,7 @@ const slice = createSlice({
 
 export default slice.reducer;
 
-export const { clearForNetworkOrWalletSwitch } = slice.actions;
+export const { clearForNetworkOrWalletSwitch, removeObject } = slice.actions;
 
 export const suiObjectsAdapterSelectors = objectsAdapter.getSelectors(
     (state: RootState) => state.suiObjects

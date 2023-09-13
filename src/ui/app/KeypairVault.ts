@@ -5,14 +5,12 @@ import { fromB64 } from '@mysten/bcs';
 
 import { getKeypairFromMnemonics } from '_shared/cryptography/mnemonics';
 
-import type { Ed25519Keypair } from '@mysten/sui.js';
+import type { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
+import type { AccountCustomization } from '_src/types/AccountCustomization';
 
-export type AccountInfo = {
+export type AccountInfo = AccountCustomization & {
     index: number;
     address: string;
-    name?: string;
-    color?: string;
-    emoji?: string;
     chain?: string;
     importedMnemonicName?: string;
     importedMnemonicIndex?: number;
@@ -20,6 +18,7 @@ export type AccountInfo = {
     importedLedgerIndex?: number; // migrating away - do not use - remove after 6/15/2023 (search for this date for related code)
     ledgerAccountIndex?: number;
     ledgerAccountVerified?: boolean;
+    publicKey: string | null;
 };
 
 export type SeedInfo = {

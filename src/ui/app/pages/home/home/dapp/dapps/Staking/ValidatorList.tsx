@@ -9,7 +9,7 @@ import ArrowUpDownSort from '_src/ui/app/shared/svg/ArrowUpDownSort';
 import Body from '_src/ui/app/shared/typography/Body';
 import EthosLink from '_src/ui/app/shared/typography/EthosLink';
 
-import type { SuiAddress, SuiValidatorSummary } from '@mysten/sui.js';
+import type { SuiValidatorSummary } from '@mysten/sui.js/client';
 
 export interface SuiValidatorSummaryWithApy extends SuiValidatorSummary {
     apy: number;
@@ -18,8 +18,8 @@ export interface SuiValidatorSummaryWithApy extends SuiValidatorSummary {
 }
 
 interface ValidatorListProps {
-    onSelectValidator: (string: SuiAddress) => void;
-    selectedValidator?: SuiAddress;
+    onSelectValidator: (string: string) => void;
+    selectedValidator?: string;
 }
 
 export type SortDirection = 'asc' | 'desc';
@@ -113,7 +113,7 @@ const ValidatorList: React.FC<ValidatorListProps> = ({
 
 interface ValidatorRowProps {
     validator: SuiValidatorSummaryWithApy;
-    onSelect: (suiAddress: SuiAddress) => void;
+    onSelect: (suiAddress: string) => void;
     isSelected: boolean;
 }
 

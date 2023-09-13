@@ -1,7 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-// import { getTransactionDigest } from '@mysten/sui.js';
 import { Formik } from 'formik';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -20,7 +19,7 @@ import { useCoinDecimals } from '_src/ui/app/hooks/useFormatCoin';
 import { accountCoinsSelector } from '_src/ui/app/redux/slices/account';
 import { SuccessAlert } from '_src/ui/app/shared/alerts/SuccessAlert';
 
-import type { SuiMoveObject } from '@mysten/sui.js';
+import type { SuiMoveObject } from '@mysten/sui.js/client';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FormikHelpers } from 'formik';
 
@@ -34,13 +33,14 @@ export type FormValues = typeof initialValues;
 // TODO: show out of sync when sui objects locally might be outdated
 function TransferCoinReviewPage() {
     const { connectToLedger } = useSuiLedgerClient();
-    const state = useAppSelector((state) => state);
+    const account = useAppSelector((state) => state.account);
     const [searchParams] = useSearchParams();
     const [formSubmitted, setFormSubmitted] = useState(false);
     const coinType = searchParams.get('type');
     const [sendError, setSendError] = useState<string | null>(null);
     const [coinDecimals] = useCoinDecimals(coinType);
     const formData = useAppSelector(({ forms: { sendSui } }) => sendSui);
+    const allCoins: SuiMoveObject[] = useAppSelector(accountCoinsSelector);
 
     const { locale } = useIntl();
     const dispatch = useAppDispatch();
@@ -73,10 +73,8 @@ function TransferCoinReviewPage() {
                         .toString()
                 );
 
-                const allCoins: SuiMoveObject[] = accountCoinsSelector(state);
-
                 const tx = await sendTokens({
-                    ...state.account,
+                    ...account,
                     connectToLedger,
                     allCoins,
                     recipientAddress: to,
@@ -128,8 +126,9 @@ function TransferCoinReviewPage() {
             locale,
             coinType,
             coinDecimals,
-            state,
+            account,
             connectToLedger,
+            allCoins,
             dispatch,
             navigate,
         ]

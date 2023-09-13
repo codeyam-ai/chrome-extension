@@ -1,4 +1,4 @@
-import { type TransactionBlock } from '@mysten/sui.js';
+import { type TransactionBlock } from '@mysten/sui.js/transactions';
 
 import type { Permission, DistilledEffect } from '..';
 import type { Detail } from '../DetailElement';

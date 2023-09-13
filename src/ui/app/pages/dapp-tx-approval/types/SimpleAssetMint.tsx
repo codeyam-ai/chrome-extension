@@ -5,7 +5,8 @@ import Details from './Details';
 import MintTransactionCard from './MintTransactionCard';
 
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
-import type { RawSigner, SuiObjectChange } from '@mysten/sui.js';
+import type { RawSigner } from '@mysten/sui.js';
+import type { SuiObjectChange } from '@mysten/sui.js/client';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 

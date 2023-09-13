@@ -35,13 +35,13 @@ const WalletNickname: React.FC = () => {
     );
 
     const handleOnContinue = useCallback(() => {
-        updateCurrentAccountInfo({ name: nickname });
-        navigate('/home/customize/emoji');
+        updateCurrentAccountInfo({ nickname });
+        navigate('/home/customize/profile-picture');
     }, [nickname, updateCurrentAccountInfo, navigate]);
 
     useEffect(() => {
         if (accountInfo) {
-            setNickname(accountInfo.name || '');
+            setNickname(accountInfo.nickname || '');
         }
     }, [accountInfo]);
 

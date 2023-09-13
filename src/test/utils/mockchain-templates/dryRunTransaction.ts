@@ -74,7 +74,7 @@ export const makeDryRunTransactionResponse =
                         '0x0000000000000000000000000000000000000000000000000000000000000002',
                     transactionModule: 'devnet_nft',
                     sender: '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de',
-                    type: '0x2::devnet_nft::MintNFTEvent',
+                    type: '0x0000000000000000000000000000000000000000000000000000000000000002::devnet_nft::MintNFTEvent',
                     parsedJson: {
                         creator:
                             '0xff263a941b9650b51207a674d59728f6f34102d366f4df5a59514bc3668602de',
@@ -93,7 +93,8 @@ export const makeDryRunTransactionResponse =
                         AddressOwner:
                             '0xb0e24ba1afc3d2f5e348b569e72e94cf20ec2cecf3cd27edea1c3ad628e5374c',
                     },
-                    objectType: '0x2::coin::Coin<0x2::sui::SUI>',
+                    objectType:
+                        '0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI>',
                     objectId:
                         '0x4bdf155f9636864fdb996a182a65b6796230b9f92bed0124f54ddf2e08428f8b',
                     version: '2',
@@ -107,7 +108,8 @@ export const makeDryRunTransactionResponse =
                         AddressOwner:
                             '0xed6fbd3df8a47bba33c1d45f97dd790590750813af37840eae5c43649e35103c',
                     },
-                    objectType: '0x2::coin::Coin<0x2::sui::SUI>',
+                    objectType:
+                        '0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI>',
                     objectId:
                         '0xf490fd14f639282d5b574ec0ecf378266c74a03844041463dbca85427d608b79',
                     version: '2',
@@ -120,7 +122,8 @@ export const makeDryRunTransactionResponse =
                         AddressOwner:
                             '0xb0e24ba1afc3d2f5e348b569e72e94cf20ec2cecf3cd27edea1c3ad628e5374c',
                     },
-                    coinType: '0x2::sui::SUI',
+                    coinType:
+                        '0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI',
                     amount: '99999999998998974',
                 },
                 {
@@ -128,7 +131,8 @@ export const makeDryRunTransactionResponse =
                         AddressOwner:
                             '0xed6fbd3df8a47bba33c1d45f97dd790590750813af37840eae5c43649e35103c',
                     },
-                    coinType: '0x2::sui::SUI',
+                    coinType:
+                        '0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI',
                     amount: '1000000',
                 },
             ],

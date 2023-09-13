@@ -1,5 +1,5 @@
 import { fromHEX } from '@mysten/bcs';
-import { Ed25519Keypair } from '@mysten/sui.js';
+import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -46,10 +46,11 @@ const ImportPrivateKey = () => {
         mutableAccountInfos.push({
             index,
             address,
+            publicKey: keypair.getPublicKey().toBase64(),
             importedPrivateKeyName: name,
             color: getNextWalletColor(index),
             emoji: getNextEmoji(index),
-            name,
+            nickname: name,
         });
 
         await dispatch(saveAccountInfos(mutableAccountInfos));
