@@ -56,6 +56,7 @@ describe('send coin flow', () => {
 
     const shouldAddRecipientAndClickContinue = async () => {
         const input = await screen.findByPlaceholderText('0x... or SuiNS name');
+        await new Promise(res => setTimeout(res, 100));
         await userEvent.clear(input);
         await userEvent.type(
             input,
