@@ -1,5 +1,6 @@
 import { fromHEX } from '@mysten/bcs';
-import { type Keypair, type RawSigner } from '@mysten/sui.js';
+import { type RawSigner } from '@mysten/sui.js';
+import { type Keypair } from '@mysten/sui.js/cryptography';
 import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 
 import { derivationPathForLedger } from '../pages/home/home/dapp/dapps/Ledger/hooks/useDeriveLedgerAccounts';
