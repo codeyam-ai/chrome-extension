@@ -46,6 +46,7 @@ import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 export type InitialAccountInfo = {
     authentication: string | null;
+    // isZk: boolean;
     mnemonic: string | null;
     passphrase: string | null;
     accountInfos: AccountInfo[];
