@@ -6,12 +6,56 @@ import {
     jwtToAddress,
 } from '@mysten/zklogin';
 
-import { getOAuthUrlGoogle } from './oauthUrls';
+import { getOAuthUrl, OAuthType } from './oauthUrls';
 
 import type { SuiClient } from '@mysten/sui.js/client';
 import type { TransactionBlock } from '@mysten/sui.js/transactions';
+import { api } from '../../redux/store/thunk-extras';
+import { extractJwtFromUrl } from './utils';
 
 type Proof = object;
+
+export const Zk = {
+    async run(client: SuiClient) {
+        console.log('starting run');
+
+        // const latestSuiSystemState = await client.getLatestSuiSystemState();
+        // const currentEpoch = parseInt(latestSuiSystemState.epoch);
+        // console.log('currentEpoch', currentEpoch);
+
+        // const lifetime = 2;
+        const maxEpoch = 155; // currentEpoch + lifetime;
+        console.log('maxEpoch', maxEpoch);
+
+        const ephKeyPair = new Ed25519Keypair();
+        console.log('ephPubKey', ephKeyPair.getPublicKey());
+
+        const randomness = generateRandomness();
+        console.log('randomness', randomness);
+
+        const nonce = generateNonce(
+            ephKeyPair.getPublicKey(),
+            maxEpoch,
+            randomness
+        );
+        console.log('nonce', nonce);
+
+        const jwt = await getJwtViaOAuthFlow({ nonce });
+        console.log('jwt', jwt);
+        // const { salt } = await getSalt({ jwt: jwt });
+
+        // const address = jwtToAddress(jwt, salt);
+        // const { proof } = await getProof({
+        //     jwt,
+        //     ephPubKey: ephemeralKeypair.getPublicKey().toSuiPublicKey(),
+        //     maxEpoch,
+        //     randomness,
+        //     salt,
+        // });
+
+        // return Promise.resolve(stub);
+    },
+};
 
 export type ZKData = {
     maxEpoch: number;
@@ -25,57 +69,21 @@ export const stub: ZKData = {
     proof: {},
 };
 
-export async function zkloginWithGoogle(client: SuiClient): Promise<ZKData> {
-    // return stub;
-    const currentEpochInfo = await client.getCurrentEpoch();
+async function getJwtViaOAuthFlow({
+    nonce,
+}: {
+    nonce: string;
+}): Promise<string | null> {
+    const oAuthUrl = getOAuthUrl({ type: OAuthType.Google, nonce });
 
-    // how many epochs in addition to current we want
-    // the ephemeral keypair to last
-    const lifetime = 2;
-
-    // TODO: confirm this `string` is actually representing the epoch number
-    // and can therefore be coerced
-    const maxEpoch = parseInt(currentEpochInfo.epoch) + lifetime;
-
-    const ephemeralKeypair = new Ed25519Keypair();
-
-    const randomness = generateRandomness();
-
-    const nonce = generateNonce(
-        ephemeralKeypair.getPublicKey(),
-        maxEpoch,
-        randomness
-    );
-
-    const googleOAuthUrl = getOAuthUrlGoogle({ nonce });
-
-    const { jwt } = await getOAuthJWT({ url: googleOAuthUrl });
-    const { salt } = await getSalt({ jwt: jwt });
-
-    const address = jwtToAddress(jwt, salt);
-    const { proof } = await getProof({
-        jwt,
-        ephPubKey: ephemeralKeypair.getPublicKey().toSuiPublicKey(),
-        maxEpoch,
-        randomness,
-        salt,
+    const oauthCompleteUrl = await chrome.identity.launchWebAuthFlow({
+        url: oAuthUrl,
+        interactive: true,
     });
+    if (!oauthCompleteUrl) return null;
 
-    return Promise.resolve(stub);
-}
-
-type JWTPartsWeCareAbout = {
-    iss: string; // issuer => I think it's the google id
-    aud: string; // audience => I think it's our client_id
-    sub: string; // subscriber => iss's uuid for the user => google's uuid for the user
-};
-
-/**
- * TODO: figure out what the actual payload response looks like
- */
-async function getOAuthJWT({ url }: { url: string }): Promise<{ jwt: string }> {
-    const response = await fetch(url);
-    return await response.json();
+    const jwt = extractJwtFromUrl(oauthCompleteUrl);
+    return jwt;
 }
 
 /**
@@ -146,7 +154,7 @@ async function getProof({
 }
 
 /**
- * TODO: What are the `inputs`
+ * `inputs` I'm pretty sure is just the proof payload
  */
 async function signAndExecuteTxWithZk({
     client,

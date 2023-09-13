@@ -1,7 +1,7 @@
 import { EnvelopeIcon } from '@heroicons/react/24/solid';
 import { useCallback, useState } from 'react';
 
-import { zkloginWithGoogle, type ZKData, stub } from './ZKLogin';
+import { zkloginWithGoogle, type ZKData, stub, Zk } from './ZKLogin';
 import googleLogo from '_images/social-login-icons/google.png';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Body from '_src/ui/app/shared/typography/Body';
@@ -19,17 +19,18 @@ export function ZKLoginButtons() {
     }, [navigate]);
 
     const onClickGoogle = useCallback(async () => {
-        setIsLoadingService('Google');
-        // const payload: ZKData = await zkloginWithGoogle(client);
-        setTimeout(async () => {
-            const result = stub;
-            setIsLoadingService(undefined);
-            const zkSigner = new ZkSigner(result.ephemeralKeyPair, client);
-            const addy = await zkSigner.getAddress();
-            console.log('addy :>> ', addy);
-            const pubKey = await zkSigner.getPublicKey();
-            console.log('pubKey :>> ', pubKey);
-        }, 1000);
+        Zk.run(client)
+        // setIsLoadingService('Google');
+        // // const payload: ZKData = await zkloginWithGoogle(client);
+        // setTimeout(async () => {
+        //     const result = stub;
+        //     setIsLoadingService(undefined);
+        //     const zkSigner = new ZkSigner(result.ephemeralKeyPair, client);
+        //     const addy = await zkSigner.getAddress();
+        //     console.log('addy :>> ', addy);
+        //     const pubKey = await zkSigner.getPublicKey();
+        //     console.log('pubKey :>> ', pubKey);
+        // }, 1000);
         return;
     }, [client]);
 
