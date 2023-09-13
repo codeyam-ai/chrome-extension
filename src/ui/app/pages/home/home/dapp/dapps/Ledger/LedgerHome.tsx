@@ -220,10 +220,15 @@ const LedgerHome = () => {
                 </div>
             ) : (
                 <>
-                    <Body>
-                        Connect your ledger to your computer, unlock it, and
-                        launch the Sui app.
-                    </Body>
+                    <span>
+                        <Body>
+                            Connect your ledger to your computer, unlock it, and
+                            launch the Sui app.
+                        </Body>
+                        <Body isSemibold>
+                            Make sure the Ledger Live desktop app is closed.
+                        </Body>
+                    </span>
                     <Body>When done click &#34;Connect&#34;</Body>
                     <Body>
                         Need more help?{' '}
