@@ -23,7 +23,6 @@ export function getOAuthUrl({
 
 function _getRedirectUrl(): string {
     const redirectUrl = chrome.identity.getRedirectURL('/ui.html');
-    console.log('redirectUrl c=> ', redirectUrl);
     return redirectUrl;
 }
 
@@ -39,7 +38,6 @@ function _google({ nonce }: { nonce: string }) {
     const urlSearchParams = new URLSearchParams(searchParamsData);
     const basePath = `https://accounts.google.com/o/oauth2/v2/auth`;
     return `${basePath}?${urlSearchParams}`;
-    // return `https://accounts.google.com/o/oauth2/v2/auth?client_id=$CLIENT_ID&response_type=id_token&redirect_uri=$REDIRECT_URL&scope=openid&nonce=$NONCE`;
 }
 
 function _devTest({ nonce }: { nonce: string }) {

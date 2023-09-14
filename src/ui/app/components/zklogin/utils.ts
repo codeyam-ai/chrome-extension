@@ -70,8 +70,8 @@ export function genAddressSeed(
 
 
 export function extractJwtFromUrl(url: string): string | null {
-    // `slice` removes the leading '#' which is required because the hash in not
-    // URL decoded
+    // `slice` removes the leading '#' which is required because the hash is not
+    // URL decoded, e.g., `#abc=123&other=data&key=value`
     const hashParams = new URL(url).hash.slice(1);
 
     const params = new URLSearchParams(hashParams);

@@ -17,32 +17,23 @@ type Proof = object;
 
 export const Zk = {
     async run(client: SuiClient) {
-        console.log('starting run');
-
         // const latestSuiSystemState = await client.getLatestSuiSystemState();
         // const currentEpoch = parseInt(latestSuiSystemState.epoch);
-        // console.log('currentEpoch', currentEpoch);
-
         // const lifetime = 2;
         const maxEpoch = 155; // currentEpoch + lifetime;
-        console.log('maxEpoch', maxEpoch);
 
         const ephKeyPair = new Ed25519Keypair();
-        console.log('ephPubKey', ephKeyPair.getPublicKey());
 
         const randomness = generateRandomness();
-        console.log('randomness', randomness);
 
         const nonce = generateNonce(
             ephKeyPair.getPublicKey(),
             maxEpoch,
             randomness
         );
-        console.log('nonce', nonce);
 
         const { jwt } = await getJwtViaOAuthFlow({ nonce });
         if (!jwt) return;
-        // const jwt = 'a.b.c';
         console.log('jwt', jwt);
 
         const { salt } = await getSalt({ jwt });
@@ -81,13 +72,13 @@ async function getJwtViaOAuthFlow({
 }): Promise<{ jwt: string | null }> {
     const oAuthUrl = getOAuthUrl({ type: OAuthType.Google, nonce });
 
-    const oauthCompleteUrl = await chrome.identity.launchWebAuthFlow({
+    const responseUrl = await chrome.identity.launchWebAuthFlow({
         url: oAuthUrl,
         interactive: true,
     });
-    if (!oauthCompleteUrl) return { jwt: null };
+    if (!responseUrl) return { jwt: null };
 
-    const jwt = extractJwtFromUrl(oauthCompleteUrl);
+    const jwt = extractJwtFromUrl(responseUrl);
     return { jwt };
 }
 
