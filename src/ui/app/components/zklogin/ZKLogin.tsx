@@ -2,17 +2,14 @@ import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 import {
     generateNonce,
     generateRandomness,
-    getZkSignature,
     jwtToAddress,
 } from '@mysten/zklogin';
 
 import { getOAuthUrl, OAuthType } from './oauthUrls';
 import { extractJwtFromUrl } from './utils';
-import { api } from '../../redux/store/thunk-extras';
 
 import type { ZkSignatureInputs } from './bcs';
 import type { SuiClient } from '@mysten/sui.js/client';
-import type { TransactionBlock } from '@mysten/sui.js/transactions';
 
 type Proof = ZkSignatureInputs;
 
@@ -192,7 +189,6 @@ async function getProof({
         jwt_randomness: payload.jwt_randomness.toString(),
         salt: payload.salt.toString(),
     };
-    console.log('payloadJson', payloadJson);
 
     const MYSTEN_PROVING_SERVICE_URL = 'http://185.209.177.123:8000/test/zkp';
 
@@ -201,10 +197,8 @@ async function getProof({
         headers: new Headers({ 'content-type': 'application/json' }),
         body: JSON.stringify(payloadJson),
     });
-    console.log('response', response);
 
     const json = await response.json();
-    console.log('json', json);
 
     return { proof: json };
 }
