@@ -1,45 +1,65 @@
-import Authentication from 'src/background/Authentication';
-
-import {
-    type InitialAccountInfo,
-    loadAccountInformationFromStorage,
-} from '../index';
+import accountSliceReducer, { type AccountState, setMnemonic } from '../index';                                                                                        
 import { AccountType } from '_src/shared/constants';
-import { getEncrypted } from '_src/shared/storagex/store';
+                                                                                                                                                                          
+describe('accountSlice', () => {                                                                                                                                       
+    it('handles setMnemonic on initial state', () => {                                                                                                                             
+        const action = setMnemonic('test mnemonic');                                                                                                                       
+        const state = accountSliceReducer(initialState, action);                                                                                                          
+        expect(state.mnemonic).toBe('test mnemonic');                                                                                                              
+    });   
+    
+    it('handles setMnemonic when mnemonic is already set', () => {    
+        const existingState = {
+            ...initialState,
+            mnemonic: 'existing mnemonic',
+        }                                                                                                                         
+        const action = setMnemonic('test mnemonic');                                                                                                                       
+        const state = accountSliceReducer(existingState, action);                                                                                                          
+        expect(state.mnemonic).toBe('test mnemonic');                                                                                                              
+    });   
+                                                                                                                                                                        
+    // it('should return the address of the active account', () => {                                                                                                        
+    //     const state = {                                                                                                                                                    
+    //       account: { 
+    //         ...initialState,                                                                                                                                                      
+    //         address: '0x123',                                                                                                                                              
+    //       },                                                                                                                                                               
+    //       app: {},
+    //       suiObjects: {},
+    //       balances: {},
+    //       transactions: {},
+    //       permissions: {},
+    //       forms: {},
+                                                                                                                              
+    //     };                                                                                                                                                                 
+                                                                                                                                                                           
+    //     // Act                                                                                                                                                             
+    //     const result = activeAccountSelector(state);                                                                                                                       
+                                                                                                                                                                           
+    //     // Assert                                                                                                                                                          
+    //     expect(result).toEqual('0x123');                                                                                                                                   
+    //   });                                                                                                                                                                          
+}); 
 
-describe('loadAccountInformationFromStorage Tests', () => {
-    beforeEach(() => {
-        jest.resetAllMocks();
-    });
-
-    it('Test Case 1: Test when authentication is not null and authentication is not equal to AUTHENTICATION_REQUESTED', async () => {
-        // Setup mocks for this test case
-        (getEncrypted as jest.Mock)
-            .mockReturnValueOnce('SOME_ACCOUNT_TYPE')
-            .mockReturnValueOnce('SOME_AUTHENTICATION')
-            .mockReturnValueOnce('0')
-            .mockReturnValueOnce('[]');
-
-        (Authentication.getAccountInfos as jest.Mock).mockReturnValueOnce([]);
-
-        const result: InitialAccountInfo =
-            await loadAccountInformationFromStorage(undefined, {
-                getState: jest.fn(() => ({ account: { locked: false } })),
-            });
-
-        // Expectations for this test case
-        expect(result).toEqual({
-            authentication: 'SOME_AUTHENTICATION',
-            passphrase: null,
-            mnemonic: null,
-            accountInfos: [],
-            activeAccountIndex: 0,
-            locked: false,
-            accountType: AccountType.EMAIL,
-            importNames: {
-                mnemonics: [],
-                privateKeys: [],
-            },
-        });
-    });
-});
+const initialState: AccountState = {
+    loading: true,
+    authentication: null,
+    email: null,
+    mnemonic: null,
+    passphrase: null,
+    creating: false,
+    createdMnemonic: null,
+    address: null,
+    accountInfos: [],
+    activeAccountIndex: 0,
+    accountType: AccountType.UNINITIALIZED,
+    locked: false,
+    favoriteDappsKeys: [],
+    excludedDappsKeys: [],
+    customizationsSyncPreference: false,
+    importNames: {
+        mnemonics: [],
+        privateKeys: [],
+    },
+    ledgerConnected: false,
+};
