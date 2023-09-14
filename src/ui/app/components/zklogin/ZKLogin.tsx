@@ -40,7 +40,9 @@ export const Zk = {
         console.log('salt', salt);
         if (!salt) return;
 
-        // const address = jwtToAddress(jwt, salt);
+        const address = jwtToAddress(jwt, salt);
+        console.log('address', address);
+
         // const { proof } = await getProof({
         //     jwt,
         //     ephPubKey: ephemeralKeypair.getPublicKey().toSuiPublicKey(),
