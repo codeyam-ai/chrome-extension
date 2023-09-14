@@ -1,4 +1,9 @@
-import { type ExportedKeypair, type SerializedSignature } from '@mysten/sui.js';
+import {
+    type PublicKey,
+    type ExportedKeypair,
+    type SerializedSignature,
+    toSerializedSignature,
+} from '@mysten/sui.js';
 import {
     type Ed25519Keypair,
     type Ed25519PublicKey,
@@ -16,6 +21,8 @@ import { getEncrypted, setEncrypted } from '../storagex/store';
 import { type PartialZkSignature } from '_src/ui/app/components/zklogin/utils';
 import networkEnv, { type NetworkEnvType } from '_src/background/NetworkEnv';
 import { getCurrentEpoch } from './current-epoch';
+import { fromExportedKeypair } from '_src/ui/app/components/zklogin/from-exported-keypair';
+import { getZkSignature } from '@mysten/zklogin';
 
 type JwtSerializedClaims = {
     email: string | null;
@@ -163,10 +170,65 @@ export class ZkSigner extends WalletSigner {
         // But that errors out in their code so for now going to save just CredentialData
         const credentialsData = await this.getEphemeralValue();
         console.log('credentialsData from storage :>> ', credentialsData);
+        if (!credentialsData) {
+            throw new Error('No credentials data found');
+        }
         const currentEpoch = await getCurrentEpoch();
         console.log('currentEpoch :>> ', currentEpoch);
 
-        // NOTE going to try to save credentials then come back to this track.
+        const {
+            ephemeralKeyPair,
+            proofs: storedProofs,
+            maxEpoch,
+            jwt,
+            randomness,
+        } = credentialsData;
+
+        console.log('got stuff from creds data');
+        console.log('ephemeralKeyPair :>> ', ephemeralKeyPair);
+        console.log('storedProofs :>> ', storedProofs);
+        console.log('maxEpoch :>> ', maxEpoch);
+
+        const keyPair = fromExportedKeypair(ephemeralKeyPair);
+
+        console.log('keypair :>> ', keyPair);
+
+        let proofs = storedProofs;
+        if (!proofs) {
+            proofs = await this.#generateProofs(
+                jwt,
+                BigInt(randomness),
+                maxEpoch,
+                keyPair.getPublicKey()
+            );
+            credentialsData.proofs = proofs;
+            // store the proofs to avoid creating them again
+            const newEphemeralValue = await this.getEphemeralValue();
+            if (!newEphemeralValue) {
+                // this should never happen
+                throw new Error('Missing data, account is locked');
+            }
+            // newEphemeralValue[serializeNetwork(activeNetwork)] = credentialsData;
+            // await this.setEphemeralValue(newEphemeralValue);
+            await setEncrypted({
+                // ❗❗❗❗ CHANGE THIS KEY ❗❗❗❗
+                key: 'zk-1',
+                session: false,
+                strong: false,
+                value: JSON.stringify(credentialsData),
+            });
+        }
+
+        // shows as deprecated from the mysten package but the Sui Wallet codebase uses it from signature.ts in that repo (although I thought that was the one that was exported in the Mysten package)
+        const userSignature = toSerializedSignature({
+            signature: await keyPair.sign(digest),
+            signatureScheme: keyPair.getKeyScheme(),
+            publicKey: keyPair.getPublicKey(),
+        });
+
+        console.log('userSignature :>> ', userSignature);
+
+        return getZkSignature({ inputs: proofs, maxEpoch, userSignature });
     }
 
     connect(client: SuiClient): WalletSigner {
@@ -216,20 +278,44 @@ export class ZkSigner extends WalletSigner {
         return credentialsData;
     }
 
+    async #generateProofs(
+        jwt: string,
+        randomness: bigint,
+        maxEpoch: number,
+        ephemeralPublicKey: PublicKey
+    ) {
+        // const { salt: obfuscatedSalt } = await this.getStoredData();
+        // const salt = await deobfuscate<string>(obfuscatedSalt);
+        const salt = saltStub;
+        return Promise.resolve(proofsStub);
+        // return await createPartialZKSignature({
+        // 	jwt,
+        // 	ephemeralPublicKey,
+        // 	userSalt: BigInt(salt),
+        // 	jwtRandomness: randomness,
+        // 	keyClaimName: 'sub',
+        // 	maxEpoch,
+        // });
+    }
+
     protected async getEphemeralValue(): Promise<CredentialData | null> {
-        return (await getEncrypted({
+        const rawCredentialsData = await getEncrypted({
             // ❗❗❗❗ CHANGE THIS KEY ❗❗❗❗
             key: 'zk-1',
             session: false,
             strong: false,
-        })) as CredentialData | null;
+        });
+        if (!rawCredentialsData) {
+            return null;
+        }
+        return JSON.parse(rawCredentialsData) as CredentialData;
     }
 }
 
 const jwtStub =
     'eyJhbGciOiJSUzI1NiIsImtpZCI6IjdjMGI2OTEzZmUxMzgyMGEzMzMzOTlhY2U0MjZlNzA1MzVhOWEwYmYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI5NDY3MzEzNTIyNzYtcGs1Z2xjZzhjcW8zOG5kYjM5aDdqMDkzZnBzcGh1c3UuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI5NDY3MzEzNTIyNzYtcGs1Z2xjZzhjcW8zOG5kYjM5aDdqMDkzZnBzcGh1c3UuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDM2OTY1NjQ2MzA2MjM3MzE4MTciLCJoZCI6ImV0aG9zd2FsbGV0Lnh5eiIsImVtYWlsIjoidG9tbXlAZXRob3N3YWxsZXQueHl6IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5vbmNlIjoiYmVPVWVUWVpXb2pTSWgzRlFteXdubU16SVowIiwibmJmIjoxNjk0NjM2ODM2LCJuYW1lIjoiVG9tbXkgV2lsY3playIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLQk9nVjE0OXN5cVBUZlRoWGFiaC12TXB2U3oxNm1Wa3F4b2FyWjYxVE91QT1zOTYtYyIsImdpdmVuX25hbWUiOiJUb21teSIsImZhbWlseV9uYW1lIjoiV2lsY3playIsImxvY2FsZSI6ImVuIiwiaWF0IjoxNjk0NjM3MTM2LCJleHAiOjE2OTQ2NDA3MzYsImp0aSI6IjhlZGZmMDIyM2RhYjU2YjY0MmNlMjU2ODYzYjI3YTY4YzIxNTFkOTcifQ.AI89AbyaAZhD2HrXfZwJXv__yoxwE-PgnMpyKX5ehz9TQzCAnYGgLhUHSoGKi2uhB5IWAMGi0_Z-45BBDe1hiTwwA-iC_e7gABANZxBWTOuYWttrzr3VbUMT6jxWVec3EgRxMVT4CHC6WhgjZOjTupVFrJlCFOoWyOWnl3eR1ajbAyeXQpTWbut5iWtOgsi9yid19q_kwy3-GrdVC6xjc3Hrb2fCK1Tw7DHbTpOc4ULI0biA8dresJaVqr580UTS06PQ4URSE6RHWrqSYTdtKNHK6MLsvfp8CV8x3c_J-n4dNUtfHrMBGM8kp5zg4YJE8fJHjDt-JMpfawlq741KPQ';
 const saltStub = '213783213642252539822840878157811945348';
-const decodedJwtStub = {
+const decodedJwtStub: JWTPayload = {
     iss: 'https://accounts.google.com',
     azp: '946731352276-pk5glcg8cqo38ndb39h7j093fpsphusu.apps.googleusercontent.com',
     aud: '946731352276-pk5glcg8cqo38ndb39h7j093fpsphusu.apps.googleusercontent.com',
@@ -248,7 +334,7 @@ const decodedJwtStub = {
     iat: 1694637136,
     exp: 1694640736,
     jti: '8edff0223dab56b642ce256863b27a68c2151d97',
-} as JWTPayload;
+};
 
 // This is an unsigned transaction for sending some SUI
 const stubDataToSign = new Uint8Array([
@@ -266,3 +352,46 @@ const stubDataToSign = new Uint8Array([
     41, 189, 106, 201, 27, 159, 209, 232, 3, 0, 0, 0, 0, 0, 0, 64, 171, 60, 0,
     0, 0, 0, 0, 0,
 ]);
+
+const proofsStub: PartialZkSignature = {
+    proof_points: {
+        pi_a: [
+            '17948070145290567577569534367197032795952160121538901645187309651256974121090',
+            '5612484770548744233871071579404622163176587443511638625471475946349679575376',
+            '1',
+        ],
+        pi_b: [
+            [
+                '10679174348209515438812994622136144511408556589312486798105989640961358571493',
+                '9294642663261017946844031529456074141203277334404665524402152927220253496002',
+            ],
+            [
+                '2204323869214454390996141971686094138098385069253160203251708242120621092684',
+                '6981588368132222637231456901768604850198765661278426240714029072874212934072',
+            ],
+            ['1', '0'],
+        ],
+        pi_c: [
+            '9301136315346575512905486181850444622460473138713717577416329628536129738139',
+            '16881064496764686229174928110342841687382592004306066834917346177403479718093',
+            '1',
+        ],
+    },
+    address_seed:
+        '18028501399298930227449860332913100901954313254243201663127646075617746679810',
+    claims: [
+        {
+            name: 'iss',
+            value_base64: 'yJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLC',
+            index_mod_4: 1,
+        },
+        {
+            name: 'aud',
+            value_base64:
+                'CJhdWQiOiI5NDY3MzEzNTIyNzYtcGs1Z2xjZzhjcW8zOG5kYjM5aDdqMDkzZnBzcGh1c3UuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLC',
+            index_mod_4: 1,
+        },
+    ],
+    header_base64:
+        'eyJhbGciOiJSUzI1NiIsImtpZCI6IjgzOGMwNmM2MjA0NmMyZDk0OGFmZmUxMzdkZDUzMTAxMjlmNGQ1ZDEiLCJ0eXAiOiJKV1QifQ',
+};
