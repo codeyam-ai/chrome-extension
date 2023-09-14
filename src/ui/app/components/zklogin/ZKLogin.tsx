@@ -7,64 +7,88 @@ import {
 } from '@mysten/zklogin';
 
 import { getOAuthUrl, OAuthType } from './oauthUrls';
+import { extractJwtFromUrl } from './utils';
+import { api } from '../../redux/store/thunk-extras';
 
+import type { ZkSignatureInputs } from './bcs';
 import type { SuiClient } from '@mysten/sui.js/client';
 import type { TransactionBlock } from '@mysten/sui.js/transactions';
-import { api } from '../../redux/store/thunk-extras';
-import { extractJwtFromUrl } from './utils';
 
-type Proof = object;
+type Proof = ZkSignatureInputs;
+
+export type ZkData = {
+    maxEpoch: number;
+    epkBigInt: bigint;
+    randomness: bigint;
+    nonce: string;
+    jwt: string;
+    salt: bigint;
+    address: string;
+    proof: Proof;
+};
 
 export const Zk = {
-    async run(client: SuiClient) {
-        // const latestSuiSystemState = await client.getLatestSuiSystemState();
-        // const currentEpoch = parseInt(latestSuiSystemState.epoch);
-        // const lifetime = 2;
-        const maxEpoch = 155; // currentEpoch + lifetime;
+    async run(client: SuiClient): Promise<ZkData | null> {
+        console.log('starting Zk.run()...');
 
-        const ephKeyPair = new Ed25519Keypair();
+        const latestSuiSystemState = await client.getLatestSuiSystemState();
+        const currentEpoch = parseInt(latestSuiSystemState.epoch);
+        const lifetime = 2;
+        const maxEpoch = currentEpoch + lifetime;
+        console.log('maxEpoch', maxEpoch);
+
+        const ephemeralKeyPair = new Ed25519Keypair();
+        const epk = ephemeralKeyPair.getPublicKey();
+        const epkB64 = epk.toBase64();
+        const epkBuffer = Buffer.from(epkB64, 'base64');
+        const epkHex = epkBuffer.toString('hex');
+        const epkBigInt = BigInt(`0x${epkHex}`);
+        console.log('epkBigInt', epkBigInt);
 
         const randomness = generateRandomness();
+        console.log('randomness', randomness);
 
         const nonce = generateNonce(
-            ephKeyPair.getPublicKey(),
+            ephemeralKeyPair.getPublicKey(),
             maxEpoch,
             randomness
         );
+        console.log('nonce', nonce);
 
         const { jwt } = await getJwtViaOAuthFlow({ nonce });
-        if (!jwt) return;
         console.log('jwt', jwt);
+        if (!jwt) return null;
 
         const { salt } = await getSalt({ jwt });
         console.log('salt', salt);
-        if (!salt) return;
+        if (!salt) return null;
 
         const address = jwtToAddress(jwt, salt);
         console.log('address', address);
 
-        // const { proof } = await getProof({
-        //     jwt,
-        //     ephPubKey: ephemeralKeypair.getPublicKey().toSuiPublicKey(),
-        //     maxEpoch,
-        //     randomness,
-        //     salt,
-        // });
+        const { proof } = await getProof({
+            jwt,
+            ephemeralPublicKey: epkBigInt,
+            maxEpoch,
+            randomness,
+            salt,
+        });
+        console.log('proof', proof);
 
-        // return Promise.resolve(stub);
+        const zkData: ZkData = {
+            maxEpoch,
+            epkBigInt,
+            randomness,
+            nonce,
+            jwt,
+            salt,
+            address,
+            proof,
+        };
+        console.log('zkData', zkData);
+
+        return zkData;
     },
-};
-
-export type ZKData = {
-    maxEpoch: number;
-    ephemeralKeyPair: Ed25519Keypair;
-    proof: Proof;
-};
-
-export const stub: ZKData = {
-    maxEpoch: 200,
-    ephemeralKeyPair: new Ed25519Keypair(),
-    proof: {},
 };
 
 async function getJwtViaOAuthFlow({
@@ -103,9 +127,28 @@ async function getSalt({
     return { salt };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
+namespace ProofService {
+    export interface Payload {
+        jwt: string;
+        eph_public_key: bigint;
+        max_epoch: number;
+        jwt_randomness: bigint;
+        salt: bigint;
+        key_claim_name: 'sub';
+    }
+
+    export interface PayloadJson {
+        jwt: string;
+        eph_public_key: string;
+        max_epoch: number;
+        jwt_randomness: string;
+        salt: string;
+        key_claim_name: 'sub';
+    }
+}
+
 /**
- * TODO: Integrate with mysten a proving service
- *
  * ## Curl example of generating proof
  *
  * https://docs.sui.io/build/zk_login#get-the-zero-knowledge-proof
@@ -118,70 +161,79 @@ async function getSalt({
  *
  * https://docs.sui.io/build/zk_login#can-i-run-my-own-zk-proving-service
  *
- * We could host the mysten (rust) binary ourselves.
+ * We could host the mysten (rust) binary ourselves, though I don't know where it is.
  *
  */
 async function getProof({
     jwt,
-    ephPubKey,
+    ephemeralPublicKey,
     maxEpoch,
     randomness,
     salt,
 }: {
     jwt: string;
-    ephPubKey: string;
+    ephemeralPublicKey: bigint;
     maxEpoch: number;
     randomness: bigint;
     salt: bigint;
 }): Promise<{ proof: Proof }> {
-    // The mysten proving service endpoint
-    // actually hitting it early might get us blacklisted
-    const provingServiceUrl = ''; // 'http://185.209.177.123:8000/test/zkp';
-
-    const headers = new Headers({ 'content-type': 'application/json' });
-    const body = JSON.stringify({
+    const payload: ProofService.Payload = {
         jwt,
-        eph_public_key: ephPubKey,
+        eph_public_key: ephemeralPublicKey,
         max_epoch: maxEpoch,
         jwt_randomness: randomness,
         salt,
         key_claim_name: 'sub',
-    });
-    const response = await fetch(provingServiceUrl, {
-        headers,
-        method: 'POST',
-        body,
-    });
-    const proof = (await response.json()) as Proof;
+    };
 
-    return { proof };
+    const payloadJson: ProofService.PayloadJson = {
+        ...payload,
+        eph_public_key: payload.eph_public_key.toString(),
+        jwt_randomness: payload.jwt_randomness.toString(),
+        salt: payload.salt.toString(),
+    };
+    console.log('payloadJson', payloadJson);
+
+    const MYSTEN_PROVING_SERVICE_URL = 'http://185.209.177.123:8000/test/zkp';
+
+    const response = await fetch(MYSTEN_PROVING_SERVICE_URL, {
+        method: 'POST',
+        headers: new Headers({ 'content-type': 'application/json' }),
+        body: JSON.stringify(payloadJson),
+    });
+    console.log('response', response);
+
+    const json = await response.json();
+    console.log('json', json);
+
+    return { proof: json };
 }
 
 /**
  * `inputs` I'm pretty sure is just the proof payload
  */
-async function signAndExecuteTxWithZk({
-    client,
-    txb,
-    ephKeyPair, // or ZKData
-}: {
-    client: SuiClient;
-    txb: TransactionBlock;
-    ephKeyPair: Ed25519Keypair;
-}) {
-    const { bytes, signature: userSignature } = await txb.sign({
-        client,
-        signer: ephKeyPair,
-    });
+// async function signAndExecuteTxWithZk({
+//     client,
+//     txb,
+//     ephKeyPair, // or ZKData
+// }: {
+//     client: SuiClient;
+//     txb: TransactionBlock;
+//     ephKeyPair: Ed25519Keypair;
+// }) {
+//     const { bytes, signature: userSignature } = await txb.sign({
+//         client,
+//         signer: ephKeyPair,
+//     });
 
-    const zkSignature = getZkSignature({
-        inputs,
-        maxEpoch,
-        userSignature,
-    });
+//     const zkSignature = getZkSignature({
+//         inputs,
+//         maxEpoch,
+//         userSignature,
+//     });
 
-    client.executeTransactionBlock({
-        transactionBlock: bytes,
-        signature: zkSignature,
-    });
-}
+//     client.executeTransactionBlock({
+//         transactionBlock: bytes,
+//         signature: zkSignature,
+//     });
+// }
