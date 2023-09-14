@@ -27,13 +27,16 @@ export type Serializable =
     | { [index: string]: Serializable | undefined }
     | Serializable[];
 
-export async function encrypt(password: string, secrets: Serializable): Promise<string> {
+export async function encrypt(
+    password: string,
+    secrets: Serializable
+): Promise<string> {
     return metamaskEncrypt(password, secrets);
 }
 
 export async function decrypt<T extends Serializable>(
     password: string,
-    ciphertext: string,
+    ciphertext: string
 ): Promise<T> {
     return (await metamaskDecrypt(password, ciphertext)) as T;
 }

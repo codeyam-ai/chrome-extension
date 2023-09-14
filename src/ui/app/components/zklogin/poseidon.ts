@@ -49,6 +49,8 @@ export function poseidonHash(inputs: (number | bigint | string)[]): bigint {
         const hash2 = poseidonHash(inputs.slice(16));
         return poseidonHash([hash1, hash2]);
     } else {
-        throw new Error(`Yet to implement: Unable to hash a vector of length ${inputs.length}`);
+        throw new Error(
+            `Yet to implement: Unable to hash a vector of length ${inputs.length}`
+        );
     }
 }

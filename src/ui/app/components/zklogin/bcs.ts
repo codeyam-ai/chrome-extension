@@ -64,14 +64,21 @@ function getZkSignatureBytes({ inputs, maxEpoch, userSignature }: ZkSignature) {
             {
                 inputs,
                 max_epoch: maxEpoch,
-                user_signature: typeof userSignature === 'string' ? fromB64(userSignature) : userSignature,
+                user_signature:
+                    typeof userSignature === 'string'
+                        ? fromB64(userSignature)
+                        : userSignature,
             },
-            { maxSize: 2048 },
+            { maxSize: 2048 }
         )
         .toBytes();
 }
 
-export function getZkSignature({ inputs, maxEpoch, userSignature }: ZkSignature) {
+export function getZkSignature({
+    inputs,
+    maxEpoch,
+    userSignature,
+}: ZkSignature) {
     const bytes = getZkSignatureBytes({ inputs, maxEpoch, userSignature });
     const signatureBytes = new Uint8Array(bytes.length + 1);
     signatureBytes.set([SIGNATURE_SCHEME_TO_FLAG['Zk']]);

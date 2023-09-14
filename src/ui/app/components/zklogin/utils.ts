@@ -5,6 +5,23 @@ const MAX_KEY_CLAIM_VALUE_LENGTH = 115;
 const MAX_AUD_VALUE_LENGTH = 145;
 const PACK_WIDTH = 248;
 
+type Claim = {
+    name: string;
+    value_base64: string;
+    index_mod_4: number;
+};
+type ProofPoints = {
+    pi_a: string[];
+    pi_b: string[][];
+    pi_c: string[];
+};
+export type PartialZkSignature = {
+    proof_points: ProofPoints;
+    address_seed: string;
+    claims: Claim[];
+    header_base64: string;
+};
+
 // TODO: We need to rewrite this to not depend on Buffer.
 export function toBufferBE(num: bigint, width: number) {
     const hex = num.toString(16);
@@ -23,7 +40,9 @@ export function chunkArray<T>(array: T[], chunk_size: number): T[][] {
     const chunks = Array(Math.ceil(array.length / chunk_size));
     const revArray = array.reverse();
     for (let i = 0; i < chunks.length; i++) {
-        chunks[i] = revArray.slice(i * chunk_size, (i + 1) * chunk_size).reverse();
+        chunks[i] = revArray
+            .slice(i * chunk_size, (i + 1) * chunk_size)
+            .reverse();
     }
     return chunks.reverse();
 }
@@ -47,7 +66,9 @@ export function hashASCIIStrToField(str: string, maxSize: number) {
         .map((c) => c.charCodeAt(0));
 
     const chunkSize = PACK_WIDTH / 8;
-    const packed = chunkArray(strPadded, chunkSize).map((chunk) => bytesBEToBigInt(chunk));
+    const packed = chunkArray(strPadded, chunkSize).map((chunk) =>
+        bytesBEToBigInt(chunk)
+    );
     return poseidonHash(packed);
 }
 
@@ -58,7 +79,7 @@ export function genAddressSeed(
     aud: string,
     max_name_length = MAX_KEY_CLAIM_NAME_LENGTH,
     max_value_length = MAX_KEY_CLAIM_VALUE_LENGTH,
-    max_aud_length = MAX_AUD_VALUE_LENGTH,
+    max_aud_length = MAX_AUD_VALUE_LENGTH
 ) {
     return poseidonHash([
         hashASCIIStrToField(name, max_name_length),
@@ -67,7 +88,6 @@ export function genAddressSeed(
         poseidonHash([salt]),
     ]);
 }
-
 
 export function extractJwtFromUrl(url: string): string | null {
     // `slice` removes the leading '#' which is required because the hash is not

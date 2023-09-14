@@ -24,6 +24,8 @@ export class LedgerSigner extends WalletSigner {
         derivationPath: string,
         client: SuiClient
     ) {
+        console.log('CONNECTING TO LEDGER');
+
         super(client);
         this.#connectToLedger = connectToLedger;
         this.#suiLedgerClient = null;
@@ -57,6 +59,7 @@ export class LedgerSigner extends WalletSigner {
     }
 
     async signData(data: Uint8Array): Promise<SerializedSignature> {
+        console.log('data :>> ', data);
         const ledgerClient = await this.#initializeSuiLedgerClient();
         const { signature } = await ledgerClient.signTransaction(
             this.#derivationPath,

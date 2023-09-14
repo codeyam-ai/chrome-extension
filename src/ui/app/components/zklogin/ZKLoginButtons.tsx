@@ -19,18 +19,23 @@ export function ZKLoginButtons() {
     }, [navigate]);
 
     const onClickGoogle = useCallback(async () => {
-        Zk.run(client)
-        // setIsLoadingService('Google');
-        // // const payload: ZKData = await zkloginWithGoogle(client);
-        // setTimeout(async () => {
-        //     const result = stub;
-        //     setIsLoadingService(undefined);
-        //     const zkSigner = new ZkSigner(result.ephemeralKeyPair, client);
-        //     const addy = await zkSigner.getAddress();
-        //     console.log('addy :>> ', addy);
-        //     const pubKey = await zkSigner.getPublicKey();
-        //     console.log('pubKey :>> ', pubKey);
-        // }, 1000);
+        // Zk.run(client);
+        setIsLoadingService('Google');
+        // const payload: ZKData = await zkloginWithGoogle(client);
+        const result = stub;
+        setIsLoadingService(undefined);
+        const zkSigner = new ZkSigner(result.ephemeralKeyPair, client);
+        setTimeout(async () => {
+            console.log('zkSigner :>> ', zkSigner);
+            console.log('BEGINNING SIGNING');
+            const testString = 'This is a test string';
+            const testUint8Array = new TextEncoder().encode(testString);
+
+            const signRes = await zkSigner.signMessage({
+                message: testUint8Array,
+            });
+            console.log('signRes :>> ', signRes);
+        }, 1000);
         return;
     }, [client]);
 

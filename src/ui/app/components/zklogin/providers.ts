@@ -18,7 +18,8 @@ export interface ZkProviderData {
 // THIS DATA IS FROM SUI WALLET we should update the IDs
 export const zkProviderDataMap: Record<ZkProvider, ZkProviderData> = {
     google: {
-        clientID: '946731352276-pk5glcg8cqo38ndb39h7j093fpsphusu.apps.googleusercontent.com',
+        clientID:
+            '946731352276-pk5glcg8cqo38ndb39h7j093fpsphusu.apps.googleusercontent.com',
         url: 'https://accounts.google.com/o/oauth2/v2/auth',
         extraParams: {
             response_type: 'id_token',
