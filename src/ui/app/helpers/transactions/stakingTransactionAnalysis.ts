@@ -1,8 +1,8 @@
-import { getTotalGasUsed } from '@mysten/sui.js';
 import {
     type SuiTransactionBlockResponse,
     type SuiJsonValue,
 } from '@mysten/sui.js/client';
+import { getTotalGasUsed } from '@mysten/sui.js/src/types';
 import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
 import addressOwner from './addressOwner';

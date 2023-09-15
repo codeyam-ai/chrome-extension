@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
-import { getObjectId, hasPublicTransfer } from '@mysten/sui.js';
+import { getObjectId, hasPublicTransfer } from '@mysten/sui.js/src/types';
 import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';

@@ -1,4 +1,4 @@
-import { SuiMoveObject, getSuiObjectData } from '@mysten/sui.js';
+import { SuiMoveObject, getSuiObjectData } from '@mysten/sui.js/src/types';
 import { is } from '@mysten/sui.js/utils';
 import { useEffect, useState } from 'react';
 

@@ -3,8 +3,8 @@
 
 import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
-import type { SuiMoveObject, SuiObjectData } from '@mysten/sui.js';
 import type { SuiClient } from '@mysten/sui.js/client';
+import type { SuiMoveObject, SuiObjectData } from '@mysten/sui.js/src/types';
 
 const COIN_TYPE = '0x2::coin::Coin';
 const COIN_TYPE_ARG_REGEX = /^0x2::coin::Coin<(.+)>$/;

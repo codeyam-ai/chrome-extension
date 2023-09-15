@@ -1,7 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { RawSigner } from '@mysten/sui.js';
 import {
     SuiClient,
     type SuiTransactionBlockResponse,
@@ -13,6 +12,7 @@ import {
     type IdentifierString,
     type SuiSignPersonalMessageOutput,
     type SuiSignAndExecuteTransactionBlockInput,
+    type SignedTransactionBlock,
     SUI_TESTNET_CHAIN,
     SUI_DEVNET_CHAIN,
 } from '@mysten/wallet-standard';
@@ -27,7 +27,6 @@ import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
-import type { SignedTransaction } from '@mysten/sui.js';
 import type {
     PreapprovalRequest,
     PreapprovalResponse,
@@ -87,7 +86,7 @@ class Transactions {
                   sign: SuiSignTransactionSerialized;
               },
         connection: ContentScriptConnection
-    ): Promise<SuiTransactionBlockResponse | SignedTransaction> {
+    ): Promise<SuiTransactionBlockResponse | SignedTransactionBlock> {
         if (tx) {
             const transactionBlock = TransactionBlock.from(tx.data);
             for (const command of transactionBlock.blockData.transactions) {
@@ -346,14 +345,15 @@ class Transactions {
                 const secretKey = Uint8Array.from(
                     activeSeed.seed.split(',').map((n) => parseInt(n))
                 );
-                const keypair = Ed25519Keypair.fromSecretKey(secretKey);
-                signer = new RawSigner(keypair, client);
+                signer = Ed25519Keypair.fromSecretKey(secretKey);
+                
             }
 
-            const txResponse = await signer.signAndExecuteTransactionBlock({
+            const txResponse = await client.signAndExecuteTransactionBlock({
                 transactionBlock,
                 options,
                 requestType,
+                signer
             });
 
             return txResponse;

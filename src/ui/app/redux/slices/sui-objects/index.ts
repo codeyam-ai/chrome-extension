@@ -1,7 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { getObjectId, getObjectVersion } from '@mysten/sui.js';
+import { getObjectId, getObjectVersion } from '@mysten/sui.js/src/types';
 import {
     createAsyncThunk,
     createEntityAdapter,
