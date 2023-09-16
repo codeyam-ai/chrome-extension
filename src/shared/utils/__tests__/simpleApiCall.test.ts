@@ -26,18 +26,22 @@ describe('apiCall', () => {
     );
   });
 
-  // it('includes the accessToken in the headers', async () => {                                                                                                             
-  //   const mockAccessToken = 'mockAccessToken';                                                                                                                            
-  //   const mockRelativePath = 'mockRelativePath';                                                                                                                          
-  //   const mockSecure = true;                                                                                                                                              
-                                                                                                                                                                          
-  //   await apiCall(mockRelativePath, mockSecure, mockAccessToken);                                                                                                         
-                                                                                                                                                                          
-  //   expect(fetch).toHaveBeenCalledWith(                                                                                                                                   
-  //     expect.any(String),                                                                                                                                                 
-  //     expect.objectContaining({                                                                                                                                           
-  //       headers: { 'Authorization': `Bearer ${mockAccessToken}` }                                                                                                         
-  //     })                                                                                                                                                                  
-  //   );                                                                                                                                                                    
-  // });           
+  it('includes the accessToken in the headers', async () => {                                                                                                            
+    const args = {                                                                                                                                                       
+      relativePath: 'mockRelativePath',                                                                                                                                  
+      method: 'GET',                                                                                                                                                     
+      accessToken: 'mockAccessToken',                                                                                                                                    
+      secure: true,                                                                                                                                                      
+    };                                                                                                                                                                   
+    await apiCall(args);                                                                                                                                                 
+    expect(fetch).toHaveBeenCalledWith(                                                                                                                                  
+      expect.any(String),                                                                                                                                                
+      expect.objectContaining({                                                                                                                                          
+        headers: {                                                                                                                                                       
+          'Content-Type': 'application/json',                                                                                                                            
+          'X-Supabase-Access-Token': args.accessToken                                                                                                                    
+        }                                                                                                                                                                
+      })                                                                                                                                                                 
+    );                                                                                                                                                                   
+  });            
 });
