@@ -1,4 +1,4 @@
-import { BASE_URL, SECURE_URL } from '../constants';
+import { BASE_URL, SECURE_URL } from '_shared/constants';
 
 type FetchData = {
     method: string;
