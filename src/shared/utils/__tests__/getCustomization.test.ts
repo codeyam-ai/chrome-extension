@@ -1,6 +1,6 @@
-import { decryptAccountCustomization } from './accountCustomizationEncryption';
-import getCustomization from './getCustomization';
+import { decryptAccountCustomization } from '_src/shared/utils/customizationsSync/accountCustomizationEncryption';
 import { explorerApiCall } from '_src/shared/utils/customizationsSync/ethosPlatformApiCall';
+import getCustomization from '_src/shared/utils/customizationsSync/getCustomization';
 
 jest.mock('_src/shared/utils/customizationsSync/ethosPlatformApiCall', () => ({
   explorerApiCall: jest.fn()
