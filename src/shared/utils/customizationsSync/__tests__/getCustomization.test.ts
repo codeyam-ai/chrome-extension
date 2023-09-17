@@ -6,7 +6,7 @@ jest.mock('_src/shared/utils/customizationsSync/ethosPlatformApiCall', () => ({
   explorerApiCall: jest.fn()
 }));
 
-jest.mock('./accountCustomizationEncryption', () => ({
+jest.mock('_src/shared/utils/customizationsSync/accountCustomizationEncryption', () => ({
   decryptAccountCustomization: jest.fn()
 }));
 
