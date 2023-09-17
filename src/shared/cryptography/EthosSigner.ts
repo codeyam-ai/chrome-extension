@@ -1,13 +1,13 @@
 import { toB64 } from '@mysten/bcs';
-import { SignerWithProvider } from '@mysten/sui.js';
 
+import { WalletSigner } from './WalletSigner';
 import { deleteEncrypted } from '../storagex/store';
 import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
 
 import type { SuiClient } from '@mysten/sui.js/client';
 import type { SerializedSignature } from '@mysten/sui.js/cryptography';
 
-export class EthosSigner extends SignerWithProvider {
+export class EthosSigner extends WalletSigner {
     private readonly accessToken: string;
     private readonly address: string;
 
@@ -21,7 +21,7 @@ export class EthosSigner extends SignerWithProvider {
         return this.address;
     }
 
-    async signData(data: Uint8Array): Promise<SerializedSignature> {
+    async signData(data: Uint8Array, clientIdentifier?: string): Promise<string> {
         const { json, status } = await simpleApiCall(
             'transactions/sign',
             'POST',
@@ -47,7 +47,7 @@ export class EthosSigner extends SignerWithProvider {
         return signature;
     }
 
-    connect(client: SuiClient): SignerWithProvider {
+    connect(client: SuiClient): WalletSigner {
         return new EthosSigner(this.address, this.accessToken, client);
     }
 }
