@@ -39,3 +39,11 @@ describe('getCustomization', () => {
     expect(decryptAccountCustomization).not.toHaveBeenCalled();
   });
 });
+
+it("handles timeout from explorerApiCall", async () => {
+  (explorerApiCall as jest.Mock).mockImplementation(() => new Promise((resolve) => {
+    setTimeout(() => resolve({ status: 408 }), 1000);
+  }));
+  const result = await getCustomization("dummyJwt", "dummyPrivateKey");
+  expect(result).toBeUndefined();
+});
