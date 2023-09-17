@@ -1,14 +1,15 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { RawSigner } from '@mysten/sui.js';
 import { SuiClient } from '@mysten/sui.js/client';
 import { getFaucetHost } from '@mysten/sui.js/faucet';
 
+import { BaseSigner } from '_src/shared/cryptography/BaseSigner';
 import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
-import type { Keypair } from '@mysten/sui.js';
+import type { Keypair } from '@mysten/sui.js/dist/cjs/cryptography';
 import type { QueryClient } from '@tanstack/react-query';
+import type { WalletSigner } from '_src/shared/cryptography/WalletSigner';
 
 export enum API_ENV {
     mainNet = 'mainNet',
@@ -110,7 +111,7 @@ export default class ApiProvider {
     public fallbackNumber: number | undefined = undefined;
 
     private _apiFullNodeClient?: SuiClient;
-    private _signer: RawSigner | null = null;
+    private _signer: WalletSigner | null = null;
     private _apiEnv: API_ENV = DEFAULT_API_ENV;
     private _customUrl: string | null = null;
 
@@ -185,7 +186,7 @@ export default class ApiProvider {
         };
     }
 
-    public getSignerInstance(keypair: Keypair, force?: boolean): RawSigner {
+    public getSignerInstance(keypair: Keypair, force?: boolean): WalletSigner {
         if (!this._apiFullNodeClient) {
             this.setNewSuiClient(
                 this._apiEnv,
@@ -195,7 +196,7 @@ export default class ApiProvider {
         }
 
         if (!this._signer || force) {
-            this._signer = new RawSigner(keypair, this.instance.client);
+            this._signer = new BaseSigner(keypair, this.instance.client);
         }
         return this._signer;
     }
