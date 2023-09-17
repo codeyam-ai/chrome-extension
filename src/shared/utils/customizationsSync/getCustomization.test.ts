@@ -1,0 +1,26 @@
+import { decryptAccountCustomization } from './accountCustomizationEncryption';
+import getCustomization from './getCustomization';
+import { explorerApiCall } from '_src/shared/utils/customizationsSync/ethosPlatformApiCall';
+
+jest.mock('_src/shared/utils/customizationsSync/ethosPlatformApiCall', () => ({
+  explorerApiCall: jest.fn()
+}));
+
+jest.mock('./accountCustomizationEncryption', () => ({
+  decryptAccountCustomization: jest.fn()
+}));
+
+describe('getCustomization', () => {
+  test('returns decrypted account customization when explorerApiCall returns status 200 and json object', async () => {
+    const jwt = 'test-jwt';
+    const privateKey = 'test-private-key';
+    const mockJson = { data: 'test-data' };
+    const mockDecryptedAccountCustomization = { accountInfo: 'test-account-info' };
+    (explorerApiCall as jest.Mock).mockResolvedValue({ json: mockJson, status: 200 });
+    (decryptAccountCustomization as jest.Mock).mockReturnValue(mockDecryptedAccountCustomization);
+    const result = await getCustomization(jwt, privateKey);
+    expect(result).toEqual(mockDecryptedAccountCustomization);
+    expect(explorerApiCall).toHaveBeenCalledWith('v1/user/profile', 'GET', jwt);
+    expect(decryptAccountCustomization).toHaveBeenCalledWith(mockJson.data, privateKey);
+  });
+});
