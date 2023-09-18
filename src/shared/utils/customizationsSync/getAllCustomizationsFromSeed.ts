@@ -32,10 +32,10 @@ export const getAllCustomizationsFromSeed = async (
             .export().privateKey;
 
         const accountCustomization = await getCustomization(jwt, privateKey);
-        // console.log(
-        //     'accountCustomization from server :>> ',
-        //     accountCustomization
-        // );
+        console.log(
+            'accountCustomization from server :>> ',
+            accountCustomization
+        );
 
         if (!accountCustomization) {
             break;
