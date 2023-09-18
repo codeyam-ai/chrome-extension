@@ -64,5 +64,6 @@ describe('deleteAllCustomizationsFromSeed', () => {
         expect((saveCustomization as jest.Mock).mock.calls.length).toBe(2);
         expect(getJwtWithSigner).toHaveBeenCalledTimes(2);
         expect(saveCustomization).toHaveBeenCalledTimes(2);
+        expect(saveCustomization).toHaveBeenCalledWith('jwt-string', 'deleted');
     });
 });
