@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import QrCodeSection from './QrCodeSection';
 import Button from '../../../../../../shared/buttons/Button';
 import PasswordVerificationForm from '../PasswordVerificationForm';
-import { useDependencies } from '_src/shared/utils/dependenciesContext';
 import { secureApiCall } from '_src/shared/utils/simpleApiCall';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { getImportedMnemonic } from '_src/ui/app/redux/slices/account';
@@ -17,7 +15,6 @@ export default function ViewSeedPage() {
     const dispatch = useAppDispatch();
     const [hasConfirmed, setHasConfirmed] = useState(false);
     const [showSeed, setShowSeed] = useState(false);
-    const { featureFlags } = useDependencies();
     const activeAccountIndex = useAppSelector(
         ({ account }) => account.activeAccountIndex
     );
@@ -94,11 +91,13 @@ export default function ViewSeedPage() {
 
     if (showSeed) {
         return (
-            <div className="p-6 flex flex-col gap-6">
-                <Header className="text-left">Your Recovery Phrase</Header>
-                <RecoveryPhraseDisplay
-                    mnemonic={hostedSeed ?? mnemonic ?? importedSeed ?? ''}
-                />
+            <div className="flex flex-col justify-between h-full pt-6 px-6">
+                <div className="flex flex-col gap-6">
+                    <Header className="text-left">Your Recovery Phrase</Header>
+                    <RecoveryPhraseDisplay
+                        mnemonic={hostedSeed ?? mnemonic ?? importedSeed ?? ''}
+                    />
+                </div>
                 <Button to="/" buttonStyle="secondary" isInline>
                     Done
                 </Button>
