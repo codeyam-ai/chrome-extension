@@ -4,8 +4,7 @@ import { thunkExtras } from '_redux/store/thunk-extras';
 import { getSigner } from '_src/ui/app/helpers/getSigner';
 
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
-import type { SuiSignMessageOutput } from '@mysten/wallet-standard';
+import type { SignedMessage } from '_src/shared/cryptography/WalletSigner';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 const signPersonalMessage = async (
@@ -24,8 +23,7 @@ const signPersonalMessage = async (
     }
 
     let txResult:
-        | SuiTransactionBlockResponse
-        | SuiSignMessageOutput
+        | SignedMessage
         | undefined = undefined;
     let txResultError: string | undefined;
 

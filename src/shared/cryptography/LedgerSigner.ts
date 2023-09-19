@@ -1,8 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { type SerializedSignature, type SignatureScheme } from '@mysten/sui.js';
-import { toSerializedSignature } from '@mysten/sui.js/cryptography';
+import { type SignatureScheme, type SerializedSignature, toSerializedSignature } from '@mysten/sui.js/cryptography';
 import { Ed25519PublicKey } from '@mysten/sui.js/keypairs/ed25519';
 
 import { WalletSigner } from './WalletSigner';
