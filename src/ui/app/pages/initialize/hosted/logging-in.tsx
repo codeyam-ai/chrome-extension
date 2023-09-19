@@ -15,6 +15,9 @@ import {
 } from '_src/ui/app/redux/slices/account';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
+import { AccountInfo } from '_src/ui/app/KeypairVault';
+import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
+import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
 
 const LoggingInPage = () => {
     const dispatch = useAppDispatch();
@@ -25,6 +28,8 @@ const LoggingInPage = () => {
 
     useEffect(() => {
         const setAccessToken = async () => {
+            console.log('in setAccessToken');
+
             let accessToken = (await getSession('accessToken')) as string;
             if (!accessToken) {
                 setTimeout(() => {
@@ -40,6 +45,26 @@ const LoggingInPage = () => {
             Authentication.set(accessToken);
 
             let accountInfos = await Authentication.getAccountInfos();
+            console.log('accountInfos :>> ', accountInfos);
+
+            const isMissingProperties = accountInfos.some(
+                (accInfo) =>
+                    !accInfo.color || !accInfo.emoji || !accInfo.nickname
+            );
+
+            if (isMissingProperties) {
+                accountInfos = accountInfos.map((accInfo, index) => {
+                    return {
+                        ...accInfo,
+                        color: accInfo.color ?? getNextWalletColor(index),
+                        emoji: accInfo.emoji ?? getNextEmoji(index),
+                        nickname:
+                            accInfo.nickname ?? accInfo.index === 0
+                                ? 'Primary Wallet'
+                                : `Wallet ${index + 1}`,
+                    };
+                });
+            }
 
             if (!accountInfos || accountInfos.length === 0) {
                 const newAccountInfo = await Authentication.createAccount(0);
@@ -47,6 +72,8 @@ const LoggingInPage = () => {
                     accountInfos = [newAccountInfo];
                 }
             }
+
+            console.log('accountInfos after :>> ', accountInfos);
 
             if (accountInfos && accountInfos.length > 0) {
                 await dispatch(saveAccountInfos(accountInfos));

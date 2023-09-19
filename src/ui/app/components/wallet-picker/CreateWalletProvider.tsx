@@ -157,6 +157,7 @@ const CreateWalletProvider = ({
                     : accountInfos;
 
                 draftAccountInfos.current = newAccountInfos;
+                await Authentication.updateAccountInfos(newAccountInfos);
                 _saveAccountInfos();
             } else {
                 newAccountInfos = [
