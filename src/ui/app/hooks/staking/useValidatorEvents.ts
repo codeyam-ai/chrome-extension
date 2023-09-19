@@ -1,4 +1,3 @@
-import { VALIDATORS_EVENTS_QUERY } from '@mysten/sui.js';
 import { type EventId, type SuiEvent } from '@mysten/sui.js/client';
 import { useQuery } from '@tanstack/react-query';
 
@@ -11,6 +10,7 @@ type GetValidatorsEvent = {
 
 // NOTE: This tracks a mysten backend query limit - beware, and keep in sync.
 const QUERY_MAX_RESULT_LIMIT = 50;
+const VALIDATORS_EVENTS_QUERY = "0x3::validator_set::ValidatorEpochInfoEventV2"
 
 export function useValidatorsEvents({ limit, order }: GetValidatorsEvent) {
     const client = api.instance.client;

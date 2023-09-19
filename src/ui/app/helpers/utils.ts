@@ -1,6 +1,7 @@
 import type {
     ExecutionStatus,
     MoveValue,
+    MoveStruct,
     OwnedObjectRef,
     SuiMoveObject,
     SuiObjectData,
@@ -43,10 +44,15 @@ const utils = {
         resp: SuiObjectResponse | SuiMoveObject | SuiObjectData,
     ): {[key: string]: MoveValue} | undefined => {
         if ('fields' in resp) {
-            if (resp.fields && "fields" in resp.fields && utils.isStringDictionary(resp.fields.fields)) {
-                return resp.fields.fields
-            } else if (utils.isStringDictionary(resp.fields)) {
-                return resp.fields
+            if (resp.fields) {
+                const fields = resp.fields;
+                if (utils.isStringDictionary(fields)) {
+                    return fields;
+                } else if (utils.isMoveStruct(fields) && 'fields' in fields) {
+                    if (utils.isStringDictionary(fields.fields)) {
+                        return fields.fields;
+                    }
+                }
             }
         }
     },
@@ -63,6 +69,13 @@ const utils = {
         }
       
         return true;
+    },
+
+    isMoveStruct(value: unknown): value is MoveStruct {
+        return Array.isArray(value) || 
+               (typeof value === 'object' && 
+                value !== null && 
+                ('fields' in value || ("type" in value && typeof value.type === 'string')));
     },
 
     isSuiObjectResponse(

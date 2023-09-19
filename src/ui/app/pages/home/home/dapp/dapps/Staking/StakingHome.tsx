@@ -14,7 +14,8 @@ const StakingHome: React.FC = () => {
 
         return delegatedStakes.reduce(
             (acc, curr) =>
-                curr.stakes.reduce((total, { estimatedReward }) => {
+                curr.stakes.reduce((total, stake) => {
+                    const estimatedReward = "estimatedReward" in stake ? stake.estimatedReward : 0;
                     return total + BigInt(estimatedReward ?? 0);
                 }, acc),
 

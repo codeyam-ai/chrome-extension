@@ -1,12 +1,10 @@
 import { authApiCall } from './ethosPlatformApiCall';
 import signMessageOnUsersBehalf from '_src/shared/utils/customizationsSync/signMessageOnUsersBehalf';
 
-import type { BaseSigner } from '_src/shared/cryptography/BaseSigner';
-import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
+import type { WalletSigner } from '_src/shared/cryptography/WalletSigner';
 
 async function getJwtWithSigner(
-    signer: LedgerSigner | EthosSigner | BaseSigner | null
+    signer: WalletSigner | null
 ): Promise<string> {
     const dataToSign = {
         tenantId: process.env.TENANT_ID || '',

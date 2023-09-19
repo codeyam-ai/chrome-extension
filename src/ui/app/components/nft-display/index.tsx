@@ -20,8 +20,8 @@ function NFTDisplayCard({ nftobj, showlabel, wideview }: NFTsProps) {
         <>
             {showlabel && nftFields?.name ? (
                 <div>
-                    <Body isSemibold>{nftFields.name}</Body>
-                    <Body isTextColorMedium>{nftFields.description}</Body>
+                    <Body isSemibold>{nftFields?.name?.toString()}</Body>
+                    <Body isTextColorMedium>{nftFields?.description?.toString()}</Body>
                 </div>
             ) : null}
         </>
@@ -29,9 +29,9 @@ function NFTDisplayCard({ nftobj, showlabel, wideview }: NFTsProps) {
 
     const wideviewSection = (
         <div>
-            <Body isSemibold>{nftFields?.name}</Body>
+            <Body isSemibold>{nftFields?.name?.toString()}</Body>
             <Body isTextColorMedium>
-                {truncateString(nftFields?.description, 30)}
+                {truncateString(nftFields?.description?.toString() ?? "", 30)}
             </Body>
         </div>
     );

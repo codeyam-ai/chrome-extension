@@ -30,12 +30,11 @@ import { useAppSelector, useInitializedGuard } from '_hooks';
 import { txRequestsSelectors } from '_redux/slices/transaction-requests';
 import { useDependencies } from '_shared/utils/dependenciesContext';
 
+
 import type { AnalyzeChangesResult } from './lib/analyzeChanges';
-import type { RawSigner } from '@mysten/sui.js';
 import type { SuiMoveNormalizedType } from '@mysten/sui.js/client';
 import type { RootState } from '_redux/RootReducer';
-import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
+import type { WalletSigner } from '_src/shared/cryptography/WalletSigner';
 import type { ReactNode } from 'react';
 
 export type Permission = {
@@ -70,7 +69,7 @@ export function DappTxApprovalPage() {
     }, [selectedApiEnv]);
 
     const [signer, setSigner] = useState<
-        RawSigner | EthosSigner | LedgerSigner | undefined
+        WalletSigner | undefined
     >();
     const {
         activeAccountIndex,
