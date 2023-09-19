@@ -1,7 +1,6 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { getObjectId, getObjectVersion } from '@mysten/sui.js/src/types';
 import {
     createAsyncThunk,
     createEntityAdapter,
@@ -19,6 +18,7 @@ import type {
 } from '@mysten/sui.js/client';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
+import utils from '_src/ui/app/helpers/utils';
 
 export interface ExtendedSuiObjectData extends SuiObjectData {
     index: number;
@@ -83,13 +83,13 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
 
             const objectIDs = allObjectRefs.data
                 .filter((anObj) => {
-                    const fetchedVersion = getObjectVersion(anObj);
+                    const fetchedVersion = utils.getObjectVersion(anObj);
                     const storedObj = suiObjectsAdapterSelectors.selectById(
                         state,
-                        getObjectId(anObj)
+                        utils.getObjectId(anObj)
                     );
                     const storedVersion = storedObj
-                        ? getObjectVersion(storedObj)
+                        ? utils.getObjectVersion(storedObj)
                         : null;
                     const objOutdated = fetchedVersion !== storedVersion;
                     if (!objOutdated && storedObj) {

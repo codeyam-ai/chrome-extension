@@ -1,25 +1,25 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { getObjectId, getObjectFields } from '@mysten/sui.js';
 import { useEffect, useState } from 'react';
 
 import useFileExtentionType from './useFileExtentionType';
 import useMediaUrl from './useMediaUrl';
+import utils from '../helpers/utils';
 import { NFT } from '_redux/slices/sui-objects/NFT';
 import { api } from '_redux/store/thunk-extras';
 
 import type { SuiObjectData } from '@mysten/sui.js/client';
 
 export default function useNFTBasicData(nftObj: SuiObjectData) {
-    const nftObjectID = getObjectId(nftObj);
+    const nftObjectID = nftObj.objectId
 
     const defaultFilePath = useMediaUrl(nftObj);
     const [filePath, setFilePath] = useState(defaultFilePath);
     const fileExtentionType = useFileExtentionType(filePath || '');
 
     const defaultNftFields =
-        nftObj.type === 'moveObject' ? getObjectFields(nftObj) : null;
+        nftObj.type === 'moveObject' ? utils.getObjectFields(nftObj) : null;
     const [nftFields, setNftFields] = useState(defaultNftFields);
 
     useEffect(() => {

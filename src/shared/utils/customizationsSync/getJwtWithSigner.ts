@@ -1,12 +1,12 @@
 import { authApiCall } from './ethosPlatformApiCall';
 import signMessageOnUsersBehalf from '_src/shared/utils/customizationsSync/signMessageOnUsersBehalf';
 
-import type { RawSigner } from '@mysten/sui.js';
+import type { BaseSigner } from '_src/shared/cryptography/BaseSigner';
 import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
 
 async function getJwtWithSigner(
-    signer: LedgerSigner | EthosSigner | RawSigner | null
+    signer: LedgerSigner | EthosSigner | BaseSigner | null
 ): Promise<string> {
     const dataToSign = {
         tenantId: process.env.TENANT_ID || '',
