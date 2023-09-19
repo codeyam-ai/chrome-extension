@@ -90,14 +90,14 @@ function NFTdetailsContent({
                     </div>
                     <div className="p-6">
                         <Title className={'text-left mb-2'}>
-                            {nftFields?.name}
+                            {nftFields?.name?.toString()}
                         </Title>
                         <BodyLarge
                             className={
                                 'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal mb-6'
                             }
                         >
-                            {nftFields?.description}
+                            {nftFields?.description?.toString()}
                         </BodyLarge>
 
                         <div className="flex gap-6 items-center justify-center">

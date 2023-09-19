@@ -136,6 +136,7 @@ const utils = {
         if ('objectId' in data) {
             return data.objectId;
         }
+
         return (
             utils.getObjectReference(data)?.objectId ?? utils.getObjectNotExistsResponse(data as SuiObjectResponse) as string
         );

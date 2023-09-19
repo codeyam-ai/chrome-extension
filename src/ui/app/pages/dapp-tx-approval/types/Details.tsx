@@ -16,10 +16,8 @@ import type {
     AnalyzeChangesResult,
     GasCostSummary,
 } from '../lib/analyzeChanges';
-import type { RawSigner } from '@mysten/sui.js';
 import type { SuiObjectChange } from '@mysten/sui.js/client';
-import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
+import type { WalletSigner } from '_src/shared/cryptography/WalletSigner';
 import type { ReactNode } from 'react';
 
 const Row = ({
@@ -275,7 +273,7 @@ const Details = ({
     signer,
 }: {
     analysis: AnalyzeChangesResult;
-    signer: EthosSigner | LedgerSigner | RawSigner;
+    signer: WalletSigner;
 }) => {
     const { resolvedTheme } = useTheme();
     const [details, setDetails] = useState(false);

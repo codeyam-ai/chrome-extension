@@ -3,17 +3,15 @@ import BigNumber from 'bignumber.js';
 
 import addressOwner from '_src/ui/app/helpers/transactions/addressOwner';
 
-import type { RawSigner } from '@mysten/sui.js';
 import type {
     DryRunTransactionBlockResponse,
     SuiObjectChange,
 } from '@mysten/sui.js/client';
 import type { TransactionBlock } from '@mysten/sui.js/transactions';
-import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
+import type { WalletSigner } from '_src/shared/cryptography/WalletSigner';
 
 export type AnalyzeChangesArgs = {
-    signer: RawSigner | EthosSigner | LedgerSigner;
+    signer: WalletSigner;
     transactionBlock: string | TransactionBlock | Uint8Array;
 };
 
@@ -243,8 +241,9 @@ const analyzeChanges = async ({
             .minus(number || 0)
             .dividedBy(Math.pow(10, 9));
 
-        const results = await signer.devInspectTransactionBlock({
+        const results = await signer.client.devInspectTransactionBlock({
             transactionBlock,
+            sender: address,
         });
 
         const totalGas = new BigNumber(

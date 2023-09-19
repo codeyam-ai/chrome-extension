@@ -17,13 +17,11 @@ import { useFormatCoin } from '_src/ui/app/hooks';
 import type { Detail } from '../DetailElement';
 import type { Section } from '../SectionElement';
 import type { SmallDetail } from '../SmallValue';
-import type { RawSigner } from '@mysten/sui.js';
 import type {
     SuiObjectChange,
     TransactionEffects,
 } from '@mysten/sui.js/client';
-import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
+import type { WalletSigner } from '_src/shared/cryptography/WalletSigner';
 import type { ApprovalRequest } from '_src/shared/messaging/messages/payloads/transactions';
 
 export enum TxApprovalTab {
@@ -37,7 +35,7 @@ export type TabSections = {
 };
 
 export type BaseProps = {
-    signer: RawSigner | EthosSigner | LedgerSigner;
+    signer: WalletSigner;
     txID?: string;
     txRequest: ApprovalRequest | null;
     transactionBlock: TransactionBlock | null;
