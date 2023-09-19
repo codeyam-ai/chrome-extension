@@ -41,14 +41,15 @@ function _google({ nonce }: { nonce: string }) {
 }
 
 function _devTest({ nonce }: { nonce: string }) {
+    // https://docs.sui.io/build/zk_login#configure-a-developer-account-with-openid-provider
+    const MYSTEN_DEV_USE_ONLY_CLIENT_ID =
+        '25769832374-famecqrhe2gkebt5fvqms2263046lj96.apps.googleusercontent.com';
     const params = new URLSearchParams({
         // When using the provided test client ID + redirect site, the redirect_uri needs to be provided in the state.
         state: new URLSearchParams({
             redirect_uri: _getRedirectUrl(),
         }).toString(),
-        // Test Client ID for devnet / testnet:
-        client_id:
-            '25769832374-famecqrhe2gkebt5fvqms2263046lj96.apps.googleusercontent.com',
+        client_id: MYSTEN_DEV_USE_ONLY_CLIENT_ID,
         redirect_uri: 'https://zklogin-dev-redirect.vercel.app/api/auth',
         response_type: 'id_token',
         scope: 'openid',

@@ -32,36 +32,30 @@ export const Zk = {
         const currentEpoch = parseInt(latestSuiSystemState.epoch);
         const lifetime = 2;
         const maxEpoch = currentEpoch + lifetime;
-        console.log('maxEpoch', maxEpoch);
 
         const ephemeralKeyPair = new Ed25519Keypair();
         const epk = ephemeralKeyPair.getPublicKey();
-        const epkB64 = epk.toBase64();
-        const epkBuffer = Buffer.from(epkB64, 'base64');
-        const epkHex = epkBuffer.toString('hex');
+
+        const epkBytes = epk.toRawBytes();
+        const epkHex = Buffer.from(epkBytes).toString('hex');
         const epkBigInt = BigInt(`0x${epkHex}`);
-        console.log('epkBigInt', epkBigInt);
 
         const randomness = generateRandomness();
-        console.log('randomness', randomness);
 
         const nonce = generateNonce(
             ephemeralKeyPair.getPublicKey(),
             maxEpoch,
             randomness
         );
-        console.log('nonce', nonce);
 
         const { jwt } = await getJwtViaOAuthFlow({ nonce });
-        console.log('jwt', jwt);
         if (!jwt) return null;
 
         const { salt } = await getSalt({ jwt });
-        console.log('salt', salt);
+        console.log('salt', salt)
         if (!salt) return null;
 
         const address = jwtToAddress(jwt, salt);
-        console.log('address', address);
 
         const { proof } = await getProof({
             jwt,
@@ -128,20 +122,20 @@ async function getSalt({
 namespace ProofService {
     export interface Payload {
         jwt: string;
-        eph_public_key: bigint;
-        max_epoch: number;
-        jwt_randomness: bigint;
+        extendedEphemeralPublicKey: bigint;
+        maxEpoch: number;
+        jwtRandomness: bigint;
         salt: bigint;
-        key_claim_name: 'sub';
+        keyClaimName: 'sub';
     }
 
     export interface PayloadJson {
         jwt: string;
-        eph_public_key: string;
-        max_epoch: number;
-        jwt_randomness: string;
+        extendedEphemeralPublicKey: string;
+        maxEpoch: number;
+        jwtRandomness: string;
         salt: string;
-        key_claim_name: 'sub';
+        keyClaimName: 'sub';
     }
 }
 
@@ -176,21 +170,21 @@ async function getProof({
 }): Promise<{ proof: Proof }> {
     const payload: ProofService.Payload = {
         jwt,
-        eph_public_key: ephemeralPublicKey,
-        max_epoch: maxEpoch,
-        jwt_randomness: randomness,
+        extendedEphemeralPublicKey: ephemeralPublicKey,
+        maxEpoch: maxEpoch,
+        jwtRandomness: randomness,
         salt,
-        key_claim_name: 'sub',
+        keyClaimName: 'sub',
     };
 
     const payloadJson: ProofService.PayloadJson = {
         ...payload,
-        eph_public_key: payload.eph_public_key.toString(),
-        jwt_randomness: payload.jwt_randomness.toString(),
+        extendedEphemeralPublicKey: payload.extendedEphemeralPublicKey.toString(),
+        jwtRandomness: payload.jwtRandomness.toString(),
         salt: payload.salt.toString(),
     };
 
-    const MYSTEN_PROVING_SERVICE_URL = 'http://185.209.177.123:8000/test/zkp';
+    const MYSTEN_PROVING_SERVICE_URL = 'http://prover-devnet.mystenlabs.com:8080/zkp';
 
     const response = await fetch(MYSTEN_PROVING_SERVICE_URL, {
         method: 'POST',
