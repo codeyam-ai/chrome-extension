@@ -99,11 +99,6 @@ export default function ViewSeedPage() {
                 <RecoveryPhraseDisplay
                     mnemonic={hostedSeed ?? mnemonic ?? importedSeed ?? ''}
                 />
-                {featureFlags.showMobile && (
-                    <QrCodeSection
-                        mnemonic={hostedSeed ?? mnemonic ?? importedSeed ?? ''}
-                    />
-                )}
                 <Button to="/" buttonStyle="secondary" isInline>
                     Done
                 </Button>
