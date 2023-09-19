@@ -31,17 +31,17 @@ const TicketItem = ({ ticket }: TicketItemProps) => {
                     <div className="flex justify-between items-center">
                         {ticketFields?.name && (
                             <div className="text-base">
-                                {ticketFields?.name}
+                                {ticketFields?.name?.toString()}
                             </div>
                         )}
                         {ticketFields?.count && (
                             <div className="text-xs text-slate-600">
-                                {ticketFields?.count} remaining
+                                {ticketFields?.count?.toString()} remaining
                             </div>
                         )}
                     </div>
                     {ticketFields?.description && (
-                        <div>{ticketFields?.description}</div>
+                        <div>{ticketFields?.description?.toString()}</div>
                     )}
                 </div>
             </div>

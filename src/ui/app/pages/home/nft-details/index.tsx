@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
-import { getObjectId, hasPublicTransfer } from '@mysten/sui.js/src/types';
 import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -101,17 +100,15 @@ function NFTdetailsContent({
                         </BodyLarge>
 
                         <div className="flex gap-6 items-center justify-center">
-                            {hasPublicTransfer(nft) && (
-                                <Button
-                                    buttonStyle="primary"
-                                    wrapperClassName="flex-1 w-full"
-                                    className="flex-1"
-                                    onClick={onClick}
-                                    removeContainerPadding
-                                >
-                                    Send
-                                </Button>
-                            )}
+                            <Button
+                                buttonStyle="primary"
+                                wrapperClassName="flex-1 w-full"
+                                className="flex-1"
+                                onClick={onClick}
+                                removeContainerPadding
+                            >
+                                Send
+                            </Button>
                             {filePath && (
                                 <Button
                                     buttonStyle="secondary"
@@ -262,7 +259,7 @@ function NFTDetailsPage() {
 
     const activeNFT = useMemo(() => {
         const selectedNFT = nftCollections.filter(
-            (nftItem) => getObjectId(nftItem) === objectId
+            (nftItem) => nftItem.objectId === objectId
         )[0];
         setSelectedNFT(selectedNFT);
         return selectedNFT;
