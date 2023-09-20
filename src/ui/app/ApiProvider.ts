@@ -7,7 +7,7 @@ import { getFaucetHost } from '@mysten/sui.js/faucet';
 import { BaseSigner } from '_src/shared/cryptography/BaseSigner';
 import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 
-import type { Keypair } from '@mysten/sui.js/dist/cjs/cryptography';
+import type { Ed25519Keypair } from '@mysten/sui.js/dist/cjs/keypairs/ed25519';
 import type { QueryClient } from '@tanstack/react-query';
 import type { WalletSigner } from '_src/shared/cryptography/WalletSigner';
 
@@ -186,7 +186,7 @@ export default class ApiProvider {
         };
     }
 
-    public getSignerInstance(keypair: Keypair, force?: boolean): WalletSigner {
+    public getSignerInstance(keypair: Ed25519Keypair, force?: boolean): WalletSigner {
         if (!this._apiFullNodeClient) {
             this.setNewSuiClient(
                 this._apiEnv,

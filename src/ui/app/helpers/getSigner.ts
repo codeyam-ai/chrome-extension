@@ -1,5 +1,4 @@
 import { fromHEX } from '@mysten/bcs';
-import { type Keypair } from '@mysten/sui.js/cryptography';
 import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 
 import { derivationPathForLedger } from '../pages/home/home/dapp/dapps/Ledger/hooks/useDeriveLedgerAccounts';
@@ -20,7 +19,7 @@ export const getSigner = async (
     connectToLedger: () => Promise<SuiLedgerClient>,
     forceCreateNewSigner?: boolean
 ): Promise<WalletSigner | null> => {
-    let keypair: Keypair;
+    let keypair: Ed25519Keypair;
     let signer;
 
     const activeAccount = accountInfos.find(
