@@ -77,7 +77,7 @@ const NftDisplay = ({ nft }: { nft: SuiObject }) => {
                 src={filePath}
                 alt={fileExtentionType?.name || 'NFT'}
             />
-            <div className="text-sm">{nftFields?.title}</div>
+            <div className="text-sm">{nftFields?.title?.toString()}</div>
         </div>
     );
 };

@@ -1,7 +1,6 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { getTransactionDigest } from '@mysten/sui.js/src/types/transactions';
 import {
     // createAsyncThunk,
     createEntityAdapter,
@@ -139,7 +138,7 @@ type TransactionBlockResult = SuiTransactionBlockResponse;
 // );
 
 const txAdapter = createEntityAdapter<TransactionBlockResult>({
-    selectId: (tx) => getTransactionDigest(tx),
+    selectId: (tx) => tx.digest,
 });
 
 export const txSelectors = txAdapter.getSelectors(
