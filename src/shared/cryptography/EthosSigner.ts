@@ -21,7 +21,10 @@ export class EthosSigner extends WalletSigner {
         return this.address;
     }
 
-    async signData(data: Uint8Array, clientIdentifier?: string): Promise<string> {
+    async signData(
+        data: Uint8Array,
+        clientIdentifier?: string
+    ): Promise<string> {
         const { json, status } = await simpleApiCall(
             'transactions/sign',
             'POST',

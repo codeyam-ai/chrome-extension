@@ -80,7 +80,9 @@ const StakeDetail: React.FC = () => {
     );
 
     const [formattedRewards, rewardSymbol] = useFormatCoin(
-        stake && "estimatedReward" in stake ? stake?.estimatedReward : undefined,
+        stake && 'estimatedReward' in stake
+            ? stake?.estimatedReward
+            : undefined,
         SUI_TYPE_ARG,
         9
     );

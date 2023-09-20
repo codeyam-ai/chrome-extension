@@ -48,7 +48,9 @@ const TIcketDetailsContent = ({ ticket }: { ticket: SuiObjectData }) => {
                 </ExternalLink>
             )}
             <div>
-                <Title className={'text-left mb-2'}>{ticketFields?.name?.toString()}</Title>
+                <Title className={'text-left mb-2'}>
+                    {ticketFields?.name?.toString()}
+                </Title>
                 <BodyLarge
                     className={
                         'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal mb-6'

@@ -39,7 +39,10 @@ import type {
 } from '_payloads/transactions/ApprovalRequest';
 import type { TransactionRequestResponse } from '_payloads/transactions/ui/TransactionRequestResponse';
 import type { ContentScriptConnection } from '_src/background/connections/ContentScriptConnection';
-import type { SignedMessage, SignedTransaction } from '_src/shared/cryptography/WalletSigner';
+import type {
+    SignedMessage,
+    SignedTransaction,
+} from '_src/shared/cryptography/WalletSigner';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { SeedInfo } from '_src/ui/app/KeypairVault';
 
@@ -87,7 +90,9 @@ class Transactions {
                   sign: SuiSignTransactionSerialized;
               },
         connection: ContentScriptConnection
-    ): Promise<SuiTransactionBlockResponse | SignedTransaction | SignedMessage> {
+    ): Promise<
+        SuiTransactionBlockResponse | SignedTransaction | SignedMessage
+    > {
         if (tx) {
             const transactionBlock = TransactionBlock.from(tx.data);
             for (const command of transactionBlock.blockData.transactions) {
@@ -346,14 +351,14 @@ class Transactions {
                 const secretKey = Uint8Array.from(
                     activeSeed.seed.split(',').map((n) => parseInt(n))
                 );
-                const keypair = Ed25519Keypair.fromSecretKey(secretKey);    
-                signer = new BaseSigner(keypair, client);           
+                const keypair = Ed25519Keypair.fromSecretKey(secretKey);
+                signer = new BaseSigner(keypair, client);
             }
 
             const txResponse = await signer.signAndExecuteTransactionBlock({
                 transactionBlock,
                 options,
-                requestType
+                requestType,
             });
 
             return txResponse;

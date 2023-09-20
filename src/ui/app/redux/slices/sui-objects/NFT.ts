@@ -298,8 +298,8 @@ export const parseDomains = (domains: SuiObjectResponse[]) => {
     );
 
     if (urlDomain && utils.getObjectFields(urlDomain)) {
-        const url = (utils.getObjectFields(urlDomain) as UrlDomainRpcResponse).value
-            .fields.url;
+        const url = (utils.getObjectFields(urlDomain) as UrlDomainRpcResponse)
+            .value.fields.url;
         response.url = ipfs(url);
     }
     if (displayDomain && utils.getObjectFields(displayDomain)) {

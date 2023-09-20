@@ -110,8 +110,7 @@ const SimpleAssetTransfer = ({
     onApprove,
     onCancel,
 }: {
-    signer: WalletSigner
-    ;
+    signer: WalletSigner;
     assetTransfer: SuiObjectChange;
     analysis: AnalyzeChangesResult;
     onApprove: () => void;

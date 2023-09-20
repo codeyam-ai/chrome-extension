@@ -7,7 +7,6 @@ import GenericTransactionCard from './GenericTranasctionCard';
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 import type { WalletSigner } from '_src/shared/cryptography/WalletSigner';
 
-
 export type StepInformation = {
     analysis: AnalyzeChangesResult;
 };

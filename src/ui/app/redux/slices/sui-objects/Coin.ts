@@ -5,7 +5,12 @@ import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
 import utils from '_src/ui/app/helpers/utils';
 
-import type { MoveValue, SuiClient, SuiMoveObject, SuiObjectData } from '@mysten/sui.js/client';
+import type {
+    MoveValue,
+    SuiClient,
+    SuiMoveObject,
+    SuiObjectData,
+} from '@mysten/sui.js/client';
 
 const COIN_TYPE = '0x2::coin::Coin';
 const COIN_TYPE_ARG_REGEX = /^0x2::coin::Coin<(.+)>$/;
@@ -58,20 +63,20 @@ export class Coin {
     }
 
     public static getID(obj: SuiMoveObject): string {
-        if ("id" in obj.fields) {
+        if ('id' in obj.fields) {
             return obj.fields.id as string;
         }
 
         if (
-            "fields" in obj.fields && 
-            obj.fields.fields && 
-            typeof obj.fields.fields === "object" && 
-            "id" in obj.fields.fields
+            'fields' in obj.fields &&
+            obj.fields.fields &&
+            typeof obj.fields.fields === 'object' &&
+            'id' in obj.fields.fields
         ) {
-            return obj?.fields?.fields?.id?.toString() ?? "";
+            return obj?.fields?.fields?.id?.toString() ?? '';
         }
 
-        return "";
+        return '';
     }
 
     public static getCoinTypeFromArg(coinTypeArg: string) {
@@ -201,9 +206,13 @@ export class Coin {
             },
         });
         const data = contents.data as SuiObjectData;
-        const dataFields = ((data.content as SuiMoveObject).fields as { [key: string]: MoveValue })
+        const dataFields = (data.content as SuiMoveObject).fields as {
+            [key: string]: MoveValue;
+        };
         const validators = dataFields.validators;
-        const fields = ((validators as SuiMoveObject).fields as { [key: string]: MoveValue });
+        const fields = (validators as SuiMoveObject).fields as {
+            [key: string]: MoveValue;
+        };
         const active_validators = fields.active_validators;
         return active_validators as Array<SuiMoveObject>;
     }

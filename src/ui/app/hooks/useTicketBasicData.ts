@@ -14,7 +14,9 @@ export default function useTicketBasicData(ticketObj: SuiObjectData) {
     const filePath = coverFilePath || urlFilePath;
 
     const ticketFields =
-        ticketObj.type === 'moveObject' ? utils.getObjectFields(ticketObj) : null;
+        ticketObj.type === 'moveObject'
+            ? utils.getObjectFields(ticketObj)
+            : null;
     const fileExtentionType = useFileExtentionType(filePath || '');
     return {
         ticketObjectID,

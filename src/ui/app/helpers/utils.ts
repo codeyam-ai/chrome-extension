@@ -41,8 +41,8 @@ const utils = {
     },
 
     getObjectFields: (
-        resp: SuiObjectResponse | SuiMoveObject | SuiObjectData,
-    ): {[key: string]: MoveValue} | undefined => {
+        resp: SuiObjectResponse | SuiMoveObject | SuiObjectData
+    ): { [key: string]: MoveValue } | undefined => {
         if ('fields' in resp) {
             if (resp.fields) {
                 const fields = resp.fields;
@@ -61,31 +61,34 @@ const utils = {
         if (typeof obj !== 'object' || obj === null) {
             return false;
         }
-      
+
         for (const key in obj) {
             if (typeof key !== 'string') {
                 return false;
             }
         }
-      
+
         return true;
     },
 
     isMoveStruct(value: unknown): value is MoveStruct {
-        return Array.isArray(value) || 
-               (typeof value === 'object' && 
-                value !== null && 
-                ('fields' in value || ("type" in value && typeof value.type === 'string')));
+        return (
+            Array.isArray(value) ||
+            (typeof value === 'object' &&
+                value !== null &&
+                ('fields' in value ||
+                    ('type' in value && typeof value.type === 'string')))
+        );
     },
 
     isSuiObjectResponse(
-        resp: SuiObjectResponse | SuiObjectData,
+        resp: SuiObjectResponse | SuiObjectData
     ): resp is SuiObjectResponse {
         return (resp as SuiObjectResponse).data !== undefined;
     },
 
     getObjectReference(
-        resp: SuiObjectResponse | OwnedObjectRef,
+        resp: SuiObjectResponse | OwnedObjectRef
     ): SuiObjectRef | undefined {
         if ('reference' in resp) {
             return resp.reference;
@@ -101,24 +104,25 @@ const utils = {
         return utils.getObjectDeletedResponse(resp);
     },
 
-    getObjectDeletedResponse(resp: SuiObjectResponse): SuiObjectRef | undefined {
+    getObjectDeletedResponse(
+        resp: SuiObjectResponse
+    ): SuiObjectRef | undefined {
         if (
             resp.error &&
             'object_id' in resp.error &&
             'version' in resp.error &&
             'digest' in resp.error
         ) {
-
             return {
                 objectId: resp.error.object_id,
                 version: resp.error.version,
                 digest: resp.error.digest,
             } as SuiObjectRef;
         }
-    
+
         return undefined;
     },
-    
+
     getObjectNotExistsResponse(resp: SuiObjectResponse): string | undefined {
         if (
             resp.error &&
@@ -128,29 +132,33 @@ const utils = {
         ) {
             return resp.error.object_id as string;
         }
-    
+
         return undefined;
     },
 
-    getObjectId(data: SuiObjectResponse | SuiObjectRef | OwnedObjectRef): string {
+    getObjectId(
+        data: SuiObjectResponse | SuiObjectRef | OwnedObjectRef
+    ): string {
         if ('objectId' in data) {
             return data.objectId;
         }
 
         return (
-            utils.getObjectReference(data)?.objectId ?? utils.getObjectNotExistsResponse(data as SuiObjectResponse) as string
+            utils.getObjectReference(data)?.objectId ??
+            (utils.getObjectNotExistsResponse(
+                data as SuiObjectResponse
+            ) as string)
         );
     },
-    
+
     getObjectVersion(
-        data: SuiObjectResponse | SuiObjectRef | SuiObjectData,
+        data: SuiObjectResponse | SuiObjectRef | SuiObjectData
     ): string | number | undefined {
         if ('version' in data) {
             return data.version;
         }
         return utils.getObjectReference(data)?.version;
-    }
-      
+    },
 };
 
 export default utils;

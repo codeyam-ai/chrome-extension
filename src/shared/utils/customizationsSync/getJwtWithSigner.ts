@@ -3,9 +3,7 @@ import signMessageOnUsersBehalf from '_src/shared/utils/customizationsSync/signM
 
 import type { WalletSigner } from '_src/shared/cryptography/WalletSigner';
 
-async function getJwtWithSigner(
-    signer: WalletSigner | null
-): Promise<string> {
+async function getJwtWithSigner(signer: WalletSigner | null): Promise<string> {
     const dataToSign = {
         tenantId: process.env.TENANT_ID || '',
         timestamp: Date.now(),

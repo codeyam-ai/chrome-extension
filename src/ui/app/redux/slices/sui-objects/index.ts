@@ -10,6 +10,7 @@ import {
 import { SUI_SYSTEM_STATE_OBJECT_ID } from './Coin';
 import { NFT } from './NFT';
 import testConnection from '../../testConnection';
+import utils from '_src/ui/app/helpers/utils';
 
 import type {
     PaginatedObjectsResponse,
@@ -18,7 +19,6 @@ import type {
 } from '@mysten/sui.js/client';
 import type { RootState } from '_redux/RootReducer';
 import type { AppThunkConfig } from '_store/thunk-extras';
-import utils from '_src/ui/app/helpers/utils';
 
 export interface ExtendedSuiObjectData extends SuiObjectData {
     index: number;

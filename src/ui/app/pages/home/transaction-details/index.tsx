@@ -1,7 +1,6 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-
 import clBind from 'classnames/bind';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';

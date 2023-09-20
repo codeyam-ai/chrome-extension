@@ -12,7 +12,7 @@ import { api } from '_redux/store/thunk-extras';
 import type { SuiObjectData } from '@mysten/sui.js/client';
 
 export default function useNFTBasicData(nftObj: SuiObjectData) {
-    const nftObjectID = nftObj.objectId
+    const nftObjectID = nftObj.objectId;
 
     const defaultFilePath = useMediaUrl(nftObj);
     const [filePath, setFilePath] = useState(defaultFilePath);

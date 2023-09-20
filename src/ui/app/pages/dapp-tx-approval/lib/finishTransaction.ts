@@ -1,10 +1,12 @@
 import { thunkExtras } from '_redux/store/thunk-extras';
 
-
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type { TransactionBlock } from '@mysten/sui.js/transactions';
 import type { SuiSignAndExecuteTransactionBlockInput } from '@mysten/wallet-standard';
-import type { SignedTransaction, WalletSigner } from '_src/shared/cryptography/WalletSigner';
+import type {
+    SignedTransaction,
+    WalletSigner,
+} from '_src/shared/cryptography/WalletSigner';
 
 const finishTransaction = async (
     signer: WalletSigner,

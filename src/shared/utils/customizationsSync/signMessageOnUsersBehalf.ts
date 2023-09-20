@@ -1,7 +1,10 @@
 import { fromB64 } from '@mysten/sui.js/utils';
 
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
-import type { SignedMessage, WalletSigner } from '_src/shared/cryptography/WalletSigner';
+import type {
+    SignedMessage,
+    WalletSigner,
+} from '_src/shared/cryptography/WalletSigner';
 
 const signMessageOnUsersBehalf = async (
     signer: WalletSigner | null,

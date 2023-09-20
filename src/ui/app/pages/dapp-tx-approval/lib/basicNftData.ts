@@ -2,7 +2,6 @@ import getDisplay from '_src/ui/app/helpers/getDisplay';
 
 import type { WalletSigner } from '_src/shared/cryptography/WalletSigner';
 
-
 export type BasicNFtData = {
     name?: string;
     imageUrl?: string;

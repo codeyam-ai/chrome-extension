@@ -1,11 +1,10 @@
-import { VALIDATORS_EVENTS_QUERY } from '@mysten/sui.js';
-
 import { api } from '../../redux/store/thunk-extras';
 
 import type { EventId, SuiEvent } from '@mysten/sui.js/client';
 
 // NOTE: This copys the query limit from our Rust JSON RPC backend, this needs to be kept in sync!
 const QUERY_MAX_RESULT_LIMIT = 1000;
+const VALIDATORS_EVENTS_QUERY = '0x3::validator_set::ValidatorEpochInfoEventV2';
 
 type GetValidatorsEvent = {
     limit: number | null;

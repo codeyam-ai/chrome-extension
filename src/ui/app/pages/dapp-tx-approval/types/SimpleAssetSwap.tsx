@@ -11,7 +11,6 @@ import type {
 } from '../lib/analyzeChanges';
 import type { WalletSigner } from '_src/shared/cryptography/WalletSigner';
 
-
 export type StepInformation = {
     addition: BalanceAddition;
     reduction: BalanceAddition;

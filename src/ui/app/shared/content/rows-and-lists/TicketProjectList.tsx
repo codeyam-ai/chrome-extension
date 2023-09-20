@@ -90,7 +90,9 @@ const TicketProjectList = () => {
                 let foundValidTicket = false;
                 for (const ticket of tickets) {
                     if (ticket.type) {
-                        const fields =  utils.getObjectFields(ticket);
+                        const fields = utils.getObjectFields(ticket);
+                        if (!fields) continue;
+                        
                         const isValid = await isValidTicket(
                             api.instance.client,
                             { type: ticket.type, fields: fields },

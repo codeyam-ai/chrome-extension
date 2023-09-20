@@ -22,9 +22,7 @@ const signPersonalMessage = async (
         throw new Error(`ApprovalRequest ${txID} not found`);
     }
 
-    let txResult:
-        | SignedMessage
-        | undefined = undefined;
+    let txResult: SignedMessage | undefined = undefined;
     let txResultError: string | undefined;
 
     if (approved) {

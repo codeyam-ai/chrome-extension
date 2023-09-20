@@ -4,7 +4,6 @@ import Approve from './Approve';
 import Details from './Details';
 import MintTransactionCard from './MintTransactionCard';
 
-
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
 import type { SuiObjectChange } from '@mysten/sui.js/client';
 import type { WalletSigner } from '_src/shared/cryptography/WalletSigner';

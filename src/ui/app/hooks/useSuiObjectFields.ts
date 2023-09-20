@@ -3,7 +3,8 @@
 
 import { useMemo } from 'react';
 
-import type { SuiMoveObject } from '@mysten/sui.js';
+import type { MoveValue, SuiMoveObject } from '@mysten/sui.js/client';
+import utils from '../helpers/utils';
 
 const fieldsOrder: Record<string, number> = {
     name: 0,
@@ -28,7 +29,7 @@ function sortKeys(a: string, b: string) {
 }
 
 export default function useSuiObjectFields(data: SuiMoveObject) {
-    const { fields = null } = data.type === 'moveObject' ? data : {};
+    const fields = utils.getObjectFields(data);
     return useMemo(() => {
         const keys: string[] = [];
         const otherKeys: string[] = [];

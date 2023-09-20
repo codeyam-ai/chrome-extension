@@ -30,7 +30,6 @@ import { useAppSelector, useInitializedGuard } from '_hooks';
 import { txRequestsSelectors } from '_redux/slices/transaction-requests';
 import { useDependencies } from '_shared/utils/dependenciesContext';
 
-
 import type { AnalyzeChangesResult } from './lib/analyzeChanges';
 import type { SuiMoveNormalizedType } from '@mysten/sui.js/client';
 import type { RootState } from '_redux/RootReducer';
@@ -68,9 +67,7 @@ export function DappTxApprovalPage() {
         }
     }, [selectedApiEnv]);
 
-    const [signer, setSigner] = useState<
-        WalletSigner | undefined
-    >();
+    const [signer, setSigner] = useState<WalletSigner | undefined>();
     const {
         activeAccountIndex,
         address,
