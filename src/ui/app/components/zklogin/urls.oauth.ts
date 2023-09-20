@@ -1,6 +1,3 @@
-const CLIENT_ID =
-    '117215743679-qgqrb6n1lacao6ecrc9p1mh96ffroq56.apps.googleusercontent.com';
-
 export enum OAuthType {
     Google,
     DevTest,
@@ -30,10 +27,13 @@ function _google({
     nonce: string;
     getRedirectUrl?: (path?: string) => string;
 }) {
+    const CLIENT_ID =
+        '117215743679-qgqrb6n1lacao6ecrc9p1mh96ffroq56.apps.googleusercontent.com';
+
     const searchParamsData = {
         client_id: CLIENT_ID,
         response_type: 'id_token',
-        redirect_uri: getRedirectUrl(),
+        redirect_uri: getRedirectUrl('/ui.html'),
         scope: 'openid',
         nonce: nonce,
     };
@@ -55,12 +55,15 @@ function _devTest({
 }) {
     const MYSTEN_DEV_USE_ONLY_CLIENT_ID =
         '25769832374-famecqrhe2gkebt5fvqms2263046lj96.apps.googleusercontent.com';
+    const MYSTEN_DEV_REDIRECT_URL =
+        'https://zklogin-dev-redirect.vercel.app/api/auth';
+
     const params = new URLSearchParams({
         state: new URLSearchParams({
-            redirect_uri: getRedirectUrl(),
+            redirect_uri: getRedirectUrl('/ui.html'),
         }).toString(),
         client_id: MYSTEN_DEV_USE_ONLY_CLIENT_ID,
-        redirect_uri: 'https://zklogin-dev-redirect.vercel.app/api/auth',
+        redirect_uri: MYSTEN_DEV_REDIRECT_URL,
         response_type: 'id_token',
         scope: 'openid',
         nonce: nonce,

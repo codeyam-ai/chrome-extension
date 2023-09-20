@@ -5,11 +5,12 @@ import {
     jwtToAddress,
 } from '@mysten/zklogin';
 
-import { getOAuthUrl, OAuthType } from './oauthUrls';
+import { getOAuthUrl, OAuthType } from './urls.oauth';
 import { extractJwtFromUrl } from './utils';
 
 import type { ZkSignatureInputs } from './bcs';
 import type { SuiClient } from '@mysten/sui.js/client';
+import { getSaltServiceUrl } from './urls.saltService';
 
 type Proof = ZkSignatureInputs;
 
@@ -52,7 +53,7 @@ export const Zk = {
         if (!jwt) return null;
 
         const { salt } = await getSalt({ jwt });
-        console.log('salt', salt)
+        console.log('salt', salt);
         if (!salt) return null;
 
         const address = jwtToAddress(jwt, salt);
@@ -104,9 +105,9 @@ async function getSalt({
 }: {
     jwt: string;
 }): Promise<{ salt: bigint | null }> {
-    const SALT_SERVICE_URL = 'http://localhost:3005';
+    const saltServiceUrl = getSaltServiceUrl({ env: 'production' });
 
-    const response = await fetch(`${SALT_SERVICE_URL}/get_salt`, {
+    const response = await fetch(`${saltServiceUrl}/get_salt`, {
         method: 'POST',
         headers: new Headers({ 'content-type': 'application/json' }),
         body: JSON.stringify({ jwt }),
@@ -179,12 +180,14 @@ async function getProof({
 
     const payloadJson: ProofService.PayloadJson = {
         ...payload,
-        extendedEphemeralPublicKey: payload.extendedEphemeralPublicKey.toString(),
+        extendedEphemeralPublicKey:
+            payload.extendedEphemeralPublicKey.toString(),
         jwtRandomness: payload.jwtRandomness.toString(),
         salt: payload.salt.toString(),
     };
 
-    const MYSTEN_PROVING_SERVICE_URL = 'http://prover-devnet.mystenlabs.com:8080/zkp';
+    const MYSTEN_PROVING_SERVICE_URL =
+        'http://prover-devnet.mystenlabs.com:8080/zkp';
 
     const response = await fetch(MYSTEN_PROVING_SERVICE_URL, {
         method: 'POST',
