@@ -9,28 +9,31 @@ export enum OAuthType {
 export function getOAuthUrl({
     type,
     nonce,
+    getRedirectUrl = chrome.identity.getRedirectURL,
 }: {
     type: OAuthType;
     nonce: string;
+    getRedirectUrl?: (path?: string) => string;
 }) {
     switch (type) {
         case OAuthType.Google:
-            return _google({ nonce });
+            return _google({ nonce, getRedirectUrl });
         default:
-            return _devTest({ nonce });
+            return _devTest({ nonce, getRedirectUrl });
     }
 }
 
-function _getRedirectUrl(): string {
-    const redirectUrl = chrome.identity.getRedirectURL('/ui.html');
-    return redirectUrl;
-}
-
-function _google({ nonce }: { nonce: string }) {
+function _google({
+    nonce,
+    getRedirectUrl = chrome.identity.getRedirectURL,
+}: {
+    nonce: string;
+    getRedirectUrl?: (path?: string) => string;
+}) {
     const searchParamsData = {
         client_id: CLIENT_ID,
         response_type: 'id_token',
-        redirect_uri: _getRedirectUrl(),
+        redirect_uri: getRedirectUrl(),
         scope: 'openid',
         nonce: nonce,
     };
@@ -43,12 +46,18 @@ function _google({ nonce }: { nonce: string }) {
 /**
  * https://docs.sui.io/build/zk_login#configure-a-developer-account-with-openid-provider
  */
-function _devTest({ nonce }: { nonce: string }) {
+function _devTest({
+    nonce,
+    getRedirectUrl = chrome.identity.getRedirectURL,
+}: {
+    nonce: string;
+    getRedirectUrl?: (path?: string) => string;
+}) {
     const MYSTEN_DEV_USE_ONLY_CLIENT_ID =
         '25769832374-famecqrhe2gkebt5fvqms2263046lj96.apps.googleusercontent.com';
     const params = new URLSearchParams({
         state: new URLSearchParams({
-            redirect_uri: _getRedirectUrl(),
+            redirect_uri: getRedirectUrl(),
         }).toString(),
         client_id: MYSTEN_DEV_USE_ONLY_CLIENT_ID,
         redirect_uri: 'https://zklogin-dev-redirect.vercel.app/api/auth',
