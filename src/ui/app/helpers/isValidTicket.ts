@@ -3,7 +3,6 @@
 import type { SuiClient } from '@mysten/sui.js/client';
 import type { ObjectContentFields } from '@mysten/sui.js/src/types/objects';
 
-
 export type SuiTicketData = {
     type: string;
     fields: ObjectContentFields;

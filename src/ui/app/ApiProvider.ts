@@ -186,7 +186,10 @@ export default class ApiProvider {
         };
     }
 
-    public getSignerInstance(keypair: Ed25519Keypair, force?: boolean): WalletSigner {
+    public getSignerInstance(
+        keypair: Ed25519Keypair,
+        force?: boolean
+    ): WalletSigner {
         if (!this._apiFullNodeClient) {
             this.setNewSuiClient(
                 this._apiEnv,
