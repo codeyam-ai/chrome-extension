@@ -94,7 +94,7 @@ export function DappSignMessageApprovalPage() {
                     activeAccountIndex
                 );
 
-                // closeWindow();
+                closeWindow();
             }
         },
         [
