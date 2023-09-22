@@ -108,7 +108,7 @@ const NftGridItem = ({
                             }`}
                             className="object-cover h-36 w-36 shadow-sm rounded-2xl transition-opacity duration-200 ease-in-out"
                             src={filePath}
-                            alt={nftFields?.name || 'NFT'}
+                            alt={nftFields?.name?.toString() || 'NFT'}
                         />
                     )}
                     <div
@@ -118,7 +118,7 @@ const NftGridItem = ({
                         )}
                     >
                         <BodyLarge className="text-white">
-                            {nftFields?.name}
+                            {nftFields?.name?.toString()}
                         </BodyLarge>
                     </div>
                 </div>

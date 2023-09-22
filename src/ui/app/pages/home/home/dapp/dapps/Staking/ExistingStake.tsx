@@ -1,6 +1,6 @@
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { CircleStackIcon } from '@heroicons/react/24/solid';
-import { type DelegatedStake } from '@mysten/sui.js';
+import { type DelegatedStake } from '@mysten/sui.js/client';
 import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import classNames from 'classnames';
 import { type PropsWithChildren, useCallback, useMemo } from 'react';

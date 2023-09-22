@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../redux/store/thunk-extras';
 
-import type { DelegatedStake } from '@mysten/sui.js';
+import type { DelegatedStake } from '@mysten/sui.js/client';
 import type { UseQueryResult } from '@tanstack/react-query';
 
 export default function useGetDelegatedStakes(

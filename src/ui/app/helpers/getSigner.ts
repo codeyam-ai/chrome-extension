@@ -1,6 +1,4 @@
 import { fromHEX } from '@mysten/bcs';
-import { type RawSigner } from '@mysten/sui.js';
-import { type Keypair } from '@mysten/sui.js/cryptography';
 import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 
 import { derivationPathForLedger } from '../pages/home/home/dapp/dapps/Ledger/hooks/useDeriveLedgerAccounts';
@@ -10,8 +8,7 @@ import { getEncrypted } from '_src/shared/storagex/store';
 import KeypairVault, { type AccountInfo } from '_src/ui/app/KeypairVault';
 
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
-import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-// import type { Signer } from '@mysten/sui.js/cryptography';
+import type { WalletSigner } from '_src/shared/cryptography/WalletSigner';
 
 export const getSigner = async (
     passphrase: string | null,
@@ -21,8 +18,8 @@ export const getSigner = async (
     activeAccountIndex: number,
     connectToLedger: () => Promise<SuiLedgerClient>,
     forceCreateNewSigner?: boolean
-): Promise<RawSigner | EthosSigner | LedgerSigner | null> => {
-    let keypair: Keypair;
+): Promise<WalletSigner | null> => {
+    let keypair: Ed25519Keypair;
     let signer;
 
     const activeAccount = accountInfos.find(

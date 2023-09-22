@@ -3,8 +3,14 @@
 
 import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
-import type { SuiMoveObject, SuiObjectData } from '@mysten/sui.js';
-import type { SuiClient } from '@mysten/sui.js/client';
+import utils from '_src/ui/app/helpers/utils';
+
+import type {
+    MoveValue,
+    SuiClient,
+    SuiMoveObject,
+    SuiObjectData,
+} from '@mysten/sui.js/client';
 
 const COIN_TYPE = '0x2::coin::Coin';
 const COIN_TYPE_ARG_REGEX = /^0x2::coin::Coin<(.+)>$/;
@@ -23,7 +29,12 @@ export class Coin {
     }
 
     public static getCoinTypeArg(obj: SuiMoveObject) {
-        const res = obj.type.match(COIN_TYPE_ARG_REGEX);
+        const res = this.getCoinType(obj.type);
+        return res ? res[1] : null;
+    }
+
+    public static getCoinType(type: string) {
+        const res = type.match(COIN_TYPE_ARG_REGEX);
         return res ? res[1] : null;
     }
 
@@ -48,11 +59,24 @@ export class Coin {
     }
 
     public static getBalance(obj: SuiMoveObject): bigint {
-        return BigInt(obj.fields.balance);
+        return BigInt(utils.getObjectFields(obj)?.balance?.toString() ?? 0);
     }
 
     public static getID(obj: SuiMoveObject): string {
-        return obj.fields.id.id;
+        if ('id' in obj.fields) {
+            return obj.fields.id as string;
+        }
+
+        if (
+            'fields' in obj.fields &&
+            obj.fields.fields &&
+            typeof obj.fields.fields === 'object' &&
+            'id' in obj.fields.fields
+        ) {
+            return obj?.fields?.fields?.id?.toString() ?? '';
+        }
+
+        return '';
     }
 
     public static getCoinTypeFromArg(coinTypeArg: string) {
@@ -86,7 +110,7 @@ export class Coin {
      * @param validator The sui address of the chosen validator
      */
     // public static async stakeCoin(
-    //     signer: RawSigner | EthosSigner | LedgerSigner,
+    //     signer: WalletSigner,
     //     coins: SuiMoveObject[],
     //     amount: bigint,
     //     validator: SuiAddress
@@ -108,7 +132,7 @@ export class Coin {
     // }
 
     // private static async requestSuiCoinWithExactAmount(
-    //     signer: RawSigner | EthosSigner | LedgerSigner,
+    //     signer: WalletSigner,
     //     coins: SuiMoveObject[],
     //     amount: bigint
     // ): Promise<string> {
@@ -144,7 +168,7 @@ export class Coin {
     // }
 
     // private static async selectSuiCoinWithExactAmount(
-    //     signer: RawSigner | EthosSigner | LedgerSigner,
+    //     signer: WalletSigner,
     //     coins: SuiMoveObject[],
     //     amount: bigint,
     //     refreshData = false
@@ -182,9 +206,14 @@ export class Coin {
             },
         });
         const data = contents.data as SuiObjectData;
-        const validators = (data.content as SuiMoveObject).fields.validators;
-        const active_validators = (validators as SuiMoveObject).fields
-            .active_validators;
+        const dataFields = (data.content as SuiMoveObject).fields as {
+            [key: string]: MoveValue;
+        };
+        const validators = dataFields.validators;
+        const fields = (validators as SuiMoveObject).fields as {
+            [key: string]: MoveValue;
+        };
+        const active_validators = fields.active_validators;
         return active_validators as Array<SuiMoveObject>;
     }
 }

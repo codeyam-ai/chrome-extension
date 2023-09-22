@@ -25,15 +25,15 @@ const TIcketDetailsContent = ({ ticket }: { ticket: SuiObjectData }) => {
                 />
                 {ticketFields?.count && (
                     <Body className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium text-sm mb-3">
-                        {ticketFields?.count} Use
+                        {Number(ticketFields?.count ?? 0)} Use
                         {ticketFields?.count === 1 ? '' : 's'} Remaining
                     </Body>
                 )}
             </div>
             {ticketFields?.redeem_url && (
                 <ExternalLink
-                    href={ticketFields.redeem_url}
-                    title={ticketFields.name}
+                    href={ticketFields.redeem_url?.toString()}
+                    title={ticketFields.name?.toString()}
                     className="text-ethos-light-text-medium dark:text-ethos-dark-text-medium"
                     showIcon={false}
                 >
@@ -48,13 +48,15 @@ const TIcketDetailsContent = ({ ticket }: { ticket: SuiObjectData }) => {
                 </ExternalLink>
             )}
             <div>
-                <Title className={'text-left mb-2'}>{ticketFields?.name}</Title>
+                <Title className={'text-left mb-2'}>
+                    {ticketFields?.name?.toString()}
+                </Title>
                 <BodyLarge
                     className={
                         'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal mb-6'
                     }
                 >
-                    {ticketFields?.description}
+                    {ticketFields?.description?.toString()}
                 </BodyLarge>
             </div>
         </div>

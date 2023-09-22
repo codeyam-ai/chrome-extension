@@ -1,7 +1,7 @@
-import { getObjectFields } from '@mysten/sui.js';
 import get from 'lodash/get';
 
 import ipfs from '_src/ui/app/helpers/ipfs';
+import utils from '_src/ui/app/helpers/utils';
 import { safeUrl } from '_src/ui/app/hooks/useMediaUrl';
 
 import type {
@@ -297,17 +297,17 @@ export const parseDomains = (domains: SuiObjectResponse[]) => {
         isTypeMatchRegex(d, DisplayDomainRegex)
     );
 
-    if (urlDomain && getObjectFields(urlDomain)) {
-        const url = (getObjectFields(urlDomain) as UrlDomainRpcResponse).value
-            .fields.url;
+    if (urlDomain && utils.getObjectFields(urlDomain)) {
+        const url = (utils.getObjectFields(urlDomain) as UrlDomainRpcResponse)
+            .value.fields.url;
         response.url = ipfs(url);
     }
-    if (displayDomain && getObjectFields(displayDomain)) {
+    if (displayDomain && utils.getObjectFields(displayDomain)) {
         response.description = (
-            getObjectFields(displayDomain) as DisplayDomainRpcResponse
+            utils.getObjectFields(displayDomain) as DisplayDomainRpcResponse
         ).value.fields.description;
         response.name = (
-            getObjectFields(displayDomain) as DisplayDomainRpcResponse
+            utils.getObjectFields(displayDomain) as DisplayDomainRpcResponse
         ).value.fields.name;
     }
 
@@ -338,7 +338,7 @@ export class NftClient {
                     const data = object.data;
                     if (data) {
                         return NftParser.parser(
-                            getObjectFields(object) as NftRpcResponse,
+                            utils.getObjectFields(object) as NftRpcResponse,
                             data,
                             object
                         );

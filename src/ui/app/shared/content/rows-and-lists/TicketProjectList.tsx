@@ -1,5 +1,3 @@
-import { SuiMoveObject, getSuiObjectData } from '@mysten/sui.js';
-import { is } from '@mysten/sui.js/utils';
 import { useEffect, useState } from 'react';
 
 import isValidTicket from '../../../helpers/isValidTicket';
@@ -7,6 +5,7 @@ import { accountTicketsSelector } from '../../../redux/slices/account/index';
 import Body from '../../typography/Body';
 import featureGating from '_src/background/FeatureGating';
 import Loading from '_src/ui/app/components/loading';
+import utils from '_src/ui/app/helpers/utils';
 import { useAppSelector } from '_src/ui/app/hooks';
 import { TicketProjectDetailsContent } from '_src/ui/app/pages/home/ticket-project-details';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
@@ -18,10 +17,10 @@ export interface TicketProjectProps {
     packageObjectId: string;
     agentObjectId: string;
     module: string;
-    name: string;
-    description: string;
-    coverImage: string;
-    url: string;
+    name?: string;
+    description?: string;
+    coverImage?: string;
+    url?: string;
     token?: string;
     tokenUrl?: string;
 }
@@ -61,28 +60,25 @@ const TicketProjectList = () => {
 
             const ticketProjects = ticketProjectObjects.map(
                 (ticketProjectObject) => {
-                    const suiObjectData = getSuiObjectData(ticketProjectObject);
+                    const suiObjectData = ticketProjectObject.data;
                     if (!suiObjectData) return null;
                     if (!suiObjectData.type) return null;
 
-                    const { content } = suiObjectData;
-                    if (!is(content, SuiMoveObject)) return null;
-
+                    const fields = utils.getObjectFields(suiObjectData);
                     const token = suiObjectData.type
                         .replace('>', '')
                         .split('<')[1];
-                    const { fields } = content;
                     return {
                         objectId: suiObjectData.objectId,
                         packageObjectId: suiObjectData.type.split('::')[0],
                         agentObjectId: suiObjectData.objectId,
                         module: suiObjectData.type.split('::')[1],
-                        name: fields.name,
-                        description: fields.description,
-                        url: fields.url,
+                        name: fields?.name?.toString(),
+                        description: fields?.description?.toString(),
+                        url: fields?.url?.toString(),
                         token: token,
-                        tokenUrl: fields.token_url,
-                        coverImage: fields.cover_image,
+                        tokenUrl: fields?.token_url?.toString(),
+                        coverImage: fields?.cover_image?.toString(),
                     };
                 }
             );
@@ -93,12 +89,10 @@ const TicketProjectList = () => {
 
                 let foundValidTicket = false;
                 for (const ticket of tickets) {
-                    if (
-                        ticket.type &&
-                        ticket.content &&
-                        is(ticket.content, SuiMoveObject)
-                    ) {
-                        const fields = ticket.content.fields;
+                    if (ticket.type) {
+                        const fields = utils.getObjectFields(ticket);
+                        if (!fields) continue;
+
                         const isValid = await isValidTicket(
                             api.instance.client,
                             { type: ticket.type, fields: fields },

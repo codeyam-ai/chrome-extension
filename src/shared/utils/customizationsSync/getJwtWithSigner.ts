@@ -1,13 +1,9 @@
 import { authApiCall } from './ethosPlatformApiCall';
 import signMessageOnUsersBehalf from '_src/shared/utils/customizationsSync/signMessageOnUsersBehalf';
 
-import type { RawSigner } from '@mysten/sui.js';
-import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
+import type { WalletSigner } from '_src/shared/cryptography/WalletSigner';
 
-async function getJwtWithSigner(
-    signer: LedgerSigner | EthosSigner | RawSigner | null
-): Promise<string> {
+async function getJwtWithSigner(signer: WalletSigner | null): Promise<string> {
     const dataToSign = {
         tenantId: process.env.TENANT_ID || '',
         timestamp: Date.now(),

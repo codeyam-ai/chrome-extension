@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
-import { getObjectId, hasPublicTransfer } from '@mysten/sui.js';
 import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -90,28 +89,26 @@ function NFTdetailsContent({
                     </div>
                     <div className="p-6">
                         <Title className={'text-left mb-2'}>
-                            {nftFields?.name}
+                            {nftFields?.name?.toString()}
                         </Title>
                         <BodyLarge
                             className={
                                 'text-left text-ethos-light-text-medium dark:text-ethos-dark-text-medium font-weight-normal mb-6'
                             }
                         >
-                            {nftFields?.description}
+                            {nftFields?.description?.toString()}
                         </BodyLarge>
 
                         <div className="flex gap-6 items-center justify-center">
-                            {hasPublicTransfer(nft) && (
-                                <Button
-                                    buttonStyle="primary"
-                                    wrapperClassName="flex-1 w-full"
-                                    className="flex-1"
-                                    onClick={onClick}
-                                    removeContainerPadding
-                                >
-                                    Send
-                                </Button>
-                            )}
+                            <Button
+                                buttonStyle="primary"
+                                wrapperClassName="flex-1 w-full"
+                                className="flex-1"
+                                onClick={onClick}
+                                removeContainerPadding
+                            >
+                                Send
+                            </Button>
                             {filePath && (
                                 <Button
                                     buttonStyle="secondary"
@@ -262,7 +259,7 @@ function NFTDetailsPage() {
 
     const activeNFT = useMemo(() => {
         const selectedNFT = nftCollections.filter(
-            (nftItem) => getObjectId(nftItem) === objectId
+            (nftItem) => nftItem.objectId === objectId
         )[0];
         setSelectedNFT(selectedNFT);
         return selectedNFT;

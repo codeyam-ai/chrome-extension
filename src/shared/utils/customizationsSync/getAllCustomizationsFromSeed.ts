@@ -1,7 +1,6 @@
-import { RawSigner } from '@mysten/sui.js';
-
 import getCustomization from './getCustomization';
 import getJwtWithSigner from './getJwtWithSigner';
+import { BaseSigner } from '_src/shared/cryptography/BaseSigner';
 import KeypairVault from '_src/ui/app/KeypairVault';
 
 import type { SuiClient } from '@mysten/sui.js/client';
@@ -20,7 +19,7 @@ export const getAllCustomizationsFromSeed = async (
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
-        const signer = new RawSigner(
+        const signer = new BaseSigner(
             keypairVault.getKeyPair(walletIndex),
             client
         );

@@ -1,4 +1,3 @@
-import { Coin } from '@mysten/sui.js';
 import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { useMemo } from 'react';
 
@@ -7,6 +6,7 @@ import Gas from './Gas';
 import Total from './Total';
 import TransactionBody from './TransactionBody';
 import { useFormatCoin } from '_src/ui/app/hooks';
+import { Coin } from '_src/ui/app/redux/slices/sui-objects/Coin';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 
 import type { StepInformation } from './SimpleAssetMint';

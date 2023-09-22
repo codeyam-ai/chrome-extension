@@ -1,7 +1,6 @@
-import { RawSigner } from '@mysten/sui.js';
-
 import getJwtWithSigner from './getJwtWithSigner';
 import saveCustomization from './saveCustomization';
+import { BaseSigner } from '_src/shared/cryptography/BaseSigner';
 import KeypairVault, { type AccountInfo } from '_src/ui/app/KeypairVault';
 
 import type { SuiClient } from '@mysten/sui.js/client';
@@ -15,7 +14,7 @@ export const deleteAllCustomizationsFromSeed = async (
     keypairVault.mnemonic = mnemonic;
 
     const jobs = accountInfos.map(async (accountInfo) => {
-        const signer = new RawSigner(
+        const signer = new BaseSigner(
             keypairVault.getKeyPair(accountInfo.index),
             client
         );
