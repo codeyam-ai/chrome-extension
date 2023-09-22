@@ -1,19 +1,13 @@
-import { RawSigner } from '@mysten/sui.js';
 import { SuiClient } from '@mysten/sui.js/client';
 
 import { deleteAllCustomizationsFromSeed } from '../deleteAllCustomizationsFromSeed';
 import getJwtWithSigner from '../getJwtWithSigner';
 import saveCustomization from '../saveCustomization';
-
-// Creating mock functions for our external dependencies
-// We need to do this to make sure our tests only test the functionality of deleteAllCustomizationsFromSeed
-jest.mock('@mysten/sui.js', () => ({
-    RawSigner: jest.fn(),
-}));
+import { BaseSigner } from '_src/shared/cryptography/BaseSigner';
 
 jest.mock('../getJwtWithSigner', () => jest.fn());
-
 jest.mock('../saveCustomization', () => jest.fn());
+jest.mock('_src/shared/cryptography/BaseSigner');
 
 jest.mock('_src/ui/app/KeypairVault', () => {
     return jest.fn().mockImplementation(() => {
@@ -50,7 +44,7 @@ describe('deleteAllCustomizationsFromSeed', () => {
         (getJwtWithSigner as jest.Mock).mockImplementation(() =>
             Promise.resolve('jwt-string')
         );
-        (RawSigner as jest.Mock).mockImplementation(
+        (BaseSigner as jest.Mock).mockImplementation(
             () => 'signer'
         );
 

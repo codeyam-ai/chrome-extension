@@ -24,7 +24,7 @@ describe('WindowMessageStream', () => {
 
     test('send method should post a message to the window', () => {
         messageStream = new WindowMessageStream('ethos_in-page', 'ethos_content-script');
-        messageStream.send({});
+        messageStream.send({ id: "id", payload: { type: 'disconnect-app' } });
         expect(window.postMessage).toHaveBeenCalled();
     });
 });

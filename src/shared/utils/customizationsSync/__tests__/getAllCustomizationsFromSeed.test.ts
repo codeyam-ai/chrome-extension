@@ -1,14 +1,14 @@
-import { RawSigner } from '@mysten/sui.js';
 import { SuiClient } from '@mysten/sui.js/client';
 
 import { getAllCustomizationsFromSeed } from '../getAllCustomizationsFromSeed';
 import getCustomization from '../getCustomization';
 import getJwtWithSigner from '../getJwtWithSigner';
+import { BaseSigner } from '_src/shared/cryptography/BaseSigner';
 
 // Mocking the necessary modules
-jest.mock('@mysten/sui.js');
 jest.mock('../getCustomization');
 jest.mock('../getJwtWithSigner');
+jest.mock('_src/shared/cryptography/BaseSigner');
 
 jest.mock('@mysten/sui.js/client', () => ({
     SuiClient: jest.fn().mockImplementation(() => {
@@ -23,7 +23,7 @@ describe('getAllCustomizationsFromSeed', () => {
 
     beforeEach(() => {
         (getJwtWithSigner as jest.Mock).mockImplementation(() => Promise.resolve('jwt'));
-        (RawSigner as jest.Mock).mockImplementation(() => ({
+        (BaseSigner as jest.Mock).mockImplementation(() => ({
             getAddress: () => Promise.resolve('address'),
         }));
     });
