@@ -1,8 +1,8 @@
-import { Coin } from '@mysten/sui.js';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
 import { getSigner } from './getSigner';
+import { Coin } from '../redux/slices/sui-objects/Coin';
 
 import type { AccountInfo } from '../KeypairVault';
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';

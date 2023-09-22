@@ -1,14 +1,13 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { getTransactionDigest } from '@mysten/sui.js';
 import {
     // createAsyncThunk,
     createEntityAdapter,
     createSlice,
 } from '@reduxjs/toolkit';
 
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/src/types/transactions';
 import type { RootState } from '_redux/RootReducer';
 
 // type SendTokensTXArgs = {
@@ -139,7 +138,7 @@ type TransactionBlockResult = SuiTransactionBlockResponse;
 // );
 
 const txAdapter = createEntityAdapter<TransactionBlockResult>({
-    selectId: (tx) => getTransactionDigest(tx),
+    selectId: (tx) => tx.digest,
 });
 
 export const txSelectors = txAdapter.getSelectors(

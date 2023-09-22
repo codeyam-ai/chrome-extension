@@ -1,7 +1,6 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { getObjectId, getObjectVersion } from '@mysten/sui.js';
 import {
     createAsyncThunk,
     createEntityAdapter,
@@ -11,6 +10,7 @@ import {
 import { SUI_SYSTEM_STATE_OBJECT_ID } from './Coin';
 import { NFT } from './NFT';
 import testConnection from '../../testConnection';
+import utils from '_src/ui/app/helpers/utils';
 
 import type {
     PaginatedObjectsResponse,
@@ -83,13 +83,13 @@ export const fetchAllOwnedAndRequiredObjects = createAsyncThunk<
 
             const objectIDs = allObjectRefs.data
                 .filter((anObj) => {
-                    const fetchedVersion = getObjectVersion(anObj);
+                    const fetchedVersion = utils.getObjectVersion(anObj);
                     const storedObj = suiObjectsAdapterSelectors.selectById(
                         state,
-                        getObjectId(anObj)
+                        utils.getObjectId(anObj)
                     );
                     const storedVersion = storedObj
-                        ? getObjectVersion(storedObj)
+                        ? utils.getObjectVersion(storedObj)
                         : null;
                     const objOutdated = fetchedVersion !== storedVersion;
                     if (!objOutdated && storedObj) {

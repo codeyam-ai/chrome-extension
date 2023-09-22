@@ -5,9 +5,7 @@ import Details from './Details';
 import GenericTransactionCard from './GenericTranasctionCard';
 
 import type { AnalyzeChangesResult } from '../lib/analyzeChanges';
-import type { RawSigner } from '@mysten/sui.js';
-import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
+import type { WalletSigner } from '_src/shared/cryptography/WalletSigner';
 
 export type StepInformation = {
     analysis: AnalyzeChangesResult;
@@ -22,7 +20,7 @@ const ComplexMoveCall = ({
     analysis: AnalyzeChangesResult;
     onApprove: () => void;
     onCancel: () => void;
-    signer: EthosSigner | LedgerSigner | RawSigner;
+    signer: WalletSigner;
 }) => {
     const stepInformation = useMemo(() => ({ analysis }), [analysis]);
 

@@ -1,8 +1,8 @@
-import { getTotalGasUsed } from '@mysten/sui.js';
 import { type SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 
 import addressOwner from './addressOwner';
 import findBalanceChanges from './findBalanceChanges';
+import utils from '../utils';
 
 export type SendTransactionInfo = {
     isSender: boolean;
@@ -28,7 +28,7 @@ const sendTransactionAnalysis = (
 
     if (!sender) return analysis;
 
-    const gasUsed = getTotalGasUsed(effects) || BigInt(0);
+    const gasUsed = utils.getTotalGasUsed(effects) || BigInt(0);
 
     const ownerBalanceChanges = findBalanceChanges({
         balanceChanges,

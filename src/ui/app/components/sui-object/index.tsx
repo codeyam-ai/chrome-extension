@@ -1,7 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { SuiMovePackage } from '@mysten/sui.js';
+import { SuiMovePackage } from '@mysten/sui.js/src/types/objects';
 import { is } from '@mysten/sui.js/utils';
 import cl from 'classnames';
 import { memo, useMemo } from 'react';

@@ -1,7 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { RawSigner } from '@mysten/sui.js';
 import {
     SuiClient,
     type SuiTransactionBlockResponse,
@@ -23,11 +22,11 @@ import Browser from 'webextension-polyfill';
 import { Window } from './Window';
 import { API_ENV } from '../ui/app/ApiProvider';
 import { PREAPPROVAL_KEY, TX_STORE_KEY } from '_src/shared/constants';
+import { BaseSigner } from '_src/shared/cryptography/BaseSigner';
 import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
-import type { SignedTransaction } from '@mysten/sui.js';
 import type {
     PreapprovalRequest,
     PreapprovalResponse,
@@ -40,6 +39,10 @@ import type {
 } from '_payloads/transactions/ApprovalRequest';
 import type { TransactionRequestResponse } from '_payloads/transactions/ui/TransactionRequestResponse';
 import type { ContentScriptConnection } from '_src/background/connections/ContentScriptConnection';
+import type {
+    SignedMessage,
+    SignedTransaction,
+} from '_src/shared/cryptography/WalletSigner';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
 import type { SeedInfo } from '_src/ui/app/KeypairVault';
 
@@ -87,7 +90,9 @@ class Transactions {
                   sign: SuiSignTransactionSerialized;
               },
         connection: ContentScriptConnection
-    ): Promise<SuiTransactionBlockResponse | SignedTransaction> {
+    ): Promise<
+        SuiTransactionBlockResponse | SignedTransaction | SignedMessage
+    > {
         if (tx) {
             const transactionBlock = TransactionBlock.from(tx.data);
             for (const command of transactionBlock.blockData.transactions) {
@@ -347,7 +352,7 @@ class Transactions {
                     activeSeed.seed.split(',').map((n) => parseInt(n))
                 );
                 const keypair = Ed25519Keypair.fromSecretKey(secretKey);
-                signer = new RawSigner(keypair, client);
+                signer = new BaseSigner(keypair, client);
             }
 
             const txResponse = await signer.signAndExecuteTransactionBlock({
