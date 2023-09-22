@@ -4,9 +4,7 @@ import { saveAllCustomizationsFromSeed } from '../saveAllCustomizationsFromSeed'
 import saveCustomization from '../saveCustomization';
 
 import type { SuiClient } from '@mysten/sui.js/client';
-import type {
-    AccountInfo
-} from '_src/ui/app/KeypairVault';
+import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 // Mock the getJwtWithSigner method
 jest.mock('../getJwtWithSigner', () => ({
@@ -55,23 +53,22 @@ describe('saveAllCustomizationsFromSeed', () => {
         it('should throw an error if getJwtWithSigner fails', async () => {
             // eslint-disable-next-line @typescript-eslint/no-empty-function
             jest.spyOn(global.console, 'error').mockImplementation(() => {});
-    
+
             const accountInfos = [{ index: 1 } as AccountInfo];
             const mnemonic = 'test mnemonic';
             const client = {} as SuiClient;
-    
+
             (getJwtWithSigner as jest.Mock).mockRejectedValue(
                 new Error('getJwtWithSigner failed')
             );
-    
+
             await saveAllCustomizationsFromSeed(mnemonic, accountInfos, client);
-    
+
             // eslint-disable-next-line no-console
             expect(console.error).toHaveBeenCalledTimes(1);
             expect(getJwtWithSigner).toHaveBeenCalledTimes(1);
         });
-    
+
         // Similarly add further tests for failing saveCustomization or encryption related errors etc.
     });
-    
 });

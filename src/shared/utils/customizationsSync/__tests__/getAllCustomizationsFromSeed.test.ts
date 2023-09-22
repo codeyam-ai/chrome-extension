@@ -12,9 +12,7 @@ jest.mock('_src/shared/cryptography/BaseSigner');
 
 jest.mock('@mysten/sui.js/client', () => ({
     SuiClient: jest.fn().mockImplementation(() => {
-        return {
-          
-        };
+        return {};
     }),
 }));
 
@@ -22,15 +20,19 @@ describe('getAllCustomizationsFromSeed', () => {
     const client = new SuiClient({ url: 'testUrl' });
 
     beforeEach(() => {
-        (getJwtWithSigner as jest.Mock).mockImplementation(() => Promise.resolve('jwt'));
+        (getJwtWithSigner as jest.Mock).mockImplementation(() =>
+            Promise.resolve('jwt')
+        );
         (BaseSigner as jest.Mock).mockImplementation(() => ({
             getAddress: () => Promise.resolve('address'),
         }));
     });
 
-    describe("with existing customizations", () => {
+    describe('with existing customizations', () => {
         beforeEach(() => {
-            (getCustomization as jest.Mock).mockReturnValueOnce(Promise.resolve('customization'));
+            (getCustomization as jest.Mock).mockReturnValueOnce(
+                Promise.resolve('customization')
+            );
         });
 
         it('should return customizations', async () => {
@@ -53,9 +55,11 @@ describe('getAllCustomizationsFromSeed', () => {
         });
     });
 
-    describe("with no customizations", () => {
+    describe('with no customizations', () => {
         beforeEach(() => {
-            (getCustomization as jest.Mock).mockReturnValueOnce(Promise.resolve(null));
+            (getCustomization as jest.Mock).mockReturnValueOnce(
+                Promise.resolve(null)
+            );
         });
 
         it('should break loop when no customization is returned', async () => {
@@ -65,5 +69,5 @@ describe('getAllCustomizationsFromSeed', () => {
             );
             expect(customizations).toEqual({});
         });
-    });    
+    });
 });

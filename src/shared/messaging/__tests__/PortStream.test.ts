@@ -33,7 +33,11 @@ describe('PortStream', () => {
         });
 
         jest.spyOn(port.onMessage, 'addListener').mockImplementation((h) => {
-            mockOnMessage.subscribe({ next: () => { h("", port) } });
+            mockOnMessage.subscribe({
+                next: () => {
+                    h('', port);
+                },
+            });
         });
 
         portStream = new PortStream(port);
@@ -43,7 +47,7 @@ describe('PortStream', () => {
         expect(portStream.connected).toBeTruthy();
     });
 
-    it.todo('should handle disconnect event')
+    it.todo('should handle disconnect event');
     // , () => {
     //     expect(portStream.connected).toBeTruthy();
     //     mockOnDisconnect.next(port);
@@ -64,7 +68,7 @@ describe('PortStream', () => {
     it('should send a message using the port', () => {
         const sentMessage: Message = {
             id: 'testID',
-            payload: { 'type': 'get-account' },
+            payload: { type: 'get-account' },
         };
         portStream.sendMessage(sentMessage);
         expect(port.postMessage).toHaveBeenCalledWith(sentMessage);

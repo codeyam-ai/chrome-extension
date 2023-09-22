@@ -6,11 +6,11 @@ import * as utils from '../index';
 describe('Utils', () => {
     beforeAll(() => {
         Object.defineProperty(Browser, 'runtime', {
-            value: { getURL: jest.fn() }
+            value: { getURL: jest.fn() },
         });
 
         Object.defineProperty(Browser, 'tabs', {
-            value: { create: jest.fn() }
+            value: { create: jest.fn() },
         });
     });
 

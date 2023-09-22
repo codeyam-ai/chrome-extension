@@ -11,20 +11,18 @@ jest.mock('_src/shared/cryptography/BaseSigner');
 
 jest.mock('_src/ui/app/KeypairVault', () => {
     return jest.fn().mockImplementation(() => {
-        return { 
+        return {
             mnemonic: '',
             getKeyPair: jest.fn().mockImplementation(() => ({
                 publicKey: 'testPublicKey',
-            }))
+            })),
         };
     });
 });
 
 jest.mock('@mysten/sui.js/client', () => ({
     SuiClient: jest.fn().mockImplementation(() => {
-        return {
-          
-        };
+        return {};
     }),
 }));
 
@@ -35,18 +33,18 @@ describe('deleteAllCustomizationsFromSeed', () => {
         // Setting up the mocks
         const mockAccountInfo = [
             { index: 1, address: 'testAddress1', publicKey: 'testPublicKey1' },
-            { index: 2, address: 'testAddress2', publicKey: 'testPublicKey2' }
+            { index: 2, address: 'testAddress2', publicKey: 'testPublicKey2' },
         ];
 
         const mockSuiClient = new SuiClient({ url: 'testUrl' });
         const mockMnemonic = 'test mnemonic';
-        (saveCustomization as jest.Mock).mockImplementation(() => Promise.resolve(null));
+        (saveCustomization as jest.Mock).mockImplementation(() =>
+            Promise.resolve(null)
+        );
         (getJwtWithSigner as jest.Mock).mockImplementation(() =>
             Promise.resolve('jwt-string')
         );
-        (BaseSigner as jest.Mock).mockImplementation(
-            () => 'signer'
-        );
+        (BaseSigner as jest.Mock).mockImplementation(() => 'signer');
 
         await deleteAllCustomizationsFromSeed(
             mockMnemonic,

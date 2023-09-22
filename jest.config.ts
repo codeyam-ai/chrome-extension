@@ -26,7 +26,7 @@ const config: Config.InitialOptions = {
     setupFilesAfterEnv: [
         './src/test/utils/setup-tests.ts',
         './src/background/index.ts',
-    ]
+    ],
 };
 
 export default config;
