@@ -1,4 +1,3 @@
-import { getTotalGasUsed } from '@mysten/sui.js';
 import { type SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 
 import basicTransactionAnalysis, {
@@ -17,6 +16,7 @@ import sendTransactionAnalysis, {
 import stakingTransactionAnalysis, {
     type StakingTransactionInfo,
 } from './stakingTransactionAnalysis';
+import utils from '../utils';
 
 export type ImportantTransactionInfo = {
     staking?: StakingTransactionInfo[];
@@ -85,7 +85,7 @@ const analyzeTransactions = (
         }
 
         const totalGasUsed = transaction?.effects
-            ? getTotalGasUsed(transaction.effects)
+            ? utils.getTotalGasUsed(transaction.effects)
             : undefined;
 
         const ownerBalanceChanges = findBalanceChanges({

@@ -16,6 +16,7 @@ const cssMappings = {
 const esmMappings = {
     uuid: '<rootDir>/node_modules/uuid/dist/index.js',
 };
+
 const config: Config.InitialOptions = {
     preset: 'ts-jest',
     testEnvironment: 'jsdom',
@@ -25,7 +26,7 @@ const config: Config.InitialOptions = {
     setupFilesAfterEnv: [
         './src/test/utils/setup-tests.ts',
         './src/background/index.ts',
-    ],
+    ]
 };
 
 export default config;

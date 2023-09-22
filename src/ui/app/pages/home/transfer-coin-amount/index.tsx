@@ -1,6 +1,7 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
+import { type SuiMoveObject } from '@mysten/sui.js/client';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { Formik } from 'formik';
@@ -26,7 +27,6 @@ import {
 } from '_src/ui/app/hooks/useFormatCoin';
 import { setSuiAmount } from '_src/ui/app/redux/slices/forms';
 
-import type { SuiMoveObject } from '@mysten/sui.js';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { RootState } from '_src/ui/app/redux/RootReducer';
 import type { FormikHelpers } from 'formik';

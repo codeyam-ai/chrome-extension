@@ -1,7 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { Coin } from '@mysten/sui.js';
 import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 import { BigNumber } from 'bignumber.js';
 import { Form, useFormikContext } from 'formik';
@@ -15,6 +14,7 @@ import WalletTo from '_src/ui/app/components/wallet-to';
 import humanReadableTransactionErrors from '_src/ui/app/helpers/humanReadableTransactionError';
 import truncateString from '_src/ui/app/helpers/truncate-string';
 import { useAppSelector, useFormatCoin } from '_src/ui/app/hooks';
+import { Coin } from '_src/ui/app/redux/slices/sui-objects/Coin';
 import Button from '_src/ui/app/shared/buttons/Button';
 import KeyValueList from '_src/ui/app/shared/content/rows-and-lists/KeyValueList';
 import Alert from '_src/ui/app/shared/feedback/Alert';

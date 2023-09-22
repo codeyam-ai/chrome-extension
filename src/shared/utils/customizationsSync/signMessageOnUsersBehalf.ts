@@ -1,12 +1,13 @@
-import { type RawSigner, type SignedMessage } from '@mysten/sui.js';
 import { fromB64 } from '@mysten/sui.js/utils';
 
 import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
-import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
+import type {
+    SignedMessage,
+    WalletSigner,
+} from '_src/shared/cryptography/WalletSigner';
 
 const signMessageOnUsersBehalf = async (
-    signer: LedgerSigner | EthosSigner | RawSigner | null,
+    signer: WalletSigner | null,
     message: string
 ) => {
     let txResult: SuiTransactionBlockResponse | SignedMessage | undefined =

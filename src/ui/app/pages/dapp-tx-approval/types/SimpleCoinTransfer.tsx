@@ -22,9 +22,7 @@ import type {
     AnalyzeChangesResult,
     BalanceReduction,
 } from '../lib/analyzeChanges';
-import type { RawSigner } from '@mysten/sui.js';
-import type { EthosSigner } from '_src/shared/cryptography/EthosSigner';
-import type { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
+import type { WalletSigner } from '_src/shared/cryptography/WalletSigner';
 
 export type StepInformation = {
     name: string;
@@ -102,7 +100,7 @@ const StepTwo = ({
     onCancel,
     onSelectStep,
 }: {
-    signer: RawSigner | EthosSigner | LedgerSigner;
+    signer: WalletSigner;
     stepInformation: StepInformation;
     onApprove: () => void;
     onCancel: () => void;
@@ -135,7 +133,7 @@ const SimpleCoinTransfer = ({
     onApprove,
     onCancel,
 }: {
-    signer: RawSigner | EthosSigner | LedgerSigner;
+    signer: WalletSigner;
     reduction: BalanceReduction;
     analysis: AnalyzeChangesResult;
     onApprove: () => void;

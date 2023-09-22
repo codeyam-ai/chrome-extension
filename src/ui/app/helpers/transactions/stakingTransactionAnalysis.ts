@@ -1,4 +1,3 @@
-import { getTotalGasUsed } from '@mysten/sui.js';
 import {
     type SuiTransactionBlockResponse,
     type SuiJsonValue,
@@ -6,6 +5,7 @@ import {
 import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
 import addressOwner from './addressOwner';
+import utils from '../utils';
 
 export type StakingTransactionInfo = {
     coinType?: string;
@@ -28,7 +28,7 @@ const stakingTransactionAnalysis = (
         return analysis;
     }
 
-    const gasUsed = getTotalGasUsed(transaction.effects) || BigInt(0);
+    const gasUsed = utils.getTotalGasUsed(transaction.effects) || BigInt(0);
     const stakingEvents = transaction.events.filter(
         (event) =>
             event.sender === ownerAddress &&

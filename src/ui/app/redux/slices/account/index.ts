@@ -44,7 +44,7 @@ import type { AsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
-type InitialAccountInfo = {
+export type InitialAccountInfo = {
     authentication: string | null;
     mnemonic: string | null;
     passphrase: string | null;

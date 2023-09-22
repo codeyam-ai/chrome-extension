@@ -36,6 +36,7 @@ describe('The Transaction Approval popup', () => {
             dependencies: testDeps,
         });
 
+        await screen.findByText('Wallet 1');
         await screen.findByText('Cost', {}, { timeout: 50000 });
         const approveButton = await screen.findByText('Approve');
 

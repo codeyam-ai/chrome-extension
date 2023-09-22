@@ -1,11 +1,6 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-    getExecutionStatusType,
-    getTransactionKind,
-    getTransactionKindName,
-} from '@mysten/sui.js';
 import clBind from 'classnames/bind';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -17,28 +12,27 @@ import { useAppSelector } from '_hooks';
 import { txSelectors } from '_redux/slices/transactions';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js';
-import type { TransactionKindName } from '@mysten/sui.js/src/types/transactions';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type { RootState } from '_redux/RootReducer';
 
 import st from './TransactionDetailsPage.module.scss';
 
 const cl = clBind.bind(st);
 
-const txKindToTxt: Record<TransactionKindName, string> = {
-    // TransferObject: 'Object transfer',
-    // Call: 'Call',
-    // Publish: 'Publish',
-    // TransferSui: 'Sui transfer',
-    // ChangeEpoch: 'Change epoch',
-    // Pay: 'Pay',
-    // PaySui: 'PaySui',
-    // PayAllSui: 'PayAllSui',
-    ProgrammableTransaction: 'ProgrammableTransaction',
-    ChangeEpoch: 'ChangeEpoch',
-    Genesis: 'Genesis',
-    ConsensusCommitPrologue: 'ConsensusCommitPrologue',
-};
+// const txKindToTxt: Record<TransactionKindName, string> = {
+//     // TransferObject: 'Object transfer',
+//     // Call: 'Call',
+//     // Publish: 'Publish',
+//     // TransferSui: 'Sui transfer',
+//     // ChangeEpoch: 'Change epoch',
+//     // Pay: 'Pay',
+//     // PaySui: 'PaySui',
+//     // PayAllSui: 'PayAllSui',
+//     ProgrammableTransaction: 'ProgrammableTransaction',
+//     ChangeEpoch: 'ChangeEpoch',
+//     Genesis: 'Genesis',
+//     ConsensusCommitPrologue: 'ConsensusCommitPrologue',
+// };
 
 function TransactionDetailsPage() {
     const { txDigest } = useParams();
@@ -49,22 +43,22 @@ function TransactionDetailsPage() {
     );
     // TODO: load tx if not found locally
     const txDetails = useAppSelector(txSelector) as SuiTransactionBlockResponse;
-    const status = txDetails && getExecutionStatusType(txDetails);
+    const status = txDetails && txDetails.effects?.status?.status;
     const statusIcon = status === 'success' ? 'check2-circle' : 'x-circle';
-    const txnKind = getTransactionKind(txDetails);
-    const transferKind = txnKind ? getTransactionKindName(txnKind) : undefined;
+    // const txnKind = getTransactionKind(txDetails);
+    // const transferKind = txnKind ? getTransactionKindName(txnKind) : undefined;
 
     return (
         <div className={cl('container')}>
             {txDetails ? (
                 <>
                     <Icon className={cl('status', status)} icon={statusIcon} />
-                    {transferKind ? (
+                    {/* {transferKind ? (
                         <span className={cl('txt')}>
                             <strong>{txKindToTxt[transferKind]}</strong>{' '}
                             {status === 'success' ? 'was successful' : 'failed'}
                         </span>
-                    ) : null}
+                    ) : null} */}
                     {txDigest ? (
                         <ExplorerLink
                             className={cl('link')}
