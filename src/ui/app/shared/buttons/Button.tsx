@@ -54,7 +54,7 @@ const Button = (props: ButtonProps) => {
 
     const secondaryButtonClassNames = classNames(
         baseButtonClassNames,
-        'bg-ethos-light-background-secondary text-ethos-light-primary-light',
+        'bg-ethos-light-background-purple text-ethos-light-primary-light',
         forceLightTheme
             ? ''
             : 'dark:bg-ethos-dark-background-secondary dark:text-ethos-dark-primary-dark'

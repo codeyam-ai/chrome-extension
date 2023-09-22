@@ -181,7 +181,7 @@ export function DappSignMessageApprovalPage() {
                         {message && (
                             <div className="flex flex-col gap-1 px-6 w-full">
                                 <BodyLarge>Message To Sign</BodyLarge>
-                                <div className="rounded-lg p-3 bg-ethos-light-background-secondary dark:bg-ethos-dark-background-secondary">
+                                <div className="rounded-lg p-3 bg-ethos-light-background-purple text-center w-full overflow-auto">
                                     <Body>{message}</Body>
                                 </div>
                             </div>

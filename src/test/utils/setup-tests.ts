@@ -24,12 +24,12 @@ global.chrome = {
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace JSX {
-      interface IntrinsicElements {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        "em-emoji": any;
-      }
+        interface IntrinsicElements {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            'em-emoji': any;
+        }
     }
-  }
+}
 
 configure({ asyncUtilTimeout: 10000 });
 
