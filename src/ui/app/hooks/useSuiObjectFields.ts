@@ -3,8 +3,9 @@
 
 import { useMemo } from 'react';
 
-import type { MoveValue, SuiMoveObject } from '@mysten/sui.js/client';
 import utils from '../helpers/utils';
+
+import type { SuiMoveObject } from '@mysten/sui.js/client';
 
 const fieldsOrder: Record<string, number> = {
     name: 0,

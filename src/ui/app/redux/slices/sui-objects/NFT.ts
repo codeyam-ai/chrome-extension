@@ -1,6 +1,7 @@
 import get from 'lodash/get';
 
 import ipfs from '_src/ui/app/helpers/ipfs';
+import utils from '_src/ui/app/helpers/utils';
 import { safeUrl } from '_src/ui/app/hooks/useMediaUrl';
 
 import type {
@@ -10,7 +11,6 @@ import type {
     DynamicFieldInfo,
     SuiMoveObject,
 } from '@mysten/sui.js/client';
-import utils from '_src/ui/app/helpers/utils';
 
 export type BagNFT = {
     id: string;
