@@ -1,5 +1,6 @@
 import { fromHEX, toB64 } from '@mysten/bcs';
 import { configure } from '@testing-library/dom';
+import '@testing-library/jest-dom'
 import { utils } from 'aes-js';
 import nock from 'nock';
 import * as util from 'util';
