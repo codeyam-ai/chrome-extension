@@ -5,7 +5,6 @@ import { deleteEncrypted } from '../storagex/store';
 import { simpleApiCall } from '_src/shared/utils/simpleApiCall';
 
 import type { SuiClient } from '@mysten/sui.js/client';
-import type { SerializedSignature } from '@mysten/sui.js/cryptography';
 
 export class EthosSigner extends WalletSigner {
     private readonly accessToken: string;
