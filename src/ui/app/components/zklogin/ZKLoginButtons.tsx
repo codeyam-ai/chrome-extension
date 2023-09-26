@@ -1,13 +1,13 @@
 import { EnvelopeIcon } from '@heroicons/react/24/solid';
 import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { zkloginWithGoogle, type ZKData, stub, Zk } from './ZKLogin';
+import * as ZKLogin from './ZKLogin';
+import LoadingIndicator from '../loading/LoadingIndicator';
 import googleLogo from '_images/social-login-icons/google.png';
+import { ZkSigner } from '_src/shared/cryptography/ZkSigner';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Body from '_src/ui/app/shared/typography/Body';
-import { useNavigate } from 'react-router-dom';
-import LoadingIndicator from '../loading/LoadingIndicator';
-import { ZkSigner } from '_src/shared/cryptography/ZkSigner';
 
 export function ZKLoginButtons() {
     const client = api.instance.client;
@@ -19,12 +19,15 @@ export function ZKLoginButtons() {
     }, [navigate]);
 
     const onClickGoogle = useCallback(async () => {
-        // Zk.run(client);
         setIsLoadingService('Google');
-        // const payload: ZKData = await zkloginWithGoogle(client);
-        const result = stub;
+        const zkData = await ZKLogin.Zk.login(client);
+        if (!zkData) {
+            console.log('problem logging in');
+            return;
+        }
+
         setIsLoadingService(undefined);
-        const zkSigner = new ZkSigner(result.ephemeralKeyPair, client);
+        const zkSigner = new ZkSigner(zkData.ephemeralKeyPair, client);
         setTimeout(async () => {
             console.log('zkSigner :>> ', zkSigner);
             console.log('BEGINNING SIGNING');
