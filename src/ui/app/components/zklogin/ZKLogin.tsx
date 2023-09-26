@@ -30,7 +30,7 @@ export type ZkData = {
 
 export const Zk = {
     async login(client: SuiClient): Promise<ZkData | null> {
-        console.log('starting Zk.run()...');
+        console.log('starting Zk.login()...');
 
         const latestSuiSystemState = await client.getLatestSuiSystemState();
         const currentEpoch = parseInt(latestSuiSystemState.epoch);
