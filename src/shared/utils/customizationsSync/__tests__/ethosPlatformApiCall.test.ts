@@ -1,5 +1,5 @@
-import { API_BASE_URL, EXPLORER_BASE_URL } from '_src/shared/constants';
 import { explorerApiCall, authApiCall } from '../ethosPlatformApiCall';
+import { API_BASE_URL, EXPLORER_BASE_URL } from '_src/shared/constants';
 
 global.fetch = jest.fn(() =>
     Promise.resolve({

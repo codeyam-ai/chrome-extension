@@ -3,7 +3,13 @@ import { toB64 } from "@mysten/bcs";
 import { SuiClient } from "@mysten/sui.js/client";
 
 import { EthosSigner } from "../EthosSigner";
-import { simpleApiCall } from "_src/shared/utils/simpleApiCall";
+
+global.fetch = jest.fn(() =>
+    Promise.resolve({
+        json: () => Promise.resolve({}),
+        status: 200,
+    } as Response)
+);
 
 jest.mock("@mysten/sui.js/client", () => {
     return {
@@ -21,7 +27,7 @@ jest.mock("@mysten/sui.js/client", () => {
 });
 
 describe("EthosSigner", () => {
-  const simpleApiCallMock = (simpleApiCall as jest.MockedFunction<typeof simpleApiCall>)
+  const mockFetch = (global.fetch as jest.Mock);
   const client = new SuiClient({ url: "test-url" });
   const address = "test-address";
   const accessToken = "test-token";
@@ -38,26 +44,39 @@ describe("EthosSigner", () => {
   });
 
   it("signData should call simpleApiCall and return signature", async () => {
-    simpleApiCallMock.mockImplementation(() =>
-      Promise.resolve({ json: { signature: "test-signature" }, status: 200 })
-    );
+    mockFetch.mockResolvedValueOnce(Promise.resolve({ 
+        json: () => ({ 
+            signature: "test-signature"
+        }), 
+        status: 200 
+    }));
 
     const result = await testSigner.signData(data);
     expect(result).toEqual("test-signature");
-    expect(simpleApiCallMock).toHaveBeenCalledTimes(1);
-    expect(simpleApiCallMock).toHaveBeenCalledWith("transactions/sign", "POST", accessToken, {
-      network: "sui",
-      walletAddress: address,
-      dataToSign: toB64(data),
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    expect(mockFetch).toHaveBeenCalledWith("http://localhost:3000/api/transactions/sign", {
+        body: JSON.stringify({
+            network: "sui",
+            walletAddress: "test-address",
+            dataToSign: toB64(data), 
+        }),
+        headers: {
+            "Content-Type": "application/json", 
+            "X-Supabase-Access-Token": "test-token"
+        }, 
+        method: "POST"
     });
   });
 
   it("signData should throw error if status not equal to 200", async () => {
-    simpleApiCallMock.mockImplementation(() =>
-      Promise.resolve({ json: { signature: "test-signature" }, status: 201 })
-    );
+    mockFetch.mockResolvedValueOnce(Promise.resolve({ 
+        json: () => ({ 
+            signature: "test-signature"
+        }), 
+        status: 201 
+    }));
     await expect(testSigner.signData(data)).rejects.toThrow("Signing error: 201");
-    expect(simpleApiCallMock).toHaveBeenCalledTimes(1);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 
   it("connect should return new instance of EthosSigner", () => {

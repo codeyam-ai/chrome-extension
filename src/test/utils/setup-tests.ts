@@ -86,10 +86,6 @@ jest.mock('_shared/cryptography/mnemonics', () => {
     };
 });
 
-jest.mock("_src/shared/utils/simpleApiCall", () => ({
-    simpleApiCall: jest.fn(),
-}));
-
 beforeEach(() => clearFakeStorages());
 
 // ref: https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
