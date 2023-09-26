@@ -19,6 +19,8 @@ import saveCustomization from '_src/shared/utils/customizationsSync/saveCustomiz
 import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 
 import type { Dispatch, SetStateAction } from 'react';
+import { toast } from 'react-toastify';
+import { FailAlert } from '../../shared/alerts/FailAlert';
 
 /*
     Because creating a wallet extensively uses hooks (and hooks can't be used outside
@@ -199,7 +201,14 @@ const CreateWalletProvider = ({
             await _saveAccountInfos();
             setLoading(false);
         };
-        executeWithLoading();
+        try {
+            executeWithLoading();
+        } catch (error) {
+            toast(
+                <FailAlert text="There was an error creating a new wallet" />
+            );
+            setLoading(false);
+        }
     }, [
         accountInfos,
         authentication,

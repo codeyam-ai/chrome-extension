@@ -20,6 +20,8 @@ import saveCustomization from '_src/shared/utils/customizationsSync/saveCustomiz
 import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 
 import type { AccountInfo } from '../../KeypairVault';
+import { toast } from 'react-toastify';
+import { FailAlert } from '../../shared/alerts/FailAlert';
 
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -176,13 +178,17 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     );
 
     const onClickDone = useCallback(async () => {
-        await _saveAccountInfos();
-        if (customizationsSyncPreference) {
-            await handleSaveCustomization(
-                currentAccountInfo.address,
-                draftAccountInfos.current,
-                walletIndex
-            );
+        try {
+            await _saveAccountInfos();
+            if (customizationsSyncPreference) {
+                await handleSaveCustomization(
+                    currentAccountInfo.address,
+                    draftAccountInfos.current,
+                    walletIndex
+                );
+            }
+        } catch (error) {
+            toast(<FailAlert text="There was an error editing this wallet" />);
         }
     }, [
         _saveAccountInfos,
@@ -265,7 +271,11 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                     />
                 </div>
                 <div className="relative mx-6"></div>
-                <Button buttonStyle="primary" onClick={onClickDone}>
+                <Button
+                    buttonStyle="primary"
+                    onClick={onClickDone}
+                    disabled={loading}
+                >
                     <Loading loading={loading}>Done</Loading>
                 </Button>
             </div>

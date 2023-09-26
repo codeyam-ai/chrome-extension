@@ -65,7 +65,7 @@ class Authentication {
         );
 
         if (status !== 200) {
-            return null;
+            throw new Error("Couldn't create wallet");
         }
 
         return json.accounts.find((a: AccountInfo) => a.chain === chain);
