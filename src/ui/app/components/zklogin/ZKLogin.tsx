@@ -2,20 +2,23 @@ import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 import {
     generateNonce,
     generateRandomness,
+    getZkSignature,
     jwtToAddress,
 } from '@mysten/zklogin';
 
 import { getOAuthUrl, OAuthType } from './urls.oauth';
+import { getSaltServiceUrl } from './urls.saltService';
 import { extractJwtFromUrl } from './utils';
 
 import type { ZkSignatureInputs } from './bcs';
 import type { SuiClient } from '@mysten/sui.js/client';
-import { getSaltServiceUrl } from './urls.saltService';
+import type { TransactionBlock } from '@mysten/sui.js/transactions';
 
 type Proof = ZkSignatureInputs;
 
 export type ZkData = {
     maxEpoch: number;
+    ephemeralKeyPair: Ed25519Keypair;
     epkBigInt: bigint;
     randomness: bigint;
     nonce: string;
@@ -26,7 +29,7 @@ export type ZkData = {
 };
 
 export const Zk = {
-    async run(client: SuiClient): Promise<ZkData | null> {
+    async login(client: SuiClient): Promise<ZkData | null> {
         console.log('starting Zk.run()...');
 
         const latestSuiSystemState = await client.getLatestSuiSystemState();
@@ -69,6 +72,7 @@ export const Zk = {
 
         const zkData: ZkData = {
             maxEpoch,
+            ephemeralKeyPair,
             epkBigInt,
             randomness,
             nonce,
@@ -80,6 +84,48 @@ export const Zk = {
         console.log('zkData', zkData);
 
         return zkData;
+    },
+    /**
+     * This is the flow that mysten [recommends
+     * here](https://docs.sui.io/build/zk_login#assemble-the-zklogin-signature-and-submit-the-transaction).
+     * We are not using it until we transition away from Signers and towards
+     * KeyPairs.
+     */
+    async signAndExecuteTransactionBlock({
+        txb,
+        client,
+        zkData,
+    }: {
+        txb: TransactionBlock;
+        client: SuiClient;
+        zkData: ZkData;
+    }) {
+        /**
+         * First, sign the transaction bytes with the ephemeral private key.
+         * This is the same as traditional KeyPair signing.
+         */
+        const { bytes, signature: userSignature } = await txb.sign({
+            client,
+            signer: zkData.ephemeralKeyPair,
+        });
+
+        /**
+         * Next, serialize the zkLogin signature by combining the ZK proof and
+         * the ephemeral signature.
+         */
+        const zkSignature = getZkSignature({
+            inputs: zkData.proof,
+            maxEpoch: zkData.maxEpoch,
+            userSignature,
+        });
+
+        /**
+         * Finally, execute the transaction.
+         */
+        client.executeTransactionBlock({
+            transactionBlock: bytes,
+            signature: zkSignature,
+        });
     },
 };
 
@@ -186,8 +232,7 @@ async function getProof({
         salt: payload.salt.toString(),
     };
 
-    const MYSTEN_PROVING_SERVICE_URL =
-        'https://prover.mystenlabs.com/v1';
+    const MYSTEN_PROVING_SERVICE_URL = 'https://prover.mystenlabs.com/v1';
 
     const response = await fetch(MYSTEN_PROVING_SERVICE_URL, {
         method: 'POST',
@@ -199,32 +244,3 @@ async function getProof({
 
     return { proof: json };
 }
-
-/**
- * `inputs` I'm pretty sure is just the proof payload
- */
-// async function signAndExecuteTxWithZk({
-//     client,
-//     txb,
-//     ephKeyPair, // or ZKData
-// }: {
-//     client: SuiClient;
-//     txb: TransactionBlock;
-//     ephKeyPair: Ed25519Keypair;
-// }) {
-//     const { bytes, signature: userSignature } = await txb.sign({
-//         client,
-//         signer: ephKeyPair,
-//     });
-
-//     const zkSignature = getZkSignature({
-//         inputs,
-//         maxEpoch,
-//         userSignature,
-//     });
-
-//     client.executeTransactionBlock({
-//         transactionBlock: bytes,
-//         signature: zkSignature,
-//     });
-// }
