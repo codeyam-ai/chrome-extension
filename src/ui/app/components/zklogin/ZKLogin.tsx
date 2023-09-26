@@ -88,7 +88,7 @@ async function getJwtViaOAuthFlow({
 }: {
     nonce: string;
 }): Promise<{ jwt: string | null }> {
-    const oAuthUrl = getOAuthUrl({ type: OAuthType.Google, nonce });
+    const oAuthUrl = getOAuthUrl({ type: OAuthType.DevTest, nonce });
 
     const responseUrl = await chrome.identity.launchWebAuthFlow({
         url: oAuthUrl,
@@ -187,7 +187,7 @@ async function getProof({
     };
 
     const MYSTEN_PROVING_SERVICE_URL =
-        'http://prover-devnet.mystenlabs.com:8080/zkp';
+        'https://prover.mystenlabs.com/v1';
 
     const response = await fetch(MYSTEN_PROVING_SERVICE_URL, {
         method: 'POST',
