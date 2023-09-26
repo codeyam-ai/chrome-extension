@@ -1,28 +1,25 @@
-import {
-    type PublicKey,
-    type ExportedKeypair,
-    type SerializedSignature,
-    toSerializedSignature,
-} from '@mysten/sui.js';
-import {
-    type Ed25519Keypair,
-    type Ed25519PublicKey,
-} from '@mysten/sui.js/keypairs/ed25519';
+import { toSerializedSignature } from '@mysten/sui.js/cryptography';
+import { type Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
+import { getZkSignature } from '@mysten/zklogin';
+import { blake2b } from '@noble/hashes/blake2b';
+import { decodeJwt, type JWTPayload } from 'jose';
 
 import { WalletSigner } from './WalletSigner';
+import { getCurrentEpoch } from './current-epoch';
+import { obfuscate } from './keystore';
+import { getEncrypted, setEncrypted } from '../storagex/store';
+import networkEnv, { type NetworkEnvType } from '_src/background/NetworkEnv';
+import { computeZkAddress } from '_src/ui/app/components/zklogin/address';
+import { fromExportedKeypair } from '_src/ui/app/components/zklogin/from-exported-keypair';
+import { type ZkProvider } from '_src/ui/app/components/zklogin/providers';
+import { type PartialZkSignature } from '_src/ui/app/components/zklogin/utils';
 
 import type { SuiClient } from '@mysten/sui.js/client';
-import { decodeJwt, type JWTPayload } from 'jose';
-import { type ZkProvider } from '_src/ui/app/components/zklogin/providers';
-import { computeZkAddress } from '_src/ui/app/components/zklogin/address';
-import { deobfuscate, obfuscate } from './keystore';
-import { blake2b } from '@noble/hashes/blake2b';
-import { getEncrypted, setEncrypted } from '../storagex/store';
-import { type PartialZkSignature } from '_src/ui/app/components/zklogin/utils';
-import networkEnv, { type NetworkEnvType } from '_src/background/NetworkEnv';
-import { getCurrentEpoch } from './current-epoch';
-import { fromExportedKeypair } from '_src/ui/app/components/zklogin/from-exported-keypair';
-import { getZkSignature } from '@mysten/zklogin';
+import type {
+    ExportedKeypair,
+    SerializedSignature,
+    PublicKey,
+} from '@mysten/sui.js/cryptography';
 
 type JwtSerializedClaims = {
     email: string | null;

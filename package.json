@@ -114,7 +114,6 @@
         "@mysten/ledgerjs-hw-app-sui": "^0.2.0",
         "@mysten/sui.js": "^0.42.0",
         "@mysten/wallet-standard": "^0.8.0",
-        "@noble/hashes": "^1.3.2",
         "@mysten/zklogin": "^0.1.3",
         "@noble/hashes": "^1.3.2",
         "@reduxjs/toolkit": "^1.8.3",
