@@ -34,7 +34,7 @@ function _google({
         client_id: CLIENT_ID,
         response_type: 'id_token',
         redirect_uri: getRedirectUrl('/ui.html'),
-        scope: 'openid',
+        scope: 'openid profile email',
         nonce: nonce,
     };
 
@@ -65,7 +65,7 @@ function _devTest({
         client_id: MYSTEN_DEV_USE_ONLY_CLIENT_ID,
         redirect_uri: MYSTEN_DEV_REDIRECT_URL,
         response_type: 'id_token',
-        scope: 'openid',
+        scope: 'openid profile email',
         nonce: nonce,
     });
 
