@@ -1,4 +1,3 @@
-import { de } from 'date-fns/locale';
 import getJwtWithSigner from '../getJwtWithSigner';
 import { saveAllCustomizationsFromSeed } from '../saveAllCustomizationsFromSeed';
 import saveCustomization from '../saveCustomization';

@@ -1,3 +1,4 @@
+import { useAppSelector } from '_src/ui/app/hooks';
 import Button from '_src/ui/app/shared/buttons/Button';
 import BodyLarge from '_src/ui/app/shared/typography/BodyLarge';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
@@ -26,6 +27,10 @@ const SecurityItemDisplay = ({ item }: { item: SecurityItem }) => {
 };
 
 const SecurityHomePage = () => {
+    const authentication = useAppSelector(
+        ({ account }) => account.authentication
+    );
+
     const securityItems: SecurityItem[] = [
         {
             title: 'Password',
@@ -49,6 +54,11 @@ const SecurityHomePage = () => {
             path: '/settings/security/view-private-key',
         },
     ];
+
+    if (authentication) {
+        // Password is not available if email user
+        securityItems.shift();
+    }
 
     return (
         <div className="flex flex-col px-6 divide-y divide-ethos-light-text-stroke dark:divide-ethos-dark-text-stroke">

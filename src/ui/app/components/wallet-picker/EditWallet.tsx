@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import getNextWalletColor from '../../helpers/getNextWalletColor';
 import { useAppDispatch, useAppSelector } from '../../hooks';
@@ -7,6 +8,7 @@ import useWalletName from '../../hooks/useWalletName';
 import { saveAccountInfos, setAccountInfos } from '../../redux/slices/account';
 import { thunkExtras } from '../../redux/store/thunk-extras';
 import EmojiDisplay from '../../shared/EmojiDisplay';
+import { FailAlert } from '../../shared/alerts/FailAlert';
 import Button from '../../shared/buttons/Button';
 import BasicSectionHeader from '../../shared/headers/section-headers/BasicSectionHeader';
 import Input from '../../shared/inputs/Input';
@@ -176,13 +178,17 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
     );
 
     const onClickDone = useCallback(async () => {
-        await _saveAccountInfos();
-        if (customizationsSyncPreference) {
-            await handleSaveCustomization(
-                currentAccountInfo.address,
-                draftAccountInfos.current,
-                walletIndex
-            );
+        try {
+            await _saveAccountInfos();
+            if (customizationsSyncPreference) {
+                await handleSaveCustomization(
+                    currentAccountInfo.address,
+                    draftAccountInfos.current,
+                    walletIndex
+                );
+            }
+        } catch (error) {
+            toast(<FailAlert text="There was an error editing this wallet" />);
         }
     }, [
         _saveAccountInfos,
@@ -265,7 +271,11 @@ const EditWallet = ({ setIsWalletEditing }: EditWalletProps) => {
                     />
                 </div>
                 <div className="relative mx-6"></div>
-                <Button buttonStyle="primary" onClick={onClickDone}>
+                <Button
+                    buttonStyle="primary"
+                    onClick={onClickDone}
+                    disabled={loading}
+                >
                     <Loading loading={loading}>Done</Loading>
                 </Button>
             </div>

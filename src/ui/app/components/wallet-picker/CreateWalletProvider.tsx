@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
+import { toast } from 'react-toastify';
 
 import { type AccountInfo } from '../../KeypairVault';
 import getNextEmoji from '../../helpers/getNextEmoji';
@@ -10,6 +11,7 @@ import {
     setAccountInfos,
 } from '../../redux/slices/account';
 import { thunkExtras } from '../../redux/store/thunk-extras';
+import { FailAlert } from '../../shared/alerts/FailAlert';
 import { clearForNetworkOrWalletSwitch as clearBalancesForNetworkOrWalletSwitch } from '_redux/slices/balances';
 import { clearForNetworkOrWalletSwitch as clearTokensForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
 import Authentication from '_src/background/Authentication';
@@ -110,8 +112,8 @@ const CreateWalletProvider = ({
 
     const _saveAccountInfos = useCallback(async () => {
         if (authentication) {
-            Authentication.updateAccountInfos(draftAccountInfos.current);
-            await dispatch(setAccountInfos(draftAccountInfos.current));
+            await Authentication.updateAccountInfos(draftAccountInfos.current);
+            await dispatch(saveAccountInfos(draftAccountInfos.current));
             await Authentication.getAccountInfos(true);
         } else {
             await dispatch(clearTokensForNetworkOrWalletSwitch());
@@ -199,7 +201,14 @@ const CreateWalletProvider = ({
             await _saveAccountInfos();
             setLoading(false);
         };
-        executeWithLoading();
+        try {
+            executeWithLoading();
+        } catch (error) {
+            toast(
+                <FailAlert text="There was an error creating a new wallet" />
+            );
+            setLoading(false);
+        }
     }, [
         accountInfos,
         authentication,

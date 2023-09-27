@@ -20,6 +20,7 @@ const LoggingInPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [loading, setLoading] = useState<boolean>(true);
+    const [isError, setIsError] = useState(false);
     const [authenticationSlow, setAuthenticationSlow] =
         useState<boolean>(false);
 
@@ -59,7 +60,12 @@ const LoggingInPage = () => {
                 setLoading(false);
             }
         };
-        setAccessToken();
+        try {
+            setAccessToken();
+        } catch (error) {
+            setIsError(true);
+            setLoading(false);
+        }
     }, [dispatch, navigate]);
 
     useEffect(() => {
@@ -80,9 +86,17 @@ const LoggingInPage = () => {
     return (
         <>
             <div className="flex flex-col items-center gap-6">
-                <BodyLarge isSemibold>Authenticating</BodyLarge>
+                <BodyLarge isSemibold>
+                    {isError ? 'An error has occurred' : 'Authenticating'}
+                </BodyLarge>
                 <LoadingIndicator big />
-                {!loading && authenticationSlow && (
+                {isError && (
+                    <>
+                        <BodyLarge>Try logging in again</BodyLarge>
+                        <Button onClick={reset}>Log Back In</Button>
+                    </>
+                )}
+                {!isError && !loading && authenticationSlow && (
                     <>
                         <BodyLarge>
                             Authentication is taking a while.

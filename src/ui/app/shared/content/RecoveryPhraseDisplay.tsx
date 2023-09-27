@@ -68,15 +68,15 @@ const RecoveryPhraseDisplay = ({
                 {mnemonic.split(' ').map((word, index) => {
                     return (
                         <div className="grid grid-cols-3 gap-2" key={index}>
-                            <BodyLarge
+                            <Body
                                 isTextColorMedium
                                 className="text-right col-span-1"
                             >
                                 <code className="pointer-events-none select-none">
                                     {index + 1}
                                 </code>
-                            </BodyLarge>
-                            <BodyLarge
+                            </Body>
+                            <Body
                                 isSemibold
                                 className={`text-left col-span-2 !text-ethos-light-mnemonic-word ${
                                     forceLightTheme
@@ -85,7 +85,7 @@ const RecoveryPhraseDisplay = ({
                                 }`}
                             >
                                 {word}
-                            </BodyLarge>
+                            </Body>
                         </div>
                     );
                 })}
