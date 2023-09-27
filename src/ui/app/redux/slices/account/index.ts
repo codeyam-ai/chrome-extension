@@ -61,6 +61,16 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
     async (_args, { getState }): Promise<InitialAccountInfo> => {
         let activeAccountIndex = 0;
 
+        const retrievedOnboarding = await getEncrypted({
+            key: 'onboarding',
+            session: false,
+            strong: false,
+        });
+        const onboarding =
+            retrievedOnboarding === null
+                ? true
+                : JSON.parse(retrievedOnboarding);
+
         const accountTypeString = ((await getEncrypted({
             key: 'account-type',
             session: false,
@@ -108,7 +118,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     mnemonics: [],
                     privateKeys: [],
                 },
-                onboarding: true,
+                onboarding,
             };
         }
 
@@ -131,7 +141,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     mnemonics: [],
                     privateKeys: [],
                 },
-                onboarding: true,
+                onboarding,
             };
         }
 
@@ -305,14 +315,6 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
         const {
             account: { locked: alreadyLocked },
         } = getState() as RootState;
-
-        const onboarding = (await getEncrypted({
-            key: 'onboarding',
-            session: false,
-            strong: false,
-        }))
-            ? true
-            : false;
 
         // TODO: This seems unnecessary; if the redux state is locked, we shouldn't have to then delete the data.
         //  Deleting the data happens first, and later the redux state is updated
@@ -940,6 +942,12 @@ export const reset = createAsyncThunk(
         const {
             account: { passphrase, importNames },
         } = getState() as RootState;
+        await deleteEncrypted({
+            key: 'onboarding',
+            session: false,
+            strong: false,
+        });
+
         if (passphrase) {
             for (const name of importNames.mnemonics || []) {
                 await deleteEncrypted({
@@ -1006,13 +1014,8 @@ export const reset = createAsyncThunk(
             session: false,
             strong: false,
         });
-        await deleteEncrypted({
-            key: 'onboarding',
-            session: false,
-            strong: false,
-        });
 
-        window.location.reload();
+        setTimeout(() => window.location.reload(), 500);
     }
 );
 
@@ -1116,10 +1119,11 @@ export const completeOnboarding: AsyncThunk<void, void, AppThunkConfig> =
     createAsyncThunk<void, void, AppThunkConfig>(
         'account/completeOnboarding',
         async () => {
-            await deleteEncrypted({
+            await setEncrypted({
                 key: 'onboarding',
                 session: false,
                 strong: false,
+                value: 'false',
             });
         }
     );
@@ -1288,14 +1292,16 @@ const accountSlice = createSlice({
         },
         lockWalletUI: (state, action: PayloadAction<boolean>) => {
             if (action.payload) {
-                state.authentication = null;
-                state.onboarding = true;
+                if (state.authentication) {
+                    state.onboarding = true;
+                    deleteEncrypted({
+                        key: 'onboarding',
+                        session: false,
+                        strong: false,
+                    });
+                }
 
-                deleteEncrypted({
-                    key: 'onboarding',
-                    session: false,
-                    strong: false,
-                });
+                state.authentication = null;
             } else {
                 state.locked = true;
             }

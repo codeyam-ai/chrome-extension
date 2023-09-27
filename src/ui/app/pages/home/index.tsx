@@ -37,6 +37,7 @@ const AppContainer = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
+        if (guardChecking) return;
         dispatch(completeOnboarding());
     }, [guardChecking, dispatch]);
 
