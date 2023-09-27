@@ -112,14 +112,6 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             };
         }
 
-        const onboarding = (await getEncrypted({
-            key: 'onboarding',
-            session: false,
-            strong: false,
-        }))
-            ? true
-            : false;
-
         const passphrase = await getEncrypted({
             key: 'passphrase',
             session: true,
@@ -139,7 +131,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     mnemonics: [],
                     privateKeys: [],
                 },
-                onboarding,
+                onboarding: true,
             };
         }
 
@@ -313,6 +305,14 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
         const {
             account: { locked: alreadyLocked },
         } = getState() as RootState;
+
+        const onboarding = (await getEncrypted({
+            key: 'onboarding',
+            session: false,
+            strong: false,
+        }))
+            ? true
+            : false;
 
         // TODO: This seems unnecessary; if the redux state is locked, we shouldn't have to then delete the data.
         //  Deleting the data happens first, and later the redux state is updated
