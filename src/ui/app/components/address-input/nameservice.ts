@@ -6,7 +6,7 @@ export const getSuiAddress = async (domain: string) => {
         const address = await client.resolveNameServiceAddress({
             name: domain,
         });
-        return address;    
+        return address;
     } catch (e) {
         return null;
     }

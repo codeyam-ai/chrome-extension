@@ -53,12 +53,23 @@ export type InitialAccountInfo = {
     locked: boolean;
     accountType: AccountType;
     importNames: { mnemonics: string[]; privateKeys: string[] };
+    onboarding: boolean;
 };
 
 export const loadAccountInformationFromStorage = createAsyncThunk(
     'account/loadAccountInformation',
     async (_args, { getState }): Promise<InitialAccountInfo> => {
         let activeAccountIndex = 0;
+
+        const retrievedOnboarding = await getEncrypted({
+            key: 'onboarding',
+            session: false,
+            strong: false,
+        });
+        const onboarding =
+            retrievedOnboarding === null
+                ? true
+                : JSON.parse(retrievedOnboarding);
 
         const accountTypeString = ((await getEncrypted({
             key: 'account-type',
@@ -107,6 +118,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     mnemonics: [],
                     privateKeys: [],
                 },
+                onboarding,
             };
         }
 
@@ -129,6 +141,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     mnemonics: [],
                     privateKeys: [],
                 },
+                onboarding,
             };
         }
 
@@ -319,6 +332,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 locked: true,
                 accountType,
                 importNames,
+                onboarding,
             };
         }
 
@@ -331,6 +345,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             locked: false,
             accountType,
             importNames,
+            onboarding,
         };
     }
 );
@@ -927,6 +942,12 @@ export const reset = createAsyncThunk(
         const {
             account: { passphrase, importNames },
         } = getState() as RootState;
+        await deleteEncrypted({
+            key: 'onboarding',
+            session: false,
+            strong: false,
+        });
+
         if (passphrase) {
             for (const name of importNames.mnemonics || []) {
                 await deleteEncrypted({
@@ -994,7 +1015,7 @@ export const reset = createAsyncThunk(
             strong: false,
         });
 
-        window.location.reload();
+        setTimeout(() => window.location.reload(), 500);
     }
 );
 
@@ -1093,6 +1114,19 @@ export const unlockWithMnemonic: AsyncThunk<
         return null;
     }
 );
+
+export const completeOnboarding: AsyncThunk<void, void, AppThunkConfig> =
+    createAsyncThunk<void, void, AppThunkConfig>(
+        'account/completeOnboarding',
+        async () => {
+            await setEncrypted({
+                key: 'onboarding',
+                session: false,
+                strong: false,
+                value: 'false',
+            });
+        }
+    );
 
 export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
     'account/getFavoriteDappsKeys',
@@ -1201,6 +1235,7 @@ export type AccountState = {
     customizationsSyncPreference: boolean;
     importNames: { mnemonics: string[]; privateKeys: string[] };
     ledgerConnected: boolean;
+    onboarding: boolean;
 };
 
 const initialState: AccountState = {
@@ -1224,6 +1259,7 @@ const initialState: AccountState = {
         privateKeys: [],
     },
     ledgerConnected: false,
+    onboarding: true,
 };
 
 const accountSlice = createSlice({
@@ -1256,6 +1292,15 @@ const accountSlice = createSlice({
         },
         lockWalletUI: (state, action: PayloadAction<boolean>) => {
             if (action.payload) {
+                if (state.authentication) {
+                    state.onboarding = true;
+                    deleteEncrypted({
+                        key: 'onboarding',
+                        session: false,
+                        strong: false,
+                    });
+                }
+
                 state.authentication = null;
             } else {
                 state.locked = true;
@@ -1284,6 +1329,7 @@ const accountSlice = createSlice({
                     state.accountType = action.payload.accountType;
                     state.importNames = action.payload.importNames;
                     state.locked = action.payload.locked;
+                    state.onboarding = action.payload.onboarding;
                 }
             )
             .addCase(createMnemonic.pending, (state) => {
@@ -1324,6 +1370,9 @@ const accountSlice = createSlice({
                     state.loading = true;
                 }
                 state.passphrase = action.payload;
+            })
+            .addCase(completeOnboarding.fulfilled, (state) => {
+                state.onboarding = false;
             })
             .addCase(
                 loadFavoriteDappsKeysFromStorage.fulfilled,

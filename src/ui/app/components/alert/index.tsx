@@ -24,7 +24,10 @@ const modeToIcon: Record<Exclude<ModeType, 'loading'>, SuiIcons> = {
 
 function Alert({ children, className, mode = 'warning' }: AlertProps) {
     return (
-        <div data-testid="alert" className={cl(st.container, st[mode], className)}>
+        <div
+            data-testid="alert"
+            className={cl(st.container, st[mode], className)}
+        >
             {mode === 'loading' ? (
                 <LoadingIndicator className={st.loader} />
             ) : (

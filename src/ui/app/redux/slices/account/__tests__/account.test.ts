@@ -62,4 +62,5 @@ const initialState: AccountState = {
         privateKeys: [],
     },
     ledgerConnected: false,
+    onboarding: true,
 };
