@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import getNextWalletColor from '../../helpers/getNextWalletColor';
 import { useAppDispatch, useAppSelector } from '../../hooks';
@@ -7,6 +8,7 @@ import useWalletName from '../../hooks/useWalletName';
 import { saveAccountInfos, setAccountInfos } from '../../redux/slices/account';
 import { thunkExtras } from '../../redux/store/thunk-extras';
 import EmojiDisplay from '../../shared/EmojiDisplay';
+import { FailAlert } from '../../shared/alerts/FailAlert';
 import Button from '../../shared/buttons/Button';
 import BasicSectionHeader from '../../shared/headers/section-headers/BasicSectionHeader';
 import Input from '../../shared/inputs/Input';
@@ -20,8 +22,6 @@ import saveCustomization from '_src/shared/utils/customizationsSync/saveCustomiz
 import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 
 import type { AccountInfo } from '../../KeypairVault';
-import { toast } from 'react-toastify';
-import { FailAlert } from '../../shared/alerts/FailAlert';
 
 interface EditWalletProps {
     setIsWalletEditing: React.Dispatch<React.SetStateAction<boolean>>;

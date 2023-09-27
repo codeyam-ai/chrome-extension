@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
+import { toast } from 'react-toastify';
 
 import { type AccountInfo } from '../../KeypairVault';
 import getNextEmoji from '../../helpers/getNextEmoji';
@@ -10,6 +11,7 @@ import {
     setAccountInfos,
 } from '../../redux/slices/account';
 import { thunkExtras } from '../../redux/store/thunk-extras';
+import { FailAlert } from '../../shared/alerts/FailAlert';
 import { clearForNetworkOrWalletSwitch as clearBalancesForNetworkOrWalletSwitch } from '_redux/slices/balances';
 import { clearForNetworkOrWalletSwitch as clearTokensForNetworkOrWalletSwitch } from '_redux/slices/sui-objects';
 import Authentication from '_src/background/Authentication';
@@ -19,8 +21,6 @@ import saveCustomization from '_src/shared/utils/customizationsSync/saveCustomiz
 import useJwt from '_src/shared/utils/customizationsSync/useJwt';
 
 import type { Dispatch, SetStateAction } from 'react';
-import { toast } from 'react-toastify';
-import { FailAlert } from '../../shared/alerts/FailAlert';
 
 /*
     Because creating a wallet extensively uses hooks (and hooks can't be used outside
