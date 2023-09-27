@@ -18,6 +18,7 @@ type Proof = ZkSignatureInputs;
 
 export type ZkData = {
     maxEpoch: number;
+    minEpoch: number;
     ephemeralKeyPair: Ed25519Keypair;
     epkBigInt: bigint;
     randomness: bigint;
@@ -72,6 +73,7 @@ export const Zk = {
 
         const zkData: ZkData = {
             maxEpoch,
+            minEpoch: currentEpoch,
             ephemeralKeyPair,
             epkBigInt,
             randomness,
@@ -151,7 +153,7 @@ async function getSalt({
 }: {
     jwt: string;
 }): Promise<{ salt: bigint | null }> {
-    const saltServiceUrl = getSaltServiceUrl({ env: 'production' });
+    const saltServiceUrl = getSaltServiceUrl({ env: 'development' });
 
     const response = await fetch(`${saltServiceUrl}/get_salt`, {
         method: 'POST',

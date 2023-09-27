@@ -2,7 +2,7 @@ import { EnvelopeIcon } from '@heroicons/react/24/solid';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import * as ZKLogin from './ZKLogin';
+import { Zk } from './ZKLogin';
 import LoadingIndicator from '../loading/LoadingIndicator';
 import googleLogo from '_images/social-login-icons/google.png';
 import { ZkSigner } from '_src/shared/cryptography/ZkSigner';
@@ -20,14 +20,14 @@ export function ZKLoginButtons() {
 
     const onClickGoogle = useCallback(async () => {
         setIsLoadingService('Google');
-        const zkData = await ZKLogin.Zk.login(client);
+        const zkData = await Zk.login(client);
         if (!zkData) {
             console.log('problem logging in');
             return;
         }
 
         setIsLoadingService(undefined);
-        const zkSigner = new ZkSigner(zkData.ephemeralKeyPair, client);
+        const zkSigner = new ZkSigner({ zkData, client });
         setTimeout(async () => {
             console.log('zkSigner :>> ', zkSigner);
             console.log('BEGINNING SIGNING');
