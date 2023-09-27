@@ -5,6 +5,7 @@ import { getSigner } from './getSigner';
 import { Coin } from '../redux/slices/sui-objects/Coin';
 
 import type { AccountInfo } from '../KeypairVault';
+import type { ZkData } from '../components/zklogin/ZKLogin';
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
 import type { SuiMoveObject } from '@mysten/sui.js/client';
 
@@ -15,6 +16,7 @@ const sendTokens = async ({
     accountInfos,
     address,
     authentication,
+    zkData,
     activeAccountIndex,
     tokenTypeArg,
     amount,
@@ -26,6 +28,7 @@ const sendTokens = async ({
     accountInfos: AccountInfo[];
     address: string | null;
     authentication: string | null;
+    zkData: ZkData | null;
     activeAccountIndex: number;
     tokenTypeArg: string;
     amount: bigint;
@@ -36,6 +39,7 @@ const sendTokens = async ({
         accountInfos,
         address,
         authentication,
+        zkData,
         activeAccountIndex,
         connectToLedger
     );

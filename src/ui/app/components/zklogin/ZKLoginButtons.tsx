@@ -8,11 +8,17 @@ import googleLogo from '_images/social-login-icons/google.png';
 import { ZkSigner } from '_src/shared/cryptography/ZkSigner';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Body from '_src/ui/app/shared/typography/Body';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { setZk } from '../../redux/slices/account';
 
 export function ZKLoginButtons() {
     const client = api.instance.client;
     const navigate = useNavigate();
     const [isLoadingService, setIsLoadingService] = useState<'Google'>();
+    const dispatch = useAppDispatch();
+    const account = useAppSelector((state) => state.account);
+
+    console.log('account :>> ', account);
 
     const onClickEmail = useCallback(() => {
         navigate('/initialize/hosted');
@@ -27,20 +33,26 @@ export function ZKLoginButtons() {
         }
 
         setIsLoadingService(undefined);
-        const zkSigner = new ZkSigner({ zkData, client });
-        setTimeout(async () => {
-            console.log('zkSigner :>> ', zkSigner);
-            console.log('BEGINNING SIGNING');
-            const testString = 'This is a test string';
-            const testUint8Array = new TextEncoder().encode(testString);
 
-            const signRes = await zkSigner.signMessage({
-                message: testUint8Array,
-            });
-            console.log('signRes :>> ', signRes);
-        }, 1000);
+        const res = await dispatch(setZk(zkData));
+        console.log('res :>> ', res);
+
+        // navigate('/initialize/complete');
+
+        // const zkSigner = new ZkSigner({ zkData, client });
+        // setTimeout(async () => {
+        //     console.log('zkSigner :>> ', zkSigner);
+        //     console.log('BEGINNING SIGNING');
+        //     const testString = 'This is a test string';
+        //     const testUint8Array = new TextEncoder().encode(testString);
+
+        //     const signRes = await zkSigner.signMessage({
+        //         message: testUint8Array,
+        //     });
+        //     console.log('signRes :>> ', signRes);
+        // }, 1000);
         return;
-    }, [client]);
+    }, [client, dispatch]);
 
     return (
         <>

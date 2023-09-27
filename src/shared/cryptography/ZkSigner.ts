@@ -140,7 +140,7 @@ export class ZkSigner extends WalletSigner {
 
         // in the sui wallet this is not called here (not sure were it gets called when the account is created)
         // await this.#doLogin();
-        await this.#saveCredentialsToStorage({ zkData });
+        // await this.#saveCredentialsToStorage({ zkData });
 
         return Promise.resolve({
             type: 'zk',
@@ -241,36 +241,36 @@ export class ZkSigner extends WalletSigner {
         return new ZkSigner({ zkData: this.zkData, client });
     }
 
-    async #saveCredentialsToStorage({ zkData }: { zkData: ZkData }) {
-        const activeNetwork = await networkEnv.getActiveNetwork();
+    // async #saveCredentialsToStorage({ zkData }: { zkData: ZkData }) {
+    //     const activeNetwork = await networkEnv.getActiveNetwork();
 
-        const credentialsData: CredentialData = {
-            ephemeralKeyPair: zkData.ephemeralKeyPair.export(),
-            minEpoch: zkData.minEpoch,
-            maxEpoch: zkData.maxEpoch,
-            network: activeNetwork,
-            randomness: zkData.randomness.toString(),
-            jwt: zkData.jwt,
-            proofs: zkData.proof,
-        };
-        console.log(
-            'credentialsData being saved to storage :>> ',
-            credentialsData
-        );
-        // ephemeralValue[serializeNetwork(activeNetwork)] = credentialsData;
-        // await this.setEphemeralValue(ephemeralValue);
-        // await this.onUnlocked();
+    //     const credentialsData: CredentialData = {
+    //         ephemeralKeyPair: zkData.ephemeralKeyPair.export(),
+    //         minEpoch: zkData.minEpoch,
+    //         maxEpoch: zkData.maxEpoch,
+    //         network: activeNetwork,
+    //         randomness: zkData.randomness.toString(),
+    //         jwt: zkData.jwt,
+    //         proofs: zkData.proof,
+    //     };
+    //     console.log(
+    //         'credentialsData being saved to storage :>> ',
+    //         credentialsData
+    //     );
+    //     // ephemeralValue[serializeNetwork(activeNetwork)] = credentialsData;
+    //     // await this.setEphemeralValue(ephemeralValue);
+    //     // await this.onUnlocked();
 
-        await setEncrypted({
-            // ❗❗❗❗ CHANGE THIS KEY ❗❗❗❗
-            key: 'zk-1',
-            session: false,
-            strong: false,
-            value: JSON.stringify(credentialsData),
-        });
+    //     // await setEncrypted({
+    //     //     // ❗❗❗❗ CHANGE THIS KEY ❗❗❗❗
+    //     //     key: 'zk',
+    //     //     session: false,
+    //     //     strong: false,
+    //     //     value: JSON.stringify(credentialsData),
+    //     // });
 
-        return credentialsData;
-    }
+    //     return credentialsData;
+    // }
 
     // async #doLogin() {
     //     // const { provider, claims } = await this.getStoredData();

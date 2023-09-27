@@ -15,7 +15,7 @@ const esmMappings = {
     uuid: '<rootDir>/node_modules/uuid/dist/index.js',
     // jose has a node cjs export, so "just" use that instead of the browser/esm
     // version
-    jose: '<rootDir>/node_modules/jose/dist/node/cjs/index.js'
+    jose: '<rootDir>/node_modules/jose/dist/node/cjs/index.js',
 };
 
 const config: Config.InitialOptions = {

@@ -74,6 +74,7 @@ export function DappTxApprovalPage() {
         authentication,
         accountInfos,
         passphrase,
+        zkData,
     } = useAppSelector(({ account }) => account);
 
     const activeAccount = useMemo(
@@ -153,6 +154,7 @@ export function DappTxApprovalPage() {
                 accountInfos,
                 address,
                 authentication,
+                zkData,
                 activeAccountIndex,
                 connectToLedger
             );

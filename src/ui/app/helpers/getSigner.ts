@@ -1,9 +1,11 @@
 import { fromHEX } from '@mysten/bcs';
 import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 
+import { type ZkData } from '../components/zklogin/ZKLogin';
 import { derivationPathForLedger } from '../pages/home/home/dapp/dapps/Ledger/hooks/useDeriveLedgerAccounts';
 import { api, thunkExtras } from '../redux/store/thunk-extras';
 import { LedgerSigner } from '_src/shared/cryptography/LedgerSigner';
+import { ZkSigner } from '_src/shared/cryptography/ZkSigner';
 import { getEncrypted } from '_src/shared/storagex/store';
 import KeypairVault, { type AccountInfo } from '_src/ui/app/KeypairVault';
 
@@ -15,6 +17,7 @@ export const getSigner = async (
     accountInfos: AccountInfo[],
     address: string | null,
     authentication: string | null,
+    zkData: ZkData | null,
     activeAccountIndex: number,
     connectToLedger: () => Promise<SuiLedgerClient>,
     forceCreateNewSigner?: boolean
@@ -34,6 +37,10 @@ export const getSigner = async (
             derivationPathForLedger(activeAccount.ledgerAccountIndex),
             api.instance.client
         );
+    }
+
+    if (zkData) {
+        return new ZkSigner({ zkData, client: api.instance.client });
     }
 
     if (authentication) {

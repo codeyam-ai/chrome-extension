@@ -34,6 +34,7 @@ export function DappSignMessageApprovalPage() {
         address: activeAddress,
         authentication,
         passphrase,
+        zkData,
     } = useAppSelector(({ account }) => account);
     const signMessageRequestLoading = useAppSelector(
         ({ transactionRequests }) => !transactionRequests.initialized
@@ -89,6 +90,7 @@ export function DappSignMessageApprovalPage() {
                     approved,
                     passphrase,
                     authentication,
+                    zkData,
                     activeAddress,
                     accountInfos,
                     activeAccountIndex
@@ -100,6 +102,7 @@ export function DappSignMessageApprovalPage() {
         [
             accountInfos,
             activeAccountIndex,
+            zkData,
             activeAddress,
             authentication,
             closeWindow,

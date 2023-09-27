@@ -36,6 +36,7 @@ import {
     setEncrypted,
 } from '_src/shared/storagex/store';
 import KeypairVault from '_src/ui/app/KeypairVault';
+import { type ZkData } from '_src/ui/app/components/zklogin/ZKLogin';
 import getNextEmoji from '_src/ui/app/helpers/getNextEmoji';
 import getNextWalletColor from '_src/ui/app/helpers/getNextWalletColor';
 import { AUTHENTICATION_REQUESTED } from '_src/ui/app/pages/initialize/hosted';
@@ -46,7 +47,7 @@ import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 export type InitialAccountInfo = {
     authentication: string | null;
-    // isZk: boolean;
+    zkData: ZkData | null;
     mnemonic: string | null;
     passphrase: string | null;
     accountInfos: AccountInfo[];
@@ -109,6 +110,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
 
             return {
                 authentication: authentication || null,
+                zkData: null,
                 passphrase: null,
                 mnemonic: null,
                 accountInfos,
@@ -132,6 +134,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
         if (!passphrase || passphrase.length === 0) {
             return {
                 authentication: null,
+                zkData: null,
                 passphrase: null,
                 mnemonic: null,
                 accountInfos: [],
@@ -152,6 +155,15 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             passphrase,
             strong: true,
         });
+
+        const zkDataSerialized = await getEncrypted({
+            key: 'zk',
+            session: true,
+            strong: false,
+        });
+
+        const zkData = zkDataSerialized ? JSON.parse(zkDataSerialized) : null;
+
         let accountInfos: AccountInfo[] = JSON.parse(
             (await getEncrypted({
                 key: 'accountInfos',
@@ -328,6 +340,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 authentication: null,
                 passphrase: passphrase || null,
                 mnemonic: mnemonic || null,
+                zkData,
                 accountInfos,
                 activeAccountIndex,
                 locked: true,
@@ -341,6 +354,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             authentication: authentication || null,
             passphrase: passphrase || null,
             mnemonic: mnemonic || null,
+            zkData,
             accountInfos,
             activeAccountIndex,
             locked: false,
@@ -635,7 +649,10 @@ export const deleteImportedPrivateKey = createAsyncThunk(
 
 export const saveAuthentication = createAsyncThunk(
     'account/setAuthentication',
-    async (authentication: string | null, { getState }) => {
+    async (
+        authentication: string | null,
+        { getState }
+    ): Promise<string | null> => {
         if (!authentication) {
             await deleteEncrypted({
                 key: 'authentication',
@@ -658,6 +675,47 @@ export const saveAuthentication = createAsyncThunk(
             });
         }
         return authentication;
+    }
+);
+
+export const deleteZk = createAsyncThunk('account/deleteZk', async () => {
+    await deleteEncrypted({
+        key: 'zk',
+        session: true,
+        strong: false,
+    });
+
+    await deleteEncrypted({
+        key: 'account-type',
+        session: true,
+        strong: false,
+    });
+});
+
+export const setZk = createAsyncThunk(
+    'account/setZk',
+    async (zkData: ZkData): Promise<ZkData> => {
+        const serializedZkData = JSON.stringify({
+            ...zkData,
+            epkBigInt: zkData.epkBigInt.toString(),
+            randomness: zkData.randomness.toString(),
+            salt: zkData.salt.toString(),
+        });
+        console.log('zkData in saveZk thunk :>> ', zkData);
+        await setEncrypted({
+            key: 'zk',
+            value: JSON.stringify(serializedZkData),
+            strong: false,
+            session: true,
+        });
+
+        await setEncrypted({
+            key: 'account-type',
+            value: AccountType.ZK,
+            strong: false,
+            session: false,
+        });
+        return zkData;
     }
 );
 
@@ -999,6 +1057,11 @@ export const reset = createAsyncThunk(
             session: true,
             strong: false,
         });
+        await deleteEncrypted({
+            key: 'zk',
+            session: true,
+            strong: false,
+        });
         await deleteEncrypted({ key: 'email', session: false, strong: false });
         await deleteEncrypted({
             key: 'activeAccountIndex',
@@ -1221,6 +1284,7 @@ export const saveCustomizationsSyncPreference = createAsyncThunk(
 export type AccountState = {
     loading: boolean;
     authentication: string | null;
+    zkData: ZkData | null;
     email: string | null;
     mnemonic: string | null;
     passphrase: string | null;
@@ -1242,6 +1306,7 @@ export type AccountState = {
 const initialState: AccountState = {
     loading: true,
     authentication: null,
+    zkData: null,
     email: null,
     mnemonic: null,
     passphrase: null,
@@ -1281,6 +1346,13 @@ const accountSlice = createSlice({
         },
         setAuthentication: (state, action: PayloadAction<string | null>) => {
             state.authentication = action.payload;
+        },
+        setZk: (state, action: PayloadAction<ZkData>) => {
+            console.log('action.payload in reducer :>> ', action.payload);
+            state.zkData = action.payload;
+        },
+        deleteZk: (state) => {
+            state.zkData = null;
         },
         setAccountInfos: (state, action: PayloadAction<AccountInfo[]>) => {
             state.accountInfos = action.payload;
@@ -1361,6 +1433,9 @@ const accountSlice = createSlice({
             })
             .addCase(saveAuthentication.fulfilled, (state, action) => {
                 state.authentication = action.payload;
+            })
+            .addCase(setZk.fulfilled, (state, action) => {
+                state.zkData = action.payload;
             })
             .addCase(saveEmail.fulfilled, (state, action) => {
                 state.email = action.payload;
