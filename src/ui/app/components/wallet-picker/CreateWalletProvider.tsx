@@ -112,8 +112,8 @@ const CreateWalletProvider = ({
 
     const _saveAccountInfos = useCallback(async () => {
         if (authentication) {
-            Authentication.updateAccountInfos(draftAccountInfos.current);
-            await dispatch(setAccountInfos(draftAccountInfos.current));
+            await Authentication.updateAccountInfos(draftAccountInfos.current);
+            await dispatch(saveAccountInfos(draftAccountInfos.current));
             await Authentication.getAccountInfos(true);
         } else {
             await dispatch(clearTokensForNetworkOrWalletSwitch());
