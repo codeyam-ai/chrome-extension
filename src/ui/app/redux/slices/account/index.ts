@@ -53,6 +53,7 @@ export type InitialAccountInfo = {
     locked: boolean;
     accountType: AccountType;
     importNames: { mnemonics: string[]; privateKeys: string[] };
+    onboarding: boolean;
 };
 
 export const loadAccountInformationFromStorage = createAsyncThunk(
@@ -107,8 +108,17 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     mnemonics: [],
                     privateKeys: [],
                 },
+                onboarding: true,
             };
         }
+
+        const onboarding = (await getEncrypted({
+            key: 'onboarding',
+            session: false,
+            strong: false,
+        }))
+            ? true
+            : false;
 
         const passphrase = await getEncrypted({
             key: 'passphrase',
@@ -129,6 +139,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     mnemonics: [],
                     privateKeys: [],
                 },
+                onboarding,
             };
         }
 
@@ -319,6 +330,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                 locked: true,
                 accountType,
                 importNames,
+                onboarding,
             };
         }
 
@@ -331,6 +343,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             locked: false,
             accountType,
             importNames,
+            onboarding,
         };
     }
 );
@@ -993,6 +1006,11 @@ export const reset = createAsyncThunk(
             session: false,
             strong: false,
         });
+        await deleteEncrypted({
+            key: 'onboarding',
+            session: false,
+            strong: false,
+        });
 
         window.location.reload();
     }
@@ -1093,6 +1111,18 @@ export const unlockWithMnemonic: AsyncThunk<
         return null;
     }
 );
+
+export const completeOnboarding: AsyncThunk<void, void, AppThunkConfig> =
+    createAsyncThunk<void, void, AppThunkConfig>(
+        'account/completeOnboarding',
+        async () => {
+            await deleteEncrypted({
+                key: 'onboarding',
+                session: false,
+                strong: false,
+            });
+        }
+    );
 
 export const loadFavoriteDappsKeysFromStorage = createAsyncThunk(
     'account/getFavoriteDappsKeys',
@@ -1201,6 +1231,7 @@ export type AccountState = {
     customizationsSyncPreference: boolean;
     importNames: { mnemonics: string[]; privateKeys: string[] };
     ledgerConnected: boolean;
+    onboarding: boolean;
 };
 
 const initialState: AccountState = {
@@ -1224,6 +1255,7 @@ const initialState: AccountState = {
         privateKeys: [],
     },
     ledgerConnected: false,
+    onboarding: true,
 };
 
 const accountSlice = createSlice({
@@ -1257,6 +1289,13 @@ const accountSlice = createSlice({
         lockWalletUI: (state, action: PayloadAction<boolean>) => {
             if (action.payload) {
                 state.authentication = null;
+                state.onboarding = true;
+
+                deleteEncrypted({
+                    key: 'onboarding',
+                    session: false,
+                    strong: false,
+                });
             } else {
                 state.locked = true;
             }
@@ -1284,6 +1323,7 @@ const accountSlice = createSlice({
                     state.accountType = action.payload.accountType;
                     state.importNames = action.payload.importNames;
                     state.locked = action.payload.locked;
+                    state.onboarding = action.payload.onboarding;
                 }
             )
             .addCase(createMnemonic.pending, (state) => {
@@ -1324,6 +1364,9 @@ const accountSlice = createSlice({
                     state.loading = true;
                 }
                 state.passphrase = action.payload;
+            })
+            .addCase(completeOnboarding.fulfilled, (state) => {
+                state.onboarding = false;
             })
             .addCase(
                 loadFavoriteDappsKeysFromStorage.fulfilled,

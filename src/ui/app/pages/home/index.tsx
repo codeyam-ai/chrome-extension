@@ -5,6 +5,7 @@ import { defer, filter, from, of, repeat, switchMap } from 'rxjs';
 
 import { useBalancesState } from '../../hooks/useBalancesState';
 import { AppState } from '../../hooks/useInitializedGuard';
+import { completeOnboarding } from '../../redux/slices/account';
 import { fetchAllBalances } from '../../redux/slices/balances';
 import {
     fetchInvalidPackages,
@@ -34,6 +35,10 @@ const AppContainer = () => {
         AppState.HOSTED,
     ]);
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(completeOnboarding());
+    }, [guardChecking, dispatch]);
 
     useEffect(() => {
         dispatch(initializeInvalidPackages());

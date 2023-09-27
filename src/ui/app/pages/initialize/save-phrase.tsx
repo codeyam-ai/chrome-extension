@@ -53,6 +53,12 @@ const SavePhrasePage = () => {
         }
     }, [address]);
 
+    // useEffect(() => {
+    //     if (!mnemonic) {
+    //         navigate('/');
+    //     }
+    // }, [mnemonic, navigate]);
+
     useEffect(() => {
         dispatch(loadAccountInformationFromStorage());
     }, [dispatch]);

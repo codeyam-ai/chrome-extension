@@ -16,12 +16,16 @@ describe('getSuiAddress', () => {
         const domain = 'test.sten';
         const expectedAddress = '0000xaddress';
 
-        mockSuiClient.prototype.resolveNameServiceAddress.mockResolvedValue(expectedAddress);
+        mockSuiClient.prototype.resolveNameServiceAddress.mockResolvedValue(
+            expectedAddress
+        );
 
         const actualAddress = await getSuiAddress(domain);
 
         expect(getFullnodeUrl).toBeCalledWith('mainnet');
-        expect(mockSuiClient.prototype.resolveNameServiceAddress).toBeCalledWith({
+        expect(
+            mockSuiClient.prototype.resolveNameServiceAddress
+        ).toBeCalledWith({
             name: domain,
         });
         expect(actualAddress).toEqual(expectedAddress);
@@ -30,7 +34,9 @@ describe('getSuiAddress', () => {
     it('returns null when there is an error', async () => {
         const domain = 'error.sten';
 
-        mockSuiClient.prototype.resolveNameServiceAddress.mockRejectedValue(new Error('Network error'));
+        mockSuiClient.prototype.resolveNameServiceAddress.mockRejectedValue(
+            new Error('Network error')
+        );
 
         const actualAddress = await getSuiAddress(domain);
 
