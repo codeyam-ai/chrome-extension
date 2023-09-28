@@ -18,6 +18,7 @@ import PaintBrushIcon from '../../shared/svg/PaintBrushIcon';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import EthosLogoWithText from '../logos/EthosLogoWithText';
 import {
+    AccountType,
     BASE_URL,
     DASHBOARD_LINK,
     MAILTO_SUPPORT_URL,
@@ -51,6 +52,9 @@ const SettingsHomePage = () => {
 
     const apiEnv = useAppSelector((state) => state.app.apiEnv);
     const networkName = API_ENV_TO_INFO[apiEnv].name;
+    const isZK = useAppSelector(
+        ({ account: { accountType } }) => accountType === AccountType.ZK
+    );
 
     return (
         <div>
@@ -104,7 +108,9 @@ const SettingsHomePage = () => {
                                     to: SubpageUrls.permissions,
                                 },
                                 {
-                                    text: 'Lock / Reset Ethos',
+                                    text: isZK
+                                        ? 'Sign Out'
+                                        : 'Lock / Reset Ethos',
                                     iconWithNoClasses: <LockClosedIcon />,
                                     to: SubpageUrls.lock,
                                 },

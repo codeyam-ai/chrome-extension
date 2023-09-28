@@ -12,6 +12,7 @@ import { getSaltServiceUrl } from './urls.saltService';
 import { extractJwtFromUrl } from './utils';
 
 import type { ZkSignatureInputs } from './bcs';
+import type { ZkProvider } from './providers';
 import type { SuiClient } from '@mysten/sui.js/client';
 import type { TransactionBlock } from '@mysten/sui.js/transactions';
 import type { JWTPayload } from 'jose';
@@ -41,6 +42,7 @@ export type ZkData = {
     address: string;
     proof: Proof;
     profileInfo?: OAuthProfileInfo;
+    provider: ZkProvider;
 };
 
 export const Zk = {
@@ -106,6 +108,8 @@ export const Zk = {
                 name: decodedJwt.name,
                 picture: decodedJwt.picture,
             },
+            // ❗❗❗ Change this to the actual provider ❗❗❗
+            provider: 'google',
         };
         console.log('zkData', zkData);
 
