@@ -131,25 +131,25 @@ export default function ViewPrivateKeyPage() {
         getImported();
     }, [activeAccountInfo, dispatch, privateKey]);
 
-    useEffect(() => {
-        // ZK Private Key
+    // useEffect(() => {
+    //     // ZK Private Key
 
-        const exportedKeypair =
-            zkData?.ephemeralKeyPair as any as ExportedKeypair;
-        console.log('exportedKeypair :>> ', exportedKeypair);
+    //     const exportedKeypair =
+    //         zkData?.ephemeralKeyPair as any as ExportedKeypair;
+    //     console.log('exportedKeypair :>> ', exportedKeypair);
 
-        // const keyPair = fromExportedKeypair(
-        //     exportedKeypair
-        // );
+    //     // const keyPair = fromExportedKeypair(
+    //     //     exportedKeypair
+    //     // );
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const privateKeyObj = (zkData?.ephemeralKeyPair as any).keypair
-            .secretKey as { [key: number]: number };
-        const privateKeyArray = Object.values(privateKeyObj);
-        const privateKeyUint8Array = new Uint8Array(privateKeyArray);
-        const b64PrivateKey = toB64(privateKeyUint8Array);
-        setZkPrivateKey(b64PrivateKey);
-    }, [zkData?.ephemeralKeyPair]);
+    //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    //     const privateKeyObj = (zkData?.ephemeralKeyPair as any).keypair
+    //         .secretKey as { [key: number]: number };
+    //     const privateKeyArray = Object.values(privateKeyObj);
+    //     const privateKeyUint8Array = new Uint8Array(privateKeyArray);
+    //     const b64PrivateKey = toB64(privateKeyUint8Array);
+    //     setZkPrivateKey(b64PrivateKey);
+    // }, [zkData?.ephemeralKeyPair]);
 
     const safePrivateKey =
         privateKey ?? hostedPrivateKey ?? importedPrivateKey ?? zkPrivateKey;
