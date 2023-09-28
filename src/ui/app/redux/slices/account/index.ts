@@ -1424,12 +1424,9 @@ const accountSlice = createSlice({
                     state.accountType = action.payload.accountType;
                     state.importNames = action.payload.importNames;
                     state.locked = action.payload.locked;
-<<<<<<< Updated upstream
                     state.onboarding = action.payload.onboarding;
-=======
                     state.zkData = action.payload.zkData;
                     console.log('..............................', state);
->>>>>>> Stashed changes
                 }
             )
             .addCase(createMnemonic.pending, (state) => {
