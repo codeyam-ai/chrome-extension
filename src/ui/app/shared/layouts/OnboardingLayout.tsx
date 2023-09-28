@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Loading from '../../components/loading';
 import {
@@ -8,6 +8,7 @@ import {
     useInitializedGuard,
 } from '../../hooks';
 import { AppState } from '../../hooks/useInitializedGuard';
+import { AccountType } from '_src/shared/constants';
 
 import type React from 'react';
 
@@ -15,7 +16,9 @@ const OnboardingLayout = ({
     children,
 }: React.HTMLAttributes<HTMLDivElement>) => {
     const navigate = useNavigate();
+    const { pathname } = useLocation();
     const onboarding = useAppSelector(({ account }) => account.onboarding);
+    const accountType = useAppSelector(({ account }) => account.accountType);
     const guardLoading = useFullscreenGuard(true);
     const checkingInitialized = useInitializedGuard([
         AppState.UNINITIALIZED,
@@ -25,10 +28,18 @@ const OnboardingLayout = ({
     ]);
 
     useEffect(() => {
+        if (
+            accountType === AccountType.EMAIL ||
+            accountType === AccountType.ZK
+        ) {
+            if (pathname === '/welcome') {
+                return;
+            }
+        }
         if (!onboarding) {
             navigate('/', { replace: true });
         }
-    }, [navigate, onboarding]);
+    }, [pathname, navigate, onboarding, accountType]);
 
     return (
         <Loading loading={guardLoading || checkingInitialized} big={true}>
