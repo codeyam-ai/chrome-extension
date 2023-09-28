@@ -5,6 +5,7 @@ import {
     getZkSignature,
     jwtToAddress,
 } from '@mysten/zklogin';
+import { decodeJwt } from 'jose';
 
 import { getOAuthUrl, OAuthType } from './urls.oauth';
 import { getSaltServiceUrl } from './urls.saltService';
@@ -13,6 +14,18 @@ import { extractJwtFromUrl } from './utils';
 import type { ZkSignatureInputs } from './bcs';
 import type { SuiClient } from '@mysten/sui.js/client';
 import type { TransactionBlock } from '@mysten/sui.js/transactions';
+import type { JWTPayload } from 'jose';
+
+type OAuthProfileInfo = {
+    email?: string;
+    email_verified?: boolean;
+    given_name?: string;
+    family_name?: string;
+    name?: string;
+    picture?: string;
+};
+
+type ZkJwtPayload = JWTPayload & OAuthProfileInfo;
 
 type Proof = ZkSignatureInputs;
 
@@ -27,6 +40,7 @@ export type ZkData = {
     salt: bigint;
     address: string;
     proof: Proof;
+    profileInfo?: OAuthProfileInfo;
 };
 
 export const Zk = {
@@ -71,6 +85,8 @@ export const Zk = {
         });
         console.log('proof', proof);
 
+        const decodedJwt = decodeJwt(jwt) as ZkJwtPayload;
+
         const zkData: ZkData = {
             maxEpoch,
             minEpoch: currentEpoch,
@@ -82,6 +98,14 @@ export const Zk = {
             salt,
             address,
             proof,
+            profileInfo: {
+                email: decodedJwt.email,
+                email_verified: decodedJwt.email_verified,
+                given_name: decodedJwt.given_name,
+                family_name: decodedJwt.family_name,
+                name: decodedJwt.name,
+                picture: decodedJwt.picture,
+            },
         };
         console.log('zkData', zkData);
 
