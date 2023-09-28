@@ -9,7 +9,10 @@ import { ZkSigner } from '_src/shared/cryptography/ZkSigner';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Body from '_src/ui/app/shared/typography/Body';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { setZk } from '../../redux/slices/account';
+import { saveAccountInfos, setZk } from '../../redux/slices/account';
+import { AccountInfo } from '../../KeypairVault';
+import getNextWalletColor from '../../helpers/getNextWalletColor';
+import getNextEmoji from '../../helpers/getNextEmoji';
 
 export function ZKLoginButtons() {
     const client = api.instance.client;
@@ -33,6 +36,19 @@ export function ZKLoginButtons() {
         }
 
         setIsLoadingService(undefined);
+
+        await dispatch(
+            saveAccountInfos([
+                {
+                    address: zkData.address,
+                    index: 0,
+                    publicKey: zkData.address,
+                    color: getNextWalletColor(0),
+                    emoji: getNextEmoji(0),
+                    nickname: 'Primary Wallet',
+                } as AccountInfo,
+            ])
+        );
 
         const res = await dispatch(setZk(zkData));
         console.log('res :>> ', res);
