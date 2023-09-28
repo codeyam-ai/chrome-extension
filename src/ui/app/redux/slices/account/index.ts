@@ -1419,14 +1419,12 @@ const accountSlice = createSlice({
                                 state.activeAccountIndex
                         )?.address ||
                             null);
-                    console.log('!!!!!!!!!!!!!!!!!!!!!!', address);
                     state.address = address;
                     state.accountType = action.payload.accountType;
                     state.importNames = action.payload.importNames;
                     state.locked = action.payload.locked;
                     state.onboarding = action.payload.onboarding;
                     state.zkData = action.payload.zkData;
-                    console.log('..............................', state);
                 }
             )
             .addCase(createMnemonic.pending, (state) => {
