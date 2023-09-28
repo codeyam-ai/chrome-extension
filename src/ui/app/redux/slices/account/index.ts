@@ -1449,6 +1449,7 @@ const accountSlice = createSlice({
             })
             .addCase(setZk.fulfilled, (state, action) => {
                 state.zkData = action.payload;
+                state.address = action.payload.address;
             })
             .addCase(saveEmail.fulfilled, (state, action) => {
                 state.email = action.payload;

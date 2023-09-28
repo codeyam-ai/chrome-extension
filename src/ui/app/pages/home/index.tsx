@@ -40,10 +40,6 @@ const AppContainer = () => {
     ]);
     const dispatch = useAppDispatch();
 
-    const test = useCallback(() => {
-        dispatch(loadAccountInformationFromStorage());
-    }, [dispatch]);
-
     useEffect(() => {
         if (guardChecking) return;
         dispatch(completeOnboarding());
@@ -105,7 +101,6 @@ const AppContainer = () => {
                 big={true}
                 className="w-[360px] h-[420px] flex justify-center items-center"
             >
-                <button onClick={test}>test</button>
                 <BaseLayout>
                     <NavBar />
                     <main className="flex-grow h-[494px] overflow-scroll no-scrollbar">
