@@ -27,9 +27,10 @@ const SecurityItemDisplay = ({ item }: { item: SecurityItem }) => {
 };
 
 const SecurityHomePage = () => {
-    const authentication = useAppSelector(
-        ({ account }) => account.authentication
-    );
+    const { authentication, isZk } = useAppSelector(({ account }) => ({
+        authentication: account.authentication,
+        isZk: Boolean(account.zkData),
+    }));
 
     const securityItems: SecurityItem[] = [
         {
@@ -55,8 +56,8 @@ const SecurityHomePage = () => {
         },
     ];
 
-    if (authentication) {
-        // Password is not available if email user
+    if (authentication || isZk) {
+        // Password is not available if email or ZK user
         securityItems.shift();
     }
 
