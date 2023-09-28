@@ -121,6 +121,7 @@ function useOnHandleSubmit({
         address,
         activeAccountIndex,
         accountInfos,
+        zkData,
         passphrase,
     } = useAppSelector((state) => state.account);
     // const state = useAppSelector((state) => state);
@@ -160,6 +161,7 @@ function useOnHandleSubmit({
                 accountInfos,
                 address,
                 authentication,
+                zkData,
                 activeAccountIndex,
                 connectToLedger
             );

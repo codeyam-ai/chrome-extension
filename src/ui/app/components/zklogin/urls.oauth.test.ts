@@ -22,7 +22,7 @@ test('oauth url for', () => {
     expect(url.searchParams.get('redirect_uri')).toMatch(
         /\.chromiumapp\.org\/ui\.html/
     );
-    expect(url.searchParams.get('scope')).toBe('openid');
+    expect(url.searchParams.get('scope')).toBe('openid profile email');
     expect(url.searchParams.get('nonce')).toBe(expectedNonce);
 });
 
@@ -44,7 +44,7 @@ test('oauth url for devnet and testnet', () => {
     expect(url.searchParams.get('redirect_uri')).toMatch(
         'zklogin-dev-redirect.vercel.app/api/auth'
     );
-    expect(url.searchParams.get('scope')).toBe('openid');
+    expect(url.searchParams.get('scope')).toBe('openid profile email');
     expect(url.searchParams.get('nonce')).toBe(expectedNonce);
     expect(url.searchParams.get('state')).toBeTruthy();
 

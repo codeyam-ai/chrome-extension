@@ -175,6 +175,7 @@ export function DappTxApprovalPage() {
         passphrase,
         selectedApiEnv,
         signer,
+        zkData,
     ]);
 
     const getTransactionInfo = useCallback(async () => {
