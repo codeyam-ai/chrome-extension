@@ -92,7 +92,6 @@ export default function useInitializedGuard(
         }
 
         if (guardAct) {
-            console.log('in guard act currentState :>> ', currentState);
             if (currentState === AppState.LOADING) return;
             if (
                 currentState === AppState.UNINITIALIZED &&

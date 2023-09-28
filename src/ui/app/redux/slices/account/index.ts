@@ -715,7 +715,6 @@ export const setZk = createAsyncThunk(
             randomness: zkData.randomness.toString(),
             salt: zkData.salt.toString(),
         });
-        console.log('zkData in saveZk thunk :>> ', zkData);
         await setEncrypted({
             key: 'zk',
             value: JSON.stringify(serializedZkData),
@@ -1362,7 +1361,6 @@ const accountSlice = createSlice({
             state.authentication = action.payload;
         },
         setZk: (state, action: PayloadAction<ZkData>) => {
-            console.log('action.payload in reducer :>> ', action.payload);
             state.zkData = action.payload;
         },
         deleteZk: (state) => {
@@ -1399,10 +1397,6 @@ const accountSlice = createSlice({
             .addCase(
                 loadAccountInformationFromStorage.fulfilled,
                 (state, action) => {
-                    console.log(
-                        'loadAccountInformationFromStorage.fulfilled: action.payload',
-                        action.payload
-                    );
                     state.loading = false;
                     state.authentication = action.payload.authentication;
                     state.passphrase = action.payload.passphrase;
