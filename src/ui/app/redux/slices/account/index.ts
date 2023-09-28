@@ -1014,10 +1014,11 @@ export const reset = createAsyncThunk(
         const {
             account: { passphrase, importNames },
         } = getState() as RootState;
-        await deleteEncrypted({
+        await setEncrypted({
             key: 'onboarding',
             session: false,
             strong: false,
+            value: 'true',
         });
 
         if (passphrase) {
