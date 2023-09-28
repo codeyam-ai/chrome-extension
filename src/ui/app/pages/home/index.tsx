@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { defer, filter, from, of, repeat, switchMap } from 'rxjs';
@@ -17,24 +17,32 @@ import BaseLayout from '../../shared/layouts/BaseLayout';
 import NavBar from '../../shared/navigation/nav-bar/NavBar';
 import TabBar from '../../shared/navigation/tab-bar/TabBar';
 import Loading from '_components/loading';
-import { useAppDispatch, useInitializedGuard } from '_hooks';
+import { useAppDispatch, useAppSelector, useInitializedGuard } from '_hooks';
 import { fetchAllOwnedAndRequiredObjects } from '_redux/slices/sui-objects';
 import featureGating from '_src/background/FeatureGating';
 import PageLayout from '_src/ui/app/pages/PageLayout';
 
 import type { AppDispatch } from '../../redux/store';
+import { loadAccountInformationFromStorage } from '../../redux/slices/account';
 
 export const POLL_SUI_OBJECTS_INTERVAL = 4000;
 export const POLL_INVALID_PACKAGES = 300000;
 
 const AppContainer = () => {
+    const account = useAppSelector((state) => state.account);
+    console.log('account :>> ', account);
     const { pathname } = useLocation();
     const { loading, error, showError } = useBalancesState();
     const guardChecking = useInitializedGuard([
         AppState.MNEMONIC,
         AppState.HOSTED,
+        AppState.ZK,
     ]);
     const dispatch = useAppDispatch();
+
+    const test = useCallback(() => {
+        dispatch(loadAccountInformationFromStorage());
+    }, [dispatch]);
 
     useEffect(() => {
         if (guardChecking) return;
@@ -97,6 +105,7 @@ const AppContainer = () => {
                 big={true}
                 className="w-[360px] h-[420px] flex justify-center items-center"
             >
+                <button onClick={test}>test</button>
                 <BaseLayout>
                     <NavBar />
                     <main className="flex-grow h-[494px] overflow-scroll no-scrollbar">

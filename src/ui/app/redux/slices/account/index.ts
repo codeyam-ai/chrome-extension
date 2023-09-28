@@ -125,13 +125,28 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             };
         }
 
-        const passphrase = await getEncrypted({
-            key: 'passphrase',
+        const passphrase =
+            (await getEncrypted({
+                key: 'passphrase',
+                session: true,
+                strong: false,
+            })) ?? undefined;
+
+        const zkDataSerialized = await getEncrypted({
+            key: 'zk',
             session: true,
             strong: false,
         });
 
-        if (!passphrase || passphrase.length === 0) {
+        const zkData = zkDataSerialized ? JSON.parse(zkDataSerialized) : null;
+
+        console.log(
+            '👹👹👹 zkData in account slice loadAccountInfoFromStorage :>> ',
+            zkData
+        );
+
+        if (!zkData && (!passphrase || passphrase.length === 0)) {
+            // if (!passphrase || passphrase.length === 0) {
             return {
                 authentication: null,
                 zkData: null,
@@ -155,14 +170,6 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             passphrase,
             strong: true,
         });
-
-        const zkDataSerialized = await getEncrypted({
-            key: 'zk',
-            session: true,
-            strong: false,
-        });
-
-        const zkData = zkDataSerialized ? JSON.parse(zkDataSerialized) : null;
 
         let accountInfos: AccountInfo[] = JSON.parse(
             (await getEncrypted({
@@ -331,11 +338,11 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
 
         // TODO: This seems unnecessary; if the redux state is locked, we shouldn't have to then delete the data.
         //  Deleting the data happens first, and later the redux state is updated
-        if (alreadyLocked) {
+        if (alreadyLocked && passphrase) {
             await setLocked(passphrase);
         }
 
-        if (await isLocked(passphrase)) {
+        if (passphrase && (await isLocked(passphrase))) {
             return {
                 authentication: null,
                 passphrase: passphrase || null,
@@ -1385,6 +1392,10 @@ const accountSlice = createSlice({
             .addCase(
                 loadAccountInformationFromStorage.fulfilled,
                 (state, action) => {
+                    console.log(
+                        'action.payload in fulfilled reducer builder :>> ',
+                        action.payload
+                    );
                     state.loading = false;
                     state.authentication = action.payload.authentication;
                     state.passphrase = action.payload.passphrase;
@@ -1394,11 +1405,13 @@ const accountSlice = createSlice({
                         action.payload.activeAccountIndex || 0;
 
                     state.address =
-                        state.accountInfos.find(
+                        action.payload.zkData?.address ??
+                        (state.accountInfos.find(
                             (accountInfo) =>
                                 (accountInfo.index || 0) ===
                                 state.activeAccountIndex
-                        )?.address || null;
+                        )?.address ||
+                            null);
                     state.accountType = action.payload.accountType;
                     state.importNames = action.payload.importNames;
                     state.locked = action.payload.locked;
