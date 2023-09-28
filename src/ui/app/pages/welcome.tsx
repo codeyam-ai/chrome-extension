@@ -5,6 +5,7 @@ import {
 } from '@heroicons/react/24/solid';
 import { useEffect } from 'react';
 
+import { ZKLoginButtons } from '../components/zklogin/ZKLoginButtons';
 import { useInitializedGuard } from '../hooks';
 import { useFavoriteDapps } from '../hooks/useFavoriteDapps';
 import { AppState } from '../hooks/useInitializedGuard';
@@ -15,7 +16,6 @@ import Title from '../shared/typography/Title';
 import { DEFAULT_DAPP_KEYS } from '_src/data/dappsMap';
 
 import type { OnboardingButtonProps } from '../shared/buttons/OnboardingButton';
-import { ZKLoginButtons } from '../components/zklogin/ZKLoginButtons';
 
 const setupButtons: OnboardingButtonProps[] = [
     {
