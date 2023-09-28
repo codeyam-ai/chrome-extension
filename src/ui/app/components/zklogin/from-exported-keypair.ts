@@ -13,7 +13,7 @@ import { fromB64 } from '@mysten/sui.js/utils';
 const PRIVATE_KEY_SIZE = 32;
 const LEGACY_PRIVATE_KEY_SIZE = 64;
 export function fromExportedKeypair(keypair: ExportedKeypair): Keypair {
-    const secretKey = fromB64(keypair.privateKey);
+    const secretKey = keypair.privateKey;
 
     switch (keypair.schema) {
         case 'ED25519':
@@ -22,7 +22,7 @@ export function fromExportedKeypair(keypair: ExportedKeypair): Keypair {
                 // This is a legacy secret key, we need to strip the public key bytes and only read the first 32 bytes
                 pureSecretKey = secretKey.slice(0, PRIVATE_KEY_SIZE);
             }
-            return Ed25519Keypair.fromSecretKey(pureSecretKey);
+            return Ed25519Keypair.fromSecretKey(secretKey);
         case 'Secp256k1':
             return Secp256k1Keypair.fromSecretKey(secretKey);
         case 'Secp256r1':
