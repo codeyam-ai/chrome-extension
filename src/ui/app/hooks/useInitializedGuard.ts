@@ -37,11 +37,8 @@ export default function useInitializedGuard(
         ({ account: { mnemonic } }) => mnemonic
     );
     const isZkReady = useAppSelector(({ account }) => {
-        console.log('isZkRdy ', account);
         return Boolean(account.zkData);
     });
-
-    console.log('isZkReady :>> ', isZkReady);
 
     if (passwordReady && mnemonicReady) {
         currentState = AppState.MNEMONIC;

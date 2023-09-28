@@ -3,22 +3,18 @@ import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Zk } from './ZKLogin';
+import { useAppDispatch } from '../../hooks';
+import { setZk } from '../../redux/slices/account';
 import LoadingIndicator from '../loading/LoadingIndicator';
 import googleLogo from '_images/social-login-icons/google.png';
-import { ZkSigner } from '_src/shared/cryptography/ZkSigner';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Body from '_src/ui/app/shared/typography/Body';
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { setZk } from '../../redux/slices/account';
 
 export function ZKLoginButtons() {
     const client = api.instance.client;
     const navigate = useNavigate();
     const [isLoadingService, setIsLoadingService] = useState<'Google'>();
     const dispatch = useAppDispatch();
-    const account = useAppSelector((state) => state.account);
-
-    console.log('account :>> ', account);
 
     const onClickEmail = useCallback(() => {
         navigate('/initialize/hosted');
