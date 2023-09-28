@@ -42,7 +42,10 @@ export function ZKLoginButtons() {
                     publicKey: zkData.address,
                     color: getNextWalletColor(0),
                     emoji: getNextEmoji(0),
-                    nickname: 'Primary Wallet',
+                    nftPfpUrl: zkData.profileInfo?.picture,
+                    nickname: zkData.profileInfo?.given_name
+                        ? `${zkData.profileInfo?.given_name}'s Wallet`
+                        : 'Primary Wallet',
                 } as AccountInfo,
             ])
         );
