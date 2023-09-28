@@ -3,12 +3,16 @@ import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Zk } from './ZKLogin';
+import getNextEmoji from '../../helpers/getNextEmoji';
+import getNextWalletColor from '../../helpers/getNextWalletColor';
 import { useAppDispatch } from '../../hooks';
-import { setZk } from '../../redux/slices/account';
+import { saveAccountInfos, setZk } from '../../redux/slices/account';
 import LoadingIndicator from '../loading/LoadingIndicator';
 import googleLogo from '_images/social-login-icons/google.png';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Body from '_src/ui/app/shared/typography/Body';
+
+import type { AccountInfo } from '../../KeypairVault';
 
 export function ZKLoginButtons() {
     const client = api.instance.client;
@@ -30,8 +34,20 @@ export function ZKLoginButtons() {
 
         setIsLoadingService(undefined);
 
-        const res = await dispatch(setZk(zkData));
-        console.log('res :>> ', res);
+        await dispatch(
+            saveAccountInfos([
+                {
+                    address: zkData.address,
+                    index: 0,
+                    publicKey: zkData.address,
+                    color: getNextWalletColor(0),
+                    emoji: getNextEmoji(0),
+                    nickname: 'Primary Wallet',
+                } as AccountInfo,
+            ])
+        );
+
+        await dispatch(setZk(zkData));
 
         // navigate('/initialize/complete');
 
