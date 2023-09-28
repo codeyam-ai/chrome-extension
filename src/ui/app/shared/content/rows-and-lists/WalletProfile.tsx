@@ -43,6 +43,8 @@ const WalletProfile = ({ onClick, inlineWalletPicker }: WalletProfileProps) => {
     const isZK = useMemo(() => accountType === AccountType.ZK, [accountType]);
 
     const _onClick = useCallback(() => {
+        console.log('in onClick');
+
         if (isZK) return;
         onClick?.();
     }, [onClick, isZK]);
@@ -69,7 +71,7 @@ const WalletProfile = ({ onClick, inlineWalletPicker }: WalletProfileProps) => {
     return (
         <div className="flex flex-row gap-2 items-center">
             <div className="flex flex-row gap-2 items-center py-1">
-                {inlineWalletPicker ? (
+                {inlineWalletPicker || isZK ? (
                     <div onClick={_onClick}>
                         <CurrentWallet />
                     </div>
