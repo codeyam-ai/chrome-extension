@@ -36,9 +36,10 @@ export default function useInitializedGuard(
     const mnemonicReady = useAppSelector(
         ({ account: { mnemonic } }) => mnemonic
     );
-    const isZkReady = useAppSelector(({ account: { zkData } }) =>
-        Boolean(zkData)
-    );
+    const isZkReady = useAppSelector(({ account }) => {
+        console.log('isZkRdy ', account);
+        return Boolean(account.zkData);
+    });
 
     console.log('isZkReady :>> ', isZkReady);
 

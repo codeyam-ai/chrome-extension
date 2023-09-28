@@ -46,6 +46,7 @@ import type { RootState } from '_redux/RootReducer';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
 
 export type InitialAccountInfo = {
+    address: string | null;
     authentication: string | null;
     zkData: ZkData | null;
     mnemonic: string | null;
@@ -62,6 +63,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
     'account/loadAccountInformation',
     async (_args, { getState }): Promise<InitialAccountInfo> => {
         let activeAccountIndex = 0;
+        let address = null;
 
         const retrievedOnboarding = await getEncrypted({
             key: 'onboarding',
@@ -109,6 +111,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             }
 
             return {
+                address,
                 authentication: authentication || null,
                 zkData: null,
                 passphrase: null,
@@ -138,16 +141,18 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             strong: false,
         });
 
-        const zkData = zkDataSerialized ? JSON.parse(zkDataSerialized) : null;
+        const zkData = zkDataSerialized
+            ? JSON.parse(JSON.parse(zkDataSerialized))
+            : null;
 
-        console.log(
-            '👹👹👹 zkData in account slice loadAccountInfoFromStorage :>> ',
-            zkData
-        );
+        if (zkData) {
+            address = zkData.address as string;
+        }
 
         if (!zkData && (!passphrase || passphrase.length === 0)) {
             // if (!passphrase || passphrase.length === 0) {
             return {
+                address,
                 authentication: null,
                 zkData: null,
                 passphrase: null,
@@ -344,6 +349,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
 
         if (passphrase && (await isLocked(passphrase))) {
             return {
+                address,
                 authentication: null,
                 passphrase: passphrase || null,
                 mnemonic: mnemonic || null,
@@ -358,6 +364,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
         }
 
         return {
+            address,
             authentication: authentication || null,
             passphrase: passphrase || null,
             mnemonic: mnemonic || null,
@@ -1393,7 +1400,7 @@ const accountSlice = createSlice({
                 loadAccountInformationFromStorage.fulfilled,
                 (state, action) => {
                     console.log(
-                        'action.payload in fulfilled reducer builder :>> ',
+                        'loadAccountInformationFromStorage.fulfilled: action.payload',
                         action.payload
                     );
                     state.loading = false;
@@ -1404,18 +1411,25 @@ const accountSlice = createSlice({
                     state.activeAccountIndex =
                         action.payload.activeAccountIndex || 0;
 
-                    state.address =
-                        action.payload.zkData?.address ??
+                    const address =
+                        action.payload.address ??
                         (state.accountInfos.find(
                             (accountInfo) =>
                                 (accountInfo.index || 0) ===
                                 state.activeAccountIndex
                         )?.address ||
                             null);
+                    console.log('!!!!!!!!!!!!!!!!!!!!!!', address);
+                    state.address = address;
                     state.accountType = action.payload.accountType;
                     state.importNames = action.payload.importNames;
                     state.locked = action.payload.locked;
+<<<<<<< Updated upstream
                     state.onboarding = action.payload.onboarding;
+=======
+                    state.zkData = action.payload.zkData;
+                    console.log('..............................', state);
+>>>>>>> Stashed changes
                 }
             )
             .addCase(createMnemonic.pending, (state) => {
