@@ -56,8 +56,14 @@ const SecurityHomePage = () => {
         },
     ];
 
-    if (authentication || isZk) {
+    if (authentication) {
         // Password is not available if email or ZK user
+        securityItems.shift();
+    }
+
+    if (isZk) {
+        // Password and recovery phrase are not available if ZK user
+        securityItems.shift();
         securityItems.shift();
     }
 
