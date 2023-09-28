@@ -1,8 +1,10 @@
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
+import { useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import WalletColorAndEmojiCircle from '../../WalletColorAndEmojiCircle';
 import BodyLarge from '../../typography/BodyLarge';
+import { AccountType } from '_src/shared/constants';
 import { type AccountInfo } from '_src/ui/app/KeypairVault';
 import AccountAddress, {
     AddressMode,
@@ -29,14 +31,28 @@ const WalletProfile = ({ onClick, inlineWalletPicker }: WalletProfileProps) => {
                     (accountInfo.index || 0) === activeAccountIndex
             )
     );
+    const accountType = useAppSelector(
+        ({ account: { accountType } }) => accountType
+    );
+
     const isWalletPickerOpen = useWalletPickerIsOpen();
     const walletPickerUrl = useNextWalletPickerUrl(true, 'open');
     const closeWalletPickerUrl = useNextWalletPickerUrl(false);
     const name = useWalletName(accountInfo);
     const shortenedName = truncateString(name, 8);
+    const isZK = useMemo(() => accountType === AccountType.ZK, [accountType]);
+
+    const _onClick = useCallback(() => {
+        if (isZK) return;
+        onClick?.();
+    }, [onClick, isZK]);
 
     const CurrentWallet = () => (
-        <div className="flex flex-row gap-2 items-center cursor-pointer">
+        <div
+            className={`flex flex-row gap-2 items-center ${
+                isZK ? 'cursor-auto' : 'cursor-pointer'
+            }`}
+        >
             <WalletColorAndEmojiCircle
                 {...accountInfo}
                 circleSizeClasses="h-6 w-6"
@@ -44,7 +60,9 @@ const WalletProfile = ({ onClick, inlineWalletPicker }: WalletProfileProps) => {
             />
             <BodyLarge isSemibold>{shortenedName}</BodyLarge>
 
-            <ChevronDownIcon className="h-4 w-4 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+            {!isZK && (
+                <ChevronDownIcon className="h-4 w-4 text-ethos-light-text-medium dark:text-ethos-dark-text-medium" />
+            )}
         </div>
     );
 
@@ -52,7 +70,7 @@ const WalletProfile = ({ onClick, inlineWalletPicker }: WalletProfileProps) => {
         <div className="flex flex-row gap-2 items-center">
             <div className="flex flex-row gap-2 items-center py-1">
                 {inlineWalletPicker ? (
-                    <div onClick={onClick}>
+                    <div onClick={_onClick}>
                         <CurrentWallet />
                     </div>
                 ) : (
