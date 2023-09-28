@@ -338,8 +338,8 @@ export class ZkSigner extends WalletSigner {
     protected async getEphemeralValue(): Promise<CredentialData | null> {
         const rawCredentialsData = await getEncrypted({
             // ❗❗❗❗ CHANGE THIS KEY ❗❗❗❗
-            key: 'zk-1',
-            session: false,
+            key: 'zk',
+            session: true,
             strong: false,
         });
         if (!rawCredentialsData) {

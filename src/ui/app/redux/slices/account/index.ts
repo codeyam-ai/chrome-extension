@@ -717,7 +717,7 @@ export const setZk = createAsyncThunk(
         });
         await setEncrypted({
             key: 'zk',
-            value: JSON.stringify(serializedZkData),
+            value: serializedZkData,
             strong: false,
             session: true,
         });
