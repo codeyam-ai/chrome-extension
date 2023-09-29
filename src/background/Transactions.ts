@@ -500,7 +500,7 @@ class Transactions {
             strong: false,
         });
 
-        const zkData = JSON.parse(zkDataString || '{}')
+        const zkData = JSON.parse(zkDataString || '{}');
 
         return zkData;
     }

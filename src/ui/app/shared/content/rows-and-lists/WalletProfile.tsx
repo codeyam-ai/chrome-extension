@@ -43,8 +43,6 @@ const WalletProfile = ({ onClick, inlineWalletPicker }: WalletProfileProps) => {
     const isZK = useMemo(() => accountType === AccountType.ZK, [accountType]);
 
     const _onClick = useCallback(() => {
-        console.log('in onClick');
-
         if (isZK) return;
         onClick?.();
     }, [onClick, isZK]);

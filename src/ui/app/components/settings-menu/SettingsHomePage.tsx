@@ -56,90 +56,89 @@ const SettingsHomePage = () => {
         ({ account: { accountType } }) => accountType === AccountType.ZK
     );
 
+    const listSections = [
+        {
+            color: teal,
+            items: [
+                {
+                    text: 'View Explorer',
+                    iconWithNoClasses: <GlobeAltIcon />,
+                    to: DASHBOARD_LINK,
+                    isExternalLink: true,
+                },
+                {
+                    text: 'Open Expanded View',
+                    iconWithNoClasses: <ArrowsPointingOutIcon />,
+                    to: '/home',
+                    isExpandView: true,
+                },
+            ],
+        },
+        {
+            color: purple,
+            items: [
+                {
+                    text: 'Network',
+                    iconWithNoClasses: <SignalIcon />,
+                    to: SubpageUrls.network,
+                    detailText: networkName,
+                },
+                {
+                    text: 'Theme',
+                    iconWithNoClasses: <PaintBrushIcon />,
+                    to: SubpageUrls.theme,
+                    detailText: themeDisplay,
+                },
+                {
+                    text: 'Security',
+                    iconWithNoClasses: <ShieldExclamationIcon />,
+                    to: SubpageUrls.security,
+                },
+                {
+                    text: 'Permissions',
+                    iconWithNoClasses: <DocumentCheckIcon />,
+                    to: SubpageUrls.permissions,
+                },
+                {
+                    text: isZK ? 'Sign Out' : 'Lock / Reset Ethos',
+                    iconWithNoClasses: <LockClosedIcon />,
+                    to: SubpageUrls.lock,
+                },
+                {
+                    text: 'Customizations Sync',
+                    iconWithNoClasses: <ArrowPathIcon />,
+                    to: SubpageUrls.customizationSync,
+                },
+            ],
+        },
+        {
+            color: blue,
+            items: [
+                {
+                    text: 'Terms of Service',
+                    iconWithNoClasses: <DocumentTextIcon />,
+                    to: ToS_LINK,
+                    isExternalLink: true,
+                },
+                {
+                    text: 'Contact Ethos Support',
+                    iconWithNoClasses: <DocumentTextIcon />,
+                    to: MAILTO_SUPPORT_URL,
+                    isExternalLink: true,
+                },
+            ],
+        },
+    ];
+
+    if (isZK) {
+        // If ZK, don't show customizations sync
+        listSections[1].items.pop();
+    }
+
     return (
         <div>
             <div className="h-[550px] flex flex-col justify-between">
-                <SettingsList
-                    listSections={[
-                        {
-                            color: teal,
-                            items: [
-                                {
-                                    text: 'View Explorer',
-                                    iconWithNoClasses: <GlobeAltIcon />,
-                                    to: DASHBOARD_LINK,
-                                    isExternalLink: true,
-                                },
-                                {
-                                    text: 'Open Expanded View',
-                                    iconWithNoClasses: (
-                                        <ArrowsPointingOutIcon />
-                                    ),
-                                    to: '/home',
-                                    isExpandView: true,
-                                },
-                            ],
-                        },
-                        {
-                            color: purple,
-                            items: [
-                                {
-                                    text: 'Network',
-                                    iconWithNoClasses: <SignalIcon />,
-                                    to: SubpageUrls.network,
-                                    detailText: networkName,
-                                },
-                                {
-                                    text: 'Theme',
-                                    iconWithNoClasses: <PaintBrushIcon />,
-                                    to: SubpageUrls.theme,
-                                    detailText: themeDisplay,
-                                },
-                                {
-                                    text: 'Security',
-                                    iconWithNoClasses: (
-                                        <ShieldExclamationIcon />
-                                    ),
-                                    to: SubpageUrls.security,
-                                },
-                                {
-                                    text: 'Permissions',
-                                    iconWithNoClasses: <DocumentCheckIcon />,
-                                    to: SubpageUrls.permissions,
-                                },
-                                {
-                                    text: isZK
-                                        ? 'Sign Out'
-                                        : 'Lock / Reset Ethos',
-                                    iconWithNoClasses: <LockClosedIcon />,
-                                    to: SubpageUrls.lock,
-                                },
-                                {
-                                    text: 'Customizations Sync',
-                                    iconWithNoClasses: <ArrowPathIcon />,
-                                    to: SubpageUrls.customizationSync,
-                                },
-                            ],
-                        },
-                        {
-                            color: blue,
-                            items: [
-                                {
-                                    text: 'Terms of Service',
-                                    iconWithNoClasses: <DocumentTextIcon />,
-                                    to: ToS_LINK,
-                                    isExternalLink: true,
-                                },
-                                {
-                                    text: 'Contact Ethos Support',
-                                    iconWithNoClasses: <DocumentTextIcon />,
-                                    to: MAILTO_SUPPORT_URL,
-                                    isExternalLink: true,
-                                },
-                            ],
-                        },
-                    ]}
-                />
+                <SettingsList listSections={listSections} />
                 <div className="flex justify-between items-center pr-6 pl-2 py-4 border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
                     <Link to={BASE_URL} target="_blank">
                         <EthosLogoWithText className="h-8" />
