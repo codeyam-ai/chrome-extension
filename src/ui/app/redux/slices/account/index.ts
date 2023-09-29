@@ -141,9 +141,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             strong: false,
         });
 
-        const zkData = zkDataSerialized
-            ? JSON.parse(JSON.parse(zkDataSerialized))
-            : null;
+        const zkData = zkDataSerialized ? JSON.parse(zkDataSerialized) : null;
 
         if (zkData) {
             address = zkData.address as string;
