@@ -45,6 +45,7 @@ import type {
     SignedTransaction,
 } from '_src/shared/cryptography/WalletSigner';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
+import type { ZkAccountData } from '_src/types/ZkAccountData';
 import type { SeedInfo } from '_src/ui/app/KeypairVault';
 
 function openTxWindow(txRequestId: string) {
@@ -492,7 +493,7 @@ class Transactions {
         return authentication;
     }
 
-    private async getZkData(): Promise<string | null> {
+    private async getZkData(): Promise<ZkAccountData | null> {
         const zkDataString = await getEncrypted({
             key: 'zk',
             session: true,
