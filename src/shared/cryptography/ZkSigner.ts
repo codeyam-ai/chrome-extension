@@ -217,7 +217,6 @@ export class ZkSigner extends WalletSigner {
         //     // newEphemeralValue[serializeNetwork(activeNetwork)] = credentialsData;
         //     // await this.setEphemeralValue(newEphemeralValue);
         //     await setEncrypted({
-        //         // ❗❗❗❗ CHANGE THIS KEY ❗❗❗❗
         //         key: 'zk-1',
         //         session: false,
         //         strong: false,
@@ -262,7 +261,6 @@ export class ZkSigner extends WalletSigner {
     //     // await this.onUnlocked();
 
     //     // await setEncrypted({
-    //     //     // ❗❗❗❗ CHANGE THIS KEY ❗❗❗❗
     //     //     key: 'zk',
     //     //     session: false,
     //     //     strong: false,
@@ -305,7 +303,6 @@ export class ZkSigner extends WalletSigner {
     //     // await this.onUnlocked();
 
     //     await setEncrypted({
-    //         // ❗❗❗❗ CHANGE THIS KEY ❗❗❗❗
     //         key: 'zk-1',
     //         session: false,
     //         strong: false,
@@ -337,7 +334,6 @@ export class ZkSigner extends WalletSigner {
 
     protected async getEphemeralValue(): Promise<CredentialData | null> {
         const rawCredentialsData = await getEncrypted({
-            // ❗❗❗❗ CHANGE THIS KEY ❗❗❗❗
             key: 'zk',
             session: true,
             strong: false,
