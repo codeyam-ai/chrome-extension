@@ -1,3 +1,4 @@
+import Permissions from '_src/background/Permissions';
 import { EnvelopeIcon } from '@heroicons/react/24/solid';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -48,6 +49,10 @@ export function ZKLoginButtons() {
                         : 'Primary Wallet',
                 } as AccountInfo,
             ])
+        );
+
+        await Permissions.grantEthosDashboardBasicPermissionsForAccount(
+            zkData.address
         );
 
         await dispatch(setZk(zkData));
