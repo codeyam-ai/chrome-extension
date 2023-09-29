@@ -89,6 +89,7 @@ export function DappTxApprovalPage() {
     const guardLoading = useInitializedGuard([
         AppState.MNEMONIC,
         AppState.HOSTED,
+        AppState.ZK,
     ]);
     const txRequestsLoading = useAppSelector(
         ({ transactionRequests }) => !transactionRequests.initialized

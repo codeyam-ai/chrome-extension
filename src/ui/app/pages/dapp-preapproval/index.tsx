@@ -133,6 +133,7 @@ export function DappPreapprovalPage() {
     const guardLoading = useInitializedGuard([
         AppState.MNEMONIC,
         AppState.HOSTED,
+        AppState.ZK,
     ]);
 
     const { closeWindow } = useDependencies();

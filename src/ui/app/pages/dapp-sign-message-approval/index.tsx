@@ -27,6 +27,7 @@ export function DappSignMessageApprovalPage() {
     const guardLoading = useInitializedGuard([
         AppState.MNEMONIC,
         AppState.HOSTED,
+        AppState.ZK,
     ]);
     const {
         activeAccountIndex,

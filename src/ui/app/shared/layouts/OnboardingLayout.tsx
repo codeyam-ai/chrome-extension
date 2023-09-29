@@ -23,6 +23,7 @@ const OnboardingLayout = ({
     const checkingInitialized = useInitializedGuard([
         AppState.UNINITIALIZED,
         AppState.HOSTED,
+        AppState.ZK,
         AppState.MNEMONIC,
         AppState.LOCKED,
     ]);
