@@ -102,7 +102,7 @@ export function ZKLoginButtons() {
                     onClick={onClickEmail}
                     className="flex items-center place-content-center w-[68px] h-[52px] rounded-[10px] bg-ethos-light-background-secondary"
                 >
-                    <span className="sr-only">Sign in with email</span>
+                    <span className="sr-only">Sign in with Email</span>
                     <EnvelopeIcon className="w-6 h-6" />
                 </button>
                 <button
