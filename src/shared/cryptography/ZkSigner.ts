@@ -1,3 +1,4 @@
+import { toB64 } from '@mysten/bcs';
 import { toSerializedSignature } from '@mysten/sui.js/cryptography';
 import { type Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 import { genAddressSeed, getZkSignature } from '@mysten/zklogin';
@@ -165,7 +166,12 @@ export class ZkSigner extends WalletSigner {
     }
 
     async signData(data: Uint8Array): Promise<SerializedSignature | any> {
+        console.log('in signData');
+
         const digest = blake2b(data, { dkLen: 32 });
+        // const digest = blake2b(stubDataToSign, { dkLen: 32 });
+        console.log('digest :>> ', digest);
+
         // if (await this.isLocked()) {
         // 	throw new Error('Account is locked');
         // }
@@ -228,6 +234,8 @@ export class ZkSigner extends WalletSigner {
             publicKey: keyPair.getPublicKey(),
         });
 
+        console.log('userSignature :>> ', userSignature);
+
         const decodedJWT = decodeJwt(jwt);
 
         const aud = Array.isArray(decodedJWT.aud)
@@ -265,7 +273,17 @@ export class ZkSigner extends WalletSigner {
                 aud ?? ''
             ).toString(),
         };
+        console.log('INPUTS', inputs);
+        console.log('proof :>> ', proof);
+
         const zkSig = getZkSignature({ inputs, maxEpoch, userSignature });
+        console.log('zkSig :>> ', zkSig);
+
+        // const isValid = await keyPair
+        //     .getPublicKey()
+        //     .verifyTransactionBlock(data, zkSig);
+
+        // console.log('isValid✅✅✅ :>> ', isValid);
 
         return zkSig;
     }
@@ -273,6 +291,98 @@ export class ZkSigner extends WalletSigner {
     connect(client: SuiClient): WalletSigner {
         return new ZkSigner({ zkData: this.zkData, client });
     }
+
+    // async #saveCredentialsToStorage({ zkData }: { zkData: ZkData }) {
+    //     const activeNetwork = await networkEnv.getActiveNetwork();
+
+    //     const credentialsData: CredentialData = {
+    //         ephemeralKeyPair: zkData.ephemeralKeyPair.export(),
+    //         minEpoch: zkData.minEpoch,
+    //         maxEpoch: zkData.maxEpoch,
+    //         network: activeNetwork,
+    //         randomness: zkData.randomness.toString(),
+    //         jwt: zkData.jwt,
+    //         proofs: zkData.proof,
+    //     };
+    //     console.log(
+    //         'credentialsData being saved to storage :>> ',
+    //         credentialsData
+    //     );
+    //     // ephemeralValue[serializeNetwork(activeNetwork)] = credentialsData;
+    //     // await this.setEphemeralValue(ephemeralValue);
+    //     // await this.onUnlocked();
+
+    //     // await setEncrypted({
+    //     //     key: 'zk',
+    //     //     session: false,
+    //     //     strong: false,
+    //     //     value: JSON.stringify(credentialsData),
+    //     // });
+
+    //     return credentialsData;
+    // }
+
+    // async #doLogin() {
+    //     // const { provider, claims } = await this.getStoredData();
+    //     // const { sub, decodedJWT, iss } = await deobfuscate<JwtSerializedClaims>(claims);
+    //     const epoch = await getCurrentEpoch();
+    //     // const { ephemeralKeyPair, nonce, randomness, maxEpoch } = prepareZKLogin(Number(epoch));
+    //     const maxEpoch = epoch + 5; // Temporary
+    //     const randomness = BigInt(0); // Temporary
+    //     const ephemeralKeyPair = this.ephemeralKeyPair;
+    //     // const jwt = await zkLogin({ provider, nonce, loginHint: sub });
+    //     const jwt = jwtStub;
+    //     const decodedJWT = decodeJwt(jwt);
+    //     // if (decodedJWT.aud !== aud || decodedJWT.sub !== sub || decodedJWT.iss !== iss) {
+    //     // 	throw new Error("Logged in account doesn't match with saved account");
+    //     // }
+    //     const ephemeralValue = (await this.getEphemeralValue()) || {};
+    //     const activeNetwork = await networkEnv.getActiveNetwork();
+    //     const credentialsData: CredentialData = {
+    //         ephemeralKeyPair: ephemeralKeyPair.export(),
+    //         minEpoch: Number(epoch),
+    //         maxEpoch,
+    //         network: activeNetwork,
+    //         randomness: randomness.toString(),
+    //         jwt,
+    //     };
+    //     console.log(
+    //         'credentialsData being saved to storage :>> ',
+    //         credentialsData
+    //     );
+    //     // ephemeralValue[serializeNetwork(activeNetwork)] = credentialsData;
+    //     // await this.setEphemeralValue(ephemeralValue);
+    //     // await this.onUnlocked();
+
+    //     await setEncrypted({
+    //         key: 'zk-1',
+    //         session: false,
+    //         strong: false,
+    //         value: JSON.stringify(credentialsData),
+    //     });
+
+    //     return credentialsData;
+    // }
+
+    // async #generateProofs(
+    //     jwt: string,
+    //     randomness: bigint,
+    //     maxEpoch: number,
+    //     ephemeralPublicKey: PublicKey
+    // ) {
+    //     // const { salt: obfuscatedSalt } = await this.getStoredData();
+    //     // const salt = await deobfuscate<string>(obfuscatedSalt);
+    //     const salt = saltStub;
+    //     return Promise.resolve(proofsStub);
+    //     return await createPartialZKSignature({
+    //     	jwt,
+    //     	ephemeralPublicKey,
+    //     	userSalt: BigInt(salt),
+    //     	jwtRandomness: randomness,
+    //     	keyClaimName: 'sub',
+    //     	maxEpoch,
+    //     });
+    // }
 
     protected async getEphemeralValue(): Promise<CredentialData | null> {
         const rawCredentialsData = await getEncrypted({
