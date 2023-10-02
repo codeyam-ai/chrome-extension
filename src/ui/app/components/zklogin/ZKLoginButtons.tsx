@@ -1,4 +1,3 @@
-import Permissions from '_src/background/Permissions';
 import { EnvelopeIcon } from '@heroicons/react/24/solid';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -10,15 +9,17 @@ import { useAppDispatch } from '../../hooks';
 import { saveAccountInfos, setZk } from '../../redux/slices/account';
 import LoadingIndicator from '../loading/LoadingIndicator';
 import googleLogo from '_images/social-login-icons/google.png';
+import Permissions from '_src/background/Permissions';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 import Body from '_src/ui/app/shared/typography/Body';
 
+import type { ZkData } from './ZKLogin';
 import type { AccountInfo } from '../../KeypairVault';
 
 export function ZKLoginButtons() {
     const client = api.instance.client;
     const navigate = useNavigate();
-    const [isLoadingService, setIsLoadingService] = useState<'Google'>();
+    const [loading, setLoading] = useState(false);
     const dispatch = useAppDispatch();
 
     const onClickEmail = useCallback(() => {
@@ -26,14 +27,20 @@ export function ZKLoginButtons() {
     }, [navigate]);
 
     const onClickGoogle = useCallback(async () => {
-        setIsLoadingService('Google');
-        const zkData = await Zk.login(client);
-        if (!zkData) {
-            console.log('problem logging in');
+        setLoading(true);
+        let zkData: ZkData | null;
+        try {
+            zkData = await Zk.login(client);
+            if (!zkData) {
+                setLoading(false);
+                return;
+            }
+        } catch (error) {
+            setLoading(false);
             return;
         }
 
-        setIsLoadingService(undefined);
+        setLoading(false);
 
         await dispatch(
             saveAccountInfos([
@@ -76,6 +83,12 @@ export function ZKLoginButtons() {
 
     return (
         <>
+            {loading && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <LoadingIndicator big white />
+                </div>
+            )}
+
             <div className="flex items-center">
                 <div className="w-full border-t border-ethos-light-text-stroke" />
                 <Body isSemibold isTextColorMedium className="italic px-4">
@@ -84,7 +97,7 @@ export function ZKLoginButtons() {
                 <div className="w-full border-t border-ethos-light-text-stroke" />
             </div>
             <Body isSemibold>Sign in or create a wallet with:</Body>
-            <div className="flex gap-3">
+            <div className="flex gap-3 mx-auto">
                 <button
                     onClick={onClickEmail}
                     className="flex items-center place-content-center w-[68px] h-[52px] rounded-[10px] bg-ethos-light-background-secondary"
@@ -97,15 +110,11 @@ export function ZKLoginButtons() {
                     className="flex items-center place-content-center w-[68px] h-[52px] rounded-[10px] bg-ethos-light-background-secondary"
                 >
                     <span className="sr-only">Sign in with Google</span>
-                    {isLoadingService === 'Google' ? (
-                        <LoadingIndicator />
-                    ) : (
-                        <img
-                            src={googleLogo}
-                            alt="Google logo"
-                            className="w-7 h-7"
-                        />
-                    )}
+                    <img
+                        src={googleLogo}
+                        alt="Google logo"
+                        className="w-7 h-7"
+                    />
                 </button>
             </div>
         </>
