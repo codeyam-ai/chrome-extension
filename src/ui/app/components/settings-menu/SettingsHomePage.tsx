@@ -27,6 +27,15 @@ import {
 import { ThemeContext } from '_src/shared/utils/themeContext';
 import { useAppSelector } from '_src/ui/app/hooks';
 
+type ListItem = {
+    text: string;
+    iconWithNoClasses: JSX.Element;
+    to: string;
+    isExternalLink?: boolean;
+    isExpandView?: boolean;
+    detailText?: string;
+};
+
 export const SubpageUrls = {
     network: '/settings/network',
     theme: '/settings/theme',
@@ -56,7 +65,7 @@ const SettingsHomePage = () => {
         ({ account: { accountType } }) => accountType === AccountType.ZK
     );
 
-    const listSections = [
+    const listSections: { color: string; items: ListItem[] }[] = [
         {
             color: teal,
             items: [
@@ -132,7 +141,11 @@ const SettingsHomePage = () => {
 
     if (isZK) {
         // If ZK, don't show customizations sync or security
-        listSections[1].items.pop();
+        listSections[1].items = listSections[1].items.filter(
+            (item: { to: string }) =>
+                item.to !== SubpageUrls.customizationSync &&
+                item.to !== SubpageUrls.security
+        );
     }
 
     return (
