@@ -174,31 +174,25 @@ export class ZkSigner extends WalletSigner {
         // Currently the SUI wallet saves the CredentialData in a Record with keys being 'mainnet', 'testnet' etc
         // But that errors out in their code so for now going to save just CredentialData
         const credentialsData = await this.getEphemeralValue();
-        console.log('credentialsData from storage :>> ', credentialsData);
+        console.log(
+            'credentialsData from storage in ZkSigner signData :>> ',
+            credentialsData
+        );
         if (!credentialsData) {
             throw new Error('No credentials data found');
         }
         const currentEpoch = await getCurrentEpoch();
-        console.log('currentEpoch :>> ', currentEpoch);
+        console.log('currentEpoch in ZkSigner signData :>> ', currentEpoch);
 
-        const {
-            ephemeralKeyPair,
-            proofs: storedProofs,
-            maxEpoch,
-            jwt,
-            randomness,
-        } = credentialsData;
+        const { ephemeralKeyPair, proofs, maxEpoch, jwt, randomness } =
+            credentialsData;
 
-        console.log('got stuff from creds data');
-        console.log('ephemeralKeyPair :>> ', ephemeralKeyPair);
-        console.log('storedProofs :>> ', storedProofs);
-        console.log('maxEpoch :>> ', maxEpoch);
+        console.log('just before get keypair');
 
         const keyPair = fromExportedKeypair(ephemeralKeyPair);
+        console.log('keyPair fromExportedKeypair :>> ', keyPair);
 
-        console.log('keypair :>> ', keyPair);
-
-        const proofs = storedProofs;
+        console.log('proofs :>> ', proofs);
         if (!proofs) throw 'no proofs stored';
         // if (!proofs) {
         //     proofs = await this.#generateProofs(
@@ -224,7 +218,11 @@ export class ZkSigner extends WalletSigner {
         //     });
         // }
 
-        // shows as deprecated from the mysten package but the Sui Wallet codebase uses it from signature.ts in that repo (although I thought that was the one that was exported in the Mysten package)
+        const signature = await keyPair.sign(digest);
+        console.log('signature :>> ', signature);
+        const publicKey = keyPair.getPublicKey();
+        console.log('publicKey :>> ', publicKey);
+
         const userSignature = toSerializedSignature({
             signature: await keyPair.sign(digest),
             signatureScheme: keyPair.getKeyScheme(),

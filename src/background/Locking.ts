@@ -88,14 +88,12 @@ export const resetLockTimeout = async () => {
     if (zkDataSerialized) {
         // make sure the normal lock timeout is cancelled if ZK
         Browser.alarms.clear(alarmName);
-        console.log('checking zk expiry');
 
         const zkData = zkDataSerialized ? JSON.parse(zkDataSerialized) : null;
 
         const isExpired = await isZkExpired(zkData.maxEpoch, zkData.minEpoch);
 
         if (isExpired) {
-            console.log('zk expired, resetting');
             await resetZkWallet();
         }
     } else {

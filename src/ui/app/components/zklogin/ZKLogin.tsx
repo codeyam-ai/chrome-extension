@@ -40,7 +40,7 @@ export type ZkData = {
     jwt: string;
     salt: bigint;
     address: string;
-    proof: Proof;
+    proofs: Proof;
     profileInfo?: OAuthProfileInfo;
     provider: ZkProvider;
 };
@@ -55,6 +55,10 @@ export const Zk = {
         const maxEpoch = currentEpoch + lifetime;
 
         const ephemeralKeyPair = new Ed25519Keypair();
+        console.log(
+            'ephemeralKeyPair just created in ZkLogin :>> ',
+            ephemeralKeyPair
+        );
         const epk = ephemeralKeyPair.getPublicKey();
 
         const epkBytes = epk.toRawBytes();
@@ -99,7 +103,7 @@ export const Zk = {
             jwt,
             salt,
             address,
-            proof,
+            proofs: proof,
             profileInfo: {
                 email: decodedJwt.email,
                 email_verified: decodedJwt.email_verified,
@@ -144,7 +148,7 @@ export const Zk = {
          * the ephemeral signature.
          */
         const zkSignature = getZkSignature({
-            inputs: zkData.proof,
+            inputs: zkData.proofs,
             maxEpoch: zkData.maxEpoch,
             userSignature,
         });

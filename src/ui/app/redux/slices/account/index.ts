@@ -709,6 +709,7 @@ export const setZk = createAsyncThunk(
     async (zkData: ZkData): Promise<ZkData> => {
         const serializedZkData = JSON.stringify({
             ...zkData,
+            ephemeralKeyPair: zkData.ephemeralKeyPair.export(),
             epkBigInt: zkData.epkBigInt.toString(),
             randomness: zkData.randomness.toString(),
             salt: zkData.salt.toString(),
