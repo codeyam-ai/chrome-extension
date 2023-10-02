@@ -1,10 +1,10 @@
 import { bcs } from '@mysten/sui.js/bcs';
 import {
-    type SuiClient,
+    type DryRunTransactionBlockResponse,
     type ExecuteTransactionRequestType,
+    type SuiClient,
     type SuiTransactionBlockResponse,
     type SuiTransactionBlockResponseOptions,
-    type DryRunTransactionBlockResponse,
 } from '@mysten/sui.js/client';
 import { IntentScope, messageWithIntent } from '@mysten/sui.js/cryptography';
 import {
@@ -109,8 +109,6 @@ export abstract class WalletSigner {
         const signed = await this.signTransactionBlock({
             transactionBlock: bytes,
         });
-
-        console.log('signed in WalletSigner.ts :>> ', signed);
 
         return this.client.executeTransactionBlock({
             transactionBlock: bytes,

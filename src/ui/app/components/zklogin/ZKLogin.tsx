@@ -57,18 +57,12 @@ export type ZkData = {
 
 export const Zk = {
     async login(client: SuiClient): Promise<ZkData | null> {
-        console.log('starting Zk.login()...');
-
         const latestSuiSystemState = await client.getLatestSuiSystemState();
         const currentEpoch = parseInt(latestSuiSystemState.epoch);
         const lifetime = 2;
         const maxEpoch = currentEpoch + lifetime;
 
         const ephemeralKeyPair = new Ed25519Keypair();
-        console.log(
-            'ephemeralKeyPair just created in ZkLogin :>> ',
-            ephemeralKeyPair
-        );
         const epk = ephemeralKeyPair.getPublicKey();
 
         const epkBytes = epk.toRawBytes();
@@ -87,7 +81,6 @@ export const Zk = {
         if (!jwt) return null;
 
         const { salt } = await getSalt({ jwt });
-        console.log('salt', salt);
         if (!salt) return null;
 
         const address = jwtToAddress(jwt, salt);
@@ -99,7 +92,6 @@ export const Zk = {
             randomness,
             salt,
         });
-        console.log('proof', proof);
 
         const decodedJwt = decodeJwt(jwt) as ZkJwtPayload;
 
@@ -125,8 +117,6 @@ export const Zk = {
             // ❗❗❗ Change this to the actual provider ❗❗❗
             provider: 'google',
         };
-        console.log('zkData', zkData);
-
         return zkData;
     },
     /**
