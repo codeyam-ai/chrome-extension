@@ -34,6 +34,13 @@ declare global {
 
 configure({ asyncUtilTimeout: 10000 });
 
+jest.mock('@mysten/sui.js/cryptography', () => {
+    return {
+        __esModule: true,
+        ...jest.requireActual('@mysten/sui.js/cryptography')
+    };
+});
+
 jest.mock('webextension-polyfill', () => {
     return fakeBrowser;
 });
