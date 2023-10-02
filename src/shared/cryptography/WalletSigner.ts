@@ -110,6 +110,8 @@ export abstract class WalletSigner {
             transactionBlock: bytes,
         });
 
+        console.log('signed in WalletSigner.ts :>> ', signed);
+
         return this.client.executeTransactionBlock({
             transactionBlock: bytes,
             signature: signed.signature,

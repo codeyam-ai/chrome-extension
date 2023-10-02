@@ -55,6 +55,8 @@ function TransferCoinReviewPage() {
                 locale,
             });
 
+            console.log('amountBigNumber :>> ', amountBigNumber);
+
             if (coinType === null) {
                 return;
             }
@@ -73,6 +75,8 @@ function TransferCoinReviewPage() {
                         .toString()
                 );
 
+                console.log('bigIntAmount :>> ', bigIntAmount);
+
                 const tx = await sendTokens({
                     ...account,
                     connectToLedger,
@@ -81,6 +85,8 @@ function TransferCoinReviewPage() {
                     tokenTypeArg: coinType,
                     amount: bigIntAmount,
                 });
+
+                console.log('tx :>> ', tx);
 
                 toast(<SuccessAlert text={'Transaction submitted...'} />);
 
@@ -105,6 +111,7 @@ function TransferCoinReviewPage() {
                 const receiptUrl = '/home';
                 navigate(receiptUrl);
             } catch (e) {
+                console.log('e in sendTokens :>> ', e);
                 // const error = e as { message: string };
                 // const failAlertText =
                 //     isErrorCausedByUserNotHavingEnoughSuiToPayForGas(

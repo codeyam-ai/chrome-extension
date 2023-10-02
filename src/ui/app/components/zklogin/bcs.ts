@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { BCS, fromB64, toB64 } from '@mysten/bcs';
-import { SIGNATURE_SCHEME_TO_FLAG } from '@mysten/sui.js/cryptography';
 import { bcs } from '@mysten/sui.js/bcs';
+import { SIGNATURE_SCHEME_TO_FLAG } from '@mysten/sui.js/cryptography';
+
+import type { ZkSignature } from '@mysten/zklogin/dist/cjs/bcs';
 
 export const zkBcs = new BCS(bcs);
 
@@ -29,18 +31,18 @@ export interface ProofPoints {
     pi_c: string[];
 }
 
-export interface ZkSignatureInputs {
-    proof_points: ProofPoints;
-    address_seed: string;
-    claims: Claim[];
-    header_base64: string;
-}
+// export interface ZkSignatureInputs {
+//     proof_points: ProofPoints;
+//     address_seed: string;
+//     claims: Claim[];
+//     header_base64: string;
+// }
 
-export interface ZkSignature {
-    inputs: ZkSignatureInputs;
-    maxEpoch: number;
-    userSignature: string | Uint8Array;
-}
+// export interface ZkSignature {
+//     inputs: ZkSignatureInputs;
+//     maxEpoch: number;
+//     userSignature: string | Uint8Array;
+// }
 
 zkBcs.registerStructType('ZkSignature', {
     inputs: {

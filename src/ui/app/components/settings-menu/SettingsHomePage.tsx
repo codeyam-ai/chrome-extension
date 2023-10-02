@@ -131,7 +131,7 @@ const SettingsHomePage = () => {
     ];
 
     if (isZK) {
-        // If ZK, don't show customizations sync
+        // If ZK, don't show customizations sync or security
         listSections[1].items.pop();
     }
 

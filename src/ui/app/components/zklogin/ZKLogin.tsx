@@ -11,7 +11,6 @@ import { getOAuthUrl, OAuthType } from './urls.oauth';
 import { getSaltServiceUrl } from './urls.saltService';
 import { extractJwtFromUrl } from './utils';
 
-import type { ZkSignatureInputs } from './bcs';
 import type { ZkProvider } from './providers';
 import type { SuiClient } from '@mysten/sui.js/client';
 import type { TransactionBlock } from '@mysten/sui.js/transactions';
@@ -28,7 +27,18 @@ type OAuthProfileInfo = {
 
 type ZkJwtPayload = JWTPayload & OAuthProfileInfo;
 
-type Proof = ZkSignatureInputs;
+export type ProofResponse = {
+    proofPoints: {
+        a: string[];
+        b: string[][];
+        c: string[];
+    };
+    headerBase64: string;
+    issBase64Details: {
+        indexMod4: number;
+        value: string;
+    };
+};
 
 export type ZkData = {
     maxEpoch: number;
@@ -40,7 +50,7 @@ export type ZkData = {
     jwt: string;
     salt: bigint;
     address: string;
-    proofs: Proof;
+    proof: ProofResponse;
     profileInfo?: OAuthProfileInfo;
     provider: ZkProvider;
 };
@@ -103,7 +113,7 @@ export const Zk = {
             jwt,
             salt,
             address,
-            proofs: proof,
+            proof,
             profileInfo: {
                 email: decodedJwt.email,
                 email_verified: decodedJwt.email_verified,
@@ -125,42 +135,42 @@ export const Zk = {
      * We are not using it until we transition away from Signers and towards
      * KeyPairs.
      */
-    async signAndExecuteTransactionBlock({
-        txb,
-        client,
-        zkData,
-    }: {
-        txb: TransactionBlock;
-        client: SuiClient;
-        zkData: ZkData;
-    }) {
-        /**
-         * First, sign the transaction bytes with the ephemeral private key.
-         * This is the same as traditional KeyPair signing.
-         */
-        const { bytes, signature: userSignature } = await txb.sign({
-            client,
-            signer: zkData.ephemeralKeyPair,
-        });
+    // async signAndExecuteTransactionBlock({
+    //     txb,
+    //     client,
+    //     zkData,
+    // }: {
+    //     txb: TransactionBlock;
+    //     client: SuiClient;
+    //     zkData: ZkData;
+    // }) {
+    //     /**
+    //      * First, sign the transaction bytes with the ephemeral private key.
+    //      * This is the same as traditional KeyPair signing.
+    //      */
+    //     const { bytes, signature: userSignature } = await txb.sign({
+    //         client,
+    //         signer: zkData.ephemeralKeyPair,
+    //     });
 
-        /**
-         * Next, serialize the zkLogin signature by combining the ZK proof and
-         * the ephemeral signature.
-         */
-        const zkSignature = getZkSignature({
-            inputs: zkData.proofs,
-            maxEpoch: zkData.maxEpoch,
-            userSignature,
-        });
+    //     /**
+    //      * Next, serialize the zkLogin signature by combining the ZK proof and
+    //      * the ephemeral signature.
+    //      */
+    //     const zkSignature = getZkSignature({
+    //         inputs: zkData.proof,
+    //         maxEpoch: zkData.maxEpoch,
+    //         userSignature,
+    //     });
 
-        /**
-         * Finally, execute the transaction.
-         */
-        client.executeTransactionBlock({
-            transactionBlock: bytes,
-            signature: zkSignature,
-        });
-    },
+    //     /**
+    //      * Finally, execute the transaction.
+    //      */
+    //     client.executeTransactionBlock({
+    //         transactionBlock: bytes,
+    //         signature: zkSignature,
+    //     });
+    // },
 };
 
 async function getJwtViaOAuthFlow({
@@ -168,7 +178,8 @@ async function getJwtViaOAuthFlow({
 }: {
     nonce: string;
 }): Promise<{ jwt: string | null }> {
-    const oAuthUrl = getOAuthUrl({ type: OAuthType.DevTest, nonce });
+    const oAuthUrl = getOAuthUrl({ type: OAuthType.Google, nonce });
+    // const oAuthUrl = getOAuthUrl({ type: OAuthType.DevTest, nonce });
 
     const responseUrl = await chrome.identity.launchWebAuthFlow({
         url: oAuthUrl,
@@ -248,7 +259,7 @@ async function getProof({
     maxEpoch: number;
     randomness: bigint;
     salt: bigint;
-}): Promise<{ proof: Proof }> {
+}): Promise<{ proof: ProofResponse }> {
     const payload: ProofService.Payload = {
         jwt,
         extendedEphemeralPublicKey: ephemeralPublicKey,
@@ -275,6 +286,5 @@ async function getProof({
     });
 
     const json = await response.json();
-
     return { proof: json };
 }

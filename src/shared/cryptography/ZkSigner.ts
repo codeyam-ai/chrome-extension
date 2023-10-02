@@ -1,6 +1,7 @@
+import { toB64 } from '@mysten/bcs';
 import { toSerializedSignature } from '@mysten/sui.js/cryptography';
 import { type Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
-import { getZkSignature } from '@mysten/zklogin';
+import { genAddressSeed, getZkSignature } from '@mysten/zklogin';
 import { blake2b } from '@noble/hashes/blake2b';
 import { decodeJwt, type JWTPayload } from 'jose';
 
@@ -9,7 +10,6 @@ import { getCurrentEpoch } from './current-epoch';
 import { obfuscate } from './keystore';
 import { getEncrypted, setEncrypted } from '../storagex/store';
 import networkEnv, { type NetworkEnvType } from '_src/background/NetworkEnv';
-import { computeZkAddress } from '_src/ui/app/components/zklogin/address';
 import { fromExportedKeypair } from '_src/ui/app/components/zklogin/from-exported-keypair';
 import { type ZkProvider } from '_src/ui/app/components/zklogin/providers';
 import { type PartialZkSignature } from '_src/ui/app/components/zklogin/utils';
@@ -18,9 +18,12 @@ import type { SuiClient } from '@mysten/sui.js/client';
 import type {
     ExportedKeypair,
     SerializedSignature,
-    PublicKey,
 } from '@mysten/sui.js/cryptography';
-import type { ZkData } from '_src/ui/app/components/zklogin/ZKLogin';
+import type { ZkSignatureInputs } from '@mysten/zklogin/dist/cjs/bcs';
+import type {
+    ProofResponse,
+    ZkData,
+} from '_src/ui/app/components/zklogin/ZKLogin';
 
 type JwtSerializedClaims = {
     email: string | null;
@@ -34,8 +37,8 @@ type JwtSerializedClaims = {
 };
 
 type CredentialData = {
-    ephemeralKeyPair: ExportedKeypair;
-    proofs: PartialZkSignature;
+    exportedKeypair: ExportedKeypair;
+    proof: ProofResponse;
     minEpoch: number;
     maxEpoch: number;
     network: NetworkEnvType;
@@ -85,6 +88,7 @@ export interface ZkAccountSerialized extends SerializedAccount {
 export class ZkSigner extends WalletSigner {
     ephemeralKeyPair: Ed25519Keypair;
     address: string | undefined;
+    claims: JwtSerializedClaims | undefined;
     zkData: ZkData;
 
     constructor({ zkData, client }: { zkData: ZkData; client: SuiClient }) {
@@ -124,7 +128,9 @@ export class ZkSigner extends WalletSigner {
             iss: decodedJWT.iss,
             sub: decodedJWT.sub,
         };
+
         console.log('claims :>> ', claims);
+        this.claims = claims;
         // const address = computeZkAddress({
         //     claimName: 'sub',
         //     claimValue: decodedJWT.sub,
@@ -163,8 +169,8 @@ export class ZkSigner extends WalletSigner {
     async signData(data: Uint8Array): Promise<SerializedSignature | any> {
         console.log('in signData');
 
-        // const digest = blake2b(data, { dkLen: 32 });
-        const digest = blake2b(stubDataToSign, { dkLen: 32 });
+        const digest = blake2b(data, { dkLen: 32 });
+        // const digest = blake2b(stubDataToSign, { dkLen: 32 });
         console.log('digest :>> ', digest);
 
         // if (await this.isLocked()) {
@@ -184,16 +190,22 @@ export class ZkSigner extends WalletSigner {
         const currentEpoch = await getCurrentEpoch();
         console.log('currentEpoch in ZkSigner signData :>> ', currentEpoch);
 
-        const { ephemeralKeyPair, proofs, maxEpoch, jwt, randomness } =
+        const { exportedKeypair, proof, maxEpoch, jwt, randomness } =
             credentialsData;
 
-        console.log('just before get keypair');
+        console.log('got stuff from creds data');
+        console.log('exportedKeypair :>> ', exportedKeypair);
+        console.log('maxEpoch :>> ', maxEpoch);
 
-        const keyPair = fromExportedKeypair(ephemeralKeyPair);
-        console.log('keyPair fromExportedKeypair :>> ', keyPair);
+        const keyPair = fromExportedKeypair(exportedKeypair);
 
-        console.log('proofs :>> ', proofs);
-        if (!proofs) throw 'no proofs stored';
+        console.log('keypair :>> ', keyPair);
+        console.log('proof :>> ', proof);
+        if (!proof) throw 'no proofs stored';
+        console.log('address :>> ', this.address);
+        if (!this.address) throw 'no address stored';
+        console.log('claims :>> ', this.claims);
+        if (!this.claims) throw 'no claims stored';
         // if (!proofs) {
         //     proofs = await this.#generateProofs(
         //         jwt,
@@ -231,7 +243,56 @@ export class ZkSigner extends WalletSigner {
 
         console.log('userSignature :>> ', userSignature);
 
-        return getZkSignature({ inputs: proofs, maxEpoch, userSignature });
+        const decodedJWT = decodeJwt(jwt);
+
+        const aud = Array.isArray(decodedJWT.aud)
+            ? decodedJWT.aud.at(0)
+            : decodedJWT.aud;
+        // const inputs: ZkSignatureInputs = {
+        //     proof_points: {
+        //         pi_a: proof.proofPoints.a,
+        //         pi_b: proof.proofPoints.b,
+        //         pi_c: proof.proofPoints.c,
+        //     },
+        //     header_base64: proof.headerBase64,
+        //     address_seed: this.address,
+        //     claims: [
+        //         {
+        //             name: 'iss',
+        //             value_base64: proof.issBase64Details.value,
+        //             index_mod_4: proof.issBase64Details.indexMod4,
+        //         },
+        //         {
+        //             name: 'aud',
+        //             value_base64: toB64(
+        //                 new TextEncoder().encode(this.claims.aud)
+        //             ),
+        //             index_mod_4: 1,
+        //         },
+        //     ],
+        // };
+        const inputs: ZkSignatureInputs = {
+            ...proof,
+            addressSeed: genAddressSeed(
+                this.zkData.salt,
+                'sub',
+                decodedJWT.sub ?? '',
+                aud ?? ''
+            ).toString(),
+        };
+        console.log('INPUTS', inputs);
+        console.log('proof :>> ', proof);
+
+        const zkSig = getZkSignature({ inputs, maxEpoch, userSignature });
+        console.log('zkSig :>> ', zkSig);
+
+        // const isValid = await keyPair
+        //     .getPublicKey()
+        //     .verifyTransactionBlock(data, zkSig);
+
+        // console.log('isValid✅✅✅ :>> ', isValid);
+
+        return zkSig;
     }
 
     connect(client: SuiClient): WalletSigner {
@@ -270,7 +331,7 @@ export class ZkSigner extends WalletSigner {
 
     // async #doLogin() {
     //     // const { provider, claims } = await this.getStoredData();
-    //     // const { sub, aud, iss } = await deobfuscate<JwtSerializedClaims>(claims);
+    //     // const { sub, decodedJWT, iss } = await deobfuscate<JwtSerializedClaims>(claims);
     //     const epoch = await getCurrentEpoch();
     //     // const { ephemeralKeyPair, nonce, randomness, maxEpoch } = prepareZKLogin(Number(epoch));
     //     const maxEpoch = epoch + 5; // Temporary
@@ -339,7 +400,8 @@ export class ZkSigner extends WalletSigner {
         if (!rawCredentialsData) {
             return null;
         }
-        return JSON.parse(rawCredentialsData) as CredentialData;
+        const credentialData = JSON.parse(rawCredentialsData) as CredentialData;
+        return credentialData;
     }
 }
 
