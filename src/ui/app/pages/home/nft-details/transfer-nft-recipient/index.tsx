@@ -41,6 +41,7 @@ function TransferNFTRecipient() {
         address,
         authentication,
         activeAccountIndex,
+        zkData,
         accountInfos,
         passphrase,
     } = useAppSelector((state) => state.account);
@@ -94,6 +95,7 @@ function TransferNFTRecipient() {
                 accountInfos,
                 address,
                 authentication,
+                zkData,
                 activeAccountIndex,
                 connectToLedger
             );
@@ -148,6 +150,7 @@ function TransferNFTRecipient() {
             accountInfos,
             address,
             authentication,
+            zkData,
             activeAccountIndex,
             connectToLedger,
             selectedNFTObj,

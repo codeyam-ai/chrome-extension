@@ -1,10 +1,10 @@
 import {
     ArrowDownOnSquareIcon,
-    EnvelopeIcon,
     PlusCircleIcon,
 } from '@heroicons/react/24/solid';
 import { useEffect } from 'react';
 
+import { ZKLoginButtons } from '../components/zklogin/ZKLoginButtons';
 import { useInitializedGuard } from '../hooks';
 import { useFavoriteDapps } from '../hooks/useFavoriteDapps';
 import { AppState } from '../hooks/useInitializedGuard';
@@ -25,14 +25,14 @@ const setupButtons: OnboardingButtonProps[] = [
         iconBackgroundColor: '#E81CA5',
         buttonGradientColor: '#F8ECF4',
     },
-    {
-        title: 'Sign in with Email',
-        to: '/initialize/hosted',
-        linkType: 'internal',
-        iconWithNoClasses: <EnvelopeIcon />,
-        iconBackgroundColor: '#6D28D9',
-        buttonGradientColor: '#EFECF8',
-    },
+    // {
+    //     title: 'Sign in with Email',
+    //     to: '/initialize/hosted',
+    //     linkType: 'internal',
+    //     iconWithNoClasses: <EnvelopeIcon />,
+    //     iconBackgroundColor: '#6D28D9',
+    //     buttonGradientColor: '#EFECF8',
+    // },
     {
         title: 'Import an Existing Wallet',
         to: '/initialize/import/seed',
@@ -80,6 +80,7 @@ const WelcomePage = () => {
                                 />
                             );
                         })}
+                        <ZKLoginButtons />
                     </div>
                 </div>
             </div>

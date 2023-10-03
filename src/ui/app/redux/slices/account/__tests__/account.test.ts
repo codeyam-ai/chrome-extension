@@ -47,6 +47,7 @@ const initialState: AccountState = {
     email: null,
     mnemonic: null,
     passphrase: null,
+    zkData: null,
     creating: false,
     createdMnemonic: null,
     address: null,

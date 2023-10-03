@@ -6,6 +6,7 @@ import { getSigner } from '_src/ui/app/helpers/getSigner';
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
 import type { SignedMessage } from '_src/shared/cryptography/WalletSigner';
 import type { AccountInfo } from '_src/ui/app/KeypairVault';
+import type { ZkData } from '_src/ui/app/components/zklogin/ZKLogin';
 
 const signPersonalMessage = async (
     connectToLedger: () => Promise<SuiLedgerClient>,
@@ -14,6 +15,7 @@ const signPersonalMessage = async (
     approved: boolean,
     passphrase: string | null,
     authentication: string | null,
+    zkData: ZkData | null,
     address: string | null,
     accountInfos: AccountInfo[],
     activeAccountIndex: number
@@ -31,6 +33,7 @@ const signPersonalMessage = async (
             accountInfos,
             address,
             authentication,
+            zkData,
             activeAccountIndex,
             connectToLedger
         );

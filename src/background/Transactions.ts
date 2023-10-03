@@ -24,6 +24,7 @@ import { API_ENV } from '../ui/app/ApiProvider';
 import { PREAPPROVAL_KEY, TX_STORE_KEY } from '_src/shared/constants';
 import { BaseSigner } from '_src/shared/cryptography/BaseSigner';
 import { EthosSigner } from '_src/shared/cryptography/EthosSigner';
+import { ZkSigner } from '_src/shared/cryptography/ZkSigner';
 import { getEncrypted, setEncrypted } from '_src/shared/storagex/store';
 import { api } from '_src/ui/app/redux/store/thunk-extras';
 
@@ -44,6 +45,7 @@ import type {
     SignedTransaction,
 } from '_src/shared/cryptography/WalletSigner';
 import type { Preapproval } from '_src/shared/messaging/messages/payloads/transactions/Preapproval';
+import type { ZkAccountData } from '_src/types/ZkAccountData';
 import type { SeedInfo } from '_src/ui/app/KeypairVault';
 
 function openTxWindow(txRequestId: string) {
@@ -337,8 +339,11 @@ class Transactions {
             let signer;
 
             const authentication = await this.getAuthentication();
+            const zkData = await this.getZkData();
             if (authentication) {
                 signer = new EthosSigner(address, authentication, client);
+            } else if (zkData) {
+                signer = new ZkSigner({ zkData, client });
             } else {
                 const activeSeed = await this.getActiveSeed();
 
@@ -486,6 +491,18 @@ class Transactions {
         });
 
         return authentication;
+    }
+
+    private async getZkData(): Promise<ZkAccountData | null> {
+        const zkDataString = await getEncrypted({
+            key: 'zk',
+            session: true,
+            strong: false,
+        });
+
+        const zkData = JSON.parse(zkDataString || '{}');
+
+        return zkData;
     }
 
     private createTransactionRequest(

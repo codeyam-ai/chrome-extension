@@ -18,6 +18,7 @@ import PaintBrushIcon from '../../shared/svg/PaintBrushIcon';
 import BodyLarge from '../../shared/typography/BodyLarge';
 import EthosLogoWithText from '../logos/EthosLogoWithText';
 import {
+    AccountType,
     BASE_URL,
     DASHBOARD_LINK,
     MAILTO_SUPPORT_URL,
@@ -25,6 +26,15 @@ import {
 } from '_src/shared/constants';
 import { ThemeContext } from '_src/shared/utils/themeContext';
 import { useAppSelector } from '_src/ui/app/hooks';
+
+type ListItem = {
+    text: string;
+    iconWithNoClasses: JSX.Element;
+    to: string;
+    isExternalLink?: boolean;
+    isExpandView?: boolean;
+    detailText?: string;
+};
 
 export const SubpageUrls = {
     network: '/settings/network',
@@ -51,89 +61,97 @@ const SettingsHomePage = () => {
 
     const apiEnv = useAppSelector((state) => state.app.apiEnv);
     const networkName = API_ENV_TO_INFO[apiEnv].name;
+    const isZK = useAppSelector(
+        ({ account: { accountType } }) => accountType === AccountType.ZK
+    );
+
+    const listSections: { color: string; items: ListItem[] }[] = [
+        {
+            color: teal,
+            items: [
+                {
+                    text: 'View Explorer',
+                    iconWithNoClasses: <GlobeAltIcon />,
+                    to: DASHBOARD_LINK,
+                    isExternalLink: true,
+                },
+                {
+                    text: 'Open Expanded View',
+                    iconWithNoClasses: <ArrowsPointingOutIcon />,
+                    to: '/home',
+                    isExpandView: true,
+                },
+            ],
+        },
+        {
+            color: purple,
+            items: [
+                {
+                    text: 'Network',
+                    iconWithNoClasses: <SignalIcon />,
+                    to: SubpageUrls.network,
+                    detailText: networkName,
+                },
+                {
+                    text: 'Theme',
+                    iconWithNoClasses: <PaintBrushIcon />,
+                    to: SubpageUrls.theme,
+                    detailText: themeDisplay,
+                },
+                {
+                    text: 'Security',
+                    iconWithNoClasses: <ShieldExclamationIcon />,
+                    to: SubpageUrls.security,
+                },
+                {
+                    text: 'Permissions',
+                    iconWithNoClasses: <DocumentCheckIcon />,
+                    to: SubpageUrls.permissions,
+                },
+                {
+                    text: isZK ? 'Sign Out' : 'Lock / Reset Ethos',
+                    iconWithNoClasses: <LockClosedIcon />,
+                    to: SubpageUrls.lock,
+                },
+                {
+                    text: 'Customizations Sync',
+                    iconWithNoClasses: <ArrowPathIcon />,
+                    to: SubpageUrls.customizationSync,
+                },
+            ],
+        },
+        {
+            color: blue,
+            items: [
+                {
+                    text: 'Terms of Service',
+                    iconWithNoClasses: <DocumentTextIcon />,
+                    to: ToS_LINK,
+                    isExternalLink: true,
+                },
+                {
+                    text: 'Contact Ethos Support',
+                    iconWithNoClasses: <DocumentTextIcon />,
+                    to: MAILTO_SUPPORT_URL,
+                    isExternalLink: true,
+                },
+            ],
+        },
+    ];
+
+    if (isZK) {
+        // If ZK, don't show customizations sync or security
+        listSections[1].items = listSections[1].items.filter(
+            (item: { to: string }) =>
+                item.to !== SubpageUrls.customizationSync &&
+                item.to !== SubpageUrls.security
+        );
+    }
 
     return (
         <div>
             <div className="h-[550px] flex flex-col justify-between">
-                <SettingsList
-                    listSections={[
-                        {
-                            color: teal,
-                            items: [
-                                {
-                                    text: 'View Explorer',
-                                    iconWithNoClasses: <GlobeAltIcon />,
-                                    to: DASHBOARD_LINK,
-                                    isExternalLink: true,
-                                },
-                                {
-                                    text: 'Open Expanded View',
-                                    iconWithNoClasses: (
-                                        <ArrowsPointingOutIcon />
-                                    ),
-                                    to: '/home',
-                                    isExpandView: true,
-                                },
-                            ],
-                        },
-                        {
-                            color: purple,
-                            items: [
-                                {
-                                    text: 'Network',
-                                    iconWithNoClasses: <SignalIcon />,
-                                    to: SubpageUrls.network,
-                                    detailText: networkName,
-                                },
-                                {
-                                    text: 'Theme',
-                                    iconWithNoClasses: <PaintBrushIcon />,
-                                    to: SubpageUrls.theme,
-                                    detailText: themeDisplay,
-                                },
-                                {
-                                    text: 'Security',
-                                    iconWithNoClasses: (
-                                        <ShieldExclamationIcon />
-                                    ),
-                                    to: SubpageUrls.security,
-                                },
-                                {
-                                    text: 'Permissions',
-                                    iconWithNoClasses: <DocumentCheckIcon />,
-                                    to: SubpageUrls.permissions,
-                                },
-                                {
-                                    text: 'Lock / Reset Ethos',
-                                    iconWithNoClasses: <LockClosedIcon />,
-                                    to: SubpageUrls.lock,
-                                },
-                                {
-                                    text: 'Customizations Sync',
-                                    iconWithNoClasses: <ArrowPathIcon />,
-                                    to: SubpageUrls.customizationSync,
-                                },
-                            ],
-                        },
-                        {
-                            color: blue,
-                            items: [
-                                {
-                                    text: 'Terms of Service',
-                                    iconWithNoClasses: <DocumentTextIcon />,
-                                    to: ToS_LINK,
-                                    isExternalLink: true,
-                                },
-                                {
-                                    text: 'Contact Ethos Support',
-                                    iconWithNoClasses: <DocumentTextIcon />,
-                                    to: MAILTO_SUPPORT_URL,
-                                    isExternalLink: true,
-                                },
-                            ],
-                        },
-                    ]}
-                />
+                <SettingsList listSections={listSections} />
                 <div className="flex justify-between items-center pr-6 pl-2 py-4 border-t border-ethos-light-text-stroke dark:border-ethos-dark-text-stroke">
                     <Link to={BASE_URL} target="_blank">
                         <EthosLogoWithText className="h-8" />

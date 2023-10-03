@@ -33,6 +33,7 @@ const AppContainer = () => {
     const guardChecking = useInitializedGuard([
         AppState.MNEMONIC,
         AppState.HOSTED,
+        AppState.ZK,
     ]);
     const dispatch = useAppDispatch();
 

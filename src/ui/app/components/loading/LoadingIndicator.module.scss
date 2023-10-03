@@ -9,6 +9,17 @@
     animation: 0.75s linear infinite spinner-animation;
 }
 
+.spinner-white {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+    border: 2px solid #fff;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: 0.75s linear infinite spinner-animation;
+}
+
 @keyframes spinner-animation {
     to {
         transform: rotate(360deg);

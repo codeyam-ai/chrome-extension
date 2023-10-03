@@ -27,9 +27,9 @@ const SecurityItemDisplay = ({ item }: { item: SecurityItem }) => {
 };
 
 const SecurityHomePage = () => {
-    const authentication = useAppSelector(
-        ({ account }) => account.authentication
-    );
+    const { authentication } = useAppSelector(({ account }) => ({
+        authentication: account.authentication,
+    }));
 
     const securityItems: SecurityItem[] = [
         {

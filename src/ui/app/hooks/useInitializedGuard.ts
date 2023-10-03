@@ -12,6 +12,7 @@ export enum AppState {
     MNEMONIC = 'mnemonic',
     PASSWORD = 'password',
     HOSTED = 'hosted',
+    ZK = 'zk',
     LOCKED = 'locked',
 }
 
@@ -35,9 +36,16 @@ export default function useInitializedGuard(
     const mnemonicReady = useAppSelector(
         ({ account: { mnemonic } }) => mnemonic
     );
+    const isZkReady = useAppSelector(({ account }) => {
+        return Boolean(account.zkData);
+    });
 
     if (passwordReady && mnemonicReady) {
         currentState = AppState.MNEMONIC;
+    }
+
+    if (isZkReady) {
+        currentState = AppState.ZK;
     }
 
     const authentication = useAppSelector(
@@ -98,6 +106,9 @@ export default function useInitializedGuard(
                     destination = '/';
                     break;
                 case AppState.HOSTED:
+                    destination = '/';
+                    break;
+                case AppState.ZK:
                     destination = '/';
                     break;
                 case AppState.PASSWORD:
