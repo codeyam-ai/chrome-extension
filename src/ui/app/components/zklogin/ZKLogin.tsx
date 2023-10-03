@@ -186,7 +186,7 @@ async function getSalt({
 }: {
     jwt: string;
 }): Promise<{ salt: bigint | null }> {
-    const saltServiceUrl = getSaltServiceUrl({ env: 'development' });
+    const saltServiceUrl = getSaltServiceUrl({ env: 'production' });
 
     const response = await fetch(`${saltServiceUrl}/get_salt`, {
         method: 'POST',
