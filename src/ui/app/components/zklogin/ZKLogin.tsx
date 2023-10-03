@@ -6,8 +6,7 @@ import {
 } from '@mysten/zklogin';
 import { decodeJwt } from 'jose';
 
-import { getOAuthUrl, OAuthType } from './urls.oauth';
-import { getSaltServiceUrl } from './urls.saltService';
+import { getOAuthUrl, OAuthType } from './oauthUrls';
 import { extractJwtFromUrl } from './utils';
 
 import type { ZkProvider } from './providers';
@@ -209,7 +208,8 @@ async function getSalt({
 }: {
     jwt: string;
 }): Promise<{ salt: bigint | null }> {
-    const saltServiceUrl = getSaltServiceUrl({ env: 'production' });
+    const saltServiceUrl = process.env.ETHOS_SALT_SERVICE_URL;
+    if (!saltServiceUrl) throw 'salt service url environment variable not set';
 
     const response = await fetch(`${saltServiceUrl}/get_salt`, {
         method: 'POST',

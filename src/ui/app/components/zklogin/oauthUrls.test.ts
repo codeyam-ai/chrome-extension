@@ -1,4 +1,4 @@
-import { OAuthType, getOAuthUrl } from './urls.oauth';
+import { OAuthType, getOAuthUrl } from './oauthUrls';
 
 test('oauth url for', () => {
     // example URL:
