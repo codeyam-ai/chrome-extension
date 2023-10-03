@@ -45,11 +45,11 @@ export function ZKLoginButtons() {
                     logo={googleLogo}
                     setLoading={setLoading}
                 />
-                <ZKLoginButton
+                {/* <ZKLoginButton
                     provider="twitch"
                     logo={twitchLogo}
                     setLoading={setLoading}
-                />
+                /> */}
             </div>
         </>
     );
