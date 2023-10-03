@@ -2,7 +2,6 @@ import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 import {
     generateNonce,
     generateRandomness,
-    getZkSignature,
     jwtToAddress,
 } from '@mysten/zklogin';
 import { decodeJwt } from 'jose';
@@ -13,7 +12,6 @@ import { extractJwtFromUrl } from './utils';
 
 import type { ZkProvider } from './providers';
 import type { SuiClient } from '@mysten/sui.js/client';
-import type { TransactionBlock } from '@mysten/sui.js/transactions';
 import type { JWTPayload } from 'jose';
 
 type OAuthProfileInfo = {
