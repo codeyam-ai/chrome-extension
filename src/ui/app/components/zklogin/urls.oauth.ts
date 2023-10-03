@@ -1,5 +1,6 @@
 export enum OAuthType {
     Google,
+    Twitch,
     DevTest,
 }
 
@@ -15,6 +16,8 @@ export function getOAuthUrl({
     switch (type) {
         case OAuthType.Google:
             return _google({ nonce, getRedirectUrl });
+        case OAuthType.Twitch:
+            return _twitch({ nonce, getRedirectUrl });
         default:
             return _devTest({ nonce, getRedirectUrl });
     }
@@ -40,6 +43,28 @@ function _google({
 
     const urlSearchParams = new URLSearchParams(searchParamsData);
     const basePath = `https://accounts.google.com/o/oauth2/v2/auth`;
+    return `${basePath}?${urlSearchParams}`;
+}
+
+function _twitch({
+    nonce,
+    getRedirectUrl = chrome.identity.getRedirectURL,
+}: {
+    nonce: string;
+    getRedirectUrl?: (path?: string) => string;
+}) {
+    const CLIENT_ID = '1kc6a4vmlnrv6zxnemkctoal4l1hb6';
+
+    const searchParamsData = {
+        client_id: CLIENT_ID,
+        response_type: 'id_token',
+        redirect_uri: getRedirectUrl('/ui.html'),
+        scope: 'openid',
+        nonce: nonce,
+    };
+
+    const urlSearchParams = new URLSearchParams(searchParamsData);
+    const basePath = `https://id.twitch.tv/oauth2/authorize`;
     return `${basePath}?${urlSearchParams}`;
 }
 

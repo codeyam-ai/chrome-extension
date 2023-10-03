@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import ResetWalletForm from './ResetWalletForm';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
@@ -21,6 +21,21 @@ const SignOutZk = () => {
         await dispatch(resetWallet());
     }, [dispatch]);
 
+    const loginName = useMemo(() => {
+        let name: string | undefined;
+
+        if (zkData?.profileInfo) {
+            if ('email' in zkData.profileInfo) {
+                name = zkData.profileInfo.email;
+            }
+            if ('preferred_username' in zkData.profileInfo) {
+                name = zkData.profileInfo.preferred_username;
+            }
+        }
+
+        return name;
+    }, [zkData]);
+
     return (
         <div className="flex">
             <div className="flex flex-col gap-6">
@@ -34,9 +49,7 @@ const SignOutZk = () => {
                         </span>{' '}
                         as{' '}
                         <span className="font-semibold text-ethos-light-text-default dark:text-ethos-dark-text-default">
-                            {zkData?.provider === 'facebook'
-                                ? zkData?.profileInfo?.name
-                                : zkData?.profileInfo?.email}
+                            {loginName}
                         </span>{' '}
                         to access the this wallet again.
                     </Body>

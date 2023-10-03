@@ -16,7 +16,7 @@ import type { SuiClient } from '@mysten/sui.js/client';
 import type { TransactionBlock } from '@mysten/sui.js/transactions';
 import type { JWTPayload } from 'jose';
 
-type OAuthProfileInfo = {
+type GoogleOAuthProfileInfo = {
     email?: string;
     email_verified?: boolean;
     given_name?: string;
@@ -25,7 +25,12 @@ type OAuthProfileInfo = {
     picture?: string;
 };
 
-type ZkJwtPayload = JWTPayload & OAuthProfileInfo;
+type TwitchOauthProfileInfo = {
+    preferred_username?: string;
+};
+
+type ZkJwtPayload = JWTPayload &
+    (GoogleOAuthProfileInfo | TwitchOauthProfileInfo);
 
 export type ProofResponse = {
     proofPoints: {
@@ -51,12 +56,15 @@ export type ZkData = {
     salt: bigint;
     address: string;
     proof: ProofResponse;
-    profileInfo?: OAuthProfileInfo;
+    profileInfo?: GoogleOAuthProfileInfo | TwitchOauthProfileInfo;
     provider: ZkProvider;
 };
 
 export const Zk = {
-    async login(client: SuiClient): Promise<ZkData | null> {
+    async login(
+        client: SuiClient,
+        provider: ZkProvider
+    ): Promise<ZkData | null> {
         const latestSuiSystemState = await client.getLatestSuiSystemState();
         const currentEpoch = parseInt(latestSuiSystemState.epoch);
         const lifetime = 2;
@@ -77,7 +85,7 @@ export const Zk = {
             randomness
         );
 
-        const { jwt } = await getJwtViaOAuthFlow({ nonce });
+        const { jwt } = await getJwtViaOAuthFlow({ nonce, provider });
         if (!jwt) return null;
 
         const { salt } = await getSalt({ jwt });
@@ -106,16 +114,21 @@ export const Zk = {
             salt,
             address,
             proof,
-            profileInfo: {
-                email: decodedJwt.email,
-                email_verified: decodedJwt.email_verified,
-                given_name: decodedJwt.given_name,
-                family_name: decodedJwt.family_name,
-                name: decodedJwt.name,
-                picture: decodedJwt.picture,
-            },
-            // ❗❗❗ Change this to the actual provider ❗❗❗
-            provider: 'google',
+            profileInfo: decodedJwt.email
+                ? ({
+                      email: decodedJwt.email,
+                      email_verified: decodedJwt.email_verified,
+                      given_name: decodedJwt.given_name,
+                      family_name: decodedJwt.family_name,
+                      name: decodedJwt.name,
+                      picture: decodedJwt.picture,
+                  } as GoogleOAuthProfileInfo)
+                : decodedJwt.preferred_username
+                ? ({
+                      preferred_username: decodedJwt.preferred_username,
+                  } as TwitchOauthProfileInfo)
+                : undefined,
+            provider,
         };
         return zkData;
     },
@@ -165,11 +178,23 @@ export const Zk = {
 
 async function getJwtViaOAuthFlow({
     nonce,
+    provider,
 }: {
     nonce: string;
+    provider: ZkProvider;
 }): Promise<{ jwt: string | null }> {
-    const oAuthUrl = getOAuthUrl({ type: OAuthType.Google, nonce });
-    // const oAuthUrl = getOAuthUrl({ type: OAuthType.DevTest, nonce });
+    let type = OAuthType.DevTest;
+    switch (provider) {
+        case 'google':
+            type = OAuthType.Google;
+            break;
+        case 'twitch':
+            type = OAuthType.Twitch;
+            break;
+        default:
+            break;
+    }
+    const oAuthUrl = getOAuthUrl({ type, nonce });
 
     const responseUrl = await chrome.identity.launchWebAuthFlow({
         url: oAuthUrl,
