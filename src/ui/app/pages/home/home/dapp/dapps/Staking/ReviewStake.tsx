@@ -144,6 +144,7 @@ const ReviewStake: React.FC = () => {
         passphrase,
         queryClient,
         validatorSuiAddress,
+        zkData,
     ]);
 
     return (

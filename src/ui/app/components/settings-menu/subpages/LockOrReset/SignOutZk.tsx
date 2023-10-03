@@ -1,15 +1,13 @@
+import { capitalize } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 
-import ResetWalletForm from './ResetWalletForm';
+import LoadingIndicator from '../../../loading/LoadingIndicator';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import { reset as resetWallet } from '_src/ui/app/redux/slices/account';
-import ConfirmDestructiveActionDialog from '_src/ui/app/shared/dialog/ConfirmDestructiveActionDialog';
+import Button from '_src/ui/app/shared/buttons/Button';
 import Body from '_src/ui/app/shared/typography/Body';
 import ContentBlock from '_src/ui/app/shared/typography/ContentBlock';
 import Header from '_src/ui/app/shared/typography/Header';
-import Button from '_src/ui/app/shared/buttons/Button';
-import { capitalize } from 'lodash';
-import LoadingIndicator from '../../../loading/LoadingIndicator';
 
 const SignOutZk = () => {
     const zkData = useAppSelector(({ account }) => account.zkData);

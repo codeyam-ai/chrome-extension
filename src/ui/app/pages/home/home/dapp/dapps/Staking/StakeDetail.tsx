@@ -156,6 +156,7 @@ const StakeDetail: React.FC = () => {
         queryClient,
         stake?.status,
         stakedSuiId,
+        zkData,
     ]);
 
     if (!stake) {

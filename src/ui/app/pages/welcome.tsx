@@ -1,6 +1,5 @@
 import {
     ArrowDownOnSquareIcon,
-    EnvelopeIcon,
     PlusCircleIcon,
 } from '@heroicons/react/24/solid';
 import { useEffect } from 'react';

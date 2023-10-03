@@ -5,7 +5,6 @@ import { blake2b } from '@noble/hashes/blake2b';
 import { decodeJwt } from 'jose';
 
 import { WalletSigner } from './WalletSigner';
-import { getCurrentEpoch } from './current-epoch';
 import { obfuscate } from './keystore';
 import { getEncrypted } from '../storagex/store';
 import { type NetworkEnvType } from '_src/background/NetworkEnv';
@@ -127,7 +126,6 @@ export class ZkSigner extends WalletSigner {
             sub: decodedJWT.sub,
         };
 
-        console.log('claims :>> ', claims);
         this.claims = claims;
         // const address = computeZkAddress({
         //     claimName: 'sub',
@@ -137,8 +135,6 @@ export class ZkSigner extends WalletSigner {
         //     userSalt: BigInt(salt),
         // });
         const address = zkData.address;
-
-        console.log('address :>> ', address);
 
         this.address = address;
 
@@ -176,13 +172,12 @@ export class ZkSigner extends WalletSigner {
         if (!credentialsData) {
             throw new Error('No credentials data found');
         }
-        const { exportedKeypair, proof, maxEpoch, jwt, randomness } =
-            credentialsData;
+        const { exportedKeypair, proof, maxEpoch, jwt } = credentialsData;
 
         const keyPair = fromExportedKeypair(exportedKeypair);
-        if (!proof) throw 'no proofs stored';
-        if (!this.address) throw 'no address stored';
-        if (!this.claims) throw 'no claims stored';
+        if (!proof) throw new Error('no proofs stored');
+        if (!this.address) throw new Error('no address stored');
+        if (!this.claims) throw new Error('no claims stored');
         // if (!proofs) {
         //     proofs = await this.#generateProofs(
         //         jwt,
@@ -206,9 +201,6 @@ export class ZkSigner extends WalletSigner {
         //         value: JSON.stringify(credentialsData),
         //     });
         // }
-
-        const signature = await keyPair.sign(digest);
-        const publicKey = keyPair.getPublicKey();
 
         const userSignature = toSerializedSignature({
             signature: await keyPair.sign(digest),

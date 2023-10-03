@@ -81,16 +81,9 @@ const sendTokens = async ({
         );
     }
 
-    console.log('in sendTokens 🔥🔥🔥🔥');
-
     const response = await signer.signAndExecuteTransactionBlock({
         transactionBlock,
     });
-
-    console.log(
-        'response from signer.signAndExecuteTransactionBlock :>> ',
-        response
-    );
 
     return response;
 };

@@ -1,7 +1,8 @@
 import Browser from 'webextension-polyfill';
 
+import { PERMISSIONS_STORAGE_KEY } from './Permissions';
 import { connections } from '_src/background/index';
-import { AUTO_LOCK_TIMEOUT_KEY, AccountType } from '_src/shared/constants';
+import { AUTO_LOCK_TIMEOUT_KEY } from '_src/shared/constants';
 import {
     deleteEncrypted,
     getEncrypted,
@@ -9,7 +10,6 @@ import {
     setEncrypted,
 } from '_src/shared/storagex/store';
 import isZkExpired from '_src/ui/app/components/zklogin/isZkExpired';
-import { PERMISSIONS_STORAGE_KEY } from './Permissions';
 
 const alarmName = 'lockAlarm';
 

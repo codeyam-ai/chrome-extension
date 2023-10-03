@@ -13,8 +13,6 @@ import { fromB64 } from '@mysten/sui.js/utils';
 const PRIVATE_KEY_SIZE = 32;
 const LEGACY_PRIVATE_KEY_SIZE = 64;
 export function fromExportedKeypair(keypair: ExportedKeypair): Keypair {
-    console.log('fromExportedKeypair in from-exported-keypair', keypair);
-    console.log('keypair.privateKey :>> ', keypair.privateKey);
     const secretKey = fromB64(keypair.privateKey);
 
     switch (keypair.schema) {

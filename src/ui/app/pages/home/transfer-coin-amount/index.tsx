@@ -249,6 +249,7 @@ function useOnHandleSubmit({
             accountInfos,
             address,
             authentication,
+            zkData,
             activeAccountIndex,
             connectToLedger,
             formState.to,

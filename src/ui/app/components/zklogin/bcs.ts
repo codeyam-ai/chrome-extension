@@ -19,12 +19,6 @@ zkBcs.registerStructType('ZkClaim', {
     index_mod_4: BCS.U8,
 });
 
-type Claim = {
-    name: string;
-    value_base64: string;
-    index_mod_4: number;
-};
-
 export interface ProofPoints {
     pi_a: string[];
     pi_b: string[][];

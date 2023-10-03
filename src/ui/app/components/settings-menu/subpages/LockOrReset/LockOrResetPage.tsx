@@ -1,8 +1,8 @@
-import { useAppSelector } from '_src/ui/app/hooks';
 import LockWallet from './LockWallet';
 import ResetWallet from './ResetWallet';
-import { AccountType } from '_src/shared/constants';
 import SignOutZk from './SignOutZk';
+import { AccountType } from '_src/shared/constants';
+import { useAppSelector } from '_src/ui/app/hooks';
 
 const LockOrResetPage = () => {
     const isZK = useAppSelector(

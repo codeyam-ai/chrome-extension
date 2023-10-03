@@ -150,6 +150,7 @@ function TransferNFTRecipient() {
             accountInfos,
             address,
             authentication,
+            zkData,
             activeAccountIndex,
             connectToLedger,
             selectedNFTObj,

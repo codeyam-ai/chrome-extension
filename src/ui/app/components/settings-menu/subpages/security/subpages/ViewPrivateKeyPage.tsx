@@ -1,11 +1,10 @@
-import { fromB64, toHEX, fromHEX, toB64 } from '@mysten/bcs';
+import { fromB64, fromHEX, toB64, toHEX } from '@mysten/bcs';
 import { useCallback, useEffect, useState } from 'react';
 
 import PasswordVerificationForm from './PasswordVerificationForm';
 import { secureApiCall } from '../../../../../../../shared/utils/simpleApiCall';
 import Button from '../../../../../shared/buttons/Button';
 import { getKeypairFromMnemonics } from '_src/shared/cryptography/mnemonics';
-import { fromExportedKeypair } from '_src/ui/app/components/zklogin/from-exported-keypair';
 import { useAppDispatch, useAppSelector } from '_src/ui/app/hooks';
 import {
     getImportedMnemonic,
@@ -13,7 +12,6 @@ import {
 } from '_src/ui/app/redux/slices/account';
 import Alert from '_src/ui/app/shared/feedback/Alert';
 
-import type { ExportedKeypair } from '@mysten/sui.js/dist/cjs/cryptography';
 import type { ChangeEventHandler } from 'react';
 
 export default function ViewPrivateKeyPage() {
@@ -42,14 +40,12 @@ export default function ViewPrivateKeyPage() {
     const authentication = useAppSelector(
         ({ account }) => account.authentication
     );
-    const zkData = useAppSelector(({ account }) => account.zkData);
     const [hostedPrivateKey, setHostedPrivateKey] = useState<
         string | undefined
     >();
     const [importedPrivateKey, setImportedPrivateKey] = useState<
         string | undefined
     >();
-    const [zkPrivateKey, setZkPrivateKey] = useState<string>();
 
     const onHandleConfirmed = useCallback<ChangeEventHandler<HTMLInputElement>>(
         (event) => {
@@ -131,28 +127,7 @@ export default function ViewPrivateKeyPage() {
         getImported();
     }, [activeAccountInfo, dispatch, privateKey]);
 
-    // useEffect(() => {
-    //     // ZK Private Key
-
-    //     const exportedKeypair =
-    //         zkData?.ephemeralKeyPair as any as ExportedKeypair;
-    //     console.log('exportedKeypair :>> ', exportedKeypair);
-
-    //     // const keyPair = fromExportedKeypair(
-    //     //     exportedKeypair
-    //     // );
-
-    //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    //     const privateKeyObj = (zkData?.ephemeralKeyPair as any).keypair
-    //         .secretKey as { [key: number]: number };
-    //     const privateKeyArray = Object.values(privateKeyObj);
-    //     const privateKeyUint8Array = new Uint8Array(privateKeyArray);
-    //     const b64PrivateKey = toB64(privateKeyUint8Array);
-    //     setZkPrivateKey(b64PrivateKey);
-    // }, [zkData?.ephemeralKeyPair]);
-
-    const safePrivateKey =
-        privateKey ?? hostedPrivateKey ?? importedPrivateKey ?? zkPrivateKey;
+    const safePrivateKey = privateKey ?? hostedPrivateKey ?? importedPrivateKey;
 
     if (showPrivateKey) {
         return (
