@@ -40,7 +40,7 @@ describe('Lock Wallet Page', () => {
             const lockWalletButton = await screen.findByText('Lock Wallet Now');
             await userEvent.click(lockWalletButton);
 
-            await screen.findAllByText('Sign in with Email');
+            await screen.findAllByText('Generate New Wallet');
         });
     });
 

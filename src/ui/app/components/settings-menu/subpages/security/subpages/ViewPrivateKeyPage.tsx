@@ -1,4 +1,4 @@
-import { fromB64, toHEX, fromHEX, toB64 } from '@mysten/bcs';
+import { fromB64, fromHEX, toB64, toHEX } from '@mysten/bcs';
 import { useCallback, useEffect, useState } from 'react';
 
 import PasswordVerificationForm from './PasswordVerificationForm';

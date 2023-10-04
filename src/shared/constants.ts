@@ -36,5 +36,6 @@ export const NUM_OF_EPOCH_BEFORE_EARNING = 2;
 export enum AccountType {
     EMAIL = 'EMAIL',
     PASSWORD = 'PASSWORD',
+    ZK = 'ZK',
     UNINITIALIZED = 'UNINITIALIZED',
 }

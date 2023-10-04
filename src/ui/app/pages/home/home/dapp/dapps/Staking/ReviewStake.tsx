@@ -46,6 +46,7 @@ const ReviewStake: React.FC = () => {
         address,
         authentication,
         passphrase,
+        zkData,
     } = useAppSelector(({ account }) => account);
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -75,6 +76,7 @@ const ReviewStake: React.FC = () => {
             accountInfos,
             address,
             authentication,
+            zkData,
             activeAccountIndex,
             connectToLedger
         );
@@ -142,6 +144,7 @@ const ReviewStake: React.FC = () => {
         passphrase,
         queryClient,
         validatorSuiAddress,
+        zkData,
     ]);
 
     return (

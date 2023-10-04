@@ -74,6 +74,7 @@ export function DappTxApprovalPage() {
         authentication,
         accountInfos,
         passphrase,
+        zkData,
     } = useAppSelector(({ account }) => account);
 
     const activeAccount = useMemo(
@@ -88,6 +89,7 @@ export function DappTxApprovalPage() {
     const guardLoading = useInitializedGuard([
         AppState.MNEMONIC,
         AppState.HOSTED,
+        AppState.ZK,
     ]);
     const txRequestsLoading = useAppSelector(
         ({ transactionRequests }) => !transactionRequests.initialized
@@ -153,6 +155,7 @@ export function DappTxApprovalPage() {
                 accountInfos,
                 address,
                 authentication,
+                zkData,
                 activeAccountIndex,
                 connectToLedger
             );
@@ -173,6 +176,7 @@ export function DappTxApprovalPage() {
         passphrase,
         selectedApiEnv,
         signer,
+        zkData,
     ]);
 
     const getTransactionInfo = useCallback(async () => {

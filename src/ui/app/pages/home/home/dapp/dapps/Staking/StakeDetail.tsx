@@ -54,6 +54,7 @@ const StakeDetail: React.FC = () => {
         authentication,
         accountInfos,
         passphrase,
+        zkData,
     } = useAppSelector(({ account }) => account);
     const { data: allDelegatedStakes } = useGetDelegatedStakes(address || '');
     const { data: systemState } = useSystemState();
@@ -113,6 +114,7 @@ const StakeDetail: React.FC = () => {
             accountInfos,
             address,
             authentication,
+            zkData,
             activeAccountIndex,
             connectToLedger
         );
@@ -154,6 +156,7 @@ const StakeDetail: React.FC = () => {
         queryClient,
         stake?.status,
         stakedSuiId,
+        zkData,
     ]);
 
     if (!stake) {

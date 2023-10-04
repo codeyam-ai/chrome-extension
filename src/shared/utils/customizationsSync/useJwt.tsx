@@ -17,6 +17,7 @@ export const useJwt = () => {
         address: activeAddress,
         authentication,
         passphrase,
+        zkData,
     } = useAppSelector(({ account }) => account);
 
     const getCachedJwt = useCallback(
@@ -38,6 +39,7 @@ export const useJwt = () => {
                         connectToLedger,
                         passphrase || '',
                         authentication,
+                        zkData,
                         address,
                         accountInfos,
                         accountIndex,
@@ -60,6 +62,7 @@ export const useJwt = () => {
                         connectToLedger,
                         passphrase || '',
                         authentication,
+                        zkData,
                         address,
                         accountInfos,
                         accountIndex,
@@ -73,6 +76,7 @@ export const useJwt = () => {
                         connectToLedger,
                         passphrase || '',
                         authentication,
+                        zkData,
                         address,
                         accountInfos,
                         accountIndex,
@@ -93,6 +97,7 @@ export const useJwt = () => {
             currentAccountInfos,
             passphrase,
             setCachedJwt,
+            zkData,
         ]
     );
 

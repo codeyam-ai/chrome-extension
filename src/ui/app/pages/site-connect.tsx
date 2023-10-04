@@ -76,7 +76,7 @@ const permissionTypeToTxt: Record<PermissionType, PermissionInfo> = {
 function SiteConnectPage() {
     const { requestID } = useParams();
     const guardLoading = useInitializedGuard(
-        [AppState.MNEMONIC, AppState.HOSTED],
+        [AppState.MNEMONIC, AppState.HOSTED, AppState.ZK],
         true
     );
     const permissionsInitialized = useAppSelector(
