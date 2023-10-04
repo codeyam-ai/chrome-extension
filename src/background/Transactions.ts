@@ -500,9 +500,14 @@ class Transactions {
             strong: false,
         });
 
-        const zkData = JSON.parse(zkDataString || '{}');
+        if (!zkDataString) return null;
 
-        return zkData;
+        try {
+            const zkData = JSON.parse(zkDataString);
+            return zkData;
+        } catch (e) {
+            return null;
+        }
     }
 
     private createTransactionRequest(
