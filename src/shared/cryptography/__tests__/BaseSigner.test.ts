@@ -5,8 +5,6 @@ import * as nobleHashes from '@noble/hashes/blake2b';
 
 import { BaseSigner } from '../BaseSigner';
 
-
-
 describe('BaseSigner', () => {
     const blake2bSpy = jest.spyOn(nobleHashes, 'blake2b');
     const toSerializedSignatureSpy = jest.spyOn(cryptography, 'toSerializedSignature');

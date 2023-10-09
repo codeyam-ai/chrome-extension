@@ -5,7 +5,7 @@ import {
     generateMnemonicsAndKeypair,
     getKeypairFromMnemonics,
     normalizeMnemonics,
-} from './mnemonics';
+} from '../mnemonics';
 
 describe('mnemonics', () => {
     it.skip('generate mnemonics', () => {
