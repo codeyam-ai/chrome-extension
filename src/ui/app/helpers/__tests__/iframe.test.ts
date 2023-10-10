@@ -1,8 +1,7 @@
 import iframe from '../iframe';
-import { BASE_URL, LOGIN_URL } from '_src/shared/constants';
+import { BASE_URL } from '_src/shared/constants';
 
 // Mocking and spying on external dependencies
-const addEventListenerSpy = jest.spyOn(window, 'addEventListener');
 const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
 
 const mockIframeElement = {
