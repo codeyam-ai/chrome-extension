@@ -1,10 +1,10 @@
+import * as cryptography from '@mysten/sui.js/cryptography';
 import { Ed25519PublicKey } from '@mysten/sui.js/keypairs/ed25519';
 
 import { LedgerSigner } from '../LedgerSigner';
 
 import type SuiLedgerClient from '@mysten/ledgerjs-hw-app-sui';
 import type { SuiClient } from '@mysten/sui.js/client';
-import * as cryptography from '@mysten/sui.js/cryptography';
 
 jest.mock('@mysten/sui.js/keypairs/ed25519', () => {
   return {
