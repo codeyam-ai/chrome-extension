@@ -13,10 +13,10 @@ export default function formatUrl(url: string) {
 
 /**
  * Removes the 'https://', 'http://', and 'www.' prefixes from a given URL.
- * 
+ *
  * @param url - The URL to be formatted.
  * @returns The formatted URL without any 'https://', 'http://', or 'www.' prefixes.
- * 
+ *
  * @example
  * const url = 'https://www.example.com';
  * const formattedUrl = formatUrl(url);
