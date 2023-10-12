@@ -69,7 +69,11 @@ const SendReceiveButtonGroup = ({
                 }),
             });
 
-            if (result.status !== 201 && result.status !== 200) {
+            if (
+                result.status !== 202 &&
+                result.status !== 201 &&
+                result.status !== 200
+            ) {
                 setIsFaucetInProgress(false);
                 setError(true);
             }
