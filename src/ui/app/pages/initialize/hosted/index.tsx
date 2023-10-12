@@ -65,7 +65,11 @@ const HostedPage = () => {
                             An email has been sent to {email} with a link to
                             create to your Ethos Wallet. Not seeing an email?
                             Check your spam folder, or{' '}
-                            <EthosLink to={MAILTO_SUPPORT_URL} type="external">
+                            <EthosLink
+                                to={MAILTO_SUPPORT_URL}
+                                type="external"
+                                forceLightMode
+                            >
                                 contact us
                             </EthosLink>
                             .
