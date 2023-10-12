@@ -48,6 +48,7 @@ import type { AccountInfo } from '_src/ui/app/KeypairVault';
 export type InitialAccountInfo = {
     address: string | null;
     authentication: string | null;
+    email: string | null;
     zkData: ZkData | null;
     mnemonic: string | null;
     passphrase: string | null;
@@ -109,10 +110,16 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
                     activeAccountIndex = (accountInfos?.length || 1) - 1;
                 }
             }
+            const email = await getEncrypted({
+                key: 'email',
+                session: false,
+                strong: false,
+            });
 
             return {
                 address,
                 authentication: authentication || null,
+                email,
                 zkData: null,
                 passphrase: null,
                 mnemonic: null,
@@ -148,10 +155,10 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
         }
 
         if (!zkData && (!passphrase || passphrase.length === 0)) {
-            // if (!passphrase || passphrase.length === 0) {
             return {
                 address,
                 authentication: null,
+                email: null,
                 zkData: null,
                 passphrase: null,
                 mnemonic: null,
@@ -348,6 +355,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
         if (passphrase && (await isLocked(passphrase))) {
             return {
                 address,
+                email: null,
                 authentication: null,
                 passphrase: passphrase || null,
                 mnemonic: mnemonic || null,
@@ -367,6 +375,7 @@ export const loadAccountInformationFromStorage = createAsyncThunk(
             passphrase: passphrase || null,
             mnemonic: mnemonic || null,
             zkData,
+            email: null,
             accountInfos,
             activeAccountIndex,
             locked: false,
@@ -1010,7 +1019,7 @@ export const savePassphrase: AsyncThunk<
 
 export const reset = createAsyncThunk(
     'account/reset',
-    async (_args, { getState }): Promise<void> => {
+    async (_args, { getState }): Promise<boolean> => {
         const {
             account: { passphrase, importNames },
         } = getState() as RootState;
@@ -1094,6 +1103,7 @@ export const reset = createAsyncThunk(
         });
 
         setTimeout(() => window.location.reload(), 500);
+        return true;
     }
 );
 
@@ -1420,6 +1430,7 @@ const accountSlice = createSlice({
                     state.locked = action.payload.locked;
                     state.onboarding = action.payload.onboarding;
                     state.zkData = action.payload.zkData;
+                    state.email = action.payload.email;
                 }
             )
             .addCase(createMnemonic.pending, (state) => {
@@ -1535,6 +1546,11 @@ const accountSlice = createSlice({
                         state.activeAccountIndex =
                             state.accountInfos[0]?.index || 0;
                     }
+                }
+            })
+            .addCase(reset.fulfilled, (state, action) => {
+                if (action.payload) {
+                    state = initialState;
                 }
             }),
 });
