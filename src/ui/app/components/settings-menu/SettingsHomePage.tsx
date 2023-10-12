@@ -61,8 +61,11 @@ const SettingsHomePage = () => {
 
     const apiEnv = useAppSelector((state) => state.app.apiEnv);
     const networkName = API_ENV_TO_INFO[apiEnv].name;
-    const isZK = useAppSelector(
-        ({ account: { accountType } }) => accountType === AccountType.ZK
+    const { isZk, isEmail } = useAppSelector(
+        ({ account: { accountType } }) => ({
+            isZk: accountType === AccountType.ZK,
+            isEmail: accountType === AccountType.EMAIL,
+        })
     );
 
     const listSections: { color: string; items: ListItem[] }[] = [
@@ -109,7 +112,7 @@ const SettingsHomePage = () => {
                     to: SubpageUrls.permissions,
                 },
                 {
-                    text: isZK ? 'Sign Out' : 'Lock / Reset Ethos',
+                    text: isZk || isEmail ? 'Sign Out' : 'Lock / Reset Ethos',
                     iconWithNoClasses: <LockClosedIcon />,
                     to: SubpageUrls.lock,
                 },
@@ -139,7 +142,7 @@ const SettingsHomePage = () => {
         },
     ];
 
-    if (isZK) {
+    if (isZk) {
         // If ZK, don't show customizations sync or security
         listSections[1].items = listSections[1].items.filter(
             (item: { to: string }) =>
