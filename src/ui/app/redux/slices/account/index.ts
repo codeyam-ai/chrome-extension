@@ -26,6 +26,7 @@ import Authentication from '_src/background/Authentication';
 import { PERMISSIONS_STORAGE_KEY } from '_src/background/Permissions';
 import { CUSTOMIZE_ID } from '_src/data/dappsMap';
 import {
+    AUTO_LOCK_TIMEOUT_KEY,
     AccountType,
     MNEMONIC_TEST,
     PASSPHRASE_TEST,
@@ -33,6 +34,7 @@ import {
 import {
     deleteEncrypted,
     getEncrypted,
+    removeLocal,
     setEncrypted,
 } from '_src/shared/storagex/store';
 import KeypairVault from '_src/ui/app/KeypairVault';
@@ -1101,6 +1103,7 @@ export const reset = createAsyncThunk(
             session: false,
             strong: false,
         });
+        await removeLocal(AUTO_LOCK_TIMEOUT_KEY);
 
         setTimeout(() => window.location.reload(), 500);
         return true;
