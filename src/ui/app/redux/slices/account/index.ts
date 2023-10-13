@@ -1065,16 +1065,16 @@ export const reset = createAsyncThunk(
                 strong: true,
             });
             await deleteEncrypted({
-                key: 'accountInfos',
-                session: false,
-                strong: false,
-            });
-            await deleteEncrypted({
                 key: 'activeSeed',
                 session: true,
                 strong: false,
             });
         }
+        await deleteEncrypted({
+            key: 'accountInfos',
+            session: false,
+            strong: false,
+        });
         await deleteEncrypted({
             key: 'authentication',
             session: true,
