@@ -281,6 +281,7 @@ export function DappTxApprovalPage() {
                 txRequest?.tx && 'requestType' in txRequest.tx
                     ? txRequest.tx.requestType
                     : undefined;
+
             await finishTransaction(
                 signer,
                 transactionBlock ?? null,

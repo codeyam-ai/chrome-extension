@@ -11,6 +11,7 @@ import {
     fakeSessionStorage,
 } from './fake-browser/fake-browser';
 import { accountInfos } from './storage';
+import { toSerializedSignature } from '@mysten/sui.js/cryptography';
 
 global.chrome = {
     ...(global.chrome || {}),
@@ -38,6 +39,7 @@ jest.mock('@mysten/sui.js/cryptography', () => {
     return {
         __esModule: true,
         ...jest.requireActual('@mysten/sui.js/cryptography'),
+        toSerializedSignature: jest.fn(() => 'MOCK SIGNATURE'),
     };
 });
 
