@@ -74,7 +74,7 @@ export const Zk = {
         const epkHex = Buffer.from(epkBytes).toString('hex');
         const epkBigInt = BigInt(`0x${epkHex}`);
 
-        const randomness = generateRandomness();
+        const randomness = BigInt(generateRandomness());
 
         const nonce = generateNonce(
             ephemeralKeyPair.getPublicKey(),
@@ -209,6 +209,7 @@ async function getSalt({
     jwt: string;
 }): Promise<{ salt: bigint | null }> {
     const saltServiceUrl = process.env.ETHOS_SALT_SERVICE_URL;
+    // eslint-disable-next-line no-throw-literal
     if (!saltServiceUrl) throw 'salt service url environment variable not set';
 
     const response = await fetch(`${saltServiceUrl}/get_salt`, {
