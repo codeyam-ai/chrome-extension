@@ -91,7 +91,7 @@ const ProviderSelect = ({ theme, provider }: ProviderSelectProps) => {
 
     const getCoinbaseUrl = useCallback(() => {
         const onRampURL = generateOnRampURL({
-            appId: '1dbd2a0b94',
+            appId: 'a8e29dd5-9997-4545-a02d-503594ed4a6f',
             destinationWallets: [
                 { address: address as string, blockchains: ['sui'] },
             ],

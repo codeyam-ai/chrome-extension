@@ -1,4 +1,7 @@
-import type { ExecutionStatus, SuiTransactionBlockKind } from '@mysten/sui.js/client';
+import type {
+    ExecutionStatus,
+    SuiTransactionBlockKind,
+} from '@mysten/sui.js/client';
 
 type ExecutionStatusType = ExecutionStatus['status'];
 

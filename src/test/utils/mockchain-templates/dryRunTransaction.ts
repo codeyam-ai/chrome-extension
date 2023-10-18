@@ -1,4 +1,4 @@
-import type { DryRunTransactionBlockResponse } from '@mysten/sui.js/client'
+import type { DryRunTransactionBlockResponse } from '@mysten/sui.js/client';
 
 export const makeDryRunTransactionResponse =
     (): DryRunTransactionBlockResponse => {
