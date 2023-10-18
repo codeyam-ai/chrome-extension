@@ -1,4 +1,4 @@
-import type { DryRunTransactionBlockResponse } from '@mysten/sui.js/src/types/transactions';
+import type { DryRunTransactionBlockResponse } from '@mysten/sui.js/client'
 
 export const makeDryRunTransactionResponse =
     (): DryRunTransactionBlockResponse => {
@@ -26,7 +26,7 @@ export const makeDryRunTransactionResponse =
                         reference: {
                             objectId:
                                 '0xafff18843f4289b7bf2b21968dda52fdb9b829f640b6ee285bcc039a7d64d4cb',
-                            version: 3,
+                            version: '3',
                             digest: 'WTcTAQyt1mk7BCmG7MT11gM94CkK2644YynaiM4ozDK',
                         },
                     },
@@ -40,7 +40,7 @@ export const makeDryRunTransactionResponse =
                         reference: {
                             objectId:
                                 '0xf51bfc7d98d86fbd75f19d16c37484b0f0f7382eb6c9bfcad2fe4a94be2c8822',
-                            version: 3,
+                            version: '3',
                             digest: 'EPfwDgzWr3aajJEbg2BCipTbTBu9XDDhMuC7NEG7qr24',
                         },
                     },
@@ -53,7 +53,7 @@ export const makeDryRunTransactionResponse =
                     reference: {
                         objectId:
                             '0xf51bfc7d98d86fbd75f19d16c37484b0f0f7382eb6c9bfcad2fe4a94be2c8822',
-                        version: 3,
+                        version: '3',
                         digest: 'EPfwDgzWr3aajJEbg2BCipTbTBu9XDDhMuC7NEG7qr24',
                     },
                 },
@@ -136,5 +136,5 @@ export const makeDryRunTransactionResponse =
                     amount: '1000000',
                 },
             ],
-        };
+        } as unknown as DryRunTransactionBlockResponse;
     };
