@@ -1,5 +1,4 @@
-import type { ExecutionStatus } from '@mysten/sui.js/client';
-import type { TransactionKindName } from '@mysten/sui.js/src/types/transactions';
+import type { ExecutionStatus, SuiTransactionBlockKind } from '@mysten/sui.js/client';
 
 type ExecutionStatusType = ExecutionStatus['status'];
 
@@ -8,7 +7,7 @@ export interface TxResultState {
     txId: string;
     status: ExecutionStatusType;
     txGas: number;
-    kind: TransactionKindName | undefined;
+    kind: SuiTransactionBlockKind | undefined;
     from: string;
     amount?: number;
     timestampMs?: number;

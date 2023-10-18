@@ -1,4 +1,4 @@
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js/src/types/transactions';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 
 export const makeCoinTransactionBlock = (
     toAddress: string,
@@ -61,7 +61,7 @@ export const makeCoinTransactionBlock = (
                         {
                             objectId:
                                 '0x0b14de5b883ac5efef3fba247bc49c57879a6948ac2581f0379fdc6b2ddeb910',
-                            version: 63873,
+                            version: '63873',
                             digest: 'F9PXnwB8r94WutVBu1TxCbFxxUuZaE3zcurVEQUn6TWh',
                         },
                     ],
@@ -101,7 +101,7 @@ export const makeCoinTransactionBlock = (
                     },
                     reference: {
                         objectId: createdCoinObjectId,
-                        version: 63874,
+                        version: '63874',
                         digest: 'HEGEeuJnyZSVTa2Y9FfJpRLrGEWj4uGa845jnqwLFwsG',
                     },
                 },
@@ -114,7 +114,7 @@ export const makeCoinTransactionBlock = (
                     reference: {
                         objectId:
                             '0x0b14de5b883ac5efef3fba247bc49c57879a6948ac2581f0379fdc6b2ddeb910',
-                        version: 63874,
+                        version: '63874',
                         digest: 'J4ni7948zvdZTVEr9HeYgSeKnsrd6BhTtk5pxjYM4onT',
                     },
                 },
@@ -126,7 +126,7 @@ export const makeCoinTransactionBlock = (
                 reference: {
                     objectId:
                         '0x0b14de5b883ac5efef3fba247bc49c57879a6948ac2581f0379fdc6b2ddeb910',
-                    version: 63874,
+                    version: '63874',
                     digest: 'J4ni7948zvdZTVEr9HeYgSeKnsrd6BhTtk5pxjYM4onT',
                 },
             },
