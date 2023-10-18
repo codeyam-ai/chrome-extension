@@ -11,7 +11,6 @@ import {
     fakeSessionStorage,
 } from './fake-browser/fake-browser';
 import { accountInfos } from './storage';
-import { toSerializedSignature } from '@mysten/sui.js/cryptography';
 
 global.chrome = {
     ...(global.chrome || {}),
