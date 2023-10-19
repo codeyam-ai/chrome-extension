@@ -1,7 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { TransactionBlock } from '@mysten/sui.js/transactions';
+import { isTransactionBlock } from '@mysten/sui.js/transactions';
 import { toB64, fromB64 } from '@mysten/sui.js/utils';
 import {
     SUI_CHAINS,
@@ -266,7 +266,7 @@ export class EthosWallet implements Wallet {
     };
 
     #signTransactionBlock: SuiSignTransactionBlockMethod = async (input) => {
-        if (!TransactionBlock.is(input.transactionBlock)) {
+        if (!isTransactionBlock(input.transactionBlock)) {
             throw new Error(
                 'Unexpect transaction format found. Ensure that you are using the `Transaction` class.'
             );
@@ -296,7 +296,7 @@ export class EthosWallet implements Wallet {
         async (input) => {
             const { transactionBlock, account, chain, options } = input;
 
-            if (!TransactionBlock.is(transactionBlock)) {
+            if (!isTransactionBlock(transactionBlock)) {
                 throw new Error(
                     'Unexpect transaction format found. Ensure that you are using the `Transaction` class.'
                 );

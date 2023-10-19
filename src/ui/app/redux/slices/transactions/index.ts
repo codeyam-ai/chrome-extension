@@ -7,7 +7,7 @@ import {
     createSlice,
 } from '@reduxjs/toolkit';
 
-import type { SuiTransactionBlockResponse } from '@mysten/sui.js/src/types/transactions';
+import type { SuiTransactionBlockResponse } from '@mysten/sui.js/client';
 import type { RootState } from '_redux/RootReducer';
 
 // type SendTokensTXArgs = {

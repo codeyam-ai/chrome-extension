@@ -62,11 +62,11 @@ export class LedgerSigner extends WalletSigner {
             this.#derivationPath,
             data
         );
-        const pubKey = await this.getPublicKey();
+        const publicKey = await this.getPublicKey();
         return toSerializedSignature({
             signature,
             signatureScheme: this.#signatureScheme,
-            pubKey,
+            publicKey,
         });
     }
 

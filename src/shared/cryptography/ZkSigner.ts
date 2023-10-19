@@ -1,6 +1,6 @@
 import { toSerializedSignature } from '@mysten/sui.js/cryptography';
 import { type Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
-import { genAddressSeed, getZkSignature } from '@mysten/zklogin';
+import { genAddressSeed, getZkLoginSignature } from '@mysten/zklogin';
 import { blake2b } from '@noble/hashes/blake2b';
 import { decodeJwt } from 'jose';
 
@@ -16,7 +16,6 @@ import type {
     ExportedKeypair,
     SerializedSignature,
 } from '@mysten/sui.js/cryptography';
-import type { ZkSignatureInputs } from '@mysten/zklogin/dist/cjs/bcs';
 import type {
     ProofResponse,
     ZkData,
@@ -236,16 +235,19 @@ export class ZkSigner extends WalletSigner {
         //         },
         //     ],
         // };
-        const inputs: ZkSignatureInputs = {
-            ...proof,
-            addressSeed: genAddressSeed(
-                this.zkData.salt,
-                'sub',
-                decodedJWT.sub ?? '',
-                aud ?? ''
-            ).toString(),
-        };
-        const zkSig = getZkSignature({ inputs, maxEpoch, userSignature });
+        const zkSig = getZkLoginSignature({
+            inputs: {
+                ...proof,
+                addressSeed: genAddressSeed(
+                    this.zkData.salt,
+                    'sub',
+                    decodedJWT.sub ?? '',
+                    aud ?? ''
+                ).toString(),
+            },
+            maxEpoch,
+            userSignature,
+        });
 
         return zkSig;
     }

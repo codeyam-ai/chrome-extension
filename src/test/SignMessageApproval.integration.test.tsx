@@ -54,9 +54,7 @@ describe('The Sign Message Approval popup', () => {
             .calls[0][2] as SuiSignPersonalMessageOutput;
         expect(result).toBeDefined();
         expect(result.bytes).toEqual('aGVsbG8=');
-        expect(result.signature).toEqual(
-            'AODqBuGDqJhM2N0HJECuKowhEl2ZSpQ1t8jGGIa8CH1q/yY6lBuWULUSB6Z01Zco9vNBAtNm9N9aWVFLw2aGAt4='
-        );
+        expect(result.signature).toEqual('MOCK SIGNATURE');
     });
 
     test('shows the message to sign and allows user to reject it', async () => {

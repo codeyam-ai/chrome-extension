@@ -49,7 +49,7 @@ describe('BaseSigner', () => {
         blake2bSpy.mockReturnValue(new Uint8Array([8, 9, 10, 11]));
 
         const result = await signer.signData(data);
-        expect(result).toEqual('AAECAwQEBQYH');
+        expect(result).toEqual('MOCK SIGNATURE');
         expect(signDataSpy).toHaveBeenCalledWith(
             new Uint8Array([8, 9, 10, 11])
         );

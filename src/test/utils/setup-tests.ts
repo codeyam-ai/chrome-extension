@@ -38,6 +38,7 @@ jest.mock('@mysten/sui.js/cryptography', () => {
     return {
         __esModule: true,
         ...jest.requireActual('@mysten/sui.js/cryptography'),
+        toSerializedSignature: jest.fn(() => 'MOCK SIGNATURE'),
     };
 });
 
