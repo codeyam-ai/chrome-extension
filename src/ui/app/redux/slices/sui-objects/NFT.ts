@@ -60,12 +60,15 @@ export class NFT {
     }
 
     public static isKiosk(data: SuiObjectData): boolean {
+        console.log('KIOSK', data);
         return (
             !!data.type &&
             data.type.includes('kiosk') &&
             !!data.content &&
             'fields' in data.content &&
-            ('kiosk' in data.content.fields || 'for' in data.content.fields)
+            ('kiosk' in data.content.fields ||
+                'for' in data.content.fields ||
+                'cap' in data.content.fields)
         );
     }
 
@@ -76,6 +79,7 @@ export class NFT {
         if (!this.isKiosk(data)) return [];
         let kiosk = get(data, 'content.fields.kiosk');
         if (!kiosk) kiosk = get(data, 'content.fields.for');
+        if (!kiosk) kiosk = get(data, 'content.fields.cap.fields.for');
         if (!kiosk) return [];
         let allKioskObjects: DynamicFieldInfo[] = [];
         let cursor: string | undefined | null;
