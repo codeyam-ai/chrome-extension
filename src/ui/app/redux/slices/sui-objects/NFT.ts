@@ -60,7 +60,6 @@ export class NFT {
     }
 
     public static isKiosk(data: SuiObjectData): boolean {
-        console.log('KIOSK', data);
         return (
             !!data.type &&
             data.type.includes('kiosk') &&
