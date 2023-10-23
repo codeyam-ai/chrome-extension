@@ -7,6 +7,7 @@ import {
     deleteEncrypted,
     getEncrypted,
     getLocal,
+    removeLocal,
     setEncrypted,
 } from '_src/shared/storagex/store';
 import isZkExpired from '_src/ui/app/components/zklogin/isZkExpired';
@@ -28,7 +29,7 @@ export async function lockWallet() {
     }
 }
 
-async function resetZkWallet() {
+async function resetZkOrEmailWallet() {
     await setEncrypted({
         key: 'onboarding',
         session: false,
@@ -40,6 +41,12 @@ async function resetZkWallet() {
         session: true,
         strong: false,
     });
+    await deleteEncrypted({
+        key: 'authentication',
+        session: true,
+        strong: false,
+    });
+    await deleteEncrypted({ key: 'email', session: false, strong: false });
     await deleteEncrypted({
         key: 'activeAccountIndex',
         session: false,
@@ -65,15 +72,26 @@ async function resetZkWallet() {
         session: true,
         strong: false,
     });
+    await removeLocal(AUTO_LOCK_TIMEOUT_KEY);
 
     // window is not available in background script, so we use this.
     // it will close the expanded tab if there is one
     setTimeout(() => chrome.runtime.reload(), 500);
 }
 
-Browser.alarms.onAlarm.addListener((alarm) => {
+Browser.alarms.onAlarm.addListener(async (alarm) => {
     if (alarm.name === alarmName) {
-        lockWallet();
+        const authentication = await getEncrypted({
+            key: 'authentication',
+            session: true,
+            strong: false,
+        });
+
+        if (authentication) {
+            resetZkOrEmailWallet();
+        } else {
+            lockWallet();
+        }
     }
 });
 
@@ -94,7 +112,7 @@ export const resetLockTimeout = async () => {
         const isExpired = await isZkExpired(zkData.maxEpoch, zkData.minEpoch);
 
         if (isExpired) {
-            await resetZkWallet();
+            await resetZkOrEmailWallet();
         }
     } else {
         const timeout = (await getLocal(AUTO_LOCK_TIMEOUT_KEY)) as number;
