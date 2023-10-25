@@ -3,7 +3,7 @@ import type { TransactionBlock } from '@mysten/sui.js/transactions';
 import type { ExtendedSuiObjectData } from '_redux/slices/sui-objects';
 
 const obKioskPackageId =
-    '0x88eccc40067c9b73b92ebde24759aa4287c5274cfed35f7e67dcea4352ef6594';
+    '0x39f01412072df12631c8c938ee9e11678fe55a7ea4dfff75b8833e6b53aeb8bf';
 const kioskModule = '0x2::kiosk';
 
 const transferObjectTransactionBlock = async (
