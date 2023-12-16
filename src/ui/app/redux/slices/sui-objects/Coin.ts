@@ -64,6 +64,13 @@ export class Coin {
 
     public static getID(obj: SuiMoveObject): string {
         if ('id' in obj.fields) {
+            if (
+                obj.fields.id &&
+                typeof obj.fields.id === 'object' &&
+                'id' in obj.fields.id
+            ) {
+                return obj.fields.id.id as string;
+            }
             return obj.fields.id as string;
         }
 
