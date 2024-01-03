@@ -1,5 +1,5 @@
 import { capitalize } from 'lodash';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 import { Zk } from './ZKLogin';
 import getNextEmoji from '../../helpers/getNextEmoji';
@@ -12,6 +12,8 @@ import { api } from '_src/ui/app/redux/store/thunk-extras';
 import type { ZkData } from './ZKLogin';
 import type { ZkProvider } from './providers';
 import type { AccountInfo } from '../../KeypairVault';
+import ZkLoginWarningDialog from '../../shared/dialog/ZkLoginWarningDialog';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 interface ZKLoginButtonProps {
     provider: ZkProvider;
@@ -26,8 +28,13 @@ const ZKLoginButton: React.FC<ZKLoginButtonProps> = ({
 }) => {
     const client = api.instance.client;
     const dispatch = useAppDispatch();
+    const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
 
-    const onClick = useCallback(async () => {
+    const openWarning = useCallback(() => {
+        setIsWarningModalOpen(true);
+    }, []);
+
+    const startZkLogin = useCallback(async () => {
         setLoading(true);
         let zkData: ZkData | null;
         try {
@@ -83,17 +90,34 @@ const ZKLoginButton: React.FC<ZKLoginButtonProps> = ({
     }, [client, dispatch, provider, setLoading]);
 
     return (
-        <button
-            onClick={onClick}
-            className="flex items-center place-content-center w-[68px] h-[52px] rounded-[10px] bg-ethos-light-background-secondary"
-        >
-            <span className="sr-only">Sign in with {capitalize(provider)}</span>
-            <img
-                src={logo}
-                alt={`${capitalize(provider)} logo`}
-                className="w-7 h-7"
+        <>
+            <button
+                onClick={openWarning}
+                className="flex items-center place-content-center w-[68px] h-[52px] rounded-[10px] bg-ethos-light-background-secondary"
+            >
+                <span className="sr-only">
+                    Sign in with {capitalize(provider)}
+                </span>
+                <img
+                    src={logo}
+                    alt={`${capitalize(provider)} logo`}
+                    className="w-7 h-7"
+                />
+            </button>
+            <ZkLoginWarningDialog
+                isOpen={isWarningModalOpen}
+                setIsOpen={setIsWarningModalOpen}
+                title="Warning"
+                paragraphs={[
+                    'Signing in with Google and Twitch using ZK Login will no longer be supported.',
+                    'Please do not create a new wallet using these methods, and if you have an existing account please transfer your assets to a new wallet.',
+                ]}
+                primaryButtonText="Continue with sign in"
+                onClickPrimaryButton={startZkLogin}
+                iconWithNoClasses={<ExclamationTriangleIcon />}
+                forceLightTheme
             />
-        </button>
+        </>
     );
 };
 

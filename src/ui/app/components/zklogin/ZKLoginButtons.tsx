@@ -3,10 +3,10 @@ import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import ZKLoginButton from './ZKLoginButton';
-import LoadingIndicator from '../loading/LoadingIndicator';
 import googleLogo from '_images/social-login-icons/google.png';
 import twitchLogo from '_images/social-login-icons/twitch.png';
 import Body from '_src/ui/app/shared/typography/Body';
+import LoadingIndicator from '../loading/LoadingIndicator';
 
 export function ZKLoginButtons() {
     const navigate = useNavigate();
