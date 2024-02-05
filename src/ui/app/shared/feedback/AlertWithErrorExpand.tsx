@@ -171,7 +171,7 @@ const AlertWithErrorExpand = ({
                             channel in the{' '}
                             <EthosLink
                                 type="external"
-                                to="https://discord.gg/ethoswallet"
+                                to="https://bit.ly/ethosdiscordcommunity"
                             >
                                 Ethos Discord
                             </EthosLink>
@@ -257,7 +257,7 @@ const AlertWithErrorExpand = ({
                                             channel in the{' '}
                                             <EthosLink
                                                 type="external"
-                                                to="https://discord.gg/ethoswallet"
+                                                to="https://bit.ly/ethosdiscordcommunity"
                                             >
                                                 Ethos Discord
                                             </EthosLink>{' '}

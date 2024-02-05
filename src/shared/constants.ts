@@ -20,7 +20,7 @@ export const DASHBOARD_COLLECTIBLES = BASE_URL + '/dashboard/collectibles';
 export const LOGIN_URL = BASE_URL + '/logged_in';
 export const MAILTO_SUPPORT_URL = 'mailto:support@ethoswallet.xyz';
 export const TWITTER_URL = 'https://twitter.com/EthosWalletXYZ';
-export const DISCORD_URL = 'https://discord.gg/ethoswallet';
+export const DISCORD_URL = 'https://bit.ly/ethosdiscordcommunity';
 
 export const MIST_PER_SUI = 1000000000;
 
