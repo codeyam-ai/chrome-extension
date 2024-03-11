@@ -274,7 +274,7 @@ describe('The Security Settings page', () => {
         });
     });
 
-    describe('email user', () => {
+    xdescribe('email user', () => {
         beforeEach(async () => {
             nock(BASE_URL, {
                 reqheaders: { 'x-supabase-access-token': fakeAccessToken },

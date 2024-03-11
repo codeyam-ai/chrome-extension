@@ -35,7 +35,10 @@ export const apiCall = async ({
         data.body = JSON.stringify(body);
     }
 
-    const baseUrl = secure ? SECURE_URL : BASE_URL;
+    const baseUrl = secure
+        ? 'https://ethoswallet-xyz-app-2af571486ef0.relay.evervault.com'
+        : BASE_URL;
+    // const baseUrl = secure ? SECURE_URL : BASE_URL;
     const response = await fetch(`${baseUrl}/api/${relativePath}`, data);
     const { status } = response;
 
