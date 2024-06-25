@@ -38,10 +38,12 @@ const NetworkSelector = () => {
     const dispatch = useAppDispatch();
 
     const netWorks = useMemo(() => {
-        return generateActiveNetworkList().map((itm) => ({
-            ...API_ENV_TO_INFO[itm as keyof typeof API_ENV],
-            networkName: itm,
-        }));
+        return generateActiveNetworkList()
+            .map((itm) => ({
+                ...API_ENV_TO_INFO[itm as keyof typeof API_ENV],
+                networkName: itm,
+            }))
+            .filter((itm) => itm.name !== 'Devnet'); // Shinami discontinued devnet;
     }, []);
 
     const queryClient = useQueryClient();

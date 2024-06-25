@@ -39,10 +39,12 @@ function NetworkPage() {
     const dispatch = useAppDispatch();
 
     const networks = useMemo(() => {
-        return generateActiveNetworkList().map((itm) => ({
-            ...API_ENV_TO_INFO[itm as keyof typeof API_ENV],
-            networkName: itm,
-        }));
+        return generateActiveNetworkList()
+            .map((itm) => ({
+                ...API_ENV_TO_INFO[itm as keyof typeof API_ENV],
+                networkName: itm,
+            }))
+            .filter((itm) => itm.name !== 'Devnet'); // Shinami discontinued devnet
     }, []);
 
     const queryClient = useQueryClient();
@@ -87,9 +89,8 @@ function NetworkPage() {
             <ContentBlock className="!py-6">
                 <Header>Network</Header>
                 <BodyLarge isTextColorMedium>
-                    Mainnet is used for live transactions. Devnet and testnet
-                    are only intended for developers to test their dApps and
-                    tokens.
+                    Mainnet is used for live transactions. Testnet is only
+                    intended for developers to test their dApps and tokens.
                 </BodyLarge>
             </ContentBlock>
             <SegmentedControl items={networkOptions} />
